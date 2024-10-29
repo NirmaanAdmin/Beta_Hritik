@@ -26,7 +26,7 @@ class drawing_management extends AdminController
 		init_drawing_fist_item();
 		$user_id = get_staff_user_id();
 		$master_parent_id = '';
-		$id = $this->input->get('id');
+		$id = $this->input->get('id') ?? 3;
 		$edit = $this->input->get('edit');
 		$share_to_me = $this->input->get('share_to_me');
 		$my_approval = $this->input->get('my_approval');
@@ -88,7 +88,7 @@ class drawing_management extends AdminController
 		$data['customer_groups'] = $this->client_groups_model->get_groups();
 		$data['discipline'] = $this->drawing_management_model->get_discipline();
 
-		$this->load->view('file_managements/file_management.php', $data);
+		$this->load->view('file_managements/file_management.php', $data); 
 	}
 
 	/**
