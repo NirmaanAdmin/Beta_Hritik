@@ -90,6 +90,7 @@
 									<?php 
 									foreach ($root_folder as $key => $value) { 
 										$active = '';
+										
 										if($master_parent_id == $value['id'] && $share_to_me == 0){
 											$active = ' active';
 										}
@@ -98,7 +99,7 @@
 											<a href="<?php echo admin_url('drawing_management?id='.$value['id']); ?>" class="w100">
 												<?php echo drawing_htmldecode($value['name']); ?>	
 											</a>
-											<?php if($value['project_id'] == 0) { ?>
+											
 												<div class="dropdown">
 													<button class="btn btn-tool pull-right dropdown-toggle" role="button" id="dropdown_menu_<?php echo drawing_htmldecode($value['id']); ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 														<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
@@ -120,7 +121,7 @@
 														<?php } ?>
 													</ul>
 												</div>
-											<?php } ?>
+											
 										</li>
 									<?php } ?>
 									<?php /* <li class="list-group-item list-group-item-action">
