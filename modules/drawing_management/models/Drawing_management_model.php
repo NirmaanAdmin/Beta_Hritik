@@ -14,7 +14,7 @@ class drawing_management_model extends app_model
 	{
 		parent::__construct();
 	}
-
+ 
 	/**
 	 * get items
 	 * @param  integer $id     
@@ -112,6 +112,15 @@ class drawing_management_model extends app_model
 	 * @return boolean 
 	 */
 	public function update_item($data){
+		
+		if(isset($data['controlled_document'])){
+			if($data['controlled_document'] == 'on'){
+				echo $data['controlled_document'] = 1;
+			}
+		}else{
+			echo $data['controlled_document'] = 0;
+		}
+		
 		if(isset($data['duedate']) && $data['duedate'] == ''){
 			$data['duedate'] = null;
 		}

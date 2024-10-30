@@ -27,12 +27,12 @@
 													<?php echo _l('dmg_upload'); ?>											
 												</span>
 											</button>
-											<button class="btn btn-default pull-right mright10 display-flex default-tool" onclick="create_folder()">
+											<!-- <button class="btn btn-default pull-right mright10 display-flex default-tool" onclick="create_folder()">
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder-plus"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
 												<span class="mleft5 mtop2">
 													<?php echo _l('dmg_new_folder'); ?>											
 												</span>
-											</button>
+											</button> -->
 										<?php } else { 
 											if(isset($item) && $edit != 1){
 												?>
@@ -192,7 +192,7 @@
 									<?php 
 									if(isset($item)){
 										if(isset($item) && $item->filetype == 'folder'){
-											$child_items = $this->drawing_management_model->get_item('','parent_id = '.$parent_id, 'name, id, dateadded, filetype');											
+											$child_items = $this->drawing_management_model->get_item('','parent_id = '.$parent_id, 'name, id, dateadded, filetype,parent_id');											
 											if(count($child_items)){ 
 												$this->load->view('file_managements/includes/item_list.php', ['child_items' => $child_items]);												
 											} else { ?>

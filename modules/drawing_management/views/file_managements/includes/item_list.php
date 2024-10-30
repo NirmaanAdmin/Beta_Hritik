@@ -13,7 +13,7 @@
 				$item_icon = '';
 				if($value['filetype'] == 'folder'){
 					$item_icon = '<i class="fa fa-folder text-yellow fs-19"></i> ';
-				}
+				} 
 				else{
 					$item_icon = '<i class="fa fa-file text-primary fs-14"></i> ';
 				}
@@ -40,7 +40,7 @@
 								$download = '';
 								if($value['filetype'] == 'folder'){ 
 									$download = '<a href="'.admin_url('drawing_management/download_folder/'.$value['id']).'" >'._l('dmg_dowload').'</a>';
-									?>
+									?> 
 									<li class="no-padding">
 										<a href="#" data-name="<?php echo drawing_htmldecode($value['name']); ?>" onclick="edit_folder(this, '<?php echo drawing_htmldecode($value['id']); ?>')"><?php echo _l('dmg_edit') ?></a>											
 									</li>
@@ -51,7 +51,7 @@
 									<?php
 									if(!drawing_check_file_locked($value['id'])){ ?>
 										<li class="no-padding">
-											<a href="<?php echo admin_url('drawing_management?id='.$value['id'].'&edit=1') ?>" data-name="<?php echo drawing_htmldecode($value['name']); ?>"><?php echo _l('dmg_edit_metadata') ?></a>											
+											<a href="<?php echo admin_url('drawing_management?id='.$value['id'].'&edit=1&pid='.$value['parent_id']) ?>" data-name="<?php echo drawing_htmldecode($value['name']); ?>"><?php echo _l('dmg_edit_metadata') ?></a>											
 										</li>
 									<?php } 
 								}
