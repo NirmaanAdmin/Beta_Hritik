@@ -5,6 +5,7 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Shared\Html;
 use \Convertio\Convertio;
+
 /**
  * Document management model
  */
@@ -14,7 +15,7 @@ class drawing_management_model extends app_model
 	{
 		parent::__construct();
 	}
- 
+
 	/**
 	 * get items
 	 * @param  integer $id     
@@ -22,32 +23,34 @@ class drawing_management_model extends app_model
 	 * @param  string $select 
 	 * @return array or object         
 	 */
-	public function get_item($id, $where = '', $select = ''){
-		if($select != ''){
+	public function get_item($id, $where = '', $select = '')
+	{
+		if ($select != '') {
 			$this->db->select($select);
-		} 
-		if($id != ''){
-			$this->db->where('id',$id);
-			return $this->db->get(db_prefix().'dms_items')->row();
 		}
-		else{    
-			if($where != ''){
+		if ($id != '') {
+			$this->db->where('id', $id);
+			return $this->db->get(db_prefix() . 'dms_items')->row();
+		} else {
+			if ($where != '') {
 				$this->db->where($where);
-			} 
-			return $this->db->get(db_prefix().'dms_items')->result_array();
+			}
+			return $this->db->get(db_prefix() . 'dms_items')->result_array();
 		}
 	}
 
-	public function get_root_item($user_id) {
-		$this->db->where('parent_id = 0 and ((creator_id = '.$user_id.' and creator_type = "staff") or (creator_id = 0 and creator_type = "public"))');
+	public function get_root_item($user_id)
+	{
+		$this->db->where('parent_id = 0 and ((creator_id = ' . $user_id . ' and creator_type = "staff") or (creator_id = 0 and creator_type = "public"))');
 		$this->db->order_by("creator_id", "desc");
-		return $this->db->get(db_prefix().'dms_items')->result_array();
+		return $this->db->get(db_prefix() . 'dms_items')->result_array();
 	}
 
-	public function check_project_member_exist($project_id) {
+	public function check_project_member_exist($project_id)
+	{
 		$this->db->where('project_id', $project_id);
 		$this->db->where('staff_id', get_staff_user_id());
-		return $this->db->get(db_prefix().'project_members')->row();
+		return $this->db->get(db_prefix() . 'project_members')->row();
 	}
 
 	/**
@@ -55,24 +58,24 @@ class drawing_management_model extends app_model
 	 * @param  integer $id 
 	 * @return boolean     
 	 */
-	public function delete_item($id){
+	public function delete_item($id)
+	{
 		$data_item = $this->get_item($id, '', 'filetype, parent_id, name');
-		if($data_item){
+		if ($data_item) {
 			$this->db->where('id', $id);
-			$this->db->delete(db_prefix().'dms_items');
-			if($this->db->affected_rows() > 0) {
-				if($data_item->filetype != 'folder'){
+			$this->db->delete(db_prefix() . 'dms_items');
+			if ($this->db->affected_rows() > 0) {
+				if ($data_item->filetype != 'folder') {
 					// Delete physical file
-					$this->delete_file_item(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER .'/files/'. $data_item->parent_id . '/' . $data_item->name);
+					$this->delete_file_item(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/' . $data_item->name);
 					// Delete all version file
 					$data_log_version = $this->get_log_version_by_parent($id, '', 'id');
 					foreach ($data_log_version as $key => $value) {
 						$this->delete_log_version($value['id']);
 					}
-				}
-				else{
+				} else {
 					// Delete child item of folder
-					$child_data = $this->get_item('', 'parent_id = '.$id, 'id');
+					$child_data = $this->get_item('', 'parent_id = ' . $id, 'id');
 					foreach ($child_data as $key => $value) {
 						$this->delete_item($value['id']);
 					}
@@ -88,22 +91,22 @@ class drawing_management_model extends app_model
 	 * @param array $data 
 	 * @return boolean 
 	 */
-	public function create_item($data){
-		if(is_client_logged_in()){
-			$data['creator_id'] = get_client_user_id();	
-			$data['creator_type'] = 'customer';	
-		}
-		else{
-			$data['creator_id'] = get_staff_user_id();	
-			$data['creator_type'] = 'staff';	
+	public function create_item($data)
+	{
+		if (is_client_logged_in()) {
+			$data['creator_id'] = get_client_user_id();
+			$data['creator_type'] = 'customer';
+		} else {
+			$data['creator_id'] = get_staff_user_id();
+			$data['creator_type'] = 'staff';
 		}
 
-		if(isset($data['parent_id'])){
+		if (isset($data['parent_id'])) {
 			$data['master_id'] = $this->get_master_id($data['parent_id']);
 		}
 		$data['dateadded'] = date('Y-m-d H:i:s');
-        $data['hash'] = app_generate_hash();
-		$this->db->insert(db_prefix().'dms_items', $data);		
+		$data['hash'] = app_generate_hash();
+		$this->db->insert(db_prefix() . 'dms_items', $data);
 		return $this->db->insert_id();
 	}
 	/**
@@ -111,60 +114,61 @@ class drawing_management_model extends app_model
 	 * @param array $data 
 	 * @return boolean 
 	 */
-	public function update_item($data){
-		
-		if(isset($data['controlled_document'])){
-			if($data['controlled_document'] == 'on'){
+	public function update_item($data)
+	{
+
+		if (isset($data['controlled_document'])) {
+			if ($data['controlled_document'] == 'on') {
 				echo $data['controlled_document'] = 1;
 			}
-		}else{
+		} else {
 			echo $data['controlled_document'] = 0;
 		}
-		
-		if(isset($data['duedate']) && $data['duedate'] == ''){
+
+		if (isset($data['duedate']) && $data['duedate'] == '') {
 			$data['duedate'] = null;
 		}
-		if(isset($data['dateadded']) && $data['dateadded'] == ''){
+		if (isset($data['dateadded']) && $data['dateadded'] == '') {
 			$data['dateadded'] = null;
 		}
-		if(isset($data['dateadded']) && $data['dateadded'] != ''){
+		if (isset($data['dateadded']) && $data['dateadded'] != '') {
 			$data['dateadded'] = date('Y-m-d H:i:s', strtotime($data['dateadded']));
 		}
-		if(isset($data['issue_date']) && $data['issue_date'] != ''){
+		if (isset($data['issue_date']) && $data['issue_date'] != '') {
 			$data['issue_date'] = date('Y-m-d H:i:s', strtotime($data['issue_date']));
 		}
-		if(isset($data['discipline']) && $data['discipline'] != ''){
+		if (isset($data['discipline']) && $data['discipline'] != '') {
 			$data['discipline'] = implode(",", $data['discipline']);
 		}
 		$customfield = [];
-		if(isset($data['customfield'])){
+		if (isset($data['customfield'])) {
 			$customfield = $data['customfield'];
 			unset($data['customfield']);
 		}
 		$affectedRows = 0;
 		$id = $data['id'];
 		$data_item = $this->get_item($id, '', 'name');
-		if($data_item){
-			if(isset($data['parent_id'])){
+		if ($data_item) {
+			if (isset($data['parent_id'])) {
 				$data['master_id'] = $this->get_master_id($data['parent_id']);
 			}
 			$this->db->where('id', $id);
-			$this->db->update(db_prefix().'dms_items', $data);		
-			if ($this->db->affected_rows() > 0) {   
+			$this->db->update(db_prefix() . 'dms_items', $data);
+			if ($this->db->affected_rows() > 0) {
 				// Rename file if name has been changed
-				if(isset($data['name']) && ($data_item->name != $data['name'])){
+				if (isset($data['name']) && ($data_item->name != $data['name'])) {
 					$this->change_file_name($id, $data['name']);
-				}     
+				}
 				$affectedRows++;
 			}
 		}
 		// Add or update custom field
-		if(count($customfield) > 0){
+		if (count($customfield) > 0) {
 			$data_field = [];
 			foreach ($customfield as $customfield_id => $field_value) {
 				$field_value = (is_array($field_value) ? json_encode($field_value) : $field_value);
 				$data_customfield = $this->get_custom_fields($customfield_id);
-				if($data_customfield){
+				if ($data_customfield) {
 					$data_field_item['title'] = $data_customfield->title;
 					$data_field_item['type'] = $data_customfield->type;
 					$data_field_item['option'] = $data_customfield->option;
@@ -176,12 +180,12 @@ class drawing_management_model extends app_model
 			}
 			$data_field = json_encode($data_field);
 			$this->db->where('id', $id);
-			$this->db->update(db_prefix().'dms_items', ['custom_field' => $data_field]);	
-			if ($this->db->affected_rows() > 0) {   
+			$this->db->update(db_prefix() . 'dms_items', ['custom_field' => $data_field]);
+			if ($this->db->affected_rows() > 0) {
 				$affectedRows++;
 			}
-		} 
-		if($affectedRows > 0){
+		}
+		if ($affectedRows > 0) {
 			$this->add_audit_log($id, _l('dmg_updated_file'));
 			return true;
 		}
@@ -193,18 +197,18 @@ class drawing_management_model extends app_model
 	 * @param  integer $id     
 	 * @return integer         
 	 */
-	public function get_master_id($id){
+	public function get_master_id($id)
+	{
 		$master_id = 0;
 		$this->db->select('master_id');
-		$this->db->where('id',$id);
-		$data = $this->db->get(db_prefix().'dms_items')->row();
-		if($data){
-			if($data->master_id == 0){
+		$this->db->where('id', $id);
+		$data = $this->db->get(db_prefix() . 'dms_items')->row();
+		if ($data) {
+			if ($data->master_id == 0) {
 				$master_id = $id;
-			}
-			else{
+			} else {
 				$master_id = $data->master_id;
-			}			
+			}
 		}
 		return $master_id;
 	}
@@ -214,16 +218,83 @@ class drawing_management_model extends app_model
 	 * @param  integer $id 
 	 * @return array     
 	 */
-	public function breadcrum_array($id, $array = []){
+	public function breadcrum_array($id, $array = [])
+	{
 		$data_item = $this->get_item($id, '', 'master_id, parent_id, name, id');
-		if($data_item && is_object($data_item)){
+		if ($data_item && is_object($data_item)) {
 			$array[] = ['id' => $id, 'parent_id' => $data_item->parent_id, 'name' => $data_item->name];
-			if($data_item->parent_id > 0 && $id = $data_item->parent_id){
+			if ($data_item->parent_id > 0 && $id = $data_item->parent_id) {
 				$array = $this->breadcrum_array($id, $array);
 			}
 		}
 		return $array;
 	}
+	public function get_document_number($id)
+	{
+
+		$file = $this->db->where('id', $id)->get(db_prefix() . 'dms_items')->row();
+
+		if (!$file) {
+			return "Document type not found.";
+		}
+
+		// Fetch the type of document (last folder) by id
+		$doc_type = $this->db->where('id', $file->parent_id)->get(db_prefix() . 'dms_items')->row();
+
+		if (!$doc_type) {
+			return "Discipline not found.";
+		}
+
+		// Fetch project name using parent_id of the discipline
+		$discipline = $this->db->where('id', $doc_type->parent_id)->get(db_prefix() . 'dms_items')->row();
+
+		if (!$discipline) {
+			return "Project not found.";
+		}
+
+		// Fetch project name using parent_id of the discipline
+		$project = $this->db->where('id', $discipline->parent_id)->get(db_prefix() . 'dms_items')->row();
+
+		if (!$project) {
+			return "Project not found.";
+		}
+
+		// Get the first 3 letters of project name, discipline, and document type
+		$project_code = strtoupper(substr($project->name, 0, 3));
+		$discipline_code = strtoupper(substr($discipline->name, 0, 3));
+		$type_code = strtoupper(substr($doc_type->name, 0, 3));
+
+		// Construct the base document prefix to search for existing document numbers
+		$prefix = "{$project_code}-{$discipline_code}-{$type_code}-";
+
+		// Find the last used number for this document type
+		$last_document = $this->db->like('document_number', "{$prefix}", 'after')
+			->order_by('document_number', 'desc')
+			->get(db_prefix() . 'dms_items')
+			->row();
+
+		// Extract the last number from the document_number if it exists, otherwise start from 0
+		if ($last_document && preg_match('/(\d+)$/', $last_document->document_number, $matches)) {
+			$last_number = (int)$matches[1];
+		} else {
+			$last_number = 0;
+		}
+
+		// Increment the last number by 1 and format it to be 3 digits with leading zeros
+		$new_number = str_pad($last_number + 1, 3, '0', STR_PAD_LEFT);
+
+		// Concatenate to create the document number
+		$document_number = "{$prefix}{$new_number}";
+
+		// Prepare data to update
+		$data = ['document_number' => $document_number];
+
+		// Update the document number in the record
+		$this->db->where('id', $id)->update(db_prefix() . 'dms_items', $data);
+
+		return $document_number;
+	}
+
 
 	/**
 	 * upload file
@@ -231,45 +302,51 @@ class drawing_management_model extends app_model
 	 * @param  string $folder 
 	 * @return boolean         
 	 */
-	public function upload_file($id, $type, $version = '1.0.0'){
-		$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/'.$type.'/' . $id . '/';
+	public function upload_file($id, $type, $version = '1.0.0')
+	{
+		$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/' . $type . '/' . $id . '/';
 		$totalUploaded = 0;
-		if (isset($_FILES['file']['name'])
-				&& ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
-				if (!is_array($_FILES['file']['name'])) {
-					$_FILES['file']['name'] = [$_FILES['file']['name']];
-					$_FILES['file']['type'] = [$_FILES['file']['type']];
-					$_FILES['file']['tmp_name'] = [$_FILES['file']['tmp_name']];
-					$_FILES['file']['error'] = [$_FILES['file']['error']];
-					$_FILES['file']['size'] = [$_FILES['file']['size']];
-				}
-				_file_attachments_index_fix('file');
-				for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
-					// Get the temp file path
-					$tmpFilePath = $_FILES['file']['tmp_name'][$i];
-					// Make sure we have a filepath
-					if (!empty($tmpFilePath) && $tmpFilePath != '') {
-						if (_perfex_upload_error($_FILES['file']['error'][$i])
-							|| !_upload_extension_allowed($_FILES['file']['name'][$i])) {
-							continue;
+		if (
+			isset($_FILES['file']['name'])
+			&& ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+		) {
+			if (!is_array($_FILES['file']['name'])) {
+				$_FILES['file']['name'] = [$_FILES['file']['name']];
+				$_FILES['file']['type'] = [$_FILES['file']['type']];
+				$_FILES['file']['tmp_name'] = [$_FILES['file']['tmp_name']];
+				$_FILES['file']['error'] = [$_FILES['file']['error']];
+				$_FILES['file']['size'] = [$_FILES['file']['size']];
+			}
+			_file_attachments_index_fix('file');
+			for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
+				// Get the temp file path
+				$tmpFilePath = $_FILES['file']['tmp_name'][$i];
+				// Make sure we have a filepath
+				if (!empty($tmpFilePath) && $tmpFilePath != '') {
+					if (
+						_perfex_upload_error($_FILES['file']['error'][$i])
+						|| !_upload_extension_allowed($_FILES['file']['name'][$i])
+					) {
+						continue;
 					}
 
 					_maybe_create_upload_path($path);
 					$filename = $this->check_duplicate_file_name($id, $_FILES['file']['name'][$i]);
-					$newFilePath = $path.$filename;
+					$newFilePath = $path . $filename;
 					// Upload the file into the temp dir
 					if (move_uploaded_file($tmpFilePath, $newFilePath)) {
 						$creator_type = 'staff';
-						if(is_client_logged_in()){
+						if (is_client_logged_in()) {
 							$creator_type = 'customer';
 						}
-						$this->add_attachment_file_to_database($filename, $id, $version, $_FILES['file']['type'][$i], '', '', '', $creator_type);
+						$inserted_id = $this->add_attachment_file_to_database($filename, $id, $version, $_FILES['file']['type'][$i], '', '', '', $creator_type);
 						$totalUploaded++;
 					}
 				}
 			}
 		}
-		return (bool) $totalUploaded;
+
+		return $inserted_id;
 	}
 
 	/**
@@ -280,86 +357,81 @@ class drawing_management_model extends app_model
 	 * @param [type] $filetype  
 	 */
 	public function add_attachment_file_to_database($name, $parent_id, $version, $filetype, $log_text = '', $old_item_id = '', $creator_id = '', $creator_type = 'staff')
-    {
-    	if(is_numeric($old_item_id) && $old_item_id > 0){
-    		$data_item = $this->get_item($old_item_id);
-    		if($data_item){
-    			$data = (array)$data_item;
-    			$data['id'] = '';
-    			$data['parent_id'] = $parent_id;
-    			$data['version'] = $version;
-    			$data['master_id'] = $this->get_master_id($parent_id);
-    		}
-    	}
-    	else{
-    		$data['dateadded'] = date('Y-m-d H:i:s');
-    		if($creator_type == 'staff'){
-    			if($creator_id == ''){
-    				$data['creator_id'] = get_staff_user_id();
-    			}
-    			else{
-    				$data['creator_id'] = $creator_id;
-    			}
-    		}
-    		else{
-    			if($creator_id == ''){
-    				$data['creator_id'] = get_client_user_id();
-    			}
-    			else{
-    				$data['creator_id'] = $creator_id;
-    			}
-    		}
-    		$data['creator_type'] = $creator_type;
-    		$data['name'] = $name;
-    		$data['parent_id'] = $parent_id;
-    		$data['version'] = $version;
-    		$data['filetype'] = $filetype;
-    		$data['hash'] = app_generate_hash();
-    		$data['master_id'] = $this->get_master_id($parent_id);
-    	}
-        $this->db->insert(db_prefix() . 'dms_items', $data);
-        $insert_id = $this->db->insert_id();
-        if($insert_id){
-        	if($log_text == ''){
-        		$this->add_audit_log($insert_id, _l('dmg_added_file'));
-        	}
-        	else{
-        		$this->add_audit_log($insert_id, $log_text);
-        	}
-        	if(is_numeric($old_item_id) && $old_item_id > 0){
-        		$this->change_log_item_id($old_item_id, $insert_id);     
-        		$this->change_version_item_id($old_item_id, $insert_id);     
-        		$this->change_reminder_item_id($old_item_id, $insert_id);     
-        		$this->change_share_to_item_id($old_item_id, $insert_id);     
-        		$this->change_approve_item_id($old_item_id, $insert_id);     
-        		$this->change_sign_approve_item_id($old_item_id, $insert_id);     
-        	}
-        }
-        return $insert_id;
-    }
+	{
+		if (is_numeric($old_item_id) && $old_item_id > 0) {
+			$data_item = $this->get_item($old_item_id);
+			if ($data_item) {
+				$data = (array)$data_item;
+				$data['id'] = '';
+				$data['parent_id'] = $parent_id;
+				$data['version'] = $version;
+				$data['master_id'] = $this->get_master_id($parent_id);
+			}
+		} else {
+			$data['dateadded'] = date('Y-m-d H:i:s');
+			if ($creator_type == 'staff') {
+				if ($creator_id == '') {
+					$data['creator_id'] = get_staff_user_id();
+				} else {
+					$data['creator_id'] = $creator_id;
+				}
+			} else {
+				if ($creator_id == '') {
+					$data['creator_id'] = get_client_user_id();
+				} else {
+					$data['creator_id'] = $creator_id;
+				}
+			}
+			$data['creator_type'] = $creator_type;
+			$data['name'] = $name;
+			$data['parent_id'] = $parent_id;
+			$data['version'] = $version;
+			$data['filetype'] = $filetype;
+			$data['hash'] = app_generate_hash();
+			$data['master_id'] = $this->get_master_id($parent_id);
+		}
+		$this->db->insert(db_prefix() . 'dms_items', $data);
+		$insert_id = $this->db->insert_id();
+		if ($insert_id) {
+			if ($log_text == '') {
+				$this->add_audit_log($insert_id, _l('dmg_added_file'));
+			} else {
+				$this->add_audit_log($insert_id, $log_text);
+			}
+			if (is_numeric($old_item_id) && $old_item_id > 0) {
+				$this->change_log_item_id($old_item_id, $insert_id);
+				$this->change_version_item_id($old_item_id, $insert_id);
+				$this->change_reminder_item_id($old_item_id, $insert_id);
+				$this->change_share_to_item_id($old_item_id, $insert_id);
+				$this->change_approve_item_id($old_item_id, $insert_id);
+				$this->change_sign_approve_item_id($old_item_id, $insert_id);
+			}
+		}
+		return $insert_id;
+	}
 
-    /**
-     * get log version
-     * @param  integer $id     
-     * @param  string $where  
-     * @param  string $select 
-     * @return array or object         
-     */
-    public function get_log_version($id, $where = '', $select = ''){
-    	if($select != ''){
+	/**
+	 * get log version
+	 * @param  integer $id     
+	 * @param  string $where  
+	 * @param  string $select 
+	 * @return array or object         
+	 */
+	public function get_log_version($id, $where = '', $select = '')
+	{
+		if ($select != '') {
 			$this->db->select($select);
-		} 
-		if($id != ''){
-			$this->db->where('id',$id);
-			return $this->db->get(db_prefix().'dms_file_versions')->row();
 		}
-		else{    
-			if($where != ''){
+		if ($id != '') {
+			$this->db->where('id', $id);
+			return $this->db->get(db_prefix() . 'dms_file_versions')->row();
+		} else {
+			if ($where != '') {
 				$this->db->where($where);
-			} 
-			return $this->db->get(db_prefix().'dms_file_versions')->result_array();
+			}
+			return $this->db->get(db_prefix() . 'dms_file_versions')->result_array();
 		}
-    }
+	}
 
 
 	/**
@@ -367,17 +439,18 @@ class drawing_management_model extends app_model
 	 * @param  integer $id 
 	 * @return boolean     
 	 */
-	public function delete_log_version($id, $audit_log = true){		
+	public function delete_log_version($id, $audit_log = true)
+	{
 		$data_log = $this->get_log_version($id, '', 'name, parent_id');
-		if($data_log){
+		if ($data_log) {
 			$this->db->where('id', $id);
-			$this->db->delete(db_prefix().'dms_file_versions');
-			if($this->db->affected_rows() > 0) {
+			$this->db->delete(db_prefix() . 'dms_file_versions');
+			if ($this->db->affected_rows() > 0) {
 				//Delete physiscal file
-				$this->delete_file_item(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER .'/log_versions/'. $data_log->parent_id . '/' . $data_log->name);		
+				$this->delete_file_item(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/log_versions/' . $data_log->parent_id . '/' . $data_log->name);
 				// Add audit log
-				if($audit_log){
-					$this->add_audit_log($data_log->parent_id, _l('dmg_deleted_version').': '.$data_log->name);					
+				if ($audit_log) {
+					$this->add_audit_log($data_log->parent_id, _l('dmg_deleted_version') . ': ' . $data_log->name);
 				}
 				return true;
 			}
@@ -386,30 +459,32 @@ class drawing_management_model extends app_model
 	}
 
 	/**
-	* get log version by parent
-	* @param  integer $parent_id     
-	* @param  string $where  
-	* @param  string $select 
-	* @return array    
-	*/
-	public function get_log_version_by_parent($parent_id, $where = '', $select = ''){
-		if($select != ''){
+	 * get log version by parent
+	 * @param  integer $parent_id     
+	 * @param  string $where  
+	 * @param  string $select 
+	 * @return array    
+	 */
+	public function get_log_version_by_parent($parent_id, $where = '', $select = '')
+	{
+		if ($select != '') {
 			$this->db->select($select);
-		} 
-		if($where != ''){
+		}
+		if ($where != '') {
 			$this->db->where($where);
-		} 
+		}
 		$this->db->where('parent_id', $parent_id);
 		$this->db->order_by('dateadded', 'desc');
-		return $this->db->get(db_prefix().'dms_file_versions')->result_array();
+		return $this->db->get(db_prefix() . 'dms_file_versions')->result_array();
 	}
 
 	/**
 	 * delete file item
 	 * @param  string $path 
 	 */
-	public function delete_file_item($path){
-		if(file_exists($path)){
+	public function delete_file_item($path)
+	{
+		if (file_exists($path)) {
 			unlink($path);
 		}
 	}
@@ -420,13 +495,14 @@ class drawing_management_model extends app_model
 	 * @param  string $new_name 
 	 * @return boolean           
 	 */
-	public function change_file_name($id, $new_name){
+	public function change_file_name($id, $new_name)
+	{
 		$data_item = $this->get_item($id, '', 'name, parent_id');
-		if($data_item){
-			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER .'/files/'. $data_item->parent_id . '/';
-			$new_path = $path.$new_name;
-			$old_path = $path.$data_item->name;
-			if(file_exists($old_path)){
+		if ($data_item) {
+			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/';
+			$new_path = $path . $new_name;
+			$old_path = $path . $data_item->name;
+			if (file_exists($old_path)) {
 				rename($old_path, $new_path);
 				return true;
 			}
@@ -439,14 +515,15 @@ class drawing_management_model extends app_model
 	 * @param array $data 
 	 * @return integer $insert id 
 	 */
-	public function add_custom_field($data){
+	public function add_custom_field($data)
+	{
 		$data['option'] = is_array($data['option']) ? json_encode($data['option']) : null;
-		if(!isset($data['required'])){
+		if (!isset($data['required'])) {
 			$data['required'] = 0;
 		}
-		$this->db->insert(db_prefix().'dms_custom_fields', $data);
+		$this->db->insert(db_prefix() . 'dms_custom_fields', $data);
 		$insert_id = $this->db->insert_id();
-		if($insert_id){
+		if ($insert_id) {
 			return $insert_id;
 		}
 		return 0;
@@ -456,14 +533,15 @@ class drawing_management_model extends app_model
 	 * @param  array $data 
 	 * @return boolean     
 	 */
-	public function update_custom_field($data){
+	public function update_custom_field($data)
+	{
 		$data['option'] = is_array($data['option']) ? json_encode($data['option']) : null;
-		if(!isset($data['required'])){
+		if (!isset($data['required'])) {
 			$data['required'] = 0;
 		}
 		$this->db->where('id', $data['id']);
-		$this->db->update(db_prefix().'dms_custom_fields', $data);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_custom_fields', $data);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -474,49 +552,50 @@ class drawing_management_model extends app_model
 	 * @param  integer $id 
 	 * @return boolean     
 	 */
-	public function delete_custom_field($id){
+	public function delete_custom_field($id)
+	{
 		$this->db->where('id', $id);
-		$this->db->delete(db_prefix().'dms_custom_fields');
-		if($this->db->affected_rows() > 0) {
+		$this->db->delete(db_prefix() . 'dms_custom_fields');
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	* get custom_fields
-	* @param  integer $id 
-	* @return array or object    
-	*/
-	public function get_custom_fields($id = ''){
-		if($id != ''){
+	 * get custom_fields
+	 * @param  integer $id 
+	 * @return array or object    
+	 */
+	public function get_custom_fields($id = '')
+	{
+		if ($id != '') {
 			$this->db->where('id', $id);
-			return $this->db->get(db_prefix().'dms_custom_fields')->row();
-		}
-		else{
-			return $this->db->get(db_prefix().'dms_custom_fields')->result_array();
+			return $this->db->get(db_prefix() . 'dms_custom_fields')->row();
+		} else {
+			return $this->db->get(db_prefix() . 'dms_custom_fields')->result_array();
 		}
 	}
 
 	/**
-	* copy file
-	* @param  integer $id            
-	* @param  string $save_path        
-	* @param  string $file_name 
-	* @return string $new_file_name                
-	*/
+	 * copy file
+	 * @param  integer $id            
+	 * @param  string $save_path        
+	 * @param  string $file_name 
+	 * @return string $new_file_name                
+	 */
 	public function copy_file($from_path, $save_path)
-	{	
+	{
 		try {
-			if(file_exists($from_path)){
+			if (file_exists($from_path)) {
 				// copy($from_path, $save_path);
 
 				$arrContextOptions = array(
-					"ssl"=>array(
-						"verify_peer"=>false,
-						"verify_peer_name"=>false,
+					"ssl" => array(
+						"verify_peer" => false,
+						"verify_peer_name" => false,
 					),
-				);  
+				);
 				$file_content = file_get_contents($from_path, false, stream_context_create($arrContextOptions));
 				file_put_contents($save_path, $file_content);
 				return true;
@@ -531,26 +610,26 @@ class drawing_management_model extends app_model
 	 * @param  integer $id   
 	 * @param  string $path 
 	 */
-	public function create_folder($id, $path = ''){
-		if($path == ''){
+	public function create_folder($id, $path = '')
+	{
+		if ($path == '') {
 			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/temps/' . $id;
 			drawing_dmg_create_folder($path);
-			$path = $path . '/'.drawing_dmg_get_file_name($id);
+			$path = $path . '/' . drawing_dmg_get_file_name($id);
 			drawing_dmg_create_folder($path);
 		}
-		$data_child = $this->get_item('', 'parent_id = '.$id, 'id, name, filetype, parent_id');
-		if($data_child){
+		$data_child = $this->get_item('', 'parent_id = ' . $id, 'id, name, filetype, parent_id');
+		if ($data_child) {
 			foreach ($data_child as $key => $value) {
-				if($value['filetype'] == 'folder'){
-					$new_path = $path.'/'.$value['name'];
+				if ($value['filetype'] == 'folder') {
+					$new_path = $path . '/' . $value['name'];
 					drawing_dmg_create_folder($new_path);
 					$this->create_folder($value['id'], $new_path);
-				}
-				else{
-					$path1 = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $value['parent_id'] . '/'. $value['name'];
-					$path2 = $path . '/'. $value['name'];
+				} else {
+					$path1 = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $value['parent_id'] . '/' . $value['name'];
+					$path2 = $path . '/' . $value['name'];
 					$this->copy_file($path1, $path2);
-				}			
+				}
 			}
 		}
 	}
@@ -562,38 +641,36 @@ class drawing_management_model extends app_model
 	 * @param  string $id        
 	 * @return boolean            
 	 */
-	public function check_duplicate_name($parent_id, $name, $id = '', $filetype = '', $filetype_negative = false, $creator_id = '', $creator_type = 'staff'){
-		$query = 'name = \''.$name.'\' and parent_id = '.$parent_id;
-		if($creator_id != '' && $creator_type != ''){
-			$query .= ' and creator_id = '.$creator_id.' and creator_type = \''.$creator_type.'\'';
-		}
-		else{
-			if(is_client_logged_in()){
-				$query .= ' and creator_id = '.get_client_user_id().' and creator_type = \'customer\'';				
-			}
-			else{
-				$query .= ' and creator_id = '.get_staff_user_id().' and creator_type = \'staff\'';				
+	public function check_duplicate_name($parent_id, $name, $id = '', $filetype = '', $filetype_negative = false, $creator_id = '', $creator_type = 'staff')
+	{
+		$query = 'name = \'' . $name . '\' and parent_id = ' . $parent_id;
+		if ($creator_id != '' && $creator_type != '') {
+			$query .= ' and creator_id = ' . $creator_id . ' and creator_type = \'' . $creator_type . '\'';
+		} else {
+			if (is_client_logged_in()) {
+				$query .= ' and creator_id = ' . get_client_user_id() . ' and creator_type = \'customer\'';
+			} else {
+				$query .= ' and creator_id = ' . get_staff_user_id() . ' and creator_type = \'staff\'';
 			}
 		}
 
-		if(is_numeric($id) && $id > 0){
-			$query .= ' and id != '.$id;
+		if (is_numeric($id) && $id > 0) {
+			$query .= ' and id != ' . $id;
 		}
-		if($filetype != ''){
-			if(!$filetype_negative){
-				$query .= ' and filetype = \''.$filetype.'\'';
-			}
-			else{
-				$query .= ' and filetype != \''.$filetype.'\'';				
+		if ($filetype != '') {
+			if (!$filetype_negative) {
+				$query .= ' and filetype = \'' . $filetype . '\'';
+			} else {
+				$query .= ' and filetype != \'' . $filetype . '\'';
 			}
 		}
 		$data_item = $this->get_item('', $query, 'id');
-		if(is_array($data_item) && count($data_item) > 0){
+		if (is_array($data_item) && count($data_item) > 0) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * check duplicate file name
 	 * @param  integer  $parent_id 
@@ -601,23 +678,22 @@ class drawing_management_model extends app_model
 	 * @param  integer $count     
 	 * @return string             
 	 */
-	public function check_duplicate_file_name($parent_id, $name, $count = 0){
+	public function check_duplicate_file_name($parent_id, $name, $count = 0)
+	{
 		$new_name = $name;
-		if($count > 0){
+		if ($count > 0) {
 			$split_name = explode('.', $name);
-			if(count($split_name) > 1 && isset($split_name[count($split_name) - 1])){
-				$ext = '.'.$split_name[count($split_name) - 1];
-				$new_name = str_replace($ext,'', $name).' ('.$count.')'.$ext;
-			}
-			else{
-				$new_name = $name.' ('.$count.')';
+			if (count($split_name) > 1 && isset($split_name[count($split_name) - 1])) {
+				$ext = '.' . $split_name[count($split_name) - 1];
+				$new_name = str_replace($ext, '', $name) . ' (' . $count . ')' . $ext;
+			} else {
+				$new_name = $name . ' (' . $count . ')';
 			}
 		}
-		if($this->check_duplicate_name($parent_id, $new_name, '', 'folder', true)){
+		if ($this->check_duplicate_name($parent_id, $new_name, '', 'folder', true)) {
 			return $this->check_duplicate_file_name($parent_id, $name, $count + 1);
-		}
-		else{
-			return $new_name;			
+		} else {
+			return $new_name;
 		}
 	}
 
@@ -628,16 +704,16 @@ class drawing_management_model extends app_model
 	 * @param  integer $count     
 	 * @return string             
 	 */
-	public function check_duplicate_folder_name($parent_id, $name, $count = 0){
+	public function check_duplicate_folder_name($parent_id, $name, $count = 0)
+	{
 		$new_name = $name;
-		if($count > 0){
-			$new_name = $name.' ('.$count.')';
+		if ($count > 0) {
+			$new_name = $name . ' (' . $count . ')';
 		}
-		if($this->check_duplicate_name($parent_id, $new_name, '', 'folder')){
+		if ($this->check_duplicate_name($parent_id, $new_name, '', 'folder')) {
 			return $this->check_duplicate_folder_name($parent_id, $name, $count + 1);
-		}
-		else{
-			return $new_name;			
+		} else {
+			return $new_name;
 		}
 	}
 
@@ -647,23 +723,23 @@ class drawing_management_model extends app_model
 	 * @param  array $id_lever_1 
 	 * @param  string $save_path  
 	 */
-	public function create_folder_bulk_download($id_lever_1, $folder_name){
+	public function create_folder_bulk_download($id_lever_1, $folder_name)
+	{
 		// Create root folder
-		$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER.'/temps/bulk_downloads/'.$folder_name.'/';
+		$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/temps/bulk_downloads/' . $folder_name . '/';
 		drawing_dmg_create_folder($path);
-		$data_child = $this->get_item('', 'id IN ('.$id_lever_1.')', 'id, name, filetype, parent_id');
-		if($data_child){
+		$data_child = $this->get_item('', 'id IN (' . $id_lever_1 . ')', 'id, name, filetype, parent_id');
+		if ($data_child) {
 			foreach ($data_child as $key => $value) {
-				if($value['filetype'] == 'folder'){
-					$new_path = $path.'/'.$value['name'];
+				if ($value['filetype'] == 'folder') {
+					$new_path = $path . '/' . $value['name'];
 					drawing_dmg_create_folder($new_path);
 					$this->create_folder($value['id'], $new_path);
-				}
-				else{
-					$path1 = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $value['parent_id'] . '/'. $value['name'];
-					$path2 = $path . '/'. $value['name'];
+				} else {
+					$path1 = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $value['parent_id'] . '/' . $value['name'];
+					$path2 = $path . '/' . $value['name'];
 					$this->copy_file($path1, $path2);
-				}			
+				}
 			}
 		}
 	}
@@ -674,28 +750,28 @@ class drawing_management_model extends app_model
 	 * @param  string $item_id   
 	 * @return boolean            
 	 */
-	public function duplicate_item($folder_id, $item_id){
+	public function duplicate_item($folder_id, $item_id)
+	{
 		$affectedRows = 0;
 		$data_item = $this->get_item($item_id);
-		if($data_item){
+		if ($data_item) {
 			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $folder_id . '/';
 			_maybe_create_upload_path($path);
-			if($data_item->filetype == 'folder'){
+			if ($data_item->filetype == 'folder') {
 				$data["parent_id"] = $folder_id;
 				$data["name"] = $this->check_duplicate_folder_name($folder_id, $data_item->name);
 				$insert_id = $this->create_item($data);
 				$new_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $insert_id . '/';
 				_maybe_create_upload_path($new_path);
-				$data_child = $this->get_item('', 'parent_id = '.$item_id, 'id, name, filetype, parent_id');
+				$data_child = $this->get_item('', 'parent_id = ' . $item_id, 'id, name, filetype, parent_id');
 				foreach ($data_child as $key => $value) {
 					$this->duplicate_item($insert_id, $value['id']);
 				}
 				$affectedRows++;
-			}
-			else{
-				$oldFilePath = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/'.$data_item->name;
+			} else {
+				$oldFilePath = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/' . $data_item->name;
 				$filename = $this->check_duplicate_file_name($folder_id, $data_item->name);
-				$newFilePath = $path.$filename;
+				$newFilePath = $path . $filename;
 				// Upload the file into the temp dir
 				if ($this->copy_file($oldFilePath, $newFilePath)) {
 					$this->add_attachment_file_to_database($filename, $folder_id, $data_item->version, $data_item->filetype, '', '', $data_item->creator_id, $data_item->creator_type);
@@ -703,7 +779,7 @@ class drawing_management_model extends app_model
 				}
 			}
 		}
-		if($affectedRows > 0){
+		if ($affectedRows > 0) {
 			return true;
 		}
 		return false;
@@ -716,38 +792,38 @@ class drawing_management_model extends app_model
 	 * @param  string $item_id   
 	 * @return boolean            
 	 */
-	public function move_item($folder_id, $item_id){
+	public function move_item($folder_id, $item_id)
+	{
 		$affectedRows = 0;
 		$data_item = $this->get_item($item_id);
-		if($data_item){
+		if ($data_item) {
 			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $folder_id . '/';
 			_maybe_create_upload_path($path);
-			if($data_item->filetype == 'folder'){
+			if ($data_item->filetype == 'folder') {
 				$data["parent_id"] = $folder_id;
 				$data["name"] = $this->check_duplicate_folder_name($folder_id, $data_item->name);
 				$insert_id = $this->create_item($data);
 				$new_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $insert_id . '/';
 				_maybe_create_upload_path($new_path);
-				$data_child = $this->get_item('', 'parent_id = '.$item_id, 'id, name, filetype, parent_id');
+				$data_child = $this->get_item('', 'parent_id = ' . $item_id, 'id, name, filetype, parent_id');
 				foreach ($data_child as $key => $value) {
 					$this->move_item($insert_id, $value['id']);
 				}
 				$affectedRows++;
-			}
-			else{
+			} else {
 
-				$oldFilePath = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/'.$data_item->name;
+				$oldFilePath = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/' . $data_item->name;
 				$filename = $this->check_duplicate_file_name($folder_id, $data_item->name);
-				$newFilePath = $path.$filename;
+				$newFilePath = $path . $filename;
 				// Upload the file into the temp dir
 				if ($this->copy_file($oldFilePath, $newFilePath)) {
-					$log_text = _l('dmg_moved_file_from').' '.drawing_dmg_get_file_name($data_item->parent_id).' '._l('dmg_to').' '.drawing_dmg_get_file_name($folder_id);
+					$log_text = _l('dmg_moved_file_from') . ' ' . drawing_dmg_get_file_name($data_item->parent_id) . ' ' . _l('dmg_to') . ' ' . drawing_dmg_get_file_name($folder_id);
 					$this->add_attachment_file_to_database($filename, $folder_id, $data_item->version, $data_item->filetype, $log_text, $item_id, $data_item->creator_id, $data_item->creator_type);
 					$affectedRows++;
 				}
 			}
 		}
-		if($affectedRows > 0){
+		if ($affectedRows > 0) {
 			$this->delete_item($item_id);
 			return true;
 		}
@@ -758,21 +834,21 @@ class drawing_management_model extends app_model
 	 * add audit log
 	 * @param string $action 
 	 */
-	public function add_audit_log($item_id, $action){
-		if(is_client_logged_in()){
+	public function add_audit_log($item_id, $action)
+	{
+		if (is_client_logged_in()) {
 			$userid = get_client_user_id();
-			$data['user_id'] = $userid;	
-			$data['user_name'] = get_company_name($userid);	
-		}
-		else{
+			$data['user_id'] = $userid;
+			$data['user_name'] = get_company_name($userid);
+		} else {
 			$userid = get_staff_user_id();
-			$data['user_id'] = $userid;	
-			$data['user_name'] = get_staff_full_name($userid);	
+			$data['user_id'] = $userid;
+			$data['user_name'] = get_staff_full_name($userid);
 		}
 		$data['date'] = date('Y-m-d H:i:s');
 		$data['action'] = $action;
 		$data['item_id'] = $item_id;
-		$this->db->insert(db_prefix().'dms_audit_logs', $data);
+		$this->db->insert(db_prefix() . 'dms_audit_logs', $data);
 		return $this->db->insert_id();
 	}
 
@@ -783,19 +859,19 @@ class drawing_management_model extends app_model
 	 * @param  string $select 
 	 * @return array or object         
 	 */
-	public function get_audit_log($id, $where = '', $select = ''){
-		if($select != ''){
+	public function get_audit_log($id, $where = '', $select = '')
+	{
+		if ($select != '') {
 			$this->db->select($select);
-		} 
-		if($id != ''){
-			$this->db->where('id',$id);
-			return $this->db->get(db_prefix().'dms_audit_logs')->row();
 		}
-		else{    
-			if($where != ''){
+		if ($id != '') {
+			$this->db->where('id', $id);
+			return $this->db->get(db_prefix() . 'dms_audit_logs')->row();
+		} else {
+			if ($where != '') {
 				$this->db->where($where);
-			} 
-			return $this->db->get(db_prefix().'dms_audit_logs')->result_array();
+			}
+			return $this->db->get(db_prefix() . 'dms_audit_logs')->result_array();
 		}
 	}
 
@@ -805,10 +881,11 @@ class drawing_management_model extends app_model
 	 * @param  integer $new_item_id 
 	 * @return boolean              
 	 */
-	public function change_log_item_id($old_item_id, $new_item_id){
+	public function change_log_item_id($old_item_id, $new_item_id)
+	{
 		$this->db->where('item_id', $old_item_id);
-		$this->db->update(db_prefix().'dms_audit_logs', ['item_id' => $new_item_id]);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_audit_logs', ['item_id' => $new_item_id]);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -820,18 +897,19 @@ class drawing_management_model extends app_model
 	 * @param  integer $new_item_id 
 	 * @return boolean              
 	 */
-	public function change_version_item_id($old_item_id, $new_item_id){
+	public function change_version_item_id($old_item_id, $new_item_id)
+	{
 		$data_log_version = $this->get_log_version_by_parent($old_item_id);
 		$this->db->where('parent_id', $old_item_id);
-		$this->db->update(db_prefix().'dms_file_versions', ['parent_id' => $new_item_id]);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_file_versions', ['parent_id' => $new_item_id]);
+		if ($this->db->affected_rows() > 0) {
 			// Move previous file to log folder
 			$old_log_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/log_versions/' . $old_item_id . '/';
 			$new_log_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/log_versions/' . $new_item_id . '/';
 			_maybe_create_upload_path($new_log_path);
 			foreach ($data_log_version as $key => $log_version) {
-				$from_path = $old_log_path.$log_version['name'];
-				$to_path = $new_log_path.$log_version['name'];
+				$from_path = $old_log_path . $log_version['name'];
+				$to_path = $new_log_path . $log_version['name'];
 				$this->move_file_to_folder($from_path, $to_path);
 			}
 			return true;
@@ -845,14 +923,17 @@ class drawing_management_model extends app_model
 	 * @param  string $folder 
 	 * @return boolean         
 	 */
-	public function upload_version_file($id, $version = '1.0.0'){
+	public function upload_version_file($id, $version = '1.0.0')
+	{
 		$totalUploaded = 0;
 		$data_item = $this->get_item($id);
-		if($data_item){
+		if ($data_item) {
 			$parent_id = $data_item->parent_id;
 			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $parent_id . '/';
-			if (isset($_FILES['file']['name'])
-				&& ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+			if (
+				isset($_FILES['file']['name'])
+				&& ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+			) {
 				if (!is_array($_FILES['file']['name'])) {
 					$_FILES['file']['name'] = [$_FILES['file']['name']];
 					$_FILES['file']['type'] = [$_FILES['file']['type']];
@@ -866,14 +947,16 @@ class drawing_management_model extends app_model
 					$tmpFilePath = $_FILES['file']['tmp_name'][$i];
 					// Make sure we have a filepath
 					if (!empty($tmpFilePath) && $tmpFilePath != '') {
-						if (_perfex_upload_error($_FILES['file']['error'][$i])
-							|| !_upload_extension_allowed($_FILES['file']['name'][$i])) {
+						if (
+							_perfex_upload_error($_FILES['file']['error'][$i])
+							|| !_upload_extension_allowed($_FILES['file']['name'][$i])
+						) {
 							continue;
-					}
+						}
 
 						_maybe_create_upload_path($path);
 						$filename = $this->check_duplicate_file_name($parent_id, $_FILES['file']['name'][$i]);
-						$newFilePath = $path.$filename;
+						$newFilePath = $path . $filename;
 						// Upload the file into the temp dir
 						if (move_uploaded_file($tmpFilePath, $newFilePath)) {
 
@@ -882,13 +965,13 @@ class drawing_management_model extends app_model
 							$version_data['filetype'] = $data_item->filetype;
 							$version_data['parent_id'] = $id;
 							$res_vs = $this->create_version_file($version_data);
-							if($res_vs){
+							if ($res_vs) {
 
 								// Move previous file to log folder
-								$from_path = $path.$data_item->name;
+								$from_path = $path . $data_item->name;
 								$log_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/log_versions/' . $id . '/';
 								_maybe_create_upload_path($log_path);
-								$to_path = $log_path.$data_item->name;
+								$to_path = $log_path . $data_item->name;
 								$this->move_file_to_folder($from_path, $to_path);
 
 								// Update name and version of new file to database
@@ -911,27 +994,28 @@ class drawing_management_model extends app_model
 	 * @param string $filetype  
 	 */
 	public function update_change_version_to_database($name, $item_id, $version, $filetype)
-    {
-        $data['name'] = $name;
-        $data['version'] = $version;
-        $data['filetype'] = $filetype;
-        $this->db->where('id', $item_id);
-        $this->db->update(db_prefix() . 'dms_items', $data);
-        if ($this->db->affected_rows() > 0) {   
-        	$this->add_audit_log($item_id, _l('dmg_uploaded_new_version').': '.$name);
-        	return true;
-        }
-        return false;
-    }
+	{
+		$data['name'] = $name;
+		$data['version'] = $version;
+		$data['filetype'] = $filetype;
+		$this->db->where('id', $item_id);
+		$this->db->update(db_prefix() . 'dms_items', $data);
+		if ($this->db->affected_rows() > 0) {
+			$this->add_audit_log($item_id, _l('dmg_uploaded_new_version') . ': ' . $name);
+			return true;
+		}
+		return false;
+	}
 
-    /**
+	/**
 	 * create version file
 	 * @param array $data 
 	 * @return boolean 
 	 */
-	public function create_version_file($data){
-        $data['dateadded'] = date('Y-m-d H:i:s');
-		$this->db->insert(db_prefix().'dms_file_versions', $data);		
+	public function create_version_file($data)
+	{
+		$data['dateadded'] = date('Y-m-d H:i:s');
+		$this->db->insert(db_prefix() . 'dms_file_versions', $data);
 		return $this->db->insert_id();
 	}
 
@@ -941,7 +1025,8 @@ class drawing_management_model extends app_model
 	 * @param  string $newFilePath 
 	 * @return boolean              
 	 */
-	public function move_file_to_folder($oldFilePath, $newFilePath){
+	public function move_file_to_folder($oldFilePath, $newFilePath)
+	{
 		if ($this->copy_file($oldFilePath, $newFilePath)) {
 			// Delete physical file
 			$this->delete_file_item($oldFilePath);
@@ -950,20 +1035,21 @@ class drawing_management_model extends app_model
 		return false;
 	}
 
-	public function restore_item($version_id){
+	public function restore_item($version_id)
+	{
 		$data_log_version = $this->get_log_version($version_id);
-		if($data_log_version){
+		if ($data_log_version) {
 			$id = $data_log_version->parent_id;
 			$data_item = $this->get_item($id);
-			if($data_item){
+			if ($data_item) {
 				// Update version infor
 				$data['name'] = $data_log_version->name;
 				$data['version'] = $data_log_version->version;
 				$data['filetype'] = $data_log_version->filetype;
 				$this->db->where('id', $id);
 				$this->db->update(db_prefix() . 'dms_items', $data);
-				if ($this->db->affected_rows() > 0) {   
-					$this->add_audit_log($id, _l('dmg_restored_version').': '.$data_log_version->name);
+				if ($this->db->affected_rows() > 0) {
+					$this->add_audit_log($id, _l('dmg_restored_version') . ': ' . $data_log_version->name);
 				}
 				// Create log for old file
 				$version_data['name'] = $data_item->name;
@@ -971,19 +1057,19 @@ class drawing_management_model extends app_model
 				$version_data['filetype'] = $data_item->filetype;
 				$version_data['parent_id'] = $id;
 				$res_vs = $this->create_version_file($version_data);
-				if($res_vs){
+				if ($res_vs) {
 					// Move previous file to log folder
 					$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $data_item->parent_id . '/';
 					$log_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/log_versions/' . $id . '/';
 					_maybe_create_upload_path($log_path);
-					$from_path = $path.$data_item->name;
-					$to_path = $log_path.$data_item->name;
+					$from_path = $path . $data_item->name;
+					$to_path = $log_path . $data_item->name;
 
 					// Change physical file location between two folder
 					$this->move_file_to_folder($from_path, $to_path);
 
-					$from_path = $log_path.$data_log_version->name;
-					$to_path = $path.$data_log_version->name;
+					$from_path = $log_path . $data_log_version->name;
+					$to_path = $path . $data_log_version->name;
 					$this->move_file_to_folder($from_path, $to_path);
 
 					//Delete log has been restore
@@ -1000,9 +1086,10 @@ class drawing_management_model extends app_model
 	 * @param  array $data 
 	 * @return integer       
 	 */
-	public function create_remider($data){
+	public function create_remider($data)
+	{
 		$data['dateadded'] = date('Y-m-d H:i:s');
-		$this->db->insert(db_prefix().'dms_remiders', $data);		
+		$this->db->insert(db_prefix() . 'dms_remiders', $data);
 		return $this->db->insert_id();
 	}
 
@@ -1011,41 +1098,43 @@ class drawing_management_model extends app_model
 	 * @param  array $data 
 	 * @return integer       
 	 */
-	public function update_remider($data){
+	public function update_remider($data)
+	{
 		$this->db->where('id', $data['id']);
-		$this->db->update(db_prefix().'dms_remiders', $data);		
-		if ($this->db->affected_rows() > 0) { 
+		$this->db->update(db_prefix() . 'dms_remiders', $data);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	* get remider
-	* @param  integer $id     
-	* @param  string $where  
-	* @param  string $select 
-	* @return array or object         
-	*/
-	public function get_remider($id, $where = '', $select = ''){
-		if($select != ''){
+	 * get remider
+	 * @param  integer $id     
+	 * @param  string $where  
+	 * @param  string $select 
+	 * @return array or object         
+	 */
+	public function get_remider($id, $where = '', $select = '')
+	{
+		if ($select != '') {
 			$this->db->select($select);
-		} 
-		if($id != ''){
-			$this->db->where('id',$id);
-			return $this->db->get(db_prefix().'dms_remiders')->row();
 		}
-		else{    
-			if($where != ''){
+		if ($id != '') {
+			$this->db->where('id', $id);
+			return $this->db->get(db_prefix() . 'dms_remiders')->row();
+		} else {
+			if ($where != '') {
 				$this->db->where($where);
-			} 
-			return $this->db->get(db_prefix().'dms_remiders')->result_array();
+			}
+			return $this->db->get(db_prefix() . 'dms_remiders')->result_array();
 		}
 	}
 
-	public function get_file_reminder($file_id){
+	public function get_file_reminder($file_id)
+	{
 		$this->db->where('file_id', $file_id);
-		return $this->db->get(db_prefix().'dms_remiders')->result_array();
+		return $this->db->get(db_prefix() . 'dms_remiders')->result_array();
 	}
 
 	/**
@@ -1053,10 +1142,11 @@ class drawing_management_model extends app_model
 	 * @param  integer $id 
 	 * @return boolean     
 	 */
-	public function delete_remider($id){
+	public function delete_remider($id)
+	{
 		$this->db->where('id', $id);
-		$this->db->delete(db_prefix().'dms_remiders');
-		if($this->db->affected_rows() > 0) {
+		$this->db->delete(db_prefix() . 'dms_remiders');
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -1066,11 +1156,12 @@ class drawing_management_model extends app_model
 	 * auto remider
 	 * @return [type] 
 	 */
-	public function auto_drawing_remider(){
-		$data = $this->get_remider('','date <= \''.date('Y-m-d H:i:s').'\'', 'id, email, file_id, date, message');
+	public function auto_drawing_remider()
+	{
+		$data = $this->get_remider('', 'date <= \'' . date('Y-m-d H:i:s') . '\'', 'id, email, file_id, date, message');
 		foreach ($data as $key => $value) {
-			$this->send_mail_remider($value['email'], $value['file_id'], $value['message']);	
-			$this->delete_remider($value['id']);		
+			$this->send_mail_remider($value['email'], $value['file_id'], $value['message']);
+			$this->delete_remider($value['id']);
 		}
 	}
 
@@ -1080,11 +1171,12 @@ class drawing_management_model extends app_model
 	 * @param  integer $file_id 
 	 * @param  string $message 
 	 */
-	public function send_mail_remider($email, $file_id, $message){
+	public function send_mail_remider($email, $file_id, $message)
+	{
 		if ($email != '') {
 			$data_send_mail = new stdClass();
 			$data_send_mail->email = trim($email);
-			$data_send_mail->link = '<a href="'.admin_url('drawing_management?id='.$file_id).'">'.drawing_dmg_get_file_name($file_id).'</a>';
+			$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $file_id) . '">' . drawing_dmg_get_file_name($file_id) . '</a>';
 			$data_send_mail->message = $message;
 			$template = mail_template('reminder', 'drawing_management', $data_send_mail);
 			$template->send();
@@ -1095,23 +1187,24 @@ class drawing_management_model extends app_model
 	 * add share document
 	 * @param array $data 
 	 */
-	public function add_share_document($data){
-		if(isset($data['date']) && $data['date'] != ''){
+	public function add_share_document($data)
+	{
+		if (isset($data['date']) && $data['date'] != '') {
 			$data['date'] = drawing_dmg_format_date_time($data['date']);
 		}
-		if(!isset($data['expiration'])){
+		if (!isset($data['expiration'])) {
 			$data['expiration'] = 0;
 		}
-		if(isset($data['staff']) && $data['staff'] != ''){
+		if (isset($data['staff']) && $data['staff'] != '') {
 			$data['staff'] = implode(',', $data['staff']);
 		}
-		if(isset($data['customer']) && $data['customer'] != ''){
+		if (isset($data['customer']) && $data['customer'] != '') {
 			$data['customer'] = implode(',', $data['customer']);
 		}
-		if(isset($data['customer_group']) && $data['customer_group'] != ''){
+		if (isset($data['customer_group']) && $data['customer_group'] != '') {
 			$data['customer_group'] = implode(',', $data['customer_group']);
 		}
-		$this->db->insert(db_prefix().'dms_share_logs', $data);
+		$this->db->insert(db_prefix() . 'dms_share_logs', $data);
 		return $this->db->insert_id();
 	}
 
@@ -1119,25 +1212,26 @@ class drawing_management_model extends app_model
 	 * update share document
 	 * @param array $data 
 	 */
-	public function update_share_document($data){
-		if(isset($data['date']) && $data['date'] != ''){
+	public function update_share_document($data)
+	{
+		if (isset($data['date']) && $data['date'] != '') {
 			$data['date'] = drawing_dmg_format_date_time($data['date']);
 		}
-		if(!isset($data['expiration'])){
+		if (!isset($data['expiration'])) {
 			$data['expiration'] = 0;
 		}
-		if(isset($data['staff']) && $data['staff'] != ''){
+		if (isset($data['staff']) && $data['staff'] != '') {
 			$data['staff'] = implode(',', $data['staff']);
 		}
-		if(isset($data['customer']) && $data['customer'] != ''){
+		if (isset($data['customer']) && $data['customer'] != '') {
 			$data['customer'] = implode(',', $data['customer']);
 		}
-		if(isset($data['customer_group']) && $data['customer_group'] != ''){
+		if (isset($data['customer_group']) && $data['customer_group'] != '') {
 			$data['customer_group'] = implode(',', $data['customer_group']);
 		}
 		$this->db->where('id', $data['id']);
-		$this->db->update(db_prefix().'dms_share_logs', $data);		
-		if ($this->db->affected_rows() > 0) { 
+		$this->db->update(db_prefix() . 'dms_share_logs', $data);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -1151,19 +1245,19 @@ class drawing_management_model extends app_model
 	 * @param  string $select 
 	 * @return array or object         
 	 */
-	public function get_share_log($id, $where = '', $select = ''){
-		if($select != ''){
+	public function get_share_log($id, $where = '', $select = '')
+	{
+		if ($select != '') {
 			$this->db->select($select);
-		} 
-		if($id != ''){
-			$this->db->where('id',$id);
-			return $this->db->get(db_prefix().'dms_share_logs')->row();
 		}
-		else{    
-			if($where != ''){
+		if ($id != '') {
+			$this->db->where('id', $id);
+			return $this->db->get(db_prefix() . 'dms_share_logs')->row();
+		} else {
+			if ($where != '') {
 				$this->db->where($where);
-			} 
-			return $this->db->get(db_prefix().'dms_share_logs')->result_array();
+			}
+			return $this->db->get(db_prefix() . 'dms_share_logs')->result_array();
 		}
 	}
 
@@ -1172,180 +1266,185 @@ class drawing_management_model extends app_model
 	 * @param  integer $id 
 	 * @return boolean     
 	 */
-	public function delete_share($id){
+	public function delete_share($id)
+	{
 		$this->db->where('id', $id);
-		$this->db->delete(db_prefix().'dms_share_logs');
-		if($this->db->affected_rows() > 0) {
+		$this->db->delete(db_prefix() . 'dms_share_logs');
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
 	}
 
-	public function get_share_user_list($data){
+	public function get_share_user_list($data)
+	{
 		$result = '';
-		if($data['share_to'] == 'staff'){
+		if ($data['share_to'] == 'staff') {
 			$staff_arr = explode(',', $data['staff']);
 			foreach ($staff_arr as $key => $id) {
-				$result .= get_staff_full_name($id).', ';
+				$result .= get_staff_full_name($id) . ', ';
 			}
-			if($result != ''){
-				$result = '<i class="fa fa-user-circle"></i> '.rtrim($result, ', ');
+			if ($result != '') {
+				$result = '<i class="fa fa-user-circle"></i> ' . rtrim($result, ', ');
 			}
 		}
-		if($data['share_to'] == 'customer'){
+		if ($data['share_to'] == 'customer') {
 			$staff_arr = explode(',', $data['customer']);
 			foreach ($staff_arr as $key => $id) {
-				$result .= get_company_name($id).', ';
+				$result .= get_company_name($id) . ', ';
 			}
-			if($result != ''){
-				$result = '<i class="fa fa-user-o"></i> '.rtrim($result, ', ');
+			if ($result != '') {
+				$result = '<i class="fa fa-user-o"></i> ' . rtrim($result, ', ');
 			}
 		}
-		if($data['share_to'] == 'customer_group'){
+		if ($data['share_to'] == 'customer_group') {
 			$staff_arr = explode(',', $data['customer_group']);
 			foreach ($staff_arr as $key => $id) {
 				$this->db->select('name');
 				$this->db->where('id', $id);
-				$group_data = $this->db->get(db_prefix().'customers_groups')->row();
-				if($group_data){
-					$result .= $group_data->name.', ';
+				$group_data = $this->db->get(db_prefix() . 'customers_groups')->row();
+				if ($group_data) {
+					$result .= $group_data->name . ', ';
 				}
 			}
-			if($result != ''){
-				$result = '<i class="fa fa-users" aria-hidden="true"></i> '.rtrim($result, ', ');
+			if ($result != '') {
+				$result = '<i class="fa fa-users" aria-hidden="true"></i> ' . rtrim($result, ', ');
 			}
 		}
 		return $result;
 	}
 
-    /**
-     * get item share to me
-     * @param  string $type 
-     */
-    public function get_item_share_to_me($parse_string = false, $type = 'staff'){
-    	$current_date = date('Y-m-d H:i:s');
-    	$list = [];
-    	if($type == 'staff'){
-    		$userid = get_staff_user_id();
-    		$data = $this->db->query('select distinct(item_id) as id from '.db_prefix().'dms_share_logs where share_to = "staff" AND ((find_in_set('.$userid.', staff) AND expiration = 1 AND expiration_date > \''.$current_date.'\') OR (find_in_set('.$userid.', staff) AND expiration = 0))')->result_array();
-    		foreach ($data as $key => $value) {
-    			$list[] = $value['id'];
-    		}
-    	}
-    	if($type == 'customer'){
-    		$userid = get_client_user_id();
-    		$groups_query = '';
-    		$client_groups = $this->client_groups_model->get_customer_groups($userid);
-    		if(is_array($client_groups) && count($client_groups) > 0){
-    			foreach ($client_groups as $key => $group) {
-    				$groups_query .= '((find_in_set('.$group['groupid'].', customer_group) AND expiration = 1 AND expiration_date > \''.$current_date.'\') OR (find_in_set('.$group['groupid'].', customer_group) AND expiration = 0))  OR ';
-    			}
-    			if($groups_query != ''){
-    				$groups_query = rtrim($groups_query, ' OR ');
-    				$groups_query = ' OR (share_to = "customer_group" AND ('.$groups_query.'))';
-    			}
-    		}
-    		$customer_query = ' (share_to = "customer" AND ((find_in_set('.$userid.', customer) AND expiration = 1 AND expiration_date > \''.$current_date.'\') OR (find_in_set('.$userid.', customer) AND expiration = 0)))';
-    		$data = $this->db->query('select distinct(item_id) as id from '.db_prefix().'dms_share_logs where'.$customer_query.$groups_query)->result_array();
-    		foreach ($data as $key => $value) {
-    			$list[] = $value['id'];
-    		}
-    	}
-    	if($parse_string == false){
-    		return $list;
-    	}
-    	else{
-    		if(count($list) > 0){
-    			return implode(',', $list);
-    		}
-    		else{
-    			return '0';
-    		}
-    	}
-    }
+	/**
+	 * get item share to me
+	 * @param  string $type 
+	 */
+	public function get_item_share_to_me($parse_string = false, $type = 'staff')
+	{
+		$current_date = date('Y-m-d H:i:s');
+		$list = [];
+		if ($type == 'staff') {
+			$userid = get_staff_user_id();
+			$data = $this->db->query('select distinct(item_id) as id from ' . db_prefix() . 'dms_share_logs where share_to = "staff" AND ((find_in_set(' . $userid . ', staff) AND expiration = 1 AND expiration_date > \'' . $current_date . '\') OR (find_in_set(' . $userid . ', staff) AND expiration = 0))')->result_array();
+			foreach ($data as $key => $value) {
+				$list[] = $value['id'];
+			}
+		}
+		if ($type == 'customer') {
+			$userid = get_client_user_id();
+			$groups_query = '';
+			$client_groups = $this->client_groups_model->get_customer_groups($userid);
+			if (is_array($client_groups) && count($client_groups) > 0) {
+				foreach ($client_groups as $key => $group) {
+					$groups_query .= '((find_in_set(' . $group['groupid'] . ', customer_group) AND expiration = 1 AND expiration_date > \'' . $current_date . '\') OR (find_in_set(' . $group['groupid'] . ', customer_group) AND expiration = 0))  OR ';
+				}
+				if ($groups_query != '') {
+					$groups_query = rtrim($groups_query, ' OR ');
+					$groups_query = ' OR (share_to = "customer_group" AND (' . $groups_query . '))';
+				}
+			}
+			$customer_query = ' (share_to = "customer" AND ((find_in_set(' . $userid . ', customer) AND expiration = 1 AND expiration_date > \'' . $current_date . '\') OR (find_in_set(' . $userid . ', customer) AND expiration = 0)))';
+			$data = $this->db->query('select distinct(item_id) as id from ' . db_prefix() . 'dms_share_logs where' . $customer_query . $groups_query)->result_array();
+			foreach ($data as $key => $value) {
+				$list[] = $value['id'];
+			}
+		}
+		if ($parse_string == false) {
+			return $list;
+		} else {
+			if (count($list) > 0) {
+				return implode(',', $list);
+			} else {
+				return '0';
+			}
+		}
+	}
 
-    /**
-     * get child id list from parent
-     * @param  integer $parent_id 
-     * @param  array  $result    
-     * @return array            
-     */
-    public function get_child_id_list_from_parent($parent_id, $result = []){
-    	$data_item = $this->get_item('', 'parent_id = '.$parent_id);
-    	foreach ($data_item as $key => $value) {
-    		$result[] = $value['id'];
-    		$result = $this->get_child_id_list_from_parent($value['id'], $result);
-    	}
-    	return $result;
-    }
+	/**
+	 * get child id list from parent
+	 * @param  integer $parent_id 
+	 * @param  array  $result    
+	 * @return array            
+	 */
+	public function get_child_id_list_from_parent($parent_id, $result = [])
+	{
+		$data_item = $this->get_item('', 'parent_id = ' . $parent_id);
+		foreach ($data_item as $key => $value) {
+			$result[] = $value['id'];
+			$result = $this->get_child_id_list_from_parent($value['id'], $result);
+		}
+		return $result;
+	}
 
-    /**
-     * check permission share to me
-     * @param  integer $item_id 
-     * @param  string $type    
-     */
-    public function check_permission_share_to_me($item_id, $type = 'staff'){
-    	$array = [];
-    	$share_to_me = $this->drawing_management_model->get_item_share_to_me(false, $type);
-    	foreach ($share_to_me as $key => $id) {
-    		$array[] = $id;
-    		$array = $this->get_child_id_list_from_parent($id, $array);
-    	}
-    	if(in_array($item_id, $array)){
-    		return true;
-    	}
-    	return false;
-    }
+	/**
+	 * check permission share to me
+	 * @param  integer $item_id 
+	 * @param  string $type    
+	 */
+	public function check_permission_share_to_me($item_id, $type = 'staff')
+	{
+		$array = [];
+		$share_to_me = $this->drawing_management_model->get_item_share_to_me(false, $type);
+		foreach ($share_to_me as $key => $id) {
+			$array[] = $id;
+			$array = $this->get_child_id_list_from_parent($id, $array);
+		}
+		if (in_array($item_id, $array)) {
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     * getpermissionitemsharetome
-     * @param  integer $item_id 
-     * @param  string $type    
-     * @return [type]          
-     */
-    public function drawing_get_permission_item_share_to_me($item_id, $type = 'staff'){
-    	$current_date = date('Y-m-d H:i:s');
-    	$list = [];
-    	if($type == 'staff'){
-    		$userid = get_staff_user_id();
-    		$data = $this->db->query('select permission from '.db_prefix().'dms_share_logs where item_id = '.$item_id.' AND share_to = "staff" AND ((find_in_set('.$userid.', staff) AND expiration = 1 AND expiration_date > \''.$current_date.'\') OR (find_in_set('.$userid.', staff) AND expiration = 0))')->result_array();
-    		foreach ($data as $key => $value) {
-    			$list[] = $value['permission'];
-    		}
-    	}
-    	if($type == 'customer'){
-    		$userid = get_client_user_id();
-    		$groups_query = '';
-    		$client_groups = $this->client_groups_model->get_customer_groups($userid);
-    		if(is_array($client_groups) && count($client_groups) > 0){
-    			foreach ($client_groups as $key => $group) {
-    				$groups_query .= '((find_in_set('.$group['groupid'].', customer_group) AND expiration = 1 AND expiration_date > \''.$current_date.'\') OR (find_in_set('.$group['groupid'].', customer_group) AND expiration = 0))  OR ';
-    			}
-    			if($groups_query != ''){
-    				$groups_query = rtrim($groups_query, ' OR ');
-    				$groups_query = ' OR (share_to = "customer_group" AND ('.$groups_query.'))';
-    			}
-    		}
-    		$customer_query = ' (share_to = "customer" AND ((find_in_set('.$userid.', customer) AND expiration = 1 AND expiration_date > \''.$current_date.'\') OR (find_in_set('.$userid.', customer) AND expiration = 0)))';
-    		$data = $this->db->query('select permission from '.db_prefix().'dms_share_logs where item_id = '.$item_id.' AND ('.$customer_query.$groups_query.')')->result_array();
-    		foreach ($data as $key => $value) {
-    			$list[] = $value['permission'];
-    		}
-    	}
-    	return $list;
-    }
+	/**
+	 * getpermissionitemsharetome
+	 * @param  integer $item_id 
+	 * @param  string $type    
+	 * @return [type]          
+	 */
+	public function drawing_get_permission_item_share_to_me($item_id, $type = 'staff')
+	{
+		$current_date = date('Y-m-d H:i:s');
+		$list = [];
+		if ($type == 'staff') {
+			$userid = get_staff_user_id();
+			$data = $this->db->query('select permission from ' . db_prefix() . 'dms_share_logs where item_id = ' . $item_id . ' AND share_to = "staff" AND ((find_in_set(' . $userid . ', staff) AND expiration = 1 AND expiration_date > \'' . $current_date . '\') OR (find_in_set(' . $userid . ', staff) AND expiration = 0))')->result_array();
+			foreach ($data as $key => $value) {
+				$list[] = $value['permission'];
+			}
+		}
+		if ($type == 'customer') {
+			$userid = get_client_user_id();
+			$groups_query = '';
+			$client_groups = $this->client_groups_model->get_customer_groups($userid);
+			if (is_array($client_groups) && count($client_groups) > 0) {
+				foreach ($client_groups as $key => $group) {
+					$groups_query .= '((find_in_set(' . $group['groupid'] . ', customer_group) AND expiration = 1 AND expiration_date > \'' . $current_date . '\') OR (find_in_set(' . $group['groupid'] . ', customer_group) AND expiration = 0))  OR ';
+				}
+				if ($groups_query != '') {
+					$groups_query = rtrim($groups_query, ' OR ');
+					$groups_query = ' OR (share_to = "customer_group" AND (' . $groups_query . '))';
+				}
+			}
+			$customer_query = ' (share_to = "customer" AND ((find_in_set(' . $userid . ', customer) AND expiration = 1 AND expiration_date > \'' . $current_date . '\') OR (find_in_set(' . $userid . ', customer) AND expiration = 0)))';
+			$data = $this->db->query('select permission from ' . db_prefix() . 'dms_share_logs where item_id = ' . $item_id . ' AND (' . $customer_query . $groups_query . ')')->result_array();
+			foreach ($data as $key => $value) {
+				$list[] = $value['permission'];
+			}
+		}
+		return $list;
+	}
 
-    /**
+	/**
 	 * breadcrum array for share
 	 * @param  integer $id 
 	 * @return array     
 	 */
-	public function breadcrum_array_for_share($id, $share_id, $array = []){		
+	public function breadcrum_array_for_share($id, $share_id, $array = [])
+	{
 		$data_item = $this->get_item($id, '', 'master_id, parent_id, name, id');
-		if($data_item && is_object($data_item)){
+		if ($data_item && is_object($data_item)) {
 			$array[] = ['id' => $id, 'parent_id' => $data_item->parent_id, 'name' => $data_item->name];
-			if(is_numeric($data_item->parent_id) && $data_item->parent_id > 0 && $id = $data_item->parent_id){
-				if(!in_array($data_item->parent_id, $share_id)){
+			if (is_numeric($data_item->parent_id) && $data_item->parent_id > 0 && $id = $data_item->parent_id) {
+				if (!in_array($data_item->parent_id, $share_id)) {
 					return $array;
 				}
 				$array = $this->breadcrum_array_for_share($id, $share_id, $array);
@@ -1355,14 +1454,15 @@ class drawing_management_model extends app_model
 	}
 
 	/**
-	* breadcrum array
-	* @param  integer $id 
-	* @return array     
-	*/
-	public function breadcrum_array2($id, $creator_type = 'staff'){		
+	 * breadcrum array
+	 * @param  integer $id 
+	 * @return array     
+	 */
+	public function breadcrum_array2($id, $creator_type = 'staff')
+	{
 		$array = [];
 		$share_id = $this->get_item_share_to_me(false, $creator_type);
-		if(is_array($share_id) && count($share_id) > 0){
+		if (is_array($share_id) && count($share_id) > 0) {
 			$array = $this->breadcrum_array_for_share($id, $share_id);
 		}
 		return $array;
@@ -1375,9 +1475,9 @@ class drawing_management_model extends app_model
 	 */
 	public function delete_approve_setting($id)
 	{
-		if(is_numeric($id)){
+		if (is_numeric($id)) {
 			$this->db->where('id', $id);
-			$this->db->delete(db_prefix() .'dms_approval_setting');
+			$this->db->delete(db_prefix() . 'dms_approval_setting');
 			if ($this->db->affected_rows() > 0) {
 				return true;
 			}
@@ -1386,14 +1486,14 @@ class drawing_management_model extends app_model
 	}
 
 	/**
-	* add approval process
-	* @param array $data 
-	* @return boolean 
-	*/
+	 * add approval process
+	 * @param array $data 
+	 * @return boolean 
+	 */
 	public function add_approval_process($data)
 	{
 		unset($data['approval_setting_id']);
-		if(isset($data['staff'])){
+		if (isset($data['staff'])) {
 			$setting = [];
 			foreach ($data['staff'] as $key => $value) {
 				$node = [];
@@ -1405,36 +1505,36 @@ class drawing_management_model extends app_model
 			unset($data['approver']);
 			unset($data['staff']);
 		}
-		if(!isset($data['choose_when_approving'])){
+		if (!isset($data['choose_when_approving'])) {
 			$data['choose_when_approving'] = 0;
 		}
-		if(isset($data['departments'])){
+		if (isset($data['departments'])) {
 			$data['departments'] = implode(',', $data['departments']);
 		}
-		if(isset($data['job_positions'])){
+		if (isset($data['job_positions'])) {
 			$data['job_positions'] = implode(',', $data['job_positions']);
 		}
 		$data['setting'] = json_encode($setting);
-		if(isset($data['notification_recipient'])){
+		if (isset($data['notification_recipient'])) {
 			$data['notification_recipient'] = implode(",", $data['notification_recipient']);
 		}
-		$this->db->insert(db_prefix() .'dms_approval_setting', $data);
+		$this->db->insert(db_prefix() . 'dms_approval_setting', $data);
 		$insert_id = $this->db->insert_id();
-		if($insert_id){
+		if ($insert_id) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	* update approval process
-	* @param  integer $id   
-	* @param  array $data 
-	* @return boolean       
-	*/
+	 * update approval process
+	 * @param  integer $id   
+	 * @param  array $data 
+	 * @return boolean       
+	 */
 	public function update_approval_process($id, $data)
 	{
-		if(isset($data['staff'])){
+		if (isset($data['staff'])) {
 			$setting = [];
 			foreach ($data['staff'] as $key => $value) {
 				$node = [];
@@ -1447,25 +1547,25 @@ class drawing_management_model extends app_model
 			unset($data['staff']);
 		}
 
-		if(!isset($data['choose_when_approving'])){
+		if (!isset($data['choose_when_approving'])) {
 			$data['choose_when_approving'] = 0;
 		}
 		$data['setting'] = json_encode($setting);
-		if(isset($data['departments'])){
+		if (isset($data['departments'])) {
 			$data['departments'] = implode(',', $data['departments']);
-		}else{
+		} else {
 			$data['departments'] = '';
 		}
-		if(isset($data['job_positions'])){
+		if (isset($data['job_positions'])) {
 			$data['job_positions'] = implode(',', $data['job_positions']);
-		}else{
+		} else {
 			$data['job_positions'] = '';
 		}
-		if(isset($data['notification_recipient'])){
+		if (isset($data['notification_recipient'])) {
 			$data['notification_recipient'] = implode(",", $data['notification_recipient']);
 		}
 		$this->db->where('id', $id);
-		$this->db->update(db_prefix() .'dms_approval_setting', $data);
+		$this->db->update(db_prefix() . 'dms_approval_setting', $data);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
@@ -1473,37 +1573,39 @@ class drawing_management_model extends app_model
 	}
 
 	/**
-	* get approval setting
-	* @param  integer $id 
-	* @return integer     
-	*/
-	public function get_approval_setting($id){
-		if($id != ''){
-			$this->db->where('id',$id);
-			return $this->db->get(db_prefix().'dms_approval_setting')->row();
-		}else {
-			return $this->db->get(db_prefix().'dms_approval_setting')->result_array();
+	 * get approval setting
+	 * @param  integer $id 
+	 * @return integer     
+	 */
+	public function get_approval_setting($id)
+	{
+		if ($id != '') {
+			$this->db->where('id', $id);
+			return $this->db->get(db_prefix() . 'dms_approval_setting')->row();
+		} else {
+			return $this->db->get(db_prefix() . 'dms_approval_setting')->result_array();
 		}
 	}
 
 
 	/**
-	* get approve setting
-	* @param  string  $type         
-	* @param  boolean $only_setting 
-	* @return boolean                
-	*/
-	public function get_approve_setting($type, $only_setting = true){
+	 * get approve setting
+	 * @param  string  $type         
+	 * @param  boolean $only_setting 
+	 * @return boolean                
+	 */
+	public function get_approve_setting($type, $only_setting = true)
+	{
 		$this->db->select('*');
 		$this->db->where('related', $type);
-		$approval_setting = $this->db->get(db_prefix().'dms_approval_setting')->row();
-		if($approval_setting){
-			if($only_setting == false){
+		$approval_setting = $this->db->get(db_prefix() . 'dms_approval_setting')->row();
+		if ($approval_setting) {
+			if ($only_setting == false) {
 				return $approval_setting;
-			}else{
+			} else {
 				return json_decode($approval_setting->setting);
 			}
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -1514,7 +1616,8 @@ class drawing_management_model extends app_model
 	 * @param  integer $staff_id 
 	 * @return bool           
 	 */
-	public function send_request_approve($rel_id, $rel_type, $staff_id = ''){
+	public function send_request_approve($rel_id, $rel_type, $staff_id = '')
+	{
 		$data_new = $this->get_approve_setting($rel_type, true);
 		$data_setting = $this->get_approve_setting($rel_type, false);
 		$this->delete_approval_details($rel_id, $rel_type);
@@ -1522,13 +1625,13 @@ class drawing_management_model extends app_model
 		foreach ($data_new as $value) {
 			$row = [];
 			$row['notification_recipient'] = $data_setting->notification_recipient;
-			$row['approval_deadline'] = date('Y-m-d', strtotime(date('Y-m-d').' +'.$data_setting->number_day_approval.' day'));
+			$row['approval_deadline'] = date('Y-m-d', strtotime(date('Y-m-d') . ' +' . $data_setting->number_day_approval . ' day'));
 			$row['staffid'] = $value->staff;
 			$row['date_send'] = $date_send;
 			$row['rel_id'] = $rel_id;
 			$row['rel_type'] = $rel_type;
 			$row['sender'] = $staff_id;
-			$this->db->insert(db_prefix().'dms_approval_details', $row);
+			$this->db->insert(db_prefix() . 'dms_approval_details', $row);
 		}
 		return true;
 	}
@@ -1538,12 +1641,12 @@ class drawing_management_model extends app_model
 	 * @param  string $rel_id   
 	 * @param  string $rel_type 
 	 * @return boolean           
-	*/
+	 */
 	public function delete_approval_details($rel_id, $rel_type)
 	{
 		$this->db->where('rel_id', $rel_id);
 		$this->db->where('rel_type', $rel_type);
-		$this->db->delete(db_prefix().'dms_approval_details');
+		$this->db->delete(db_prefix() . 'dms_approval_details');
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
@@ -1554,9 +1657,10 @@ class drawing_management_model extends app_model
 	 * get item from hash
 	 * @param  string $hash 
 	 */
-	public function get_item_from_hash($hash){
+	public function get_item_from_hash($hash)
+	{
 		$this->db->where('hash', $hash);
-		return $this->db->get(db_prefix().'dms_items')->row();
+		return $this->db->get(db_prefix() . 'dms_items')->row();
 	}
 
 	/**
@@ -1565,14 +1669,15 @@ class drawing_management_model extends app_model
 	 * @param  string $rel_type 
 	 * @return integer           
 	 */
-	public function get_approval_details($rel_id,$rel_type){
-		if($rel_id != ''){
-			$this->db->where('rel_id',$rel_id);
-			$this->db->where('rel_type',$rel_type);
+	public function get_approval_details($rel_id, $rel_type)
+	{
+		if ($rel_id != '') {
+			$this->db->where('rel_id', $rel_id);
+			$this->db->where('rel_type', $rel_type);
 			$this->db->order_by('id');
-			return $this->db->get(db_prefix().'dms_approval_details')->result_array();
-		}else {
-			return $this->db->get(db_prefix().'dms_approval_details')->result_array();
+			return $this->db->get(db_prefix() . 'dms_approval_details')->result_array();
+		} else {
+			return $this->db->get(db_prefix() . 'dms_approval_details')->result_array();
 		}
 	}
 
@@ -1581,41 +1686,40 @@ class drawing_management_model extends app_model
 	 * @param  array $data 
 	 * @return boolean       
 	 */
-	public function change_approve_document($data){
+	public function change_approve_document($data)
+	{
 		$this->db->where('rel_id', $data['rel_id']);
 		$this->db->where('rel_type', $data['rel_type']);
 		$this->db->where('staffid', $data['staffid']);
 		$this->db->update(db_prefix() . 'dms_approval_details', $data);
 		if ($this->db->affected_rows() > 0) {
 			// If has rejected then change status to finish approve
-			if($data['approve'] == 2)
-			{
+			if ($data['approve'] == 2) {
 				$this->db->where('id', $data['rel_id']);
-				$this->db->update(db_prefix().'dms_items', ['approve' => 2]);
+				$this->db->update(db_prefix() . 'dms_items', ['approve' => 2]);
 				return true;
 			}
 
-			$count_approve_total = $this->count_approve($data['rel_id'],$data['rel_type'])->count;
-			$count_approve = $this->count_approve($data['rel_id'],$data['rel_type'],1)->count;
-			$count_rejected = $this->count_approve($data['rel_id'],$data['rel_type'],2)->count;
+			$count_approve_total = $this->count_approve($data['rel_id'], $data['rel_type'])->count;
+			$count_approve = $this->count_approve($data['rel_id'], $data['rel_type'], 1)->count;
+			$count_rejected = $this->count_approve($data['rel_id'], $data['rel_type'], 2)->count;
 
-			if(($count_approve + $count_rejected) == $count_approve_total){
-				if($count_approve_total == $count_approve){
+			if (($count_approve + $count_rejected) == $count_approve_total) {
+				if ($count_approve_total == $count_approve) {
 					$this->db->where('id', $data['rel_id']);
-					$this->db->update(db_prefix().'dms_items', ['approve' => 1]);
+					$this->db->update(db_prefix() . 'dms_items', ['approve' => 1]);
 
 					// Move items
 					$data_item = $this->get_item($data['rel_id']);
-					if($data_item && $data_item->move_after_approval == 1 && is_numeric($data_item->folder_after_approval) && $data_item->folder_after_approval > 0){
+					if ($data_item && $data_item->move_after_approval == 1 && is_numeric($data_item->folder_after_approval) && $data_item->folder_after_approval > 0) {
 						$this->move_item($data_item->folder_after_approval, $data['rel_id']);
 					}
-				}
-				else{
+				} else {
 					$this->db->where('id', $data['rel_id']);
-					$this->db->update(db_prefix().'dms_items', ['approve' => 2]);
+					$this->db->update(db_prefix() . 'dms_items', ['approve' => 2]);
 				}
 			}
-			return true;               
+			return true;
 		}
 		return false;
 	}
@@ -1627,12 +1731,12 @@ class drawing_management_model extends app_model
 	 * @param  string $approve  
 	 * @return object        
 	 */
-	public function count_approve($rel_id, $rel_type, $approve = ''){
-		if($approve == ''){
-			return $this->db->query('SELECT count(distinct(staffid)) as count FROM '.db_prefix().'dms_approval_details where rel_id = '.$rel_id.' and rel_type = \''.$rel_type.'\'')->row();
-		}
-		else{
-			return $this->db->query('SELECT count(distinct(staffid)) as count FROM '.db_prefix().'dms_approval_details where rel_id = '.$rel_id.' and rel_type = \''.$rel_type.'\' and approve = '.$approve.'')->row();
+	public function count_approve($rel_id, $rel_type, $approve = '')
+	{
+		if ($approve == '') {
+			return $this->db->query('SELECT count(distinct(staffid)) as count FROM ' . db_prefix() . 'dms_approval_details where rel_id = ' . $rel_id . ' and rel_type = \'' . $rel_type . '\'')->row();
+		} else {
+			return $this->db->query('SELECT count(distinct(staffid)) as count FROM ' . db_prefix() . 'dms_approval_details where rel_id = ' . $rel_id . ' and rel_type = \'' . $rel_type . '\' and approve = ' . $approve . '')->row();
 		}
 	}
 
@@ -1643,7 +1747,8 @@ class drawing_management_model extends app_model
 	 * @param  integer $staff_id 
 	 * @return bool           
 	 */
-	public function send_request_approve_eid($rel_id, $rel_type, $staff_id = ''){
+	public function send_request_approve_eid($rel_id, $rel_type, $staff_id = '')
+	{
 		$data_new = $this->get_approve_setting($rel_type, true);
 		$data_setting = $this->get_approve_setting($rel_type, false);
 		$this->delete_approval_details($rel_id, $rel_type);
@@ -1651,31 +1756,32 @@ class drawing_management_model extends app_model
 		foreach ($data_new as $value) {
 			$row = [];
 			$row['notification_recipient'] = $data_setting->notification_recipient;
-			$row['approval_deadline'] = date('Y-m-d', strtotime(date('Y-m-d').' +'.$data_setting->number_day_approval.' day'));
+			$row['approval_deadline'] = date('Y-m-d', strtotime(date('Y-m-d') . ' +' . $data_setting->number_day_approval . ' day'));
 			$row['staffid'] = $value->staff;
 			$row['date_send'] = $date_send;
 			$row['rel_id'] = $rel_id;
 			$row['rel_type'] = $rel_type;
 			$row['sender'] = $staff_id;
-			$this->db->insert(db_prefix().'dms_approval_detail_eids', $row);
+			$this->db->insert(db_prefix() . 'dms_approval_detail_eids', $row);
 		}
 		return true;
 	}
 
-		/**
+	/**
 	 * get approval details
 	 * @param  integer $rel_id   
 	 * @param  string $rel_type 
 	 * @return integer           
 	 */
-	public function get_approval_detail_eids($rel_id,$rel_type){
-		if($rel_id != ''){
-			$this->db->where('rel_id',$rel_id);
-			$this->db->where('rel_type',$rel_type);
+	public function get_approval_detail_eids($rel_id, $rel_type)
+	{
+		if ($rel_id != '') {
+			$this->db->where('rel_id', $rel_id);
+			$this->db->where('rel_type', $rel_type);
 			$this->db->order_by('id');
-			return $this->db->get(db_prefix().'dms_approval_detail_eids')->result_array();
-		}else {
-			return $this->db->get(db_prefix().'dms_approval_detail_eids')->result_array();
+			return $this->db->get(db_prefix() . 'dms_approval_detail_eids')->result_array();
+		} else {
+			return $this->db->get(db_prefix() . 'dms_approval_detail_eids')->result_array();
 		}
 	}
 
@@ -1685,29 +1791,29 @@ class drawing_management_model extends app_model
 	 * @param  array $data 
 	 * @return boolean       
 	 */
-	public function update_signer_info($id, $data){
+	public function update_signer_info($id, $data)
+	{
 		$this->db->where('id', $id);
-		$this->db->update(db_prefix().'dms_approval_detail_eids', $data);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_approval_detail_eids', $data);
+		if ($this->db->affected_rows() > 0) {
 			$this->db->where('id', $id);
-			$signer_data = $this->db->get(db_prefix().'dms_approval_detail_eids')->row();
-			if($signer_data){
-				$count_approve_total = $this->count_approve_eids($data['rel_id'],$data['rel_type'])->count;
-				$count_approve = $this->count_approve_eids($data['rel_id'],$data['rel_type'],1)->count;
-				$count_rejected = $this->count_approve_eids($data['rel_id'],$data['rel_type'],2)->count;
-				if(($count_approve + $count_rejected) == $count_approve_total){
-					if($count_approve_total == $count_approve){
+			$signer_data = $this->db->get(db_prefix() . 'dms_approval_detail_eids')->row();
+			if ($signer_data) {
+				$count_approve_total = $this->count_approve_eids($data['rel_id'], $data['rel_type'])->count;
+				$count_approve = $this->count_approve_eids($data['rel_id'], $data['rel_type'], 1)->count;
+				$count_rejected = $this->count_approve_eids($data['rel_id'], $data['rel_type'], 2)->count;
+				if (($count_approve + $count_rejected) == $count_approve_total) {
+					if ($count_approve_total == $count_approve) {
 						$this->db->where('id', $data['rel_id']);
-						$this->db->update(db_prefix().'dms_items', ['sign_approve' => 1]);
+						$this->db->update(db_prefix() . 'dms_items', ['sign_approve' => 1]);
 						// Move items
 						$data_item = $this->get_item($data['rel_id']);
-						if($data_item && $data_item->move_after_approval == 1 && is_numeric($data_item->folder_after_approval) && $data_item->folder_after_approval > 0){
+						if ($data_item && $data_item->move_after_approval == 1 && is_numeric($data_item->folder_after_approval) && $data_item->folder_after_approval > 0) {
 							$this->move_item($data_item->folder_after_approval, $data['rel_id']);
 						}
-					}
-					else{
+					} else {
 						$this->db->where('id', $data['rel_id']);
-						$this->db->update(db_prefix().'dms_items', ['sign_approve' => 2]);
+						$this->db->update(db_prefix() . 'dms_items', ['sign_approve' => 2]);
 					}
 				}
 			}
@@ -1723,12 +1829,12 @@ class drawing_management_model extends app_model
 	 * @param  string $approve  
 	 * @return object        
 	 */
-	public function count_approve_eids($rel_id, $rel_type, $approve = ''){
-		if($approve == ''){
-			return $this->db->query('SELECT count(distinct(staffid)) as count FROM '.db_prefix().'dms_approval_detail_eids where rel_id = '.$rel_id.' and rel_type = \''.$rel_type.'\'')->row();
-		}
-		else{
-			return $this->db->query('SELECT count(distinct(staffid)) as count FROM '.db_prefix().'dms_approval_detail_eids where rel_id = '.$rel_id.' and rel_type = \''.$rel_type.'\' and approve = '.$approve.'')->row();
+	public function count_approve_eids($rel_id, $rel_type, $approve = '')
+	{
+		if ($approve == '') {
+			return $this->db->query('SELECT count(distinct(staffid)) as count FROM ' . db_prefix() . 'dms_approval_detail_eids where rel_id = ' . $rel_id . ' and rel_type = \'' . $rel_type . '\'')->row();
+		} else {
+			return $this->db->query('SELECT count(distinct(staffid)) as count FROM ' . db_prefix() . 'dms_approval_detail_eids where rel_id = ' . $rel_id . ' and rel_type = \'' . $rel_type . '\' and approve = ' . $approve . '')->row();
 		}
 	}
 
@@ -1738,10 +1844,11 @@ class drawing_management_model extends app_model
 	 * @param  integer $new_item_id 
 	 * @return boolean              
 	 */
-	public function change_reminder_item_id($old_item_id, $new_item_id){
+	public function change_reminder_item_id($old_item_id, $new_item_id)
+	{
 		$this->db->where('file_id', $old_item_id);
-		$this->db->update(db_prefix().'dms_remiders', ['file_id' => $new_item_id]);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_remiders', ['file_id' => $new_item_id]);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -1753,10 +1860,11 @@ class drawing_management_model extends app_model
 	 * @param  integer $new_item_id 
 	 * @return boolean              
 	 */
-	public function change_share_to_item_id($old_item_id, $new_item_id){
+	public function change_share_to_item_id($old_item_id, $new_item_id)
+	{
 		$this->db->where('item_id', $old_item_id);
-		$this->db->update(db_prefix().'dms_share_logs', ['item_id' => $new_item_id]);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_share_logs', ['item_id' => $new_item_id]);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -1768,11 +1876,12 @@ class drawing_management_model extends app_model
 	 * @param  integer $new_item_id 
 	 * @return boolean              
 	 */
-	public function change_approve_item_id($old_item_id, $new_item_id, $rel_type = 'document'){
+	public function change_approve_item_id($old_item_id, $new_item_id, $rel_type = 'document')
+	{
 		$this->db->where('rel_id', $old_item_id);
 		$this->db->where('rel_type', $rel_type);
-		$this->db->update(db_prefix().'dms_approval_details', ['rel_id' => $new_item_id]);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_approval_details', ['rel_id' => $new_item_id]);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
@@ -1784,39 +1893,41 @@ class drawing_management_model extends app_model
 	 * @param  integer $new_item_id 
 	 * @return boolean              
 	 */
-	public function change_sign_approve_item_id($old_item_id, $new_item_id, $rel_type = 'document'){
+	public function change_sign_approve_item_id($old_item_id, $new_item_id, $rel_type = 'document')
+	{
 		$this->db->where('rel_id', $old_item_id);
 		$this->db->where('rel_type', $rel_type);
-		$this->db->update(db_prefix().'dms_approval_detail_eids', ['rel_id' => $new_item_id]);
-		if($this->db->affected_rows() > 0) {
+		$this->db->update(db_prefix() . 'dms_approval_detail_eids', ['rel_id' => $new_item_id]);
+		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
 		return false;
-	} 
+	}
 
 	/**
 	 * convert html to word
 	 * @param  string $html 
 	 * @param  string $path 
 	 */
-	public function convert_html_to_word($html, $path){
-    	require_once(module_dir_path(DRAWING_MANAGEMENT_MODULE_NAME).'/third_party/vendor/autoload.php');  
+	public function convert_html_to_word($html, $path)
+	{
+		require_once(module_dir_path(DRAWING_MANAGEMENT_MODULE_NAME) . '/third_party/vendor/autoload.php');
 		$phpWord = new PhpWord();
 		$section = $phpWord->addSection();
 		Html::addHtml($section, $html);
 		$phpWord->save($path, 'Word2007');
 	}
 
-	public function convert_html_file_to_word_api($from_path, $to_path){
-		require_once(module_dir_path(DRAWING_MANAGEMENT_MODULE_NAME).'/third_party/convertio/autoload.php');    
-		$API = new Convertio("9cebcf2b7088b5c95a637a07cf395936");    
-		$API->settings(array('api_protocol' => 'http', 'http_timeout' => 10));       
+	public function convert_html_file_to_word_api($from_path, $to_path)
+	{
+		require_once(module_dir_path(DRAWING_MANAGEMENT_MODULE_NAME) . '/third_party/convertio/autoload.php');
+		$API = new Convertio("9cebcf2b7088b5c95a637a07cf395936");
+		$API->settings(array('api_protocol' => 'http', 'http_timeout' => 10));
 		$API->start($from_path, 'docx')->wait()->download($to_path)->delete();
 	}
 
-	public function get_discipline() {
-		return $this->db->get(db_prefix().'dms_discipline')->result_array();
+	public function get_discipline()
+	{
+		return $this->db->get(db_prefix() . 'dms_discipline')->result_array();
 	}
-
-
 }

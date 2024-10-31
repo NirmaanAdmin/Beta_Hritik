@@ -170,7 +170,9 @@ class drawing_management extends AdminController
 	 */
 	public function upload_file($id, $redirect_type = ''){
 		$result =  $this->drawing_management_model->upload_file($id, 'files');
-		if($result){
+	
+		if($result){			
+			$this->drawing_management_model->get_document_number($result);
 			set_alert('success', _l('dmg_uploaded_successfully'));
 		}
 		else{

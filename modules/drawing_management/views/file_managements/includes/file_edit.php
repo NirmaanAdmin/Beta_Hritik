@@ -59,11 +59,23 @@ if (isset($item)) {
 					</div>
 				</div>
 				<?php
-				// Get `pid` from the URL, if available
+
 				$pid = isset($_GET['pid']) ? (int)$_GET['pid'] : null;
 
 				// Set selected status based on database value or default to "Issued for Review" when `pid` is 19
-				$selectedStatus = !empty($item->controlled_document) ? $item->controlled_document : ($pid === 19 ? 'Issued for Information' : '');
+				$selectedStatus = !empty($item->purpose) ? $item->purpose : ($pid === 19 ? 'Issued for review' : '');
+
+				$pid = isset($_GET['pid']) ? (int)$_GET['pid'] : null;
+				$selectedStatus = !empty($item->purpose) ? $item->purpose : ($pid === 23 ? 'Issued for approval' : '');
+
+				$pid = isset($_GET['pid']) ? (int)$_GET['pid'] : null;
+				$selectedStatus = !empty($item->purpose) ? $item->purpose : ($pid === 23 ? 'Issued for approval' : '');
+
+				$pid = isset($_GET['pid']) ? (int)$_GET['pid'] : null;
+				$selectedStatus = !empty($item->purpose) ? $item->purpose : ($pid === 24 ? 'Issued for tender' : '');
+
+				$pid = isset($_GET['pid']) ? (int)$_GET['pid'] : null;
+				$selectedStatus = !empty($item->purpose) ? $item->purpose : ($pid === 25 ? 'Issued for construction' : '');
 				?>
 
 				<div class="col-sm-6">
@@ -72,10 +84,10 @@ if (isset($item)) {
 						<select id="purpose" name="purpose" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
 							<option value=""></option>
 							<option value="Issued for Information" <?php echo ($item->purpose == "Issued for Information" ? 'selected' : '') ?>>Issued for Information</option>
-							<option value="Issued for review" <?php echo $selectedStatus === 'Issued for Information' ? 'selected' : ''; ?>>Issued for review</option>
-							<option value="Issued for approval" <?php echo ($item->purpose == "Issued for approval" ? 'selected' : '') ?>>Issued for approval</option>
-							<option value="Issued for tender" <?php echo ($item->purpose == "Issued for tender" ? 'selected' : '') ?>>Issued for tender</option>
-							<option value="Issued for construction" <?php echo ($item->purpose == "Issued for construction" ? 'selected' : '') ?>>Issued for construction</option>
+							<option value="Issued for review" <?php echo $selectedStatus === 'Issued for review' ? 'selected' : ''; ?>>Issued for review</option>
+							<option value="Issued for approval" <?php echo $selectedStatus === 'Issued for approval' ? 'selected' : ''; ?>>Issued for approval</option>
+							<option value="Issued for tender" <?php echo $selectedStatus === 'Issued for tender	' ? 'selected' : ''; ?>>Issued for tender</option>
+							<option value="Issued for construction" <?php echo $selectedStatus === 'Issued for construction' ? 'selected' : ''; ?>>Issued for construction</option>
 
 
 						</select>
@@ -95,11 +107,23 @@ if (isset($item)) {
 				<div class="col-sm-6">
 					<?php echo render_input('document_number', 'dmg_document_number', $item->document_number); ?>
 				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="status" class="control-label"><?php echo _l('status'); ?></label>
+						<select id="status" name="status" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+							<option value=""></option>
+							<option value="under_review" <?php echo ($item->status == "under_review" ? 'selected' : '') ?> >Under Review</option>
+							<option value="released" <?php echo ($item->status == "released" ? 'selected' : '') ?>>Released</option>
+							<option value="released_with_comments" <?php echo ($item->status == "released_with_comments" ? 'selected' : '') ?> >Released with comments</option>
+							<option value="rejected" <?php echo ($item->status == "rejected" ? 'selected' : '') ?>>Rejected</option>
+						</select>
+					</div>
+				</div>
 				<?php
 				$id = isset($_GET['pid']) ? (int)$_GET['pid'] : null;
 				?>
 
-				<div class="col-md-12">
+				<div class="col-sm-6">
 					<label>
 						Controlled Document
 						<input type="checkbox" id="controlled_document" name="controlled_document"
