@@ -77,6 +77,10 @@
 					<td class="text-nowrap"><?php echo _l('dmg_notes'); ?></td>
 					<td><?php echo ($item->note != null ? drawing_nlbr($item->note) : ''); ?></td>
 				</tr>
+				<tr>
+					<td class="text-nowrap">Controlled Document	</td>
+					<td><?php echo ($item->controlled_document == 1 ? 'Yes' : 'No'); ?></td>
+				</tr>
 
 				<?php 
 				$data_custom_field = [];

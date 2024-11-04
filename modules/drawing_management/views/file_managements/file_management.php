@@ -1,6 +1,35 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
 <input type="hidden" name="parent_id" value="<?php echo drawing_htmldecode($parent_id); ?>">
+<style>
+	<style>
+
+	/* Basic styles for dropdown */
+	.dropdown-menu {
+		width: 100%;
+		border: 1px solid #ddd;
+		background-color: #fff;
+		max-height: 200px;
+		overflow-y: auto;
+	}
+
+	.dropdown-item {
+		padding: 8px 12px;
+		display: block;
+		color: #333;
+		text-decoration: none;
+	}
+
+	.dropdown-item:hover {
+		background-color: #f0f0f0;
+	}
+
+	.dropdown-item.disabled {
+		color: #999;
+		pointer-events: none;
+	}
+</style>
+</style>
 <div id="wrapper">
 	<div class="content">
 		<div class="row">
@@ -20,7 +49,6 @@
 								<?php if ($share_to_me == 0) { ?>
 									<div class="col-md-9 btn-tool">
 										<?php if (isset($item) && $item->filetype == 'folder') {	?>
-											<?php echo render_input('search', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?>
 											<button class="btn btn-default pull-right mright10 display-flex default-tool" onclick="open_upload()">
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud">
 													<polyline points="16 16 12 12 8 16" />
@@ -32,6 +60,13 @@
 													<?php echo _l('dmg_upload'); ?>
 												</span>
 											</button>
+											<!-- <?php echo render_input('search_new', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?> -->
+											<div class="input-group">
+												<input type="text" class="form-control" id="searchBox" placeholder="Type to search files or folders" autocomplete="off">
+												<div id="dropdown" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000;"></div>
+											</div>
+
+
 											<!-- <button class="btn btn-default pull-right mright10 display-flex default-tool" onclick="create_folder()">
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder-plus"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
 												<span class="mleft5 mtop2">
@@ -216,11 +251,11 @@
 											}
 											$col_class = '';
 											?>
-											<?php if ($value['id'] == 1) { 
+											<?php if ($value['id'] == 1) {
 												$col_class = 'col-md-9';
-											}elseif ($value['id'] == 2) {
+											} elseif ($value['id'] == 2) {
 												$col_class = 'col-md-7';
-											}else{
+											} else {
 												$col_class = 'col-md-8';
 											} ?>
 											<nav aria-label="breadcrumb">
@@ -238,7 +273,7 @@
 														<span class="mtop3 mleft5">These files are viewable by entire company</span>
 													</h5>
 												<?php } else { ?>
-													<h5 class="text-muted display-flex col-md-4"  style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
+													<h5 class="text-muted display-flex col-md-4" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
 
 														<span class="mtop3 mleft5">These are project specific design files</span>
 													<?php 	}
@@ -588,3 +623,47 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 </body>
 
 </html>
+<script>
+	$(document).ready(function() {
+		$('#searchBox').on('keyup', function() {
+			let query = $(this).val();
+
+			if (query.length >= 3) {
+				$.ajax({
+					url: '<?= base_url("drawing_management/get_file_and_folder") ?>',
+					type: 'GET',
+					data: {
+						query: query
+					},
+					dataType: 'json',
+					success: function(data) {
+						$('#dropdown').empty().show(); // Clear previous results and show dropdown
+						if (data.length > 0) {
+							$.each(data, function(index, item) {
+								// let typeLabel = item.type === 'folder' ? 'Folder' : 'File';
+								let breadcrumb = item.breadcrumb.join(' > '); // Join breadcrumb with ">"
+								let url = `<?= admin_url('drawing_management?id=') ?>${item.id}`;
+								$('#dropdown').append(
+									`<a href="${url}" class="dropdown-item">
+                                    ${breadcrumb ? breadcrumb + ' > ' : ''}${item.name} 
+                                </a>`
+								);
+							});
+						} else {
+							$('#dropdown').append('<a href="#" class="dropdown-item disabled">No results found</a>');
+						}
+					}
+				});
+			} else {
+				$('#dropdown').hide(); // Hide dropdown if query is less than 3 characters
+			}
+		});
+
+		// Hide dropdown when clicking outside the search box or dropdown
+		$(document).on('click', function(e) {
+			if (!$(e.target).closest('#searchBox').length && !$(e.target).closest('#dropdown').length) {
+				$('#dropdown').hide();
+			}
+		});
+	});
+</script>
