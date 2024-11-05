@@ -949,12 +949,14 @@ class purchase extends AdminController
         $data['pur_request'] = $this->purchase_model->get_pur_request_by_status(2);
         $data['units'] = $this->purchase_model->get_units();
         $data['projects'] = $this->projects_model->get_items();
-
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
+        $data['area_pur'] = $this->purchase_model->get_area();
         $data['title']             = $title;
         $this->load->view('quotations/estimate', $data);
     }
 
-    /**
+    /** 
      * { validate estimate number }
      */
     public function validate_estimate_number()
@@ -1589,7 +1591,6 @@ class purchase extends AdminController
                     $pur_order_row_template .= $this->purchase_model->create_purchase_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency);
                 }
             }
-
         }
         $data['pur_order_row_template'] = $pur_order_row_template;
         $data['currencies'] = $this->currencies_model->get();
@@ -1611,7 +1612,7 @@ class purchase extends AdminController
         $data['area_pur'] = $this->purchase_model->get_area();
 
         $data['ajaxItems'] = false;
-        
+
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
             $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased');
         } else {
@@ -1630,7 +1631,7 @@ class purchase extends AdminController
                 $data['selected_head'] = $purchase_request->group_pur;
                 $data['selected_sub_head'] = $purchase_request->sub_groups_pur;
                 $data['selected_area'] = $purchase_request->area_pur;
-             }
+            }
         }
 
         $data['title'] = $title;
@@ -8797,23 +8798,23 @@ class purchase extends AdminController
     public function cron_emails()
     {
         $cron_emails = $this->purchase_model->check_cron_emails();
-        if(!empty($cron_emails)) {
+        if (!empty($cron_emails)) {
             foreach ($cron_emails as $key => $value) {
-                if($value['type'] == "purchase" && !empty($value['options'])) {
+                if ($value['type'] == "purchase" && !empty($value['options'])) {
                     $options = json_decode($value['options'], true);
                     $rel_name = $options['rel_name'];
                     $insert_id = $options['insert_id'];
                     $user_id = $options['user_id'];
                     $status = $options['status'];
-                    if(isset($options['approver'])) {
+                    if (isset($options['approver'])) {
                         $rel_type = $options['rel_type'];
                         $project = $options['project'];
                         $requester = $options['requester'];
 
                         $this->purchase_model->send_mail_to_approver($rel_type, $rel_name, $insert_id, $user_id, $status, $project, $requester);
                     }
-                    if(isset($options['sender'])) {
-                        if($status == 2 || $status == 3) {
+                    if (isset($options['sender'])) {
+                        if ($status == 2 || $status == 3) {
                             $this->purchase_model->send_mail_to_sender($rel_name, $status, $insert_id, $user_id);
                         }
                     }
@@ -8823,5 +8824,4 @@ class purchase extends AdminController
         }
         return true;
     }
-    
 }
