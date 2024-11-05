@@ -59,6 +59,21 @@
          <div class="row">
             <div class="col-md-4">
               <p class="bold mtop15" ><?php echo _l('vendor').': '?><a href="<?php echo admin_url('purchase/vendor/'.$estimate->vendor->userid); ?>"><?php echo pur_html_entity_decode($estimate->vendor->company); ?></a></p>
+              <p class="bold p_mar"><?php echo _l('group_pur').': '?> <?php  foreach ($commodity_groups_pur as $group) {
+               if($group['id'] == $estimate->group_pur){
+                 echo $group['name'];
+               }
+             }?> </p>
+             <p class="bold p_mar"><?php echo _l('sub_groups_pur').': '?> <?php  foreach ($sub_groups_pur as $group) {
+               if($group['id'] == $estimate->sub_groups_pur){
+                 echo $group['sub_group_name'];
+               }
+             }?> </p>
+             <p class="bold p_mar"><?php echo _l('area_pur').': '?> <?php  foreach ($area_pur as $area) {
+               if($area['id'] == $estimate->area_pur){
+                 echo $area['area_name'];
+               }
+             }?> </p>
             </div>
             <div class="col-md-8">
                <div class="pull-right _buttons">
@@ -272,6 +287,9 @@
                                     <th align="center">#</th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
+                                    <th align="right"><?php echo _l('group_pur'); ?></th>
+                                    <th align="right"><?php echo _l('sub_groups_pur'); ?></th>
+                                    <th align="right"><?php echo _l('area_pur') ?></th>
                                     <th align="right"><?php echo _l('purchase_unit_price'); ?></th>
                                     <th align="right"><?php echo _l('into_money'); ?></th>
                                     <?php if(get_option('show_purchase_tax_column') == 1){ ?>
