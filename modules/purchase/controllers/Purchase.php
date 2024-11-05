@@ -1052,7 +1052,9 @@ class purchase extends AdminController
         $data['tax_data'] = $this->purchase_model->get_html_tax_pur_estimate($id);
         $data['check_approval_setting'] = $this->purchase_model->check_approval_setting($estimate->project, 'pur_quotation', 0);
         $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_quotation', $id);
-
+         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
+        $data['area_pur'] = $this->purchase_model->get_area();
         if ($to_return == false) {
             $this->load->view('quotations/estimate_preview_template', $data);
         } else {

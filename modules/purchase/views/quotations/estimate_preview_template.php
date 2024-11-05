@@ -57,7 +57,7 @@
             </div>
          </div>
          <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <p class="bold mtop15" ><?php echo _l('vendor').': '?><a href="<?php echo admin_url('purchase/vendor/'.$estimate->vendor->userid); ?>"><?php echo pur_html_entity_decode($estimate->vendor->company); ?></a></p>
               <p class="bold p_mar"><?php echo _l('group_pur').': '?> <?php  foreach ($commodity_groups_pur as $group) {
                if($group['id'] == $estimate->group_pur){
@@ -75,7 +75,7 @@
                }
              }?> </p>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-6">
                <div class="pull-right _buttons">
               <?php if($estimate->status != 2){ ?>
               
