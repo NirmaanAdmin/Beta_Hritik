@@ -150,18 +150,18 @@
 
             <?php
             $selected = '';
-            // foreach ($commodity_groups_pur as $group) {
-            //   if (isset($pur_order)) {
-            //     if ($pur_order->group_pur == $group['id']) {
-            //       $selected = $group['id'];
-            //     }
-            //   }
-            //   if (isset($selected_head)) {
-            //     if ($selected_head == $group['id']) {
-            //       $selected = $group['id'];
-            //     }
-            //   }
-            // }
+            foreach ($commodity_groups_pur as $group) {
+              if (isset($estimate)) {
+                if ($estimate->group_pur == $group['id']) {
+                  $selected = $group['id'];
+                }
+              }
+              if (isset($selected_head)) {
+                if ($selected_head == $group['id']) {
+                  $selected = $group['id'];
+                }
+              }
+            }
             echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
             ?>
           </div>
@@ -244,18 +244,18 @@
                 <?php
 
                 $selected = '';
-                // foreach ($sub_groups_pur as $sub_group) {
-                //   if (isset($pur_order)) {
-                //     if ($pur_order->sub_groups_pur == $sub_group['id']) {
-                //       $selected = $sub_group['id'];
-                //     }
-                //   }
-                //   if (isset($selected_sub_head)) {
-                //     if ($selected_sub_head == $sub_group['id']) {
-                //       $selected = $sub_group['id'];
-                //     }
-                //   }
-                // }
+                foreach ($sub_groups_pur as $sub_group) {
+                  if (isset($estimate)) {
+                    if ($estimate->sub_groups_pur == $sub_group['id']) {
+                      $selected = $sub_group['id'];
+                    }
+                  }
+                  if (isset($selected_sub_head)) {
+                    if ($selected_sub_head == $sub_group['id']) {
+                      $selected = $sub_group['id'];
+                    }
+                  }
+                }
                 echo render_select('sub_groups_pur', $sub_groups_pur, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
                 ?>
               </div>
@@ -264,18 +264,18 @@
                 <?php
 
                 $selected = '';
-                // foreach ($area_pur as $area) {
-                //   if (isset($pur_order)) {
-                //     if ($pur_order->area_pur == $area['id']) {
-                //       $selected = $area['id'];
-                //     }
-                //   }
-                //   if (isset($selected_area)) {
-                //     if ($selected_area == $area['id']) {
-                //       $selected = $area['id'];
-                //     }
-                //   }
-                // }
+                foreach ($area_pur as $area) {
+                  if (isset($estimate)) {
+                    if ($estimate->area_pur == $area['id']) {
+                      $selected = $area['id'];
+                    }
+                  }
+                  if (isset($selected_area)) {
+                    if ($selected_area == $area['id']) {
+                      $selected = $area['id'];
+                    }
+                  }
+                }
                 echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
                 ?>
               </div>
