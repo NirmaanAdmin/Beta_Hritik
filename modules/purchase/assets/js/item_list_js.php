@@ -36,7 +36,6 @@ var hidden_columns = [3,7];
         'unit_id': 'required',
         'purchase_id': 'required',
         'commodity_type': 'required',
-        'rate': 'required',
     },expenseSubmitHandler);
 
 
