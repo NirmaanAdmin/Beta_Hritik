@@ -14148,11 +14148,9 @@ class Purchase_model extends App_Model
 
         if(!empty($approver_list)) {
             $approver_list = array_column($approver_list, 'id');
-            $this->db->select('tblstaff.staffid as id, tblstaff.email, tblstaff.firstname, tblstaff.lastname, tblpur_contacts.email as vendor_email'); 
-            $this->db->from('tblstaff');
-            $this->db->join('tblpur_contacts', 'tblpur_contacts.id = tblstaff.send_to_vendors', 'left'); 
-            $this->db->where_in('tblstaff.staffid', $approver_list);
-            $approver_list = $this->db->get()->result_array();
+            $this->db->select('staffid as id, email, firstname, lastname');
+            $this->db->where_in('staffid', $approver_list);
+            $approver_list = $this->db->get('tblstaff')->result_array();
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
