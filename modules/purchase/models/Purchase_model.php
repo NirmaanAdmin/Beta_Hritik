@@ -14148,7 +14148,7 @@ class Purchase_model extends App_Model
 
         if(!empty($approver_list)) {
             $approver_list = array_column($approver_list, 'id');
-            $this->db->select('staffid as id, email, firstname, lastname');
+            $this->db->select('staffid as id, email, firstname, lastname,send_to_vendors');
             $this->db->where_in('staffid', $approver_list);
             $approver_list = $this->db->get('tblstaff')->result_array();
 
@@ -14156,12 +14156,15 @@ class Purchase_model extends App_Model
             $login_staff = $this->db->get('tblstaff')->row();
             
             foreach ($approver_list as $key => $value) {
+                $this->db->select('email');
+                $this->db->where_in('id', $value['send_to_vendors']);
+                $vedor_email = $this->db->get('tblpur_contacts')->row();
                 $data = array();
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
                 if($rel_name == 'purchase_request') {
-                    $data['mail_to'] = $value['email'];
+                    $data['mail_to'] = $vedor_email->email;
                     $data['pur_request_id'] = $id;
                     $data = (object) $data;
                     $template = mail_template('purchase_request_to_approver','purchase',$data);
