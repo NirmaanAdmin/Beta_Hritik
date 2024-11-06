@@ -1217,7 +1217,7 @@ class Purchase_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_request', $insert_id);
         if ($insert_id) {
 
@@ -1551,7 +1551,7 @@ class Purchase_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
             return true;
         }
@@ -1791,7 +1791,7 @@ class Purchase_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_quotation', $insert_id);
 
         if ($insert_id) {
@@ -2215,7 +2215,7 @@ class Purchase_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
             return true;
         }
@@ -2249,7 +2249,7 @@ class Purchase_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
@@ -2431,7 +2431,7 @@ class Purchase_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_order', $insert_id);
         if ($insert_id) {
             // Update next purchase order number in settings
@@ -3615,6 +3615,20 @@ class Purchase_model extends App_Model
             return null;  // Return null if no result is found
         }
     }
+    function get_budget_head_estimate($id = '')
+    {
+        $this->db->select('group_name');
+        $this->db->from(db_prefix() . 'pur_estimates');
+        $this->db->join(db_prefix() . 'assets_group', db_prefix() . 'pur_estimates.group_pur = ' . db_prefix() . 'assets_group.group_id', 'left');
+        $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->row()->group_name;  // Return the 'group_name' field
+        } else {
+            return null;  // Return null if no result is found
+        }
+    }
     /**
      * Get budget head name for a purchase order.
      *
@@ -3663,6 +3677,20 @@ class Purchase_model extends App_Model
             return null;  // Return null if no result is found
         }
     }
+    function get_budget_sub_head_estimate($id = '')
+    {
+        $this->db->select('sub_group_name');
+        $this->db->from(db_prefix() . 'pur_estimates');
+        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'pur_estimates.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
+        $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->row()->sub_group_name;  // Return the 'sub_group_name' field
+        } else {
+            return null;  // Return null if no result is found
+        }
+    }
     function get_budget_sub_head_po($id = '')
     {
         $this->db->select('sub_group_name');
@@ -3684,6 +3712,20 @@ class Purchase_model extends App_Model
      *
      * @return string
      */
+    function get_pur_request_area_estimate($id = '')
+    {
+        $this->db->select('area_name');
+        $this->db->from(db_prefix() . 'pur_estimates');
+        $this->db->join(db_prefix() . 'area', db_prefix() . 'pur_estimates.area_pur = ' . db_prefix() . 'area.id', 'left');
+        $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->row()->area_name;  // Return the 'area_name' field
+        } else {
+            return null;  // Return null if no result is found
+        }
+    }
     function get_pur_request_area($id = '')
     {
         $this->db->select('area_name');
@@ -6869,6 +6911,9 @@ class Purchase_model extends App_Model
                 <span style="text-align: right;"><b>' . _l('project') . ':</b> ' . get_project_name_by_id($pur_estimate->project) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_estimate->addedfrom) . '</span><br /><br />
                 <span style="text-align: right;">' . format_pdf_vendor_info($pur_estimate->vendor->userid) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_estimate($pur_estimate_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_estimate($pur_estimate_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_estimate($pur_estimate_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -14045,35 +14090,35 @@ class Purchase_model extends App_Model
         $this->db->select('*');
         $this->db->where('related', $related);
         $this->db->where('project_id', $project);
-        $project_members = $this->db->get(db_prefix().'pur_approval_setting')->row();
+        $project_members = $this->db->get(db_prefix() . 'pur_approval_setting')->row();
 
-        if(!empty($project_members)) {
-            if(!empty($project_members->approver)) {
+        if (!empty($project_members)) {
+            if (!empty($project_members->approver)) {
                 $approver = $project_members->approver;
-                $approver = explode(',',$approver);
+                $approver = explode(',', $approver);
                 $this->db->select('staffid as id, "approve" as action', FALSE);
                 $this->db->where_in('staffid', $approver);
-                $intersect = $this->db->get(db_prefix().'staff')->result_array();
+                $intersect = $this->db->get(db_prefix() . 'staff')->result_array();
             }
         }
 
-        if($response == 1) {
+        if ($response == 1) {
             $intersect = array_values($intersect);
             $this->db->select('staffid as id, "approve" as action', FALSE);
             $this->db->where('admin', 1);
-            $this->db->order_by('staffid','desc');
-            $this->db->limit(1);  
+            $this->db->order_by('staffid', 'desc');
+            $this->db->limit(1);
             $staffs = $this->db->get('tblstaff')->result_array();
             $intersect = array_merge($intersect, $staffs);
             $intersect = array_unique($intersect, SORT_REGULAR);
             $intersect = array_values($intersect);
             return $intersect;
         } else {
-            if(!empty($intersect)) {
+            if (!empty($intersect)) {
                 $intersect = array_filter($intersect, function ($var) {
                     return ($var['id'] == $user_id);
                 });
-                if(!empty($intersect)) {
+                if (!empty($intersect)) {
                     $check_status = true;
                 }
             }
@@ -14083,7 +14128,7 @@ class Purchase_model extends App_Model
         $this->db->where('staffid', $user_id);
         $this->db->where('admin', 1);
         $staffs = $this->db->get('tblstaff')->result_array();
-        if(count($staffs) > 0) {
+        if (count($staffs) > 0) {
             $check_status = true;
         }
         return $check_status;
@@ -14092,16 +14137,18 @@ class Purchase_model extends App_Model
     public function send_mail_to_approver($rel_type, $rel_name, $id, $user_id, $status, $project, $requester)
     {
         $approver_list = $this->check_approval_setting($project, $rel_type, 1, $user_id);
-        $this->db->select('staffid as id, "approve" as action', FALSE);
-        $this->db->where('admin', 1);
-        $this->db->or_where('staffid', $user_id);
-        $this->db->order_by('staffid','desc');
-        $staffs = $this->db->get('tblstaff')->result_array();
+        $this->db->select('tblstaff.staffid as id, "approve" as action', FALSE);
+        $this->db->from('tblstaff');
+        $this->db->join('tblpur_contacts', 'tblpur_contacts.userid = tblstaff.staffid', 'left'); 
+        $this->db->where('tblstaff.admin', 1);
+        $this->db->or_where('tblstaff.staffid', $user_id);
+        $this->db->order_by('tblstaff.staffid', 'desc');
+        $staffs = $this->db->get()->result_array();
         $approver_list = array_merge($approver_list, $staffs);
         $approver_list = array_unique($approver_list, SORT_REGULAR);
         $approver_list = array_values($approver_list);
 
-        if(!empty($approver_list)) {
+        if (!empty($approver_list)) {
             $approver_list = array_column($approver_list, 'id');
             $this->db->select('staffid as id, email, firstname, lastname');
             $this->db->where_in('staffid', $approver_list);
@@ -14109,33 +14156,33 @@ class Purchase_model extends App_Model
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
-            
+
             foreach ($approver_list as $key => $value) {
                 $data = array();
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
-                if($rel_name == 'purchase_request') {
+                if ($rel_name == 'purchase_request') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_request_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_request_to_approver','purchase',$data);
+                    $template = mail_template('purchase_request_to_approver', 'purchase', $data);
                     $template->send();
                 }
 
-                if($rel_name == 'purchase_order') {
+                if ($rel_name == 'purchase_order') {
                     $data['mail_to'] = $value['email'];
                     $data['po_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_order_to_approver','purchase',$data);
+                    $template = mail_template('purchase_order_to_approver', 'purchase', $data);
                     $template->send();
                 }
 
-                if($rel_name == 'quotation') {
+                if ($rel_name == 'quotation') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_quotation_to_approver','purchase',$data);
+                    $template = mail_template('purchase_quotation_to_approver', 'purchase', $data);
                     $template->send();
                 }
             }
@@ -14147,25 +14194,25 @@ class Purchase_model extends App_Model
         $requester = 0;
         $vendor_id = 0;
         $vendor_name = '';
-        if($type == 'purchase_request') {
+        if ($type == 'purchase_request') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'pur_request')->row();
             $requester = $row->requester;
         }
 
-        if($type == 'purchase_order') {
+        if ($type == 'purchase_order') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'pur_orders')->row();
             $requester = $row->addedfrom;
             $vendor_id = $row->vendor;
-            if($vendor_id != 0) {
+            if ($vendor_id != 0) {
                 $this->db->where('userid', $vendor_id);
                 $vendor_detail = $this->db->get(db_prefix() . 'pur_vendor')->row();
                 $vendor_name = $vendor_detail->company;
             }
         }
 
-        if($type == 'quotation') {
+        if ($type == 'quotation') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'pur_estimates')->row();
             $requester = $row->addedfrom;
@@ -14177,7 +14224,7 @@ class Purchase_model extends App_Model
         $this->db->or_where('staffid', $user_id);
         $staffs = $this->db->get('tblstaff')->result_array();
 
-        if($type == 'purchase_order') {
+        if ($type == 'purchase_order') {
             $this->db->select('email, firstname, lastname');
             $this->db->where('userid', $vendor_id);
             $this->db->where('is_primary', 1);
@@ -14186,7 +14233,7 @@ class Purchase_model extends App_Model
             $staffs = array_values($staffs);
         }
 
-        if(!empty($staffs)) {
+        if (!empty($staffs)) {
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
@@ -14196,28 +14243,28 @@ class Purchase_model extends App_Model
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
-                if($type == 'purchase_request') {
+                if ($type == 'purchase_request') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_request_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_request_to_sender','purchase',$data);
+                    $template = mail_template('purchase_request_to_sender', 'purchase', $data);
                     $template->send();
                 }
 
-                if($type == 'purchase_order') {
+                if ($type == 'purchase_order') {
                     $data['mail_to'] = $value['email'];
                     $data['po_id'] = $id;
                     $data['vendor_name'] = $vendor_name;
                     $data = (object) $data;
-                    $template = mail_template('purchase_order_to_sender','purchase',$data);
+                    $template = mail_template('purchase_order_to_sender', 'purchase', $data);
                     $template->send();
                 }
 
-                if($type == 'quotation') {
+                if ($type == 'quotation') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_quotation_to_sender','purchase',$data);
+                    $template = mail_template('purchase_quotation_to_sender', 'purchase', $data);
                     $template->send();
                 }
             }
@@ -14321,6 +14368,6 @@ class Purchase_model extends App_Model
     {
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'cron_email');
-        return true; 
+        return true;
     }
 }
