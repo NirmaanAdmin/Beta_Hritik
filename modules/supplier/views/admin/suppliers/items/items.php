@@ -21,7 +21,7 @@
                         <?php echo render_textarea('long_description','invoice_item_long_description'); ?>
                         <div class="form-group">
                         <label for="rate" class="control-label">
-                            <?php echo _l('invoice_item_add_edit_rate_currency',$base_currency->name . ' <small>('._l('base_currency_string').')</small>'); ?></label>
+                            <?php echo _l('invoice_item_add_edit_rate_currency',$base_currency->name ); ?></label>
                             <input type="number" id="rate" name="rate" class="form-control" value="">
                         </div>
                         <?php
