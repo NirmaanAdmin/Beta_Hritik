@@ -14163,7 +14163,7 @@ class Purchase_model extends App_Model
                 $data['contact_lastname'] = $login_staff->lastname;
 
                 if($rel_name == 'purchase_request') {
-                    $data['mail_to'] = $value['email'].', '.$value['vendor_email'];
+                    $data['mail_to'] = $value['email'];
                     $data['pur_request_id'] = $id;
                     $data = (object) $data;
                     $template = mail_template('purchase_request_to_approver','purchase',$data);
