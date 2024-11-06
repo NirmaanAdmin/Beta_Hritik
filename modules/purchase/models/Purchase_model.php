@@ -14139,7 +14139,7 @@ class Purchase_model extends App_Model
         $approver_list = $this->check_approval_setting($project, $rel_type, 1, $user_id);
         $this->db->select('tblstaff.staffid as id, "approve" as action', FALSE);
         $this->db->from('tblstaff');
-        $this->db->join('tblpur_contacts', 'tblpur_contacts.userid = tblstaff.staffid', 'left'); 
+        $this->db->join('tblpur_contacts', 'tblpur_contacts.id = tblstaff.send_to_vendors', 'left'); 
         $this->db->where('tblstaff.admin', 1);
         $this->db->or_where('tblstaff.staffid', $user_id);
         $this->db->order_by('tblstaff.staffid', 'desc');
