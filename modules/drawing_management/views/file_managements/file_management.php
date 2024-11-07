@@ -2,7 +2,6 @@
 <?php init_head(); ?>
 <input type="hidden" name="parent_id" value="<?php echo drawing_htmldecode($parent_id); ?>">
 <style>
-	<style>
 
 	/* Basic styles for dropdown */
 	.dropdown-menu {
@@ -28,7 +27,6 @@
 		color: #999;
 		pointer-events: none;
 	}
-</style>
 </style>
 <div id="wrapper">
 	<div class="content">
