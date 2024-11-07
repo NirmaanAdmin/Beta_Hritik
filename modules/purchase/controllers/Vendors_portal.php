@@ -9,7 +9,7 @@ class Vendors_portal extends App_Controller
     /**
      * @since  2.3.3
      */
-    
+
 
     public $template = [];
 
@@ -26,8 +26,10 @@ class Vendors_portal extends App_Controller
         parent::__construct();
 
 
-        if (is_staff_logged_in()
-            && $this->app->is_db_upgrade_required($this->current_db_version)) {
+        if (
+            is_staff_logged_in()
+            && $this->app->is_db_upgrade_required($this->current_db_version)
+        ) {
             redirect(admin_url());
         }
 
@@ -83,8 +85,8 @@ class Vendors_portal extends App_Controller
          * @var string
          */
         $this->template['footer'] = $this->use_footer == true
-        ? $this->load->view('vendor_portal/footer', $this->data, true)
-        : '';
+            ? $this->load->view('vendor_portal/footer', $this->data, true)
+            : '';
         $GLOBALS['customers_footer'] = $this->template['footer'];
 
         /**
@@ -170,9 +172,9 @@ class Vendors_portal extends App_Controller
     }
 
     /**
-    * Disables theme footer
-    * @return core/ClientsController
-    */
+     * Disables theme footer
+     * @return core/ClientsController
+     */
     public function disableFooter()
     {
         $this->use_footer = false;
@@ -184,8 +186,8 @@ class Vendors_portal extends App_Controller
      */
     public function index()
     {
-        if(is_vendor_logged_in()){
-            $data['is_home'] = true;    
+        if (is_vendor_logged_in()) {
+            $data['is_home'] = true;
 
             $data['project_statuses'] = $this->projects_model->get_project_statuses();
             $data['title']            = get_vendor_company_name(get_vendor_user_id());
@@ -195,7 +197,7 @@ class Vendors_portal extends App_Controller
             $this->data($data);
             $this->view('vendor_portal/home');
             $this->layout();
-        }else{
+        } else {
             redirect(site_url('purchase/authentication_vendor'));
         }
     }
@@ -203,7 +205,8 @@ class Vendors_portal extends App_Controller
     /**
      * { terms and conditions }
      */
-    public function terms_and_conditions(){
+    public function terms_and_conditions()
+    {
         $data['title'] = _l('terms_and_conditions');
         $data['terms'] = get_purchase_option('terms_and_conditions');
         $this->data($data);
@@ -217,7 +220,7 @@ class Vendors_portal extends App_Controller
     public function profile()
     {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
         if ($this->input->post('profile')) {
@@ -239,7 +242,7 @@ class Vendors_portal extends App_Controller
                     'email'              => $this->input->post('email'),
                     'phonenumber'        => $this->input->post('phonenumber'),
                     'direction'          => $this->input->post('direction'),
-                  
+
                 ], get_vendor_contact_user_id(), true);
 
                 if ($success == true) {
@@ -281,7 +284,7 @@ class Vendors_portal extends App_Controller
     public function company()
     {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
         if ($this->input->post() && is_primary_contact_pur()) {
@@ -294,7 +297,7 @@ class Vendors_portal extends App_Controller
                 $this->form_validation->set_rules('company_form', '', 'required');
             }
 
-           
+
 
             if ($this->form_validation->run() !== false) {
                 $data['company'] = $this->input->post('company');
@@ -319,8 +322,10 @@ class Vendors_portal extends App_Controller
                 $data['zip']         = $this->input->post('zip');
                 $data['state']       = $this->input->post('state');
 
-                if (get_option('allow_primary_contact_to_view_edit_billing_and_shipping') == 1
-                    && is_primary_contact_pur()) {
+                if (
+                    get_option('allow_primary_contact_to_view_edit_billing_and_shipping') == 1
+                    && is_primary_contact_pur()
+                ) {
 
                     // Dynamically get the billing and shipping values from $_POST
                     for ($i = 0; $i < 2; $i++) {
@@ -354,8 +359,8 @@ class Vendors_portal extends App_Controller
     {
         $id = get_vendor_contact_user_id();
 
-        if (file_exists(PURCHASE_MODULE_UPLOAD_FOLDER.'/contact_profile/' . $id)) {
-            delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER.'/contact_profile/'. $id);
+        if (file_exists(PURCHASE_MODULE_UPLOAD_FOLDER . '/contact_profile/' . $id)) {
+            delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/contact_profile/' . $id);
         }
 
         $this->db->where('id', $id);
@@ -376,7 +381,7 @@ class Vendors_portal extends App_Controller
      */
     public function change_language($lang = '')
     {
-       
+
 
         $this->db->where('userid', get_vendor_user_id());
         $this->db->update(db_prefix() . 'pur_vendor', ['default_language' => $lang]);
@@ -391,14 +396,15 @@ class Vendors_portal extends App_Controller
     /**
      * { Purchase order }
      */
-    public function purchase_order(){
+    public function purchase_order()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $data['title']            = _l('purchase_order');
-      
+
         $data['pur_order'] = $this->purchase_model->get_pur_order_by_vendor(get_vendor_user_id());
 
         $this->data($data);
@@ -409,14 +415,15 @@ class Vendors_portal extends App_Controller
     /**
      * { list contracts }
      */
-    public function contracts(){
+    public function contracts()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $data['title']            = _l('contracts');
-      
+
         $data['contracts'] = $this->purchase_model->get_contracts_by_vendor(get_vendor_user_id());
 
         $this->data($data);
@@ -427,15 +434,16 @@ class Vendors_portal extends App_Controller
     /**
      * { list items }
      */
-    public function items(){
+    public function items()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $data['title']            = _l('items');
-        
-        
+
+
         $data['items'] = $this->purchase_model->get_vendor_item(get_vendor_user_id());
 
         $data['external_items'] = $this->purchase_model->get_item_by_vendor(get_vendor_user_id());
@@ -448,15 +456,16 @@ class Vendors_portal extends App_Controller
     /**
      * { list quotations }
      */
-    public function quotations(){
+    public function quotations()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
-        }
+        } 
 
         $data['title']            = _l('quotations');
-      
-        $data['quotations'] = $this->purchase_model->get_estimate('',['vendor' => get_vendor_user_id()]);
+
+        $data['quotations'] = $this->purchase_model->get_estimate('', ['vendor' => get_vendor_user_id()]);
 
         $this->data($data);
         $this->view('vendor_portal/quotations');
@@ -466,14 +475,15 @@ class Vendors_portal extends App_Controller
     /**
      * { list payments }
      */
-    public function payments(){
+    public function payments()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $data['title']            = _l('payments');
-      
+
         $data['payments'] = $this->purchase_model->get_payment_by_vendor(get_vendor_user_id());
 
         $this->data($data);
@@ -481,7 +491,7 @@ class Vendors_portal extends App_Controller
         $this->layout();
     }
 
-    
+
 
     /**
      * Uploads an attachment.
@@ -490,7 +500,7 @@ class Vendors_portal extends App_Controller
      */
     public function upload_attachment()
     {
-       $check = handle_pur_vendor_attachments_upload(get_vendor_user_id());
+        $check = handle_pur_vendor_attachments_upload(get_vendor_user_id());
     }
 
     /**
@@ -510,8 +520,7 @@ class Vendors_portal extends App_Controller
         }
 
 
-        $this->load->view('vendor_portal/_file',$data);
-      
+        $this->load->view('vendor_portal/_file', $data);
     }
 
     /**
@@ -519,10 +528,11 @@ class Vendors_portal extends App_Controller
      *
      * @param      string  $id     The identifier
      */
-    public function add_update_quotation($id = '',$view = ''){
+    public function add_update_quotation($id = '', $view = '')
+    {
 
-        if (!is_vendor_logged_in() ) {
-            
+        if (!is_vendor_logged_in()) {
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
@@ -540,24 +550,24 @@ class Vendors_portal extends App_Controller
             $data['estimate_detail'] = $this->purchase_model->get_pur_estimate_detail($id);
 
             $currency_rate = 1;
-            if($data['estimate']->currency != 0 && $data['estimate']->currency_rate != null){
+            if ($data['estimate']->currency != 0 && $data['estimate']->currency_rate != null) {
                 $currency_rate = $data['estimate']->currency_rate;
             }
 
             $to_currency = $data['base_currency']->name;
-            if($data['estimate']->currency != 0 && $data['estimate']->to_currency != null) {
+            if ($data['estimate']->currency != 0 && $data['estimate']->to_currency != null) {
                 $to_currency = $data['estimate']->to_currency;
             }
 
-            if (count($data['estimate_detail']) > 0) { 
+            if (count($data['estimate_detail']) > 0) {
                 $index_quote = 0;
-                foreach ($data['estimate_detail'] as $quote_detail) { 
+                foreach ($data['estimate_detail'] as $quote_detail) {
                     $index_quote++;
                     $unit_name = pur_get_unit_name($quote_detail['unit_id']);
                     $taxname = $quote_detail['tax_name'];
                     $item_name = $quote_detail['item_name'];
 
-                    if(strlen($item_name) == 0){
+                    if (strlen($item_name) == 0) {
                         $item_name = pur_get_item_variatiom($quote_detail['item_code']);
                     }
 
@@ -566,7 +576,7 @@ class Vendors_portal extends App_Controller
             }
 
             $data['tax_data'] = $this->purchase_model->get_html_tax_pur_estimate($id);
-            
+
             $data['edit']     = true;
             $title            = _l('edit', _l('estimate_lowercase'));
         }
@@ -578,7 +588,7 @@ class Vendors_portal extends App_Controller
             $action = $this->input->post('action');
 
             switch ($action) {
-             case 'quo_comment':
+                case 'quo_comment':
                     // comment is blank
                     if (!$this->input->post('content')) {
                         redirect($this->uri->uri_string());
@@ -594,9 +604,9 @@ class Vendors_portal extends App_Controller
         }
 
         $data['ajaxItems'] = false;
-        if(total_rows(db_prefix().'pur_vendor_items', ['vendor' => get_vendor_user_id()]) <= ajax_on_total_items()){ 
+        if (total_rows(db_prefix() . 'pur_vendor_items', ['vendor' => get_vendor_user_id()]) <= ajax_on_total_items()) {
             $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased', false, get_vendor_user_id());
-        }else {
+        } else {
             $data['items']     = [];
             $data['ajaxItems'] = true;
         }
@@ -607,12 +617,12 @@ class Vendors_portal extends App_Controller
 
         $this->load->model('taxes_model');
         $data['taxes'] = $this->purchase_model->get_taxes();
-        
+
         $data['vendor_currency'] = get_vendor_currency(get_vendor_user_id());
 
         $this->load->model('invoice_items_model');
 
-        
+
         $data['items_groups'] = $this->invoice_items_model->get_groups();
 
         $data['comments'] = $this->purchase_model->get_comments($id, 'pur_quotation');
@@ -621,10 +631,12 @@ class Vendors_portal extends App_Controller
         $data['vendors'] = $this->purchase_model->get_vendor();
 
         $data['units'] = $this->purchase_model->get_units();
-        
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
+        $data['area_pur'] = $this->purchase_model->get_area();
 
         $data['title']             = $title;
-       
+
 
         $this->data($data);
         $this->view('vendor_portal/estimate');
@@ -638,8 +650,8 @@ class Vendors_portal extends App_Controller
      */
     public function view_quotation($id)
     {
-        if (!is_vendor_logged_in() ) {
-            
+        if (!is_vendor_logged_in()) {
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
         $this->load->model('currencies_model');
@@ -647,7 +659,7 @@ class Vendors_portal extends App_Controller
 
         $estimate = $this->purchase_model->get_estimate($id);
 
-        if($estimate->currency != 0){
+        if ($estimate->currency != 0) {
             $data['base_currency'] = pur_get_currency_by_id($estimate->currency);
         }
 
@@ -664,7 +676,7 @@ class Vendors_portal extends App_Controller
             $action = $this->input->post('action');
 
             switch ($action) {
-             case 'quo_comment':
+                case 'quo_comment':
                     // comment is blank
                     if (!$this->input->post('content')) {
                         redirect($this->uri->uri_string());
@@ -690,10 +702,11 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $val    The value
      * @return      json
      */
-    public function items_change($val){
+    public function items_change($val)
+    {
 
         $value = $this->purchase_model->items_change($val);
-        
+
         echo json_encode([
             'value' => $value
         ]);
@@ -706,10 +719,11 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $tax    The tax
      * @return   json
      */
-    public function tax_change($tax){
+    public function tax_change($tax)
+    {
         $taxes = explode('%7C', $tax);
         $total_tax = $this->purchase_model->get_total_tax($taxes);
-        
+
         echo json_encode([
             'total_tax' => $total_tax,
         ]);
@@ -720,10 +734,10 @@ class Vendors_portal extends App_Controller
      *
      * @param      string  $id     The identifier
      */
-    public function quotation_form($id='')
+    public function quotation_form($id = '')
     {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
@@ -732,27 +746,25 @@ class Vendors_portal extends App_Controller
             $estimate_data['vendor'] = get_vendor_user_id();
             $estimate_data['terms'] = $this->input->post('terms', false);
             if ($id == '') {
-           
+
                 $id = $this->purchase_model->add_estimate($estimate_data);
                 if ($id) {
                     set_alert('success', _l('added_successfully', _l('estimate')));
-                    
+
                     redirect(site_url('purchase/vendors_portal/view_quotation/' . $id));
-                    
                 }
             } else {
-            
+
                 $success = $this->purchase_model->update_estimate($estimate_data, $id);
                 if ($success) {
                     set_alert('success', _l('updated_successfully', _l('estimate')));
                 }
                 redirect(site_url('purchase/vendors_portal/view_quotation/' . $id));
-                
             }
         }
     }
 
-     /**
+    /**
      * { delete estimate }
      *
      * @param      <type>  $id     The identifier
@@ -761,7 +773,7 @@ class Vendors_portal extends App_Controller
     public function delete_estimate($id)
     {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
-            
+
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
@@ -782,8 +794,9 @@ class Vendors_portal extends App_Controller
     /**
      * { view purchase order }
      */
-    public function pur_order($id,$hash=''){
-        if(!is_vendor_logged_in()){
+    public function pur_order($id, $hash = '')
+    {
+        if (!is_vendor_logged_in()) {
             check_pur_order_restrictions($id, $hash);
         }
 
@@ -795,7 +808,7 @@ class Vendors_portal extends App_Controller
             $action = $this->input->post('action');
 
             switch ($action) {
-             case 'po_comment':
+                case 'po_comment':
                     // comment is blank
                     if (!$this->input->post('content')) {
                         redirect($this->uri->uri_string());
@@ -834,10 +847,11 @@ class Vendors_portal extends App_Controller
     /**
      * { view purchase request }
      */
-    public function pur_request($id,$hash){
+    public function pur_request($id, $hash)
+    {
 
         check_pur_request_restrictions($id, $hash);
-        
+
         $this->load->model('departments_model');
         $this->load->model('currencies_model');
 
@@ -847,14 +861,14 @@ class Vendors_portal extends App_Controller
         $data['departments'] = $this->departments_model->get();
         $data['units'] = $this->purchase_model->get_units();
         $data['items'] = $this->purchase_model->get_items();
-        
+
         $data['check_appr'] = $this->purchase_model->get_approve_setting('pur_request');
-        $data['get_staff_sign'] = $this->purchase_model->get_staff_sign($id,'pur_request');
-        $data['check_approve_status'] = $this->purchase_model->check_approval_details($id,'pur_request');
-        $data['list_approve_status'] = $this->purchase_model->get_list_approval_details($id,'pur_request');
+        $data['get_staff_sign'] = $this->purchase_model->get_staff_sign($id, 'pur_request');
+        $data['check_approve_status'] = $this->purchase_model->check_approval_details($id, 'pur_request');
+        $data['list_approve_status'] = $this->purchase_model->get_list_approval_details($id, 'pur_request');
 
         $data['base_currency'] = $this->currencies_model->get_base_currency();
-        if($data['pur_request']->currency != 0){
+        if ($data['pur_request']->currency != 0) {
             $data['base_currency'] = pur_get_currency_by_id($data['pur_request']->currency);
         }
 
@@ -874,7 +888,8 @@ class Vendors_portal extends App_Controller
      *
      * @param        $id     The identifier
      */
-    public function view_contract($id){
+    public function view_contract($id)
+    {
         $contract = $this->purchase_model->get_contract($id);
         $data['contract']  = $contract;
         if (!$contract) {
@@ -885,7 +900,7 @@ class Vendors_portal extends App_Controller
             $action = $this->input->post('action');
 
             switch ($action) {
-             case 'contract_comment':
+                case 'contract_comment':
                     // comment is blank
                     if (!$this->input->post('content')) {
                         redirect($this->uri->uri_string());
@@ -898,10 +913,10 @@ class Vendors_portal extends App_Controller
 
                     break;
 
-             case 'sign_contract':
-                    process_digital_signature_image($this->input->post('signature', false), PURCHASE_MODULE_UPLOAD_FOLDER .'/vendor_sign/'.$id);
+                case 'sign_contract':
+                    process_digital_signature_image($this->input->post('signature', false), PURCHASE_MODULE_UPLOAD_FOLDER . '/vendor_sign/' . $id);
                     $this->db->where('id', $id);
-                    $this->db->update(db_prefix().'pur_contracts', array_merge(get_acceptance_info_array(), [
+                    $this->db->update(db_prefix() . 'pur_contracts', array_merge(get_acceptance_info_array(), [
                         'signed' => 1,
                     ]));
 
@@ -923,11 +938,11 @@ class Vendors_portal extends App_Controller
 
         $data['identity_confirmation_enabled'] = true;
         $data['bodyclass'] .= ' identity-confirmation';
-        $this->app_scripts->theme('sticky-js','assets/plugins/sticky/sticky.js');
+        $this->app_scripts->theme('sticky-js', 'assets/plugins/sticky/sticky.js');
         $data['comments'] = $this->purchase_model->get_comments($id, 'pur_contract');
         //add_views_tracking('proposal', $id);
         hooks()->do_action('contract_html_viewed', $id);
-        $this->app_css->remove('reset-css','customers-area-default');
+        $this->app_css->remove('reset-css', 'customers-area-default');
         $data                      = hooks()->apply_filters('contract_customers_area_view_data', $data);
         $this->data($data);
         no_index_customers_area();
@@ -938,7 +953,8 @@ class Vendors_portal extends App_Controller
     /**
      * { invoices }
      */
-    public function invoices(){
+    public function invoices()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -956,7 +972,8 @@ class Vendors_portal extends App_Controller
      *
      * @param        $id     The identifier
      */
-    public function invoice($id){
+    public function invoice($id)
+    {
         $invoice = $this->purchase_model->get_pur_invoice($id);
         $data['pur_invoice'] = $invoice;
         if (!$invoice) {
@@ -967,7 +984,7 @@ class Vendors_portal extends App_Controller
             $action = $this->input->post('action');
 
             switch ($action) {
-             case 'inv_comment':
+                case 'inv_comment':
                     // comment is blank
                     if (!$this->input->post('content')) {
                         redirect($this->uri->uri_string());
@@ -996,7 +1013,8 @@ class Vendors_portal extends App_Controller
     /**
      * { purchase request }
      */
-    public function purchase_request(){
+    public function purchase_request()
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1015,33 +1033,34 @@ class Vendors_portal extends App_Controller
      *
      * @param      string  $id     The identifier
      */
-    public function add_update_items($id = ''){
+    public function add_update_items($id = '')
+    {
         if (!is_vendor_logged_in() && !is_staff_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $vendor_id = get_vendor_user_id();
 
-        if($id == ''){
+        if ($id == '') {
             $data['title'] = _l('pur_add_item');
-        }else{
+        } else {
             $data['title'] = _l('pur_update_item');
             $data['item'] = $this->purchase_model->get_item_of_vendor($id);
             $data['files'] = $this->purchase_model->get_vendor_item_file($id);
         }
 
-        if($this->input->post()){
+        if ($this->input->post()) {
             $item_data = $this->input->post();
-            if($id == ''){
-                
+            if ($id == '') {
+
                 $item_id = $this->purchase_model->add_vendor_item($item_data, $vendor_id);
-                if($item_id){
+                if ($item_id) {
                     handle_vendor_item_attachment($item_id);
 
                     set_alert('success', _l('added_successfully'));
                 }
-            }else{
-                if($data['item']->vendor_id != $vendor_id){
+            } else {
+                if ($data['item']->vendor_id != $vendor_id) {
 
                     set_alert('warning', _l('item_not_found'));
 
@@ -1051,7 +1070,7 @@ class Vendors_portal extends App_Controller
                 $success = $this->purchase_model->update_vendor_item($item_data, $id);
 
                 $handled = handle_vendor_item_attachment($id);
-                if($success || $handled){
+                if ($success || $handled) {
                     set_alert('success', _l('updated_successfully'));
                 }
             }
@@ -1074,30 +1093,31 @@ class Vendors_portal extends App_Controller
      *
      * @param        $item_id  The item identifier
      */
-    public function delete_vendor_item($item_id){
+    public function delete_vendor_item($item_id)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $vendor_id = get_vendor_user_id();
 
-        if(!$item_id){
+        if (!$item_id) {
             redirect(site_url('purchase/vendors_portal/items'));
         }
 
         $delete = $this->purchase_model->delete_vendor_item($item_id, $vendor_id);
-        if($delete){
+        if ($delete) {
             set_alert('success', _l('deleted_successfully'));
         }
 
         redirect(site_url('purchase/vendors_portal/items'));
-
     }
 
     /**
      * { detail item }
      */
-    public function detail_item($item_id){
+    public function detail_item($item_id)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1109,26 +1129,26 @@ class Vendors_portal extends App_Controller
 
         $data['item_from'] = 'vendor';
 
-        if(!isset($data['item']->vendor_id) || $data['item']->vendor_id != $vendor_id){
+        if (!isset($data['item']->vendor_id) || $data['item']->vendor_id != $vendor_id) {
 
             $items = $this->purchase_model->get_item_by_vendor($vendor_id);
 
             $itds = [];
-            foreach($items as $it){
+            foreach ($items as $it) {
                 $itds[] = $it['items'];
             }
 
-            if(!in_array($item_id, $itds)){
+            if (!in_array($item_id, $itds)) {
                 set_alert('warning', _l('item_not_found'));
                 redirect(site_url('purchase/vendors_portal/items'));
             }
 
             $this->db->where('id', $item_id);
-            $data['item'] = $this->db->get(db_prefix().'items')->row();
+            $data['item'] = $this->db->get(db_prefix() . 'items')->row();
 
             $data['item_file'] = $this->purchase_model->get_item_attachments($item_id);
 
-            if(is_numeric($data['item']->from_vendor_item)){
+            if (is_numeric($data['item']->from_vendor_item)) {
                 $data['vendor_image'] = $this->purchase_model->get_vendor_item_file($data['item']->from_vendor_item);
             }
 
@@ -1147,20 +1167,21 @@ class Vendors_portal extends App_Controller
     /**
      * { share_item }
      */
-    public function share_item($item_id){
+    public function share_item($item_id)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
         $vendor_id = get_vendor_user_id();
 
         $item = $this->purchase_model->get_item_of_vendor($item_id);
-        if($item->vendor_id != $vendor_id){
+        if ($item->vendor_id != $vendor_id) {
             set_alert('warning', _l('item_not_found'));
             redirect(site_url('purchase/vendors_portal/items'));
         }
 
         $shared = $this->purchase_model->share_vendor_item($item_id);
-        if($shared){
+        if ($shared) {
             set_alert('success', _l('shared_successfully'));
         }
 
@@ -1189,22 +1210,23 @@ class Vendors_portal extends App_Controller
         if ($this->input->is_ajax_request()) {
             $item                     = $this->purchase_model->get_item_v2($id);
             $item->long_description   = nl2br($item->long_description);
-            if($currency_rate != 1){
-                $item->purchase_price = round(($item->purchase_price*$currency_rate), 2);
+            if ($currency_rate != 1) {
+                $item->purchase_price = round(($item->purchase_price * $currency_rate), 2);
             }
-            
+
             $html = '<option value=""></option>';
-           
+
             $item->warehouses_html = $html;
 
             echo json_encode($item);
         }
     }
 
-     /**
+    /**
      * Gets the quotation row template.
      */
-    public function get_quotation_row_template(){
+    public function get_quotation_row_template()
+    {
         $name = $this->input->post('name');
         $item_name = $this->input->post('item_name');
         $quantity = $this->input->post('quantity');
@@ -1219,7 +1241,7 @@ class Vendors_portal extends App_Controller
         $currency_rate = $this->input->post('currency_rate');
         $to_currency = $this->input->post('to_currency');
 
-        echo $this->purchase_model->create_quotation_row_template($name, $item_name, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key, false, $currency_rate, $to_currency );
+        echo $this->purchase_model->create_quotation_row_template($name, $item_name, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key, false, $currency_rate, $to_currency);
     }
 
     /**
@@ -1228,7 +1250,8 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $pur_request  The purchase request id
      * @return json
      */
-    public function coppy_pur_request($pur_request){
+    public function coppy_pur_request($pur_request)
+    {
         $this->load->model('currencies_model');
 
         $pur_request_detail = $this->purchase_model->get_pur_request_detail_in_estimate($pur_request);
@@ -1242,9 +1265,9 @@ class Vendors_portal extends App_Controller
         $total = 0;
         $data_rs = [];
         $tax_html = '';
-        
-        if(count($pur_request_detail) > 0){
-            foreach($pur_request_detail as $key => $item){
+
+        if (count($pur_request_detail) > 0) {
+            foreach ($pur_request_detail as $key => $item) {
                 $subtotal += $item['into_money'];
                 $total += $item['total'];
             }
@@ -1255,35 +1278,35 @@ class Vendors_portal extends App_Controller
 
         $currency_rate = 1;
         $to_currency = $base_currency->id;
-        if($purchase_request->currency != 0 && $purchase_request->currency_rate != null){
+        if ($purchase_request->currency != 0 && $purchase_request->currency_rate != null) {
             $currency_rate = $purchase_request->currency_rate;
             $to_currency = $purchase_request->currency;
         }
 
-        if(count($pur_request_detail) > 0){
+        if (count($pur_request_detail) > 0) {
             $index_quote = 0;
-            foreach($pur_request_detail as $key => $item){
+            foreach ($pur_request_detail as $key => $item) {
                 $index_quote++;
                 $unit_name = pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
                 $item_name = $item['item_text'];
 
-                if(strlen($item_name) == 0){
+                if (strlen($item_name) == 0) {
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
                 $list_item .= $this->purchase_model->create_quotation_row_template('newitems[' . $index_quote . ']',  $item_name, $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total'], '', '', $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index_quote, true, $currency_rate, $to_currency);
             }
         }
-        
+
 
         $taxes_data = $this->purchase_model->get_html_tax_pur_request($pur_request);
         $tax_html = $taxes_data['html'];
 
         echo json_encode([
             'result' => $pur_request_detail,
-            'subtotal' => app_format_money(round($subtotal,2),''),
-            'total' => app_format_money(round($total, 2),''),
+            'subtotal' => app_format_money(round($subtotal, 2), ''),
+            'total' => app_format_money(round($total, 2), ''),
             'tax_html' => $tax_html,
             'taxes' => $taxes,
             'list_item' => $list_item,
@@ -1295,7 +1318,8 @@ class Vendors_portal extends App_Controller
     /**
      * Adds an update invoice.
      */
-    public function add_update_invoice($id = ''){
+    public function add_update_invoice($id = '')
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1310,16 +1334,15 @@ class Vendors_portal extends App_Controller
         $this->load->model('currencies_model');
         $data['base_currency'] = $this->currencies_model->get_base_currency();
 
-        if($id == ''){
+        if ($id == '') {
             $data['title'] = _l('pur_add_invoice');
             $data['pur_orders'] = $this->purchase_model->get_pur_order_approved_for_inv_by_vendor($vendor_id);
-            
-        }else{
+        } else {
             $data['pur_orders'] = $this->purchase_model->get_pur_order_approved_by_vendor($vendor_id);
             $data['title'] = _l('pur_update_invoice');
             $invoice = $this->purchase_model->get_pur_invoice($id);
 
-            if($invoice->vendor != $vendor_id){
+            if ($invoice->vendor != $vendor_id) {
                 set_alert('invoice_not_found');
                 redirect(site_url('purchase/vendors_portal/invoices'));
             }
@@ -1328,37 +1351,37 @@ class Vendors_portal extends App_Controller
             $data['pur_invoice_detail'] = $this->purchase_model->get_pur_invoice_detail($id);
 
             $currency_rate = 1;
-            if($data['pur_invoice']->currency != 0 && $data['pur_invoice']->currency_rate != null){
+            if ($data['pur_invoice']->currency != 0 && $data['pur_invoice']->currency_rate != null) {
                 $currency_rate = $data['pur_invoice']->currency_rate;
             }
 
             $to_currency = $data['base_currency']->name;
-            if($data['pur_invoice']->currency != 0 && $data['pur_invoice']->to_currency != null) {
+            if ($data['pur_invoice']->currency != 0 && $data['pur_invoice']->to_currency != null) {
                 $to_currency = $data['pur_invoice']->to_currency;
             }
 
-            if (count($data['pur_invoice_detail']) > 0) { 
+            if (count($data['pur_invoice_detail']) > 0) {
                 $index_order = 0;
-                foreach ($data['pur_invoice_detail'] as $inv_detail) { 
+                foreach ($data['pur_invoice_detail'] as $inv_detail) {
                     $index_order++;
                     $unit_name = pur_get_unit_name($inv_detail['unit_id']);
                     $taxname = $inv_detail['tax_name'];
                     $item_name = $inv_detail['item_name'];
 
-                    if(strlen($item_name) == 0){
+                    if (strlen($item_name) == 0) {
                         $item_name = pur_get_item_variatiom($inv_detail['item_code']);
                     }
 
                     $pur_invoice_row_template .= $this->purchase_model->create_purchase_invoice_row_template('items[' . $index_order . ']',  $item_name, $inv_detail['description'], $inv_detail['quantity'], $unit_name, $inv_detail['unit_price'], $taxname, $inv_detail['item_code'], $inv_detail['unit_id'], $inv_detail['tax_rate'],  $inv_detail['total_money'], $inv_detail['discount_percent'], $inv_detail['discount_money'], $inv_detail['total'], $inv_detail['into_money'], $inv_detail['tax'], $inv_detail['tax_value'], $inv_detail['id'], true, $currency_rate, $to_currency);
                 }
-            }else{
+            } else {
                 $item_name = $data['pur_invoice']->invoice_number;
                 $description = $data['pur_invoice']->adminnote;
                 $quantity = 1;
                 $taxname = '';
                 $tax_rate = 0;
                 $tax = get_tax_rate_item($id);
-                if($tax && !is_array($tax)){
+                if ($tax && !is_array($tax)) {
                     $taxname = $tax->name;
                     $tax_rate = $tax->taxrate;
                 }
@@ -1366,16 +1389,16 @@ class Vendors_portal extends App_Controller
                 $total = $data['pur_invoice']->subtotal + $data['pur_invoice']->tax;
                 $index = 0;
 
-                $pur_invoice_row_template .= $this->purchase_model->create_purchase_invoice_row_template('newitems[' . $index . ']',  $item_name, $description, $quantity, '', $data['pur_invoice']->subtotal, $taxname, null, null, $tax_rate,  $data['pur_invoice']->total, 0, 0, $total, $data['pur_invoice']->subtotal , $data['pur_invoice']->tax_rate, $data['pur_invoice']->tax, '', true);
+                $pur_invoice_row_template .= $this->purchase_model->create_purchase_invoice_row_template('newitems[' . $index . ']',  $item_name, $description, $quantity, '', $data['pur_invoice']->subtotal, $taxname, null, null, $tax_rate,  $data['pur_invoice']->total, 0, 0, $total, $data['pur_invoice']->subtotal, $data['pur_invoice']->tax_rate, $data['pur_invoice']->tax, '', true);
             }
         }
 
         $data['pur_invoice_row_template'] = $pur_invoice_row_template;
 
         $data['ajaxItems'] = false;
-        if(total_rows(db_prefix().'pur_vendor_items', ['vendor' => get_vendor_user_id()]) <= ajax_on_total_items()){ 
+        if (total_rows(db_prefix() . 'pur_vendor_items', ['vendor' => get_vendor_user_id()]) <= ajax_on_total_items()) {
             $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased', false, get_vendor_user_id());
-        }else {
+        } else {
             $data['items']     = [];
             $data['ajaxItems'] = true;
         }
@@ -1394,10 +1417,11 @@ class Vendors_portal extends App_Controller
      *
      * @param      <type>  $ct    
      */
-    public function contract_change($ct){
+    public function contract_change($ct)
+    {
         $contract = $this->purchase_model->get_contract($ct);
         $value = 0;
-        if($contract){
+        if ($contract) {
             $value = $contract->contract_value;
         }
 
@@ -1412,10 +1436,11 @@ class Vendors_portal extends App_Controller
      *
      * @param      <type>  $ct    
      */
-    public function pur_order_change($ct){
+    public function pur_order_change($ct)
+    {
         $pur_order = $this->purchase_model->get_pur_order($ct);
         $pur_order_detail = $this->purchase_model->get_pur_order_detail($ct);
-        
+
         $list_item = $this->purchase_model->create_purchase_order_row_template();
         $discount_percent = 0;
 
@@ -1423,19 +1448,19 @@ class Vendors_portal extends App_Controller
 
         $currency_rate = 1;
         $to_currency = $base_currency->id;
-        if($pur_order->currency != 0 && $pur_order->currency_rate != null){
+        if ($pur_order->currency != 0 && $pur_order->currency_rate != null) {
             $currency_rate = $pur_order->currency_rate;
             $to_currency = $pur_order->currency;
         }
 
-        if(count($pur_order_detail) > 0){
+        if (count($pur_order_detail) > 0) {
             $index = 0;
-            foreach($pur_order_detail as $key => $item){
+            foreach ($pur_order_detail as $key => $item) {
                 $index++;
                 $unit_name = pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
                 $item_name = $item['item_name'];
-                if(strlen($item_name) == 0){
+                if (strlen($item_name) == 0) {
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
@@ -1444,7 +1469,7 @@ class Vendors_portal extends App_Controller
         }
 
         $discount_type = 'after_tax';
-        if($pur_order){
+        if ($pur_order) {
             $discount_percent = $pur_order->discount_percent;
             $discount_type = $pur_order->discount_type;
         }
@@ -1460,16 +1485,17 @@ class Vendors_portal extends App_Controller
         ]);
     }
 
-        /**
+    /**
      * { tax rate change }
      *
      * @param        $tax    The tax
      */
-    public function tax_rate_change($tax){
+    public function tax_rate_change($tax)
+    {
         $this->load->model('taxes_model');
         $tax = $this->taxes_model->get($tax);
         $rate = 0;
-        if($tax){
+        if ($tax) {
             $rate = $tax->taxrate;
         }
 
@@ -1482,15 +1508,16 @@ class Vendors_portal extends App_Controller
      * { pur invoice form }
      * @return redirect
      */
-    public function pur_invoice_form(){
+    public function pur_invoice_form()
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
         $vendor_id = get_vendor_user_id();
 
-        if($this->input->post()){
+        if ($this->input->post()) {
             $data = $this->input->post();
-            if($data['id'] == ''){
+            if ($data['id'] == '') {
                 unset($data['id']);
                 $data['add_from'] = get_vendor_contact_user_id();
                 $data['add_from_type'] = 'vendor';
@@ -1499,19 +1526,18 @@ class Vendors_portal extends App_Controller
                 if ($mess) {
                     handle_pur_invoice_file($mess);
                     set_alert('success', _l('added_successfully'));
-
                 } else {
                     set_alert('warning', _l('add_purchase_invoice_fail'));
                 }
                 redirect(site_url('purchase/vendors_portal/invoices'));
-            }else{
+            } else {
                 $id = $data['id'];
                 unset($data['id']);
                 handle_pur_invoice_file($id);
                 $success = $this->purchase_model->update_pur_invoice($id, $data);
-                if($success){
-                    set_alert('success', _l('updated_successfully') );
-                }else{
+                if ($success) {
+                    set_alert('success', _l('updated_successfully'));
+                } else {
                     set_alert('warning', _l('update_purchase_invoice_fail'));
                 }
                 redirect(site_url('purchase/vendors_portal/invoices'));
@@ -1524,7 +1550,8 @@ class Vendors_portal extends App_Controller
      *
      * @param      <type>  $id     The identifier
      */
-    public function delete_invoice($id){
+    public function delete_invoice($id)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1532,7 +1559,7 @@ class Vendors_portal extends App_Controller
 
         $invoice = $this->purchase_model->get_pur_invoice($id);
 
-        if($invoice->vendor != $vendor_id){
+        if ($invoice->vendor != $vendor_id) {
             redirect(site_url('purchase/vendors_portal/invoices'));
         }
 
@@ -1555,14 +1582,15 @@ class Vendors_portal extends App_Controller
      *
      * @param        $pur_order  The pur order
      */
-    public function confirm_order($pur_order){
+    public function confirm_order($pur_order)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $success = $this->purchase_model->confirm_order($pur_order);
 
-        echo json_encode(['success' => $success ]);
+        echo json_encode(['success' => $success]);
     }
 
     /**
@@ -1571,14 +1599,15 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $pur_order  The pur order
      * @param      <type>  $status     The status
      */
-    public function update_delivery_status($pur_order, $status){
+    public function update_delivery_status($pur_order, $status)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $success = $this->purchase_model->change_delivery_status($status, $pur_order);
 
-        echo json_encode(['success' => $success ]);
+        echo json_encode(['success' => $success]);
     }
 
 
@@ -1588,27 +1617,29 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $pur_order  The pur order
      * @param      <type>  $status     The status
      */
-    public function update_delivery_date($pur_order){
+    public function update_delivery_date($pur_order)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
         $success = false;
         $date = $this->input->post('date');
         $this->db->where('id', $pur_order);
-        $this->db->update(db_prefix().'pur_orders', ['delivery_date'=> to_sql_date($date)]);
-        if($this->db->affected_rows() > 0){
+        $this->db->update(db_prefix() . 'pur_orders', ['delivery_date' => to_sql_date($date)]);
+        if ($this->db->affected_rows() > 0) {
             $success = true;
         }
 
 
-        echo json_encode(['success' => $success ]);
+        echo json_encode(['success' => $success]);
     }
 
     /**
      * { update delivery date on list }
      * @return redirect
      */
-    public function update_delivery_date_on_list(){
+    public function update_delivery_date_on_list()
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1617,13 +1648,13 @@ class Vendors_portal extends App_Controller
 
         $success = false;
         $this->db->where('id', $data['order_id']);
-        $this->db->update(db_prefix().'pur_orders', ['delivery_date'=> to_sql_date($data['delivery_date'])]);
-        if($this->db->affected_rows() > 0){
+        $this->db->update(db_prefix() . 'pur_orders', ['delivery_date' => to_sql_date($data['delivery_date'])]);
+        if ($this->db->affected_rows() > 0) {
             $success = true;
         }
 
 
-        if($success == true){
+        if ($success == true) {
             set_alert('success', _l('update_delivery_date_successfully'));
         }
 
@@ -1638,16 +1669,16 @@ class Vendors_portal extends App_Controller
     public function upload_files($pur_order)
     {
         $success = false;
-        
+
         $success = handle_vendor_po_attachments_upload(get_vendor_user_id(), true, $pur_order);
-        
+
 
         if ($success) {
-            
+
             set_alert('success', _l('uploaded_successfully'));
         }
 
-        redirect(site_url('purchase/vendors_portal/pur_order/'.$pur_order.'?tab=attachment'));
+        redirect(site_url('purchase/vendors_portal/pur_order/' . $pur_order . '?tab=attachment'));
     }
 
     /**
@@ -1658,16 +1689,16 @@ class Vendors_portal extends App_Controller
     public function upload_estimate_files($pur_estimate)
     {
         $success = false;
-        
+
         $success = handle_vendor_estimate_attachments_upload(get_vendor_user_id(), true, $pur_estimate);
-        
+
 
         if ($success) {
-            
+
             set_alert('success', _l('uploaded_successfully'));
         }
 
-        redirect(site_url('purchase/vendors_portal/view_quotation/'.$pur_estimate.'?tab=attachment'));
+        redirect(site_url('purchase/vendors_portal/view_quotation/' . $pur_estimate . '?tab=attachment'));
     }
 
     /**
@@ -1676,24 +1707,25 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $id         The identifier
      * @param      string  $pur_order  The pur order
      */
-    public function delete_po_file($id, $pur_order){
+    public function delete_po_file($id, $pur_order)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $this->db->where('id', $id);
-        $file = $this->db->get(db_prefix().'files')->row();
+        $file = $this->db->get(db_prefix() . 'files')->row();
 
         $contact_id = get_vendor_contact_user_id();
 
-        if($file->contact_id != $contact_id){
+        if ($file->contact_id != $contact_id) {
             set_alert('warning', _l('file_not_found'));
-            redirect(site_url('purchase/vendors_portal/pur_order/'.$pur_order.'?tab=attachment'));
+            redirect(site_url('purchase/vendors_portal/pur_order/' . $pur_order . '?tab=attachment'));
         }
 
         $this->purchase_model->delete_purorder_attachment($id);
 
-        redirect(site_url('purchase/vendors_portal/pur_order/'.$pur_order.'?tab=attachment'));
+        redirect(site_url('purchase/vendors_portal/pur_order/' . $pur_order . '?tab=attachment'));
     }
 
     /**
@@ -1702,24 +1734,25 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $id         The identifier
      * @param      string  $pur_order  The pur order
      */
-    public function delete_estimate_file($id, $pur_estimate){
+    public function delete_estimate_file($id, $pur_estimate)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $this->db->where('id', $id);
-        $file = $this->db->get(db_prefix().'files')->row();
+        $file = $this->db->get(db_prefix() . 'files')->row();
 
         $contact_id = get_vendor_contact_user_id();
 
-        if($file->contact_id != $contact_id){
+        if ($file->contact_id != $contact_id) {
             set_alert('warning', _l('file_not_found'));
-            redirect(site_url('purchase/vendors_portal/view_quotation/'.$pur_estimate.'?tab=attachment'));
+            redirect(site_url('purchase/vendors_portal/view_quotation/' . $pur_estimate . '?tab=attachment'));
         }
 
         $this->purchase_model->delete_estimate_attachment($id);
 
-        redirect(site_url('purchase/vendors_portal/view_quotation/'.$pur_estimate.'?tab=attachment'));
+        redirect(site_url('purchase/vendors_portal/view_quotation/' . $pur_estimate . '?tab=attachment'));
     }
 
     /**
@@ -1728,26 +1761,28 @@ class Vendors_portal extends App_Controller
      * @param      <type>  $id         The identifier
      * @param      string  $pur_order  The pur order
      */
-    public function delete_vendor_item_file($id, $item_id){
+    public function delete_vendor_item_file($id, $item_id)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $this->db->where('id', $id);
-        $file = $this->db->get(db_prefix().'files')->row();
+        $file = $this->db->get(db_prefix() . 'files')->row();
 
         $contact_id = get_vendor_contact_user_id();
 
 
         $this->purchase_model->delete_vendor_item_file($id);
 
-        redirect(site_url('purchase/vendors_portal/add_update_items/'.$item_id));
+        redirect(site_url('purchase/vendors_portal/add_update_items/' . $item_id));
     }
 
     /**
      * { order returns }
      */
-    public function order_returns(){
+    public function order_returns()
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1768,7 +1803,8 @@ class Vendors_portal extends App_Controller
      *
      * @param        $id     The identifier
      */
-    public function order_return($id){
+    public function order_return($id)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
@@ -1786,19 +1822,20 @@ class Vendors_portal extends App_Controller
     /**
      * { setting language }
      */
-    public function setting_language(){
+    public function setting_language()
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $vendor_id = get_vendor_user_id();
 
-        if($this->input->post()){
+        if ($this->input->post()) {
             $default_language = $this->input->post('default_language');
             $this->db->where('userid', $vendor_id);
-            $this->db->update(db_prefix().'pur_vendor', ['default_language' => $default_language]);
+            $this->db->update(db_prefix() . 'pur_vendor', ['default_language' => $default_language]);
 
-            if($this->db->affected_rows() > 0){
+            if ($this->db->affected_rows() > 0) {
                 set_alert('success', _l('change_language_successfully'));
                 redirect(site_url('purchase/vendors_portal/setting_language'));
             }
@@ -1821,16 +1858,16 @@ class Vendors_portal extends App_Controller
     public function upload_pr_files($pur_request, $hash)
     {
         $success = false;
-        
+
         $success = handle_vendor_pr_attachments_upload(get_vendor_user_id(), true, $pur_request);
-        
+
 
         if ($success) {
-            
+
             set_alert('success', _l('uploaded_successfully'));
         }
 
-        redirect(site_url('purchase/vendors_portal/pur_request/'.$pur_request.'/'.$hash.'?tab=attachment'));
+        redirect(site_url('purchase/vendors_portal/pur_request/' . $pur_request . '/' . $hash . '?tab=attachment'));
     }
 
     /**
@@ -1839,30 +1876,32 @@ class Vendors_portal extends App_Controller
      * @param        $id         The identifier
      * @param      string  $pur_order  The pur order
      */
-    public function delete_pr_file($id, $pur_request, $hash){
+    public function delete_pr_file($id, $pur_request, $hash)
+    {
         if (!is_vendor_logged_in()) {
             redirect(site_url('purchase/authentication_vendor/login'));
         }
 
         $this->db->where('id', $id);
-        $file = $this->db->get(db_prefix().'files')->row();
+        $file = $this->db->get(db_prefix() . 'files')->row();
 
         $contact_id = get_vendor_contact_user_id();
 
-        if($file->contact_id != $contact_id){
+        if ($file->contact_id != $contact_id) {
             set_alert('warning', _l('file_not_found'));
-            redirect(site_url('purchase/vendors_portal/pur_request/'.$pur_request.'/'.$hash.'?tab=attachment'));
+            redirect(site_url('purchase/vendors_portal/pur_request/' . $pur_request . '/' . $hash . '?tab=attachment'));
         }
 
         $this->purchase_model->delete_purrequest_attachment($id);
 
-        redirect(site_url('purchase/vendors_portal/pur_request/'.$pur_request.'/'.$hash.'?tab=attachment'));
+        redirect(site_url('purchase/vendors_portal/pur_request/' . $pur_request . '/' . $hash . '?tab=attachment'));
     }
 
     /**
      * Gets the purchase order row template.
      */
-    public function get_purchase_invoice_row_template(){
+    public function get_purchase_invoice_row_template()
+    {
         $name = $this->input->post('name');
         $item_name = $this->input->post('item_name');
         $item_description = $this->input->post('item_description');
@@ -1878,7 +1917,7 @@ class Vendors_portal extends App_Controller
         $currency_rate = $this->input->post('currency_rate');
         $to_currency = $this->input->post('to_currency');
 
-        echo $this->purchase_model->create_purchase_invoice_row_template($name, $item_name, $item_description, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key,  false, $currency_rate, $to_currency );
+        echo $this->purchase_model->create_purchase_invoice_row_template($name, $item_name, $item_description, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key,  false, $currency_rate, $to_currency);
     }
 
     /**
@@ -1895,15 +1934,14 @@ class Vendors_portal extends App_Controller
 
         $success = false;
         $this->db->where('id', $order_id);
-        $this->db->update(db_prefix().'wh_order_returns', ['status' => $status]);
-        if($this->db->affected_rows() > 0){
+        $this->db->update(db_prefix() . 'wh_order_returns', ['status' => $status]);
+        if ($this->db->affected_rows() > 0) {
             $success = true;
         }
 
         echo json_encode([
             'success' => $success,
         ]);
-
     }
 
     /**
@@ -1911,18 +1949,19 @@ class Vendors_portal extends App_Controller
      *
      * @param        $currency_id  The currency identifier
      */
-    public function get_currency_rate($currency_id){
+    public function get_currency_rate($currency_id)
+    {
         $base_currency = get_base_currency();
 
         $pr_currency = pur_get_currency_by_id($currency_id);
 
         $currency_rate = 1;
-        $convert_str = ' ('.$base_currency->name.' => '.$base_currency->name.')'; 
-        $currency_name = '('.$base_currency->name.')';
-        if($base_currency->id != $pr_currency->id){
+        $convert_str = ' (' . $base_currency->name . ' => ' . $base_currency->name . ')';
+        $currency_name = '(' . $base_currency->name . ')';
+        if ($base_currency->id != $pr_currency->id) {
             $currency_rate = pur_get_currency_rate($base_currency->name, $pr_currency->name);
-            $convert_str = ' ('.$base_currency->name.' => '.$pr_currency->name.')'; 
-            $currency_name = '('.$pr_currency->name.')';
+            $convert_str = ' (' . $base_currency->name . ' => ' . $pr_currency->name . ')';
+            $currency_name = '(' . $pr_currency->name . ')';
         }
 
         echo json_encode([
@@ -1930,6 +1969,5 @@ class Vendors_portal extends App_Controller
             'convert_str' => $convert_str,
             'currency_name' => $currency_name,
         ]);
-
     }
 }

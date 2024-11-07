@@ -509,24 +509,34 @@
                 <div role="tabpanel" class="tab-pane ptop10 " id="compare_quotes">
                   <?php if (total_rows(db_prefix() . 'pur_estimates', ['pur_request' => $pur_request->id]) > 0) { ?>
 
-                    <div class="btn-group pull-right mright5" data-toggle="tooltip" title="<?php echo _l('compare_quotation_tooltip'); ?>">
+                    <!-- <div class="btn-group pull-right mright5" data-toggle="tooltip" title="<?php echo _l('compare_quotation_tooltip'); ?>">
                       <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
                       <ul class="dropdown-menu dropdown-menu-right">
                         <li class="hidden-xs"><a href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
                         <li class="hidden-xs"><a href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
                         <li><a href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id); ?>"><?php echo _l('download'); ?></a></li>
                       </ul>
-                    </div>
+                    </div> -->
 
                     <div class="col-md-6">
                       <table class="table border table-striped martop0">
                         <tbody>
                           <tr class="project-overview">
-                            <td class="bold" width="30%"><?php echo _l('pur_rq_code'); ?></td>
-                            <td><?php echo pur_html_entity_decode($pur_request->pur_rq_code); ?></td>
+                            <td class="bold" width="30%">PR Code</td>
+                            <td><?php echo pur_html_entity_decode($pur_request->pur_rq_code); ?><div class="btn-group  mright5" style="margin-left: 10px;"  data-toggle="tooltip" title="" data-original-title="Preview/Download compare quotation pdf">
+                                <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="fa fa-file-pdf"></i><span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                  <li class="hidden-xs"><a href="http://localhost/nirmaanbetacrm2/admin/purchase/compare_quotation_pdf/6?output_type=I">View PDF</a></li>
+                                  <li class="hidden-xs"><a href="http://localhost/nirmaanbetacrm2/admin/purchase/compare_quotation_pdf/6?output_type=I" target="_blank">View PDF in New Tab</a></li>
+                                  <li><a href="http://localhost/nirmaanbetacrm2/admin/purchase/compare_quotation_pdf/6">Download</a></li>
+                                </ul>
+                              </div>
+                            </td>
                           </tr>
                           <tr class="project-overview">
-                            <td class="bold"><?php echo _l('pur_rq_name'); ?></td>
+                            <td class="bold">PR Name</td>
                             <td><?php echo _l($pur_request->pur_rq_name); ?></td>
                           </tr>
                           <tr class="project-overview">
@@ -549,6 +559,29 @@
                     <div class="col-md-6">
                       <table class="table border table-striped martop0">
                         <tbody>
+
+                          <tr class="project-overview">
+                            <td class=""><span class="bold"><?= _l('group_pur') ?> :</span></td>
+                            <td>
+                              asdmamdad
+
+                            </td>
+                          </tr>
+                          <tr class="project-overview">
+                            <td class=""><span class="bold"><?= _l('sub_groups_pur'); ?> :</span></td>
+                            <td>
+                              asdmamdad
+
+                            </td>
+                          </tr>
+                          <tr class="project-overview">
+                            <td class=""><span class="bold"><?= _l('area_pur'); ?> :</span></td>
+                            <td>
+                              asdmamdad
+
+                            </td>
+                          </tr>
+
                           <tr class="project-overview">
                             <td colspan="3" class="bold text-center" width="30%"><?php echo _l('vendors'); ?></td>
                           </tr>
@@ -562,6 +595,7 @@
                               <td class=""><span class="bold"><?php echo _l('phonenumber') . ': '; ?></span><span class=""><?php echo pur_html_entity_decode($vendor->phonenumber); ?></span></td>
                             </tr>
                           <?php } ?>
+
                         </tbody>
                       </table>
                     </div>

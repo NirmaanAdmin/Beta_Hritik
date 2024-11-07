@@ -7,11 +7,9 @@ var table_pur_request = $('.table-table_pur_request');
     };
 
 (function($) {
-	"use strict"; 
+	"use strict";
 
-	
-
-	initDataTable('.table-table_pur_request', admin_url+'purchase/table_pur_request',[0], [0], Params, [3, 'desc']);
+	initDataTable('.table-table_pur_request', admin_url+'purchase/table_pur_request',[0], [0], Params, [6, 'desc']);
 
 	$.each(Params, function(i, obj) {
         $('select' + obj).on('change', function() {  

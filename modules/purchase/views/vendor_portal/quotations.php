@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<?php  defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="row">
 	
 	<div class="col-md-12">
@@ -12,7 +12,7 @@
 		            <thead>
 		               <tr>
 		                  <th ><?php echo _l('quotations'); ?></th>
-		                  <th ><?php echo _l('estimate_dt_table_heading_amount'); ?></th>
+		                  <th ><?php echo _l('estimate_dt_table_heading_amount'); ?></th> 
 		                  <th ><?php echo _l('estimates_total_tax'); ?></th>
 		                  <th ><?php echo _l('purchase_request'); ?></th>
 		                  <th ><?php echo _l('estimate_dt_table_heading_date'); ?></th>

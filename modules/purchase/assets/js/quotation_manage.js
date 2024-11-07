@@ -6,7 +6,7 @@ var hidden_columns = [2,4,5,6];
         "vendor": "[name='vendor[]']",
     };
     var table_estimates = $('.table-pur_estimates');
-    initDataTable(table_estimates, admin_url + 'purchase/table_estimates',[0], [0], Params);
+    initDataTable(table_estimates, admin_url + 'purchase/table_estimates',[0], [0], Params,[9, 'desc']);
     init_pur_estimate();
 
      $.each(Params, function(i, obj) {

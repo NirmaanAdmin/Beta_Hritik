@@ -10,7 +10,9 @@ $aColumns = [
     'YEAR(date) as year',
     'vendor',
     'pur_request',
-    
+    'group_name',
+    'sub_group_name',
+    'area_name',
     'date',
     'expirydate',
 
@@ -21,6 +23,9 @@ $join = [
     'LEFT JOIN ' . db_prefix() . 'currencies ON ' . db_prefix() . 'currencies.id = ' . db_prefix() . 'pur_estimates.currency',
     'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'pur_estimates.vendor',
     'LEFT JOIN ' . db_prefix() . 'pur_request ON ' . db_prefix() . 'pur_request.id = ' . db_prefix() . 'pur_estimates.pur_request',
+    'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = ' . db_prefix() . 'pur_estimates.group_pur',
+    'LEFT JOIN ' . db_prefix() . 'wh_sub_group ON ' . db_prefix() . 'wh_sub_group.id = ' . db_prefix() . 'pur_estimates.sub_groups_pur',
+    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_estimates.area_pur',
 ];
 
 $sIndexColumn = 'id';
@@ -95,6 +100,10 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
 $output  = $result['output'];
 $rResult = $result['rResult'];
 
+// echo '<pre>';
+// print_r($rResult);
+// die;
+
 foreach ($rResult as $aRow) {
     $row = [];
 
@@ -146,16 +155,17 @@ foreach ($rResult as $aRow) {
 
     $row[] = '<a href="' . admin_url('purchase/view_pur_request/' . $aRow['pur_request']) . '" onclick="init_pur_estimate(' . $aRow['id'] . '); return false;">' . $aRow['pur_rq_code'] .'</a>' ;
 
-   
+    $row[] = $aRow['group_name']; ;
+
+    $row[] = $aRow['sub_group_name'];
+    
+    $row[] = $aRow['area_name'];
 
     $row[] = _d($aRow['date']);
 
     $row[] = _d($aRow['expirydate']);
 
-
-
     $row[] = get_status_approve($aRow[db_prefix() . 'pur_estimates.status']);
-
 
     $row['DT_RowClass'] = 'has-row-options';
 

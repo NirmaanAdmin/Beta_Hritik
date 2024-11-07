@@ -519,6 +519,7 @@ class purchase extends AdminController
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['departments'] = $this->departments_model->get();
         $data['vendor_contacts'] = $this->purchase_model->get_contacts();
+        
         $this->load->view('purchase_request/manage', $data);
     }
 
@@ -1052,7 +1053,7 @@ class purchase extends AdminController
         $data['tax_data'] = $this->purchase_model->get_html_tax_pur_estimate($id);
         $data['check_approval_setting'] = $this->purchase_model->check_approval_setting($estimate->project, 'pur_quotation', 0);
         $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_quotation', $id);
-         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
         $data['area_pur'] = $this->purchase_model->get_area();
         if ($to_return == false) {
