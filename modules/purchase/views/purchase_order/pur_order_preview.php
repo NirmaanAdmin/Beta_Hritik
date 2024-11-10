@@ -473,7 +473,7 @@
                                     ?></strong><?php if($es['description'] != ''){ ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?></td>
                                     <td align="left"><?php echo $es['description']; ?></td>
                                     <td align="right"  width="12%"><?php echo pur_html_entity_decode($es['quantity']); ?></td>
-                                    <td align="right"><?php echo app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
+                                    <td align="right"><?php echo '₹ '. app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
                                     <td align="right"><?php echo app_format_money($es['into_money'],$base_currency->symbol); ?></td>
                                     <?php if(get_option('show_purchase_tax_column') == 1){ ?>
                                     <td align="right"><?php echo app_format_money(($es['total'] - $es['into_money']),$base_currency->symbol); ?></td>

@@ -3603,28 +3603,28 @@ class Purchase_model extends App_Model
      */
     function get_budget_head($id = '')
     {
-        $this->db->select('group_name');
+        $this->db->select('name');
         $this->db->from(db_prefix() . 'pur_request');
-        $this->db->join(db_prefix() . 'assets_group', db_prefix() . 'pur_request.group_pur = ' . db_prefix() . 'assets_group.group_id', 'left');
+        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_request.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
         $this->db->where(db_prefix() . 'pur_request.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
-            return $query->row()->group_name;  // Return the 'group_name' field
+            return $query->row()->name;  // Return the 'group_name' field
         } else {
             return null;  // Return null if no result is found
         }
     }
     function get_budget_head_estimate($id = '')
     {
-        $this->db->select('group_name');
+        $this->db->select('name');
         $this->db->from(db_prefix() . 'pur_estimates');
-        $this->db->join(db_prefix() . 'assets_group', db_prefix() . 'pur_estimates.group_pur = ' . db_prefix() . 'assets_group.group_id', 'left');
+        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_estimates.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
         $this->db->where(db_prefix() . 'pur_estimates.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
-            return $query->row()->group_name;  // Return the 'group_name' field
+            return $query->row()->name;  // Return the 'group_name' field
         } else {
             return null;  // Return null if no result is found
         }
@@ -3634,7 +3634,7 @@ class Purchase_model extends App_Model
      *
      * This function retrieves the 'group_name' associated with a given purchase order ID.
      * It joins the 'pur_orders' table with the 'assets_group' table to fetch the relevant
-     * group name based on the 'group_pur' field.
+     * group name based on the 'items_group' field.
      *
      * @param int $id The ID of the purchase order.
      *
@@ -3643,14 +3643,14 @@ class Purchase_model extends App_Model
 
     function get_budget_head_po($id = '')
     {
-        $this->db->select('group_name');
+        $this->db->select('name');
         $this->db->from(db_prefix() . 'pur_orders');
-        $this->db->join(db_prefix() . 'assets_group', db_prefix() . 'pur_orders.group_pur = ' . db_prefix() . 'assets_group.group_id', 'left');
+        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_orders.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
         $this->db->where(db_prefix() . 'pur_orders.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
-            return $query->row()->group_name;  // Return the 'group_name' field
+            return $query->row()->name;  // Return the 'group_name' field
         } else {
             return null;  // Return null if no result is found
         }
@@ -4642,11 +4642,12 @@ class Purchase_model extends App_Model
         foreach ($pur_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
+            $unit_name = pur_get_unit_name($row['unit_id']);
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 12%">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 12%">' . $row['quantity'] . '</td>
+            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 12%">' . $row['quantity']  .' ' .$unit_name .'</td>
          
             <td align="right" style="width: 12%">' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
        
@@ -5336,7 +5337,7 @@ class Purchase_model extends App_Model
             if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id)) {
                 // Check if no attachments left, so we can delete the folder also
                 $other_attachments = list_files(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id);
-                if (count($other_attachments) == 0) {
+                if (count($other_attachments) == 0) { 
                     // okey only index.html so we can delete the folder also
                     delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id);
                 }
@@ -14268,6 +14269,7 @@ class Purchase_model extends App_Model
             }
         }
     }
+
 
     public function save_purchase_files($related, $id)
     {
