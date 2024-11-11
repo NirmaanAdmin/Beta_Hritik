@@ -4541,7 +4541,6 @@ class Purchase_model extends App_Model
     public function get_purorder_pdf_html($pur_order_id)
     {
 
-
         $pur_order = $this->get_pur_order($pur_order_id);
         $pur_order_detail = $this->get_pur_order_detail($pur_order_id);
         $company_name = get_option('invoice_company_name');
@@ -4630,10 +4629,10 @@ class Purchase_model extends App_Model
             <th class="thead-dark" align="left" style="width: 25%">' . _l('item_description') . '</th>
             <th class="thead-dark" align="right" style="width: 12%">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 12%">' . _l('quantity') . '</th>
-         
+            <th class="thead-dark" align="right" style="width: 12%">' . _l('tax_percentage') . '</th>
             <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
  
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('discount') . '</th>
+            
             <th class="thead-dark" align="right" style="width: 12%">' . _l('total') . '</th>
           </tr>
           </thead>
@@ -4648,10 +4647,8 @@ class Purchase_model extends App_Model
             <td align="left" style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
             <td align="right" style="width: 12%">' . $row['quantity']  .' ' .$unit_name .'</td>
-         
+            <td align="right" style="width: 12%">' . app_format_money($row['tax_order_rate'], '') . '</td>
             <td align="right" style="width: 12%">' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
-       
-            <td align="right" style="width: 12%">' . app_format_money($row['discount_money'], '') . '</td>
             <td align="right" style="width: 12%">' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
 
@@ -4686,9 +4683,9 @@ class Purchase_model extends App_Model
         }
         $html .= '<tr id="subtotal">
                  <td width="33%"></td>
-                 <td>' . _l('total') . '</td>
+                 <td><strong>' . _l('total') . '</strong></td>
                  <td class="subtotal">
-                    ' . app_format_money($pur_order->total, '') . '
+                    ' .'₹ '. app_format_money($pur_order->total, '') . '
                  </td>
               </tr>';
 
@@ -4713,6 +4710,7 @@ class Purchase_model extends App_Model
         </tbody>
       </table>';
         $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/pur_order_pdf.css') . '"  rel="stylesheet" type="text/css" />';
+        
         return $html;
     }
 

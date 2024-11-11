@@ -701,3 +701,4 @@ $lang['convert_to_po'] = 'Convert to PO';
 $lang['delivery_person'] = 'Delivered by';
 $lang['area'] = 'Area';
 $lang['specification'] = 'Specification';
+$lang['tax_percentage'] = 'Tax %';
