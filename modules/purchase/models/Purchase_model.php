@@ -4627,8 +4627,9 @@ class Purchase_model extends App_Model
           <tr>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
             <th class="thead-dark" align="left" style="width: 25%">' . _l('item_description') . '</th>
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 12%">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 12%">' . _l('unit_price') . '</th>
+            
             <th class="thead-dark" align="right" style="width: 12%">' . _l('tax_percentage') . '</th>
             <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
  
@@ -4645,9 +4646,10 @@ class Purchase_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
             <td align="right" style="width: 12%">' . $row['quantity']  .' ' .$unit_name .'</td>
-            <td align="right" style="width: 12%">' . app_format_money($row['tax_order_rate'], '') . '</td>
+            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
+            
+            <td align="right" style="width: 12%">' . app_format_money($row['tax_rate'], '') . '</td>
             <td align="right" style="width: 12%">' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
             <td align="right" style="width: 12%">' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
