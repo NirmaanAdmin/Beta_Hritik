@@ -4525,9 +4525,11 @@ class Purchase_model extends App_Model
      *
      * @return     <type>  ( purorder pdf )
      */
-    public function purorder_pdf($pur_order)
+    public function purorder_pdf($pur_order, $id)
     {
-        return app_pdf('pur_order', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Pur_order_pdf'), $pur_order);
+        $pur_order_data = $this->get_pur_order($id);
+        $footer_text = $pur_order_data->pur_order_name;
+        return app_pdf('pur_order', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Pur_order_pdf'), $pur_order, $footer_text);
     }
 
 
@@ -4556,7 +4558,7 @@ class Purchase_model extends App_Model
         $ship_to = format_po_ship_to_info($pur_order);
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
-            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" style="max-width: 230px">';
         }
         if (!empty($pur_order->delivery_date)) {
             $delivery_date = '<span style="text-align: right;"><b>' . _l('delivery_date') . ':</b> ' . date('d-m-Y', strtotime($pur_order->delivery_date)) . '</span><br />';
@@ -4621,7 +4623,7 @@ class Purchase_model extends App_Model
 
       <br><br>
       ';
-
+      $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
@@ -4649,9 +4651,9 @@ class Purchase_model extends App_Model
             <td align="right" style="width: 12%">' . $row['quantity']  .' ' .$unit_name .'</td>
             <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
             
-            <td align="right" style="width: 12%">' . app_format_money($row['tax_rate'], '') . '</td>
-            <td align="right" style="width: 12%">' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
-            <td align="right" style="width: 12%">' . app_format_money($row['total_money'], '') . '</td>
+            <td align="right" style="width: 10%">' . '₹ '. app_format_money($row['tax_rate'], '') . '</td>
+            <td align="right" style="width: 13%">' . '₹ '. app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            <td align="right" style="width: 13%">' . '₹ '. app_format_money($row['total_money'], '') . '</td>
           </tr>';
 
             $t_mn += $row['total_money'];
@@ -4696,8 +4698,9 @@ class Purchase_model extends App_Model
         $html .= '<div style="page-break-before:always">&nbsp;</div>';
 
         $html .= '<div class="col-md-12 mtop15">
-            <p class="bold"><b>' . _l('estimate_add_edit_vendor_note') . ':</b> ' . nl2br($pur_order->vendornote) . '</p>
-            <p class="bold"><b>' . _l('terms_and_conditions') . ':</b> ' . nl2br($pur_order->terms) . '</p>
+            <p class="bold"><b class="h4_style">' . _l('estimate_add_edit_vendor_note') . ':</b> ' . nl2br($pur_order->vendornote) . '</p>';
+        $html .= '<div style="page-break-before:always">&nbsp;</div>';
+        $html .= '<p class="bold"><b class="h4_style">' . _l('terms_and_conditions') . ':</b> ' . nl2br($pur_order->terms) . '</p>
             </div>';
         $html .= '<br>
       <br>
