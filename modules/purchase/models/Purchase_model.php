@@ -4626,7 +4626,7 @@ class Purchase_model extends App_Model
       ';
       $html .= '<div class="col-md-12 ">
       <p class="bold"><b class="h4_style">' . _l('estimate_add_edit_order_summary') . ':</b> ' . $pur_order->order_summary . '</p>';
- 
+      $html .= '<div style="page-break-before:always">&nbsp;</div>';
       $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
@@ -10909,6 +10909,13 @@ class Purchase_model extends App_Model
 
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
 
+        $units_list = $this->get_units();
+
+        $row .= '<td class="quantities">' .
+        render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
+        // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+        render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
+        '</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
 
         if ($unit_price != '') {
@@ -10921,10 +10928,7 @@ class Purchase_model extends App_Model
             $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
         }
 
-        $row .= '<td class="quantities">' .
-            render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
-            render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
-            '</td>';
+        
 
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 

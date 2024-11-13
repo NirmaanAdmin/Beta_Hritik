@@ -669,7 +669,7 @@ AHMEDABAD - 380 054, INDIA<br><br>
 <strong>Subject:</strong> Supply and Installation of “Mathios Stone and Tiles” for Proposed BGJ Guest House Project<br><br>
 
 Dear Sir/Madam,<br>
-This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- Nineteen lakh Seven thousand Seven hundred and sixteen only) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
 
 <strong>Currency:</strong> INR<br><br>
 
@@ -755,7 +755,7 @@ AHMEDABAD - 380 054, INDIA<br><br>
 <strong>Subject:</strong> Supply and Installation of “Mathios Stone and Tiles” for Proposed BGJ Guest House Project<br><br>
 
 Dear Sir/Madam,<br>
-This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- Nineteen lakh Seven thousand Seven hundred and sixteen only) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
 
 <strong>Currency:</strong> INR<br><br>
 
