@@ -4558,7 +4558,7 @@ class Purchase_model extends App_Model
         $ship_to = format_po_ship_to_info($pur_order);
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
-            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" style="max-width: 230px">';
+            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="130" height="100">';
         }
         if (!empty($pur_order->delivery_date)) {
             $delivery_date = '<span style="text-align: right;"><b>' . _l('delivery_date') . ':</b> ' . date('d-m-Y', strtotime($pur_order->delivery_date)) . '</span><br />';
@@ -4582,32 +4582,29 @@ class Purchase_model extends App_Model
         if (!empty($ship_to)) {
             $ship_to_detail = '<span style="text-align: right;">' . $ship_to . '</span><br /><br />';
         }
-
-
         $html = '<table class="table">
-        <tbody>
-          <tr>
-            <td>
-                ' . $logo . '
-                ' . format_organization_info() . '
-            </td>
-            <td style="position: absolute; float: right;">
-                <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('purchase_order')) . '</b></span><br />
-                <span style="text-align: right;">' . $pur_order->pur_order_number . ' - ' . $pur_order->pur_order_name . '</span><br /><br />
-                <span style="text-align: right;">' . format_pdf_vendor_info($pur_order->vendor) . '</span><br />
-                
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <tbody>
+            <tr>
+                <td>
+                    ' . $logo . '
+                </td>
+                <td style="position: absolute; float: right;">
+                    <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('purchase_order')) . '</b></span><br />
+                    <span style="text-align: right;">' . $pur_order->pur_order_number . ' - ' . $pur_order->pur_order_name . '</span><br /><br />                   
+                </td>
+            </tr>
+            </tbody>
+        </table>';
 
-      <table class="table">
+        $html .= '<table class="table">
         <tbody>
           <tr>
             <td>
-                ' . $project_detail . '
+                ' . format_organization_info() . '
+                 ' . $project_detail . '
             </td>
             <td style="position: absolute; float: right;">
+                <span style="text-align: right;">' . format_pdf_vendor_info($pur_order->vendor) . '</span><br />
                 ' . $ship_to_detail . '
                 ' . $delivery_date . '
                 ' . $delivery_person . '
@@ -4616,10 +4613,14 @@ class Purchase_model extends App_Model
                 <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />                
+            
             </td>
           </tr>
         </tbody>
       </table>
+
+      
+      
 
       <br><br>
       ';
@@ -4632,11 +4633,11 @@ class Purchase_model extends App_Model
             <th class="thead-dark" align="right" style="width: 12%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 12%">' . _l('unit_price') . '</th>
             
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('tax_percentage') . '</th>
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
+            <th class="thead-dark" align="right" style="width: 13%">' . _l('tax') . '</th>
  
             
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('total') . '</th>
+            <th class="thead-dark" align="right" style="width: 13%">' . _l('total') . '</th>
           </tr>
           </thead>
           <tbody>';
@@ -4651,7 +4652,7 @@ class Purchase_model extends App_Model
             <td align="right" style="width: 12%">' . $row['quantity']  .' ' .$unit_name .'</td>
             <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
             
-            <td align="right" style="width: 10%">' . '₹ '. app_format_money($row['tax_rate'], '') . '</td>
+            <td align="right" style="width: 10%">'. app_format_money($row['tax_rate'], '') . '</td>
             <td align="right" style="width: 13%">' . '₹ '. app_format_money($row['total'] - $row['into_money'], '') . '</td>
             <td align="right" style="width: 13%">' . '₹ '. app_format_money($row['total_money'], '') . '</td>
           </tr>';
