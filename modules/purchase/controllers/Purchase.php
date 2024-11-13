@@ -1530,6 +1530,7 @@ class purchase extends AdminController
 
             $pur_order_data['terms'] = $this->input->post('terms', false);
             $pur_order_data['vendornote'] = $this->input->post('vendornote', false);
+            $pur_order_data['order_summary'] = $this->input->post('order_summary', false);
 
             if ($id == '') {
                 if (!has_permission('purchase_orders', '', 'create')) {
