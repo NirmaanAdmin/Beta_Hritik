@@ -4625,7 +4625,7 @@ class Purchase_model extends App_Model
       <br><br>
       ';
       $html .= '<div class="col-md-12 ">
-      <p class="bold"><b class="h4_style">' . _l('estimate_add_edit_order_summary') . ':</b> ' . nl2br($pur_order->order_summary) . '</p>';
+      <p class="bold"><b class="h4_style">' . _l('estimate_add_edit_order_summary') . ':</b> ' . $pur_order->order_summary . '</p>';
  
       $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">

@@ -538,7 +538,12 @@
                            </tbody>
                         </table>
                      </div>   
-
+                     <?php if($estimate->order_summary != ''){ ?>
+                     <div class="col-md-12 mtop15">
+                        <p class="bold text-muted"><?php echo _l('order_summary'); ?></p>
+                        <p><?php echo nl2br($estimate->order_summary); ?></p>
+                     </div>
+                     <?php } ?>
                      <?php if($estimate->vendornote != ''){ ?>
                      <div class="col-md-12 mtop15">
                         <p class="bold text-muted"><?php echo _l('estimate_note'); ?></p>
