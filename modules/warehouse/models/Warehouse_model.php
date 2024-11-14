@@ -1121,7 +1121,24 @@ class Warehouse_model extends App_Model {
 		return $goods_code;
 
 	}
-
+	public function save_invetory_files($related, $id)
+    {
+        $uploadedFiles = handle_invetory_attachments_array($related, $id);
+        if ($uploadedFiles && is_array($uploadedFiles)) {
+            foreach ($uploadedFiles as $file) {
+                $data = array();
+                $data['dateadded'] = date('Y-m-d H:i:s');
+                $data['rel_type'] = $related;
+                $data['rel_id'] = $id;
+                $data['staffid'] = get_staff_user_id();
+                $data['attachment_key'] = app_generate_hash();
+                $data['file_name'] = $file['file_name'];
+                $data['filetype']  = $file['filetype'];
+                $this->db->insert(db_prefix() . 'invetory_files', $data);
+            }
+        }
+        return true;
+    }
 	/**
 	 * add goods
 	 * @param array $data
@@ -1232,7 +1249,7 @@ class Warehouse_model extends App_Model {
 
 		$this->db->insert(db_prefix() . 'goods_receipt', $data);
 		$insert_id = $this->db->insert_id();
-
+		$this->save_invetory_files('goods_receipt', $insert_id);
 		/*insert detail*/
 		if ($insert_id) {
 			foreach ($inventory_receipts as $inventory_receipt) {
@@ -3456,6 +3473,7 @@ class Warehouse_model extends App_Model {
 		$data['delivery_status'] = null;
 		$this->db->insert(db_prefix() . 'goods_delivery', $data);
 		$insert_id = $this->db->insert_id();
+		$this->save_invetory_files('goods_delivery', $insert_id);
 		/*update save note*/
 		if (isset($insert_id)) {
 			foreach ($goods_deliveries as $goods_delivery) {
@@ -6289,6 +6307,7 @@ class Warehouse_model extends App_Model {
 
 		$this->db->insert(db_prefix() . 'wh_loss_adjustment', $data_add);
 		$insert_id = $this->db->insert_id();
+		$this->save_invetory_files('loos_adjustment', $insert_id);
 		if ($insert_id) {
 
 			foreach ($loss_adjustments as $loss_adjustment) {
@@ -8326,6 +8345,14 @@ class Warehouse_model extends App_Model {
     	}
     }
 
+	public function get_inventory_attachments($related, $id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', $related);
+        $this->db->order_by('dateadded', 'desc');
+        $attachments = $this->db->get(db_prefix() . 'purchase_files')->result_array();
+        return $attachments;
+    }
     public function add_goods_receipt_from_purchase_order($data_insert)
     {
     	
@@ -16343,7 +16370,7 @@ class Warehouse_model extends App_Model {
 
 		$this->db->insert(db_prefix() . 'wh_packing_lists', $data);
 		$insert_id = $this->db->insert_id();
-
+		$this->save_invetory_files('packing_list', $insert_id);
 		/*update save note*/
 
 		if (isset($insert_id)) {

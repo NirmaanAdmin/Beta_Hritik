@@ -837,7 +837,7 @@ class warehouse extends AdminController {
 			$data['base_currency_id'] = 0;
 		}
 
-		$this->load->view('manage_goods_receipt/purchase', $data);
+		$this->load->view('manage_goods_receipt/purchase', $data); 
 
 	}
 
@@ -6921,7 +6921,7 @@ if(strlen($data['inventory_filter']) > 0){
 	 * packing list TODO
 	 * @return view
 	 */
-	public function packing_list($id ='', $edit_approval = false) {
+	public function packing_list($id ='', $edit_approval = false) { 
 
 		$this->load->model('clients_model');
 		$this->load->model('taxes_model');

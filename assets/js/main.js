@@ -77,8 +77,8 @@ $("body").on("loaded.bs.select change", "select.ajax-search", function (e) {
       .find("button.dropdown-toggle");
     dropdownToggle.after(
       '<span class="pointer ajax-clear-values" onclick="deselect_ajax_search(this); return false;" data-id="' +
-        id +
-        '"></span>'
+      id +
+      '"></span>'
     );
   }
 });
@@ -242,10 +242,10 @@ $(function () {
     if ($newTaskRelationBtn.length > 0) {
       new_task(
         admin_url +
-          "tasks/task?rel_id=" +
-          $newTaskRelationBtn.attr("data-rel-id") +
-          "&rel_type=" +
-          $newTaskRelationBtn.attr("data-rel-type")
+        "tasks/task?rel_id=" +
+        $newTaskRelationBtn.attr("data-rel-id") +
+        "&rel_type=" +
+        $newTaskRelationBtn.attr("data-rel-type")
       );
     } else if ($("body").hasClass("project")) {
       new_task(
@@ -868,10 +868,10 @@ $(function () {
       .parents("tr")
       .find(
         "td input[" +
-          (typeof is_own_attr !== typeof undefined && is_own_attr !== false
-            ? "data-can-view"
-            : "data-can-view-own") +
-          "]"
+        (typeof is_own_attr !== typeof undefined && is_own_attr !== false
+          ? "data-can-view"
+          : "data-can-view-own") +
+        "]"
       );
 
     if (view_chk_selector.data("not-applicable") == true) {
@@ -891,10 +891,10 @@ $(function () {
   $("body").on("change", 'input[name="checklist-box"]', function () {
     requestGet(
       admin_url +
-        "tasks/checkbox_action/" +
-        $(this).parents(".checklist").data("checklist-id") +
-        "/" +
-        ($(this).prop("checked") === true ? 1 : 0)
+      "tasks/checkbox_action/" +
+      $(this).parents(".checklist").data("checklist-id") +
+      "/" +
+      ($(this).prop("checked") === true ? 1 : 0)
     );
     recalculate_checklist_items_progress();
     if (
@@ -1040,10 +1040,10 @@ $(function () {
       .data("col-status-id");
     new_task(
       admin_url +
-        "tasks/task?rel_type=project&rel_id=" +
-        project_id +
-        "&milestone_id=" +
-        milestone_id
+      "tasks/task?rel_type=project&rel_id=" +
+      project_id +
+      "&milestone_id=" +
+      milestone_id
     );
     $('body [data-toggle="popover"]').popover("hide");
   });
@@ -1797,9 +1797,9 @@ $(function () {
   $("body").on("click", ".close-reminder-modal", function () {
     $(
       ".reminder-modal-" +
-        $(this).data("rel-type") +
-        "-" +
-        $(this).data("rel-id")
+      $(this).data("rel-type") +
+      "-" +
+      $(this).data("rel-id")
     ).modal("hide");
   });
 
@@ -1869,8 +1869,8 @@ $(function () {
           } else {
             errorContainer.html(
               '<div class="alert alert-warning no-mbot mtop15">' +
-                response.error +
-                "</div>"
+              response.error +
+              "</div>"
             );
           }
         })
@@ -2188,16 +2188,16 @@ $(function () {
       initDataTable(
         table_invoices,
         admin_url +
-          "invoices/table" +
-          ($("body").hasClass("recurring") ? "?recurring=1" : ""),
+        "invoices/table" +
+        ($("body").hasClass("recurring") ? "?recurring=1" : ""),
         "undefined",
         "undefined",
         Sales_table_ServerParams,
         !$("body").hasClass("recurring")
           ? [
-              [3, "desc"],
-              [0, "desc"],
-            ]
+            [3, "desc"],
+            [0, "desc"],
+          ]
           : [table_invoices.find("th.next-recurring-date").index(), "asc"]
       );
     }
@@ -2428,8 +2428,8 @@ $(function () {
     ) {
       $itemsTable.before(
         '<div class="alert alert-warning mbot20" id="items-warning">' +
-          app.lang.item_forgotten_in_preview +
-          '<i class="fa fa-angle-double-down pointer pull-right fa-2x" style="margin-top:-4px;" onclick="add_item_to_table(\'undefined\',\'undefined\',undefined); return false;"></i></div>'
+        app.lang.item_forgotten_in_preview +
+        '<i class="fa fa-angle-double-down pointer pull-right fa-2x" style="margin-top:-4px;" onclick="add_item_to_table(\'undefined\',\'undefined\',undefined); return false;"></i></div>'
       );
 
       $("html,body").animate({
@@ -2441,8 +2441,8 @@ $(function () {
       if ($itemsTable.length && $itemsTable.find(".item").length === 0) {
         $itemsTable.before(
           '<div class="alert alert-warning mbot20" id="items-warning">' +
-            app.lang.no_items_warning +
-            "</div>"
+          app.lang.no_items_warning +
+          "</div>"
         );
         $("html,body").animate({
           scrollTop: $("#items-warning").offset().top,
@@ -2996,8 +2996,8 @@ $(function () {
         new_desc_value,
         desc_selector = $(
           "[data-bill-expense=" +
-            $(this).attr("data-id") +
-            "] .item_long_description"
+          $(this).attr("data-id") +
+          "] .item_long_description"
         );
       current_desc_val = desc_selector.val();
       current_desc_val = current_desc_val.trim();
@@ -3047,8 +3047,8 @@ function _make_task_checklist_items_deletable() {
           .find("a > span.text")
           .after(
             '<small class="checklist-item-template-remove" onclick="remove_checklist_item_template(' +
-              $item.attr("value") +
-              '); event.stopPropagation();"><i class="fa fa-remove"></i></small>'
+            $item.attr("value") +
+            '); event.stopPropagation();"><i class="fa fa-remove"></i></small>'
           );
       }
     });
@@ -3082,12 +3082,12 @@ function _init_tasks_billable_select(tasks, project_id) {
       }
       billable_tasks_area.append(
         '<option value="' +
-          obj.id +
-          '"' +
-          option_data +
-          ">" +
-          obj.name +
-          "</option>"
+        obj.id +
+        '"' +
+        option_data +
+        ">" +
+        obj.name +
+        "</option>"
       );
     });
 
@@ -3108,8 +3108,8 @@ function _init_tasks_billable_select(tasks, project_id) {
 
     tasks_help_wrapper.html(
       '<span class="pointer popover-invoker" data-container=".form-group-select-task_select" data-trigger="click" data-placement="top" data-toggle="popover" data-content="' +
-        help_tooltip +
-        '"><i class="fa-regular fa-circle-question"></i></span>'
+      help_tooltip +
+      '"><i class="fa-regular fa-circle-question"></i></span>'
     );
 
     delay(function () {
@@ -3439,7 +3439,7 @@ function initDataTable(
 
         var tId = table[0].getAttribute('id');
 
-        if(tId && Object.hasOwn(app.dtFilters, tId)) {
+        if (tId && Object.hasOwn(app.dtFilters, tId)) {
           d['filters'] = app.dtFilters[tId]
         }
       },
@@ -3839,14 +3839,14 @@ function logout() {
 // Init the media elfinder for tinymce browser
 function elFinderBrowser(callback, value, meta) {
   tinymce.activeEditor.windowManager.elfinderCallback = callback
-  
+
   tinymce.activeEditor.windowManager.openUrl({
-      url: admin_url + "misc/tinymce_file_browser",
-      title: app.lang.media_files,
-      width: 900,
-      height: 450,
+    url: admin_url + "misc/tinymce_file_browser",
+    title: app.lang.media_files,
+    width: 900,
+    height: 450,
   });
-  
+
   return false;
 }
 
@@ -3871,7 +3871,7 @@ function init_editor(selector, settings) {
     promotion: false,
     selector: selector,
     browser_spellcheck: true,
-    cache_suffix: '?v='+app.version,
+    cache_suffix: '?v=' + app.version,
     height: 250,
     min_height: 250,
     theme: "silver",
@@ -3897,7 +3897,7 @@ function init_editor(selector, settings) {
     ],
     toolbar: "fontfamily fontsize | forecolor backcolor | bold italic | alignleft aligncenter alignright alignjustify | image link | bullist numlist | restoredraft",
     contextmenu: "link image | paste copy",
-    file_picker_callback : elFinderBrowser,
+    file_picker_callback: elFinderBrowser,
     setup: function (ed) {
       // Default fontsize is 12
       ed.on("init", function () {
@@ -3907,7 +3907,7 @@ function init_editor(selector, settings) {
   };
 
   // Add the rtl to the settings if is true
-  if(isRTL == "true") {
+  if (isRTL == "true") {
     _settings.directionality = "rtl"
     _settings.plugins.push('directionality')
   }
@@ -4121,9 +4121,9 @@ function reminderFormHandler(form) {
   } else {
     $(
       ".reminder-modal-" +
-        form.find('[name="rel_type"]').val() +
-        "-" +
-        form.find('[name="rel_id"]').val()
+      form.find('[name="rel_type"]').val() +
+      "-" +
+      form.find('[name="rel_id"]').val()
     ).modal("hide");
   }
 
@@ -4434,8 +4434,8 @@ function init_kan_ban_sort_icon(sort, type) {
     .find("." + type)
     .prepend(
       " <i class='kanban-sort-icon fa fa-sort-amount-" +
-        sort.toLowerCase() +
-        "'></i>"
+      sort.toLowerCase() +
+      "'></i>"
     );
 }
 
@@ -4482,7 +4482,7 @@ function init_newsfeed_form() {
       dragover: function (file) {
         $("#new-post-form").addClass("dropzone-active");
       },
-      complete: function (file) {},
+      complete: function (file) { },
       drop: function (file) {
         $("#new-post-form").removeClass("dropzone-active");
       },
@@ -4692,9 +4692,9 @@ function refresh_post_likes(postid) {
 function refresh_post_comments(postid) {
   $.post(
     admin_url +
-      "newsfeed/init_post_comments/" +
-      postid +
-      "?refresh_post_comments=true"
+    "newsfeed/init_post_comments/" +
+    postid +
+    "?refresh_post_comments=true"
   ).done(function (response) {
     $('[data-comments-postid="' + postid + '"]').html(response);
   });
@@ -5476,9 +5476,9 @@ function leads_bulk_action(event) {
 function init_proposal_editor() {
   init_tinymce_inline_editor({
     saveUsing: save_proposal_content,
-    onSetup: function(editor) {
+    onSetup: function (editor) {
       editor.on("MouseDown ContextMenu", function () {
-        if (!is_mobile() && 
+        if (!is_mobile() &&
           !$("#small-table").hasClass("hide")) {
           small_table_full_view();
         }
@@ -5746,8 +5746,8 @@ function do_task_checklist_items_height(task_checklist_items) {
     if (
       $(this).outerHeight() <
       this.scrollHeight +
-        parseFloat($(this).css("borderTopWidth")) +
-        parseFloat($(this).css("borderBottomWidth"))
+      parseFloat($(this).css("borderTopWidth")) +
+      parseFloat($(this).css("borderBottomWidth"))
     ) {
       $(this).height(0).height(this.scrollHeight);
     }
@@ -5858,10 +5858,10 @@ function save_checklist_item_template(id, field) {
       .find('select option[value=""]')
       .after(
         '<option value="' +
-          response.id +
-          '">' +
-          description.trim() +
-          "</option>"
+        response.id +
+        '">' +
+        description.trim() +
+        "</option>"
       );
     singleChecklistTemplate.removeClass("hide");
     singleChecklistTemplate.find("select").selectpicker("refresh");
@@ -6574,7 +6574,7 @@ function edit_task_comment(id) {
   tinymce.remove("#task_comment_" + id);
   var editorConfig = _simple_editor_config();
   editorConfig.auto_focus = "task_comment_" + id;
-  editorConfig.toolbar_sticky  = true;
+  editorConfig.toolbar_sticky = true;
   init_editor("#task_comment_" + id, editorConfig);
   tinymce.triggerSave();
 }
@@ -6676,7 +6676,7 @@ function edit_task_inline_description(e, id) {
     toolbar: false,
     menubar: false,
     inline: true,
-    cache_suffix: '?v='+app.version,
+    cache_suffix: '?v=' + app.version,
     selector: "#task_view_description",
     theme: "silver",
     directionality: isRTL == "true" ? "rtl" : "",
@@ -6821,6 +6821,15 @@ function init_estimate(id) {
     "estimateid",
     "estimates/get_estimate_data_ajax",
     ".table-estimates"
+  );
+}
+function init_change_order(id) {
+  load_small_table_item(
+    id,
+    "#change_order",
+    "change_order_id",
+    "change_orders/get_change_order_data_ajax",
+    ".table-change-orders"
   );
 }
 
@@ -7019,10 +7028,10 @@ function _set_item_preview_custom_fields_array(custom_fields) {
         $.each(selected, function (i, e) {
           $(
             'tr.main td[data-id="' +
-              cf.id +
-              '"] input[type="checkbox"][value="' +
-              e +
-              '"]'
+            cf.id +
+            '"] input[type="checkbox"][value="' +
+            e +
+            '"]'
           ).prop("checked", true);
         });
       }
@@ -7632,17 +7641,17 @@ function calculate_total() {
   $(".adjustment").html(format_money(adjustment));
   $(".subtotal").html(
     format_money(subtotal) +
-      hidden_input(
-        "subtotal",
-        accounting.toFixed(subtotal, app.options.decimal_places)
-      )
+    hidden_input(
+      "subtotal",
+      accounting.toFixed(subtotal, app.options.decimal_places)
+    )
   );
   $(".total").html(
     format_money(total) +
-      hidden_input(
-        "total",
-        accounting.toFixed(total, app.options.decimal_places)
-      )
+    hidden_input(
+      "total",
+      accounting.toFixed(total, app.options.decimal_places)
+    )
   );
 
   $(document).trigger("sales-total-calculated");
@@ -8623,7 +8632,7 @@ function init_new_task_comment(manual) {
   );
 
   var editorConfig = _simple_editor_config();
-  
+
   editorConfig.toolbar_sticky = true
 
   if (typeof manual == "undefined" || manual === false) {
@@ -8641,7 +8650,7 @@ function init_new_task_comment(manual) {
   editorConfig.setup = function (editor) {
     initializeTinyMceMentions(editor, function () {
       return $.getJSON(
-        admin_url + "tasks/get_staff_names_for_mentions/" + taskid     
+        admin_url + "tasks/get_staff_names_for_mentions/" + taskid
       )
     })
   };
@@ -8650,38 +8659,38 @@ function init_new_task_comment(manual) {
 }
 
 function initializeTinyMceMentions(editor, usersCallback) {
-  if(!Object.hasOwn(editor, 'perfexCommands')) {
+  if (!Object.hasOwn(editor, 'perfexCommands')) {
     editor.perfexCommands = {}
   }
 
   let cachedUsers = null;
 
-  editor.perfexCommands.getUsersForMention = async function() {
-    if(Array.isArray(cachedUsers)) {
+  editor.perfexCommands.getUsersForMention = async function () {
+    if (Array.isArray(cachedUsers)) {
       return cachedUsers
     }
 
     let users = await usersCallback()
 
-    cachedUsers = users.map(u=>({
+    cachedUsers = users.map(u => ({
       value: u.id.toString(),
       text: u.name,
     }));
 
     return cachedUsers
   },
-  editor.perfexCommands.insertMentionUser = function (id, name, rng) {
-    // Insert in to the editor
-    editor.selection.setRng(rng || 0)
+    editor.perfexCommands.insertMentionUser = function (id, name, rng) {
+      // Insert in to the editor
+      editor.selection.setRng(rng || 0)
 
-    editor.insertContent((
-      '<span class="mention" contenteditable="false" data-mention-id="' +
-      id +
-      '">@' +
-      name +
-      "</span>&nbsp;"
-    ))
-  }
+      editor.insertContent((
+        '<span class="mention" contenteditable="false" data-mention-id="' +
+        id +
+        '">@' +
+        name +
+        "</span>&nbsp;"
+      ))
+    }
 
   editor.ui.registry.addAutocompleter('mentions', {
     trigger: '@', // the trigger character to open the autocompleter
@@ -8691,14 +8700,14 @@ function initializeTinyMceMentions(editor, usersCallback) {
     // Retrieve the available users
     fetch: function (pattern) {
       return new Promise(resolve =>
-          resolve(editor.perfexCommands.getUsersForMention())
+        resolve(editor.perfexCommands.getUsersForMention())
       )
     },
 
     // Executed when user is selected from the dropdown
     onAction: function (autocompleteApi, rng, value) {
-      editor.perfexCommands.getUsersForMention().then(users=> {
-        let user = users.find(user=>user.value == value)
+      editor.perfexCommands.getUsersForMention().then(users => {
+        let user = users.find(user => user.value == value)
         editor.perfexCommands.insertMentionUser(value, user.text, rng)
         autocompleteApi.hide()
       })

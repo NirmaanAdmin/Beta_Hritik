@@ -3423,7 +3423,7 @@ class Hr_profile extends AdminController {
 					$training_temp['training_program_point'] = $training_results['training_program_point'];
 					$training_temp['staff_training_result'] = $training_results['staff_training_result'];
 
-					//have not done the test data
+					//have not done the test data 
 					$staff_training_result = [];
 					foreach ($training_temp['list_training'] as $key => $value) {
 						$staff_training_result[$value['training_id']] = [

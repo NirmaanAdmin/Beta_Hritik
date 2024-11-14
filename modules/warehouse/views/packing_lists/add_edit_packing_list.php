@@ -6,7 +6,7 @@
 		<div class="row">
 			<div class="col-md-12" id="small-table">
 				<div class="panel_s">
-					<?php echo form_open_multipart(admin_url('warehouse/packing_list'), array('id'=>'add_edit_packing_list')); ?>
+					<?php echo form_open_multipart(admin_url('warehouse/packing_list'), array('id' => 'add_edit_packing_list')); ?>
 					<div class="panel-body">
 
 						<div class="row">
@@ -16,11 +16,11 @@
 							</div>
 						</div>
 
-						<?php 
+						<?php
 						$id = '';
 						$additional_discount = 0;
 						$shipping_fee = 0;
-						if(isset($packing_list)){
+						if (isset($packing_list)) {
 							$id = $packing_list->id;
 							echo form_hidden('isedit');
 							$additional_discount = $packing_list->additional_discount;
@@ -32,27 +32,27 @@
 						<input type="hidden" name="save_and_send_request" value="false">
 						<input type="hidden" name="main_additional_discount" value="<?php echo html_entity_decode($additional_discount); ?>">
 						<input type="hidden" name="main_shipping_fee" value="<?php echo html_entity_decode($shipping_fee); ?>">
-						<?php 
+						<?php
 						$input_number_attr = ['min' => '0.00', 'step' => 'any'];
 						$volume_attr = ['min' => '0.00', 'step' => 'any', 'readonly' => true];
 						$shipping_fee_number_attr = ['min' => '0.00', 'step' => 'any'];
-						$packing_list_code = isset($packing_list)? $packing_list->packing_list_number : (isset($goods_code) ? $goods_code : '');
-						$packing_list_name = isset($packing_list)? $packing_list->packing_list_name : $packing_list_name_ex;
-						$clientid = isset($packing_list)? $packing_list->clientid : '';
-						$delivery_note_id = isset($packing_list)? $packing_list->delivery_note_id : '';
-						$width = isset($packing_list)? $packing_list->width : 0.0;
-						$height = isset($packing_list)? $packing_list->height : 0.0;
-						$lenght = isset($packing_list)? $packing_list->lenght : 0.0;
-						$weight = isset($packing_list)? $packing_list->weight : 0.0;
-						$volume = isset($packing_list)? $packing_list->volume : 0.0;
-						$client_note = isset($packing_list)? $packing_list->client_note : '';
-						$admin_note = isset($packing_list)? $packing_list->admin_note : '';
+						$packing_list_code = isset($packing_list) ? $packing_list->packing_list_number : (isset($goods_code) ? $goods_code : '');
+						$packing_list_name = isset($packing_list) ? $packing_list->packing_list_name : $packing_list_name_ex;
+						$clientid = isset($packing_list) ? $packing_list->clientid : '';
+						$delivery_note_id = isset($packing_list) ? $packing_list->delivery_note_id : '';
+						$width = isset($packing_list) ? $packing_list->width : 0.0;
+						$height = isset($packing_list) ? $packing_list->height : 0.0;
+						$lenght = isset($packing_list) ? $packing_list->lenght : 0.0;
+						$weight = isset($packing_list) ? $packing_list->weight : 0.0;
+						$volume = isset($packing_list) ? $packing_list->volume : 0.0;
+						$client_note = isset($packing_list) ? $packing_list->client_note : '';
+						$admin_note = isset($packing_list) ? $packing_list->admin_note : '';
 
 
 						?>
 
 						<!-- start -->
-						<div class="row" >
+						<div class="row">
 							<div class="col-md-6">
 								<?php echo render_select('delivery_note_id', $goods_deliveries, array('id', array('goods_delivery_code')), 'stock_export', $delivery_note_id, ['data-width' => '100%', 'class' => 'selectpicker', 'data-live-search' => "true"], array(), '', '', true); ?>
 
@@ -69,54 +69,54 @@
 										<address>
 											<span class="billing_street">
 												<?php $billing_street = (isset($packing_list) ? $packing_list->billing_street : '--'); ?>
-												<?php $billing_street = ($billing_street == '' ? '--' :$billing_street); ?>
+												<?php $billing_street = ($billing_street == '' ? '--' : $billing_street); ?>
 												<?php echo html_entity_decode($billing_street); ?></span><br>
-												<span class="billing_city">
-													<?php $billing_city = (isset($packing_list) ? $packing_list->billing_city : '--'); ?>
-													<?php $billing_city = ($billing_city == '' ? '--' :$billing_city); ?>
-													<?php echo html_entity_decode($billing_city); ?></span>,
-													<span class="billing_state">
-														<?php $billing_state = (isset($packing_list) ? $packing_list->billing_state : '--'); ?>
-														<?php $billing_state = ($billing_state == '' ? '--' :$billing_state); ?>
-														<?php echo html_entity_decode($billing_state); ?></span>
-														<br/>
-														<span class="billing_country">
-															<?php $billing_country = (isset($packing_list) ? get_country_short_name($packing_list->billing_country) : '--'); ?>
-															<?php $billing_country = ($billing_country == '' ? '--' :$billing_country); ?>
-															<?php echo html_entity_decode($billing_country); ?></span>,
-															<span class="billing_zip">
-																<?php $billing_zip = (isset($packing_list) ? $packing_list->billing_zip : '--'); ?>
-																<?php $billing_zip = ($billing_zip == '' ? '--' :$billing_zip); ?>
-																<?php echo html_entity_decode($billing_zip); ?></span>
-															</address>
-														</div>
-														<div class="col-md-6">
-															<p class="bold"><?php echo _l('ship_to'); ?></p>
-															<address>
-																<span class="shipping_street">
-																	<?php $shipping_street = (isset($packing_list) ? $packing_list->shipping_street : '--'); ?>
-																	<?php $shipping_street = ($shipping_street == '' ? '--' :$shipping_street); ?>
-																	<?php echo html_entity_decode($shipping_street); ?></span><br>
-																	<span class="shipping_city">
-																		<?php $shipping_city = (isset($packing_list) ? $packing_list->shipping_city : '--'); ?>
-																		<?php $shipping_city = ($shipping_city == '' ? '--' :$shipping_city); ?>
-																		<?php echo html_entity_decode($shipping_city); ?></span>,
-																		<span class="shipping_state">
-																			<?php $shipping_state = (isset($packing_list) ? $packing_list->shipping_state : '--'); ?>
-																			<?php $shipping_state = ($shipping_state == '' ? '--' :$shipping_state); ?>
-																			<?php echo html_entity_decode($shipping_state); ?></span>
-																			<br/>
-																			<span class="shipping_country">
-																				<?php $shipping_country = (isset($packing_list) ? get_country_short_name($packing_list->shipping_country) : '--'); ?>
-																				<?php $shipping_country = ($shipping_country == '' ? '--' :$shipping_country); ?>
-																				<?php echo html_entity_decode($shipping_country); ?></span>,
-																				<span class="shipping_zip">
-																					<?php $shipping_zip = (isset($packing_list) ? $packing_list->shipping_zip : '--'); ?>
-																					<?php $shipping_zip = ($shipping_zip == '' ? '--' :$shipping_zip); ?>
-																					<?php echo html_entity_decode($shipping_zip); ?></span>
-																				</address>
-																			</div>
-																		</div>
+											<span class="billing_city">
+												<?php $billing_city = (isset($packing_list) ? $packing_list->billing_city : '--'); ?>
+												<?php $billing_city = ($billing_city == '' ? '--' : $billing_city); ?>
+												<?php echo html_entity_decode($billing_city); ?></span>,
+											<span class="billing_state">
+												<?php $billing_state = (isset($packing_list) ? $packing_list->billing_state : '--'); ?>
+												<?php $billing_state = ($billing_state == '' ? '--' : $billing_state); ?>
+												<?php echo html_entity_decode($billing_state); ?></span>
+											<br />
+											<span class="billing_country">
+												<?php $billing_country = (isset($packing_list) ? get_country_short_name($packing_list->billing_country) : '--'); ?>
+												<?php $billing_country = ($billing_country == '' ? '--' : $billing_country); ?>
+												<?php echo html_entity_decode($billing_country); ?></span>,
+											<span class="billing_zip">
+												<?php $billing_zip = (isset($packing_list) ? $packing_list->billing_zip : '--'); ?>
+												<?php $billing_zip = ($billing_zip == '' ? '--' : $billing_zip); ?>
+												<?php echo html_entity_decode($billing_zip); ?></span>
+										</address>
+									</div>
+									<div class="col-md-6">
+										<p class="bold"><?php echo _l('ship_to'); ?></p>
+										<address>
+											<span class="shipping_street">
+												<?php $shipping_street = (isset($packing_list) ? $packing_list->shipping_street : '--'); ?>
+												<?php $shipping_street = ($shipping_street == '' ? '--' : $shipping_street); ?>
+												<?php echo html_entity_decode($shipping_street); ?></span><br>
+											<span class="shipping_city">
+												<?php $shipping_city = (isset($packing_list) ? $packing_list->shipping_city : '--'); ?>
+												<?php $shipping_city = ($shipping_city == '' ? '--' : $shipping_city); ?>
+												<?php echo html_entity_decode($shipping_city); ?></span>,
+											<span class="shipping_state">
+												<?php $shipping_state = (isset($packing_list) ? $packing_list->shipping_state : '--'); ?>
+												<?php $shipping_state = ($shipping_state == '' ? '--' : $shipping_state); ?>
+												<?php echo html_entity_decode($shipping_state); ?></span>
+											<br />
+											<span class="shipping_country">
+												<?php $shipping_country = (isset($packing_list) ? get_country_short_name($packing_list->shipping_country) : '--'); ?>
+												<?php $shipping_country = ($shipping_country == '' ? '--' : $shipping_country); ?>
+												<?php echo html_entity_decode($shipping_country); ?></span>,
+											<span class="shipping_zip">
+												<?php $shipping_zip = (isset($packing_list) ? $packing_list->shipping_zip : '--'); ?>
+												<?php $shipping_zip = ($shipping_zip == '' ? '--' : $shipping_zip); ?>
+												<?php echo html_entity_decode($shipping_zip); ?></span>
+										</address>
+									</div>
+								</div>
 
 								<div class="form-group">
 									<label for="number">
@@ -126,7 +126,7 @@
 										<span class="input-group-addon">
 											<?php echo html_entity_decode($packing_list_code); ?>
 										</span>
-										<input type="text" name="packing_list_name" class="form-control" value="<?php echo html_entity_decode($packing_list_name); ?>" >
+										<input type="text" name="packing_list_name" class="form-control" value="<?php echo html_entity_decode($packing_list_name); ?>">
 									</div>
 								</div>
 
@@ -135,35 +135,77 @@
 							<div class="col-md-6">
 								<div class="row">
 									<div class="col-md-6">
-										<?php echo render_input('width','width_m_label',$width, 'number', $input_number_attr) ?>
+										<?php echo render_input('width', 'width_m_label', $width, 'number', $input_number_attr) ?>
 									</div>
 									<div class="col-md-6">
-										<?php echo render_input('height','height_m_label',$height, 'number', $input_number_attr) ?>
+										<?php echo render_input('height', 'height_m_label', $height, 'number', $input_number_attr) ?>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<?php echo render_input('lenght','lenght_m_label',$lenght, 'number', $input_number_attr) ?>
+										<?php echo render_input('lenght', 'lenght_m_label', $lenght, 'number', $input_number_attr) ?>
 									</div>
 									<div class="col-md-6">
-										<?php echo render_input('weight','weight_kg_label',$weight, 'number', $input_number_attr) ?>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										<?php echo render_input('volume','volume_m3_label',$volume, 'number', $volume_attr) ?>
+										<?php echo render_input('weight', 'weight_kg_label', $weight, 'number', $input_number_attr) ?>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-12">
-										<?php echo render_textarea('client_note','client_note', $client_note,array(),array(),'mtop15'); ?>
+										<?php echo render_input('volume', 'volume_m3_label', $volume, 'number', $volume_attr) ?>
 									</div>
 								</div>
-								
+								<div class="row">
+									<div class="col-md-12">
+										<?php echo render_textarea('client_note', 'client_note', $client_note, array(), array(), 'mtop15'); ?>
+									</div>
+								</div>
+
 							</div>
 
 						</div>
 
+					</div>
+					<div class="panel_s">
+						<div class="panel-body">
+							<label for="attachment"><?php echo _l('attachment'); ?></label>
+							<div class="attachments">
+								<div class="attachment">
+									<div class="col-md-5 form-group" style="padding-left: 0px;">
+										<div class="input-group">
+											<input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+											<span class="input-group-btn">
+												<button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<br /> <br />
+
+							<?php
+							if (isset($attachments) && count($attachments) > 0) {
+								foreach ($attachments as $value) {
+									echo '<div class="col-md-3">';
+									$path = get_upload_path_by_type('purchase') . 'pur_request/' . $value['rel_id'] . '/' . $value['file_name'];
+									$is_image = is_image($path);
+									if ($is_image) {
+										echo '<div class="preview_image">';
+									}
+							?>
+									<a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+										<i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+										<?php if ($is_image) { ?>
+											<img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+										<?php } ?>
+									</a>
+									<?php if ($is_image) {
+										echo '</div>';
+										echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+									} ?>
+							<?php echo '</div>';
+								}
+							} ?>
+						</div>
 					</div>
 
 					<div class="panel-body mtop10 invoice-item">
@@ -208,7 +250,7 @@
 										<td><span class="bold"><?php echo _l('additional_discount'); ?> :</span>
 										</td>
 										<td class="wh-additional_discount" width="30%">
-											<?php echo render_input('additional_discount','',$additional_discount, 'number', $input_number_attr); ?>
+											<?php echo render_input('additional_discount', '', $additional_discount, 'number', $input_number_attr); ?>
 										</td>
 									</tr>
 									<tr id="total_discount">
@@ -221,7 +263,7 @@
 										<td><span class="bold"><?php echo _l('wh_shipping_fee'); ?> :</span>
 										</td>
 										<td class="wh-shipping_fee" width="30%">
-											<?php echo render_input('shipping_fee','',$shipping_fee, 'number', $shipping_fee_number_attr); ?>
+											<?php echo render_input('shipping_fee', '', $shipping_fee, 'number', $shipping_fee_number_attr); ?>
 										</td>
 									</tr>
 									<tr id="totalmoney">
@@ -241,24 +283,24 @@
 						<div class="col-md-12 mtop15">
 							<div class="panel-body bottom-transaction">
 
-								<?php echo render_textarea('admin_note','admin_note',$admin_note,array(),array(),'mtop15'); ?>
+								<?php echo render_textarea('admin_note', 'admin_note', $admin_note, array(), array(), 'mtop15'); ?>
 
 								<div class="btn-bottom-toolbar text-right">
-									<a href="<?php echo admin_url('warehouse/manage_packing_list'); ?>"class="btn btn-default text-right mright5"><?php echo _l('close'); ?></a>
+									<a href="<?php echo admin_url('warehouse/manage_packing_list'); ?>" class="btn btn-default text-right mright5"><?php echo _l('close'); ?></a>
 
-									<?php if(wh_check_approval_setting('5') != false) { ?>
-										<?php if(isset($packing_list) && $packing_list->approval != 1){ ?>
-											<a href="javascript:void(0)"class="btn btn-info pull-right mright5 add_packing_list_send" ><?php echo _l('save_send_request'); ?></a>
-										<?php }elseif(!isset($packing_list)){ ?>
-											<a href="javascript:void(0)"class="btn btn-info pull-right mright5 add_packing_list_send" ><?php echo _l('save_send_request'); ?></a>
+									<?php if (wh_check_approval_setting('5') != false) { ?>
+										<?php if (isset($packing_list) && $packing_list->approval != 1) { ?>
+											<a href="javascript:void(0)" class="btn btn-info pull-right mright5 add_packing_list_send"><?php echo _l('save_send_request'); ?></a>
+										<?php } elseif (!isset($packing_list)) { ?>
+											<a href="javascript:void(0)" class="btn btn-info pull-right mright5 add_packing_list_send"><?php echo _l('save_send_request'); ?></a>
 										<?php } ?>
 									<?php } ?>
 
 									<?php if (is_admin() || has_permission('warehouse', '', 'edit') || has_permission('warehouse', '', 'create')) { ?>
-										<?php if(isset($packing_list) && $packing_list->approval == 0){ ?>
-											<a href="javascript:void(0)"class="btn btn-info pull-right mright5 add_packing_list" ><?php echo _l('save'); ?></a>
-										<?php }elseif(!isset($packing_list)){ ?>
-											<a href="javascript:void(0)"class="btn btn-info pull-right mright5 add_packing_list" ><?php echo _l('save'); ?></a>
+										<?php if (isset($packing_list) && $packing_list->approval == 0) { ?>
+											<a href="javascript:void(0)" class="btn btn-info pull-right mright5 add_packing_list"><?php echo _l('save'); ?></a>
+										<?php } elseif (!isset($packing_list)) { ?>
+											<a href="javascript:void(0)" class="btn btn-info pull-right mright5 add_packing_list"><?php echo _l('save'); ?></a>
 										<?php } ?>
 									<?php } ?>
 
@@ -278,9 +320,7 @@
 
 
 <?php init_tail(); ?>
-<?php require 'modules/warehouse/assets/js/packing_lists/add_edit_packing_list_js.php';?>
+<?php require 'modules/warehouse/assets/js/packing_lists/add_edit_packing_list_js.php'; ?>
 </body>
+
 </html>
-
-
-
