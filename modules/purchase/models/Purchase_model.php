@@ -4700,7 +4700,7 @@ class Purchase_model extends App_Model
         $html .= ' </tbody></table>';
 
         $html .= '<div style="page-break-before:always">&nbsp;</div>';
-        $vendornote_with_break = str_replace('ANNEXURE - B', 'ANNEXURE - B<div style="page-break-after:always"></div>', $pur_order->vendornote);
+        $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div>ANNEXURE - B', $pur_order->vendornote);
         $html .= '<div class="col-md-12 mtop15">
             <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
         $html .= '<div style="page-break-before:always">&nbsp;</div>';
