@@ -4546,6 +4546,7 @@ class Purchase_model extends App_Model
         $pur_order = $this->get_pur_order($pur_order_id);
         $pur_order_detail = $this->get_pur_order_detail($pur_order_id);
         $estimate_details = $this->get_pur_estimate_detail($pur_order_id);
+        $tax_data = $this->get_html_tax_pur_invoice($pur_order_id);
         $company_name = get_option('invoice_company_name');
         $address = get_option('invoice_company_address');
         $day = date('d', strtotime($pur_order->order_date));
@@ -4668,7 +4669,7 @@ class Purchase_model extends App_Model
       </table><br><br>';
 
         $html .= '<table class="table text-right"><tbody>';
-        if ($pur_order->discount_total > 0) {
+        // if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
                     <td width="33%"></td>
                      <td>' . _l('subtotal') . ' </td>
@@ -4680,7 +4681,7 @@ class Purchase_model extends App_Model
                   <td width="33%"></td>
                      <td>' . _l('discount(%)') . '(%)' . '</td>
                      <td class="subtotal">
-                        ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
+                        ' . pur_html_entity_decode($tax_data['preview_html']) . ' %' . '
                      </td>
                   </tr>
                   <tr id="subtotal">
@@ -4690,12 +4691,12 @@ class Purchase_model extends App_Model
                         ' . app_format_money($pur_order->discount_total, '') . '
                      </td>
                   </tr>';
-        }
+        // }
         $html .= '<tr id="subtotal">
                  <td width="33%"></td>
                  <td><strong>' . _l('total') . '</strong></td>
                  <td class="subtotal">
-                    ' .'₹ '. app_format_money($pur_order->total, '') . '
+                    ' .'₹ '. app_format_money($estimate_details['total'], '') . '
                  </td>
               </tr>';
 
