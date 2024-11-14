@@ -703,3 +703,4 @@ $lang['delivery_person'] = 'Delivered by';
 $lang['area'] = 'Area';
 $lang['specification'] = 'Specification';
 $lang['tax_percentage'] = 'Tax %';
+$lang['signature_pur_order'] = 'Signature';
