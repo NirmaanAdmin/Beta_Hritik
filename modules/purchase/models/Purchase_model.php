@@ -4625,7 +4625,7 @@ class Purchase_model extends App_Model
       <br><br>
       ';
       $html .= '<div class="col-md-12 ">
-      <p class="bold"><b class="h4_style">' . _l('estimate_add_edit_order_summary') . ':</b> ' . $pur_order->order_summary . '</p>';
+      <p class="bold"> ' . $pur_order->order_summary . '</p>';
       $html .= '<div style="page-break-before:always">&nbsp;</div>';
       $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">
@@ -4700,11 +4700,11 @@ class Purchase_model extends App_Model
         $html .= ' </tbody></table>';
 
         $html .= '<div style="page-break-before:always">&nbsp;</div>';
-
+        $vendornote_with_break = str_replace('ANNEXURE - B', 'ANNEXURE - B<div style="page-break-after:always"></div>', $pur_order->vendornote);
         $html .= '<div class="col-md-12 mtop15">
-            <p class="bold"><b class="h4_style">' . _l('estimate_add_edit_vendor_note') . ':</b> ' . nl2br($pur_order->vendornote) . '</p>';
+            <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
         $html .= '<div style="page-break-before:always">&nbsp;</div>';
-        $html .= '<p class="bold"><b class="h4_style">' . _l('terms_and_conditions') . ':</b> ' . nl2br($pur_order->terms) . '</p>
+        $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
             </div>';
         $html .= '<br>
       <br>
