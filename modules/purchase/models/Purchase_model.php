@@ -4545,6 +4545,7 @@ class Purchase_model extends App_Model
 
         $pur_order = $this->get_pur_order($pur_order_id);
         $pur_order_detail = $this->get_pur_order_detail($pur_order_id);
+        $estimate_details = $this->get_pur_estimate_detail($pur_order_id);
         $company_name = get_option('invoice_company_name');
         $address = get_option('invoice_company_address');
         $day = date('d', strtotime($pur_order->order_date));
@@ -4624,8 +4625,9 @@ class Purchase_model extends App_Model
 
       <br><br>
       ';
+      $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
       $html .= '<div class="col-md-12 ">
-      <p class="bold"> ' . $pur_order->order_summary . '</p>';
+      <p class="bold"> ' . $order_summary_with_break . '</p>';
       $html .= '<div style="page-break-before:always">&nbsp;</div>';
       $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">
@@ -4671,7 +4673,7 @@ class Purchase_model extends App_Model
                     <td width="33%"></td>
                      <td>' . _l('subtotal') . ' </td>
                      <td class="subtotal">
-                        ' . app_format_money($t_mn, '') . '
+                        ' . app_format_money($estimate_details['subtotal'], '') . '
                      </td>
                   </tr>
                   <tr id="subtotal">
