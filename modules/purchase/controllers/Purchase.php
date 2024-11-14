@@ -1530,6 +1530,7 @@ class purchase extends AdminController
 
             $pur_order_data['terms'] = $this->input->post('terms', false);
             $pur_order_data['vendornote'] = $this->input->post('vendornote', false);
+            $pur_order_data['order_summary'] = $this->input->post('order_summary', false);
 
             if ($id == '') {
                 if (!has_permission('purchase_orders', '', 'create')) {
@@ -2695,9 +2696,9 @@ class purchase extends AdminController
         }
 
         $pur_request = $this->purchase_model->get_purorder_pdf_html($id);
-
+        
         try {
-            $pdf = $this->purchase_model->purorder_pdf($pur_request);
+            $pdf = $this->purchase_model->purorder_pdf($pur_request, $id);
         } catch (Exception $e) {
             echo pur_html_entity_decode($e->getMessage());
             die;

@@ -472,8 +472,10 @@
                                     }
                                     ?></strong><?php if($es['description'] != ''){ ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?></td>
                                     <td align="left"><?php echo $es['description']; ?></td>
-                                    <td align="right"  width="12%"><?php echo pur_html_entity_decode($es['quantity']); ?></td>
-                                    <td align="right"><?php echo '₹ '. app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
+                                    <td align="right"  width="12%"><?php
+                                    $unit_name = pur_get_unit_name($es['unit_id']);
+                                     echo pur_html_entity_decode($es['quantity']) . ' '. $unit_name; ?></td>
+                                    <td align="right"><?php echo app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
                                     <td align="right"><?php echo app_format_money($es['into_money'],$base_currency->symbol); ?></td>
                                     <?php if(get_option('show_purchase_tax_column') == 1){ ?>
                                     <td align="right"><?php echo app_format_money(($es['total'] - $es['into_money']),$base_currency->symbol); ?></td>
@@ -538,7 +540,12 @@
                            </tbody>
                         </table>
                      </div>   
-
+                     <?php if($estimate->order_summary != ''){ ?>
+                     <div class="col-md-12 mtop15">
+                        <p class="bold text-muted"><?php echo _l('order_summary'); ?></p>
+                        <p><?php echo nl2br($estimate->order_summary); ?></p>
+                     </div>
+                     <?php } ?>
                      <?php if($estimate->vendornote != ''){ ?>
                      <div class="col-md-12 mtop15">
                         <p class="bold text-muted"><?php echo _l('estimate_note'); ?></p>

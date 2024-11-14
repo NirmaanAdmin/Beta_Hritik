@@ -640,6 +640,92 @@
           <div class="row">
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
+              <?php $value = (isset($pur_order) ? $pur_order->order_summary : get_purchase_option('order_summary'));
+                if (!isset($pur_order) && $pur_order->order_summary == '') {
+                  $value = '<strong>PURCHASE ORDER</strong><br><br>
+
+<strong>M/S SURFACES PLUS</strong><br>
+G.F. PREMIER HOUSE-1, SARKHEJ- GANDHINAGAR HIGHWAY, OPP. GURUDWARA, THALTEJ, <br>
+AHMEDABAD - 380 054, INDIA<br><br>
+
+<strong>P.O. Number:</strong> BI/JAMNAGAR/24-25/027<br>
+<strong>P.O. Date:</strong> 22-Oct-24<br>
+<strong>Rev. No.:</strong><br>
+<strong>Rev. Date:</strong><br><br>
+
+<strong>PAN No.:</strong> AAHFS1631G<br>
+<strong>Beneficiary name:</strong> SURFACES PLUS<br>
+<strong>GST No.:</strong> 24AAHFS1631G1ZI<br>
+<strong>Bank name:</strong> Yes Bank.<br>
+<strong>Bank branch:</strong> Yes bank C.G.Road branch<br>
+<strong>Bank A/c no.:</strong> 000784600000404<br>
+<strong>SWIFT/RTGS code:</strong> YESB0000007<br><br>
+
+<strong>Contact Person:</strong> Anand Patel<br>
+<strong>Telephone:</strong> +91 7575001193<br>
+<strong>Email:</strong> Sales1@surfacesplus.in<br><br>
+
+<strong>Project:</strong> Basilius International Jamnagar<br>
+<strong>Subject:</strong> Supply and Installation of “Mathios Stone and Tiles” for Proposed BGJ Guest House Project<br><br>
+
+Dear Sir/Madam,<br>
+This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+
+<strong>Currency:</strong> INR<br><br>
+
+<strong>Terms:</strong> F.O.R. at Site<br><br>
+
+<strong>Type of Order:</strong> Item Rate Order<br><br>
+
+<strong>Price Escalation:</strong> The agreed amount shall remain fixed for this project. No escalation shall be paid in contract duration and for this project for any reason whatsoever. Price shall be valid for 6 Months from the date of Sign of PO.<br><br>
+
+<strong>Destination:</strong> M/s BASILIUS INTERNATIONAL<br>
+3rd Floor, 304, Benison Commercial Complex, Old Padra Road, Opposite Hari Bhakti, Vadodara, Gujarat – 390007<br><br>
+
+<strong>Delivery Schedule:</strong> Within 65 to 70 days from the date of receipt of confirm order.<br><br>
+
+<strong>Payment Terms:</strong><br>
+100% advance along with the confirm order.<br><br>
+
+<strong>Part Shipment:</strong> Allowed.<br><br>
+
+<strong>Trans-Shipment:</strong> Allowed<br><br>
+
+<strong>Shipping, Delivery & Acceptance:</strong><br>
+The supplier will export quality packaging and ship all goods in industry standards as may be applicable to ensure that the goods are received by the buyer in good condition. The applicable Purchase Order number must appear on all shipping containers, packing lists, delivery tickets, and Invoice.<br><br>
+
+<strong>Packing Charges:</strong> Inclusive. Material must be preserved, packaged, handled, and packed to permit efficient handling, provide protection from loss or damage, and comply with industry standards and carrier requirements. Supplier will be liable for any loss or damage due to its failure to properly preserve, package, handle, or pack any shipment. You shall provide the packing list along with Invoice and other documents.<br><br>
+
+<strong>Other Terms & Conditions:</strong><br>
+(a) All items should be as per approved specification, ratings, and protection level of by consultant / Basilius team.<br>
+(b) All material & accessories should be delivered as per purchase order only and subject to MAS/ Consultant approval.<br>
+(c) Third party inspection can be organized from our side, pre dispatch inspection will be done, if required.<br>
+(d) Replacement/Rectification: Within 7-10 days if found any damage.<br>
+(e) All material should be strictly as per applicable standard.<br>
+(f) Goods shall be packaged properly to ensure safe arrival at the project site.<br>
+(g) Transportation to the site and transit insurance shall be in your scope.<br>
+(h) Service / complain response time: Within 48 hours from the time of complaint logged, if required.<br>
+Supplier shall provide all the documents incl. delivery challan, invoice, materials test certificate/ Declaration of Conformity, Serial no, technical details of the product being supplied being asked by Basilius etc.<br><br>
+
+<strong>Annexures:</strong><br>
+Annexure A (Order Summary)<br>
+Annexure B (Special conditions of purchase)<br>
+Annexure C (General terms & conditions of purchase)<br><br>
+
+We hereby acknowledge and accept the purchase order and the annexures.<br><br>
+
+<strong>On behalf of Basilius International</strong><br>
+We hereby acknowledge and accept the purchase order and the annexures.<br><br>
+
+<strong>Authorized Signatory (Affix stamp)</strong><br><br>
+
+<strong>Authorized Signatory of the supplier (affix stamp)</strong><br><br>';
+                }
+
+                ?>
+
+
+                <?php echo render_textarea('order_summary', 'estimate_add_edit_order_summary', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <?php $value = (isset($pur_order) ? $pur_order->vendornote : get_purchase_option('vendor_note'));
                 if (!isset($pur_order) && $pur_order->vendornote == '') {
                   $value = '<strong>PURCHASE ORDER</strong><br><br>
@@ -669,7 +755,7 @@ AHMEDABAD - 380 054, INDIA<br><br>
 <strong>Subject:</strong> Supply and Installation of “Mathios Stone and Tiles” for Proposed BGJ Guest House Project<br><br>
 
 Dear Sir/Madam,<br>
-This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- Nineteen lakh Seven thousand Seven hundred and sixteen only) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
 
 <strong>Currency:</strong> INR<br><br>
 
@@ -721,8 +807,8 @@ We hereby acknowledge and accept the purchase order and the annexures.<br><br>
 
 <strong>Authorized Signatory of the supplier (affix stamp)</strong><br><br>
 
-<strong>ANNEXURE - B</strong><br>
-<strong>SPECIAL CONDITIONS OF PURCHASE</strong><br><br>
+<h4 style="font-size: 20px;text-align: center;"><strong>ANNEXURE - B</strong><br>
+<strong>SPECIAL CONDITIONS OF PURCHASE</strong></h4><br><br>
 
 <strong>BUYER ADDRESS:</strong><br>
 BASILIUS INTERNATIONAL LLP<br>
@@ -777,7 +863,7 @@ Gross / Net Weight<br>
                 <?php $value = (isset($pur_order) ? $pur_order->terms :  get_purchase_option('terms_and_conditions'));
 
                 if (!isset($pur_order) && $pur_order->terms == '') {
-                  $value = "<strong>ANNEXURE - C<br>GENERAL TERMS & CONDITIONS OF PURCHASE</strong><br><br>
+                  $value = "<h4 style='font-size: 20px;text-align: center;'><strong>ANNEXURE - C<br>GENERAL TERMS & CONDITIONS OF PURCHASE</strong></h4><br><br>
 
           <strong>1. Definitions.</strong><br>
           1.1 In these Conditions: 'BASILLUS' means “BASILIUS INTERNATIONAL LLP INTERNATIONAL LLP”; 'Completion Date' means the date or dates shown on the Order Form overleaf; 'The Vendor' means the supplier or service provider to whom the Order overleaf is addressed; 'The Contract' means terms and conditions signed between BASILLUS and the Vendor, governing the subject matter of this Order (inclusive of the Order Form set out overleaf); 'The Goods' means the goods (if any) to be supplied under the Contract, and; 'The Services' means the services (if any) to be provided and any work carried out under the Contract.<br><br>

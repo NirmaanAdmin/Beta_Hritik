@@ -53,6 +53,7 @@ $lang['request_quotation']  = 'Request a quote';
 $lang['related_to_pur_request']                         = 'This %s is related to %s: %s';
 $lang['buyer']  = 'Buyer';
 $lang['estimate_add_edit_vendor_note']  = 'Vendor note';
+$lang['estimate_add_edit_order_summary']  = 'Order Details';
 $lang['estimate_detail']  = 'Estimate detail';
 $lang['pur_change_status_to']  = 'Change status to';
 $lang['coppy_pur_request']  = 'Coppy purchase request to estimate detail table!';

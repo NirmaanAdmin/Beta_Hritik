@@ -495,6 +495,7 @@ function pur_add_item_to_preview(id) {
 
     $('.main select.taxes').selectpicker('val', taxSelectedArray);
     $('.main input[name="unit"]').val(response.unit_name);
+    $('.main select#unit_name').selectpicker('val', response.unit_id);
 
     var $currency = $("body").find('.accounting-template select[name="currency"]');
     var baseCurency = $currency.attr('data-base');
