@@ -1510,6 +1510,7 @@ class purchase extends AdminController
         $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups'] = $this->purchase_model->get_sub_group();
         $data['area'] = $this->purchase_model->get_area();
+        $data['activity'] = $this->purchase_model->get_po_activity($id);
         if ($to_return == false) {
             $this->load->view('purchase_order/pur_order_preview', $data);
         } else {

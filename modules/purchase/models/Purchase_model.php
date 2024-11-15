@@ -2232,6 +2232,7 @@ class Purchase_model extends App_Model
      */
     public function change_status_pur_order($status, $id)
     {
+        $original_po = $this->get_pur_order($id);
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_orders', ['approve_status' => $status]);
         if ($this->db->affected_rows() > 0) {
@@ -2250,6 +2251,26 @@ class Purchase_model extends App_Model
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
                 $this->db->insert(db_prefix().'cron_email', $cron_email);
+
+                $from_status = '';
+                if($original_po->approve_status == 1) {
+                    $from_status = 'Draft';
+                } else if($original_po->approve_status == 2) {
+                    $from_status = 'Approved';
+                } else if($original_po->approve_status == 3) {
+                    $from_status = 'Rejected';
+                }
+
+                $to_status = '';
+                if($status == 1) {
+                    $to_status = 'Draft';
+                } else if($status == 2) {
+                    $to_status = 'Approved';
+                } else if($status == 3) {
+                    $to_status = 'Rejected';
+                }
+
+                $this->log_po_activity($id, "Purchase order status updated from ".$from_status." to ".$to_status."");
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
@@ -2497,6 +2518,7 @@ class Purchase_model extends App_Model
             $this->db->where('id', $insert_id);
             $this->db->update(db_prefix() . 'pur_orders', $total);
 
+            $this->log_po_activity($insert_id, 'po_activity_created');
             // warehouse module hook after purchase order add
             hooks()->do_action('after_purchase_order_add', $insert_id);
 
@@ -2622,6 +2644,17 @@ class Purchase_model extends App_Model
 
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
+            $this->db->where('id', $id);
+            $po = $this->db->get(db_prefix() . 'pur_orders')->row();
+            if($po->approve_status == 3) {
+                $status_array = array();
+                $status_array['approve_status'] = 1;
+                $this->db->where('id', $id);
+                $this->db->update(db_prefix() . 'pur_orders', $status_array);
+                $from_status = 'Rejected';
+                $to_status = 'Draft';
+                $this->log_po_activity($id, "Purchase order status updated from ".$from_status." to ".$to_status."");
+            }
         }
 
         if (count($new_order) > 0) {
@@ -2665,6 +2698,9 @@ class Purchase_model extends App_Model
                 $new_quote_insert_id = $this->db->insert_id();
                 if ($new_quote_insert_id) {
                     $affectedRows++;
+                    $this->log_po_activity($id, 'purchase_order_activity_added_item', false, serialize([
+                        $this->get_items_by_id($rqd['item_code'])->description,
+                    ]));
                 }
             }
         }
@@ -2716,8 +2752,14 @@ class Purchase_model extends App_Model
         if (count($remove_order) > 0) {
             foreach ($remove_order as $remove_id) {
                 $this->db->where('id', $remove_id);
+                $pur_order_id = $this->db->get(db_prefix() . 'pur_order_detail')->row();
+                $item_detail = $this->get_items_by_id($pur_order_id->item_code);
+                $this->db->where('id', $remove_id);
                 if ($this->db->delete(db_prefix() . 'pur_order_detail')) {
                     $affectedRows++;
+                    $this->log_po_activity($id, 'purchase_order_activity_removed_item', false, serialize([
+                        $item_detail->description,
+                    ]));
                 }
             }
         }
@@ -3122,13 +3164,19 @@ class Purchase_model extends App_Model
 
         foreach ($data_new as $key => $value) {
             $row = [];
-            $row['action'] = 'approve';
-            $row['staffid'] = $value['id'];
-            $row['date_send'] = $date_send;
-            $row['rel_id'] = $data['rel_id'];
-            $row['rel_type'] = $data['rel_type'];
-            $row['sender'] = $sender;
-            $this->db->insert('tblpur_approval_details', $row);
+            $this->db->select('rel_id');
+            $this->db->where('rel_id', $data['rel_id']);
+            $this->db->where('rel_type', $data['rel_type']);
+            $rel_id_data = $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
+            if(empty($rel_id_data)) {
+                $row['action'] = 'approve';
+                $row['staffid'] = $value['id'];
+                $row['date_send'] = $date_send;
+                $row['rel_id'] = $data['rel_id'];
+                $row['rel_type'] = $data['rel_type'];
+                $row['sender'] = $sender;
+                $this->db->insert('tblpur_approval_details', $row);
+            }
         }
 
         // foreach ($data_new as $value) {
@@ -14403,5 +14451,49 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'cron_email');
         return true; 
+    }
+
+    /**
+     * All purchase activity
+     * @param  mixed $id invoiceid
+     * @return array
+     */
+    public function get_po_activity($id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'purchase');
+        $this->db->order_by('date', 'asc');
+        return $this->db->get(db_prefix() . 'purchase_activity')->result_array();
+    }
+
+    /**
+     * Log purchase activity to database
+     * @param  mixed $id   invoiceid
+     * @param  string $description activity description
+     */
+    public function log_po_activity($id, $description = '', $client = false, $additional_data = '')
+    {
+        if (DEFINED('CRON')) {
+            $staffid   = '[CRON]';
+            $full_name = '[CRON]';
+        } elseif (defined('STRIPE_SUBSCRIPTION_INVOICE')) {
+            $staffid   = null;
+            $full_name = '[Stripe]';
+        } elseif ($client == true) {
+            $staffid   = null;
+            $full_name = '';
+        } else {
+            $staffid   = get_staff_user_id();
+            $full_name = get_staff_full_name(get_staff_user_id());
+        }
+        $this->db->insert(db_prefix() . 'purchase_activity', [
+            'description'     => $description,
+            'date'            => date('Y-m-d H:i:s'),
+            'rel_id'          => $id,
+            'rel_type'        => 'purchase',
+            'staffid'         => $staffid,
+            'full_name'       => $full_name,
+            'additional_data' => $additional_data,
+        ]);
     }
 }

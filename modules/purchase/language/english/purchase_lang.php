@@ -704,3 +704,6 @@ $lang['area'] = 'Area';
 $lang['specification'] = 'Specification';
 $lang['tax_percentage'] = 'Tax %';
 $lang['signature_pur_order'] = 'Signature';
+$lang['po_activity_created'] = 'created the purchase order';
+$lang['purchase_order_activity_added_item'] = 'added new item <b>%s</b>';
+$lang['purchase_order_activity_removed_item'] = 'removed item <b>%s</b>';
