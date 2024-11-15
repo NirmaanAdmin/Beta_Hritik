@@ -4645,7 +4645,10 @@ class Purchase_model extends App_Model
           </tr>
           </thead>
           <tbody>';
+        $sub_total_amn = 0;
+        $tax_total = 0;
         $t_mn = 0;
+        $discount_total = 0;
         foreach ($pur_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
@@ -4662,20 +4665,33 @@ class Purchase_model extends App_Model
           </tr>';
 
             $t_mn += $row['total_money'];
+            $tax_total += $row['total'] - $row['into_money'];
+            $sub_total_amn += $row['total_money'] - $tax_total;
         }
         $html .=  '</tbody>
       </table><br><br>';
-
+      
         $html .= '<table class="table text-right"><tbody>';
+        if ($pur_order->discount_total > 0 || $tax_total > 0) {
+            $html .= '<tr id="subtotal">
+            <td width="33%"></td>
+            <td>' . _l('subtotal') . ' </td>
+            <td class="subtotal">
+            ' .'₹ '. app_format_money($sub_total_amn, '') . '
+            </td>
+            </tr>';
+        }
+        if ($tax_total > 0) {
+            $html .= '<tr id="tax">
+            <td width="33%"></td>
+            <td>' . _l('Tax') . ' </td>
+            <td class="taxtotal">
+            ' .'₹ '. app_format_money($tax_total, '') . '
+            </td>
+            </tr>';
+        }
         if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
-                    <td width="33%"></td>
-                     <td>' . _l('subtotal') . ' </td>
-                     <td class="subtotal">
-                        ' . app_format_money($t_mn, '') . '
-                     </td>
-                  </tr>
-                  <tr id="subtotal">
                   <td width="33%"></td>
                      <td>' . _l('discount(%)') . '(%)' . '</td>
                      <td class="subtotal">
@@ -4686,7 +4702,7 @@ class Purchase_model extends App_Model
                   <td width="33%"></td>
                      <td>' . _l('discount(money)') . '</td>
                      <td class="subtotal">
-                        ' . app_format_money($pur_order->discount_total, '') . '
+                        ' .'₹ '. app_format_money($pur_order->discount_total, '') . '
                      </td>
                   </tr>';
         }
