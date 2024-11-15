@@ -4731,7 +4731,7 @@ class Purchase_model extends App_Model
             <td width="33%"></td>
             <td>' . _l('subtotal') . ' </td>
             <td class="subtotal">
-            ' .'₹ '. app_format_money($sub_total_amn, '') . '
+            ' .'₹ '. app_format_money($pur_order->subtotal, '') . '
             </td>
             </tr>';
         }
