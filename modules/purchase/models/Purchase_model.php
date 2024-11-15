@@ -4627,7 +4627,7 @@ class Purchase_model extends App_Model
       $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
       $html .= '<div class="col-md-12 ">
       <p class="bold"> ' . $order_summary_with_break . '</p>';
-      $html .= '<div style="page-break-before:always">&nbsp;</div>';
+      $html .= '<div style="page-break-before:always"></div>';
       $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
@@ -4716,11 +4716,11 @@ class Purchase_model extends App_Model
 
         $html .= ' </tbody></table>';
 
-        $html .= '<div style="page-break-before:always">&nbsp;</div>';
+        $html .= '<div>&nbsp;</div>';
         $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
         $html .= '<div class="col-md-12 mtop15">
             <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
-        $html .= '<div style="page-break-before:always">&nbsp;</div>';
+        $html .= '<div style="page-break-before:always"></div>';
         $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
             </div>';
         $html .= '<br>
