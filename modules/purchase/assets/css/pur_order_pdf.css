@@ -1,3 +1,7 @@
+.table * {
+	font-size: 13px;
+	line-height: 14px;
+}
 .border_table{
 	border: 1px solid #A4A4A4!important; 
 	border-top: 1px solid #A4A4A4!important;

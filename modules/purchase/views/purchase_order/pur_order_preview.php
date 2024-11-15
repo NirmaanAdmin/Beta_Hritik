@@ -441,7 +441,7 @@
                                  <tr>
                                     <th align="center">#</th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
-                                    <th align="right"><?php echo _l('decription'); ?></th>
+                                    <th align="left" width="100"><?php echo _l('decription'); ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
                                     <th align="right"><?php echo _l('purchase_unit_price'); ?></th>
                                     <th align="right"><?php echo _l('into_money'); ?></th>
@@ -463,15 +463,16 @@
                                  foreach($estimate_detail as $es) { ?>
                                  <tr nobr="true" class="sortable">
                                     <td class="dragger item_no ui-sortable-handle" align="center"><?php echo pur_html_entity_decode($count); ?></td>
-                                    <td class="description" align="left;"><span><strong><?php 
+                                    <td class="description" align="left"><div style="width: 250px"><span><strong><?php 
                                     $item = get_item_hp($es['item_code']); 
                                     if(isset($item) && isset($item->commodity_code) && isset($item->description)){
                                        echo pur_html_entity_decode($item->commodity_code.' - '.$item->description);
                                     }else{
                                        echo pur_html_entity_decode($es['item_name']);
                                     }
-                                    ?></strong><?php if($es['description'] != ''){ ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?></td>
-                                    <td align="left"><?php echo $es['description']; ?></td>
+                                    ?></strong><?php if($es['description'] != ''){ ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?>
+                                    </div></td>
+                                    <td align="left" ><div style="width: 300px"><?php echo $es['description']; ?></div></td>
                                     <td align="right"  width="12%"><?php
                                     $unit_name = pur_get_unit_name($es['unit_id']);
                                      echo pur_html_entity_decode($es['quantity']) . ' '. $unit_name; ?></td>
