@@ -4608,21 +4608,27 @@ class Purchase_model extends App_Model
                 ' . $ship_to_detail . '
                 ' . $delivery_date . '
                 ' . $delivery_person . '
-                ' . $pur_request_name . '
-                <span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />                
-            
+                ' . $pur_request_name . ' ';
+                if (!empty($pur_order->addedfrom)) {
+                    $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
+                }
+                $group_head_po = $this->get_budget_head_po($pur_order->id);
+                if ($group_head_po != '') {
+                    $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
+                }
+                $group_sub_head_po = $this->get_budget_sub_head_po($pur_order->id);
+                if ($group_sub_head_po != '') {
+                    $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
+                }
+                $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
+                if ($group_req_area_po != '') {
+                    $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
+                }
+                $html .= '            
             </td>
           </tr>
         </tbody>
       </table>
-
-      
-      
-
-      <br><br>
       ';
       $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
       $html .= '<div class="col-md-12 ">
