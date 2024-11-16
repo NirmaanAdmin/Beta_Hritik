@@ -4617,6 +4617,9 @@ class Purchase_model extends App_Model
         if (!empty($pur_order->buyer)) {
             $buyer = '<span style="text-align: right;"><b>' . _l('buyer') . ':</b> ' . get_staff_full_name($pur_order->buyer) . '</span><br />';
         }
+        if (!empty(($pur_order->order_date))) {
+            $order_date = '<br /><span><b>' . _l('order_date') . ':</b> ' . date('d M Y', strtotime($pur_order->order_date)) . '<br /></span><br />';
+        }
         // if(!empty($pur_order->delivery_person)) {
         //     $delivery_person = '<span style="text-align: right;"><b>'. _l('delivery_person').':</b> '. get_staff_full_name($pur_order->delivery_person).'</span><br />';
         // }
@@ -4650,6 +4653,7 @@ class Purchase_model extends App_Model
             <td>
                 ' . format_organization_info() . '
                  ' . $project_detail . '
+                 ' . $order_date . '
             </td>
             <td style="position: absolute; float: right;">
                 <span style="text-align: right;">' . format_pdf_vendor_info($pur_order->vendor) . '</span><br />
