@@ -4641,7 +4641,8 @@ class Purchase_model extends App_Model
                 </td>
                 <td style="position: absolute; float: right;">
                     <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('purchase_order')) . '</b></span><br />
-                    <span style="text-align: right;">' . $pur_order->pur_order_number . ' - ' . $pur_order->pur_order_name . '</span><br /><br />                   
+                    <span style="text-align: right;">' . $pur_order->pur_order_number . ' - ' . $pur_order->pur_order_name . '</span><br /><br />   
+                    ' . $order_date . '                
                 </td>
             </tr>
             </tbody>
@@ -4653,7 +4654,6 @@ class Purchase_model extends App_Model
             <td>
                 ' . format_organization_info() . '
                  ' . $project_detail . '
-                 ' . $order_date . '
             </td>
             <td style="position: absolute; float: right;">
                 <span style="text-align: right;">' . format_pdf_vendor_info($pur_order->vendor) . '</span><br />
