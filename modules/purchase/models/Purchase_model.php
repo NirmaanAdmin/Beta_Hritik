@@ -4618,7 +4618,7 @@ class Purchase_model extends App_Model
             $buyer = '<span style="text-align: right;"><b>' . _l('buyer') . ':</b> ' . get_staff_full_name($pur_order->buyer) . '</span><br />';
         }
         if (!empty(($pur_order->order_date))) {
-            $order_date = '<br /><span><b>' . _l('order_date') . ':</b> ' . date('d M Y', strtotime($pur_order->order_date)) . '<br /></span><br />';
+            $order_date = '<span><b>' . _l('order_date') . ':</b> ' . date('d M Y', strtotime($pur_order->order_date)) . '<br /></span><br />';
         }
         // if(!empty($pur_order->delivery_person)) {
         //     $delivery_person = '<span style="text-align: right;"><b>'. _l('delivery_person').':</b> '. get_staff_full_name($pur_order->delivery_person).'</span><br />';
