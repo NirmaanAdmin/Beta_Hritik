@@ -78,9 +78,14 @@
 					<td><?php echo ($item->note != null ? drawing_nlbr($item->note) : ''); ?></td>
 				</tr>
 				<tr>
-					<td class="text-nowrap">Controlled Document	</td>
+					<td class="text-nowrap"><?php echo _l('dmg_controlled_document'); ?></td>
 					<td><?php echo ($item->controlled_document == 1 ? 'Yes' : 'No'); ?></td>
 				</tr>
+				<tr>
+					<td class="text-nowrap"><?php echo _l('status'); ?></td>
+					<td><?php echo _l($item->status); ?></td>
+				</tr>
+
 
 				<?php 
 				$data_custom_field = [];
@@ -436,7 +441,7 @@
 					$edit_url = admin_url('drawing_management?share_to_me=1&id='.$item->id.'&edit=1');
 				}
 				else{
-					$edit_url = admin_url('drawing_management?id='.$item->id.'&edit=1');
+					$edit_url = admin_url('drawing_management?id='.$item->id.'&edit=1&pid='.$item->$parent_id);
 				}
 				?>
 				<a href="<?php echo drawing_htmldecode($edit_url); ?>" class="btn btn-default w100 mtop5 mbot5">

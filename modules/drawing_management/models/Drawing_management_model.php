@@ -229,6 +229,7 @@ class drawing_management_model extends app_model
 		}
 		return $array;
 	}
+
 	public function get_document_number($id)
 	{
 
@@ -285,9 +286,18 @@ class drawing_management_model extends app_model
 
 		// Concatenate to create the document number
 		$document_number = "{$prefix}{$new_number}";
-
-		// Prepare data to update
+		if ($file->parent_id == 25) {
+			// Prepare data to update
+			$data = [
+				'document_number' => $document_number,
+				'controlled_document' => 1,
+				'purpose' => 'Issued for construction'
+			];
+		}else{
+			// Prepare data to update
 		$data = ['document_number' => $document_number];
+		}
+
 
 		// Update the document number in the record
 		$this->db->where('id', $id)->update(db_prefix() . 'dms_items', $data);
@@ -1930,51 +1940,53 @@ class drawing_management_model extends app_model
 	{
 		return $this->db->get(db_prefix() . 'dms_discipline')->result_array();
 	}
-	public function searchFilesAndFolders($query) {
-	
-        // Fetch all items matching the search query
-        $this->db->like('name', $query);
-        $query = $this->db->get(db_prefix() . 'dms_items');
-        $results = $query->result();
-		
-        // Fetch root folder (folder without a parent_id)
-        $this->db->where('filetype', 'folder');
-        $this->db->where('parent_id', NULL);
-        $rootFolderQuery =  $this->db->get(db_prefix() . 'dms_items');
-        $rootFolder = $rootFolderQuery->row();
+	public function searchFilesAndFolders($query)
+	{
 
-        // Add breadcrumb path for each result
-        foreach ($results as $key => $item) {
-            $breadcrumbs = [];
-            if ($rootFolder) {
-                $breadcrumbs[] = $rootFolder->name;  // Add root folder to every breadcrumb
-            }
-            $breadcrumbs = array_merge($breadcrumbs, $this->getLimitedBreadcrumb($item->parent_id));  // Get parent and grandparent
-            $results[$key]->breadcrumb = $breadcrumbs;
-        }
+		// Fetch all items matching the search query
+		$this->db->like('name', $query);
+		$query = $this->db->get(db_prefix() . 'dms_items');
+		$results = $query->result();
 
-        return $results;
-    }
+		// Fetch root folder (folder without a parent_id)
+		$this->db->where('filetype', 'folder');
+		$this->db->where('parent_id', NULL);
+		$rootFolderQuery =  $this->db->get(db_prefix() . 'dms_items');
+		$rootFolder = $rootFolderQuery->row();
 
-    private function getLimitedBreadcrumb($parent_id) {
-        $breadcrumb = [];
-        $level = 0;
-        
-        // Loop to find up to 2 levels of breadcrumbs
-        while ($parent_id !== NULL && $level < 2) {
-            $this->db->where('id', $parent_id);
-            $query = $this->db->get('tbldms_items');
-            $parent = $query->row();
-            
-            if ($parent) {
-                $breadcrumb[] = $parent->name;
-                $parent_id = $parent->parent_id;
-                $level++;
-            } else {
-                break;
-            }
-        }
+		// Add breadcrumb path for each result
+		foreach ($results as $key => $item) {
+			$breadcrumbs = [];
+			if ($rootFolder) {
+				$breadcrumbs[] = $rootFolder->name;  // Add root folder to every breadcrumb
+			}
+			$breadcrumbs = array_merge($breadcrumbs, $this->getLimitedBreadcrumb($item->parent_id));  // Get parent and grandparent
+			$results[$key]->breadcrumb = $breadcrumbs;
+		}
 
-        return array_reverse($breadcrumb);  // Reverse to show root first
-    }
+		return $results;
+	}
+
+	private function getLimitedBreadcrumb($parent_id)
+	{
+		$breadcrumb = [];
+		$level = 0;
+
+		// Loop to find up to 2 levels of breadcrumbs
+		while ($parent_id !== NULL && $level < 2) {
+			$this->db->where('id', $parent_id);
+			$query = $this->db->get('tbldms_items');
+			$parent = $query->row();
+
+			if ($parent) {
+				$breadcrumb[] = $parent->name;
+				$parent_id = $parent->parent_id;
+				$level++;
+			} else {
+				break;
+			}
+		}
+
+		return array_reverse($breadcrumb);  // Reverse to show root first
+	}
 }

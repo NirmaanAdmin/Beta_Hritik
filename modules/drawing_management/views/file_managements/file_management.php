@@ -69,7 +69,8 @@
 											
 											<!-- <?php echo render_input('search_new', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?> -->
 											<div class="input-group">
-												<input type="text" class="form-control" id="searchBox" placeholder="Type to search files or folders" autocomplete="off">
+												<!-- <input type="text" class="form-control" id="searchBox" placeholder="Type to search files or folders" autocomplete="off"> -->
+												<?php echo render_input('searchBox', '', '', 'text', ['placeholder' => 'Type to search files or folder'], [], 'pull-right default-tool'); ?>
 												<div id="dropdown" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000;"></div>
 											</div>
 
