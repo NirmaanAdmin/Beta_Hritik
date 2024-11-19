@@ -166,6 +166,10 @@ define('TASKS_ATTACHMENTS_FOLDER', FCPATH . 'uploads/tasks' . '/');
  */
 define('PURCHASE_ATTACHMENTS_FOLDER', FCPATH . 'uploads/purchase' . '/');
 /**
+ * Purchase attachments
+ */
+define('CHANGEE_ATTACHMENTS_FOLDER', FCPATH . 'uploads/changee' . '/');
+/**
  * Inventory attachments
  */
 define('INVENTORY_ATTACHMENTS_FOLDER', FCPATH . 'uploads/inventory' . '/');
