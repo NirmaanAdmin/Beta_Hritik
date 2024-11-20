@@ -140,6 +140,14 @@ function get_relation_data($type, $rel_id = '', $extra = [])
         if ($rel_id != '') {
             $data = $CI->tasks_model->get($rel_id);
         }
+    }elseif ($type == 'pur_order') {             
+        if ($rel_id != '') {
+            $CI->load->model('purchase_model');
+            $data = $CI->purchase_model->get_pur_order($rel_id);
+        }else{
+            $search = $CI->misc_model->_search_purchase_orders($q);
+            $data   = $search['result'];
+        }
     }
 
     $data = hooks()->apply_filters('get_relation_data', $data, compact('type', 'rel_id', 'extra'));
@@ -328,15 +336,27 @@ function get_relation_values($relation, $type)
         $link = admin_url('projects/view/' . $id);
     }
 
-    return hooks()->apply_filters('relation_values', [
-        'id'        => $id,
-        'name'      => $name,
-        'link'      => $link,
-        'addedfrom' => $addedfrom,
-        'subtext'   => $subtext,
-        'type'      => $type,
-        'relation'  => $relation,
-    ]);
+    if($type == 'pur_order'){
+        return [
+            'id'        => $id,
+            'name'      => $name,
+            'link'      => $link,
+            'addedfrom' => $addedfrom,
+            'subtext'   => $subtext,
+            'type'      => $type,
+            'relation'  => $relation,
+        ];
+    }else{
+        return hooks()->apply_filters('relation_values', [
+            'id'        => $id,
+            'name'      => $name,
+            'link'      => $link,
+            'addedfrom' => $addedfrom,
+            'subtext'   => $subtext,
+            'type'      => $type,
+            'relation'  => $relation,
+        ]);
+    }
 }
 
 /**

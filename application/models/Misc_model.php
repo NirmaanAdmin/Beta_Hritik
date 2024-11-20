@@ -1494,4 +1494,31 @@ class Misc_model extends App_Model
 
         return $result;
     }
+    public function _search_purchase_orders($q, $limit = 0)
+    {
+            $result = [
+                'result'         => [],
+                'type'           => 'pur_order',
+                'search_heading' => _l('purchase_orders'),
+            ];
+    
+
+            // Purchase Orders
+            $this->db->select();
+            $this->db->from(db_prefix() . 'pur_orders');
+    
+            $this->db->where('(pur_order_name LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
+                OR pur_order_number LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
+                OR vendor LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\')');
+    
+            if ($limit != 0) {
+                $this->db->limit($limit);
+            }
+    
+            $this->db->order_by('pur_order_name', 'ASC');
+            $result['result'] = $this->db->get()->result_array();
+            
+    
+        return $result;
+    }
 }
