@@ -140,10 +140,10 @@ function get_relation_data($type, $rel_id = '', $extra = [])
         if ($rel_id != '') {
             $data = $CI->tasks_model->get($rel_id);
         }
-    }elseif ($type == 'pur_order') {             
+    } elseif ($type == 'pur_order') {             
         if ($rel_id != '') {
-            $CI->load->model('purchase_model');
-            $data = $CI->purchase_model->get_pur_order($rel_id);
+            // $CI->load->model('purchase_model');
+            // $data = $CI->purchase_model->get_pur_order($rel_id);
         }else{
             $search = $CI->misc_model->_search_purchase_orders($q);
             $data   = $search['result'];
@@ -334,6 +334,17 @@ function get_relation_values($relation, $type)
         $name = '#' . $id . ' - ' . $name . ' - ' . get_company_name($clientId);
 
         $link = admin_url('projects/view/' . $id);
+    }elseif ($type == 'pur_order') {   
+            
+        if (is_array($relation)) {
+            $id        = $relation['id'];
+            $name      = $relation['pur_order_name'];
+        } else {
+            $id        = $relation->id;
+            $name      = $relation->pur_order_name;
+        }
+       $link = admin_url('purchase/purchase_order/' . $id);
+      
     }
 
     if($type == 'pur_order'){
