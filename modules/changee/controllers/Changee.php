@@ -235,14 +235,14 @@ class changee extends AdminController
         $this->db->where('module_name', 'warehouse');
         $module = $this->db->get(db_prefix() . 'modules')->row();
         $data['tab'][] = 'changee_order_setting';
-        $data['tab'][] = 'purchase_options';
-        $data['tab'][] = 'units';
+        // $data['tab'][] = 'purchase_options';
+        // $data['tab'][] = 'units';
         $data['tab'][] = 'approval';
-        $data['tab'][] = 'commodity_group';
-        $data['tab'][] = 'sub_group';
-        $data['tab'][] = 'vendor_category';
+        // $data['tab'][] = 'commodity_group';
+        // $data['tab'][] = 'sub_group';
+        // $data['tab'][] = 'vendor_category';
         $data['tab'][] = 'permissions';
-        $data['tab'][] = 'order_return';
+        // $data['tab'][] = 'order_return';
         $data['tab'][] = 'currency_rates';
 
         if ($data['group'] == '') {

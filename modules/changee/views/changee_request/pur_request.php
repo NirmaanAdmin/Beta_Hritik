@@ -63,7 +63,7 @@
                       </div>
 
                       <div class="col-md-3 form-group">
-                        <label for="sale_estimate"><?php echo _l('sale_estimate'); ?></label>
+                        <label for="sale_estimate"><?php echo _l('co_sale_estimate'); ?></label>
                         <select name="sale_estimate" id="sale_estimate" onchange="coppy_sale_estimate(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <?php foreach ($salse_estimates as $s) { ?>

@@ -12,7 +12,7 @@
 	                      <hr />
 	                      <p><a href="#" class="font-medium" onclick="init_report(this,'list_import_goods'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('cost_of_import_goods_for_each_item'); ?></a></p>
 	                      <hr class="hr-10" />
-	                      <p><a href="#" class="font-medium" onclick="init_report(this,'po_voucher_report'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('po_voucher_report'); ?></a></p>
+	                      <p><a href="#" class="font-medium" onclick="init_report(this,'po_voucher_report'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('co_voucher_report'); ?></a></p>
 	                      <hr class="hr-10" />
 	                      <p><a href="#" class="font-medium" onclick="init_report(this,'po_report'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('po_report'); ?></a></p>
 

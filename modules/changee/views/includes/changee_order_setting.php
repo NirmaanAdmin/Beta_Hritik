@@ -14,13 +14,13 @@
   <?php echo render_input('pur_request_prefix','pur_request_prefix',changee_get_purchase_option('pur_request_prefix')); ?>
 </div>
 
-<div class="col-md-6">
+<?php /* <div class="col-md-6">
   <?php echo render_input('pur_inv_prefix','pur_inv_prefix',changee_get_purchase_option('pur_inv_prefix')); ?>
 </div>
 
 <div class="col-md-6">
   <?php echo render_input('debit_note_prefix','debit_note_prefix',get_option('debit_note_prefix')); ?>
-</div>
+</div> */ ?>
 
 <div class="col-md-6">
   <?php echo render_input('next_po_number','next_po_number',changee_get_purchase_option('next_po_number'),'number'); ?>

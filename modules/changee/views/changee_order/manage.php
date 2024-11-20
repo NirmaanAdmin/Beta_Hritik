@@ -13,7 +13,7 @@
 	                        </a>
 	                        <?php } ?>
                            <div class="btn-group pull-left">
-                              <a href="#" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo _l('po_voucher'); ?>&nbsp;<span class="caret"></span></a>
+                              <a href="#" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo _l('co_voucher'); ?>&nbsp;<span class="caret"></span></a>
                               <ul class="dropdown-menu dropdown-menu-right">
                                  <li class="hidden-xs"><a href="<?php echo admin_url('changee/po_voucher?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
                                  <li class="hidden-xs"><a href="<?php echo admin_url('changee/po_voucher?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
@@ -118,14 +118,14 @@
                            _l('type'),
                            _l('project'),
                            _l('department'),
-                           _l('po_description'),
-                           _l('po_value'),
+                           _l('co_description'),
+                           _l('co_value'),
                            _l('tax_value'),
-                           _l('po_value_included_tax'),
+                           _l('co_value_included_tax'),
                            _l('tags'),
                            _l('approval_status'),
-                           _l('delivery_date'),
-                           _l('delivery_status'),
+                           // _l('delivery_date'),
+                           // _l('delivery_status'),
                            _l('payment_status'),
                            _l('convert_expense'),
                            );
