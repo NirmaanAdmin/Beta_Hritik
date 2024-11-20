@@ -20,7 +20,7 @@ $aColumns = [
     'subtotal',
     'total_tax',
     'total',
-    '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags', 
+    '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'co_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags', 
     'approve_status',
     // 'delivery_date',
     // 'delivery_status',
@@ -42,14 +42,14 @@ if(isset($vendor) || isset($project)){
 }
 
 $sIndexColumn = 'id';
-$sTable       = db_prefix().'pur_orders';
+$sTable       = db_prefix().'co_orders';
 $join         = [
-                    'LEFT JOIN '.db_prefix().'pur_vendor ON '.db_prefix().'pur_vendor.userid = '.db_prefix().'pur_orders.vendor',
-                    'LEFT JOIN '.db_prefix().'departments ON '.db_prefix().'departments.departmentid = '.db_prefix().'pur_orders.department',
-                    'LEFT JOIN '.db_prefix().'projects ON '.db_prefix().'projects.id = '.db_prefix().'pur_orders.project',
-                    'LEFT JOIN '.db_prefix().'assets_group ON '.db_prefix().'assets_group.group_id = '.db_prefix().'pur_orders.group_pur',
-                    'LEFT JOIN '.db_prefix().'wh_sub_group ON '.db_prefix().'wh_sub_group.id = '.db_prefix().'pur_orders.sub_groups_pur',
-                    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_orders.area_pur',
+                    'LEFT JOIN '.db_prefix().'pur_vendor ON '.db_prefix().'pur_vendor.userid = '.db_prefix().'co_orders.vendor',
+                    'LEFT JOIN '.db_prefix().'departments ON '.db_prefix().'departments.departmentid = '.db_prefix().'co_orders.department',
+                    'LEFT JOIN '.db_prefix().'projects ON '.db_prefix().'projects.id = '.db_prefix().'co_orders.project',
+                    'LEFT JOIN '.db_prefix().'assets_group ON '.db_prefix().'assets_group.group_id = '.db_prefix().'co_orders.group_pur',
+                    'LEFT JOIN '.db_prefix().'wh_sub_group ON '.db_prefix().'wh_sub_group.id = '.db_prefix().'co_orders.sub_groups_pur',
+                    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'co_orders.area_pur',
                 ];
 $i = 0;
 foreach ($custom_fields as $field) {
@@ -58,18 +58,18 @@ foreach ($custom_fields as $field) {
         $select_as = 'date_picker_cvalue_' . $i;
     }
     array_push($aColumns, 'ctable_' . $i . '.value as ' . $select_as);
-    array_push($join, 'LEFT JOIN '.db_prefix().'customfieldsvalues as ctable_' . $i . ' ON '.db_prefix().'pur_orders.id = ctable_' . $i . '.relid AND ctable_' . $i . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $i . '.fieldid=' . $field['id']);
+    array_push($join, 'LEFT JOIN '.db_prefix().'customfieldsvalues as ctable_' . $i . ' ON '.db_prefix().'co_orders.id = ctable_' . $i . '.relid AND ctable_' . $i . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $i . '.fieldid=' . $field['id']);
     $i++;
 }
 
 $where = [];
 
 if(isset($vendor)){
-    array_push($where, ' AND '.db_prefix().'pur_orders.vendor = '.$vendor);
+    array_push($where, ' AND '.db_prefix().'co_orders.vendor = '.$vendor);
 }
 
 if(isset($project)){
-    array_push($where, ' AND '.db_prefix().'pur_orders.project = '.$project);
+    array_push($where, ' AND '.db_prefix().'co_orders.project = '.$project);
 }
 
 if ($this->ci->input->post('from_date')
@@ -109,11 +109,11 @@ if ($this->ci->input->post('delivery_status')
 
 if ($this->ci->input->post('changee_request')
     && count($this->ci->input->post('changee_request')) > 0) {
-    array_push($where, 'AND pur_request IN (' . implode(',', $this->ci->input->post('changee_request')) . ')');
+    array_push($where, 'AND co_request IN (' . implode(',', $this->ci->input->post('changee_request')) . ')');
 }
 
 if(!has_permission('changee_orders', '', 'view')){
-   array_push($where, 'AND (' . db_prefix() . 'pur_orders.addedfrom = '.get_staff_user_id().' OR ' . db_prefix() . 'pur_orders.buyer = '.get_staff_user_id().' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . ') OR '.get_staff_user_id().' IN (SELECT staffid FROM ' . db_prefix() . 'pur_approval_details WHERE ' . db_prefix() . 'pur_approval_details.rel_type = "pur_order" AND ' . db_prefix() . 'pur_approval_details.rel_id = '.db_prefix().'pur_orders.id))');
+   array_push($where, 'AND (' . db_prefix() . 'co_orders.addedfrom = '.get_staff_user_id().' OR ' . db_prefix() . 'co_orders.buyer = '.get_staff_user_id().' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . ') OR '.get_staff_user_id().' IN (SELECT staffid FROM ' . db_prefix() . 'co_approval_details WHERE ' . db_prefix() . 'co_approval_details.rel_type = "pur_order" AND ' . db_prefix() . 'co_approval_details.rel_id = '.db_prefix().'co_orders.id))');
 }
 
 $type = $this->ci->input->post('type');
@@ -122,9 +122,9 @@ if (isset($type)) {
     foreach ($type as $t) {
         if ($t != '') {
             if ($where_type == '') {
-                $where_type .= ' AND (tblpur_orders.type = "' . $t . '"';
+                $where_type .= ' AND (tblco_orders.type = "' . $t . '"';
             } else {
-                $where_type .= ' or tblpur_orders.type = "' . $t . '"';
+                $where_type .= ' or tblco_orders.type = "' . $t . '"';
             }
         }
     }
@@ -141,9 +141,9 @@ if (isset($tags_ft)) {
     foreach ($tags_ft as $commodity_id) {
         if ($commodity_id != '') {
             if ($where_tags_ft == '') {
-                $where_tags_ft .= ' AND (tblpur_orders.id = "' . $commodity_id . '"';
+                $where_tags_ft .= ' AND (tblco_orders.id = "' . $commodity_id . '"';
             } else {
-                $where_tags_ft .= ' or tblpur_orders.id = "' . $commodity_id . '"';
+                $where_tags_ft .= ' or tblco_orders.id = "' . $commodity_id . '"';
             }
         }
     }
@@ -158,7 +158,7 @@ if(!is_admin()) {
     $having = "FIND_IN_SET('".get_staff_user_id()."', member_list) != 0";
 }
 
-$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'pur_orders.id as id','company','pur_order_number','expense_convert',db_prefix().'projects.name as project_name',db_prefix().'departments.name as department_name', 'currency', '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_orders.project) as member_list'], '', [], $having);
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'co_orders.id as id','company','pur_order_number','expense_convert',db_prefix().'projects.name as project_name',db_prefix().'departments.name as department_name', 'currency', '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'co_orders.project) as member_list'], '', [], $having);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -223,7 +223,7 @@ foreach ($rResult as $aRow) {
             }else{
                 $_data = '<a href="'.admin_url('expenses/list_expenses/'.$aRow['expense_convert']).'" class="btn btn-success btn-icon">'._l('view_expense').'</a>';
             }
-        }elseif($aColumns[$i] == '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags'){
+        }elseif($aColumns[$i] == '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'co_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags'){
                 
                 $_data = render_tags($aRow['tags']);
 

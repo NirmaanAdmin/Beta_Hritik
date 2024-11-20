@@ -36,7 +36,7 @@
 
                   <li role="presentation" class="tab-separator">
                     <?php
-                              $totalComments = total_rows(db_prefix().'pur_comments',['rel_id' => $estimate->id, 'rel_type' => 'pur_quotation']);
+                              $totalComments = total_rows(db_prefix().'co_comments',['rel_id' => $estimate->id, 'rel_type' => 'pur_quotation']);
                               ?>
                      <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
                      <?php echo _l('pur_discuss'); ?>
@@ -247,13 +247,13 @@
                         <?php } ?>
                         </div>
 
-                    <?php if($estimate->pur_request){ ?>    
-                     <?php if($estimate->pur_request->id != 0){ ?>
+                    <?php if($estimate->co_request){ ?>    
+                     <?php if($estimate->co_request->id != 0){ ?>
                      <div class="col-md-12">
-                        <h4 class="font-medium mbot15"><?php echo _l('related_to_pur_request',array(
+                        <h4 class="font-medium mbot15"><?php echo _l('related_to_co_request',array(
                            _l('estimate_lowercase'),
-                           _l('pur_request'),
-                           '<a href="'.admin_url('changee/view_pur_request/'.$estimate->pur_request->id).'" target="_blank">' . $estimate->pur_request->pur_rq_name . '</a>',
+                           _l('co_request'),
+                           '<a href="'.admin_url('changee/view_co_request/'.$estimate->co_request->id).'" target="_blank">' . $estimate->co_request->pur_rq_name . '</a>',
                            )); ?></h4>
                      </div>
                      <?php } ?>

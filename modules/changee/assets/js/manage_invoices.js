@@ -5,7 +5,7 @@
 		"from_date": 'input[name="from_date"]',
         "to_date": 'input[name="to_date"]',
         "contract": "[name='contract[]']",
-        "pur_orders": "[name='pur_orders[]']",
+        "co_orders": "[name='co_orders[]']",
         "vendors": "[name='vendor_ft[]']"
     };
 

@@ -33,22 +33,22 @@
 
           <div class="row">
             <div class="col-md-12">
-              <a href="<?php echo site_url('changee/vendors_portal/add_update_quotation?changee_request='.$pur_request->id); ?>" class="btn btn-info mbot10 pull-right"><?php echo _l('convert_to_quotation'); ?></a>
+              <a href="<?php echo site_url('changee/vendors_portal/add_update_quotation?changee_request='.$co_request->id); ?>" class="btn btn-info mbot10 pull-right"><?php echo _l('convert_to_quotation'); ?></a>
             </div>
 
              <div class="col-md-6">
                 <table class="table table-striped table-bordered">
                   <tr>
                     <td width="30%"><?php echo _l('pur_rq_code'); ?></td>
-                    <td><?php echo changee_pur_html_entity_decode($pur_request->pur_rq_code); ?></td>
+                    <td><?php echo changee_pur_html_entity_decode($co_request->pur_rq_code); ?></td>
                   </tr>
                   <tr>
                     <td><?php echo _l('pur_rq_name'); ?></td>
-                    <td><?php echo changee_pur_html_entity_decode($pur_request->pur_rq_name); ?></td>
+                    <td><?php echo changee_pur_html_entity_decode($co_request->pur_rq_name); ?></td>
                   </tr>
                   <tr>
                     <td><?php echo _l('description'); ?></td>
-                    <td><?php echo changee_pur_html_entity_decode($pur_request->rq_description); ?></td>
+                    <td><?php echo changee_pur_html_entity_decode($co_request->rq_description); ?></td>
                   </tr>
                 </table>
              </div>
@@ -56,15 +56,15 @@
                 <table class="table table-striped table-bordered">
                   <tr>
                     <td width="30%"><?php echo _l('request_date'); ?></td>
-                    <td><?php echo _dt($pur_request->request_date); ?></td>
+                    <td><?php echo _dt($co_request->request_date); ?></td>
                   </tr>
                   <tr>
                     <td><?php echo _l('requester'); ?></td>
-                    <td><?php echo get_staff_full_name($pur_request->requester); ?></td>
+                    <td><?php echo get_staff_full_name($co_request->requester); ?></td>
                   </tr>
                   <tr>
                     <td><?php echo _l('status'); ?></td>
-                    <td><?php echo changee_get_status_approve($pur_request->status); ?></td>
+                    <td><?php echo changee_get_status_approve($co_request->status); ?></td>
                   </tr>
                 </table>
              </div>  
@@ -73,7 +73,7 @@
         </div>
 
         <div role="tabpanel" class="tab-pane <?php if($this->input->get('tab') === 'attachment'){echo ' active';} ?>" id="attachment">
-              <?php echo form_open_multipart(site_url('changee/vendors_portal/upload_pr_files/'.$pur_request->id.'/'.$pur_request->hash),array('class'=>'dropzone','id'=>'files-upload')); ?>
+              <?php echo form_open_multipart(site_url('changee/vendors_portal/upload_pr_files/'.$co_request->id.'/'.$co_request->hash),array('class'=>'dropzone','id'=>'files-upload')); ?>
                  <input type="file" name="file" multiple class="hide"/>
                  <?php echo form_close(); ?>
 
@@ -123,7 +123,7 @@
                                   $attachment_url = $file['external_link'];
                               }
 
-                              $href_url = site_url(PURCHASE_PATH.'pur_request/'.$file['rel_id'].'/'.$file['file_name']).'" download';
+                              $href_url = site_url(PURCHASE_PATH.'co_request/'.$file['rel_id'].'/'.$file['file_name']).'" download';
                                                                 if(!empty($file['external'])){
                                                                   $href_url = $file['external_link'];
                                                                 }
@@ -149,7 +149,7 @@
                   
                       <td>
                           <?php if($file['contact_id'] == changee_get_vendor_contact_user_id()){ ?>
-                              <a href="<?php echo site_url('changee/vendors_portal/delete_pr_file/'.$file['id'].'/'.$pur_request->id.'/'.$pur_request->hash); ?>"
+                              <a href="<?php echo site_url('changee/vendors_portal/delete_pr_file/'.$file['id'].'/'.$co_request->id.'/'.$co_request->hash); ?>"
                                   class="btn btn-danger btn-icon _delete file-delete"><i class="fa fa-remove"></i></a>
                               <?php } ?>
                           </td>
@@ -187,10 +187,10 @@
 
                    <?php $_subtotal = 0;
                    $_total = 0;
-                   if(count($pur_request_detail) > 0){
+                   if(count($co_request_detail) > 0){
                       $count = 1;
                       $t_mn = 0;
-                   foreach($pur_request_detail as $es) { 
+                   foreach($co_request_detail as $es) { 
                     $_subtotal += $es['into_money'];
                     $_total += $es['total'];
                     ?>
@@ -255,7 +255,7 @@
                    <?php echo app_format_money($_subtotal, $base_currency->symbol); ?>
                  </td>
               </tr>
-              <?php if(isset($pur_request)){ 
+              <?php if(isset($co_request)){ 
                 echo $taxes_data['html'];
                 ?>
               <?php } ?>
@@ -289,4 +289,4 @@
 <?php hooks()->do_action('app_admin_footer'); ?>
 </body>
 </html>
-<?php require 'modules/changee/assets/js/pur_request_vendor_js.php';?>
+<?php require 'modules/changee/assets/js/co_request_vendor_js.php';?>

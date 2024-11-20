@@ -4,19 +4,19 @@
 
 <div id="wrapper">
   <div class="content">
-    <?php echo form_open_multipart($this->uri->uri_string(), array('id' => 'add_edit_pur_request-form', 'class' => '_transaction_form')); ?>
+    <?php echo form_open_multipart($this->uri->uri_string(), array('id' => 'add_edit_co_request-form', 'class' => '_transaction_form')); ?>
     <div class="row">
       <div class="col-md-12">
         <div class="panel_s">
           <div class="panel-body">
-            <h4 class="customer-profile-group-heading"><?php if (isset($pur_request)) {
-                                                          echo changee_pur_html_entity_decode($pur_request->pur_rq_code);
+            <h4 class="customer-profile-group-heading"><?php if (isset($co_request)) {
+                                                          echo changee_pur_html_entity_decode($co_request->pur_rq_code);
                                                         } else {
                                                           echo _l($title) . ' ' . _l('changee_request');
                                                         } ?></h4>
             <?php
 
-            if (isset($pur_request)) {
+            if (isset($co_request)) {
               echo form_hidden('isedit');
             } ?>
             <div class="row accounting-template">
@@ -26,16 +26,16 @@
                 <div class="col-md-12">
                   <div class="col-md-6">
                     <?php
-                    $prefix = changee_get_purchase_option('pur_request_prefix');
-                    $next_number = changee_get_purchase_option('next_pr_number');
-                    $number = (isset($pur_request) ? $pur_request->number : $next_number);
+                    $prefix = changee_get_changee_option('co_request_prefix');
+                    $next_number = changee_get_changee_option('next_pr_number');
+                    $number = (isset($co_request) ? $co_request->number : $next_number);
                     echo form_hidden('number', $number); ?>
 
-                    <?php $pur_rq_code = (isset($pur_request) ? $pur_request->pur_rq_code : $prefix . '-' . str_pad($next_number, 5, '0', STR_PAD_LEFT) . '-' . date('Y'));
+                    <?php $pur_rq_code = (isset($co_request) ? $co_request->pur_rq_code : $prefix . '-' . str_pad($next_number, 5, '0', STR_PAD_LEFT) . '-' . date('Y'));
                     echo render_input('pur_rq_code', 'pur_rq_code', $pur_rq_code, 'text', array('readonly' => '')); ?>
                   </div>
                   <div class="col-md-6">
-                    <?php $pur_rq_name = (isset($pur_request) ? $pur_request->pur_rq_name : '');
+                    <?php $pur_rq_name = (isset($co_request) ? $co_request->pur_rq_name : '');
                     echo render_input('pur_rq_name', 'pur_rq_name', $pur_rq_name); ?>
                   </div>
 
@@ -52,9 +52,9 @@
                         <select name="project" id="project" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <?php foreach ($projects as $s) { ?>
-                            <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_request) && $s['id'] == $pur_request->project) {
+                            <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($co_request) && $s['id'] == $co_request->project) {
                                                                                               echo 'selected';
-                                                                                            } else if (!isset($pur_request) && $s['id'] == $project_id) {
+                                                                                            } else if (!isset($co_request) && $s['id'] == $project_id) {
                                                                                               echo 'selected';
                                                                                             } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
                           <?php } ?>
@@ -67,7 +67,7 @@
                         <select name="sale_estimate" id="sale_estimate" onchange="coppy_sale_estimate(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <?php foreach ($salse_estimates as $s) { ?>
-                            <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_request) && $s['id'] == $pur_request->sale_estimate) {
+                            <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($co_request) && $s['id'] == $co_request->sale_estimate) {
                                                                                               echo 'selected';
                                                                                             } ?>><?php echo format_estimate_number($s['id']); ?></option>
                           <?php } ?>
@@ -79,10 +79,10 @@
                         <label for="type"><?php echo _l('type'); ?></label>
                         <select name="type" id="type" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
-                          <option value="capex" <?php if (isset($pur_request) && $pur_request->type == 'capex') {
+                          <option value="capex" <?php if (isset($co_request) && $co_request->type == 'capex') {
                                                   echo 'selected';
                                                 } ?>><?php echo _l('capex'); ?></option>
-                          <option value="opex" <?php if (isset($pur_request) && $pur_request->type == 'opex') {
+                          <option value="opex" <?php if (isset($co_request) && $co_request->type == 'opex') {
                                                   echo 'selected';
                                                 } ?>><?php echo _l('opex'); ?></option>
                         </select>
@@ -93,7 +93,7 @@
                         <?php
                         $currency_attr = array('disabled' => true, 'data-show-subtext' => true);
 
-                        $selected = (isset($pur_request) && $pur_request->currency != 0) ? $pur_request->currency : '';
+                        $selected = (isset($co_request) && $co_request->currency != 0) ? $co_request->currency : '';
                         if ($selected == '') {
                           foreach ($currencies as $currency) {
 
@@ -113,7 +113,7 @@
                     <select name="department" id="department" class="selectpicker" onchange="department_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                       <option value=""></option>
                       <?php foreach ($departments as $s) { ?>
-                        <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if (isset($pur_request) && $s['departmentid'] == $pur_request->department) {
+                        <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if (isset($co_request) && $s['departmentid'] == $co_request->department) {
                                                                                                     echo 'selected';
                                                                                                   } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
                       <?php } ?>
@@ -127,7 +127,7 @@
                     <select name="sale_invoice" onchange="coppy_sale_invoice(); return false;" id="sale_invoice" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                       <option value=""></option>
                       <?php foreach ($invoices as $inv) { ?>
-                        <option value="<?php echo changee_pur_html_entity_decode($inv['id']); ?>" <?php if (isset($pur_request) && $inv['id'] == $pur_request->sale_invoice) {
+                        <option value="<?php echo changee_pur_html_entity_decode($inv['id']); ?>" <?php if (isset($co_request) && $inv['id'] == $co_request->sale_invoice) {
                                                                                             echo 'selected';
                                                                                           } ?>><?php echo format_invoice_number($inv['id']); ?></option>
                       <?php } ?>
@@ -141,7 +141,7 @@
                     <select name="requester" id="requester" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                       <option value=""></option>
                       <?php foreach ($staffs as $s) { ?>
-                        <option value="<?php echo changee_pur_html_entity_decode($s['staffid']); ?>" <?php if (isset($pur_request) && $s['staffid'] == $pur_request->requester) {
+                        <option value="<?php echo changee_pur_html_entity_decode($s['staffid']); ?>" <?php if (isset($co_request) && $s['staffid'] == $co_request->requester) {
                                                                                                 echo 'selected';
                                                                                               } elseif ($s['staffid'] == get_staff_user_id()) {
                                                                                                 echo 'selected';
@@ -155,13 +155,13 @@
                     <label for="send_to_vendors"><?php echo _l('pur_send_to_vendors'); ?></label>
                     <select name="send_to_vendors[]" id="send_to_vendors" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                       <?php
-                      if (isset($pur_request)) {
-                        $vendors_arr = explode(',', $pur_request->send_to_vendors ?? '');
+                      if (isset($co_request)) {
+                        $vendors_arr = explode(',', $co_request->send_to_vendors ?? '');
                       }
                       ?>
 
                       <?php foreach ($vendors as $s) { ?>
-                        <option value="<?php echo changee_pur_html_entity_decode($s['userid']); ?>" <?php if (isset($pur_request) && in_array($s['userid'], $vendors_arr)) {
+                        <option value="<?php echo changee_pur_html_entity_decode($s['userid']); ?>" <?php if (isset($co_request) && in_array($s['userid'], $vendors_arr)) {
                                                                                               echo 'selected';
                                                                                             } ?>><?php echo changee_pur_html_entity_decode($s['company']); ?></option>
                       <?php } ?>
@@ -171,47 +171,47 @@
                   <div class="col-md-3 form-group" style="clear: both;">
                     <?php
                     $selected = '';
-                    foreach ($commodity_groups_pur_request as $group) {
-                      if (isset($pur_request)) {
-                        if ($pur_request->group_pur == $group['id']) {
+                    foreach ($commodity_groups_co_request as $group) {
+                      if (isset($co_request)) {
+                        if ($co_request->group_pur == $group['id']) {
                           $selected = $group['id'];
                         }
                       }
                     }
-                    echo render_select('group_pur', $commodity_groups_pur_request, array('id', 'name'), 'Budget Head', $selected);
+                    echo render_select('group_pur', $commodity_groups_co_request, array('id', 'name'), 'Budget Head', $selected);
                     ?>
                   </div>
                   <div class="col-md-3 form-group">
                     <?php
 
                     $selected = '';
-                    foreach ($sub_groups_pur_request as $sub_group) {
-                      if (isset($pur_request)) {
-                        if ($pur_request->sub_groups_pur == $sub_group['id']) {
+                    foreach ($sub_groups_co_request as $sub_group) {
+                      if (isset($co_request)) {
+                        if ($co_request->sub_groups_pur == $sub_group['id']) {
                           $selected = $sub_group['id'];
                         }
                       }
                     }
-                    echo render_select('sub_groups_pur', $sub_groups_pur_request, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
+                    echo render_select('sub_groups_pur', $sub_groups_co_request, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
                     ?>
                   </div>
                   <div class="col-md-3 form-group">
                     <?php
                     $selected = '';
-                    foreach ($area_pur_request as $area) {
-                      if (isset($pur_request)) {
-                        if ($pur_request->area_pur == $area['id']) {
+                    foreach ($area_co_request as $area) {
+                      if (isset($co_request)) {
+                        if ($co_request->area_pur == $area['id']) {
                           $selected = $area['id'];
                         }
                       }
                     }
-                    echo render_select('area_pur', $area_pur_request, array('id', 'area_name'), 'Area', $selected);
+                    echo render_select('area_pur', $area_co_request, array('id', 'area_name'), 'Area', $selected);
                     ?>
                   </div>
 
 
                   <div class="col-md-12">
-                    <?php $rq_description = (isset($pur_request) ? $pur_request->rq_description : '');
+                    <?php $rq_description = (isset($co_request) ? $co_request->rq_description : '');
                     echo render_textarea('rq_description', 'rq_description', $rq_description); ?>
                   </div>
                 </div>
@@ -242,7 +242,7 @@
             if (isset($attachments) && count($attachments) > 0) {
               foreach ($attachments as $value) {
                 echo '<div class="col-md-3">';
-                $path = get_upload_path_by_type('changee') . 'pur_request/' . $value['rel_id'] . '/' . $value['file_name'];
+                $path = get_upload_path_by_type('changee') . 'co_request/' . $value['rel_id'] . '/' . $value['file_name'];
                 $is_image = is_image($path);
                 if ($is_image) {
                   echo '<div class="preview_image">';
@@ -277,26 +277,26 @@
                     </div>
 
                     <?php
-                    $pur_request_currency = $base_currency;
-                    if (isset($pur_request) && $pur_request->currency != 0) {
-                      $pur_request_currency = changee_pur_get_currency_by_id($pur_request->currency);
+                    $co_request_currency = $base_currency;
+                    if (isset($co_request) && $co_request->currency != 0) {
+                      $co_request_currency = changee_pur_get_currency_by_id($co_request->currency);
                     }
 
-                    $from_currency = (isset($pur_request) && $pur_request->from_currency != null) ? $pur_request->from_currency : $base_currency->id;
+                    $from_currency = (isset($co_request) && $co_request->from_currency != null) ? $co_request->from_currency : $base_currency->id;
                     echo form_hidden('from_currency', $from_currency);
 
                     ?>
-                    <div class="col-md-8 <?php if ($pur_request_currency->id == $base_currency->id) {
+                    <div class="col-md-8 <?php if ($co_request_currency->id == $base_currency->id) {
                                             echo 'hide';
                                           } ?>" id="currency_rate_div">
                       <div class="col-md-10 text-right">
 
-                        <p class="mtop10"><?php echo _l('currency_rate'); ?><span id="convert_str"><?php echo ' (' . $base_currency->name . ' => ' . $pur_request_currency->name . '): ';  ?></span></p>
+                        <p class="mtop10"><?php echo _l('currency_rate'); ?><span id="convert_str"><?php echo ' (' . $base_currency->name . ' => ' . $co_request_currency->name . '): ';  ?></span></p>
                       </div>
                       <div class="col-md-2 pull-right">
                         <?php $currency_rate = 1;
-                        if (isset($pur_request) && $pur_request->currency != 0) {
-                          $currency_rate = changee_pur_get_currency_rate($base_currency->name, $pur_request_currency->name);
+                        if (isset($co_request) && $co_request->currency != 0) {
+                          $currency_rate = changee_pur_get_currency_rate($base_currency->name, $co_request_currency->name);
                         }
                         echo render_input('currency_rate', '', $currency_rate, 'number', [], [], '', 'text-right');
                         ?>
@@ -311,12 +311,12 @@
                           <th></th>
                           <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
                           <th width="15%" align="right"><?php echo _l('description'); ?></th>
-                          <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th width="10%" align="right" class="qty"><?php echo _l('changee_quantity'); ?></th>
-                          <th width="10%" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
-                          <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
-                          <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th align="right"><i class="fa fa-cog"></i></th>
                         </tr>
                       </thead>
@@ -339,8 +339,8 @@
 
                             <div class="input-group" id="discount-total">
 
-                              <input type="text" readonly="true" class="form-control text-right" name="subtotal" value="<?php if (isset($pur_request)) {
-                                                                                                                          echo app_format_money($pur_request->subtotal, '');
+                              <input type="text" readonly="true" class="form-control text-right" name="subtotal" value="<?php if (isset($co_request)) {
+                                                                                                                          echo app_format_money($co_request->subtotal, '');
                                                                                                                         } ?>">
 
                               <div class="input-group-addon">
@@ -348,11 +348,11 @@
 
                                   <span class="discount-type-selected currency_span" id="subtotal_currency">
                                     <?php
-                                    if (!isset($pur_request)) {
+                                    if (!isset($co_request)) {
                                       echo changee_pur_html_entity_decode($base_currency->symbol);
                                     } else {
-                                      if ($pur_request->currency != 0) {
-                                        $_currency_symbol = changee_pur_get_currency_name_symbol($pur_request->currency, 'symbol');
+                                      if ($co_request->currency != 0) {
+                                        $_currency_symbol = changee_pur_get_currency_name_symbol($co_request->currency, 'symbol');
                                         echo changee_pur_html_entity_decode($_currency_symbol);
                                       } else {
                                         echo changee_pur_html_entity_decode($base_currency->symbol);
@@ -374,19 +374,19 @@
                           </td>
                           <td width="65%" id="total_td">
                             <div class="input-group" id="total">
-                              <input type="text" readonly="true" class="form-control text-right" name="total_mn" value="<?php if (isset($pur_request)) {
-                                                                                                                          echo app_format_money($pur_request->total, '');
+                              <input type="text" readonly="true" class="form-control text-right" name="total_mn" value="<?php if (isset($co_request)) {
+                                                                                                                          echo app_format_money($co_request->total, '');
                                                                                                                         } ?>">
                               <div class="input-group-addon">
                                 <div class="dropdown">
 
                                   <span class="discount-type-selected currency_span">
                                     <?php
-                                    if (!isset($pur_request)) {
+                                    if (!isset($co_request)) {
                                       echo changee_pur_html_entity_decode($base_currency->symbol);
                                     } else {
-                                      if ($pur_request->currency != 0) {
-                                        $_currency_symbol = changee_pur_get_currency_name_symbol($pur_request->currency, 'symbol');
+                                      if ($co_request->currency != 0) {
+                                        $_currency_symbol = changee_pur_get_currency_name_symbol($co_request->currency, 'symbol');
                                         echo changee_pur_html_entity_decode($_currency_symbol);
                                       } else {
                                         echo changee_pur_html_entity_decode($base_currency->symbol);
@@ -437,4 +437,4 @@
 </body>
 
 </html>
-<?php require 'modules/changee/assets/js/pur_request_js.php'; ?>
+<?php require 'modules/changee/assets/js/co_request_js.php'; ?>

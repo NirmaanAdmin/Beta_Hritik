@@ -5,7 +5,7 @@
        // Init accountacy currency symbol
     init_db_currency();
 
-    <?php if(changee_get_purchase_option('item_by_vendor') != 1){ ?>
+    <?php if(changee_get_changee_option('item_by_vendor') != 1){ ?>
       init_ajax_search('items','#item_select.ajax-search',undefined,admin_url+'changee/pur_commodity_code_search');
     <?php } ?>
 
@@ -62,7 +62,7 @@
 	           
 	            s_currency.selectpicker('refresh');
 
-	            <?php if(changee_get_purchase_option('item_by_vendor') == 1){ ?>
+	            <?php if(changee_get_changee_option('item_by_vendor') == 1){ ?>
 			        if(response.option_html != ''){
 			         $('#item_select').html(response.option_html);
 			         $('.selectpicker').selectpicker('refresh');

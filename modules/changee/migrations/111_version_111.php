@@ -9,14 +9,14 @@ class Migration_Version_111 extends App_module_migration
         $CI = &get_instance();
 
         //Ver 1.1.1
-		if (!$CI->db->field_exists('tax_value' ,db_prefix() . 'pur_estimate_detail')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_estimate_detail`
+		if (!$CI->db->field_exists('tax_value' ,db_prefix() . 'co_estimate_detail')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_estimate_detail`
 		      ADD COLUMN `tax_value` DECIMAL(15,2) NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('tax_rate' ,db_prefix() . 'pur_estimate_detail')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_estimate_detail`
+		if (!$CI->db->field_exists('tax_rate' ,db_prefix() . 'co_estimate_detail')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_estimate_detail`
 		      ADD COLUMN `tax_rate` TEXT NULL
 		  ;");
 		}

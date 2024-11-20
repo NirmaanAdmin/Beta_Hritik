@@ -17,7 +17,7 @@
 
       initDataTable('.table-debit-notes', admin_url+'changee/table_vendor_debit_notes/'+<?php echo changee_pur_html_entity_decode($client->userid); ?>);
 
-      initDataTable('.table-pur_estimates', admin_url+'changee/table_vendor_quoations/'+<?php echo changee_pur_html_entity_decode($client->userid); ?>);
+      initDataTable('.table-co_estimates', admin_url+'changee/table_vendor_quoations/'+<?php echo changee_pur_html_entity_decode($client->userid); ?>);
    });
 
 

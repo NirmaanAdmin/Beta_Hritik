@@ -85,7 +85,7 @@ class Changee_quotation_to_approver_merge_fields extends App_merge_fields
 
         $this->ci->db->where('id', $po_id);
 
-        $po = $this->ci->db->get(db_prefix() . 'pur_estimates')->row();
+        $po = $this->ci->db->get(db_prefix() . 'co_estimates')->row();
 
 
         if (!$po) {

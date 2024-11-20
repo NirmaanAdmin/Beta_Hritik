@@ -12,24 +12,24 @@
                   <a href="<?php echo changee_pur_html_entity_decode($file->external_link); ?>" target="_blank" class="btn btn-info mbot20"><i class="fa fa-dropbox" aria-hidden="true"></i> <?php echo _l('open_in_dropbox'); ?></a><br />
                   <?php } ?>
                   <?php
-                     $path = PURCHASE_MODULE_UPLOAD_FOLDER.'/pur_request/'.$file->rel_id.'/'.$file->file_name;
+                     $path = PURCHASE_MODULE_UPLOAD_FOLDER.'/co_request/'.$file->rel_id.'/'.$file->file_name;
                      if(is_image($path)){ ?>
-                  <img src="<?php echo base_url(PURCHASE_PATH.'pur_request/'.$file->rel_id.'/'.$file->file_name); ?>" class="img img-responsive ">
+                  <img src="<?php echo base_url(PURCHASE_PATH.'co_request/'.$file->rel_id.'/'.$file->file_name); ?>" class="img img-responsive ">
                   <?php } else if(!empty($file->external) && !empty($file->thumbnail_link)){ ?>
                   <img src="<?php echo optimize_dropbox_thumbnail($file->thumbnail_link); ?>" class="img img-responsive">
                   <?php } else if(strpos($file->file_name,'.pdf') !== false && empty($file->external)){ ?>
-                  <iframe src="<?php echo base_url(PURCHASE_PATH.'pur_request/'.$file->rel_id.'/'.$file->file_name); ?>" height="100%" width="100%" frameborder="0"></iframe>
+                  <iframe src="<?php echo base_url(PURCHASE_PATH.'co_request/'.$file->rel_id.'/'.$file->file_name); ?>" height="100%" width="100%" frameborder="0"></iframe>
                   <?php } else if(strpos($file->file_name,'.xls') !== false && empty($file->external)){ ?>
-                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'pur_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
+                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'co_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
                   </iframe>
                   <?php } else if(strpos($file->file_name,'.xlsx') !== false && empty($file->external)){ ?>
-                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'pur_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
+                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'co_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
                   </iframe>
                   <?php } else if(strpos($file->file_name,'.doc') !== false && empty($file->external)){ ?>
-                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'pur_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
+                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'co_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
                   </iframe>
                   <?php } else if(strpos($file->file_name,'.docx') !== false && empty($file->external)){ ?>
-                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'pur_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
+                  <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(PURCHASE_PATH.'co_request/'.$file->rel_id.'/'.$file->file_name); ?>' width='100%' height='100%' frameborder='0'>
                   </iframe>
                   <?php } else if(is_html5_video($path)) { ?>
                   <video width="100%" height="100%" src="<?php echo site_url('download/preview_video?path='.protected_file_url_by_path($path).'&type='.$file->filetype); ?>" controls>

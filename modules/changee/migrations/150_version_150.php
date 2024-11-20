@@ -7,8 +7,8 @@ class Migration_Version_150 extends App_module_migration
     {
     	$CI = &get_instance();
 
-    	if (!$CI->db->field_exists('wh_quantity_received' ,db_prefix() . 'pur_order_detail')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_order_detail`
+    	if (!$CI->db->field_exists('wh_quantity_received' ,db_prefix() . 'co_order_detail')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_order_detail`
 		      ADD COLUMN `wh_quantity_received` varchar(200)  NULL
 		  ;");
 		}

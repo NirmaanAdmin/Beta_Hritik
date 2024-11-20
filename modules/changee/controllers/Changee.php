@@ -235,7 +235,7 @@ class changee extends AdminController
         $this->db->where('module_name', 'warehouse');
         $module = $this->db->get(db_prefix() . 'modules')->row();
         $data['tab'][] = 'changee_order_setting';
-        // $data['tab'][] = 'purchase_options';
+        // $data['tab'][] = 'changee_options';
         // $data['tab'][] = 'units';
         $data['tab'][] = 'approval';
         // $data['tab'][] = 'commodity_group';
@@ -529,7 +529,7 @@ class changee extends AdminController
      * @param      string  $id     The identifier
      * @return    redirect, view
      */
-    public function pur_request($id = '')
+    public function co_request($id = '')
     {
         $this->load->model('departments_model');
         $this->load->model('staff_model');
@@ -539,9 +539,9 @@ class changee extends AdminController
 
             if ($this->input->post()) {
                 $add_data = $this->input->post();
-                $id = $this->changee_model->add_pur_request($add_data);
+                $id = $this->changee_model->add_co_request($add_data);
                 if ($id) {
-                    set_alert('success', _l('added_pur_request'));
+                    set_alert('success', _l('added_co_request'));
                 }
                 redirect(admin_url('changee/changee_request'));
             }
@@ -550,41 +550,41 @@ class changee extends AdminController
         } else {
             if ($this->input->post()) {
                 $edit_data = $this->input->post();
-                $success = $this->changee_model->update_pur_request($edit_data, $id);
+                $success = $this->changee_model->update_co_request($edit_data, $id);
                 if ($success == true) {
-                    set_alert('success', _l('updated_pur_request'));
+                    set_alert('success', _l('updated_co_request'));
                 }
                 redirect(admin_url('changee/changee_request'));
             }
 
-            $data['pur_request_detail'] = json_encode($this->changee_model->get_pur_request_detail($id));
-            $data['pur_request'] = $this->changee_model->get_changee_request($id);
-            $data['taxes_data'] = $this->changee_model->get_html_tax_pur_request($id);
-            $data['attachments'] = $this->changee_model->get_changee_attachments('pur_request', $id);
+            $data['co_request_detail'] = json_encode($this->changee_model->get_co_request_detail($id));
+            $data['co_request'] = $this->changee_model->get_changee_request($id);
+            $data['taxes_data'] = $this->changee_model->get_html_tax_co_request($id);
+            $data['attachments'] = $this->changee_model->get_changee_attachments('co_request', $id);
             $data['title'] = _l('edit');
         }
-        $data['commodity_groups_pur_request'] = $this->changee_model->get_commodity_group_add_commodity();
-        $data['sub_groups_pur_request'] = $this->changee_model->get_sub_group();
-        $data['area_pur_request'] = $this->changee_model->get_area();
+        $data['commodity_groups_co_request'] = $this->changee_model->get_commodity_group_add_commodity();
+        $data['sub_groups_co_request'] = $this->changee_model->get_sub_group();
+        $data['area_co_request'] = $this->changee_model->get_area();
         $data['base_currency'] = $this->currencies_model->get_base_currency();
 
         $changee_request_row_template = $this->changee_model->create_changee_request_row_template();
 
         if ($id != '') {
-            $data['pur_request_detail'] = $this->changee_model->get_pur_request_detail($id);
+            $data['co_request_detail'] = $this->changee_model->get_co_request_detail($id);
             $currency_rate = 1;
-            if ($data['pur_request']->currency != 0 && $data['pur_request']->currency_rate != null) {
-                $currency_rate = $data['pur_request']->currency_rate;
+            if ($data['co_request']->currency != 0 && $data['co_request']->currency_rate != null) {
+                $currency_rate = $data['co_request']->currency_rate;
             }
 
             $to_currency = $data['base_currency']->name;
-            if ($data['pur_request']->currency != 0 && $data['pur_request']->to_currency != null) {
-                $to_currency = $data['pur_request']->to_currency;
+            if ($data['co_request']->currency != 0 && $data['co_request']->to_currency != null) {
+                $to_currency = $data['co_request']->to_currency;
             }
 
-            if (count($data['pur_request_detail']) > 0) {
+            if (count($data['co_request_detail']) > 0) {
                 $index_request = 0;
-                foreach ($data['pur_request_detail'] as $request_detail) {
+                foreach ($data['co_request_detail'] as $request_detail) {
                     $index_request++;
                     $unit_name = changee_pur_get_unit_name($request_detail['unit_id']);
                     $taxname = '';
@@ -622,7 +622,7 @@ class changee extends AdminController
             $data['ajaxItems'] = true;
         }
 
-        $this->load->view('changee_request/pur_request', $data);
+        $this->load->view('changee_request/co_request', $data);
     }
 
     /**
@@ -631,7 +631,7 @@ class changee extends AdminController
      * @param      <type>  $id     The identifier
      * @return view
      */
-    public function view_pur_request($id)
+    public function view_co_request($id)
     {
         if (!has_permission('changee_request', '', 'view') && !has_permission('changee_request', '', 'view_own')) {
             access_denied('changee');
@@ -645,14 +645,14 @@ class changee extends AdminController
             $data['send_mail_approve'] = $send_mail_approve;
             $this->session->unset_userdata("send_mail_approve");
         }
-        $data['pur_request'] = $this->changee_model->get_changee_request($id);
+        $data['co_request'] = $this->changee_model->get_changee_request($id);
 
         if (has_permission('changee_request', '', 'view_own') && !is_admin()) {
             $staffid = get_staff_user_id();
             $in_vendor = false;
 
-            if ($data['pur_request']->send_to_vendors != null &&  $data['pur_request']->send_to_vendors != '') {
-                $send_to_vendors_ids = explode(',', $data['pur_request']->send_to_vendors);
+            if ($data['co_request']->send_to_vendors != null &&  $data['co_request']->send_to_vendors != '') {
+                $send_to_vendors_ids = explode(',', $data['co_request']->send_to_vendors);
 
                 $list_vendor = changee_get_vendor_admin_list($staffid);
                 foreach ($list_vendor as $vendor_id) {
@@ -662,37 +662,37 @@ class changee extends AdminController
                 }
             }
 
-            $approve_access = total_rows(db_prefix() . 'pur_approval_details', ['staffid' => $staffid, 'rel_type' => 'pur_request', 'rel_id' => $id]);
+            $approve_access = total_rows(db_prefix() . 'co_approval_details', ['staffid' => $staffid, 'rel_type' => 'co_request', 'rel_id' => $id]);
 
-            if ($data['pur_request']->requester != $staffid && $in_vendor == false && $approve_access == 0) {
+            if ($data['co_request']->requester != $staffid && $in_vendor == false && $approve_access == 0) {
                 access_denied('changee');
             }
         }
 
-        if (!$data['pur_request']) {
+        if (!$data['co_request']) {
             show_404();
         }
 
-        $data['pur_request_detail'] = $this->changee_model->get_pur_request_detail($id);
-        $data['title'] = $data['pur_request']->pur_rq_name;
+        $data['co_request_detail'] = $this->changee_model->get_co_request_detail($id);
+        $data['title'] = $data['co_request']->pur_rq_name;
         $data['departments'] = $this->departments_model->get();
         $data['units'] = $this->changee_model->get_units();
         $data['items'] = $this->changee_model->get_items();
-        $data['taxes_data'] = $this->changee_model->get_html_tax_pur_request($id);
+        $data['taxes_data'] = $this->changee_model->get_html_tax_co_request($id);
         $data['base_currency'] = $this->currencies_model->get_base_currency();
-        $data['check_appr'] = $this->changee_model->get_approve_setting('pur_request');
-        $data['get_staff_sign'] = $this->changee_model->get_staff_sign($id, 'pur_request');
-        $data['check_approve_status'] = $this->changee_model->check_approval_details($id, 'pur_request');
-        $data['list_approve_status'] = $this->changee_model->get_list_approval_details($id, 'pur_request');
+        $data['check_appr'] = $this->changee_model->get_approve_setting('co_request');
+        $data['get_staff_sign'] = $this->changee_model->get_staff_sign($id, 'co_request');
+        $data['check_approve_status'] = $this->changee_model->check_approval_details($id, 'co_request');
+        $data['list_approve_status'] = $this->changee_model->get_list_approval_details($id, 'co_request');
         $data['taxes'] = $this->changee_model->get_taxes();
-        $data['pur_request_attachments'] = $this->changee_model->get_changee_request_attachments($id);
-        $data['check_approval_setting'] = $this->changee_model->check_approval_setting($data['pur_request']->project, 'pur_request', 0);
-        $data['attachments'] = $this->changee_model->get_changee_attachments('pur_request', $id);
-        $data['pur_request'] = $this->changee_model->get_changee_request($id);
+        $data['co_request_attachments'] = $this->changee_model->get_changee_request_attachments($id);
+        $data['check_approval_setting'] = $this->changee_model->check_approval_setting($data['co_request']->project, 'co_request', 0);
+        $data['attachments'] = $this->changee_model->get_changee_attachments('co_request', $id);
+        $data['co_request'] = $this->changee_model->get_changee_request($id);
         $data['commodity_groups_request'] = $this->changee_model->get_commodity_group_add_commodity();
         $data['sub_groups_request'] = $this->changee_model->get_sub_group();
         $data['area_request'] = $this->changee_model->get_area();
-        $this->load->view('changee_request/view_pur_request', $data);
+        $this->load->view('changee_request/view_co_request', $data);
     }
 
     /**
@@ -766,9 +766,9 @@ class changee extends AdminController
     /**
      * { table pur request }
      */
-    public function table_pur_request()
+    public function table_co_request()
     {
-        $this->app->get_table_data(module_views_path('changee', 'changee_request/table_pur_request'));
+        $this->app->get_table_data(module_views_path('changee', 'changee_request/table_co_request'));
     }
 
     /**
@@ -777,12 +777,12 @@ class changee extends AdminController
      * @param      <type>  $id     The identifier
      * @return     redirect
      */
-    public function delete_pur_request($id)
+    public function delete_co_request($id)
     {
         if (!$id) {
             redirect(admin_url('changee/changee_request'));
         }
-        $response = $this->changee_model->delete_pur_request($id);
+        $response = $this->changee_model->delete_co_request($id);
         if (is_array($response) && isset($response['referenced'])) {
             set_alert('warning', _l('is_referenced', _l('changee_request')));
         } elseif ($response == true) {
@@ -800,17 +800,17 @@ class changee extends AdminController
      * @param      <type>  $id      The identifier
      * @return     json
      */
-    public function change_status_pur_request($status, $id)
+    public function change_status_co_request($status, $id)
     {
-        $change = $this->changee_model->change_status_pur_request($status, $id);
+        $change = $this->changee_model->change_status_co_request($status, $id);
         if ($change == true) {
 
-            $message = _l('change_status_pur_request') . ' ' . _l('successfully');
+            $message = _l('change_status_co_request') . ' ' . _l('successfully');
             echo json_encode([
                 'result' => $message,
             ]);
         } else {
-            $message = _l('change_status_pur_request') . ' ' . _l('fail');
+            $message = _l('change_status_co_request') . ' ' . _l('fail');
             echo json_encode([
                 'result' => $message,
             ]);
@@ -835,7 +835,7 @@ class changee extends AdminController
         }
 
         $data['estimateid']            = $id;
-        $data['pur_request'] = $this->changee_model->get_changee_request();
+        $data['co_request'] = $this->changee_model->get_changee_request();
         $data['vendors'] = $this->changee_model->get_vendor();
         $data['title']                 = _l('estimates');
         $data['bodyclass']             = 'estimates-total-manual';
@@ -897,7 +897,7 @@ class changee extends AdminController
         $pur_quotation_row_template = $this->changee_model->create_quotation_row_template();
 
         if ($id != '') {
-            $data['estimate_detail'] = $this->changee_model->get_pur_estimate_detail($id);
+            $data['estimate_detail'] = $this->changee_model->get_co_estimate_detail($id);
             $currency_rate = 1;
             if ($data['estimate']->currency != 0 && $data['estimate']->currency_rate != null) {
                 $currency_rate = $data['estimate']->currency_rate;
@@ -947,7 +947,7 @@ class changee extends AdminController
 
         $data['staff']             = $this->staff_model->get('', ['active' => 1]);
         $data['vendors'] = $this->changee_model->get_vendor();
-        $data['pur_request'] = $this->changee_model->get_pur_request_by_status(2);
+        $data['co_request'] = $this->changee_model->get_co_request_by_status(2);
         $data['units'] = $this->changee_model->get_units();
         $data['projects'] = $this->projects_model->get_items();
         $data['commodity_groups_pur'] = $this->changee_model->get_commodity_group_add_commodity();
@@ -976,7 +976,7 @@ class changee extends AdminController
             }
         }
 
-        if (total_rows(db_prefix() . 'pur_estimates', [
+        if (total_rows(db_prefix() . 'co_estimates', [
             'YEAR(date)' => date('Y', strtotime(to_sql_date($date))),
             'number' => $number,
         ]) > 0) {
@@ -1018,7 +1018,7 @@ class changee extends AdminController
         if (has_permission('changee_quotations', '', 'view_own') && !is_admin()) {
             $staffid = get_staff_user_id();
 
-            $approve_access = total_rows(db_prefix() . 'pur_approval_details', ['staffid' => $staffid, 'rel_type' => 'pur_quotation', 'rel_id' => $id]);
+            $approve_access = total_rows(db_prefix() . 'co_approval_details', ['staffid' => $staffid, 'rel_type' => 'pur_quotation', 'rel_id' => $id]);
 
             if ($estimate->buyer != $staffid && $estimate->addedfrom != $staffid && !changee_is_vendor_admin($estimate->vendor->userid) && $approve_access == 0) {
                 echo _l('access_denied');
@@ -1037,7 +1037,7 @@ class changee extends AdminController
         }
 
         $data['pur_estimate_attachments'] = $this->changee_model->get_changee_estimate_attachments($id);
-        $data['estimate_detail'] = $this->changee_model->get_pur_estimate_detail($id);
+        $data['estimate_detail'] = $this->changee_model->get_co_estimate_detail($id);
         $data['estimate']          = $estimate;
         $data['members']           = $this->staff_model->get('', ['active' => 1]);
         $data['vendor_contacts'] = $this->changee_model->get_contacts($estimate->vendor->userid);
@@ -1118,15 +1118,15 @@ class changee extends AdminController
     /**
      * { coppy pur request }
      *
-     * @param      <type>  $pur_request  The changee request id
+     * @param      <type>  $co_request  The changee request id
      * @return json
      */
-    public function coppy_pur_request($pur_request)
+    public function coppy_co_request($co_request)
     {
         $this->load->model('currencies_model');
 
-        $pur_request_detail = $this->changee_model->get_pur_request_detail_in_estimate($pur_request);
-        $changee_request = $this->changee_model->get_changee_request($pur_request);
+        $co_request_detail = $this->changee_model->get_co_request_detail_in_estimate($co_request);
+        $changee_request = $this->changee_model->get_changee_request($co_request);
 
         $base_currency = $this->currencies_model->get_base_currency();
         $taxes = [];
@@ -1137,8 +1137,8 @@ class changee extends AdminController
         $data_rs = [];
         $tax_html = '';
 
-        if (count($pur_request_detail) > 0) {
-            foreach ($pur_request_detail as $key => $item) {
+        if (count($co_request_detail) > 0) {
+            foreach ($co_request_detail as $key => $item) {
                 $subtotal += $item['into_money'];
                 $total += $item['total'];
             }
@@ -1153,9 +1153,9 @@ class changee extends AdminController
             $to_currency = $changee_request->currency;
         }
 
-        if (count($pur_request_detail) > 0) {
+        if (count($co_request_detail) > 0) {
             $index_quote = 0;
-            foreach ($pur_request_detail as $key => $item) {
+            foreach ($co_request_detail as $key => $item) {
                 $index_quote++;
                 $unit_name = changee_pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
@@ -1170,11 +1170,11 @@ class changee extends AdminController
         }
 
 
-        $taxes_data = $this->changee_model->get_html_tax_pur_request($pur_request);
+        $taxes_data = $this->changee_model->get_html_tax_co_request($co_request);
         $tax_html = $taxes_data['html'];
 
         echo json_encode([
-            'result' => $pur_request_detail,
+            'result' => $co_request_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
             'total' => app_format_money(round($total, 2), ''),
             'tax_html' => $tax_html,
@@ -1188,16 +1188,16 @@ class changee extends AdminController
     /**
      * { coppy pur request }
      *
-     * @param      <type>  $pur_request  The changee request id
+     * @param      <type>  $co_request  The changee request id
      * @return json
      */
-    public function coppy_pur_request_for_po($pur_request, $vendor = '')
+    public function coppy_co_request_for_po($co_request, $vendor = '')
     {
 
         $this->load->model('currencies_model');
 
-        $pur_request_detail = $this->changee_model->get_pur_request_detail_in_po($pur_request);
-        $changee_request = $this->changee_model->get_changee_request($pur_request);
+        $co_request_detail = $this->changee_model->get_co_request_detail_in_po($co_request);
+        $changee_request = $this->changee_model->get_changee_request($co_request);
 
         $base_currency = $this->currencies_model->get_base_currency();
         $taxes = [];
@@ -1209,10 +1209,10 @@ class changee extends AdminController
         $tax_html = '';
         $estimate_html = '';
 
-        $estimate_html .= $this->changee_model->get_estimate_html_by_pr_vendor($pur_request, $vendor);
+        $estimate_html .= $this->changee_model->get_estimate_html_by_pr_vendor($co_request, $vendor);
 
-        if (count($pur_request_detail) > 0) {
-            foreach ($pur_request_detail as $key => $item) {
+        if (count($co_request_detail) > 0) {
+            foreach ($co_request_detail as $key => $item) {
                 $subtotal += $item['into_money'];
                 $total += $item['total'];
             }
@@ -1228,9 +1228,9 @@ class changee extends AdminController
         }
 
 
-        if (count($pur_request_detail) > 0) {
+        if (count($co_request_detail) > 0) {
             $index_quote = 0;
-            foreach ($pur_request_detail as $key => $item) {
+            foreach ($co_request_detail as $key => $item) {
                 $index_quote++;
                 $unit_name = changee_pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
@@ -1244,11 +1244,11 @@ class changee extends AdminController
             }
         }
 
-        $taxes_data = $this->changee_model->get_html_tax_pur_request($pur_request);
+        $taxes_data = $this->changee_model->get_html_tax_co_request($co_request);
         $tax_html = $taxes_data['html'];
 
         echo json_encode([
-            'result' => $pur_request_detail,
+            'result' => $co_request_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
             'total' => app_format_money(round($total, 2), ''),
             'tax_html' => $tax_html,
@@ -1269,7 +1269,7 @@ class changee extends AdminController
     public function coppy_pur_estimate($pur_estimate_id)
     {
         $this->load->model('currencies_model');
-        $pur_estimate_detail = $this->changee_model->get_pur_estimate_detail_in_order($pur_estimate_id);
+        $co_estimate_detail = $this->changee_model->get_co_estimate_detail_in_order($pur_estimate_id);
         $pur_estimate = $this->changee_model->get_estimate($pur_estimate_id);
 
         $taxes = [];
@@ -1280,8 +1280,8 @@ class changee extends AdminController
         $data_rs = [];
         $tax_html = '';
 
-        if (count($pur_estimate_detail) > 0) {
-            foreach ($pur_estimate_detail as $key => $item) {
+        if (count($co_estimate_detail) > 0) {
+            foreach ($co_estimate_detail as $key => $item) {
                 $subtotal += $item['into_money'];
                 $total += $item['total'];
             }
@@ -1297,9 +1297,9 @@ class changee extends AdminController
             $to_currency = $pur_estimate->currency;
         }
 
-        if (count($pur_estimate_detail) > 0) {
+        if (count($co_estimate_detail) > 0) {
             $index = 0;
-            foreach ($pur_estimate_detail as $key => $item) {
+            foreach ($co_estimate_detail as $key => $item) {
                 $index++;
                 $unit_name = changee_pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
@@ -1316,7 +1316,7 @@ class changee extends AdminController
         $tax_html = $taxes_data['html'];
 
         echo json_encode([
-            'result' => $pur_estimate_detail,
+            'result' => $co_estimate_detail,
             'dc_percent' => $pur_estimate->discount_percent,
             'dc_total' => $pur_estimate->discount_total,
             'discount_type' => $pur_estimate->discount_type,
@@ -1339,7 +1339,7 @@ class changee extends AdminController
      */
     public function view_pur_order($pur_order)
     {
-        $pur_order_detail = $this->changee_model->get_pur_order_detail($pur_order);
+        $co_order_detail = $this->changee_model->get_co_order_detail($pur_order);
         $pur_order = $this->changee_model->get_pur_order($pur_order);
         $base_currency = changee_get_base_currency_pur();
 
@@ -1443,7 +1443,7 @@ class changee extends AdminController
         $data['expense_categories'] = $this->expenses_model->get_category();
         $data['item_tags'] = $this->changee_model->get_item_tag_filter();
         $data['customers'] = $this->clients_model->get();
-        $data['pur_request'] = $this->changee_model->get_pur_request_by_status(2);
+        $data['co_request'] = $this->changee_model->get_co_request_by_status(2);
 
         $data['projects'] = $this->projects_model->get();
 
@@ -1474,7 +1474,7 @@ class changee extends AdminController
         if (has_permission('changee_orders', '', 'view_own') && !is_admin()) {
             $staffid = get_staff_user_id();
 
-            $approve_access = total_rows(db_prefix() . 'pur_approval_details', ['staffid' => $staffid, 'rel_type' => 'pur_order', 'rel_id' => $id]);
+            $approve_access = total_rows(db_prefix() . 'co_approval_details', ['staffid' => $staffid, 'rel_type' => 'pur_order', 'rel_id' => $id]);
 
             if ($estimate->buyer != $staffid && $estimate->addedfrom != $staffid && !changee_is_vendor_admin($estimate->vendor) && $approve_access == 0) {
                 echo _l('access_denied');
@@ -1489,7 +1489,7 @@ class changee extends AdminController
 
         $data['payment'] = $this->changee_model->get_inv_payment_changee_order($id);
         $data['pur_order_attachments'] = $this->changee_model->get_changee_order_attachments($id);
-        $data['estimate_detail'] = $this->changee_model->get_pur_order_detail($id);
+        $data['estimate_detail'] = $this->changee_model->get_co_order_detail($id);
         $data['estimate']          = $estimate;
         $data['members']           = $this->staff_model->get('', ['active' => 1]);
         $data['vendor_contacts'] = $this->changee_model->get_contacts($estimate->vendor);
@@ -1563,7 +1563,7 @@ class changee extends AdminController
         if ($id == '') {
             $title = _l('create_new_pur_order');
         } else {
-            $data['pur_order_detail'] = $this->changee_model->get_pur_order_detail($id);
+            $data['co_order_detail'] = $this->changee_model->get_co_order_detail($id);
             $data['pur_order'] = $this->changee_model->get_pur_order($id);
             $data['attachments'] = $this->changee_model->get_changee_attachments('pur_order', $id);
 
@@ -1579,11 +1579,11 @@ class changee extends AdminController
 
 
             $data['tax_data'] = $this->changee_model->get_html_tax_pur_order($id);
-            $title = _l('pur_order_detail');
+            $title = _l('co_order_detail');
 
-            if (count($data['pur_order_detail']) > 0) {
+            if (count($data['co_order_detail']) > 0) {
                 $index_order = 0;
-                foreach ($data['pur_order_detail'] as $order_detail) {
+                foreach ($data['co_order_detail'] as $order_detail) {
                     $index_order++;
                     $unit_name = changee_pur_get_unit_name($order_detail['unit_id']);
                     $taxname = $order_detail['tax_name'];
@@ -1604,7 +1604,7 @@ class changee extends AdminController
         $this->load->model('departments_model');
         $data['departments'] = $this->departments_model->get();
         $data['invoices'] = $this->changee_model->get_invoice_for_pr();
-        $data['pur_request'] = $this->changee_model->get_pur_request_by_status(2);
+        $data['co_request'] = $this->changee_model->get_co_request_by_status(2);
         $data['projects'] = $this->projects_model->get_items();
         $data['ven'] = $this->input->get('vendor');
         $data['taxes'] = $this->changee_model->get_taxes();
@@ -1838,7 +1838,7 @@ class changee extends AdminController
         $this->load->model('projects_model');
         $data['projects'] = $this->projects_model->get();
         $data['ven'] = $this->input->get('vendor');
-        $data['pur_orders'] = $this->changee_model->get_pur_order_approved();
+        $data['co_orders'] = $this->changee_model->get_pur_order_approved();
         $data['taxes'] = $this->changee_model->get_taxes();
         $data['staff']             = $this->staff_model->get('', ['active' => 1]);
         $data['members']             = $this->staff_model->get('', ['active' => 1]);
@@ -2096,8 +2096,8 @@ class changee extends AdminController
                             case 'pur_order':
                                 $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order/signature/' . $data['rel_id'];
                                 break;
-                            case 'pur_request':
-                                $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/signature/' . $data['rel_id'];
+                            case 'co_request':
+                                $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/signature/' . $data['rel_id'];
                                 break;
                             case 'pur_quotation':
                                 $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_estimate/signature/' . $data['rel_id'];
@@ -2253,16 +2253,16 @@ class changee extends AdminController
      * @param      <type>  $id     The identifier
      * @return pdf output
      */
-    public function pur_request_pdf($id)
+    public function co_request_pdf($id)
     {
         if (!$id) {
             redirect(admin_url('changee/changee_request'));
         }
 
-        $pur_request = $this->changee_model->get_pur_request_pdf_html($id);
+        $co_request = $this->changee_model->get_co_request_pdf_html($id);
 
         try {
-            $pdf = $this->changee_model->pur_request_pdf($pur_request);
+            $pdf = $this->changee_model->co_request_pdf($co_request);
         } catch (Exception $e) {
             echo changee_pur_html_entity_decode($e->getMessage());
             die;
@@ -2293,10 +2293,10 @@ class changee extends AdminController
             redirect(admin_url('changee/changee_request'));
         }
 
-        $pur_request = $this->changee_model->get_request_quotation_pdf_html($id);
+        $co_request = $this->changee_model->get_request_quotation_pdf_html($id);
 
         try {
-            $pdf = $this->changee_model->request_quotation_pdf($pur_request);
+            $pdf = $this->changee_model->request_quotation_pdf($co_request);
         } catch (Exception $e) {
             echo changee_pur_html_entity_decode($e->getMessage());
             die;
@@ -2580,7 +2580,7 @@ class changee extends AdminController
 
         changee_handle_changee_request_file($id);
 
-        redirect(admin_url('changee/view_pur_request/' . $id . '?tab=attachment'));
+        redirect(admin_url('changee/view_co_request/' . $id . '?tab=attachment'));
     }
 
 
@@ -2696,10 +2696,10 @@ class changee extends AdminController
             redirect(admin_url('changee/changee_request'));
         }
 
-        $pur_request = $this->changee_model->get_purorder_pdf_html($id);
+        $co_request = $this->changee_model->get_purorder_pdf_html($id);
         
         try {
-            $pdf = $this->changee_model->purorder_pdf($pur_request, $id);
+            $pdf = $this->changee_model->purorder_pdf($co_request, $id);
         } catch (Exception $e) {
             echo changee_pur_html_entity_decode($e->getMessage());
             die;
@@ -2763,11 +2763,11 @@ class changee extends AdminController
             $select = [
                 'tblitems.commodity_code as item_code',
                 'tblitems.description as item_name',
-                '(select pur_order_name from ' . db_prefix() . 'pur_orders where ' . db_prefix() . 'pur_orders.id = pur_order) as po_name',
+                '(select pur_order_name from ' . db_prefix() . 'co_orders where ' . db_prefix() . 'co_orders.id = pur_order) as po_name',
                 'total_money',
             ];
             $where = [];
-            $custom_date_select = $this->get_where_report_period(db_prefix() . 'pur_orders.order_date');
+            $custom_date_select = $this->get_where_report_period(db_prefix() . 'co_orders.order_date');
             if ($custom_date_select != '') {
                 array_push($where, $custom_date_select);
             }
@@ -2778,9 +2778,9 @@ class changee extends AdminController
                 $base_currency = changee_get_base_currency_pur();
 
                 if ($report_currency == $base_currency->id) {
-                    array_push($where, 'AND ' . db_prefix() . 'pur_orders.currency IN (0, ' . $report_currency . ')');
+                    array_push($where, 'AND ' . db_prefix() . 'co_orders.currency IN (0, ' . $report_currency . ')');
                 } else {
-                    array_push($where, 'AND ' . db_prefix() . 'pur_orders.currency = ' . $report_currency);
+                    array_push($where, 'AND ' . db_prefix() . 'co_orders.currency = ' . $report_currency);
                 }
 
                 $currency = changee_pur_get_currency_by_id($report_currency);
@@ -2803,15 +2803,15 @@ class changee extends AdminController
 
             $aColumns     = $select;
             $sIndexColumn = 'id';
-            $sTable       = db_prefix() . 'pur_order_detail';
+            $sTable       = db_prefix() . 'co_order_detail';
             $join         = [
-                'LEFT JOIN ' . db_prefix() . 'items ON ' . db_prefix() . 'items.id = ' . db_prefix() . 'pur_order_detail.item_code',
-                'LEFT JOIN ' . db_prefix() . 'pur_orders ON ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order',
+                'LEFT JOIN ' . db_prefix() . 'items ON ' . db_prefix() . 'items.id = ' . db_prefix() . 'co_order_detail.item_code',
+                'LEFT JOIN ' . db_prefix() . 'co_orders ON ' . db_prefix() . 'co_orders.id = ' . db_prefix() . 'co_order_detail.pur_order',
             ];
 
             $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
                 db_prefix() . 'items.id as item_id',
-                db_prefix() . 'pur_order_detail.pur_order as po_id'
+                db_prefix() . 'co_order_detail.pur_order as po_id'
             ]);
 
             $output  = $result['output'];
@@ -4129,7 +4129,7 @@ class changee extends AdminController
                 $hash = app_generate_hash();
                 $copylink = site_url('changee/vendors_portal/pur_order/' . $id . '/' . $hash);
                 $this->db->where('id', $id);
-                $this->db->update(db_prefix() . 'pur_orders', ['hash' => $hash,]);
+                $this->db->update(db_prefix() . 'co_orders', ['hash' => $hash,]);
             }
         }
 
@@ -4143,18 +4143,18 @@ class changee extends AdminController
      *
      * @param      string  $id     The identifier
      */
-    public function copy_public_link_pur_request($id)
+    public function copy_public_link_co_request($id)
     {
-        $pur_request = $this->changee_model->get_changee_request($id);
+        $co_request = $this->changee_model->get_changee_request($id);
         $copylink = '';
-        if ($pur_request) {
-            if ($pur_request->hash != '' && $pur_request->hash != null) {
-                $copylink = site_url('changee/vendors_portal/pur_request/' . $id . '/' . $pur_request->hash);
+        if ($co_request) {
+            if ($co_request->hash != '' && $co_request->hash != null) {
+                $copylink = site_url('changee/vendors_portal/co_request/' . $id . '/' . $co_request->hash);
             } else {
                 $hash = app_generate_hash();
-                $copylink = site_url('changee/vendors_portal/pur_request/' . $id . '/' . $hash);
+                $copylink = site_url('changee/vendors_portal/co_request/' . $id . '/' . $hash);
                 $this->db->where('id', $id);
-                $this->db->update(db_prefix() . 'pur_request', ['hash' => $hash,]);
+                $this->db->update(db_prefix() . 'co_request', ['hash' => $hash,]);
             }
         }
 
@@ -4336,7 +4336,7 @@ class changee extends AdminController
      *
      * @param        $dpm    The dpm
      */
-    public function dpm_name_in_pur_request_number($dpm)
+    public function dpm_name_in_co_request_number($dpm)
     {
         $this->load->model('departments_model');
         $department = $this->departments_model->get($dpm);
@@ -4419,7 +4419,7 @@ class changee extends AdminController
                 'delivery_status',
             ];
             $where = [];
-            $custom_date_select = $this->get_where_report_period(db_prefix() . 'pur_orders.order_date');
+            $custom_date_select = $this->get_where_report_period(db_prefix() . 'co_orders.order_date');
             if ($custom_date_select != '') {
                 array_push($where, $custom_date_select);
             }
@@ -4429,15 +4429,15 @@ class changee extends AdminController
             $currency = $this->currencies_model->get_base_currency();
             $aColumns     = $select;
             $sIndexColumn = 'id';
-            $sTable       = db_prefix() . 'pur_orders';
+            $sTable       = db_prefix() . 'co_orders';
             $join         = [
-                'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'pur_orders.department',
-                'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'projects.id = ' . db_prefix() . 'pur_orders.project',
-                'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'pur_orders.vendor',
+                'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'co_orders.department',
+                'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'projects.id = ' . db_prefix() . 'co_orders.project',
+                'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'co_orders.vendor',
             ];
 
             $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-                db_prefix() . 'pur_orders.id as id',
+                db_prefix() . 'co_orders.id as id',
                 db_prefix() . 'departments.name as department_name',
                 db_prefix() . 'projects.name as project_name',
                 db_prefix() . 'pur_vendor.company as vendor_name',
@@ -4524,7 +4524,7 @@ class changee extends AdminController
                 'total',
             ];
             $where = [];
-            $custom_date_select = $this->get_where_report_period(db_prefix() . 'pur_orders.order_date');
+            $custom_date_select = $this->get_where_report_period(db_prefix() . 'co_orders.order_date');
             if ($custom_date_select != '') {
                 array_push($where, $custom_date_select);
             }
@@ -4538,9 +4538,9 @@ class changee extends AdminController
                 $base_currency = changee_get_base_currency_pur();
 
                 if ($report_currency == $base_currency->id) {
-                    array_push($where, 'AND ' . db_prefix() . 'pur_orders.currency IN (0, ' . $report_currency . ')');
+                    array_push($where, 'AND ' . db_prefix() . 'co_orders.currency IN (0, ' . $report_currency . ')');
                 } else {
-                    array_push($where, 'AND ' . db_prefix() . 'pur_orders.currency = ' . $report_currency);
+                    array_push($where, 'AND ' . db_prefix() . 'co_orders.currency = ' . $report_currency);
                 }
 
                 $currency = changee_pur_get_currency_by_id($report_currency);
@@ -4548,15 +4548,15 @@ class changee extends AdminController
 
             $aColumns     = $select;
             $sIndexColumn = 'id';
-            $sTable       = db_prefix() . 'pur_orders';
+            $sTable       = db_prefix() . 'co_orders';
             $join         = [
-                'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'pur_orders.department',
-                'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'projects.id = ' . db_prefix() . 'pur_orders.project',
-                'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'pur_orders.vendor',
+                'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'co_orders.department',
+                'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'projects.id = ' . db_prefix() . 'co_orders.project',
+                'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'co_orders.vendor',
             ];
 
             $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-                db_prefix() . 'pur_orders.id as id',
+                db_prefix() . 'co_orders.id as id',
                 db_prefix() . 'departments.name as department_name',
                 db_prefix() . 'projects.name as project_name',
                 db_prefix() . 'pur_vendor.company as vendor_name',
@@ -4726,7 +4726,7 @@ class changee extends AdminController
     {
         $data['title'] = _l('invoices');
         $data['contracts'] = $this->changee_model->get_contract();
-        $data['pur_orders'] = $this->changee_model->get_list_pur_orders();
+        $data['co_orders'] = $this->changee_model->get_list_co_orders();
         $data['vendors'] = $this->changee_model->get_vendor();
         $this->load->view('invoices/manage', $data);
     }
@@ -4762,7 +4762,7 @@ class changee extends AdminController
         $data['base_currency'] = $this->currencies_model->get_base_currency();
 
         if ($id != '') {
-            $data['pur_orders'] = $this->changee_model->get_pur_order_approved();
+            $data['co_orders'] = $this->changee_model->get_pur_order_approved();
             $data['pur_invoice'] = $this->changee_model->get_pur_invoice($id);
             $data['pur_invoice_detail'] = $this->changee_model->get_pur_invoice_detail($id);
 
@@ -4808,7 +4808,7 @@ class changee extends AdminController
                 $pur_invoice_row_template .= $this->changee_model->create_changee_invoice_row_template('newitems[' . $index . ']',  $item_name, $description, $quantity, '', $data['pur_invoice']->subtotal, $taxname, null, null, $tax_rate,  $data['pur_invoice']->total, 0, 0, $total, $data['pur_invoice']->subtotal, $data['pur_invoice']->tax_rate, $data['pur_invoice']->tax, '', true);
             }
         } else {
-            $data['pur_orders'] = $this->changee_model->get_pur_order_approved_for_inv();
+            $data['co_orders'] = $this->changee_model->get_pur_order_approved_for_inv();
         }
 
         $data['pur_invoice_row_template'] = $pur_invoice_row_template;
@@ -4837,8 +4837,8 @@ class changee extends AdminController
         $option_po = '<option value=""></option>';
         $option_ct = '<option value=""></option>';
 
-        $pur_orders = $this->changee_model->get_pur_order_approved_for_inv_by_vendor($vendor);
-        foreach ($pur_orders as $po) {
+        $co_orders = $this->changee_model->get_pur_order_approved_for_inv_by_vendor($vendor);
+        foreach ($co_orders as $po) {
             $option_po .= '<option value="' . $po['id'] . '">' . $po['pur_order_number'] . '</option>';
         }
 
@@ -4859,7 +4859,7 @@ class changee extends AdminController
         }
 
         echo json_encode([
-            'type' => changee_get_purchase_option('create_invoice_by'),
+            'type' => changee_get_changee_option('create_invoice_by'),
             'html' => $option_ct,
             'po_html' => $option_po,
             'option_html' => $option_html,
@@ -4943,7 +4943,7 @@ class changee extends AdminController
     public function pur_order_change($ct)
     {
         $pur_order = $this->changee_model->get_pur_order($ct);
-        $pur_order_detail = $this->changee_model->get_pur_order_detail($ct);
+        $co_order_detail = $this->changee_model->get_co_order_detail($ct);
 
         $list_item = $this->changee_model->create_changee_order_row_template();
         $discount_percent = 0;
@@ -4957,9 +4957,9 @@ class changee extends AdminController
             $to_currency = $pur_order->currency;
         }
 
-        if (count($pur_order_detail) > 0) {
+        if (count($co_order_detail) > 0) {
             $index = 0;
-            foreach ($pur_order_detail as $key => $item) {
+            foreach ($co_order_detail as $key => $item) {
                 $index++;
                 $unit_name = changee_pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
@@ -5684,13 +5684,13 @@ class changee extends AdminController
         }
 
         //delete changee request
-        $this->db->truncate(db_prefix() . 'pur_request');
+        $this->db->truncate(db_prefix() . 'co_request');
         //delete changee request detail
-        $this->db->truncate(db_prefix() . 'pur_request_detail');
+        $this->db->truncate(db_prefix() . 'co_request_detail');
         //delete changee order
-        $this->db->truncate(db_prefix() . 'pur_orders');
+        $this->db->truncate(db_prefix() . 'co_orders');
         //delete changee order detail
-        $this->db->truncate(db_prefix() . 'pur_order_detail');
+        $this->db->truncate(db_prefix() . 'co_order_detail');
         //delete changee order payment
         $this->db->truncate(db_prefix() . 'pur_order_payment');
         //delete changee invoice
@@ -5698,13 +5698,13 @@ class changee extends AdminController
         //delete changee invoice payment
         $this->db->truncate(db_prefix() . 'pur_invoice_payment');
         //delete changee estimate
-        $this->db->truncate(db_prefix() . 'pur_estimates');
-        //delete pur_estimate_detail
-        $this->db->truncate(db_prefix() . 'pur_estimate_detail');
+        $this->db->truncate(db_prefix() . 'co_estimates');
+        //delete co_estimate_detail
+        $this->db->truncate(db_prefix() . 'co_estimate_detail');
         //delete pur_contracts
         $this->db->truncate(db_prefix() . 'pur_contracts');
-        //delete tblpur_approval_details
-        $this->db->truncate(db_prefix() . 'pur_approval_details');
+        //delete tblco_approval_details
+        $this->db->truncate(db_prefix() . 'co_approval_details');
 
         //delete create task rel_type: "pur_contract", "pur_contract".
         $this->db->where('rel_type', 'pur_contract');
@@ -6243,7 +6243,7 @@ class changee extends AdminController
     public function remove_comment($id)
     {
         $this->db->where('id', $id);
-        $comment = $this->db->get(db_prefix() . 'pur_comments')->row();
+        $comment = $this->db->get(db_prefix() . 'co_comments')->row();
         if ($comment) {
             if ($comment->staffid != get_staff_user_id() && !is_admin()) {
                 echo json_encode([
@@ -6424,7 +6424,7 @@ class changee extends AdminController
                 $list_inv = $this->changee_model->get_inv_by_client_for_po($cli);
                 if (count($list_inv) > 0) {
                     foreach ($list_inv as $inv) {
-                        if (total_rows(db_prefix() . 'pur_orders', ['sale_invoice' => $inv['id']]) <= 0) {
+                        if (total_rows(db_prefix() . 'co_orders', ['sale_invoice' => $inv['id']]) <= 0) {
                             $data_rs[] = $inv;
                         }
                     }
@@ -6536,17 +6536,17 @@ class changee extends AdminController
     /**
      * Compares the quote pur request.
      *
-     * @param        $pur_request  The pur request
+     * @param        $co_request  The pur request
      */
-    public function compare_quote_pur_request($pur_request)
+    public function compare_quote_co_request($co_request)
     {
         if ($this->input->post()) {
             $data = $this->input->post();
-            $success = $this->changee_model->update_compare_quote($pur_request, $data);
+            $success = $this->changee_model->update_compare_quote($co_request, $data);
             if ($success) {
                 set_alert('success', _l('updated_successfully'));
             }
-            redirect(admin_url('changee/view_pur_request/' . $pur_request));
+            redirect(admin_url('changee/view_co_request/' . $co_request));
         }
     }
 
@@ -7896,7 +7896,7 @@ class changee extends AdminController
         if ($this->input->is_ajax_request()) {
             $data = [];
             if ($rel_type == 'purchasing_return_order') {
-                $data = $this->changee_model->pur_order_detail_order_return($rel_id, $return_type);
+                $data = $this->changee_model->co_order_detail_order_return($rel_id, $return_type);
             }
             if ($data) {
                 $po = $this->changee_model->get_pur_order($rel_id);
@@ -8261,9 +8261,9 @@ class changee extends AdminController
      * @param         $pur_order  The pur order
      * @return     json
      */
-    public function change_pr_approve_status($status, $pur_request)
+    public function change_pr_approve_status($status, $co_request)
     {
-        $success = $this->changee_model->change_pr_approve_status($status, $pur_request);
+        $success = $this->changee_model->change_pr_approve_status($status, $co_request);
         $message = '';
         $html = '';
         $status_str = '';
@@ -8276,20 +8276,20 @@ class changee extends AdminController
 
         if (has_permission('changee_orders', '', 'edit') || is_admin()) {
             $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-            $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $pur_request . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $co_request . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
             $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
             $html .= '</a>';
 
-            $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $pur_request . '">';
+            $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $co_request . '">';
 
             if ($status == 1) {
                 $html .= '<li>
-                          <a href="#" onclick="change_pr_approve_status( 2 ,' . $pur_request . '); return false;">
+                          <a href="#" onclick="change_pr_approve_status( 2 ,' . $co_request . '); return false;">
                              ' . _l('changee_approved') . '
                           </a>
                        </li>';
                 $html .= '<li>
-                          <a href="#" onclick="change_pr_approve_status( 3 ,' . $pur_request . '); return false;">
+                          <a href="#" onclick="change_pr_approve_status( 3 ,' . $co_request . '); return false;">
                              ' . _l('changee_reject') . '
                           </a>
                        </li>';
@@ -8298,12 +8298,12 @@ class changee extends AdminController
                 $class = 'label-primary';
             } else if ($status == 2) {
                 $html .= '<li>
-                          <a href="#" onclick="change_pr_approve_status( 1 ,' . $pur_request . '); return false;">
+                          <a href="#" onclick="change_pr_approve_status( 1 ,' . $co_request . '); return false;">
                              ' . _l('changee_not_yet_approve') . '
                           </a>
                        </li>';
                 $html .= '<li>
-                          <a href="#" onclick="change_pr_approve_status( 3 ,' . $pur_request . '); return false;">
+                          <a href="#" onclick="change_pr_approve_status( 3 ,' . $co_request . '); return false;">
                              ' . _l('changee_reject') . '
                           </a>
                        </li>';
@@ -8311,12 +8311,12 @@ class changee extends AdminController
                 $class = 'label-success';
             } else if ($status == 3) {
                 $html .= '<li>
-                          <a href="#" onclick="change_pr_approve_status( 1 ,' . $pur_request . '); return false;">
+                          <a href="#" onclick="change_pr_approve_status( 1 ,' . $co_request . '); return false;">
                              ' . _l('changee_draft') . '
                           </a>
                        </li>';
                 $html .= '<li>
-                          <a href="#" onclick="change_pr_approve_status( 2 ,' . $pur_request . '); return false;">
+                          <a href="#" onclick="change_pr_approve_status( 2 ,' . $co_request . '); return false;">
                              ' . _l('changee_approved') . '
                           </a>
                        </li>';
@@ -8354,9 +8354,9 @@ class changee extends AdminController
      *
      * @param      <type>  $vendor  The vendor
      */
-    public function table_project_pur_request($project_id)
+    public function table_project_co_request($project_id)
     {
-        $this->app->get_table_data(module_views_path('changee', 'changee_request/table_pur_request'), ['project' => $project_id]);
+        $this->app->get_table_data(module_views_path('changee', 'changee_request/table_co_request'), ['project' => $project_id]);
     }
 
 
@@ -8503,14 +8503,14 @@ class changee extends AdminController
     {
 
         $this->db->where('id', $pur_order);
-        $this->db->update(db_prefix() . 'pur_orders', ['order_status' => $status]);
+        $this->db->update(db_prefix() . 'co_orders', ['order_status' => $status]);
         if ($this->db->affected_rows() > 0) {
             if ($status == 'delivered') {
                 $this->db->where('id', $pur_order);
-                $this->db->update(db_prefix() . 'pur_orders', ['delivery_status' => 1, 'delivery_date' => date('Y-m-d')]);
+                $this->db->update(db_prefix() . 'co_orders', ['delivery_status' => 1, 'delivery_date' => date('Y-m-d')]);
             } else {
                 $this->db->where('id', $pur_order);
-                $this->db->update(db_prefix() . 'pur_orders', ['delivery_status' => 0]);
+                $this->db->update(db_prefix() . 'co_orders', ['delivery_status' => 0]);
             }
 
             set_alert('success', _l('updated_successfully', _l('order_status')));
@@ -8563,10 +8563,10 @@ class changee extends AdminController
      */
     public function vendor_contract_change($vendor)
     {
-        $pur_orders = $this->changee_model->get_pur_order_approved_by_vendor($vendor);
+        $co_orders = $this->changee_model->get_pur_order_approved_by_vendor($vendor);
 
         $html = '<option value=""></option>';
-        foreach ($pur_orders as $po) {
+        foreach ($co_orders as $po) {
             $html .= '<option value="' . $po['id'] . '">' . $po['pur_order_number'] . '</option>';
         }
 
@@ -8720,10 +8720,10 @@ class changee extends AdminController
             redirect(admin_url('changee/changee_request'));
         }
 
-        $pur_request = $this->changee_model->get_compare_quotation_pdf_html($id);
+        $co_request = $this->changee_model->get_compare_quotation_pdf_html($id);
 
         try {
-            $pdf = $this->changee_model->compare_quotation_pdf($pur_request);
+            $pdf = $this->changee_model->compare_quotation_pdf($co_request);
         } catch (Exception $e) {
             echo changee_pur_html_entity_decode($e->getMessage());
             die;

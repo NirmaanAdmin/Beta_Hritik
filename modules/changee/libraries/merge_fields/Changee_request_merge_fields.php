@@ -87,7 +87,7 @@ class Changee_request_merge_fields extends App_merge_fields
      */
     public function format($data)
     {
-        $po_id = $data->pur_request_id;
+        $po_id = $data->co_request_id;
         $this->ci->load->model('changee/changee_model');
 
 
@@ -95,14 +95,14 @@ class Changee_request_merge_fields extends App_merge_fields
 
         $this->ci->db->where('id', $po_id);
 
-        $po = $this->ci->db->get(db_prefix() . 'pur_request')->row();
+        $po = $this->ci->db->get(db_prefix() . 'co_request')->row();
 
 
         if (!$po) {
             return $fields;
         }
 
-        $fields['{public_link}']                  = site_url('changee/vendors_portal/pur_request/' . $po->id.'/'.$po->hash);
+        $fields['{public_link}']                  = site_url('changee/vendors_portal/co_request/' . $po->id.'/'.$po->hash);
         $fields['{pr_name}']                  =  $po->pur_rq_name;
         $fields['{pr_number}']                  =  $po->pur_rq_code;
         $fields['{pr_value}']                   =  app_format_money($po->total, '');

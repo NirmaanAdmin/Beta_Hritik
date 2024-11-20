@@ -208,7 +208,7 @@ class Vendors_portal extends App_Controller
     public function terms_and_conditions()
     {
         $data['title'] = _l('terms_and_conditions');
-        $data['terms'] = changee_get_purchase_option('terms_and_conditions');
+        $data['terms'] = changee_get_changee_option('terms_and_conditions');
         $this->data($data);
         $this->view('vendor_portal/terms_and_conditions');
         $this->layout();
@@ -547,7 +547,7 @@ class Vendors_portal extends App_Controller
         } else {
             $estimate = $this->changee_model->get_estimate($id);
             $data['estimate'] = $estimate;
-            $data['estimate_detail'] = $this->changee_model->get_pur_estimate_detail($id);
+            $data['estimate_detail'] = $this->changee_model->get_co_estimate_detail($id);
 
             $currency_rate = 1;
             if ($data['estimate']->currency != 0 && $data['estimate']->currency_rate != null) {
@@ -611,7 +611,7 @@ class Vendors_portal extends App_Controller
             $data['ajaxItems'] = true;
         }
 
-        $data['pur_request'] = $this->changee_model->get_changee_request_by_vendor(changee_get_vendor_user_id());
+        $data['co_request'] = $this->changee_model->get_changee_request_by_vendor(changee_get_vendor_user_id());
 
         $data['pur_quotation_row_template'] = $pur_quotation_row_template;
 
@@ -664,7 +664,7 @@ class Vendors_portal extends App_Controller
         }
 
         $data['estimate'] = $estimate;
-        $data['estimate_detail'] = $this->changee_model->get_pur_estimate_detail($id);
+        $data['estimate_detail'] = $this->changee_model->get_co_estimate_detail($id);
         $data['comments'] = $this->changee_model->get_comments($id, 'pur_quotation');
         $data['tax_data'] = $this->changee_model->get_html_tax_pur_estimate($id);
         $data['title'] = changee_format_pur_estimate_number($id);
@@ -800,9 +800,9 @@ class Vendors_portal extends App_Controller
             changee_check_pur_order_restrictions($id, $hash);
         }
 
-        $data['pur_order_detail'] = $this->changee_model->get_pur_order_detail($id);
+        $data['co_order_detail'] = $this->changee_model->get_co_order_detail($id);
         $data['pur_order'] = $this->changee_model->get_pur_order($id);
-        $title = _l('pur_order_detail');
+        $title = _l('co_order_detail');
 
         if ($this->input->post()) {
             $action = $this->input->post('action');
@@ -847,39 +847,39 @@ class Vendors_portal extends App_Controller
     /**
      * { view changee request }
      */
-    public function pur_request($id, $hash)
+    public function co_request($id, $hash)
     {
 
-        changee_check_pur_request_restrictions($id, $hash);
+        changee_check_co_request_restrictions($id, $hash);
 
         $this->load->model('departments_model');
         $this->load->model('currencies_model');
 
-        $data['pur_request_detail'] = $this->changee_model->get_pur_request_detail($id);
-        $data['pur_request'] = $this->changee_model->get_changee_request($id);
-        $data['title'] = $data['pur_request']->pur_rq_name;
+        $data['co_request_detail'] = $this->changee_model->get_co_request_detail($id);
+        $data['co_request'] = $this->changee_model->get_changee_request($id);
+        $data['title'] = $data['co_request']->pur_rq_name;
         $data['departments'] = $this->departments_model->get();
         $data['units'] = $this->changee_model->get_units();
         $data['items'] = $this->changee_model->get_items();
 
-        $data['check_appr'] = $this->changee_model->get_approve_setting('pur_request');
-        $data['get_staff_sign'] = $this->changee_model->get_staff_sign($id, 'pur_request');
-        $data['check_approve_status'] = $this->changee_model->check_approval_details($id, 'pur_request');
-        $data['list_approve_status'] = $this->changee_model->get_list_approval_details($id, 'pur_request');
+        $data['check_appr'] = $this->changee_model->get_approve_setting('co_request');
+        $data['get_staff_sign'] = $this->changee_model->get_staff_sign($id, 'co_request');
+        $data['check_approve_status'] = $this->changee_model->check_approval_details($id, 'co_request');
+        $data['list_approve_status'] = $this->changee_model->get_list_approval_details($id, 'co_request');
 
         $data['base_currency'] = $this->currencies_model->get_base_currency();
-        if ($data['pur_request']->currency != 0) {
-            $data['base_currency'] = changee_pur_get_currency_by_id($data['pur_request']->currency);
+        if ($data['co_request']->currency != 0) {
+            $data['base_currency'] = changee_pur_get_currency_by_id($data['co_request']->currency);
         }
 
         $data['taxes'] = $this->changee_model->get_taxes();
-        $data['taxes_data'] = $this->changee_model->get_html_tax_pur_request($id);
+        $data['taxes_data'] = $this->changee_model->get_html_tax_co_request($id);
 
-        $files = $this->changee_model->get_pur_request_files($id);
+        $files = $this->changee_model->get_co_request_files($id);
         $data['files'] = $files;
 
         $this->data($data);
-        $this->view('vendor_portal/pur_request');
+        $this->view('vendor_portal/co_request');
         $this->layout();
     }
 
@@ -1247,15 +1247,15 @@ class Vendors_portal extends App_Controller
     /**
      * { coppy pur request }
      *
-     * @param      <type>  $pur_request  The changee request id
+     * @param      <type>  $co_request  The changee request id
      * @return json
      */
-    public function coppy_pur_request($pur_request)
+    public function coppy_co_request($co_request)
     {
         $this->load->model('currencies_model');
 
-        $pur_request_detail = $this->changee_model->get_pur_request_detail_in_estimate($pur_request);
-        $changee_request = $this->changee_model->get_changee_request($pur_request);
+        $co_request_detail = $this->changee_model->get_co_request_detail_in_estimate($co_request);
+        $changee_request = $this->changee_model->get_changee_request($co_request);
 
         $base_currency = $this->currencies_model->get_base_currency();
         $taxes = [];
@@ -1266,8 +1266,8 @@ class Vendors_portal extends App_Controller
         $data_rs = [];
         $tax_html = '';
 
-        if (count($pur_request_detail) > 0) {
-            foreach ($pur_request_detail as $key => $item) {
+        if (count($co_request_detail) > 0) {
+            foreach ($co_request_detail as $key => $item) {
                 $subtotal += $item['into_money'];
                 $total += $item['total'];
             }
@@ -1283,9 +1283,9 @@ class Vendors_portal extends App_Controller
             $to_currency = $changee_request->currency;
         }
 
-        if (count($pur_request_detail) > 0) {
+        if (count($co_request_detail) > 0) {
             $index_quote = 0;
-            foreach ($pur_request_detail as $key => $item) {
+            foreach ($co_request_detail as $key => $item) {
                 $index_quote++;
                 $unit_name = changee_pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
@@ -1300,11 +1300,11 @@ class Vendors_portal extends App_Controller
         }
 
 
-        $taxes_data = $this->changee_model->get_html_tax_pur_request($pur_request);
+        $taxes_data = $this->changee_model->get_html_tax_co_request($co_request);
         $tax_html = $taxes_data['html'];
 
         echo json_encode([
-            'result' => $pur_request_detail,
+            'result' => $co_request_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
             'total' => app_format_money(round($total, 2), ''),
             'tax_html' => $tax_html,
@@ -1336,9 +1336,9 @@ class Vendors_portal extends App_Controller
 
         if ($id == '') {
             $data['title'] = _l('pur_add_invoice');
-            $data['pur_orders'] = $this->changee_model->get_pur_order_approved_for_inv_by_vendor($vendor_id);
+            $data['co_orders'] = $this->changee_model->get_pur_order_approved_for_inv_by_vendor($vendor_id);
         } else {
-            $data['pur_orders'] = $this->changee_model->get_pur_order_approved_by_vendor($vendor_id);
+            $data['co_orders'] = $this->changee_model->get_pur_order_approved_by_vendor($vendor_id);
             $data['title'] = _l('pur_update_invoice');
             $invoice = $this->changee_model->get_pur_invoice($id);
 
@@ -1439,7 +1439,7 @@ class Vendors_portal extends App_Controller
     public function pur_order_change($ct)
     {
         $pur_order = $this->changee_model->get_pur_order($ct);
-        $pur_order_detail = $this->changee_model->get_pur_order_detail($ct);
+        $co_order_detail = $this->changee_model->get_co_order_detail($ct);
 
         $list_item = $this->changee_model->create_changee_order_row_template();
         $discount_percent = 0;
@@ -1453,9 +1453,9 @@ class Vendors_portal extends App_Controller
             $to_currency = $pur_order->currency;
         }
 
-        if (count($pur_order_detail) > 0) {
+        if (count($co_order_detail) > 0) {
             $index = 0;
-            foreach ($pur_order_detail as $key => $item) {
+            foreach ($co_order_detail as $key => $item) {
                 $index++;
                 $unit_name = changee_pur_get_unit_name($item['unit_id']);
                 $taxname = $item['tax_name'];
@@ -1625,7 +1625,7 @@ class Vendors_portal extends App_Controller
         $success = false;
         $date = $this->input->post('date');
         $this->db->where('id', $pur_order);
-        $this->db->update(db_prefix() . 'pur_orders', ['delivery_date' => to_sql_date($date)]);
+        $this->db->update(db_prefix() . 'co_orders', ['delivery_date' => to_sql_date($date)]);
         if ($this->db->affected_rows() > 0) {
             $success = true;
         }
@@ -1648,7 +1648,7 @@ class Vendors_portal extends App_Controller
 
         $success = false;
         $this->db->where('id', $data['order_id']);
-        $this->db->update(db_prefix() . 'pur_orders', ['delivery_date' => to_sql_date($data['delivery_date'])]);
+        $this->db->update(db_prefix() . 'co_orders', ['delivery_date' => to_sql_date($data['delivery_date'])]);
         if ($this->db->affected_rows() > 0) {
             $success = true;
         }
@@ -1852,14 +1852,14 @@ class Vendors_portal extends App_Controller
     /**
      * Uploads pr files.
      *
-     * @param      string  $pur_request  The pur request
+     * @param      string  $co_request  The pur request
      * @param      string  $hash         The hash
      */
-    public function upload_pr_files($pur_request, $hash)
+    public function upload_pr_files($co_request, $hash)
     {
         $success = false;
 
-        $success = changee_handle_vendor_pr_attachments_upload(changee_get_vendor_user_id(), true, $pur_request);
+        $success = changee_handle_vendor_pr_attachments_upload(changee_get_vendor_user_id(), true, $co_request);
 
 
         if ($success) {
@@ -1867,7 +1867,7 @@ class Vendors_portal extends App_Controller
             set_alert('success', _l('uploaded_successfully'));
         }
 
-        redirect(site_url('changee/vendors_portal/pur_request/' . $pur_request . '/' . $hash . '?tab=attachment'));
+        redirect(site_url('changee/vendors_portal/co_request/' . $co_request . '/' . $hash . '?tab=attachment'));
     }
 
     /**
@@ -1876,7 +1876,7 @@ class Vendors_portal extends App_Controller
      * @param        $id         The identifier
      * @param      string  $pur_order  The pur order
      */
-    public function delete_pr_file($id, $pur_request, $hash)
+    public function delete_pr_file($id, $co_request, $hash)
     {
         if (!changee_is_vendor_logged_in()) {
             redirect(site_url('changee/authentication_vendor/login'));
@@ -1889,12 +1889,12 @@ class Vendors_portal extends App_Controller
 
         if ($file->contact_id != $contact_id) {
             set_alert('warning', _l('file_not_found'));
-            redirect(site_url('changee/vendors_portal/pur_request/' . $pur_request . '/' . $hash . '?tab=attachment'));
+            redirect(site_url('changee/vendors_portal/co_request/' . $co_request . '/' . $hash . '?tab=attachment'));
         }
 
         $this->changee_model->delete_purrequest_attachment($id);
 
-        redirect(site_url('changee/vendors_portal/pur_request/' . $pur_request . '/' . $hash . '?tab=attachment'));
+        redirect(site_url('changee/vendors_portal/co_request/' . $co_request . '/' . $hash . '?tab=attachment'));
     }
 
     /**

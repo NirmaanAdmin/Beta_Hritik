@@ -15,15 +15,15 @@
                     <div class="row">    
                         <div class="_buttons col-md-2">
                             <?php if (has_permission('changee_request', '', 'create') || is_admin()) { ?>
-                            <a href="<?php echo admin_url('changee/pur_request'); ?>"class="btn btn-info pull-left mright10 display-block">
-                                <?php echo _l('new_pur_request'); ?>
+                            <a href="<?php echo admin_url('changee/co_request'); ?>"class="btn btn-info pull-left mright10 display-block">
+                                <?php echo _l('new_co_request'); ?>
                             </a>
                             <?php } ?>
                         </div>
                         <div class="col-md-4">
                           <select name="department_filter[]" id="department_filter" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('department'); ?>">
                             <?php foreach($departments as $s) { ?>
-                              <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if(isset($pur_request) && $s['departmentid'] == $pur_request->department){ echo 'selected'; } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
+                              <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if(isset($co_request) && $s['departmentid'] == $co_request->department){ echo 'selected'; } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
                               <?php } ?>
                           </select>
                         </div>
@@ -47,7 +47,7 @@
                         _l('status'),
                         // _l('po_no'),
                         _l('options'),
-                        ),'table_pur_request'); ?>
+                        ),'table_co_request'); ?>
             
           </div>
         </div>
@@ -120,7 +120,7 @@
                       <select name="send_to_vendors[]" id="send_to_vendors" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" >
 
                           <?php foreach($vendors as $s) { ?>
-                          <option value="<?php echo changee_pur_html_entity_decode($s['userid']); ?>" <?php if(isset($pur_request) && in_array($s['userid'], $vendors_arr)){ echo 'selected';  } ?> ><?php echo changee_pur_html_entity_decode($s['company']); ?></option>
+                          <option value="<?php echo changee_pur_html_entity_decode($s['userid']); ?>" <?php if(isset($co_request) && in_array($s['userid'], $vendors_arr)){ echo 'selected';  } ?> ><?php echo changee_pur_html_entity_decode($s['company']); ?></option>
                             <?php } ?>
 
                       </select>  

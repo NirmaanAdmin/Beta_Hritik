@@ -36,8 +36,8 @@
 
                              </div>
                              <div class="col-md-2 form-group">
-                               <select name="pur_orders[]" id="pur_orders" class="selectpicker" multiple="true"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('changee_order'); ?>">
-                                 <?php foreach($pur_orders as $ct){ ?>
+                               <select name="co_orders[]" id="co_orders" class="selectpicker" multiple="true"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('changee_order'); ?>">
+                                 <?php foreach($co_orders as $ct){ ?>
                                   <option value="<?php echo changee_pur_html_entity_decode($ct['id']); ?>" <?php if($this->input->get('po') != null && $this->input->get('po') == $ct['id']){ echo 'selected'; } ?> ><?php echo changee_pur_html_entity_decode($ct['pur_order_number']); ?></option>
                                  <?php } ?>
                               </select>

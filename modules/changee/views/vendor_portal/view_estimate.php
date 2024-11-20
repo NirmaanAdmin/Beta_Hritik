@@ -31,7 +31,7 @@
                   
                   <li role="presentation" class="tab-separator <?php if($this->input->get('tab') === 'discussion'){echo 'active';} ?>">
                     <?php
-                              $totalComments = total_rows(db_prefix().'pur_comments',['rel_id' => $estimate->id, 'rel_type' => 'pur_quotation']);
+                              $totalComments = total_rows(db_prefix().'co_comments',['rel_id' => $estimate->id, 'rel_type' => 'pur_quotation']);
                               ?>
                      <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
                      <?php echo _l('pur_discuss'); ?>
@@ -60,14 +60,14 @@
                       <td><?php echo changee_get_status_approve($estimate->status) ?></td>
                     </tr>
 
-                    <?php if($estimate->pur_request != ''){ 
+                    <?php if($estimate->co_request != ''){ 
                         $this->load->model('changee/changee_model');
-                        $pur_request = $this->changee_model->get_changee_request($estimate->pur_request->id);
-                        if($pur_request && !is_array($pur_request)){
+                        $co_request = $this->changee_model->get_changee_request($estimate->co_request->id);
+                        if($co_request && !is_array($co_request)){
                       ?>
                       <tr>
                         <td><?php echo _l('changee_request'); ?></td>
-                        <td><a href="<?php echo site_url('changee/vendors_portal/pur_request/'.$estimate->pur_request->id.'/'.$pur_request->hash) ?>"><?php echo changee_pur_html_entity_decode($pur_request->pur_rq_code); ?></a></td>
+                        <td><a href="<?php echo site_url('changee/vendors_portal/co_request/'.$estimate->co_request->id.'/'.$co_request->hash) ?>"><?php echo changee_pur_html_entity_decode($co_request->pur_rq_code); ?></a></td>
                       </tr>
                     <?php } } ?>
                   </table>

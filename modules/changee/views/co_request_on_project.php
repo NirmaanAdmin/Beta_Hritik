@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="row">
       <div class="col-md-12">
-            <a href="<?php echo admin_url('changee/pur_request?project='.$project->id); ?>" class="btn btn-info"><?php echo _l('new'); ?></a>
+            <a href="<?php echo admin_url('changee/co_request?project='.$project->id); ?>" class="btn btn-info"><?php echo _l('new'); ?></a>
             <hr>
       </div>
 	<div class="col-md-12">
@@ -15,7 +15,7 @@
             _l('status'),
             _l('po_no'),
             _l('options'),
-            ),'table_pur_request'); ?>
+            ),'table_co_request'); ?>
 	</div>
 </div>
 

@@ -3,7 +3,7 @@
   <div class="col-md-6">
    
       <div class="checkbox checkbox-primary">
-        <input onchange="changee_order_setting(this); return false" type="checkbox" id="changee_order_setting" name="changee_setting[changee_order_setting]" <?php if(changee_get_purchase_option('changee_order_setting') == 1 ){ echo 'checked';} ?> value="changee_order_setting">
+        <input onchange="changee_order_setting(this); return false" type="checkbox" id="changee_order_setting" name="changee_setting[changee_order_setting]" <?php if(changee_get_changee_option('changee_order_setting') == 1 ){ echo 'checked';} ?> value="changee_order_setting">
         <label for="changee_order_setting"><?php echo _l('create_changee_order_non_create_changee_request_quotation'); ?>
 
         <a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo _l('changee_order_tooltip'); ?>"></i></a>
@@ -12,7 +12,7 @@
 
    
       <div class="checkbox checkbox-primary">
-        <input onchange="item_by_vendor(this); return false" type="checkbox" id="item_by_vendor" name="changee_setting[item_by_vendor]" <?php if(changee_get_purchase_option('item_by_vendor') == 1 ){ echo 'checked';} ?> value="item_by_vendor">
+        <input onchange="item_by_vendor(this); return false" type="checkbox" id="item_by_vendor" name="changee_setting[item_by_vendor]" <?php if(changee_get_changee_option('item_by_vendor') == 1 ){ echo 'checked';} ?> value="item_by_vendor">
         <label for="item_by_vendor"><?php echo _l('load_item_by_vendor'); ?>
 
         </label>

@@ -14,17 +14,17 @@
             ?>
 
             <input type="hidden" id="csrf_token_name" name="<?= $csrf['name']; ?>" value="<?= $csrf['hash']; ?>" />
-            <?php if ($pur_request->currency != 0) {
+            <?php if ($co_request->currency != 0) {
 
-              $base_currency = changee_pur_get_currency_by_id($pur_request->currency);
+              $base_currency = changee_pur_get_currency_by_id($co_request->currency);
             } else {
               $base_currency = $base_currency;
             } ?>
-            <?php if ($pur_request->status == 1) { ?>
+            <?php if ($co_request->status == 1) { ?>
               <div class="ribbon info"><span class="fontz9"><?php echo _l('changee_draft'); ?></span></div>
-            <?php } elseif ($pur_request->status == 2) { ?>
+            <?php } elseif ($co_request->status == 2) { ?>
               <div class="ribbon success"><span><?php echo _l('changee_approved'); ?></span></div>
-            <?php } elseif ($pur_request->status == 3) { ?>
+            <?php } elseif ($co_request->status == 3) { ?>
               <div class="ribbon danger"><span><?php echo _l('changee_reject'); ?></span></div>
             <?php } ?>
             <h4 class=""><?php echo _l($title); ?>
@@ -51,7 +51,7 @@
                       </a>
                     </li>
 
-                    <?php $quotations = changee_get_quotations_by_pur_request($pur_request->id); ?>
+                    <?php $quotations = changee_get_quotations_by_co_request($co_request->id); ?>
                     <li role="presentation" class="">
                       <a href="#compare_quotes" aria-controls="compare_quotes" role="tab" data-toggle="tab">
                         <?php echo _l('compare_quotes') . '(' . count($quotations) . ')'; ?>
@@ -72,17 +72,17 @@
                     <div class="col-md-12">
                       <p class="bold col-md-4 p_style"><?php echo _l('information'); ?></p>
                       <div>
-                        <?php if ($pur_request->status == 2) { ?>
-                          <a href="<?php echo admin_url('changee/pur_order?pr=' . $pur_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_co'); ?></a>
+                        <?php if ($co_request->status == 2) { ?>
+                          <a href="<?php echo admin_url('changee/pur_order?pr=' . $co_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_co'); ?></a>
                         <?php } ?>
                       </div>
                       <div class="col-md-3 pull-right">
                         <div class="task-info task-status task-info-status pull-right">
                           <?php if ($check_approval_setting) { ?>
                             <h5>
-                              <i class="fa fa-<?php if ($pur_request->status == 2) {
+                              <i class="fa fa-<?php if ($co_request->status == 2) {
                                                 echo 'star';
-                                              } else if ($pur_request->status == 1) {
+                                              } else if ($co_request->status == 1) {
                                                 echo 'star-o';
                                               } else {
                                                 echo 'star-half-o';
@@ -90,15 +90,15 @@
                               <?php if (has_permission('changee_request_change_approve_status', '', 'edit')) { ?>
                                 <span class="task-single-menu task-menu-status">
                                   <span class="trigger pointer manual-popover text-has-action">
-                                    <?php echo changee_pur_format_approve_status($pur_request->status, true); ?>
+                                    <?php echo changee_pur_format_approve_status($co_request->status, true); ?>
                                   </span>
                                   <span class="content-menu hide">
                                     <ul>
                                       <?php
                                       for ($pur_status = 1; $pur_status <= 3; $pur_status++) { ?>
-                                        <?php if ($pur_request->status != $pur_status) { ?>
+                                        <?php if ($co_request->status != $pur_status) { ?>
                                           <li>
-                                            <a href="#" onclick="changee_request_mark_as(<?php echo $pur_status; ?>,<?php echo $pur_request->id; ?>); return false;">
+                                            <a href="#" onclick="changee_request_mark_as(<?php echo $pur_status; ?>,<?php echo $co_request->id; ?>); return false;">
                                               <?php echo _l('changee_request_mark_as', changee_get_status_approve_str($pur_status)); ?>
                                             </a>
                                           </li>
@@ -108,7 +108,7 @@
                                   </span>
                                 </span>
                               <?php } else { ?>
-                                <?php echo changee_pur_format_approve_status($pur_request->status, true); ?>
+                                <?php echo changee_pur_format_approve_status($co_request->status, true); ?>
                               <?php } ?>
                             </h5>
                           <?php } ?>
@@ -128,12 +128,12 @@
                         <tr class="project-overview">
                           <td width="50%">
                             <span class="bold"><?php echo _l('pur_rq_code'); ?> :</span>
-                            <span><?php echo changee_pur_html_entity_decode($pur_request->pur_rq_code); ?></span>
+                            <span><?php echo changee_pur_html_entity_decode($co_request->pur_rq_code); ?></span>
                           </td>
                           <td width="50%">
                             <span class="bold"><?php echo _l('group_pur'); ?> :</span>
                             <span><?php foreach ($commodity_groups_request as $group) {
-                                    if ($group['id'] == $pur_request->group_pur) {
+                                    if ($group['id'] == $co_request->group_pur) {
                                       echo $group['name'];
                                     }
                                   } ?></span>
@@ -143,12 +143,12 @@
                         <tr class="project-overview">
                           <td width="50%">
                             <span class="bold"><?php echo _l('pur_rq_name'); ?> :</span>
-                            <span><?php echo changee_pur_html_entity_decode($pur_request->pur_rq_name); ?></span>
+                            <span><?php echo changee_pur_html_entity_decode($co_request->pur_rq_name); ?></span>
                           </td>
                           <td width="50%">
                             <span class="bold"><?php echo _l('sub_groups_pur'); ?> :</span>
                             <span><?php foreach ($sub_groups_request as $group) {
-                                    if ($group['id'] == $pur_request->sub_groups_pur) {
+                                    if ($group['id'] == $co_request->sub_groups_pur) {
                                       echo $group['sub_group_name'];
                                     }
                                   } ?></span>
@@ -159,15 +159,15 @@
                           <td width="50%">
                             <span class="bold"><?php echo _l('changee_requestor'); ?> :</span>
                             <span>
-                              <?php $_data = '<a href="' . admin_url('staff/profile/' . $pur_request->requester) . '">' . staff_profile_image($pur_request->requester, ['staff-profile-image-small']) . '</a>';
-                              $_data .= ' <a href="' . admin_url('staff/profile/' . $pur_request->requester) . '">' . get_staff_full_name($pur_request->requester) . '</a>';
+                              <?php $_data = '<a href="' . admin_url('staff/profile/' . $co_request->requester) . '">' . staff_profile_image($co_request->requester, ['staff-profile-image-small']) . '</a>';
+                              $_data .= ' <a href="' . admin_url('staff/profile/' . $co_request->requester) . '">' . get_staff_full_name($co_request->requester) . '</a>';
                               echo changee_pur_html_entity_decode($_data); ?>
                             </span>
                           </td>
                           <td width="50%">
                             <span class="bold"><?php echo _l('area_pur'); ?> :</span>
                             <span><?php foreach ($area_request as $area) {
-                                    if ($area['id'] == $pur_request->area_pur) {
+                                    if ($area['id'] == $co_request->area_pur) {
                                       echo $area['area_name'];
                                     }
                                   } ?></span>
@@ -177,7 +177,7 @@
                         <tr class="project-overview">
                           <td width="50%">
                             <span class="bold"><?php echo _l('request_date'); ?> :</span>
-                            <span><?php echo _dt($pur_request->request_date); ?></span>
+                            <span><?php echo _dt($co_request->request_date); ?></span>
                           </td>
                           <td width="50%">
                             <span class="bold"><?php echo _l('pdf'); ?> : </span>
@@ -187,9 +187,9 @@
                                                                                                                                                                                       echo ' PDF';
                                                                                                                                                                                     } ?> <span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-menu-right">
-                                  <li class="hidden-xs"><a href="<?php echo admin_url('changee/pur_request_pdf/' . $pur_request->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
-                                  <li class="hidden-xs"><a href="<?php echo admin_url('changee/pur_request_pdf/' . $pur_request->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
-                                  <li><a href="<?php echo admin_url('changee/pur_request_pdf/' . $pur_request->id); ?>"><?php echo _l('download'); ?></a></li>
+                                  <li class="hidden-xs"><a href="<?php echo admin_url('changee/co_request_pdf/' . $co_request->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
+                                  <li class="hidden-xs"><a href="<?php echo admin_url('changee/co_request_pdf/' . $co_request->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                                  <li><a href="<?php echo admin_url('changee/co_request_pdf/' . $co_request->id); ?>"><?php echo _l('download'); ?></a></li>
                                 </ul>
                             </span>
 
@@ -200,17 +200,17 @@
                         <tr class="project-overview">
                           <td width="50%">
                             <span class="bold"><?php echo _l('project'); ?> :</span>
-                            <span><?php echo get_project_name_by_id($pur_request->project); ?></span>
+                            <span><?php echo get_project_name_by_id($co_request->project); ?></span>
                           </td>
                           <td width="100%" class="d-flex">
                             <span class="bold"><?php echo _l('public_link'); ?></span>
                             <span>
                               <div class="pull-right _buttons mright5">
-                                <a href="javascript:void(0)" onclick="copy_public_link(<?php echo changee_pur_html_entity_decode($pur_request->id); ?>); return false;" class="btn btn-warning btn-with-tooltip" data-toggle="tooltip" title="<?php echo _l('copy_public_link'); ?>" data-placement="bottom"><i class="fa fa-clone "></i></a>
+                                <a href="javascript:void(0)" onclick="copy_public_link(<?php echo changee_pur_html_entity_decode($co_request->id); ?>); return false;" class="btn btn-warning btn-with-tooltip" data-toggle="tooltip" title="<?php echo _l('copy_public_link'); ?>" data-placement="bottom"><i class="fa fa-clone "></i></a>
                               </div>
                               <div class="col-md-9">
-                                <?php if ($pur_request->hash != '' && $pur_request->hash != null) {
-                                  echo render_input('link_public', '', site_url('changee/vendors_portal/pur_request/' . $pur_request->id . '/' . $pur_request->hash));
+                                <?php if ($co_request->hash != '' && $co_request->hash != null) {
+                                  echo render_input('link_public', '', site_url('changee/vendors_portal/co_request/' . $co_request->id . '/' . $co_request->hash));
                                 } else {
                                   echo render_input('link_public', '', '');
                                 } ?>
@@ -226,7 +226,7 @@
                         </tr>
                         <tr class="project-overview">
                           <td class="bold"><?php echo _l('rq_description'); ?></td>
-                          <td><?php echo changee_pur_html_entity_decode($pur_request->rq_description); ?></td>
+                          <td><?php echo changee_pur_html_entity_decode($co_request->rq_description); ?></td>
                         </tr>
 
                       </tbody>
@@ -261,10 +261,10 @@
 
                           <?php $_subtotal = 0;
                           $_total = 0;
-                          if (count($pur_request_detail) > 0) {
+                          if (count($co_request_detail) > 0) {
                             $count = 1;
                             $t_mn = 0;
-                            foreach ($pur_request_detail as $es) {
+                            foreach ($co_request_detail as $es) {
                               $_subtotal += $es['into_money'];
                               $_total += $es['total'];
                           ?>
@@ -337,7 +337,7 @@
 
                     <table class="table text-right">
                       <tbody id="tax_area_body">
-                        <?php if (isset($pur_request)) {
+                        <?php if (isset($co_request)) {
                           echo $taxes_data['html'];
                         ?>
                         <?php } ?>
@@ -391,7 +391,7 @@
                                     ?></p>
                                   <?php if ($value['approve'] == 2) {
                                   ?>
-                                    <img src="<?php echo site_url(PURCHASE_PATH . 'pur_request/signature/' . $pur_request->id . '/signature_' . $value['id'] . '.png'); ?>" class="img_style">
+                                    <img src="<?php echo site_url(PURCHASE_PATH . 'co_request/signature/' . $co_request->id . '/signature_' . $value['id'] . '.png'); ?>" class="img_style">
                                     <br><br>
                                     <p class="bold text-center text-success"><?php echo _l('signed') . ' ' . _dt($value['date']); ?></p>
                                   <?php } ?>
@@ -435,14 +435,14 @@
                     <div class="pull-right">
                       <?php
                       if ($check_appr && $check_appr != false) {
-                        if ($pur_request->status == 1 && ($check_approve_status == false || $check_approve_status == 'reject')) { ?>
-                          <a data-toggle="tooltip" data-loading-text="<?php echo _l('wait_text'); ?>" class="btn btn-success lead-top-btn lead-view" data-placement="top" href="#" onclick="send_request_approve(<?php echo changee_pur_html_entity_decode($pur_request->id); ?>); return false;"><?php echo _l('send_request_approve_pur'); ?></a>
+                        if ($co_request->status == 1 && ($check_approve_status == false || $check_approve_status == 'reject')) { ?>
+                          <a data-toggle="tooltip" data-loading-text="<?php echo _l('wait_text'); ?>" class="btn btn-success lead-top-btn lead-view" data-placement="top" href="#" onclick="send_request_approve(<?php echo changee_pur_html_entity_decode($co_request->id); ?>); return false;"><?php echo _l('send_request_approve_pur'); ?></a>
                         <?php }
                       }
                       if (isset($check_approve_status['staffid'])) {
                         ?>
                         <?php
-                        if (in_array(get_staff_user_id(), $check_approve_status['staffid']) && !in_array(get_staff_user_id(), $get_staff_sign) && $pur_request->status == 1) { ?>
+                        if (in_array(get_staff_user_id(), $check_approve_status['staffid']) && !in_array(get_staff_user_id(), $get_staff_sign) && $co_request->status == 1) { ?>
                           <div class="btn-group">
                             <a href="#" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo _l('approve'); ?><span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-menu-right ul_style">
@@ -453,8 +453,8 @@
                               </li>
                               <li>
                                 <div class="row text-right col-md-12">
-                                  <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="approve_request(<?php echo changee_pur_html_entity_decode($pur_request->id); ?>); return false;" class="btn btn-success mright15"><?php echo _l('approve'); ?></a>
-                                  <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="deny_request(<?php echo changee_pur_html_entity_decode($pur_request->id); ?>); return false;" class="btn btn-warning"><?php echo _l('deny'); ?></a>
+                                  <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="approve_request(<?php echo changee_pur_html_entity_decode($co_request->id); ?>); return false;" class="btn btn-success mright15"><?php echo _l('approve'); ?></a>
+                                  <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="deny_request(<?php echo changee_pur_html_entity_decode($co_request->id); ?>); return false;" class="btn btn-warning"><?php echo _l('deny'); ?></a>
                                 </div>
                               </li>
                             </ul>
@@ -484,7 +484,7 @@
                     if (isset($attachments) && count($attachments) > 0) {
                       foreach ($attachments as $value) {
                         echo '<div class="col-md-3">';
-                        $path = get_upload_path_by_type('changee') . 'pur_request/' . $value['rel_id'] . '/' . $value['file_name'];
+                        $path = get_upload_path_by_type('changee') . 'co_request/' . $value['rel_id'] . '/' . $value['file_name'];
                         $is_image = is_image($path);
                         if ($is_image) {
                           echo '<div class="preview_image">';
@@ -507,14 +507,14 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane ptop10 " id="compare_quotes">
-                  <?php if (total_rows(db_prefix() . 'pur_estimates', ['pur_request' => $pur_request->id]) > 0) { ?>
+                  <?php if (total_rows(db_prefix() . 'co_estimates', ['co_request' => $co_request->id]) > 0) { ?>
 
                     <!-- <div class="btn-group pull-right mright5" data-toggle="tooltip" title="<?php echo _l('compare_quotation_tooltip'); ?>">
                       <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
                       <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="hidden-xs"><a href="<?php echo admin_url('changee/compare_quotation_pdf/' . $pur_request->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
-                        <li class="hidden-xs"><a href="<?php echo admin_url('changee/compare_quotation_pdf/' . $pur_request->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
-                        <li><a href="<?php echo admin_url('changee/compare_quotation_pdf/' . $pur_request->id); ?>"><?php echo _l('download'); ?></a></li>
+                        <li class="hidden-xs"><a href="<?php echo admin_url('changee/compare_quotation_pdf/' . $co_request->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
+                        <li class="hidden-xs"><a href="<?php echo admin_url('changee/compare_quotation_pdf/' . $co_request->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                        <li><a href="<?php echo admin_url('changee/compare_quotation_pdf/' . $co_request->id); ?>"><?php echo _l('download'); ?></a></li>
                       </ul>
                     </div> -->
 
@@ -523,7 +523,7 @@
                         <tbody>
                           <tr class="project-overview">
                             <td class="bold" width="30%">PR Code</td>
-                            <td><?php echo changee_pur_html_entity_decode($pur_request->pur_rq_code); ?><div class="btn-group  mright5" style="margin-left: 10px;"  data-toggle="tooltip" title="" data-original-title="Preview/Download compare quotation pdf">
+                            <td><?php echo changee_pur_html_entity_decode($co_request->pur_rq_code); ?><div class="btn-group  mright5" style="margin-left: 10px;"  data-toggle="tooltip" title="" data-original-title="Preview/Download compare quotation pdf">
                                 <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   <i class="fa fa-file-pdf"></i><span class="caret"></span>
                                 </a>
@@ -537,21 +537,21 @@
                           </tr>
                           <tr class="project-overview">
                             <td class="bold">PR Name</td>
-                            <td><?php echo _l($pur_request->pur_rq_name); ?></td>
+                            <td><?php echo _l($co_request->pur_rq_name); ?></td>
                           </tr>
                           <tr class="project-overview">
                             <td class="bold"><?php echo _l('changee_requestor'); ?></td>
-                            <td><?php $_data = '<a href="' . admin_url('staff/profile/' . $pur_request->requester) . '">' . staff_profile_image($pur_request->requester, [
+                            <td><?php $_data = '<a href="' . admin_url('staff/profile/' . $co_request->requester) . '">' . staff_profile_image($co_request->requester, [
                                   'staff-profile-image-small',
                                 ]) . '</a>';
-                                $_data .= ' <a href="' . admin_url('staff/profile/' . $pur_request->requester) . '">' . get_staff_full_name($pur_request->requester) . '</a>';
+                                $_data .= ' <a href="' . admin_url('staff/profile/' . $co_request->requester) . '">' . get_staff_full_name($co_request->requester) . '</a>';
                                 echo changee_pur_html_entity_decode($_data);
                                 ?></td>
                           </tr>
 
                           <tr class="project-overview">
                             <td class="bold"><?php echo _l('request_date'); ?></td>
-                            <td><?php echo _dt($pur_request->request_date); ?></td>
+                            <td><?php echo _dt($co_request->request_date); ?></td>
                           </tr>
                         </tbody>
                       </table>
@@ -587,7 +587,7 @@
                           </tr>
                           <?php
 
-                          $arr_vendors = changee_get_arr_vendors_by_pr($pur_request->id); ?>
+                          $arr_vendors = changee_get_arr_vendors_by_pr($co_request->id); ?>
                           <?php foreach ($arr_vendors as $vendor) { ?>
                             <tr class="project-overview">
                               <td class=""><span class="bold"><?php echo changee_pur_html_entity_decode($vendor->company); ?></span></td>
@@ -604,7 +604,7 @@
                     </div>
                     <div class="col-md-12">
                       <div class="table-responsive">
-                        <?php echo form_open(admin_url('changee/compare_quote_pur_request/' . $pur_request->id), array('id' => 'compare_quote_pur_request-form'));  ?>
+                        <?php echo form_open(admin_url('changee/compare_quote_co_request/' . $co_request->id), array('id' => 'compare_quote_co_request-form'));  ?>
                         <table class="table table-bordered compare_quotes_table">
                           <thead class="bold">
                             <tr>
@@ -629,7 +629,7 @@
                           <tbody>
                             <?php
                             $this->load->model('changee/changee_model');
-                            $list_items = $this->changee_model->get_pur_request_detail($pur_request->id);
+                            $list_items = $this->changee_model->get_co_request_detail($co_request->id);
                             ?>
                             <?php foreach ($list_items as $key => $item) { ?>
                               <tr>
@@ -693,8 +693,8 @@
                     </div>
                     <div class="col-md-12">
                       <br>
-                      <p><span class="bold"><?php echo _l('changee_request_description') . ': '; ?></span><span><?php echo changee_pur_html_entity_decode($pur_request->rq_description); ?></span></p>
-                      <?php echo render_textarea('compare_note', 'comparison_notes', clear_textarea_breaks($pur_request->compare_note)) ?>
+                      <p><span class="bold"><?php echo _l('changee_request_description') . ': '; ?></span><span><?php echo changee_pur_html_entity_decode($co_request->rq_description); ?></span></p>
+                      <?php echo render_textarea('compare_note', 'comparison_notes', clear_textarea_breaks($co_request->compare_note)) ?>
                     </div>
                     <div class="col-md-12">
                       <button id="sm_btn" class="btn btn-info save_detail pull-right"><?php echo _l('pur_confirm'); ?></button>
@@ -741,7 +741,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('cancel'); ?></button>
-        <button onclick="sign_request(<?php echo changee_pur_html_entity_decode($pur_request->id); ?>);" data-loading-text="<?php echo _l('wait_text'); ?>" autocomplete="off" class="btn btn-success"><?php echo _l('e_signature_sign'); ?></button>
+        <button onclick="sign_request(<?php echo changee_pur_html_entity_decode($co_request->id); ?>);" data-loading-text="<?php echo _l('wait_text'); ?>" autocomplete="off" class="btn btn-success"><?php echo _l('e_signature_sign'); ?></button>
       </div>
 
 
@@ -753,4 +753,4 @@
 </body>
 
 </html>
-<?php require 'modules/changee/assets/js/view_pur_request_js.php'; ?>
+<?php require 'modules/changee/assets/js/view_co_request_js.php'; ?>

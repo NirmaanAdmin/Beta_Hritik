@@ -51,7 +51,7 @@ $("body").on('change', 'select[name="currency"]', function () {
 
 <?php $pr_id = $this->input->get('changee_request');
   if($pr_id != ''){ ?>
-$('select[name="pur_request"]').val("<?php echo changee_pur_html_entity_decode($pr_id); ?>").change();
+$('select[name="co_request"]').val("<?php echo changee_pur_html_entity_decode($pr_id); ?>").change();
 <?php } ?>
 
 $("input[name='currency_rate']").on('change', function () { 
@@ -214,12 +214,12 @@ function dc_total_change(invoker){
 }
 
 
-function coppy_pur_request(){
+function coppy_co_request(){
   "use strict";
-  var pur_request = $('select[name="pur_request"]').val();
-  if(pur_request != ''){
+  var co_request = $('select[name="co_request"]').val();
+  if(co_request != ''){
      
-    $.post(site_url + 'changee/vendors_portal/coppy_pur_request/'+pur_request).done(function(response){
+    $.post(site_url + 'changee/vendors_portal/coppy_co_request/'+co_request).done(function(response){
         response = JSON.parse(response);
         if(response){
           $('select[name="currency"]').val(response.currency).change();
@@ -241,7 +241,7 @@ function coppy_pur_request(){
         }
     });
   }else{
-    alert_float('warning', '<?php echo _l('please_chose_pur_request'); ?>')
+    alert_float('warning', '<?php echo _l('please_chose_co_request'); ?>')
   }
 }
 

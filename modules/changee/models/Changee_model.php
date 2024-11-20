@@ -678,9 +678,9 @@ class Changee_model extends App_Model
     {
         if (is_numeric($id)) {
             $this->db->where('id', $id);
-            return $this->db->get(db_prefix() . 'pur_approval_setting')->row();
+            return $this->db->get(db_prefix() . 'co_approval_setting')->row();
         }
-        return $this->db->get(db_prefix() . 'pur_approval_setting')->result_array();
+        return $this->db->get(db_prefix() . 'co_approval_setting')->result_array();
     }
 
     /**
@@ -713,7 +713,7 @@ class Changee_model extends App_Model
             $data['approver'] = NULL;
         }
 
-        $this->db->insert(db_prefix() . 'pur_approval_setting', $data);
+        $this->db->insert(db_prefix() . 'co_approval_setting', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {
             return true;
@@ -753,7 +753,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_approval_setting', $data);
+        $this->db->update(db_prefix() . 'co_approval_setting', $data);
 
         if ($this->db->affected_rows() > 0) {
             return true;
@@ -772,7 +772,7 @@ class Changee_model extends App_Model
     {
         if (is_numeric($id)) {
             $this->db->where('id', $id);
-            $this->db->delete(db_prefix() . 'pur_approval_setting');
+            $this->db->delete(db_prefix() . 'co_approval_setting');
 
             if ($this->db->affected_rows() > 0) {
                 return true;
@@ -954,85 +954,85 @@ class Changee_model extends App_Model
                 $or_where = '';
                 $list_vendor = changee_get_vendor_admin_list(get_staff_user_id());
                 foreach ($list_vendor as $vendor_id) {
-                    $or_where .= ' OR find_in_set(' . $vendor_id . ', ' . db_prefix() . 'pur_request.send_to_vendors)';
+                    $or_where .= ' OR find_in_set(' . $vendor_id . ', ' . db_prefix() . 'co_request.send_to_vendors)';
                 }
-                $this->db->where('(' . db_prefix() . 'pur_request.requester = ' . get_staff_user_id() .  $or_where . ')');
+                $this->db->where('(' . db_prefix() . 'co_request.requester = ' . get_staff_user_id() .  $or_where . ')');
             }
 
-            return $this->db->get(db_prefix() . 'pur_request')->result_array();
+            return $this->db->get(db_prefix() . 'co_request')->result_array();
         } else {
             $this->db->where('id', $id);
-            return $this->db->get(db_prefix() . 'pur_request')->row();
+            return $this->db->get(db_prefix() . 'co_request')->row();
         }
     }
 
     /**
      * Gets the pur request detail.
      *
-     * @param      <int>  $pur_request  The pur request
+     * @param      <int>  $co_request  The pur request
      *
      * @return     <array>  The pur request detail.
      */
-    public function get_pur_request_detail($pur_request)
+    public function get_co_request_detail($co_request)
     {
-        $this->db->where('pur_request', $pur_request);
-        $pur_request_lst = $this->db->get(db_prefix() . 'pur_request_detail')->result_array();
+        $this->db->where('co_request', $co_request);
+        $co_request_lst = $this->db->get(db_prefix() . 'co_request_detail')->result_array();
 
-        foreach ($pur_request_lst as $key => $detail) {
-            $pur_request_lst[$key]['into_money'] = (float) $detail['into_money'];
-            $pur_request_lst[$key]['total'] = (float) $detail['total'];
-            $pur_request_lst[$key]['unit_price'] = (float) $detail['unit_price'];
-            $pur_request_lst[$key]['tax_value'] = (float) $detail['tax_value'];
+        foreach ($co_request_lst as $key => $detail) {
+            $co_request_lst[$key]['into_money'] = (float) $detail['into_money'];
+            $co_request_lst[$key]['total'] = (float) $detail['total'];
+            $co_request_lst[$key]['unit_price'] = (float) $detail['unit_price'];
+            $co_request_lst[$key]['tax_value'] = (float) $detail['tax_value'];
         }
 
-        return $pur_request_lst;
+        return $co_request_lst;
     }
 
     /**
      * Gets the pur request detail in estimate.
      *
-     * @param      <int>  $pur_request  The pur request
+     * @param      <int>  $co_request  The pur request
      *
      * @return     <array>  The pur request detail in estimate.
      */
-    public function get_pur_request_detail_in_estimate($pur_request)
+    public function get_co_request_detail_in_estimate($co_request)
     {
 
-        $pur_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'pur_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.pur_request = ' . $pur_request)->result_array();
+        $co_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'co_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.co_request = ' . $co_request)->result_array();
 
-        foreach ($pur_request_lst as $key => $detail) {
-            $pur_request_lst[$key]['into_money'] = (float) $detail['into_money'];
-            $pur_request_lst[$key]['total'] = (float) $detail['total'];
-            $pur_request_lst[$key]['total_money'] = (float) $detail['total_money'];
-            $pur_request_lst[$key]['unit_price'] = (float) $detail['unit_price'];
-            $pur_request_lst[$key]['tax_value'] = (float) $detail['tax_value'];
+        foreach ($co_request_lst as $key => $detail) {
+            $co_request_lst[$key]['into_money'] = (float) $detail['into_money'];
+            $co_request_lst[$key]['total'] = (float) $detail['total'];
+            $co_request_lst[$key]['total_money'] = (float) $detail['total_money'];
+            $co_request_lst[$key]['unit_price'] = (float) $detail['unit_price'];
+            $co_request_lst[$key]['tax_value'] = (float) $detail['tax_value'];
         }
 
-        return $pur_request_lst;
+        return $co_request_lst;
     }
 
 
     /**
      * Gets the pur request detail in po.
      *
-     * @param      <int>  $pur_request  The pur request
+     * @param      <int>  $co_request  The pur request
      *
      * @return     <array>  The pur request detail in po.
      */
-    public function get_pur_request_detail_in_po($pur_request)
+    public function get_co_request_detail_in_po($co_request)
     {
 
-        $pur_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'pur_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.pur_request = ' . $pur_request)->result_array();
+        $co_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'co_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.co_request = ' . $co_request)->result_array();
 
-        foreach ($pur_request_lst as $key => $detail) {
-            $pur_request_lst[$key]['into_money'] = (float) $detail['into_money'];
-            $pur_request_lst[$key]['total'] = (float) $detail['total'];
-            $pur_request_lst[$key]['total_money'] = (float) $detail['total_money'];
-            $pur_request_lst[$key]['unit_price'] = (float) $detail['unit_price'];
-            $pur_request_lst[$key]['tax_value'] = (float) $detail['tax_value'];
+        foreach ($co_request_lst as $key => $detail) {
+            $co_request_lst[$key]['into_money'] = (float) $detail['into_money'];
+            $co_request_lst[$key]['total'] = (float) $detail['total'];
+            $co_request_lst[$key]['total_money'] = (float) $detail['total_money'];
+            $co_request_lst[$key]['unit_price'] = (float) $detail['unit_price'];
+            $co_request_lst[$key]['tax_value'] = (float) $detail['tax_value'];
         }
 
-        return $pur_request_lst;
+        return $co_request_lst;
     }
     /**
      * Gets the pur estimate detail in order.
@@ -1041,9 +1041,9 @@ class Changee_model extends App_Model
      *
      * @return     <array>  The pur estimate detail in order.
      */
-    public function get_pur_estimate_detail_in_order($pur_estimate)
+    public function get_co_estimate_detail_in_order($pur_estimate)
     {
-        $estimates = $this->db->query('SELECT * FROM ' . db_prefix() . 'pur_estimate_detail prq WHERE prq.pur_estimate = ' . $pur_estimate)->result_array();
+        $estimates = $this->db->query('SELECT * FROM ' . db_prefix() . 'co_estimate_detail prq WHERE prq.pur_estimate = ' . $pur_estimate)->result_array();
 
         foreach ($estimates as $key => $detail) {
             $estimates[$key]['discount_money'] = (float) $detail['discount_money'];
@@ -1060,14 +1060,14 @@ class Changee_model extends App_Model
     /**
      * Gets the pur estimate detail.
      *
-     * @param      <int>  $pur_request  The pur request
+     * @param      <int>  $co_request  The pur request
      *
      * @return     <array>  The pur estimate detail.
      */
-    public function get_pur_estimate_detail($pur_request)
+    public function get_co_estimate_detail($co_request)
     {
-        $this->db->where('pur_estimate', $pur_request);
-        $estimate_details = $this->db->get(db_prefix() . 'pur_estimate_detail')->result_array();
+        $this->db->where('pur_estimate', $co_request);
+        $estimate_details = $this->db->get(db_prefix() . 'co_estimate_detail')->result_array();
 
         foreach ($estimate_details as $key => $detail) {
             $estimate_details[$key]['discount_money'] = (float) $detail['discount_money'];
@@ -1084,25 +1084,25 @@ class Changee_model extends App_Model
     /**
      * Gets the pur order detail.
      *
-     * @param      <int>  $pur_request  The pur request
+     * @param      <int>  $co_request  The pur request
      *
      * @return     <array>  The pur order detail.
      */
-    public function get_pur_order_detail($pur_request)
+    public function get_co_order_detail($co_request)
     {
-        $this->db->where('pur_order', $pur_request);
-        $pur_order_details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+        $this->db->where('pur_order', $co_request);
+        $co_order_details = $this->db->get(db_prefix() . 'co_order_detail')->result_array();
 
-        foreach ($pur_order_details as $key => $detail) {
-            $pur_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
-            $pur_order_details[$key]['into_money'] = (float) $detail['into_money'];
-            $pur_order_details[$key]['total'] = (float) $detail['total'];
-            $pur_order_details[$key]['total_money'] = (float) $detail['total_money'];
-            $pur_order_details[$key]['unit_price'] = (float) $detail['unit_price'];
-            $pur_order_details[$key]['tax_value'] = (float) $detail['tax_value'];
+        foreach ($co_order_details as $key => $detail) {
+            $co_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
+            $co_order_details[$key]['into_money'] = (float) $detail['into_money'];
+            $co_order_details[$key]['total'] = (float) $detail['total'];
+            $co_order_details[$key]['total_money'] = (float) $detail['total_money'];
+            $co_order_details[$key]['unit_price'] = (float) $detail['unit_price'];
+            $co_order_details[$key]['tax_value'] = (float) $detail['tax_value'];
         }
 
-        return $pur_order_details;
+        return $co_order_details;
     }
 
     /**
@@ -1133,12 +1133,12 @@ class Changee_model extends App_Model
      *
      * @return     boolean  
      */
-    public function add_pur_request($data)
+    public function add_co_request($data)
     {
         $data['request_date'] = date('Y-m-d H:i:s');
-        $check_appr = $this->check_approval_setting($data['project'], 'pur_request', 0);
+        $check_appr = $this->check_approval_setting($data['project'], 'co_request', 0);
         $data['status'] = ($check_appr == true) ? 2 : 1;
-        // $check_appr = $this->get_approve_setting('pur_request');
+        // $check_appr = $this->get_approve_setting('co_request');
         // $data['status'] = 1;
         // if($check_appr && $check_appr != false){
         //     $data['status'] = 1;
@@ -1183,31 +1183,31 @@ class Changee_model extends App_Model
         $data['total_tax'] = $data['total'] - $data['subtotal'];
 
 
-        $dpm_name = changee_department_pur_request_name($data['department']);
-        $prefix = changee_get_purchase_option('pur_request_prefix');
+        $dpm_name = changee_department_co_request_name($data['department']);
+        $prefix = changee_get_changee_option('co_request_prefix');
 
         $this->db->where('pur_rq_code', $data['pur_rq_code']);
-        $check_exist_number = $this->db->get(db_prefix() . 'pur_request')->row();
+        $check_exist_number = $this->db->get(db_prefix() . 'co_request')->row();
 
         while ($check_exist_number) {
             $data['number'] = $data['number'] + 1;
             $data['pur_rq_code'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT) . '-' . date('M-Y') . '-' . $dpm_name;
             $this->db->where('pur_rq_code', $data['pur_rq_code']);
-            $check_exist_number = $this->db->get(db_prefix() . 'pur_request')->row();
+            $check_exist_number = $this->db->get(db_prefix() . 'co_request')->row();
         }
 
         $data['hash'] = app_generate_hash();
 
-        $this->db->insert(db_prefix() . 'pur_request', $data);
+        $this->db->insert(db_prefix() . 'co_request', $data);
         $insert_id = $this->db->insert_id();
-        // $this->send_mail_to_approver($data, 'pur_request', 'changee_request', $insert_id);
+        // $this->send_mail_to_approver($data, 'co_request', 'changee_request', $insert_id);
         // if ($data['status'] == 2) {
         //     $this->send_mail_to_sender('changee_request', $data['status'], $insert_id);
         // }
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "changee";
-        $cron_email_options['rel_type'] = 'pur_request';
+        $cron_email_options['rel_type'] = 'co_request';
         $cron_email_options['rel_name'] = 'changee_request';
         $cron_email_options['insert_id'] = $insert_id;
         $cron_email_options['user_id'] = get_staff_user_id();
@@ -1218,18 +1218,18 @@ class Changee_model extends App_Model
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix().'cron_email', $cron_email);
-        $this->save_purchase_files('pur_request', $insert_id);
+        $this->save_changee_files('co_request', $insert_id);
         if ($insert_id) {
 
             // Update next changee order number in settings
             $next_number = $data['number'] + 1;
             $this->db->where('option_name', 'next_pr_number');
-            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+            $this->db->update(db_prefix() . 'changee_option', ['option_val' =>  $next_number,]);
 
             if (count($detail_data) > 0) {
                 foreach ($detail_data as $key => $rqd) {
                     $dt_data = [];
-                    $dt_data['pur_request'] = $insert_id;
+                    $dt_data['co_request'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
@@ -1273,7 +1273,7 @@ class Changee_model extends App_Model
                         }
                     }
 
-                    $this->db->insert(db_prefix() . 'pur_request_detail', $dt_data);
+                    $this->db->insert(db_prefix() . 'co_request_detail', $dt_data);
                 }
             }
 
@@ -1290,7 +1290,7 @@ class Changee_model extends App_Model
      *
      * @return     boolean   
      */
-    public function update_pur_request($data, $id)
+    public function update_co_request($data, $id)
     {
         $affectedRows = 0;
         $purq = $this->get_changee_request($id);
@@ -1352,8 +1352,8 @@ class Changee_model extends App_Model
 
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_request', $data);
-        $this->save_purchase_files('pur_request', $id);
+        $this->db->update(db_prefix() . 'co_request', $data);
+        $this->save_changee_files('co_request', $id);
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
@@ -1361,7 +1361,7 @@ class Changee_model extends App_Model
         if (count($new_changee_request) > 0) {
             foreach ($new_changee_request as $key => $rqd) {
                 $dt_data = [];
-                $dt_data['pur_request'] = $id;
+                $dt_data['co_request'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
@@ -1405,7 +1405,7 @@ class Changee_model extends App_Model
                     }
                 }
 
-                $_new_detail_id = $this->db->insert(db_prefix() . 'pur_request_detail', $dt_data);
+                $_new_detail_id = $this->db->insert(db_prefix() . 'co_request_detail', $dt_data);
                 if ($_new_detail_id) {
                     $affectedRows++;
                 }
@@ -1415,7 +1415,7 @@ class Changee_model extends App_Model
         if (count($update_changee_request) > 0) {
             foreach ($update_changee_request as $_key => $rqd) {
                 $dt_data = [];
-                $dt_data['pur_request'] = $id;
+                $dt_data['co_request'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
@@ -1460,7 +1460,7 @@ class Changee_model extends App_Model
                 }
 
                 $this->db->where('prd_id', $rqd['id']);
-                $this->db->update(db_prefix() . 'pur_request_detail', $dt_data);
+                $this->db->update(db_prefix() . 'co_request_detail', $dt_data);
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
                 }
@@ -1470,7 +1470,7 @@ class Changee_model extends App_Model
         if (count($remove_changee_request) > 0) {
             foreach ($remove_changee_request as $remove_id) {
                 $this->db->where('prd_id', $remove_id);
-                if ($this->db->delete(db_prefix() . 'pur_request_detail')) {
+                if ($this->db->delete(db_prefix() . 'co_request_detail')) {
                     $affectedRows++;
                 }
             }
@@ -1490,28 +1490,28 @@ class Changee_model extends App_Model
      *
      * @return     boolean  
      */
-    public function delete_pur_request($id)
+    public function delete_co_request($id)
     {
         $affectedRows = 0;
         $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'pur_request');
+        $this->db->delete(db_prefix() . 'co_request');
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
 
         $this->db->where('rel_id', $id);
-        $this->db->where('rel_type', 'pur_request');
+        $this->db->where('rel_type', 'co_request');
         $this->db->delete(db_prefix() . 'files');
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
 
-        if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $id)) {
-            delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $id);
+        if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/' . $id)) {
+            delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/' . $id);
         }
 
-        $this->db->where('pur_request', $id);
-        $this->db->delete(db_prefix() . 'pur_request_detail');
+        $this->db->where('co_request', $id);
+        $this->db->delete(db_prefix() . 'co_request_detail');
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
@@ -1530,21 +1530,21 @@ class Changee_model extends App_Model
      *
      * @return     boolean 
      */
-    public function change_status_pur_request($status, $id)
+    public function change_status_co_request($status, $id)
     {
         if ($status == 2) {
-            $this->update_item_pur_request($id);
+            $this->update_item_co_request($id);
         }
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_request', ['status' => $status]);
+        $this->db->update(db_prefix() . 'co_request', ['status' => $status]);
         if ($this->db->affected_rows() > 0) {
             if ($status == 2 || $status == 3) {
                 // $this->send_mail_to_sender('changee_request', $status, $id);
                 $cron_email = array();
                 $cron_email_options = array();
                 $cron_email['type'] = "changee";
-                $cron_email_options['rel_type'] = 'pur_request';
+                $cron_email_options['rel_type'] = 'co_request';
                 $cron_email_options['rel_name'] = 'changee_request';
                 $cron_email_options['insert_id'] = $id;
                 $cron_email_options['user_id'] = get_staff_user_id();
@@ -1565,7 +1565,7 @@ class Changee_model extends App_Model
      *
      * @return     <array>  The pur request by status.
      */
-    public function get_pur_request_by_status($status)
+    public function get_co_request_by_status($status)
     {
 
 
@@ -1573,13 +1573,13 @@ class Changee_model extends App_Model
             $or_where = '';
             $list_vendor = changee_get_vendor_admin_list(get_staff_user_id());
             foreach ($list_vendor as $vendor_id) {
-                $or_where .= ' OR find_in_set(' . $vendor_id . ', ' . db_prefix() . 'pur_request.send_to_vendors)';
+                $or_where .= ' OR find_in_set(' . $vendor_id . ', ' . db_prefix() . 'co_request.send_to_vendors)';
             }
-            $this->db->where('(' . db_prefix() . 'pur_request.requester = ' . get_staff_user_id() .  $or_where . ')');
+            $this->db->where('(' . db_prefix() . 'co_request.requester = ' . get_staff_user_id() .  $or_where . ')');
         }
         $this->db->where('status', $status);
 
-        return $this->db->get(db_prefix() . 'pur_request')->result_array();
+        return $this->db->get(db_prefix() . 'co_request')->result_array();
     }
 
     /**
@@ -1622,12 +1622,12 @@ class Changee_model extends App_Model
      */
     public function get_estimate($id = '', $where = [])
     {
-        $this->db->select('*,' . db_prefix() . 'currencies.id as currencyid, ' . db_prefix() . 'pur_estimates.id as id, ' . db_prefix() . 'pur_estimates.currency as currency , ' . db_prefix() . 'currencies.name as currency_name');
-        $this->db->from(db_prefix() . 'pur_estimates');
-        $this->db->join(db_prefix() . 'currencies', db_prefix() . 'currencies.id = ' . db_prefix() . 'pur_estimates.currency', 'left');
+        $this->db->select('*,' . db_prefix() . 'currencies.id as currencyid, ' . db_prefix() . 'co_estimates.id as id, ' . db_prefix() . 'co_estimates.currency as currency , ' . db_prefix() . 'currencies.name as currency_name');
+        $this->db->from(db_prefix() . 'co_estimates');
+        $this->db->join(db_prefix() . 'currencies', db_prefix() . 'currencies.id = ' . db_prefix() . 'co_estimates.currency', 'left');
         $this->db->where($where);
         if (is_numeric($id)) {
-            $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+            $this->db->where(db_prefix() . 'co_estimates.id', $id);
             $estimate = $this->db->get()->row();
             if ($estimate) {
 
@@ -1635,11 +1635,11 @@ class Changee_model extends App_Model
 
                 $estimate->items = get_items_by_type('pur_estimate', $id);
 
-                if ($estimate->pur_request != 0) {
+                if ($estimate->co_request != 0) {
 
-                    $estimate->pur_request = $this->get_changee_request($estimate->pur_request);
+                    $estimate->co_request = $this->get_changee_request($estimate->co_request);
                 } else {
-                    $estimate->pur_request = '';
+                    $estimate->co_request = '';
                 }
 
                 $estimate->vendor = $this->get_vendor($estimate->vendor);
@@ -1666,7 +1666,7 @@ class Changee_model extends App_Model
     public function get_pur_order($id)
     {
         $this->db->where('id', $id);
-        return $this->db->get(db_prefix() . 'pur_orders')->row();
+        return $this->db->get(db_prefix() . 'co_orders')->row();
     }
 
 
@@ -1725,14 +1725,14 @@ class Changee_model extends App_Model
 
         $this->db->where('prefix', $data['prefix']);
         $this->db->where('number', $data['number']);
-        $check_exist_number = $this->db->get(db_prefix() . 'pur_estimates')->row();
+        $check_exist_number = $this->db->get(db_prefix() . 'co_estimates')->row();
 
         while ($check_exist_number) {
             $data['number'] = $data['number'] + 1;
 
             $this->db->where('prefix', $data['prefix']);
             $this->db->where('number', $data['number']);
-            $check_exist_number = $this->db->get(db_prefix() . 'pur_estimates')->row();
+            $check_exist_number = $this->db->get(db_prefix() . 'co_estimates')->row();
         }
 
         $save_and_send = isset($data['save_and_send']);
@@ -1772,7 +1772,7 @@ class Changee_model extends App_Model
             unset($data['grand_total']);
         }
 
-        $this->db->insert(db_prefix() . 'pur_estimates', $data);
+        $this->db->insert(db_prefix() . 'co_estimates', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_quotation', 'quotation', $insert_id);
         // if ($data['status'] == 2) {
@@ -1792,7 +1792,7 @@ class Changee_model extends App_Model
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix().'cron_email', $cron_email);
-        $this->save_purchase_files('pur_quotation', $insert_id);
+        $this->save_changee_files('pur_quotation', $insert_id);
 
         if ($insert_id) {
             $total = [];
@@ -1834,7 +1834,7 @@ class Changee_model extends App_Model
 
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
-                    $this->db->insert(db_prefix() . 'pur_estimate_detail', $dt_data);
+                    $this->db->insert(db_prefix() . 'co_estimate_detail', $dt_data);
 
 
                     $total['total_tax'] += $rqd['tax_value'];
@@ -1842,7 +1842,7 @@ class Changee_model extends App_Model
             }
 
             $this->db->where('id', $insert_id);
-            $this->db->update(db_prefix() . 'pur_estimates', $total);
+            $this->db->update(db_prefix() . 'co_estimates', $total);
 
             if (is_numeric($data['buyer']) && $data['buyer'] > 0) {
                 $notified = add_notification([
@@ -1951,14 +1951,14 @@ class Changee_model extends App_Model
 
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_estimates', $data);
-        $this->save_purchase_files('pur_quotation', $id);
+        $this->db->update(db_prefix() . 'co_estimates', $data);
+        $this->save_changee_files('pur_quotation', $id);
 
         if ($this->db->affected_rows() > 0) {
             if ($original_status != $data['status']) {
                 if ($data['status'] == 2) {
                     $this->db->where('id', $id);
-                    $this->db->update(db_prefix() . 'pur_estimates', ['sent' => 1, 'datesend' => date('Y-m-d H:i:s')]);
+                    $this->db->update(db_prefix() . 'co_estimates', ['sent' => 1, 'datesend' => date('Y-m-d H:i:s')]);
                 }
             }
             $affectedRows++;
@@ -2000,7 +2000,7 @@ class Changee_model extends App_Model
 
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
-                $this->db->insert(db_prefix() . 'pur_estimate_detail', $dt_data);
+                $this->db->insert(db_prefix() . 'co_estimate_detail', $dt_data);
                 $new_quote_insert_id = $this->db->insert_id();
                 if ($new_quote_insert_id) {
                     $affectedRows++;
@@ -2044,7 +2044,7 @@ class Changee_model extends App_Model
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                 $this->db->where('id', $rqd['id']);
-                $this->db->update(db_prefix() . 'pur_estimate_detail', $dt_data);
+                $this->db->update(db_prefix() . 'co_estimate_detail', $dt_data);
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
                 }
@@ -2054,13 +2054,13 @@ class Changee_model extends App_Model
         if (count($remove_quote) > 0) {
             foreach ($remove_quote as $remove_id) {
                 $this->db->where('id', $remove_id);
-                if ($this->db->delete(db_prefix() . 'pur_estimate_detail')) {
+                if ($this->db->delete(db_prefix() . 'co_estimate_detail')) {
                     $affectedRows++;
                 }
             }
         }
 
-        $quote_detail_after_update = $this->get_pur_estimate_detail($id);
+        $quote_detail_after_update = $this->get_co_estimate_detail($id);
         $total = [];
         $total['total_tax'] = 0;
         if (count($quote_detail_after_update) > 0) {
@@ -2070,7 +2070,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_estimates', $total);
+        $this->db->update(db_prefix() . 'co_estimates', $total);
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
@@ -2128,12 +2128,12 @@ class Changee_model extends App_Model
         $number = format_estimate_number($id);
 
         $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'pur_estimates');
+        $this->db->delete(db_prefix() . 'co_estimates');
 
         if ($this->db->affected_rows() > 0) {
 
             $this->db->where('pur_estimate', $id);
-            $this->db->delete(db_prefix() . 'pur_estimate_detail');
+            $this->db->delete(db_prefix() . 'co_estimate_detail');
 
             $this->db->where('relid IN (SELECT id from ' . db_prefix() . 'itemable WHERE rel_type="pur_estimate" AND rel_id="' . $id . '")');
             $this->db->where('fieldto', 'items');
@@ -2201,7 +2201,7 @@ class Changee_model extends App_Model
     public function change_status_pur_estimate($status, $id)
     {
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_estimates', ['status' => $status]);
+        $this->db->update(db_prefix() . 'co_estimates', ['status' => $status]);
         if ($this->db->affected_rows() > 0) {
             if ($status == 2 || $status == 3) {
                 // $this->send_mail_to_sender('quotation', $status, $id);
@@ -2234,7 +2234,7 @@ class Changee_model extends App_Model
     {
         $original_po = $this->get_pur_order($id);
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_orders', ['approve_status' => $status]);
+        $this->db->update(db_prefix() . 'co_orders', ['approve_status' => $status]);
         if ($this->db->affected_rows() > 0) {
 
             hooks()->do_action('after_changee_order_approve', $id);
@@ -2290,10 +2290,10 @@ class Changee_model extends App_Model
     {
         $this->db->where('status', $status);
         if (!has_permission('changee_quotations', '', 'view') && is_staff_logged_in()) {
-            $this->db->where('(' . db_prefix() . 'pur_estimates.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_estimates.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_estimates.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where('(' . db_prefix() . 'co_estimates.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_estimates.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_estimates.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
 
-        return $this->db->get(db_prefix() . 'pur_estimates')->result_array();
+        return $this->db->get(db_prefix() . 'co_estimates')->result_array();
     }
 
     /**
@@ -2308,9 +2308,9 @@ class Changee_model extends App_Model
         $this->db->where('vendor', $vendor);
         $this->db->where('status', 2);
         if (!has_permission('changee_quotations', '', 'view') && is_staff_logged_in()) {
-            $this->db->where('(' . db_prefix() . 'pur_estimates.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_estimates.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_estimates.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where('(' . db_prefix() . 'co_estimates.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_estimates.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_estimates.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
-        return $this->db->get(db_prefix() . 'pur_estimates')->result_array();
+        return $this->db->get(db_prefix() . 'co_estimates')->result_array();
     }
 
     /**
@@ -2362,10 +2362,10 @@ class Changee_model extends App_Model
             unset($data['newitems']);
         }
 
-        $prefix = changee_get_purchase_option('pur_order_prefix');
+        $prefix = changee_get_changee_option('pur_order_prefix');
 
         $this->db->where('pur_order_number', $data['pur_order_number']);
-        $check_exist_number = $this->db->get(db_prefix() . 'pur_orders')->row();
+        $check_exist_number = $this->db->get(db_prefix() . 'co_orders')->row();
 
         while ($check_exist_number) {
             $data['number'] = $data['number'] + 1;
@@ -2375,7 +2375,7 @@ class Changee_model extends App_Model
             }
 
             $this->db->where('pur_order_number', $data['pur_order_number']);
-            $check_exist_number = $this->db->get(db_prefix() . 'pur_orders')->row();
+            $check_exist_number = $this->db->get(db_prefix() . 'co_orders')->row();
         }
 
         $data['order_date'] = to_sql_date($data['order_date']);
@@ -2433,7 +2433,7 @@ class Changee_model extends App_Model
             unset($data['grand_total']);
         }
 
-        $this->db->insert(db_prefix() . 'pur_orders', $data);
+        $this->db->insert(db_prefix() . 'co_orders', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_order', 'changee_order', $insert_id);
         // if ($data['approve_status'] == 2) {
@@ -2453,12 +2453,12 @@ class Changee_model extends App_Model
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix().'cron_email', $cron_email);
-        $this->save_purchase_files('pur_order', $insert_id);
+        $this->save_changee_files('pur_order', $insert_id);
         if ($insert_id) {
             // Update next changee order number in settings
             $next_number = $data['number'] + 1;
             $this->db->where('option_name', 'next_po_number');
-            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+            $this->db->update(db_prefix() . 'changee_option', ['option_val' =>  $next_number,]);
 
             $total = [];
             $total['total_tax'] = 0;
@@ -2499,7 +2499,7 @@ class Changee_model extends App_Model
 
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
-                    $this->db->insert(db_prefix() . 'pur_order_detail', $dt_data);
+                    $this->db->insert(db_prefix() . 'co_order_detail', $dt_data);
                 }
             }
 
@@ -2516,7 +2516,7 @@ class Changee_model extends App_Model
             }
 
             $this->db->where('id', $insert_id);
-            $this->db->update(db_prefix() . 'pur_orders', $total);
+            $this->db->update(db_prefix() . 'co_orders', $total);
 
             $this->log_po_activity($insert_id, 'po_activity_created');
             // warehouse module hook after changee order add
@@ -2582,7 +2582,7 @@ class Changee_model extends App_Model
 
         $data['to_currency'] = $data['currency'];
 
-        $prefix = changee_get_purchase_option('pur_order_prefix');
+        $prefix = changee_get_changee_option('pur_order_prefix');
         $data['pur_order_number'] = $data['pur_order_number'];
 
         $data['order_date'] = to_sql_date($data['order_date']);
@@ -2639,18 +2639,18 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_orders', $data);
-        $this->save_purchase_files('pur_order', $id);
+        $this->db->update(db_prefix() . 'co_orders', $data);
+        $this->save_changee_files('pur_order', $id);
 
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
             $this->db->where('id', $id);
-            $po = $this->db->get(db_prefix() . 'pur_orders')->row();
+            $po = $this->db->get(db_prefix() . 'co_orders')->row();
             if($po->approve_status == 3) {
                 $status_array = array();
                 $status_array['approve_status'] = 1;
                 $this->db->where('id', $id);
-                $this->db->update(db_prefix() . 'pur_orders', $status_array);
+                $this->db->update(db_prefix() . 'co_orders', $status_array);
                 $from_status = 'Rejected';
                 $to_status = 'Draft';
                 $this->log_po_activity($id, "Changee order status updated from ".$from_status." to ".$to_status."");
@@ -2694,7 +2694,7 @@ class Changee_model extends App_Model
 
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
-                $this->db->insert(db_prefix() . 'pur_order_detail', $dt_data);
+                $this->db->insert(db_prefix() . 'co_order_detail', $dt_data);
                 $new_quote_insert_id = $this->db->insert_id();
                 if ($new_quote_insert_id) {
                     $affectedRows++;
@@ -2742,7 +2742,7 @@ class Changee_model extends App_Model
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                 $this->db->where('id', $rqd['id']);
-                $this->db->update(db_prefix() . 'pur_order_detail', $dt_data);
+                $this->db->update(db_prefix() . 'co_order_detail', $dt_data);
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
                 }
@@ -2752,10 +2752,10 @@ class Changee_model extends App_Model
         if (count($remove_order) > 0) {
             foreach ($remove_order as $remove_id) {
                 $this->db->where('id', $remove_id);
-                $pur_order_id = $this->db->get(db_prefix() . 'pur_order_detail')->row();
+                $pur_order_id = $this->db->get(db_prefix() . 'co_order_detail')->row();
                 $item_detail = $this->get_items_by_id($pur_order_id->item_code);
                 $this->db->where('id', $remove_id);
-                if ($this->db->delete(db_prefix() . 'pur_order_detail')) {
+                if ($this->db->delete(db_prefix() . 'co_order_detail')) {
                     $affectedRows++;
                     $this->log_po_activity($id, 'changee_order_activity_removed_item', false, serialize([
                         $item_detail->description,
@@ -2774,7 +2774,7 @@ class Changee_model extends App_Model
 
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_orders', $total);
+        $this->db->update(db_prefix() . 'co_orders', $total);
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
@@ -2802,7 +2802,7 @@ class Changee_model extends App_Model
 
         $affectedRows = 0;
         $this->db->where('pur_order', $id);
-        $this->db->delete(db_prefix() . 'pur_order_detail');
+        $this->db->delete(db_prefix() . 'co_order_detail');
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
         }
@@ -2837,7 +2837,7 @@ class Changee_model extends App_Model
         $this->db->delete(db_prefix() . 'customfieldsvalues');
 
         $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'pur_orders');
+        $this->db->delete(db_prefix() . 'co_orders');
 
         $this->db->where('rel_id', $id);
         $this->db->where('rel_type', 'pur_order');
@@ -2865,10 +2865,10 @@ class Changee_model extends App_Model
     {
         $this->db->where('approve_status', 2);
         if (!has_permission('changee_orders', '', 'view') && is_staff_logged_in()) {
-            $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where(' (' . db_prefix() . 'co_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
 
-        return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        return $this->db->get(db_prefix() . 'co_orders')->result_array();
     }
 
     /**
@@ -2879,13 +2879,13 @@ class Changee_model extends App_Model
     public function get_pur_order_approved_by_vendor($vendor)
     {
         if (is_staff_logged_in() && !has_permission('changee_orders', '', 'view')) {
-            $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where(' (' . db_prefix() . 'co_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
 
         $this->db->where('approve_status', 2);
         $this->db->where('vendor', $vendor);
 
-        return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        return $this->db->get(db_prefix() . 'co_orders')->result_array();
     }
 
     /**
@@ -3096,7 +3096,7 @@ class Changee_model extends App_Model
     {
         $this->db->where('rel_id', $rel_id);
         $this->db->where('rel_type', $rel_type);
-        $approve_status = $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
+        $approve_status = $this->db->get(db_prefix() . 'co_approval_details')->result_array();
         if (count($approve_status) > 0) {
             foreach ($approve_status as $value) {
                 if ($value['approve'] == -1) {
@@ -3125,7 +3125,7 @@ class Changee_model extends App_Model
         $this->db->select('*');
         $this->db->where('rel_id', $rel_id);
         $this->db->where('rel_type', $rel_type);
-        return $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
+        return $this->db->get(db_prefix() . 'co_approval_details')->result_array();
     }
 
     /**
@@ -3151,7 +3151,7 @@ class Changee_model extends App_Model
         // $staff_addedfrom = $data['addedfrom'];
         $sender = get_staff_user_id();
         $project = 0;
-        if ($data['rel_type'] == 'pur_request') {
+        if ($data['rel_type'] == 'co_request') {
             $project = $this->get_changee_request($data['rel_id'])->project;
         }
         if ($data['rel_type'] == 'pur_order') {
@@ -3167,7 +3167,7 @@ class Changee_model extends App_Model
             $this->db->select('rel_id');
             $this->db->where('rel_id', $data['rel_id']);
             $this->db->where('rel_type', $data['rel_type']);
-            $rel_id_data = $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
+            $rel_id_data = $this->db->get(db_prefix() . 'co_approval_details')->result_array();
             if(empty($rel_id_data)) {
                 $row['action'] = 'approve';
                 $row['staffid'] = $value['id'];
@@ -3175,7 +3175,7 @@ class Changee_model extends App_Model
                 $row['rel_id'] = $data['rel_id'];
                 $row['rel_type'] = $data['rel_type'];
                 $row['sender'] = $sender;
-                $this->db->insert('tblpur_approval_details', $row);
+                $this->db->insert('tblco_approval_details', $row);
             }
         }
 
@@ -3195,7 +3195,7 @@ class Changee_model extends App_Model
 
         //             $this->db->where('rel_id', $data['rel_id']);
         //             $this->db->where('rel_type', $data['rel_type']);
-        //             $this->db->delete('tblpur_approval_details');
+        //             $this->db->delete('tblco_approval_details');
 
 
         //             return $value->approver;
@@ -3207,7 +3207,7 @@ class Changee_model extends App_Model
         //     if(empty($staffid)){
         //         $this->db->where('rel_id', $data['rel_id']);
         //         $this->db->where('rel_type', $data['rel_type']);
-        //         $this->db->delete('tblpur_approval_details');
+        //         $this->db->delete('tblco_approval_details');
 
 
         //         return $value->approver;
@@ -3219,7 +3219,7 @@ class Changee_model extends App_Model
         //         $row['rel_id'] = $data['rel_id'];
         //         $row['rel_type'] = $data['rel_type'];
         //         $row['sender'] = $sender;
-        //         $this->db->insert('tblpur_approval_details', $row);
+        //         $this->db->insert('tblco_approval_details', $row);
 
         //     }else if($value->approver == 'staff'){
         //         $row['action'] = $value->action;
@@ -3229,7 +3229,7 @@ class Changee_model extends App_Model
         //         $row['rel_type'] = $data['rel_type'];
         //         $row['sender'] = $sender;
 
-        //         $this->db->insert('tblpur_approval_details', $row);
+        //         $this->db->insert('tblco_approval_details', $row);
         //     }
         // }
         return true;
@@ -3247,7 +3247,7 @@ class Changee_model extends App_Model
     {
         $this->db->select('*');
         $this->db->where('related', $type);
-        $approval_setting = $this->db->get('tblpur_approval_setting')->row();
+        $approval_setting = $this->db->get('tblco_approval_setting')->row();
         if ($approval_setting) {
             return json_decode($approval_setting->setting);
         } else {
@@ -3267,7 +3267,7 @@ class Changee_model extends App_Model
     {
         $this->db->where('rel_id', $rel_id);
         $this->db->where('rel_type', $rel_type);
-        $this->db->delete(db_prefix() . 'pur_approval_details');
+        $this->db->delete(db_prefix() . 'co_approval_details');
         if ($this->db->affected_rows() > 0) {
             return true;
         }
@@ -3315,7 +3315,7 @@ class Changee_model extends App_Model
         $this->db->where('rel_id', $rel_id);
         $this->db->where('rel_type', $rel_type);
         $this->db->where('action', 'sign');
-        $approve_status = $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
+        $approve_status = $this->db->get(db_prefix() . 'co_approval_details')->result_array();
         if (isset($approve_status)) {
             $array_return = [];
             foreach ($approve_status as $key => $value) {
@@ -3351,14 +3351,14 @@ class Changee_model extends App_Model
         $additional_data = $data['rel_type'];
         $object_type = $data['rel_type'];
         switch ($data['rel_type']) {
-            case 'pur_request':
+            case 'co_request':
                 $staff_addedfrom = $this->get_changee_request($data['rel_id'])->requester;
                 $additional_data = $this->get_changee_request($data['rel_id'])->pur_rq_name;
                 $list_approve_status = $this->get_list_approval_details($data['rel_id'], $data['rel_type']);
-                $mes = 'notify_send_request_approve_pur_request';
-                $mes_approve = 'notify_send_approve_pur_request';
-                $mes_reject = 'notify_send_rejected_pur_request';
-                $link = 'changee/view_pur_request/' . $data['rel_id'];
+                $mes = 'notify_send_request_approve_co_request';
+                $mes_approve = 'notify_send_approve_co_request';
+                $mes_reject = 'notify_send_rejected_co_request';
+                $link = 'changee/view_co_request/' . $data['rel_id'];
                 break;
 
             case 'pur_quotation':
@@ -3529,23 +3529,23 @@ class Changee_model extends App_Model
         $data_update = [];
 
         switch ($rel_type) {
-            case 'pur_request':
+            case 'co_request':
                 $data_update['status'] = $status;
-                $this->update_item_pur_request($rel_id);
+                $this->update_item_co_request($rel_id);
                 $this->db->where('id', $rel_id);
-                $this->db->update(db_prefix() . 'pur_request', $data_update);
+                $this->db->update(db_prefix() . 'co_request', $data_update);
                 return true;
                 break;
             case 'pur_quotation':
                 $data_update['status'] = $status;
                 $this->db->where('id', $rel_id);
-                $this->db->update(db_prefix() . 'pur_estimates', $data_update);
+                $this->db->update(db_prefix() . 'co_estimates', $data_update);
                 return true;
                 break;
             case 'pur_order':
                 $data_update['approve_status'] = $status;
                 $this->db->where('id', $rel_id);
-                $this->db->update(db_prefix() . 'pur_orders', $data_update);
+                $this->db->update(db_prefix() . 'co_orders', $data_update);
 
                 // warehouse module hook after changee order approve
                 hooks()->do_action('after_changee_order_approve', $rel_id);
@@ -3583,15 +3583,15 @@ class Changee_model extends App_Model
      *
      * @param      $id     The identifier
      */
-    public function update_item_pur_request($id)
+    public function update_item_co_request($id)
     {
         $pur_rq = $this->get_changee_request($id);
         if ($pur_rq) {
 
             $this->db->where('id', $id);
-            $this->db->update(db_prefix() . 'pur_request', ['from_items' => 1]);
+            $this->db->update(db_prefix() . 'co_request', ['from_items' => 1]);
 
-            $pur_rqdt = $this->get_pur_request_detail($id);
+            $pur_rqdt = $this->get_co_request_detail($id);
             if (count($pur_rqdt) > 0) {
                 foreach ($pur_rqdt as $rqdt) {
                     if ($rqdt['item_text'] != '' && ($rqdt['item_code'] == '' || $rqdt['item_code'] == null)) {
@@ -3604,7 +3604,7 @@ class Changee_model extends App_Model
                         $item_data['commodity_code'] = $this->generate_commodity_barcode();
                         $item_id = $this->add_commodity_one_item($item_data);
                         $this->db->where('prd_id', $rqdt['prd_id']);
-                        $this->db->update(db_prefix() . 'pur_request_detail', ['item_code' => $item_id,]);
+                        $this->db->update(db_prefix() . 'co_request_detail', ['item_code' => $item_id,]);
                     }
                 }
             }
@@ -3623,7 +3623,7 @@ class Changee_model extends App_Model
     {
         $data['date'] = date('Y-m-d H:i:s');
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_approval_details', $data);
+        $this->db->update(db_prefix() . 'co_approval_details', $data);
         if ($this->db->affected_rows() > 0) {
             return true;
         }
@@ -3633,13 +3633,13 @@ class Changee_model extends App_Model
     /**
      * { pur request pdf }
      *
-     * @param      <type>  $pur_request  The pur request
+     * @param      <type>  $co_request  The pur request
      *
      * @return      ( pdf )
      */
-    public function pur_request_pdf($pur_request)
+    public function co_request_pdf($co_request)
     {
-        return app_pdf('pur_request', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Pur_request_pdf'), $pur_request);
+        return app_pdf('co_request', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Pur_request_pdf'), $co_request);
     }
 
     /**
@@ -3652,9 +3652,9 @@ class Changee_model extends App_Model
     function get_budget_head($id = '')
     {
         $this->db->select('name');
-        $this->db->from(db_prefix() . 'pur_request');
-        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_request.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
-        $this->db->where(db_prefix() . 'pur_request.id', $id);
+        $this->db->from(db_prefix() . 'co_request');
+        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'co_request.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
+        $this->db->where(db_prefix() . 'co_request.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3666,9 +3666,9 @@ class Changee_model extends App_Model
     function get_budget_head_estimate($id = '')
     {
         $this->db->select('name');
-        $this->db->from(db_prefix() . 'pur_estimates');
-        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_estimates.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
-        $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+        $this->db->from(db_prefix() . 'co_estimates');
+        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'co_estimates.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
+        $this->db->where(db_prefix() . 'co_estimates.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3681,7 +3681,7 @@ class Changee_model extends App_Model
      * Get budget head name for a changee order.
      *
      * This function retrieves the 'group_name' associated with a given changee order ID.
-     * It joins the 'pur_orders' table with the 'assets_group' table to fetch the relevant
+     * It joins the 'co_orders' table with the 'assets_group' table to fetch the relevant
      * group name based on the 'items_group' field.
      *
      * @param int $id The ID of the changee order.
@@ -3692,9 +3692,9 @@ class Changee_model extends App_Model
     function get_budget_head_po($id = '')
     {
         $this->db->select('name');
-        $this->db->from(db_prefix() . 'pur_orders');
-        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_orders.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
-        $this->db->where(db_prefix() . 'pur_orders.id', $id);
+        $this->db->from(db_prefix() . 'co_orders');
+        $this->db->join(db_prefix() . 'items_groups', db_prefix() . 'co_orders.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
+        $this->db->where(db_prefix() . 'co_orders.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3714,9 +3714,9 @@ class Changee_model extends App_Model
     function get_budget_sub_head($id = '')
     {
         $this->db->select('sub_group_name');
-        $this->db->from(db_prefix() . 'pur_request');
-        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'pur_request.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
-        $this->db->where(db_prefix() . 'pur_request.id', $id);
+        $this->db->from(db_prefix() . 'co_request');
+        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'co_request.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
+        $this->db->where(db_prefix() . 'co_request.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3728,9 +3728,9 @@ class Changee_model extends App_Model
     function get_budget_sub_head_estimate($id = '')
     {
         $this->db->select('sub_group_name');
-        $this->db->from(db_prefix() . 'pur_estimates');
-        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'pur_estimates.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
-        $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+        $this->db->from(db_prefix() . 'co_estimates');
+        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'co_estimates.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
+        $this->db->where(db_prefix() . 'co_estimates.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3742,9 +3742,9 @@ class Changee_model extends App_Model
     function get_budget_sub_head_po($id = '')
     {
         $this->db->select('sub_group_name');
-        $this->db->from(db_prefix() . 'pur_orders');
-        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'pur_orders.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
-        $this->db->where(db_prefix() . 'pur_orders.id', $id);
+        $this->db->from(db_prefix() . 'co_orders');
+        $this->db->join(db_prefix() . 'wh_sub_group', db_prefix() . 'co_orders.sub_groups_pur = ' . db_prefix() . 'wh_sub_group.id', 'left');
+        $this->db->where(db_prefix() . 'co_orders.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3760,12 +3760,12 @@ class Changee_model extends App_Model
      *
      * @return string
      */
-    function get_pur_request_area_estimate($id = '')
+    function get_co_request_area_estimate($id = '')
     {
         $this->db->select('area_name');
-        $this->db->from(db_prefix() . 'pur_estimates');
-        $this->db->join(db_prefix() . 'area', db_prefix() . 'pur_estimates.area_pur = ' . db_prefix() . 'area.id', 'left');
-        $this->db->where(db_prefix() . 'pur_estimates.id', $id);
+        $this->db->from(db_prefix() . 'co_estimates');
+        $this->db->join(db_prefix() . 'area', db_prefix() . 'co_estimates.area_pur = ' . db_prefix() . 'area.id', 'left');
+        $this->db->where(db_prefix() . 'co_estimates.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3774,12 +3774,12 @@ class Changee_model extends App_Model
             return null;  // Return null if no result is found
         }
     }
-    function get_pur_request_area($id = '')
+    function get_co_request_area($id = '')
     {
         $this->db->select('area_name');
-        $this->db->from(db_prefix() . 'pur_request');
-        $this->db->join(db_prefix() . 'area', db_prefix() . 'pur_request.area_pur = ' . db_prefix() . 'area.id', 'left');
-        $this->db->where(db_prefix() . 'pur_request.id', $id);
+        $this->db->from(db_prefix() . 'co_request');
+        $this->db->join(db_prefix() . 'area', db_prefix() . 'co_request.area_pur = ' . db_prefix() . 'area.id', 'left');
+        $this->db->where(db_prefix() . 'co_request.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3789,12 +3789,12 @@ class Changee_model extends App_Model
         }
     }
 
-    function get_pur_request_area_po($id = '')
+    function get_co_request_area_po($id = '')
     {
         $this->db->select('area_name');
-        $this->db->from(db_prefix() . 'pur_orders');
-        $this->db->join(db_prefix() . 'area', db_prefix() . 'pur_orders.area_pur = ' . db_prefix() . 'area.id', 'left');
-        $this->db->where(db_prefix() . 'pur_orders.id', $id);
+        $this->db->from(db_prefix() . 'co_orders');
+        $this->db->join(db_prefix() . 'area', db_prefix() . 'co_orders.area_pur = ' . db_prefix() . 'area.id', 'left');
+        $this->db->where(db_prefix() . 'co_orders.id', $id);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -3806,23 +3806,23 @@ class Changee_model extends App_Model
     /**
      * Gets the pur request pdf html.
      *
-     * @param      <type>  $pur_request_id  The pur request identifier
+     * @param      <type>  $co_request_id  The pur request identifier
      *
      * @return     string  The pur request pdf html.
      */
-    public function get_pur_request_pdf_html($pur_request_id)
+    public function get_co_request_pdf_html($co_request_id)
     {
         $this->load->model('departments_model');
 
-        $pur_request = $this->get_changee_request($pur_request_id);
-        $pur_request_detail = $this->get_pur_request_detail($pur_request_id);
+        $co_request = $this->get_changee_request($co_request_id);
+        $co_request_detail = $this->get_co_request_detail($co_request_id);
         $company_name = get_option('invoice_company_name');
-        $dpm_name = $this->departments_model->get($pur_request->department)->name;
+        $dpm_name = $this->departments_model->get($co_request->department)->name;
         $address = get_option('invoice_company_address');
-        $day = date('d', strtotime($pur_request->request_date));
-        $month = date('m', strtotime($pur_request->request_date));
-        $year = date('Y', strtotime($pur_request->request_date));
-        $list_approve_status = $this->get_list_approval_details($pur_request_id, 'pur_request');
+        $day = date('d', strtotime($co_request->request_date));
+        $month = date('m', strtotime($co_request->request_date));
+        $year = date('Y', strtotime($co_request->request_date));
+        $list_approve_status = $this->get_list_approval_details($co_request_id, 'co_request');
         $logo = '';
 
         $company_logo = get_option('company_logo_dark');
@@ -3839,14 +3839,14 @@ class Changee_model extends App_Model
             </td>
             <td style="position: absolute; float: right;">
                 <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('request_quotation')) . '</b></span><br />
-                <span style="text-align: right;">' . $pur_request->pur_rq_code . '</span><br />
-                <span style="text-align: right;">' . changee_get_status_approve($pur_request->status) . '</span><br /><br />
-                <span style="text-align: right;"><b>' . _l('date_request') . ':</b> ' . date('d-m-Y', strtotime($pur_request->request_date)) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('project') . ':</b> ' . get_project_name_by_id($pur_request->project) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($pur_request->requester) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($pur_request_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($pur_request_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area($pur_request_id) . '</span><br />
+                <span style="text-align: right;">' . $co_request->pur_rq_code . '</span><br />
+                <span style="text-align: right;">' . changee_get_status_approve($co_request->status) . '</span><br /><br />
+                <span style="text-align: right;"><b>' . _l('date_request') . ':</b> ' . date('d-m-Y', strtotime($co_request->request_date)) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('project') . ':</b> ' . get_project_name_by_id($co_request->project) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($co_request->requester) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($co_request_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($co_request_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area($co_request_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -3867,7 +3867,7 @@ class Changee_model extends App_Model
           </tr>
         </thead>
         <tbody>';
-        foreach ($pur_request_detail as $row) {
+        foreach ($co_request_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $html .= '<tr nobr="true" class="sortable">
@@ -3897,7 +3897,7 @@ class Changee_model extends App_Model
                 if ($value['action'] == 'sign') {
                     $html .= '<h3>' . mb_strtoupper(get_staff_full_name($value['staffid'])) . '</h3>';
                     if ($value['approve'] == 2) {
-                        $html .= '<img src="' . site_url('modules/changee/uploads/pur_request/signature/' . $pur_request->id . '/signature_' . $value['id'] . '.png') . '" class="img_style">';
+                        $html .= '<img src="' . site_url('modules/changee/uploads/co_request/signature/' . $co_request->id . '/signature_' . $value['id'] . '.png') . '" class="img_style">';
                     }
                 } else {
                     $html .= '<h3>' . mb_strtoupper(get_staff_full_name($value['staffid'])) . '</h3>';
@@ -3921,35 +3921,35 @@ class Changee_model extends App_Model
     /**
      * { request quotation pdf }
      *
-     * @param      <type>  $pur_request  The pur request
+     * @param      <type>  $co_request  The pur request
      *
      * @return      ( pdf )
      */
-    public function request_quotation_pdf($pur_request)
+    public function request_quotation_pdf($co_request)
     {
-        return app_pdf('pur_request', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Request_quotation_pdf'), $pur_request);
+        return app_pdf('co_request', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Request_quotation_pdf'), $co_request);
     }
 
     /**
      * Gets the request quotation pdf html.
      *
-     * @param      <type>  $pur_request_id  The pur request identifier
+     * @param      <type>  $co_request_id  The pur request identifier
      *
      * @return     string  The request quotation pdf html.
      */
-    public function get_request_quotation_pdf_html($pur_request_id)
+    public function get_request_quotation_pdf_html($co_request_id)
     {
         $this->load->model('departments_model');
 
-        $pur_request = $this->get_changee_request($pur_request_id);
-        $pur_request_detail = $this->get_pur_request_detail($pur_request_id);
+        $co_request = $this->get_changee_request($co_request_id);
+        $co_request_detail = $this->get_co_request_detail($co_request_id);
         $company_name = get_option('invoice_company_name');
-        $dpm_name = $this->departments_model->get($pur_request->department)->name;
+        $dpm_name = $this->departments_model->get($co_request->department)->name;
         $address = get_option('invoice_company_address');
-        $day = date('d', strtotime($pur_request->request_date));
-        $month = date('m', strtotime($pur_request->request_date));
-        $year = date('Y', strtotime($pur_request->request_date));
-        $list_approve_status = $this->get_list_approval_details($pur_request_id, 'pur_request');
+        $day = date('d', strtotime($co_request->request_date));
+        $month = date('m', strtotime($co_request->request_date));
+        $year = date('Y', strtotime($co_request->request_date));
+        $list_approve_status = $this->get_list_approval_details($co_request_id, 'co_request');
         $logo = '';
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
@@ -3965,14 +3965,14 @@ class Changee_model extends App_Model
             </td>
             <td style="position: absolute; float: right;">
                 <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('request_quotation')) . '</b></span><br />
-                <span style="text-align: right;">' . $pur_request->pur_rq_code . '</span><br />
-                <span style="text-align: right;">' . changee_get_status_approve($pur_request->status) . '</span><br /><br />
-                <span style="text-align: right;"><b>' . _l('date_request') . ':</b> ' . date('d-m-Y', strtotime($pur_request->request_date)) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('project') . ':</b> ' . get_project_name_by_id($pur_request->project) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($pur_request->requester) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($pur_request_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($pur_request_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area($pur_request_id) . '</span><br />
+                <span style="text-align: right;">' . $co_request->pur_rq_code . '</span><br />
+                <span style="text-align: right;">' . changee_get_status_approve($co_request->status) . '</span><br /><br />
+                <span style="text-align: right;"><b>' . _l('date_request') . ':</b> ' . date('d-m-Y', strtotime($co_request->request_date)) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('project') . ':</b> ' . get_project_name_by_id($co_request->project) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($co_request->requester) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($co_request_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($co_request_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area($co_request_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -3992,7 +3992,7 @@ class Changee_model extends App_Model
           </tr>
         </thead>
         <tbody>';
-        foreach ($pur_request_detail as $row) {
+        foreach ($co_request_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $html .= '<tr nobr="true" class="sortable">
@@ -4043,7 +4043,7 @@ class Changee_model extends App_Model
             $ci->email->subject($inbox['subject']);
             $ci->email->message($inbox['body']);
 
-            $attachment_url = site_url(PURCHASE_PATH . 'request_quotation/' . $data['pur_request_id'] . '/' . str_replace(" ", "_", $_FILES['attachment']['name']));
+            $attachment_url = site_url(PURCHASE_PATH . 'request_quotation/' . $data['co_request_id'] . '/' . str_replace(" ", "_", $_FILES['attachment']['name']));
             $ci->email->attach($attachment_url);
 
             return $ci->email->send(true);
@@ -4066,7 +4066,7 @@ class Changee_model extends App_Model
         $val = $data['input_name_status'] == 'true' ? 1 : 0;
         if ($data['input_name'] != 'show_changee_tax_column' && $data['input_name'] != 'po_only_prefix_and_number' && $data['input_name'] != 'send_email_welcome_for_new_contact' && $data['input_name'] != 'reset_changee_order_number_every_month') {
             $this->db->where('option_name', $data['input_name']);
-            $this->db->update(db_prefix() . 'purchase_option', [
+            $this->db->update(db_prefix() . 'changee_option', [
                 'option_val' => $val,
             ]);
             if ($this->db->affected_rows() > 0) {
@@ -4123,23 +4123,23 @@ class Changee_model extends App_Model
     {
         $rs = 0;
         $this->db->where('option_name', 'create_invoice_by');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['create_invoice_by'],
         ]);
         if ($this->db->affected_rows() > 0) {
             $rs++;
         }
 
-        $this->db->where('option_name', 'pur_request_prefix');
-        $this->db->update(db_prefix() . 'purchase_option', [
-            'option_val' => $data['pur_request_prefix'],
+        $this->db->where('option_name', 'co_request_prefix');
+        $this->db->update(db_prefix() . 'changee_option', [
+            'option_val' => $data['co_request_prefix'],
         ]);
         if ($this->db->affected_rows() > 0) {
             $rs++;
         }
 
         $this->db->where('option_name', 'pur_inv_prefix');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['pur_inv_prefix'],
         ]);
         if ($this->db->affected_rows() > 0) {
@@ -4147,7 +4147,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('option_name', 'pur_order_prefix');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['pur_order_prefix'],
         ]);
         if ($this->db->affected_rows() > 0) {
@@ -4155,7 +4155,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('option_name', 'terms_and_conditions');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['terms_and_conditions'],
         ]);
         if ($this->db->affected_rows() > 0) {
@@ -4163,7 +4163,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('option_name', 'vendor_note');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['vendor_note'],
         ]);
         if ($this->db->affected_rows() > 0) {
@@ -4171,7 +4171,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('option_name', 'next_po_number');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['next_po_number'],
         ]);
         if ($this->db->affected_rows() > 0) {
@@ -4179,7 +4179,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('option_name', 'next_pr_number');
-        $this->db->update(db_prefix() . 'purchase_option', [
+        $this->db->update(db_prefix() . 'changee_option', [
             'option_val' => $data['next_pr_number'],
         ]);
         if ($this->db->affected_rows() > 0) {
@@ -4360,7 +4360,7 @@ class Changee_model extends App_Model
     {
 
         $this->db->where('rel_id', $id);
-        $this->db->where('rel_type', 'pur_request');
+        $this->db->where('rel_type', 'co_request');
         return $this->db->get(db_prefix() . 'files')->result_array();
     }
 
@@ -4463,7 +4463,7 @@ class Changee_model extends App_Model
         } else {
             $this->db->where('rel_id', $assets);
         }
-        $this->db->where('rel_type', 'pur_request');
+        $this->db->where('rel_type', 'co_request');
         $result = $this->db->get(db_prefix() . 'files');
         if (is_numeric($id)) {
             return $result->row();
@@ -4488,7 +4488,7 @@ class Changee_model extends App_Model
         $this->db->delete(db_prefix() . 'files');
         if ($attachment) {
             if (empty($attachment->external)) {
-                unlink(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $attachment->rel_id . '/' . $attachment->file_name);
+                unlink(PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/' . $attachment->rel_id . '/' . $attachment->file_name);
             }
             $this->db->where('id', $attachment->id);
             $this->db->delete('tblfiles');
@@ -4496,12 +4496,12 @@ class Changee_model extends App_Model
                 $deleted = true;
             }
 
-            if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $attachment->rel_id)) {
+            if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/' . $attachment->rel_id)) {
                 // Check if no attachments left, so we can delete the folder also
-                $other_attachments = list_files(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $attachment->rel_id);
+                $other_attachments = list_files(PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/' . $attachment->rel_id);
                 if (count($other_attachments) == 0) {
                     // okey only index.html so we can delete the folder also
-                    delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $attachment->rel_id);
+                    delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/co_request/' . $attachment->rel_id);
                 }
             }
         }
@@ -4569,7 +4569,7 @@ class Changee_model extends App_Model
     /**
      * { purorder pdf }
      *
-     * @param      <type>  $pur_request  The pur request
+     * @param      <type>  $co_request  The pur request
      *
      * @return     <type>  ( purorder pdf )
      */
@@ -4584,7 +4584,7 @@ class Changee_model extends App_Model
     /**
      * Gets the pur request pdf html.
      *
-     * @param      <type>  $pur_request_id  The pur request identifier
+     * @param      <type>  $co_request_id  The pur request identifier
      *
      * @return     string  The pur request pdf html.
      */
@@ -4592,7 +4592,7 @@ class Changee_model extends App_Model
     {
 
         $pur_order = $this->get_pur_order($pur_order_id);
-        $pur_order_detail = $this->get_pur_order_detail($pur_order_id);
+        $co_order_detail = $this->get_co_order_detail($pur_order_id);
         $company_name = get_option('invoice_company_name');
         $address = get_option('invoice_company_address');
         $day = date('d', strtotime($pur_order->order_date));
@@ -4624,10 +4624,10 @@ class Changee_model extends App_Model
         //     $delivery_person = '<span style="text-align: right;"><b>'. _l('delivery_person').':</b> '. get_staff_full_name($pur_order->delivery_person).'</span><br />';
         // }
 
-        $pur_request = $this->get_changee_request($pur_order->pur_request);
-        $pur_request_name = '';
-        if (!empty($pur_request)) {
-            $pur_request_name = '<span style="text-align: right;"><b>' . _l('pur_request') . ':</b> #' . $pur_request->pur_rq_code . '</span><br />';
+        $co_request = $this->get_changee_request($pur_order->co_request);
+        $co_request_name = '';
+        if (!empty($co_request)) {
+            $co_request_name = '<span style="text-align: right;"><b>' . _l('co_request') . ':</b> #' . $co_request->pur_rq_code . '</span><br />';
         }
         $ship_to_detail = '';
         if (!empty($ship_to)) {
@@ -4660,7 +4660,7 @@ class Changee_model extends App_Model
                 ' . $ship_to_detail . '
                 ' . $delivery_date . '
                 ' . $delivery_person . '
-                ' . $pur_request_name . ' ';
+                ' . $co_request_name . ' ';
                 if (!empty($pur_order->addedfrom)) {
                     $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
                 }
@@ -4672,9 +4672,9 @@ class Changee_model extends App_Model
                 if ($group_sub_head_po != '') {
                     $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
                 }
-                $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
+                $group_req_area_po = $this->get_co_request_area_po($pur_order->id);
                 if ($group_req_area_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
+                    $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area_po($pur_order->id) . '</span><br />';
                 }
                 $html .= '            
             </td>
@@ -4707,7 +4707,7 @@ class Changee_model extends App_Model
         $tax_total = 0;
         $t_mn = 0;
         $discount_total = 0;
-        foreach ($pur_order_detail as $row) {
+        foreach ($co_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = changee_pur_get_unit_name($row['unit_id']);
@@ -4842,14 +4842,14 @@ class Changee_model extends App_Model
         $base_currency = changee_get_base_currency_pur();
 
         if ($currency == $base_currency->id) {
-            $where = 'AND ' . db_prefix() . 'pur_orders.currency IN (0, ' . $currency . ')';
+            $where = 'AND ' . db_prefix() . 'co_orders.currency IN (0, ' . $currency . ')';
         } else {
-            $where =  'AND ' . db_prefix() . 'pur_orders.currency = ' . $currency;
+            $where =  'AND ' . db_prefix() . 'co_orders.currency = ' . $currency;
         }
 
 
-        $query = $this->db->query('SELECT DATE_FORMAT(order_date, "%m") AS month, Sum((SELECT SUM(total_money) as total FROM ' . db_prefix() . 'pur_order_detail where pur_order = ' . db_prefix() . 'pur_orders.id)) as total 
-            FROM ' . db_prefix() . 'pur_orders where DATE_FORMAT(order_date, "%Y") = ' . $year . ' ' . $where . '
+        $query = $this->db->query('SELECT DATE_FORMAT(order_date, "%m") AS month, Sum((SELECT SUM(total_money) as total FROM ' . db_prefix() . 'co_order_detail where pur_order = ' . db_prefix() . 'co_orders.id)) as total 
+            FROM ' . db_prefix() . 'co_orders where DATE_FORMAT(order_date, "%Y") = ' . $year . ' ' . $where . '
             group by month')->result_array();
         $result = [];
         $result[] = 0;
@@ -4887,7 +4887,7 @@ class Changee_model extends App_Model
             $year = date('Y');
         }
         $query = $this->db->query('SELECT DATE_FORMAT(order_date, "%m") AS month, Count(*) as count 
-            FROM ' . db_prefix() . 'pur_orders where DATE_FORMAT(order_date, "%Y") = ' . $year . '
+            FROM ' . db_prefix() . 'co_orders where DATE_FORMAT(order_date, "%Y") = ' . $year . '
             group by month')->result_array();
         $result = [];
         $result[] = 0;
@@ -4919,7 +4919,7 @@ class Changee_model extends App_Model
      */
     public function get_payment_by_vendor($vendor)
     {
-        return  $this->db->query('select pop.pur_order, pop.id as pop_id, pop.amount, pop.date, pop.paymentmode, pop.transactionid, po.pur_order_name from ' . db_prefix() . 'pur_order_payment pop left join ' . db_prefix() . 'pur_orders po on po.id = pop.pur_order where po.vendor = ' . $vendor)->result_array();
+        return  $this->db->query('select pop.pur_order, pop.id as pop_id, pop.amount, pop.date, pop.paymentmode, pop.transactionid, po.pur_order_name from ' . db_prefix() . 'pur_order_payment pop left join ' . db_prefix() . 'co_orders po on po.id = pop.pur_order where po.vendor = ' . $vendor)->result_array();
     }
 
     /**
@@ -5385,7 +5385,7 @@ class Changee_model extends App_Model
     public function mark_converted_pur_order($pur_order, $expense)
     {
         $this->db->where('id', $pur_order);
-        $this->db->update(db_prefix() . 'pur_orders', ['expense_convert' => $expense]);
+        $this->db->update(db_prefix() . 'co_orders', ['expense_convert' => $expense]);
         if ($this->db->affected_rows() > 0) {
             // accouting module hook after expense converted
             hooks()->do_action('pur_after_expense_converted', $expense);
@@ -5496,7 +5496,7 @@ class Changee_model extends App_Model
     public function get_pur_order_by_vendor($vendor)
     {
         $this->db->where('vendor', $vendor);
-        return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        return $this->db->get(db_prefix() . 'co_orders')->result_array();
     }
 
     public function get_contracts_by_vendor($vendor)
@@ -6135,7 +6135,7 @@ class Changee_model extends App_Model
     {
         $this->load->model('departments_model');
 
-        $po_voucher = $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        $po_voucher = $this->db->get(db_prefix() . 'co_orders')->result_array();
 
 
         $company_name = get_option('invoice_company_name');
@@ -6174,7 +6174,7 @@ class Changee_model extends App_Model
         </tbody>
       </table><br><br><br>';
 
-        $html .=  '<table class="table pur_request-item">
+        $html .=  '<table class="table co_request-item">
             <thead>
               <tr class="border_tr">
                 <th align="left" class="thead-dark">' . _l('changee_order') . '</th>
@@ -6281,7 +6281,7 @@ class Changee_model extends App_Model
         }
         $data['date_add'] = date('Y-m-d');
         $data['payment_status'] = 'unpaid';
-        $prefix = changee_get_purchase_option('pur_inv_prefix');
+        $prefix = changee_get_changee_option('pur_inv_prefix');
 
         $this->db->where('invoice_number', $data['invoice_number']);
         $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
@@ -6342,7 +6342,7 @@ class Changee_model extends App_Model
         if ($insert_id) {
             $next_number = $data['number'] + 1;
             $this->db->where('option_name', 'next_inv_number');
-            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+            $this->db->update(db_prefix() . 'changee_option', ['option_val' =>  $next_number,]);
 
             handle_tags_save($tags, $insert_id, 'pur_invoice');
 
@@ -6939,7 +6939,7 @@ class Changee_model extends App_Model
     /**
      * { purestimate pdf }
      *
-     * @param        $pur_request  The pur request
+     * @param        $co_request  The pur request
      *
      * @return       ( purorder pdf )
      */
@@ -6952,7 +6952,7 @@ class Changee_model extends App_Model
     /**
      * Gets the pur request pdf html.
      *
-     * @param      <type>  $pur_request_id  The pur request identifier
+     * @param      <type>  $co_request_id  The pur request identifier
      *
      * @return     string  The pur request pdf html.
      */
@@ -6961,7 +6961,7 @@ class Changee_model extends App_Model
 
 
         $pur_estimate = $this->get_estimate($pur_estimate_id);
-        $pur_estimate_detail = $this->get_pur_estimate_detail($pur_estimate_id);
+        $co_estimate_detail = $this->get_co_estimate_detail($pur_estimate_id);
         $company_name = get_option('invoice_company_name');
 
         $base_currency = changee_get_base_currency_pur();
@@ -6996,7 +6996,7 @@ class Changee_model extends App_Model
                 <span style="text-align: right;">' . changee_format_pdf_vendor_info($pur_estimate->vendor->userid) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_estimate($pur_estimate_id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_estimate($pur_estimate_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_estimate($pur_estimate_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area_estimate($pur_estimate_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -7021,7 +7021,7 @@ class Changee_model extends App_Model
           </thead>
           <tbody>';
         $t_mn = 0;
-        foreach ($pur_estimate_detail as $row) {
+        foreach ($co_estimate_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $item_name = isset($items->commodity_code) ? $items->commodity_code . ' - ' . $items->description : $row['item_name'];
@@ -7377,14 +7377,14 @@ class Changee_model extends App_Model
     public function change_delivery_status($status, $id)
     {
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_orders', ['delivery_status' => $status]);
+        $this->db->update(db_prefix() . 'co_orders', ['delivery_status' => $status]);
         if ($this->db->affected_rows() > 0) {
             if ($status == 1) {
                 $this->db->where('id', $id);
-                $this->db->update(db_prefix() . 'pur_orders', ['order_status' => 'delivered', 'delivery_date' => date('Y-m-d')]);
+                $this->db->update(db_prefix() . 'co_orders', ['order_status' => 'delivered', 'delivery_date' => date('Y-m-d')]);
             } else {
                 $this->db->where('id', $id);
-                $this->db->update(db_prefix() . 'pur_orders', ['order_status' => 'confirmed']);
+                $this->db->update(db_prefix() . 'co_orders', ['order_status' => 'confirmed']);
             }
 
             return true;
@@ -7429,8 +7429,8 @@ class Changee_model extends App_Model
                     }
                 }
             } else {
-                $prefix = changee_get_purchase_option('pur_inv_prefix');
-                $next_number = changee_get_purchase_option('next_inv_number');
+                $prefix = changee_get_changee_option('pur_inv_prefix');
+                $next_number = changee_get_changee_option('next_inv_number');
                 $data_inv['number'] = $next_number;
                 $data_inv['invoice_number'] = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
                 $data_inv['invoice_date'] = date('Y-m-d');
@@ -7515,9 +7515,9 @@ class Changee_model extends App_Model
     {
         $this->db->where('approve_status', 2);
         if (!has_permission('changee_orders', '', 'view') && is_staff_logged_in()) {
-            $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where(' (' . db_prefix() . 'co_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
-        $list_po = $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        $list_po = $this->db->get(db_prefix() . 'co_orders')->result_array();
         $data_rs = [];
         if (count($list_po) > 0) {
             foreach ($list_po as $po) {
@@ -7545,13 +7545,13 @@ class Changee_model extends App_Model
     public function get_pur_order_approved_for_inv_by_vendor($vendor)
     {
         if (!has_permission('changee_orders', '', 'view') && is_staff_logged_in()) {
-            $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where(' (' . db_prefix() . 'co_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
 
         $this->db->where('approve_status', 2);
         $this->db->where('vendor', $vendor);
 
-        $list_po = $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        $list_po = $this->db->get(db_prefix() . 'co_orders')->result_array();
         $data_rs = [];
         if (count($list_po) > 0) {
             foreach ($list_po as $po) {
@@ -7576,12 +7576,12 @@ class Changee_model extends App_Model
      *
      * @return       The list pur orders.
      */
-    public function get_list_pur_orders()
+    public function get_list_co_orders()
     {
         if (!has_permission('changee_orders', '', 'view') && is_staff_logged_in()) {
-            $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where(' (' . db_prefix() . 'co_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
-        return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        return $this->db->get(db_prefix() . 'co_orders')->result_array();
     }
 
     /**
@@ -7595,7 +7595,7 @@ class Changee_model extends App_Model
         $this->db->where('rel_type', $type);
         $this->db->order_by('dateadded', 'ASC');
 
-        return $this->db->get(db_prefix() . 'pur_comments')->result_array();
+        return $this->db->get(db_prefix() . 'co_comments')->result_array();
     }
 
     /**
@@ -7622,7 +7622,7 @@ class Changee_model extends App_Model
         }
 
         $data['content'] = nl2br($data['content']);
-        $this->db->insert(db_prefix() . 'pur_comments', $data);
+        $this->db->insert(db_prefix() . 'co_comments', $data);
         $insert_id = $this->db->insert_id();
 
         if ($insert_id) {
@@ -7644,7 +7644,7 @@ class Changee_model extends App_Model
     public function edit_comment($data, $id)
     {
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_comments', [
+        $this->db->update(db_prefix() . 'co_comments', [
             'content' => nl2br($data['content']),
         ]);
 
@@ -7663,7 +7663,7 @@ class Changee_model extends App_Model
     public function remove_comment($id)
     {
         $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'pur_comments');
+        $this->db->delete(db_prefix() . 'co_comments');
         if ($this->db->affected_rows() > 0) {
             return true;
         }
@@ -7711,7 +7711,7 @@ class Changee_model extends App_Model
     /**
      * Gets the html tax pur request.
      */
-    public function get_html_tax_pur_request($id)
+    public function get_html_tax_co_request($id)
     {
         $html = '';
         $preview_html = '';
@@ -7731,8 +7731,8 @@ class Changee_model extends App_Model
             $base_currency = changee_pur_get_currency_by_id($request->currency);
         }
 
-        $this->db->where('pur_request', $id);
-        $details = $this->db->get(db_prefix() . 'pur_request_detail')->result_array();
+        $this->db->where('co_request', $id);
+        $details = $this->db->get(db_prefix() . 'co_request_detail')->result_array();
         foreach ($details as $row) {
             if ($row['tax'] != '') {
                 $tax_arr = explode('|', $row['tax']);
@@ -7918,7 +7918,7 @@ class Changee_model extends App_Model
 
 
         $this->db->where('pur_order', $id);
-        $details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+        $details = $this->db->get(db_prefix() . 'co_order_detail')->result_array();
         $item_discount = 0;
 
         foreach ($details as $row) {
@@ -8093,7 +8093,7 @@ class Changee_model extends App_Model
         }
 
         $this->db->where('pur_estimate', $id);
-        $details = $this->db->get(db_prefix() . 'pur_estimate_detail')->result_array();
+        $details = $this->db->get(db_prefix() . 'co_estimate_detail')->result_array();
 
         $item_discount = 0;
         foreach ($details as $row) {
@@ -8297,12 +8297,12 @@ class Changee_model extends App_Model
     {
         $mail_data = [];
         $count_sent = 0;
-        $po = $this->get_changee_request($data['pur_request_id']);
+        $po = $this->get_changee_request($data['co_request_id']);
         if (isset($data['attach_pdf'])) {
-            $pur_order = $this->get_pur_request_pdf_html($data['pur_request_id']);
+            $pur_order = $this->get_co_request_pdf_html($data['co_request_id']);
 
             try {
-                $pdf = $this->pur_request_pdf($pur_order);
+                $pdf = $this->co_request_pdf($pur_order);
             } catch (Exception $e) {
                 echo changee_pur_html_entity_decode($e->getMessage());
                 die;
@@ -8315,7 +8315,7 @@ class Changee_model extends App_Model
         if (strlen(get_option('smtp_host')) > 0 && strlen(get_option('smtp_password')) > 0) {
             foreach ($data['send_to'] as $mail) {
 
-                $mail_data['pur_request_id'] = $data['pur_request_id'];
+                $mail_data['co_request_id'] = $data['co_request_id'];
                 $mail_data['content'] = $data['content'];
                 $mail_data['mail_to'] = $mail;
 
@@ -8503,8 +8503,8 @@ class Changee_model extends App_Model
                     // Recurring invoice date is okey lets convert it to new invoice
                     $_invoice                     = $this->get_pur_invoice($invoice['id']);
                     $new_invoice_data             = [];
-                    $prefix = changee_get_purchase_option('pur_inv_prefix');
-                    $new_invoice_data['number']   = changee_get_purchase_option('next_inv_number');
+                    $prefix = changee_get_changee_option('pur_inv_prefix');
+                    $new_invoice_data['number']   = changee_get_changee_option('next_inv_number');
                     $new_invoice_data['invoice_number']   = $prefix . str_pad($new_invoice_data['number'], 5, '0', STR_PAD_LEFT);
 
                     $new_invoice_data['invoice_date']     = _d($re_create_at);
@@ -8615,18 +8615,18 @@ class Changee_model extends App_Model
     /**
      * { update compare quote }
      *
-     * @param        $pur_request  The pur request
+     * @param        $co_request  The pur request
      * @param        $data         The data
      */
-    public function update_compare_quote($pur_request, $data)
+    public function update_compare_quote($co_request, $data)
     {
-        if (!$pur_request) {
+        if (!$co_request) {
             return false;
         }
 
         $affected_rows = 0;
-        $this->db->where('id', $pur_request);
-        $this->db->update(db_prefix() . 'pur_request', ['compare_note' => $data['compare_note']]);
+        $this->db->where('id', $co_request);
+        $this->db->update(db_prefix() . 'co_request', ['compare_note' => $data['compare_note']]);
         if ($this->db->affected_rows() > 0) {
             $affected_rows++;
         }
@@ -8634,7 +8634,7 @@ class Changee_model extends App_Model
         if (count($data['mark_a_contract']) > 0) {
             foreach ($data['mark_a_contract'] as $key => $mark) {
                 $this->db->where('id', $key);
-                $this->db->update(db_prefix() . 'pur_estimates', ['make_a_contract' => $mark]);
+                $this->db->update(db_prefix() . 'co_estimates', ['make_a_contract' => $mark]);
                 if ($this->db->affected_rows() > 0) {
                     $affected_rows++;
                 }
@@ -10081,7 +10081,7 @@ class Changee_model extends App_Model
     public function refresh_order_value($po_id)
     {
         $changee_order = $this->get_pur_order($po_id);
-        $changee_order_detail = $this->get_pur_order_detail($po_id);
+        $changee_order_detail = $this->get_co_order_detail($po_id);
         $affected_rows = 0;
         $has_change = 0;
 
@@ -10144,7 +10144,7 @@ class Changee_model extends App_Model
 
                         $this->db->where('pur_order', $po_id);
                         $this->db->where('item_code', $item->id);
-                        $this->db->update(db_prefix() . 'pur_order_detail', [
+                        $this->db->update(db_prefix() . 'co_order_detail', [
                             'unit_price' => $item->purchase_price,
                             'into_money' => $into_money,
                             'tax_value' => $tax_value,
@@ -10175,7 +10175,7 @@ class Changee_model extends App_Model
                 }
 
                 $this->db->where('id', $po_id);
-                $this->db->update(db_prefix() . 'pur_orders', [
+                $this->db->update(db_prefix() . 'co_orders', [
                     'subtotal' => $subtotal,
                     'total_tax' => $_total_tax,
                     'total' => $final_total,
@@ -11046,7 +11046,7 @@ class Changee_model extends App_Model
     {
         $this->db->where('find_in_set(' . $vendorid . ', send_to_vendors)');
         $this->db->where('status', 2);
-        return $this->db->get(db_prefix() . 'pur_request')->result_array();
+        return $this->db->get(db_prefix() . 'co_request')->result_array();
     }
 
     /**
@@ -11321,8 +11321,8 @@ class Changee_model extends App_Model
 
         $inv_data = [];
 
-        $prefix = changee_get_purchase_option('pur_inv_prefix');
-        $next_number = changee_get_purchase_option('next_inv_number');
+        $prefix = changee_get_changee_option('pur_inv_prefix');
+        $next_number = changee_get_changee_option('next_inv_number');
 
         $inv_data['invoice_number'] = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
         $inv_data['number'] = $next_number;
@@ -11337,7 +11337,7 @@ class Changee_model extends App_Model
             $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
         }
 
-        $pur_order_detail = $this->get_pur_order_detail($purorder);
+        $co_order_detail = $this->get_co_order_detail($purorder);
 
         $inv_data['add_from'] = get_staff_user_id();
         $inv_data['add_from_type'] = 'admin';
@@ -11361,10 +11361,10 @@ class Changee_model extends App_Model
         if ($insert_id) {
             $next_number = $inv_data['number'] + 1;
             $this->db->where('option_name', 'next_inv_number');
-            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+            $this->db->update(db_prefix() . 'changee_option', ['option_val' =>  $next_number,]);
 
-            if (count($pur_order_detail) > 0) {
-                foreach ($pur_order_detail as $order_detail) {
+            if (count($co_order_detail) > 0) {
+                foreach ($co_order_detail as $order_detail) {
                     $inv_detail_data = [];
                     $inv_detail_data['pur_invoice'] = $insert_id;
                     $inv_detail_data['item_code'] = $order_detail['item_code'];
@@ -11704,7 +11704,7 @@ class Changee_model extends App_Model
     public function confirm_order($pur_order)
     {
         $this->db->where('id', $pur_order);
-        $this->db->update(db_prefix() . 'pur_orders', ['order_status' =>  'confirmed']);
+        $this->db->update(db_prefix() . 'co_orders', ['order_status' =>  'confirmed']);
         if ($this->db->affected_rows() > 0) {
 
             return true;
@@ -11912,12 +11912,12 @@ class Changee_model extends App_Model
         $this->db->where('order_status', 'delivered');
 
         if (!has_permission('changee_orders', '', 'view') && is_staff_logged_in()) {
-            $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+            $this->db->where(' (' . db_prefix() . 'co_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'co_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
 
-        $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        $co_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
 
-        foreach ($pur_orders as $key => $order) {
+        foreach ($co_orders as $key => $order) {
             $vendor = $this->get_vendor($order['vendor']);
             $within_day = get_option('pur_return_request_within_x_day');
             if ($vendor && $vendor->return_within_day != null && $vendor->return_within_day != 0) {
@@ -11925,11 +11925,11 @@ class Changee_model extends App_Model
             }
 
             if ($order['delivery_date'] == null || $order['delivery_date'] == '' || ($order['delivery_date'] != '' &&  date('Y-m-d', strtotime('+' . $within_day . ' days', strtotime($order['delivery_date']))) < date('Y-m-d'))) {
-                unset($pur_orders[$key]);
+                unset($co_orders[$key]);
             }
         }
 
-        return $pur_orders;
+        return $co_orders;
     }
 
     /**
@@ -11937,7 +11937,7 @@ class Changee_model extends App_Model
      * @param  [type] $id 
      * @return [type]              
      */
-    public function pur_order_detail_order_return($id, $return_type = 'fully')
+    public function co_order_detail_order_return($id, $return_type = 'fully')
     {
 
         $company_id = '';
@@ -11968,7 +11968,7 @@ class Changee_model extends App_Model
             $additional_discount = $pur_order->discount_total;
             $row_template = '';
             $count_item = 0;
-            $order_detail_data = $this->get_pur_order_detail($id);
+            $order_detail_data = $this->get_co_order_detail($id);
             foreach ($order_detail_data as $key => $row) {
                 $count_item++;
                 $unit_name = '';
@@ -12060,7 +12060,7 @@ class Changee_model extends App_Model
      */
     public function create_order_return_code()
     {
-        $goods_code = changee_changee_get_purchase_option_v2('pur_order_return_number_prefix') . (changee_changee_get_purchase_option_v2('next_pur_order_return_number'));
+        $goods_code = changee_changee_get_changee_option_v2('pur_order_return_number_prefix') . (changee_changee_get_changee_option_v2('next_pur_order_return_number'));
         return $goods_code;
     }
 
@@ -12137,7 +12137,7 @@ class Changee_model extends App_Model
         /*update save note*/
         if (isset($insert_id)) {
             $this->db->where('id', $data['rel_id']);
-            $this->db->update(db_prefix() . 'pur_orders', ['order_status' => 'return']);
+            $this->db->update(db_prefix() . 'co_orders', ['order_status' => 'return']);
 
             if ($rel_type == 'manual') {
                 //CASE: add manual
@@ -12278,7 +12278,7 @@ class Changee_model extends App_Model
             $this->add_activity_log($data_log);
 
             /*update next number setting*/
-            $this->update_changee_setting_v2(['pur_next_order_return_number' =>  (int)changee_get_purchase_option('pur_next_order_return_number') + 1]);
+            $this->update_changee_setting_v2(['pur_next_order_return_number' =>  (int)changee_get_changee_option('pur_next_order_return_number') + 1]);
 
             //send request approval
             if ($save_and_send_request == 'true') {
@@ -12842,7 +12842,7 @@ class Changee_model extends App_Model
         $order_return = $this->get_order_return($id);
 
         $this->db->where('id', $order_return->rel_id);
-        $this->db->update(db_prefix() . 'pur_orders', ['order_status' => 'delivered']);
+        $this->db->update(db_prefix() . 'co_orders', ['order_status' => 'delivered']);
         if ($this->db->affected_rows() > 0) {
             $affected_rows++;
         }
@@ -12901,8 +12901,8 @@ class Changee_model extends App_Model
     {
         $vendor_str = implode(',', $data['send_to_vendors']);
 
-        $this->db->where('id', $data['pur_request_id']);
-        $this->db->update(db_prefix() . 'pur_request', ['send_to_vendors' => $vendor_str]);
+        $this->db->where('id', $data['co_request_id']);
+        $this->db->update(db_prefix() . 'co_request', ['send_to_vendors' => $vendor_str]);
 
         if ($this->db->affected_rows() > 0) {
             return true;
@@ -12916,10 +12916,10 @@ class Changee_model extends App_Model
      *
      * @param        $pur_order  The pur order
      */
-    public function get_pur_request_files($pur_request)
+    public function get_co_request_files($co_request)
     {
-        $this->db->where('rel_id', $pur_request);
-        $this->db->where('rel_type', 'pur_request');
+        $this->db->where('rel_id', $co_request);
+        $this->db->where('rel_type', 'co_request');
         return $this->db->get(db_prefix() . 'files')->result_array();
     }
 
@@ -12933,7 +12933,7 @@ class Changee_model extends App_Model
     public function change_pr_approve_status($status, $id)
     {
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'pur_request', ['status' => $status]);
+        $this->db->update(db_prefix() . 'co_request', ['status' => $status]);
         if ($this->db->affected_rows() > 0) {
 
             return true;
@@ -13129,13 +13129,13 @@ class Changee_model extends App_Model
     /**
      * Gets the pur order detail.
      *
-     * @param      <int>  $pur_request  The pur request
+     * @param      <int>  $co_request  The pur request
      *
      * @return     <array>  The pur order detail.
      */
-    public function get_pur_invoice_detail($pur_request)
+    public function get_pur_invoice_detail($co_request)
     {
-        $this->db->where('pur_invoice', $pur_request);
+        $this->db->where('pur_invoice', $co_request);
         $pur_invoice_details = $this->db->get(db_prefix() . 'pur_invoice_details')->result_array();
 
         foreach ($pur_invoice_details as $key => $detail) {
@@ -13455,20 +13455,20 @@ class Changee_model extends App_Model
     /**
      * Gets the estimate html by pr vendor.
      *
-     * @param        $pur_request  The pur request
+     * @param        $co_request  The pur request
      * @param      string  $vendor       The vendor
      *
      * @return     string  The estimate html by pr vendor.
      */
-    public function get_estimate_html_by_pr_vendor($pur_request, $vendor = '')
+    public function get_estimate_html_by_pr_vendor($co_request, $vendor = '')
     {
-        $this->db->where('pur_request', $pur_request);
+        $this->db->where('co_request', $co_request);
         $this->db->where('status', 2);
         if ($vendor != '') {
             $this->db->where('vendor', $vendor);
         }
 
-        $estimates = $this->db->get(db_prefix() . 'pur_estimates')->result_array();
+        $estimates = $this->db->get(db_prefix() . 'co_estimates')->result_array();
 
         $html = '<option value=""></option>';
         foreach ($estimates as $es) {
@@ -13637,49 +13637,49 @@ class Changee_model extends App_Model
     /**
      * { request quotation pdf }
      *
-     * @param      <type>  $pur_request  The pur request
+     * @param      <type>  $co_request  The pur request
      *
      * @return      ( pdf )
      */
-    public function compare_quotation_pdf($pur_request)
+    public function compare_quotation_pdf($co_request)
     {
-        return app_pdf('pur_request', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Compare_quotation_pdf'), $pur_request);
+        return app_pdf('co_request', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Compare_quotation_pdf'), $co_request);
     }
 
     /**
      * Gets the request quotation pdf html.
      *
-     * @param      <type>  $pur_request_id  The pur request identifier
+     * @param      <type>  $co_request_id  The pur request identifier
      *
      * @return     string  The request quotation pdf html.
      */
-    public function get_compare_quotation_pdf_html($pur_request_id)
+    public function get_compare_quotation_pdf_html($co_request_id)
     {
         $this->load->model('departments_model');
 
-        $pur_request = $this->get_changee_request($pur_request_id);
-        $project = $this->projects_model->get($pur_request->project);
+        $co_request = $this->get_changee_request($co_request_id);
+        $project = $this->projects_model->get($co_request->project);
         $project_name = '';
         if ($project && isset($project->name)) {
             $project_name = $project->name;
         }
 
-        $tax_data = $this->get_html_tax_pur_request($pur_request_id);
-        if ($pur_request->currency != 0) {
-            $base_currency = changee_pur_get_currency_by_id($pur_request->currency);
+        $tax_data = $this->get_html_tax_co_request($co_request_id);
+        if ($co_request->currency != 0) {
+            $base_currency = changee_pur_get_currency_by_id($co_request->currency);
         } else {
             $base_currency = changee_get_base_currency_pur();
         }
-        $pur_request_detail = $this->get_pur_request_detail($pur_request_id);
+        $co_request_detail = $this->get_co_request_detail($co_request_id);
         $company_name = get_option('invoice_company_name');
-        $dpm_name = $this->departments_model->get($pur_request->department)->name;
+        $dpm_name = $this->departments_model->get($co_request->department)->name;
         $address = get_option('invoice_company_address');
-        $day = date('d', strtotime($pur_request->request_date));
-        $month = date('m', strtotime($pur_request->request_date));
-        $year = date('Y', strtotime($pur_request->request_date));
-        $list_approve_status = $this->get_list_approval_details($pur_request_id, 'pur_request');
+        $day = date('d', strtotime($co_request->request_date));
+        $month = date('m', strtotime($co_request->request_date));
+        $year = date('Y', strtotime($co_request->request_date));
+        $list_approve_status = $this->get_list_approval_details($co_request_id, 'co_request');
 
-        $quotations = changee_get_quotations_by_pur_request($pur_request_id);
+        $quotations = changee_get_quotations_by_co_request($co_request_id);
 
         $html = '<table class="table">
         <tbody>
@@ -13691,7 +13691,7 @@ class Changee_model extends App_Model
             <td class="font_500">' . _l('address') . ': ' . $address . '</td>
           </tr>
           <tr>
-            <td class="font_500"><strong>' . $pur_request->pur_rq_code . '</strong></td>
+            <td class="font_500"><strong>' . $co_request->pur_rq_code . '</strong></td>
           </tr>
         </tbody>
       </table>
@@ -13714,7 +13714,7 @@ class Changee_model extends App_Model
         <tbody>
           <tr>
             <td class="td_width_25"><h4>' . _l('requester') . ':</h4></td>
-            <td class="td_width_75">' . get_staff_full_name($pur_request->requester) . '</td>
+            <td class="td_width_75">' . get_staff_full_name($co_request->requester) . '</td>
           </tr>
           <tr>
             <td class="font_500"><h4>' . _l('department') . ':</h4></td>
@@ -13746,7 +13746,7 @@ class Changee_model extends App_Model
                 </thead>
                 <tbody>';
 
-        foreach ($pur_request_detail as $key => $item) {
+        foreach ($co_request_detail as $key => $item) {
             $html .= '<tr class="">';
             $html .= '<td class="width4">' . changee_pur_html_entity_decode($key + 1) . '</td>';
             $unit_name = isset(changee_get_unit_type_item($item['unit_id'])->unit_name) ? changee_get_unit_type_item($item['unit_id'])->unit_name : '';
@@ -13803,7 +13803,7 @@ class Changee_model extends App_Model
                     </tbody></table>';
 
         $html .= '<div class="col-md-12 mtop15">
-                        <h4>' . _l('comparison_notes') . ':</h4><p>' . $pur_request->compare_note . '</p>
+                        <h4>' . _l('comparison_notes') . ':</h4><p>' . $co_request->compare_note . '</p>
                        
                      </div>';
 
@@ -13878,7 +13878,7 @@ class Changee_model extends App_Model
     public function get_pur_order_search($q)
     {
         $this->db->where('1=1 AND (pur_order_number LIKE "%' . $this->db->escape_like_str($q) . '%")');
-        return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        return $this->db->get(db_prefix() . 'co_orders')->result_array();
     }
 
     /**
@@ -13889,7 +13889,7 @@ class Changee_model extends App_Model
     public function get_estimate_search($q)
     {
         $this->db->where('1=1 AND (prefix LIKE "%' . $this->db->escape_like_str($q) . '%" OR number LIKE "%' . $this->db->escape_like_str($q) . '%")');
-        return $this->db->get(db_prefix() . 'pur_estimates')->result_array();
+        return $this->db->get(db_prefix() . 'co_estimates')->result_array();
     }
 
     /**
@@ -13932,7 +13932,7 @@ class Changee_model extends App_Model
     /**
      * { request quotation pdf }
      *
-     * @param      <type>  $pur_request  The pur request
+     * @param      <type>  $co_request  The pur request
      *
      * @return      ( pdf )
      */
@@ -14159,7 +14159,7 @@ class Changee_model extends App_Model
         if (!empty($data['approval_setting_id'])) {
             $this->db->where('id !=', $data['approval_setting_id']);
         }
-        $approval_setting = $this->db->get(db_prefix() . 'pur_approval_setting')->result_array();
+        $approval_setting = $this->db->get(db_prefix() . 'co_approval_setting')->result_array();
         if (!empty($approval_setting)) {
             $response['success'] = true;
         } else {
@@ -14177,7 +14177,7 @@ class Changee_model extends App_Model
         $this->db->select('*');
         $this->db->where('related', $related);
         $this->db->where('project_id', $project);
-        $project_members = $this->db->get(db_prefix().'pur_approval_setting')->row();
+        $project_members = $this->db->get(db_prefix().'co_approval_setting')->row();
 
         if(!empty($project_members)) {
             if(!empty($project_members->approver)) {
@@ -14249,7 +14249,7 @@ class Changee_model extends App_Model
 
                 if($rel_name == 'changee_request') {
                     $data['mail_to'] = $value['email'];
-                    $data['pur_request_id'] = $id;
+                    $data['co_request_id'] = $id;
                     $data = (object) $data;
                     $template = mail_template('changee_request_to_approver','changee',$data);
                     $template->send();
@@ -14281,13 +14281,13 @@ class Changee_model extends App_Model
         $vendor_name = '';
         if($type == 'changee_request') {
             $this->db->where('id', $id);
-            $row = $this->db->get(db_prefix() . 'pur_request')->row();
+            $row = $this->db->get(db_prefix() . 'co_request')->row();
             $requester = $row->requester;
         }
 
         if($type == 'changee_order') {
             $this->db->where('id', $id);
-            $row = $this->db->get(db_prefix() . 'pur_orders')->row();
+            $row = $this->db->get(db_prefix() . 'co_orders')->row();
             $requester = $row->addedfrom;
             $vendor_id = $row->vendor;
             if($vendor_id != 0) {
@@ -14299,7 +14299,7 @@ class Changee_model extends App_Model
 
         if($type == 'quotation') {
             $this->db->where('id', $id);
-            $row = $this->db->get(db_prefix() . 'pur_estimates')->row();
+            $row = $this->db->get(db_prefix() . 'co_estimates')->row();
             $requester = $row->addedfrom;
         }
 
@@ -14330,7 +14330,7 @@ class Changee_model extends App_Model
 
                 if($type == 'changee_request') {
                     $data['mail_to'] = $value['email'];
-                    $data['pur_request_id'] = $id;
+                    $data['co_request_id'] = $id;
                     $data = (object) $data;
                     $template = mail_template('changee_request_to_sender','changee',$data);
                     $template->send();
@@ -14357,7 +14357,7 @@ class Changee_model extends App_Model
     }
 
 
-    public function save_purchase_files($related, $id)
+    public function save_changee_files($related, $id)
     {
         $uploadedFiles = handle_changee_attachments_array($related, $id);
         if ($uploadedFiles && is_array($uploadedFiles)) {
@@ -14370,7 +14370,7 @@ class Changee_model extends App_Model
                 $data['attachment_key'] = app_generate_hash();
                 $data['file_name'] = $file['file_name'];
                 $data['filetype']  = $file['filetype'];
-                $this->db->insert(db_prefix() . 'purchase_files', $data);
+                $this->db->insert(db_prefix() . 'changee_files', $data);
             }
         }
         return true;
@@ -14381,7 +14381,7 @@ class Changee_model extends App_Model
         $this->db->where('rel_id', $id);
         $this->db->where('rel_type', $related);
         $this->db->order_by('dateadded', 'desc');
-        $attachments = $this->db->get(db_prefix() . 'purchase_files')->result_array();
+        $attachments = $this->db->get(db_prefix() . 'changee_files')->result_array();
         return $attachments;
     }
 
@@ -14394,11 +14394,11 @@ class Changee_model extends App_Model
     {
         $deleted = false;
         $this->db->where('id', $id);
-        $attachment = $this->db->get(db_prefix() . 'purchase_files')->row();
+        $attachment = $this->db->get(db_prefix() . 'changee_files')->row();
         if ($attachment) {
             if (unlink(get_upload_path_by_type('changee') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name)) {
                 $this->db->where('id', $attachment->id);
-                $this->db->delete(db_prefix() . 'purchase_files');
+                $this->db->delete(db_prefix() . 'changee_files');
                 $deleted = true;
             }
             // Check if no attachments left, so we can delete the folder also
@@ -14467,7 +14467,7 @@ class Changee_model extends App_Model
         $this->db->where('rel_id', $id);
         $this->db->where('rel_type', 'changee');
         $this->db->order_by('date', 'asc');
-        return $this->db->get(db_prefix() . 'purchase_activity')->result_array();
+        return $this->db->get(db_prefix() . 'changee_activity')->result_array();
     }
 
     /**
@@ -14490,7 +14490,7 @@ class Changee_model extends App_Model
             $staffid   = get_staff_user_id();
             $full_name = get_staff_full_name(get_staff_user_id());
         }
-        $this->db->insert(db_prefix() . 'purchase_activity', [
+        $this->db->insert(db_prefix() . 'changee_activity', [
             'description'     => $description,
             'date'            => date('Y-m-d H:i:s'),
             'rel_id'          => $id,

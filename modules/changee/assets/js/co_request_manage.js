@@ -1,4 +1,4 @@
-var table_pur_request = $('.table-table_pur_request');
+var table_co_request = $('.table-table_co_request');
 
     var Params = {
         "from_date": 'input[name="from_date"]',
@@ -9,23 +9,23 @@ var table_pur_request = $('.table-table_pur_request');
 (function($) {
 	"use strict";
 
-	initDataTable('.table-table_pur_request', admin_url+'changee/table_pur_request',[0], [0], Params, [6, 'desc']);
+	initDataTable('.table-table_co_request', admin_url+'changee/table_co_request',[0], [0], Params, [6, 'desc']);
 
 	$.each(Params, function(i, obj) {
         $('select' + obj).on('change', function() {  
-            table_pur_request.DataTable().ajax.reload()
+            table_co_request.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
         });
     });
 
     $('input[name="from_date"]').on('change', function() {
-        table_pur_request.DataTable().ajax.reload()
+        table_co_request.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
     });
     $('input[name="to_date"]').on('change', function() {
-        table_pur_request.DataTable().ajax.reload()
+        table_co_request.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
     });
@@ -36,7 +36,7 @@ var table_pur_request = $('.table-table_pur_request');
  function send_request_quotation(id) {
  	"use strict"; 
  	$('#additional_rqquo').html('');
- 	$('#additional_rqquo').append(hidden_input('pur_request_id',id));
+ 	$('#additional_rqquo').append(hidden_input('co_request_id',id));
  	$('#request_quotation').modal('show');
  }
 
@@ -44,7 +44,7 @@ var table_pur_request = $('.table-table_pur_request');
 function share_request(id){
   "use strict"; 
   $('#additional_share').html('');
-  $('#additional_share').append(hidden_input('pur_request_id',id));
+  $('#additional_share').append(hidden_input('co_request_id',id));
   $.post(admin_url + 'changee/get_vendor_shared/'+id).done(function(response){
     response = JSON.parse(response);
     var shared_vendor = response.shared_vendor;
@@ -162,7 +162,7 @@ function change_pr_approve_status(status, id){
           $('#status_span_'+id).addClass(response.class);
           $('#status_span_'+id).html(response.status_str+' '+response.html);
         }
-        table_pur_request.DataTable().ajax.reload()
+        table_co_request.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
         alert_float('success', response.mess);

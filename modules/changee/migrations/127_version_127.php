@@ -7,14 +7,14 @@ class Migration_Version_127 extends App_module_migration
     {
        $CI = &get_instance();
        
-       if (!$CI->db->field_exists('shipping_fee' ,db_prefix() . 'pur_estimates')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_estimates`
+       if (!$CI->db->field_exists('shipping_fee' ,db_prefix() . 'co_estimates')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_estimates`
 		      ADD COLUMN `shipping_fee` decimal(15,2) NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('shipping_fee' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('shipping_fee' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `shipping_fee` decimal(15,2) NULL
 		  ;");
 		}

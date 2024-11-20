@@ -44,26 +44,26 @@ class Migration_Version_107 extends App_module_migration
 		}
 
 		//version 1.0.7 additional field changee request
-		if (!$CI->db->field_exists('type' ,db_prefix() . 'pur_request')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+		if (!$CI->db->field_exists('type' ,db_prefix() . 'co_request')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
 		      ADD COLUMN `type` TEXT  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('project' ,db_prefix() . 'pur_request')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+		if (!$CI->db->field_exists('project' ,db_prefix() . 'co_request')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
 		      ADD COLUMN `project` TEXT  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('number' ,db_prefix() . 'pur_request')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+		if (!$CI->db->field_exists('number' ,db_prefix() . 'co_request')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
 		      ADD COLUMN `number` INT(11)  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('from_items' ,db_prefix() . 'pur_request')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+		if (!$CI->db->field_exists('from_items' ,db_prefix() . 'co_request')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
 		      ADD COLUMN `from_items` INT(2)  NULL DEFAULT '1'
 		  ;");
 		}
@@ -71,77 +71,77 @@ class Migration_Version_107 extends App_module_migration
 
 		//version 1.0.7 additional field changee order
 
-		if (!$CI->db->field_exists('delivery_status' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('delivery_status' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `delivery_status` int(2)  NULL DEFAULT '0'
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('type' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('type' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `type` TEXT  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('project' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('project' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `project` INT(11)  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('pur_request' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
-		      ADD COLUMN `pur_request` INT(11)  NULL
+		if (!$CI->db->field_exists('co_request' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
+		      ADD COLUMN `co_request` INT(11)  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('department' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('department' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `department` INT(11)  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('tax_order_rate' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('tax_order_rate' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `tax_order_rate` DECIMAL(15,2)  NULL
 		  ;");
 		}
 
-		if (!$CI->db->field_exists('tax_order_amount' ,db_prefix() . 'pur_orders')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+		if (!$CI->db->field_exists('tax_order_amount' ,db_prefix() . 'co_orders')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
 		      ADD COLUMN `tax_order_amount` DECIMAL(15,2)  NULL
 		  ;");
 		}
 
 		//Changee Order next Number option
-		if (changee_row_purchase_options_exist('"next_po_number"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("next_po_number", "1", "1");
+		if (changee_row_changee_options_exist('"next_po_number"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("next_po_number", "1", "1");
 		  ');
 		}
 
-		if (changee_row_purchase_options_exist('"date_reset_number"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("date_reset_number", "", "1");
+		if (changee_row_changee_options_exist('"date_reset_number"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("date_reset_number", "", "1");
 		  ');
 		}
 
-		if (changee_row_purchase_options_exist('"pur_request_prefix"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("pur_request_prefix", "#PR", "1");
+		if (changee_row_changee_options_exist('"co_request_prefix"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("co_request_prefix", "#PR", "1");
 		  ');
 		}
 
-		if (changee_row_purchase_options_exist('"next_pr_number"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("next_pr_number", "1", "1");
+		if (changee_row_changee_options_exist('"next_pr_number"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("next_pr_number", "1", "1");
 		  ');
 		}
 
-		if (changee_row_purchase_options_exist('"date_reset_pr_number"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("date_reset_pr_number", "", "1");
+		if (changee_row_changee_options_exist('"date_reset_pr_number"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("date_reset_pr_number", "", "1");
 		  ');
 		}
 
 		// Changee request detail
-		if (!$CI->db->field_exists('item_text' ,db_prefix() . 'pur_request_detail')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request_detail`
+		if (!$CI->db->field_exists('item_text' ,db_prefix() . 'co_request_detail')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request_detail`
 		      ADD COLUMN `item_text` TEXT  NULL
 		  ;");
 		}
@@ -208,13 +208,13 @@ class Migration_Version_107 extends App_module_migration
 		    ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
 		}
 
-		if (changee_row_purchase_options_exist('"pur_inv_prefix"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("pur_inv_prefix", "#INV", "1");
+		if (changee_row_changee_options_exist('"pur_inv_prefix"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("pur_inv_prefix", "#INV", "1");
 		  ');
 		}
 
-		if (changee_row_purchase_options_exist('"next_inv_number"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("next_inv_number", "1", "1");
+		if (changee_row_changee_options_exist('"next_inv_number"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("next_inv_number", "1", "1");
 		  ');
 		}
 
@@ -236,8 +236,8 @@ class Migration_Version_107 extends App_module_migration
 		  ;");
 		}
 
-		if (changee_row_purchase_options_exist('"create_invoice_by"') == 0){
-		    $CI->db->query('INSERT INTO `tblpurchase_option` (`option_name`, `option_val`, `auto`) VALUES ("create_invoice_by", "contract", "1");
+		if (changee_row_changee_options_exist('"create_invoice_by"') == 0){
+		    $CI->db->query('INSERT INTO `tblchangee_option` (`option_name`, `option_val`, `auto`) VALUES ("create_invoice_by", "contract", "1");
 		  ');
 		}
 
@@ -264,9 +264,9 @@ class Migration_Version_107 extends App_module_migration
 		}
 
 		//version 1.0.7 remove required condition for changee request field in changee estimate
-		if ($CI->db->field_exists('pur_request' ,db_prefix() . 'pur_estimates')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_estimates`
-		    CHANGE COLUMN `pur_request` `pur_request` INT(11) NULL
+		if ($CI->db->field_exists('co_request' ,db_prefix() . 'co_estimates')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_estimates`
+		    CHANGE COLUMN `co_request` `co_request` INT(11) NULL
 		  ;");
 		}
 

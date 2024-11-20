@@ -31,7 +31,7 @@
 
   init_pi_currency();
 
-  <?php if(changee_get_purchase_option('item_by_vendor') != 1){ ?>
+  <?php if(changee_get_changee_option('item_by_vendor') != 1){ ?>
     init_ajax_search('items','#item_select.ajax-search',undefined,site_url+'changee/vendors_portal/pur_commodity_code_search');
   <?php } ?>
 

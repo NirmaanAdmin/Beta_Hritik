@@ -31,7 +31,7 @@
 		                  
 		                  <li role="presentation" class="tab-separator <?php if($this->input->get('tab') === 'discussion'){echo 'active';} ?>">
 		                    <?php
-		                        $totalComments = total_rows(db_prefix().'pur_comments',['rel_id' => $pur_invoice->id, 'rel_type' => 'pur_invoice']);
+		                        $totalComments = total_rows(db_prefix().'co_comments',['rel_id' => $pur_invoice->id, 'rel_type' => 'pur_invoice']);
 		                     ?>
 		                     <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
 		                     <?php echo _l('pur_discuss'); ?>

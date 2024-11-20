@@ -35,9 +35,9 @@
 		            			<td><?php echo changee_pur_html_entity_decode(app_format_money($p['total'], $base_currency->symbol)); ?></td>
 		            			<td><?php echo app_format_money($p['total_tax'], $base_currency->symbol); ?></td>
 		            			<td>
-		            				<?php $pr = $this->changee_model->get_changee_request($p['pur_request']) ?>
+		            				<?php $pr = $this->changee_model->get_changee_request($p['co_request']) ?>
 		            				<?php if($pr && !is_array($pr)){ ?>
-		            					<a href="<?php echo site_url('changee/vendors_portal/pur_request/'.$pr->id.'/'.$pr->hash); ?>"><?php echo changee_pur_html_entity_decode($pr->pur_rq_code); ?>
+		            					<a href="<?php echo site_url('changee/vendors_portal/co_request/'.$pr->id.'/'.$pr->hash); ?>"><?php echo changee_pur_html_entity_decode($pr->pur_rq_code); ?>
 		            				<?php } ?>
 		            			</td>
 		            			<td><span class="label label-primary"><?php echo changee_pur_html_entity_decode(_d($p['date'])); ?></span></td>

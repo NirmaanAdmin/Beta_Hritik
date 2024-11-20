@@ -83,21 +83,21 @@ if (isset($contract)) {
     }
 }
 
-$pur_orders = $this->ci->input->post('pur_orders');
-if (isset($pur_orders)) {
-    $where_pur_orders = '';
-    foreach ($pur_orders as $t) {
+$co_orders = $this->ci->input->post('co_orders');
+if (isset($co_orders)) {
+    $where_co_orders = '';
+    foreach ($co_orders as $t) {
         if ($t != '') {
-            if ($where_pur_orders == '') {
-                $where_pur_orders .= ' AND ('.db_prefix().'pur_invoices.pur_order = "' . $t . '"';
+            if ($where_co_orders == '') {
+                $where_co_orders .= ' AND ('.db_prefix().'pur_invoices.pur_order = "' . $t . '"';
             } else {
-                $where_pur_orders .= ' or '.db_prefix().'pur_invoices.pur_order = "' . $t . '"';
+                $where_co_orders .= ' or '.db_prefix().'pur_invoices.pur_order = "' . $t . '"';
             }
         }
     }
-    if ($where_pur_orders != '') {
-        $where_pur_orders .= ')';
-        array_push($where, $where_pur_orders);
+    if ($where_co_orders != '') {
+        $where_co_orders .= ')';
+        array_push($where, $where_co_orders);
     }
 }
 

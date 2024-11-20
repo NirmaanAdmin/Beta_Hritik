@@ -424,9 +424,9 @@
 <div class="row">
   <div class="col-md-12 mtop15">
    <div class="panel-body bottom-transaction">
-    <?php $value = (isset($debit_note) ? $debit_note->vendornote : changee_get_purchase_option('vendor_note')); ?>
+    <?php $value = (isset($debit_note) ? $debit_note->vendornote : changee_get_changee_option('vendor_note')); ?>
     <?php echo render_textarea('vendornote','debit_note_add_edit_vendor_note',$value,array(),array(),'mtop15'); ?>
-    <?php $value = (isset($debit_note) ? $debit_note->terms : changee_get_purchase_option('terms_and_conditions')); ?>
+    <?php $value = (isset($debit_note) ? $debit_note->terms : changee_get_changee_option('terms_and_conditions')); ?>
     <?php echo render_textarea('terms','terms_and_conditions',$value,array(),array(),'mtop15','tinymce'); ?>
     <div class="btn-bottom-toolbar text-right">
 

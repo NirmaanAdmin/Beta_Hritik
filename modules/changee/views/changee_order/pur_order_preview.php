@@ -89,7 +89,7 @@
 
                   <li role="presentation" class="tab-separator">
                     <?php
-                              $totalComments = total_rows(db_prefix().'pur_comments',['rel_id' => $estimate->id, 'rel_type' => 'pur_order']);
+                              $totalComments = total_rows(db_prefix().'co_comments',['rel_id' => $estimate->id, 'rel_type' => 'pur_order']);
                               ?>
                      <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
                      <?php echo _l('pur_discuss'); ?>

@@ -7,14 +7,14 @@ class Migration_Version_122 extends App_module_migration
     public function up()
     {
         $CI = &get_instance();
-        if (!$CI->db->field_exists('order_status' ,db_prefix() . 'pur_orders')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+        if (!$CI->db->field_exists('order_status' ,db_prefix() . 'co_orders')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
           ADD COLUMN `order_status` VARCHAR(30) NULL
           ;");
         }
 
-        if (!$CI->db->field_exists('shipping_note' ,db_prefix() . 'pur_orders')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+        if (!$CI->db->field_exists('shipping_note' ,db_prefix() . 'co_orders')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
           ADD COLUMN `shipping_note` TEXT NULL
           ;");
         }
@@ -249,56 +249,56 @@ class Migration_Version_122 extends App_module_migration
             ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
         }
 
-        if (!$CI->db->field_exists('currency_rate' ,db_prefix() . 'pur_request')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_request`
+        if (!$CI->db->field_exists('currency_rate' ,db_prefix() . 'co_request')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_request`
           ADD COLUMN `currency_rate` DECIMAL(15,6) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('from_currency' ,db_prefix() . 'pur_request')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_request`
+        if (!$CI->db->field_exists('from_currency' ,db_prefix() . 'co_request')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_request`
           ADD COLUMN `from_currency` VARCHAR(20) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('to_currency' ,db_prefix() . 'pur_request')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_request`
+        if (!$CI->db->field_exists('to_currency' ,db_prefix() . 'co_request')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_request`
           ADD COLUMN `to_currency` VARCHAR(20) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('currency_rate' ,db_prefix() . 'pur_estimates')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_estimates`
+        if (!$CI->db->field_exists('currency_rate' ,db_prefix() . 'co_estimates')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_estimates`
           ADD COLUMN `currency_rate` DECIMAL(15,6) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('from_currency' ,db_prefix() . 'pur_estimates')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_estimates`
+        if (!$CI->db->field_exists('from_currency' ,db_prefix() . 'co_estimates')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_estimates`
           ADD COLUMN `from_currency` VARCHAR(20) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('to_currency' ,db_prefix() . 'pur_estimates')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_estimates`
+        if (!$CI->db->field_exists('to_currency' ,db_prefix() . 'co_estimates')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_estimates`
           ADD COLUMN `to_currency` VARCHAR(20) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('currency_rate' ,db_prefix() . 'pur_orders')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_orders`
+        if (!$CI->db->field_exists('currency_rate' ,db_prefix() . 'co_orders')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_orders`
           ADD COLUMN `currency_rate` DECIMAL(15,6) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('from_currency' ,db_prefix() . 'pur_orders')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_orders`
+        if (!$CI->db->field_exists('from_currency' ,db_prefix() . 'co_orders')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_orders`
           ADD COLUMN `from_currency` VARCHAR(20) NULL
           ');
         }
 
-        if (!$CI->db->field_exists('to_currency' ,db_prefix() . 'pur_orders')) {
-          $CI->db->query('ALTER TABLE `' . db_prefix() . 'pur_orders`
+        if (!$CI->db->field_exists('to_currency' ,db_prefix() . 'co_orders')) {
+          $CI->db->query('ALTER TABLE `' . db_prefix() . 'co_orders`
           ADD COLUMN `to_currency` VARCHAR(20) NULL
           ');
         }

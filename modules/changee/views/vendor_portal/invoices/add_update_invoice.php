@@ -28,8 +28,8 @@
 	            	<div class="col-md-6 pad_left_0 ">
 	            		<label for="invoice_number"><span class="text-danger">* </span><?php echo _l('invoice_code'); ?></label>
 		            	<?php
-	                    $prefix = changee_get_purchase_option('pur_inv_prefix');
-	                    $next_number = changee_get_purchase_option('next_inv_number');
+	                    $prefix = changee_get_changee_option('pur_inv_prefix');
+	                    $next_number = changee_get_changee_option('next_inv_number');
 	                    $number = (isset($pur_invoice) ? $pur_invoice->number : $next_number);
 	                    echo form_hidden('number',$number); ?> 
 	                           
@@ -56,7 +56,7 @@
 	                	<label for="pur_order"><?php echo _l('pur_order'); ?></label>
 	                    <select name="pur_order" id="pur_order" class="selectpicker" onchange="pur_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 	                        <option value=""></option>
-	                        <?php foreach($pur_orders as $ct){ ?>
+	                        <?php foreach($co_orders as $ct){ ?>
 	                        	<option value="<?php echo changee_pur_html_entity_decode($ct['id']); ?>" <?php if(isset($pur_invoice) && $pur_invoice->pur_order == $ct['id']){ echo 'selected'; } ?>><?php echo changee_pur_html_entity_decode($ct['pur_order_number']); ?></option>
 	                        <?php } ?>
 	                    </select>

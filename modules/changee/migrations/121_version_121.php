@@ -39,38 +39,38 @@ class Migration_Version_121 extends App_module_migration
           ;");
         }
 
-        if (!$CI->db->field_exists('tax_name' ,db_prefix() . 'pur_request_detail')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request_detail`
+        if (!$CI->db->field_exists('tax_name' ,db_prefix() . 'co_request_detail')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request_detail`
           ADD COLUMN `tax_name` TEXT NULL 
           ;");
         }
 
-        if (!$CI->db->field_exists('tax_name' ,db_prefix() . 'pur_estimate_detail')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_estimate_detail`
+        if (!$CI->db->field_exists('tax_name' ,db_prefix() . 'co_estimate_detail')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_estimate_detail`
           ADD COLUMN `tax_name` TEXT NULL 
           ;");
         }
 
-        if (!$CI->db->field_exists('item_name' ,db_prefix() . 'pur_estimate_detail')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_estimate_detail`
+        if (!$CI->db->field_exists('item_name' ,db_prefix() . 'co_estimate_detail')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_estimate_detail`
           ADD COLUMN `item_name` TEXT NULL 
           ;");
         }
 
-        if (!$CI->db->field_exists('tax_name' ,db_prefix() . 'pur_order_detail')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_order_detail`
+        if (!$CI->db->field_exists('tax_name' ,db_prefix() . 'co_order_detail')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_order_detail`
           ADD COLUMN `tax_name` TEXT NULL 
           ;");
         }
 
-        if (!$CI->db->field_exists('item_name' ,db_prefix() . 'pur_order_detail')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_order_detail`
+        if (!$CI->db->field_exists('item_name' ,db_prefix() . 'co_order_detail')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_order_detail`
           ADD COLUMN `item_name` TEXT NULL 
           ;");
         }
 
-        if (!$CI->db->field_exists('send_to_vendors' ,db_prefix() . 'pur_request')){
-            $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+        if (!$CI->db->field_exists('send_to_vendors' ,db_prefix() . 'co_request')){
+            $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
           ADD COLUMN `send_to_vendors` TEXT NULL 
           ;");
         }
@@ -158,14 +158,14 @@ class Migration_Version_121 extends App_module_migration
       add_option('cr_automatically_get_currency_rate', 1);
       add_option('cr_global_amount_expiration', 0);
 
-      if (!$CI->db->field_exists('currency' ,db_prefix() . 'pur_request')){
-          $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+      if (!$CI->db->field_exists('currency' ,db_prefix() . 'co_request')){
+          $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
         ADD COLUMN `currency` INT(11) NULL DEFAULT 0
         ;");
       }
 
-      if (!$CI->db->field_exists('currency' ,db_prefix() . 'pur_orders')){
-          $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_orders`
+      if (!$CI->db->field_exists('currency' ,db_prefix() . 'co_orders')){
+          $CI->db->query('ALTER TABLE `' . db_prefix() . "co_orders`
         ADD COLUMN `currency` INT(11) NULL DEFAULT 0
         ;");
       }

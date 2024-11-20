@@ -178,7 +178,7 @@ function changee_get_status_pur_order($status){
 function changee_format_pur_estimate_number($id)
 {
     $CI = & get_instance();
-    $CI->db->select('date,number,prefix,number_format')->from(db_prefix().'pur_estimates')->where('id', $id);
+    $CI->db->select('date,number,prefix,number_format')->from(db_prefix().'co_estimates')->where('id', $id);
     $estimate = $CI->db->get()->row();
 
     if (!$estimate) {
@@ -374,7 +374,7 @@ function changee_get_staff_email_by_id_pur($id)
  *
  * @return     array|string  The changee option.
  */
-function changee_get_purchase_option($name)
+function changee_get_changee_option($name)
 {
     $CI = & get_instance();
     $options = [];
@@ -386,7 +386,7 @@ function changee_get_purchase_option($name)
         // is not auto loaded
         $CI->db->select('option_val');
         $CI->db->where('option_name', $name);
-        $row = $CI->db->get(db_prefix() . 'purchase_option')->row();
+        $row = $CI->db->get(db_prefix() . 'changee_option')->row();
         if ($row) {
             $val = $row->option_val;
         }
@@ -404,9 +404,9 @@ function changee_get_purchase_option($name)
  *
  * @return     integer  ( 1 or 0 )
  */
-function changee_row_purchase_options_exist($name){
+function changee_row_changee_options_exist($name){
     $CI = & get_instance();
-    $i = count($CI->db->query('Select * from '.db_prefix().'purchase_option where option_name = '.$name)->result_array());
+    $i = count($CI->db->query('Select * from '.db_prefix().'changee_option where option_name = '.$name)->result_array());
     if($i == 0){
         return 0;
     }
@@ -463,7 +463,7 @@ function changee_handle_changee_request_file($id)
 {
     if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_request/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/co_request/'. $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['file']['tmp_name'];
         // Make sure we have a filepath
@@ -479,7 +479,7 @@ function changee_handle_changee_request_file($id)
                     'file_name' => $filename,
                     'filetype'  => $_FILES['file']['type'],
                     ];
-                $CI->misc_model->add_attachment_to_database($id, 'pur_request', $attachment);
+                $CI->misc_model->add_attachment_to_database($id, 'co_request', $attachment);
 
                 return true;
             }
@@ -503,7 +503,7 @@ function changee_purorder_left_to_pay($id)
     
         $CI->db->select('total')
         ->where('id', $id);
-        $invoice_total = $CI->db->get(db_prefix() . 'pur_orders')->row()->total;
+        $invoice_total = $CI->db->get(db_prefix() . 'co_orders')->row()->total;
 
 
     
@@ -653,7 +653,7 @@ function changee_get_group_name_item($id = false)
  */
 function changee_max_number_pur_order(){
     $CI           = & get_instance();
-    $max = $CI->db->query('select MAX(number) as max from '.db_prefix().'pur_orders')->row();
+    $max = $CI->db->query('select MAX(number) as max from '.db_prefix().'co_orders')->row();
     return $max->max;
 }
 
@@ -889,7 +889,7 @@ function changee_vendor_contact_profile_image_url($contact_id, $type = 'small')
 function changee_get_pur_order_subject($pur_order){
     $CI   = & get_instance();
     $CI->db->where('id',$pur_order);
-    $po = $CI->db->get(db_prefix().'pur_orders')->row();
+    $po = $CI->db->get(db_prefix().'co_orders')->row();
 
     if($po){
         return $po->pur_order_number;
@@ -905,7 +905,7 @@ function changee_get_pur_order_subject($pur_order){
  */
 function changee_max_number_estimates(){
     $CI           = & get_instance();
-    $max = $CI->db->query('select MAX(number) as max from '.db_prefix().'pur_estimates')->row();
+    $max = $CI->db->query('select MAX(number) as max from '.db_prefix().'co_estimates')->row();
     return $max->max;
 }
 
@@ -1167,7 +1167,7 @@ function changee_check_pur_order_restrictions($id, $hash)
  * @param        $id     The identifier
  * @param        $hash   The hash
  */
-function changee_check_pur_request_restrictions($id, $hash)
+function changee_check_co_request_restrictions($id, $hash)
 {
     $CI = & get_instance();
     $CI->load->model('changee/changee_model');
@@ -1177,8 +1177,8 @@ function changee_check_pur_request_restrictions($id, $hash)
     }
 
 
-    $pur_request = $CI->changee_model->get_changee_request($id);
-    if (!$pur_request || ($pur_request->hash != $hash)) {
+    $co_request = $CI->changee_model->get_changee_request($id);
+    if (!$co_request || ($co_request->hash != $hash)) {
         show_404();
     }
     
@@ -1188,7 +1188,7 @@ function changee_check_pur_request_restrictions($id, $hash)
 function changee_get_pur_order_by_client($client){
     $CI = & get_instance();
     $CI->db->where('find_in_set('.$client.', clients)');
-    return $CI->db->get(db_prefix().'pur_orders')->result_array();
+    return $CI->db->get(db_prefix().'co_orders')->result_array();
 }
 
 /**
@@ -1376,7 +1376,7 @@ function changee_get_vendor_category_html($category){
  *
  * @return     string  
  */
-function changee_department_pur_request_name($dpm){
+function changee_department_co_request_name($dpm){
     $CI = & get_instance();
     $CI->load->model('departments_model');
     $department = $CI->departments_model->get($dpm);
@@ -1392,12 +1392,12 @@ function changee_department_pur_request_name($dpm){
 /**
  * Gets the po html by pur request.
  *
- * @param  $pur_request  The pur request
+ * @param  $co_request  The pur request
  */
-function changee_get_po_html_by_pur_request($pur_request){
+function changee_get_po_html_by_co_request($co_request){
     $CI = & get_instance();
-    $CI->db->where('pur_request',$pur_request);
-    $list = $CI->db->get(db_prefix().'pur_orders')->result_array();
+    $CI->db->where('co_request',$co_request);
+    $list = $CI->db->get(db_prefix().'co_orders')->result_array();
     $rs = '';
     $count = 0;
     if(count($list) > 0){
@@ -1846,16 +1846,16 @@ function changee_get_base_currency_pur(){
 /**
  * Gets the arr vendors by pr.
  *
- * @param        $pur_request  The pur request
+ * @param        $co_request  The pur request
  *
  * @return     array   The arr vendors by pr.
  */
-function changee_get_arr_vendors_by_pr($pur_request){
+function changee_get_arr_vendors_by_pr($co_request){
     $CI           = & get_instance();
     $CI->load->model('changee/changee_model');
 
-    $CI->db->where('pur_request', $pur_request);
-    $quotes = $CI->db->get(db_prefix().'pur_estimates')->result_array();
+    $CI->db->where('co_request', $co_request);
+    $quotes = $CI->db->get(db_prefix().'co_estimates')->result_array();
     $arr_vendor = [];
     $arr_vendor_rs = [];
     if(count($quotes) > 0){
@@ -1872,11 +1872,11 @@ function changee_get_arr_vendors_by_pr($pur_request){
 /**
  * Gets the quotations by pur request.
  */
-function changee_get_quotations_by_pur_request($pur_request){
+function changee_get_quotations_by_co_request($co_request){
     $CI           = & get_instance();
 
-    $CI->db->where('pur_request', $pur_request);
-    $quotes = $CI->db->get(db_prefix().'pur_estimates')->result_array();
+    $CI->db->where('co_request', $co_request);
+    $quotes = $CI->db->get(db_prefix().'co_estimates')->result_array();
     return $quotes;
 }
 
@@ -1884,13 +1884,13 @@ function changee_get_quotations_by_pur_request($pur_request){
  * Gets the item detail in quote.
  *
  * @param        $item           The item
- * @param        $pur_estimates  The pur estimates
+ * @param        $co_estimates  The pur estimates
  */
-function changee_get_item_detail_in_quote($item, $pur_estimates){
+function changee_get_item_detail_in_quote($item, $co_estimates){
     $CI           = & get_instance();
-    $CI->db->where('pur_estimate', $pur_estimates);
+    $CI->db->where('pur_estimate', $co_estimates);
     $CI->db->where('item_code', $item);
-    $item_row = $CI->db->get(db_prefix().'pur_estimate_detail')->row();
+    $item_row = $CI->db->get(db_prefix().'co_estimate_detail')->row();
     return $item_row;
 }
 
@@ -2656,7 +2656,7 @@ function changee_pur_check_approval_setting($type)
  *
  * @return     array|string  The warehouse option.
  */
-function changee_changee_get_purchase_option_v2($name)
+function changee_changee_get_changee_option_v2($name)
 {
     $CI = & get_instance();
     $options = [];
@@ -2792,7 +2792,7 @@ function changee_pur_format_approve_status($status, $text = false, $clean = fals
  */
 function changee_handle_vendor_pr_attachments_upload($id, $customer_upload = false, $purorder='')
 {
-    $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_request/'. $purorder . '/';
+    $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/co_request/'. $purorder . '/';
     $CI            = & get_instance();
     $totalUploaded = 0;
 
@@ -2839,7 +2839,7 @@ function changee_handle_vendor_pr_attachments_upload($id, $customer_upload = fal
                         $attachment['visible_to_customer'] = 1;
                     }
 
-                    $CI->misc_model->add_attachment_to_database($purorder, 'pur_request', $attachment);
+                    $CI->misc_model->add_attachment_to_database($purorder, 'co_request', $attachment);
                     $totalUploaded++;
                 }
             }
@@ -2893,9 +2893,9 @@ function changee_get_object_comment($rel_id, $rel_type){
     $CI            = & get_instance();
     $table = '';
     if($rel_type == 'pur_order'){
-        $table = db_prefix().'pur_orders';
+        $table = db_prefix().'co_orders';
     }else if($rel_type == 'pur_quotation'){
-        $table = db_prefix().'pur_estimates';
+        $table = db_prefix().'co_estimates';
     }else if($rel_type == 'pur_contract'){
         $table = db_prefix().'pur_contracts';
     }else if($rel_type == 'pur_invoice'){

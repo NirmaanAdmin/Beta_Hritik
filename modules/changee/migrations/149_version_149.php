@@ -7,8 +7,8 @@ class Migration_Version_149 extends App_module_migration
     {
     	$CI = &get_instance();
 
-    	if ($CI->db->field_exists('department' ,db_prefix() . 'pur_request')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+    	if ($CI->db->field_exists('department' ,db_prefix() . 'co_request')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
 		  CHANGE COLUMN `department` `department` INT(11) NULL DEFAULT NULL;");
 		}
     }

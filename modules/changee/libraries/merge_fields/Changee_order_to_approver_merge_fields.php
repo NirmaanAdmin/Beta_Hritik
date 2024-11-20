@@ -95,7 +95,7 @@ class Changee_order_to_approver_merge_fields extends App_merge_fields
 
         $this->ci->db->where('id', $po_id);
 
-        $po = $this->ci->db->get(db_prefix() . 'pur_orders')->row();
+        $po = $this->ci->db->get(db_prefix() . 'co_orders')->row();
 
 
         if (!$po) {

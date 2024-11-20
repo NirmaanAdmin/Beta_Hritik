@@ -7,8 +7,8 @@ class Migration_Version_126 extends App_module_migration
     {
         $CI = &get_instance();
         // 1.2.6 create changee request from  sale estimate
-		if (!$CI->db->field_exists('sale_estimate' ,db_prefix() . 'pur_request')) { 
-		  $CI->db->query('ALTER TABLE `' . db_prefix() . "pur_request`
+		if (!$CI->db->field_exists('sale_estimate' ,db_prefix() . 'co_request')) { 
+		  $CI->db->query('ALTER TABLE `' . db_prefix() . "co_request`
 		    ADD COLUMN `sale_estimate` INT(11) NULL
 		  ;");
 		}

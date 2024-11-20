@@ -5,9 +5,9 @@ var data_send_mail = {};
   <?php if(isset($send_mail_approve)){ 
     ?>
     data_send_mail = <?php echo json_encode($send_mail_approve); ?>;
-    data_send_mail.rel_id = <?php echo changee_pur_html_entity_decode($pur_request->id); ?>;
-    data_send_mail.rel_type = 'pur_request';
-    data_send_mail.addedfrom = <?php echo changee_pur_html_entity_decode($pur_request->requester); ?>;
+    data_send_mail.rel_id = <?php echo changee_pur_html_entity_decode($co_request->id); ?>;
+    data_send_mail.rel_type = 'co_request';
+    data_send_mail.addedfrom = <?php echo changee_pur_html_entity_decode($co_request->requester); ?>;
     data_send_mail.csrf_token_name = $('input[id="csrf_token_name"]').val();
     $.post(admin_url+'changee/send_mail', data_send_mail).done(function(response){
     });
@@ -18,11 +18,11 @@ var data_send_mail = {};
 })(jQuery); 
 
 
-function change_status_pur_request(invoker,id){
+function change_status_co_request(invoker,id){
   "use strict"; 
-  $.post(admin_url+'changee/change_status_pur_request/'+invoker.value+'/'+id).done(function(reponse){
+  $.post(admin_url+'changee/change_status_co_request/'+invoker.value+'/'+id).done(function(reponse){
     reponse = JSON.parse(reponse);
-    window.location.href = admin_url + 'changee/view_pur_request/'+id;
+    window.location.href = admin_url + 'changee/view_co_request/'+id;
     alert_float('success',reponse.result);
   });
 }
@@ -30,9 +30,9 @@ function change_status_pur_request(invoker,id){
 function send_request_approve(id){
   "use strict"; 
     var data = {};
-    data.rel_id = <?php echo changee_pur_html_entity_decode($pur_request->id); ?>;
-    data.rel_type = 'pur_request';
-    data.addedfrom = <?php echo changee_pur_html_entity_decode($pur_request->requester); ?>;
+    data.rel_id = <?php echo changee_pur_html_entity_decode($co_request->id); ?>;
+    data.rel_type = 'co_request';
+    data.addedfrom = <?php echo changee_pur_html_entity_decode($co_request->requester); ?>;
   $("body").append('<div class="dt-loader"></div>');
     $.post(admin_url + 'changee/send_request_approve', data).done(function(response){
         response = JSON.parse(response);
@@ -156,7 +156,7 @@ function deny_request(id){
 function change_request_approval_status(id, status, sign_code = false){
     var data = {};
     data.rel_id = id;
-    data.rel_type = 'pur_request';
+    data.rel_type = 'co_request';
     data.approve = status;
     if(sign_code == true){
       data.signature = $('input[name="signature"]').val();
@@ -187,7 +187,7 @@ function copy_public_link(pur_order){
     alert_float('success','Copied!');
 
   }else{
-    $.post(admin_url+'changee/copy_public_link_pur_request/'+pur_order).done(function(reponse){
+    $.post(admin_url+'changee/copy_public_link_co_request/'+pur_order).done(function(reponse){
       reponse = JSON.parse(reponse);
       if(reponse.copylink != ''){
         $('#link_public').val(reponse.copylink);
@@ -206,8 +206,8 @@ function copy_public_link(pur_order){
 }  
 
 // Mark task status
-function changee_request_mark_as(status, pur_request_id) {
-    var url = 'changee/change_status_pur_request/' + status + '/' + pur_request_id;
+function changee_request_mark_as(status, co_request_id) {
+    var url = 'changee/change_status_co_request/' + status + '/' + co_request_id;
 
     $("body").append('<div class="dt-loader"></div>');
     requestGetJSON(url).done(function (response) {

@@ -17,9 +17,9 @@ $aColumns = [
 $base_currency = changee_get_base_currency_pur();
 
 $sIndexColumn = 'id';
-$sTable       = db_prefix().'pur_orders';
+$sTable       = db_prefix().'co_orders';
 $join         = [
-                    'LEFT JOIN '.db_prefix().'pur_vendor ON '.db_prefix().'pur_vendor.userid = '.db_prefix().'pur_orders.vendor',
+                    'LEFT JOIN '.db_prefix().'pur_vendor ON '.db_prefix().'pur_vendor.userid = '.db_prefix().'co_orders.vendor',
                 ];
 $i = 0;
 
@@ -28,7 +28,7 @@ $where = [];
 
 array_push($where, 'AND ((delivery_date >= "'.date('Y-m-d').'" AND delivery_date <= "'.date('Y-m-d', strtotime('+7 day', strtotime(date('Y-m-d')) )).'" ) OR delivery_status IN (0,2,3))');
 
-$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'pur_orders.id as id','company','pur_order_number','expense_convert', 'number', 'currency']);
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'co_orders.id as id','company','pur_order_number','expense_convert', 'number', 'currency']);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];

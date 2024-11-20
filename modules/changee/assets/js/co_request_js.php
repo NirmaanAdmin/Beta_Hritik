@@ -11,7 +11,7 @@ init_ajax_search('items','#item_select.ajax-search',undefined,admin_url+'changee
 validate_purrequest_form();
 function validate_purrequest_form(selector) {
 
-    selector = typeof(selector) == 'undefined' ? '#add_edit_pur_request-form' : selector;
+    selector = typeof(selector) == 'undefined' ? '#add_edit_co_request-form' : selector;
 
     appValidateForm($(selector), {
         pur_rq_code:'required', pur_rq_name:'required', currency:'required', project:'required'
@@ -105,7 +105,7 @@ function numberWithCommas(x) {
 function department_change(invoker){
   "use strict";
   if(invoker.value != ''){
-    $.post(admin_url + 'changee/dpm_name_in_pur_request_number/'+invoker.value).done(function(response){
+    $.post(admin_url + 'changee/dpm_name_in_co_request_number/'+invoker.value).done(function(response){
       response = JSON.parse(response);
       $('#pur_rq_code').html('');
       $('#pur_rq_code').val('<?php echo changee_pur_html_entity_decode($pur_rq_code); ?>-' + response.rs);

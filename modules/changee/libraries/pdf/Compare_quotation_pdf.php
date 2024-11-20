@@ -6,33 +6,33 @@ include_once(__DIR__ . '/Ib_app_pdf.php');
 
 class Compare_quotation_pdf extends Ib_app_pdf
 {
-    protected $pur_request;
+    protected $co_request;
 
-    public function __construct($pur_request)
+    public function __construct($co_request)
     {
-        $pur_request                = hooks()->apply_filters('request_html_pdf_data', $pur_request);
-        $GLOBALS['pur_request_pdf'] = $pur_request;
+        $co_request                = hooks()->apply_filters('request_html_pdf_data', $co_request);
+        $GLOBALS['co_request_pdf'] = $co_request;
 
         parent::__construct();
 
-        $this->pur_request = $pur_request;
+        $this->co_request = $co_request;
 
         $this->AddPage('L', 'A3');
         $this->SetTitle(_l('compare_quotes'));
         # Don't remove these lines - important for the PDF layout
-        $this->pur_request = $this->fix_editor_html($this->pur_request);
+        $this->co_request = $this->fix_editor_html($this->co_request);
     }
 
     public function prepare()
     {
-        $this->set_view_vars('pur_request', $this->pur_request);
+        $this->set_view_vars('co_request', $this->co_request);
 
         return $this->build();
     }
 
     protected function type()
     {
-        return 'pur_request';
+        return 'co_request';
     }
 
     protected function file_path()

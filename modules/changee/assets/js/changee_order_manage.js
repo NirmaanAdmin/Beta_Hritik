@@ -15,7 +15,7 @@ var expenseDropzone;
         "project": "[name='project[]']",
         "department": "[name='department[]']",
         "delivery_status": "[name='delivery_status[]']",
-        "changee_request": "[name='pur_request[]']"
+        "changee_request": "[name='co_request[]']"
     };
 
     initDataTable('.table-table_pur_order', admin_url+'changee/table_pur_order', [], [], Params,[2, 'desc']);

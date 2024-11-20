@@ -48,12 +48,12 @@
                     <div class="row">
                       <div class="col-md-6">
                         <?php $pur_order_name = (isset($pur_order) ? $pur_order->pur_order_name : '');
-                        echo render_input('pur_order_name', 'pur_order_description', $pur_order_name); ?>
+                        echo render_input('pur_order_name', 'co_order_description', $pur_order_name); ?>
 
                       </div>
                       <div class="col-md-6 form-group">
-                        <?php $prefix = changee_get_purchase_option('pur_order_prefix');
-                        $next_number = changee_get_purchase_option('next_po_number');
+                        <?php $prefix = changee_get_changee_option('pur_order_prefix');
+                        $next_number = changee_get_changee_option('next_po_number');
 
                         $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : $prefix . '-' . str_pad($next_number, 5, '0', STR_PAD_LEFT) . '-' . date('M-Y'));
                         if (get_option('po_only_prefix_and_number') == 1) {
@@ -64,7 +64,7 @@
                         $number = (isset($pur_order) ? $pur_order->number : $next_number);
                         echo form_hidden('number', $number); ?>
 
-                        <label for="pur_order_number"><?php echo _l('pur_order_number'); ?></label>
+                        <label for="pur_order_number"><?php echo _l('co_order_number'); ?></label>
 
                         <input type="text" readonly class="form-control" name="pur_order_number" value="<?php echo changee_pur_html_entity_decode($pur_order_number); ?>">
                       </div>
@@ -93,17 +93,17 @@
 
                       <?php
                       if ($convert_po && $selected_pr && $selected_project) {
-                        $pur_order['pur_request'] = $selected_pr;
+                        $pur_order['co_request'] = $selected_pr;
                         $pur_order['project'] = $selected_project;
                         $pur_order = (object) $pur_order;
                       }
                       ?>
                       <div class="col-md-6 form-group">
-                        <label for="pur_request"><?php echo _l('pur_request'); ?></label>
-                        <select name="pur_request" id="pur_request" class="selectpicker" onchange="coppy_pur_request(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                        <label for="co_request"><?php echo _l('co_request'); ?></label>
+                        <select name="co_request" id="co_request" class="selectpicker" onchange="coppy_co_request(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
-                          <?php foreach ($pur_request as $s) { ?>
-                            <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $pur_order->pur_request != '' && $pur_order->pur_request == $s['id']) {
+                          <?php foreach ($co_request as $s) { ?>
+                            <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $pur_order->co_request != '' && $pur_order->co_request == $s['id']) {
                                                                                               echo 'selected';
                                                                                             } ?>><?php echo changee_pur_html_entity_decode($s['pur_rq_code'] . ' - ' . $s['pur_rq_name']); ?></option>
                           <?php } ?>
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="row">
-                      <?php if (changee_get_purchase_option('changee_order_setting') == 0) { ?>
+                      <?php if (changee_get_changee_option('changee_order_setting') == 0) { ?>
                         <div class="col-md-6 form-group">
                           <label for="estimate"><?php echo _l('estimates'); ?></label>
                           <select name="estimate" id="estimate" class="selectpicker  <?php if (isset($pur_order)) {
@@ -132,7 +132,7 @@
 
                         </div>
                       <?php } ?>
-                      <div class="col-md-<?php if (changee_get_purchase_option('changee_order_setting') == 1) {
+                      <div class="col-md-<?php if (changee_get_changee_option('changee_order_setting') == 1) {
                                             echo '12';
                                           } else {
                                             echo '6';
@@ -641,11 +641,11 @@
           <div class="row">
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
-                <?php $value = (isset($pur_order) ? $pur_order->order_summary : changee_get_purchase_option('order_summary')); ?>
+                <?php $value = (isset($pur_order) ? $pur_order->order_summary : changee_get_changee_option('order_summary')); ?>
                 <?php echo render_textarea('order_summary', 'estimate_add_edit_order_summary', $value, array(), array(), 'mtop15', 'tinymce'); ?>
-                <?php $value = (isset($pur_order) ? $pur_order->vendornote : changee_get_purchase_option('vendor_note')); ?>
+                <?php $value = (isset($pur_order) ? $pur_order->vendornote : changee_get_changee_option('vendor_note')); ?>
                 <?php echo render_textarea('vendornote', 'estimate_add_edit_vendor_note', $value, array(), array(), 'mtop15', 'tinymce'); ?>
-                <?php $value = (isset($pur_order) ? $pur_order->terms :  changee_get_purchase_option('terms_and_conditions')); ?>
+                <?php $value = (isset($pur_order) ? $pur_order->terms :  changee_get_changee_option('terms_and_conditions')); ?>
                 <?php echo render_textarea('terms', 'terms_and_conditions', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <div id="vendor_data">
 
@@ -679,20 +679,20 @@
   var convert_po = '<?php echo $convert_po; ?>';
   if(convert_po) {
     $('#project').attr('disabled', true);
-    $('#pur_request').attr('disabled', true);
+    $('#co_request').attr('disabled', true);
     $('#project_val').css('display', 'block');
     $('#project_val').val($('#project').val());
   } else {
     $('#project').attr('disabled', false);
-    $('#pur_request').attr('disabled', false);
+    $('#co_request').attr('disabled', false);
     $('#project_val').remove();
   }
   
 
-  var pur_request = $('select[name="pur_request"]').val();
+  var co_request = $('select[name="co_request"]').val();
   var vendor = $('select[name="vendor"]').val();
-  if (pur_request != '') {
-    $.post(admin_url + 'changee/coppy_pur_request_for_po/' + pur_request + '/' + vendor).done(function(response) {
+  if (co_request != '') {
+    $.post(admin_url + 'changee/coppy_co_request_for_po/' + co_request + '/' + vendor).done(function(response) {
       response = JSON.parse(response);
       if (response) {
         $('select[name="estimate"]').html(response.estimate_html);

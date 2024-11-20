@@ -44,7 +44,7 @@
                   <label for="pur_order"><?php echo _l('pur_order'); ?></label>
                   <select name="pur_order" id="pur_order" class="selectpicker" onchange="view_pur_order(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" >
                     <option value=""></option>
-                    <?php foreach($pur_orders as $or){ ?>
+                    <?php foreach($co_orders as $or){ ?>
                       <option value="<?php echo changee_pur_html_entity_decode($or['id']); ?>" <?php if(isset($contract) && $contract->pur_order == $or['id']){ echo 'selected'; } ?>><?php echo changee_pur_html_entity_decode($or['pur_order_number']).' - '.changee_pur_html_entity_decode($or['pur_order_name']); ?></option>
                     <?php } ?>
                   </select>
@@ -224,7 +224,7 @@
 
                           <li role="presentation" class="">
                             <?php
-                                      $totalComments = total_rows(db_prefix().'pur_comments',['rel_id' => $contract->id, 'rel_type' => 'pur_contract']);
+                                      $totalComments = total_rows(db_prefix().'co_comments',['rel_id' => $contract->id, 'rel_type' => 'pur_contract']);
                                       ?>
                              <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
                              <?php echo _l('pur_discuss'); ?>

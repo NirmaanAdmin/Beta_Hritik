@@ -3,7 +3,7 @@
   "use strict";
     init_pq_currency();
     // Maybe items ajax search
-    <?php if(changee_get_purchase_option('item_by_vendor') != 1){ ?>
+    <?php if(changee_get_changee_option('item_by_vendor') != 1){ ?>
       init_ajax_search('items','#item_select.ajax-search',undefined,admin_url+'changee/pur_commodity_code_search');
     <?php } ?>
 
@@ -146,7 +146,7 @@ function estimate_by_vendor(invoker){
       response = JSON.parse(response);
 
       $('select[name="currency"]').val(response.currency_id).change();
-       <?php if(changee_get_purchase_option('item_by_vendor') == 1){ ?>
+       <?php if(changee_get_changee_option('item_by_vendor') == 1){ ?>
         if(response.option_html != ''){
          $('#item_select').html(response.option_html);
          $('.selectpicker').selectpicker('refresh');
@@ -160,12 +160,12 @@ function estimate_by_vendor(invoker){
   }
 }
 
-function coppy_pur_request(){
+function coppy_co_request(){
   "use strict";
-  var pur_request = $('select[name="pur_request"]').val();
-  if(pur_request != ''){
+  var co_request = $('select[name="co_request"]').val();
+  if(co_request != ''){
      
-    $.post(admin_url + 'changee/coppy_pur_request/'+pur_request).done(function(response){
+    $.post(admin_url + 'changee/coppy_co_request/'+co_request).done(function(response){
         response = JSON.parse(response);
         if(response){
           $('select[name="currency"]').val(response.currency).change();
@@ -187,7 +187,7 @@ function coppy_pur_request(){
         }
     });
   }else{
-    alert_float('warning', '<?php echo _l('please_chose_pur_request'); ?>')
+    alert_float('warning', '<?php echo _l('please_chose_co_request'); ?>')
   }
 }
 

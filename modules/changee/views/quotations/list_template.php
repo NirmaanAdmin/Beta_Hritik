@@ -7,8 +7,8 @@
      <a href="<?php echo admin_url('changee/estimate'); ?>" class="btn btn-info pull-left new"><?php echo _l('create_new_estimate'); ?></a>
    <?php } ?>
    <div class="col-md-3">
-     <select name="pur_request[]" id="pur_request" class="selectpicker pull-right mright10" multiple data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('changee_request'); ?>">
-       <?php foreach($pur_request as $s) { ?>
+     <select name="co_request[]" id="co_request" class="selectpicker pull-right mright10" multiple data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('changee_request'); ?>">
+       <?php foreach($co_request as $s) { ?>
         <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" ><?php echo changee_pur_html_entity_decode($s['pur_rq_code'].' - '.$s['pur_rq_name']); ?></option>
       <?php } ?>
      </select>
@@ -23,7 +23,7 @@
    </div>
 
   <div class="display-block text-right"> 
-    <a href="#" class="btn btn-default btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_estimate_view('.table-pur_estimates','#estimate'); return false;" data-toggle="tooltip" title="<?php echo _l('estimates_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
+    <a href="#" class="btn btn-default btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_estimate_view('.table-co_estimates','#estimate'); return false;" data-toggle="tooltip" title="<?php echo _l('estimates_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
   </div>
 
 </div>

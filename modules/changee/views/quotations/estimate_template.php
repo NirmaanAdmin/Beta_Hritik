@@ -20,11 +20,11 @@
 
           </div>
           <div class="col-md-6 form-group">
-            <label for="pur_request"><?php echo _l('pur_request'); ?></label>
-            <select name="pur_request" id="pur_request" onchange="coppy_pur_request(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+            <label for="co_request"><?php echo _l('co_request'); ?></label>
+            <select name="co_request" id="co_request" onchange="coppy_co_request(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
               <option value=""></option>
-              <?php foreach ($pur_request as $s) { ?>
-                <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($estimate) && $estimate->pur_request != '' && $estimate->pur_request->id == $s['id']) {
+              <?php foreach ($co_request as $s) { ?>
+                <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($estimate) && $estimate->co_request != '' && $estimate->co_request->id == $s['id']) {
                                                                                   echo 'selected';
                                                                                 } ?>><?php echo changee_pur_html_entity_decode($s['pur_rq_code'] . ' - ' . $s['pur_rq_name']); ?></option>
               <?php } ?>
@@ -442,9 +442,9 @@
   <div class="row">
     <div class="col-md-12 mtop15">
       <div class="panel-body bottom-transaction">
-        <?php $value = (isset($estimate) ? $estimate->vendornote : changee_get_purchase_option('vendor_note')); ?>
+        <?php $value = (isset($estimate) ? $estimate->vendornote : changee_get_changee_option('vendor_note')); ?>
         <?php echo render_textarea('vendornote', 'estimate_add_edit_vendor_note', $value, array(), array(), 'mtop15'); ?>
-        <?php $value = (isset($estimate) ? $estimate->terms : changee_get_purchase_option('terms_and_conditions')); ?>
+        <?php $value = (isset($estimate) ? $estimate->terms : changee_get_changee_option('terms_and_conditions')); ?>
         <?php echo render_textarea('terms', 'terms_and_conditions', $value, array(), array(), 'mtop15', 'tinymce'); ?>
         <div class="btn-bottom-toolbar text-right">
 

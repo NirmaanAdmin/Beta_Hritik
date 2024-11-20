@@ -2,10 +2,10 @@ var hidden_columns = [2,4,5,6];
 (function($) {
     "use strict";
     var Params = {
-        "pur_request": "[name='pur_request[]']",
+        "co_request": "[name='co_request[]']",
         "vendor": "[name='vendor[]']",
     };
-    var table_estimates = $('.table-pur_estimates');
+    var table_estimates = $('.table-co_estimates');
     initDataTable(table_estimates, admin_url + 'changee/table_estimates',[0], [0], Params,[9, 'desc']);
     init_pur_estimate();
 
@@ -20,7 +20,7 @@ var hidden_columns = [2,4,5,6];
 
 function init_pur_estimate(id) {
     "use strict";
-    load_small_estimate_table_item(id, '#estimate', 'estimateid', 'changee/get_estimate_data_ajax', '.table-pur_estimates');
+    load_small_estimate_table_item(id, '#estimate', 'estimateid', 'changee/get_estimate_data_ajax', '.table-co_estimates');
 }
 function load_small_estimate_table_item(id, selector, input_name, url, table) {
     "use strict";

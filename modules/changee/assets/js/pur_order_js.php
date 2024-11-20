@@ -6,7 +6,7 @@ $(function(){
     init_ajax_search("customer", ".client-ajax-search");
     init_po_currency();
     // Maybe items ajax search
-    <?php if(changee_get_purchase_option('item_by_vendor') != 1){ ?>
+    <?php if(changee_get_changee_option('item_by_vendor') != 1){ ?>
       init_ajax_search('items','#item_select.ajax-search',undefined,admin_url+'changee/pur_commodity_code_search');
     <?php } ?>
 
@@ -104,7 +104,7 @@ function estimate_by_vendor(invoker){
       <?php if(get_option('po_only_prefix_and_number') != 1){ ?>
       $('input[name="pur_order_number"]').val(po_number+'-'+response.company);
       <?php } ?>
-      <?php if(changee_get_purchase_option('item_by_vendor') == 1){ ?>
+      <?php if(changee_get_changee_option('item_by_vendor') == 1){ ?>
         if(response.option_html != ''){
          $('#item_select').html(response.option_html);
          $('.selectpicker').selectpicker('refresh');
@@ -148,12 +148,12 @@ function coppy_pur_estimate(){
   }
 }
 
-function coppy_pur_request(){
+function coppy_co_request(){
   "use strict";
-  var pur_request = $('select[name="pur_request"]').val();
+  var co_request = $('select[name="co_request"]').val();
   var vendor = $('select[name="vendor"]').val();
-  if(pur_request != ''){
-    $.post(admin_url + 'changee/coppy_pur_request_for_po/'+pur_request+'/'+vendor).done(function(response){
+  if(co_request != ''){
+    $.post(admin_url + 'changee/coppy_co_request_for_po/'+co_request+'/'+vendor).done(function(response){
         response = JSON.parse(response);
         if(response){ 
           $('select[name="estimate"]').html(response.estimate_html);

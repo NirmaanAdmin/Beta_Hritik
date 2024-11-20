@@ -12,7 +12,7 @@ $table_data = array(
       'name' => _l('vendor'),
       'th_attrs' => array('class' => (isset($client) ? 'not_visible' : ''))
    ),
-   _l('pur_request'),
+   _l('co_request'),
    _l('group_pur'),
    _l('sub_groups_pur'),
    _l('area_pur'),
@@ -22,4 +22,4 @@ $table_data = array(
 );
 
 
-render_datatable($table_data, 'pur_estimates');
+render_datatable($table_data, 'co_estimates');

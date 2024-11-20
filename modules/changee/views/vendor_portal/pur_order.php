@@ -43,7 +43,7 @@
                   
                   <li role="presentation" class="tab-separator <?php if($this->input->get('tab') === 'discussion'){echo 'active';} ?>">
                     <?php
-                              $totalComments = total_rows(db_prefix().'pur_comments',['rel_id' => $pur_order->id, 'rel_type' => 'pur_order']);
+                              $totalComments = total_rows(db_prefix().'co_comments',['rel_id' => $pur_order->id, 'rel_type' => 'pur_order']);
                               ?>
                      <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
                      <?php echo _l('pur_discuss'); ?>
@@ -264,11 +264,11 @@
                 </thead>
                 <tbody class="ui-sortable">
 
-                   <?php if(count($pur_order_detail) > 0){
+                   <?php if(count($co_order_detail) > 0){
                       $count = 1;
                       $t_mn = 0;
                       $item_discount = 0;
-                   foreach($pur_order_detail as $es) { ?>
+                   foreach($co_order_detail as $es) { ?>
                    <tr nobr="true" class="sortable">
                       <td class="dragger item_no ui-sortable-handle" align="center"><?php echo changee_pur_html_entity_decode($count); ?></td>
                       <td class="description" align="left;"><span><strong><?php 

@@ -15,15 +15,15 @@ $aColumns = [
     'project',
     'status',
     // 'project',
-    db_prefix().'pur_request'.'.id',
+    db_prefix().'co_request'.'.id',
     ];
 $sIndexColumn = 'id';
-$sTable       = db_prefix().'pur_request';
+$sTable       = db_prefix().'co_request';
 $join         = [
-    'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'pur_request.department',
-    'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = ' . db_prefix() . 'pur_request.group_pur',
-    'LEFT JOIN ' . db_prefix() . 'wh_sub_group ON ' . db_prefix() . 'wh_sub_group.id = ' . db_prefix() . 'pur_request.sub_groups_pur',
-    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_request.area_pur',
+    'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'co_request.department',
+    'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = ' . db_prefix() . 'co_request.group_pur',
+    'LEFT JOIN ' . db_prefix() . 'wh_sub_group ON ' . db_prefix() . 'wh_sub_group.id = ' . db_prefix() . 'co_request.sub_groups_pur',
+    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'co_request.area_pur',
 ];
 $where = [];
 
@@ -48,24 +48,24 @@ if ($this->ci->input->post('department')
 }
 
 if(isset($project)){
-    array_push($where, ' AND '.db_prefix().'pur_request.project = '.$project);
+    array_push($where, ' AND '.db_prefix().'co_request.project = '.$project);
 }
 
 if(!has_permission('changee_request', '', 'view')){
   $or_where = '';
   $list_vendor = changee_get_vendor_admin_list(get_staff_user_id());
   foreach($list_vendor as $vendor_id){
-    $or_where .= ' OR find_in_set('.$vendor_id.', ' . db_prefix() . 'pur_request.send_to_vendors)';
+    $or_where .= ' OR find_in_set('.$vendor_id.', ' . db_prefix() . 'co_request.send_to_vendors)';
   }
 
-  array_push($where, 'AND (' . db_prefix() . 'pur_request.requester = '.get_staff_user_id().  $or_where. ' OR '.get_staff_user_id().' IN (SELECT staffid FROM ' . db_prefix() . 'pur_approval_details WHERE ' . db_prefix() . 'pur_approval_details.rel_type = "pur_request" AND ' . db_prefix() . 'pur_approval_details.rel_id = '.db_prefix().'pur_request.id))');
+  array_push($where, 'AND (' . db_prefix() . 'co_request.requester = '.get_staff_user_id().  $or_where. ' OR '.get_staff_user_id().' IN (SELECT staffid FROM ' . db_prefix() . 'co_approval_details WHERE ' . db_prefix() . 'co_approval_details.rel_type = "co_request" AND ' . db_prefix() . 'co_approval_details.rel_id = '.db_prefix().'co_request.id))');
 }
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-    db_prefix().'pur_request'.'.id',
+    db_prefix().'co_request'.'.id',
     'name',
     'pur_rq_code',
-    '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_request.project) as member_list',
+    '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'co_request.project) as member_list',
 ], '', [], $having);
 
 $output  = $result['output'];
@@ -156,24 +156,24 @@ foreach ($rResult as $aRow) {
             $_data = $approve_status;
 
         }elseif($aColumns[$i] == 'pur_rq_name'){
-            $name = '<a href="' . admin_url('changee/view_pur_request/' . $aRow['id'] ).'">'.$aRow['pur_rq_name'] . '</a>';
+            $name = '<a href="' . admin_url('changee/view_co_request/' . $aRow['id'] ).'">'.$aRow['pur_rq_name'] . '</a>';
 
             $name .= '<div class="row-options">';
 
-            $name .= '<a href="' . admin_url('changee/view_pur_request/' . $aRow['id'] ).'" >' . _l('view') . '</a>';
+            $name .= '<a href="' . admin_url('changee/view_co_request/' . $aRow['id'] ).'" >' . _l('view') . '</a>';
 
             if ( (has_permission('changee_request', '', 'edit') || is_admin()) &&  $aRow['status'] != 2) {
-                $name .= ' | <a href="' . admin_url('changee/pur_request/' . $aRow['id'] ).'" >' . _l('edit') . '</a>';
+                $name .= ' | <a href="' . admin_url('changee/co_request/' . $aRow['id'] ).'" >' . _l('edit') . '</a>';
             }
 
             if (has_permission('changee_request', '', 'delete') || is_admin()) {
-                $name .= ' | <a href="' . admin_url('changee/delete_pur_request/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                $name .= ' | <a href="' . admin_url('changee/delete_co_request/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
             }
 
             $name .= '</div>';
 
             $_data = $name;
-        }elseif($aColumns[$i] == db_prefix().'pur_request'.'.id'){
+        }elseif($aColumns[$i] == db_prefix().'co_request'.'.id'){
             if($aRow['status'] == 2){
                 $_data = '<div class="btn-group mright5" data-toggle="tooltip" title="'._l('request_quotation_tooltip').'">
                            <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
@@ -191,10 +191,10 @@ foreach ($rResult as $aRow) {
                 $_data = '';
             }
         }elseif($aColumns[$i] == 'pur_rq_code'){
-            $_data = '<a href="' . admin_url('changee/view_pur_request/' . $aRow['id'] ).'">'.$aRow['pur_rq_code'] . '</a>';
+            $_data = '<a href="' . admin_url('changee/view_co_request/' . $aRow['id'] ).'">'.$aRow['pur_rq_code'] . '</a>';
         }elseif($aColumns[$i] == 'project'){
 
-            // $_data = changee_get_po_html_by_pur_request($aRow['id']);
+            // $_data = changee_get_po_html_by_co_request($aRow['id']);
             $_data = get_project_name_by_id($aRow['project']);
         }
 

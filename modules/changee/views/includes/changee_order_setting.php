@@ -7,15 +7,15 @@
 
 <?php echo form_open_multipart(admin_url('changee/pur_order_setting'),array('id'=>'pur_order_setting-form')); ?>
 <div class="col-md-6">
-	<?php echo render_input('pur_order_prefix','pur_order_prefix',changee_get_purchase_option('pur_order_prefix')); ?>
+	<?php echo render_input('pur_order_prefix','co_order_prefix',changee_get_changee_option('pur_order_prefix')); ?>
 </div>
 
 <div class="col-md-6">
-  <?php echo render_input('pur_request_prefix','pur_request_prefix',changee_get_purchase_option('pur_request_prefix')); ?>
+  <?php echo render_input('co_request_prefix','co_request_prefix',changee_get_changee_option('co_request_prefix')); ?>
 </div>
 
 <?php /* <div class="col-md-6">
-  <?php echo render_input('pur_inv_prefix','pur_inv_prefix',changee_get_purchase_option('pur_inv_prefix')); ?>
+  <?php echo render_input('pur_inv_prefix','pur_inv_prefix',changee_get_changee_option('pur_inv_prefix')); ?>
 </div>
 
 <div class="col-md-6">
@@ -23,11 +23,11 @@
 </div> */ ?>
 
 <div class="col-md-6">
-  <?php echo render_input('next_po_number','next_po_number',changee_get_purchase_option('next_po_number'),'number'); ?>
+  <?php echo render_input('next_po_number','next_co_number',changee_get_changee_option('next_po_number'),'number'); ?>
 </div>
 
 <div class="col-md-6">
-  <?php echo render_input('next_pr_number','next_pr_number',changee_get_purchase_option('next_pr_number'),'number'); ?>
+  <?php echo render_input('next_pr_number','next_cr_number',changee_get_changee_option('next_pr_number'),'number'); ?>
 </div>
 
 <div class="col-md-6">
@@ -76,11 +76,11 @@
 </div>
 	
 <div class="col-md-12">
-  <?php echo render_textarea('terms_and_conditions', 'terms_and_conditions', changee_get_purchase_option('terms_and_conditions'), [], [], '', 'tinymce'); ?>
+  <?php echo render_textarea('terms_and_conditions', 'terms_and_conditions', changee_get_changee_option('terms_and_conditions'), [], [], '', 'tinymce'); ?>
 </div>
 
 <div class="col-md-12">
-  <?php echo render_textarea('vendor_note', 'vendor_note', changee_get_purchase_option('vendor_note')); ?>
+  <?php echo render_textarea('vendor_note', 'vendor_note', changee_get_changee_option('vendor_note')); ?>
 </div>
 
 <?php if(changee_get_po_logo() == ''){ ?>

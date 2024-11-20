@@ -71,7 +71,7 @@ foreach ($purorder_statuses as $status) {
 }
 
 if (count($purorderStatusIds) > 0) {
-    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor FROM '.db_prefix().'pur_orders WHERE approve_status IN (' . implode(', ', $purorderStatusIds) . '))');
+    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor FROM '.db_prefix().'co_orders WHERE approve_status IN (' . implode(', ', $purorderStatusIds) . '))');
 }
 
 // Filter by Changee estimate
@@ -84,7 +84,7 @@ foreach ($purestimate_statuses as $status) {
 }
 
 if (count($purestimateStatusIds) > 0) {
-    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor FROM '.db_prefix().'pur_estimates WHERE status IN (' . implode(', ', $purestimateStatusIds) . '))');
+    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor FROM '.db_prefix().'co_estimates WHERE status IN (' . implode(', ', $purestimateStatusIds) . '))');
 }
 
 

@@ -19,11 +19,11 @@
       'th_attrs'=>array('class'=>'not_visible')
    ),
    _l('vendor'),
-   _l('pur_request'),
+   _l('co_request'),
    _l('estimate_dt_table_heading_date'),
    _l('estimate_dt_table_heading_expirydate'),
    _l('estimate_dt_table_heading_status'));
 
 
-render_datatable($table_data, 'pur_estimates'); ?>	
+render_datatable($table_data, 'co_estimates'); ?>	
 </div>

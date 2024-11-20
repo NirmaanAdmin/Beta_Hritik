@@ -69,7 +69,7 @@ hooks()->add_filter('get_relation_data', 'changee_debit_note_relation_data', 10,
 
 //cronjob auto reset changee order/request number
 hooks()->add_action('after_cron_run', 'changee_reset_pur_order_number');
-hooks()->add_action('after_cron_run', 'changee_reset_pur_request_number');
+hooks()->add_action('after_cron_run', 'changee_reset_co_request_number');
 
 //cronjob recurring changee invoice
 hooks()->add_action('after_cron_run', 'recurring_changee_invoice');
@@ -420,16 +420,16 @@ function changee_add_footer_components() {
         echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/vendor_manage.js') .'?v=' . CHANGEE_REVISION.'"></script>';
     }
     if(!(strpos($viewuri, '/admin/changee/changee_request') === false)){    
-        echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/pur_request_manage.js') .'?v=' . CHANGEE_REVISION.'"></script>';
+        echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/co_request_manage.js') .'?v=' . CHANGEE_REVISION.'"></script>';
     }
     if(!(strpos($viewuri, '/admin/changee/quotations') === false)){
         echo '<script src="'. base_url('assets/plugins/signature-pad/signature_pad.min.js').'"></script>';
         echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/quotation_manage.js') .'?v=' . CHANGEE_REVISION.'"></script>';
     }
-    if(!(strpos($viewuri, '/admin/changee/pur_request') === false)){
+    if(!(strpos($viewuri, '/admin/changee/co_request') === false)){
         
     }
-    if(!(strpos($viewuri, '/admin/changee/view_pur_request') === false)){
+    if(!(strpos($viewuri, '/admin/changee/view_co_request') === false)){
         echo '<link rel="stylesheet prefetch" href="'.base_url('modules/changee/assets/plugins/handsontable/chosen.css').'">';
         echo '<script src="'. base_url('assets/plugins/signature-pad/signature_pad.min.js').'"></script>';
         echo '<script src="'.base_url('modules/changee/assets/plugins/handsontable/chosen.jquery.js').'"></script>';
@@ -538,7 +538,7 @@ function changee_add_footer_components() {
     }
 
     if(!(strpos($viewuri, '/admin/projects/view') === false)  && !(strpos($viewuri, '?group=changee_request') === false)){
-        echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/pur_request_on_project.js') .'?v=' . CHANGEE_REVISION.'"></script>';
+        echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/co_request_on_project.js') .'?v=' . CHANGEE_REVISION.'"></script>';
     }
 
 }
@@ -550,10 +550,10 @@ function changee_add_footer_components() {
 function changee_add_head_components() {
     $CI = &get_instance();
     $viewuri = $_SERVER['REQUEST_URI'];
-    if(!(strpos($viewuri, '/admin/changee/pur_request') === false)){
+    if(!(strpos($viewuri, '/admin/changee/co_request') === false)){
         
     }
-    if(!(strpos($viewuri, '/admin/changee/view_pur_request') === false)){
+    if(!(strpos($viewuri, '/admin/changee/view_co_request') === false)){
         echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.js') . '"></script>';
         echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.css') . '"  rel="stylesheet" type="text/css" />';
     }
@@ -583,7 +583,7 @@ function changee_add_head_components() {
          echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/js/detail_vendor_item.js') .'?v=' . CHANGEE_REVISION.'"></script>';
      }
 
-    if(!(strpos($viewuri, '/changee/vendors_portal/pur_request') === false)){
+    if(!(strpos($viewuri, '/changee/vendors_portal/co_request') === false)){
         echo '<script src="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.js') . '"></script>';
         echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.css') . '"  rel="stylesheet" type="text/css" />';
         echo '<script src="'.base_url('modules/changee/assets/plugins/handsontable/numbro/languages.min.js').'"></script>';
@@ -625,14 +625,14 @@ function changee_head_components() {
     if(!(strpos($viewuri, '/admin/changee/pur_order') === false)){
         echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/pur_order.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
     }
-    if(!(strpos($viewuri, '/admin/changee/pur_request') === false)){
-        echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/pur_request.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
+    if(!(strpos($viewuri, '/admin/changee/co_request') === false)){
+        echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/co_request.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
     }
     if(!(strpos($viewuri, '/admin/changee/changee_request') === false)){    
-        echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/pur_request_manage.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
+        echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/co_request_manage.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
     }
-    if(!(strpos($viewuri, '/admin/changee/view_pur_request') === false)){
-        echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/view_pur_request.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
+    if(!(strpos($viewuri, '/admin/changee/view_co_request') === false)){
+        echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/view_co_request.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
     }
     if(!(strpos($viewuri, '/admin/changee/estimate') === false)){
         echo '<link href="' . module_dir_url(CHANGEE_MODULE_NAME, 'assets/css/estimate_template.css') .'?v=' . CHANGEE_REVISION.'"  rel="stylesheet" type="text/css" />';
@@ -1013,12 +1013,12 @@ function changee_reset_pur_order_number($manually)
 
     if(get_option('reset_changee_order_number_every_month') == 1){
         if (date('d') == 1) {
-            if(date('Y-m-d') != get_purchase_option('date_reset_number')){
+            if(date('Y-m-d') != get_changee_option('date_reset_number')){
                 $CI->db->where('option_name','next_po_number');
-                $CI->db->update(db_prefix().'purchase_option',['option_val' => '1']);
+                $CI->db->update(db_prefix().'changee_option',['option_val' => '1']);
                 if ($CI->db->affected_rows() > 0) {
                     $CI->db->where('option_name','date_reset_number');
-                    $CI->db->update(db_prefix().'purchase_option',['option_val' => date('Y-m-d')]);
+                    $CI->db->update(db_prefix().'changee_option',['option_val' => date('Y-m-d')]);
                 }
             }
         }
@@ -1029,17 +1029,17 @@ function changee_reset_pur_order_number($manually)
  * reset changee order number
  *  
  */
-function changee_reset_pur_request_number($manually)
+function changee_reset_co_request_number($manually)
 {
     $CI = &get_instance();
 
     if (date('m-d') == '01-01') {
-        if(date('Y-m-d') != get_purchase_option('date_reset_pr_number')){
+        if(date('Y-m-d') != get_changee_option('date_reset_pr_number')){
             $CI->db->where('option_name','next_pr_number');
-            $CI->db->update(db_prefix().'purchase_option',['option_val' => '1']);
+            $CI->db->update(db_prefix().'changee_option',['option_val' => '1']);
             if ($CI->db->affected_rows() > 0) {
                 $CI->db->where('option_name','date_reset_pr_number');
-                $CI->db->update(db_prefix().'purchase_option',['option_val' => date('Y-m-d')]);
+                $CI->db->update(db_prefix().'changee_option',['option_val' => date('Y-m-d')]);
             }
         }
     }
@@ -1650,7 +1650,7 @@ function changee_init_po_project_tabs($tabs){
                 'parent_slug' => 'changee',
                 'slug' => 'changee_request',
                 'name' => _l('changee_request'),
-                'view' => 'changee/pur_request_on_project',
+                'view' => 'changee/co_request_on_project',
                 'position' => 5,
                 'visible' => true,
                 'icon' => '',

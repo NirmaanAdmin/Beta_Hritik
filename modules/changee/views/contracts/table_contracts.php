@@ -19,7 +19,7 @@ $aColumns = [
 $sIndexColumn = 'id';
 $sTable       = db_prefix().'pur_contracts';
 $join         = [
-                    'LEFT JOIN '.db_prefix().'pur_orders ON '.db_prefix().'pur_orders.id = '.db_prefix().'pur_contracts.pur_order',
+                    'LEFT JOIN '.db_prefix().'co_orders ON '.db_prefix().'co_orders.id = '.db_prefix().'pur_contracts.pur_order',
                     'LEFT JOIN '.db_prefix().'departments ON '.db_prefix().'departments.departmentid = '.db_prefix().'pur_contracts.department',
                     'LEFT JOIN '.db_prefix().'projects ON '.db_prefix().'projects.id = '.db_prefix().'pur_contracts.project',
                 ];
