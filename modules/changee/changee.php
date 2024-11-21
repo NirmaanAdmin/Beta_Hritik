@@ -160,7 +160,9 @@ function changee_module_activation_hook()
 /**
 * Register language files, must be registered if the module is using languages
 */
-register_language_files(CHANGEE_MODULE_NAME, [CHANGEE_MODULE_NAME]);
+if (strpos($_SERVER['REQUEST_URI'], "changee") !== false) {
+    register_language_files(CHANGEE_MODULE_NAME, [CHANGEE_MODULE_NAME]);
+}
 
 /**
  * Init goals module menu items in setup in admin_init hook
@@ -171,7 +173,7 @@ function changee_module_init_menu_items() {
     $CI = &get_instance();
     if (has_permission('changee_items', '', 'view') || has_permission('changee_vendors', '', 'view') || has_permission('changee_vendor_items', '', 'view') || has_permission('changee_request', '', 'view') || has_permission('changee_quotations', '', 'view') || has_permission('changee_orders', '', 'view') || has_permission('changee_contracts', '', 'view') || has_permission('changee_invoices', '', 'view') || has_permission('changee_reports', '', 'view') || has_permission('changee_debit_notes', '', 'view') || has_permission('changee_settings', '', 'edit') || has_permission('changee_vendors', '', 'view_own') || has_permission('changee_vendor_items', '', 'view_own') || has_permission('changee_request', '', 'view_own') || has_permission('changee_quotations', '', 'view_own') || has_permission('changee_orders', '', 'view_own') || has_permission('changee_contracts', '', 'view_own') || has_permission('changee_invoices', '', 'view_own') || has_permission('changee_debit_notes', '', 'view_own') || has_permission('changee_order_return', '', 'view_own') || has_permission('changee_order_return', '', 'view') ) {
         $CI->app_menu->add_sidebar_menu_item('changee', [
-            'name' => _l('changee'),
+            'name' => 'Change order',
             'icon' => 'fa fa-shopping-cart',
             'position' => 30,
         ]);
@@ -215,7 +217,7 @@ function changee_module_init_menu_items() {
         if(has_permission('changee_request', '', 'view') || has_permission('changee_request', '', 'view_own')){
             $CI->app_menu->add_sidebar_children_item('changee', [
                 'slug' => 'changee-request',
-                'name' => _l('changee_request'),
+                'name' => 'Change request',
                 'icon' => 'fa fa-shopping-basket',
                 'href' => admin_url('changee/changee_request'),
                 'position' => 4,
@@ -225,7 +227,7 @@ function changee_module_init_menu_items() {
         if(has_permission('changee_quotations', '', 'view')  || has_permission('changee_quotations', '', 'view_own')){
             $CI->app_menu->add_sidebar_children_item('changee', [
                 'slug' => 'changee-quotation',
-                'name' => _l('quotations'),
+                'name' => 'Quotations',
                 'icon' => 'fa fa-file-powerpoint',
                 'href' => admin_url('changee/quotations'),
                 'position' => 5,
@@ -235,7 +237,7 @@ function changee_module_init_menu_items() {
         if(has_permission('changee_orders', '', 'view') || has_permission('changee_orders', '', 'view_own')){
             $CI->app_menu->add_sidebar_children_item('changee', [
                 'slug' => 'changee-order',
-                'name' => _l('changee_order'),
+                'name' => 'Change order',
                 'icon' => 'fa fa-cart-plus',
                 'href' => admin_url('changee/changee_order'),
                 'position' => 6,
