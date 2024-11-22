@@ -275,7 +275,7 @@ function purchase_module_init_menu_items() {
         if(has_permission('purchase_invoices', '', 'view') || has_permission('purchase_invoices', '', 'view_own')){
             $CI->app_menu->add_sidebar_children_item('purchase', [
                 'slug' => 'purchase-invoices',
-                'name' => _l('invoices'),
+                'name' => 'Vendor Billing',
                 'icon' => 'fa fa-clipboard',
                 'href' => admin_url('purchase/invoices'),
                 'position' => 10,
