@@ -208,7 +208,7 @@ function warehouse_module_init_menu_items()
 
         $CI->app_menu->add_sidebar_children_item('warehouse', [
             'slug'     => 'wa_manage_goods_receipt',
-            'name'     => _l('stock_import'),
+            'name'     => _l('stock_import_new'),
             'icon'     => 'fa fa-object-group',
             'href'     => admin_url('warehouse/manage_purchase'),
             'position' => 2,
@@ -216,7 +216,7 @@ function warehouse_module_init_menu_items()
         
         $CI->app_menu->add_sidebar_children_item('warehouse', [
             'slug'     => 'wa_manage_goods_delivery',
-            'name'     => _l('stock_export'),
+            'name'     => _l('stock_export_new'),
             'icon'     => 'fa fa-object-ungroup',
             'href'     => admin_url('warehouse/manage_delivery'),
             'position' => 3,
