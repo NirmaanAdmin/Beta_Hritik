@@ -106,13 +106,13 @@ function app_init_admin_sidebar_menu_items()
     }
 
     if (staff_can('view',  'subscriptions') || staff_can('view_own',  'subscriptions')) {
-        // $CI->app_menu->add_sidebar_menu_item('subscriptions', [
-        //     'name'     => _l('subscriptions'),
-        //     'href'     => admin_url('subscriptions'),
-        //     'icon'     => 'fa fa-repeat',
-        //     'position' => 15,
-        //     'badge'    => [],
-        // ]);
+        $CI->app_menu->add_sidebar_menu_item('subscriptions', [
+            'name'     => _l('subscriptions'),
+            'href'     => admin_url('subscriptions'),
+            'icon'     => 'fa fa-repeat',
+            'position' => 15,
+            'badge'    => [],
+        ]);
     }
 
     if (staff_can('view',  'expenses') || staff_can('view_own',  'expenses')) {
