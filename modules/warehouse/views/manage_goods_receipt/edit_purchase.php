@@ -44,10 +44,10 @@
 										<div class="col-md-12 pull-right">
 											<br>
 											<div class="row">
-												<div class="col-md-3 pull-right">
+												<!-- <div class="col-md-3 pull-right">
 													<p><span class="bold"><?php echo _l('debit'); ?>: </span>.....................</p>
 													<p><span class="bold"><?php echo _l('credit'); ?>: </span>.....................</p>
-												</div>
+												</div> -->
 												<div class="col-md-4 pull-right">
 													<p><span class="span-font-style"><?php echo _l('days').' '.$day.' '._l('month').' '.$month.' '._l('year') .' '.$year; ?></p>
 														<p><span class="bold"><?php echo _l('stock_received_docket_number'); ?>: </span><?php echo html_entity_decode($goods_receipt->goods_receipt_code) ?></p>
