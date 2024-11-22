@@ -985,7 +985,7 @@ $lang['settings_smtp_settings_heading']                             = 'SMTP Sett
 $lang['settings_smtp_settings_subheading']                          = 'Setup main email';
 $lang['settings_sales_heading_general']                             = 'General';
 $lang['settings_sales_heading_invoice']                             = 'Invoice';
-$lang['settings_sales_heading_estimates']                           = 'Estimates';
+$lang['settings_sales_heading_estimates']                           = 'Budget';
 $lang['settings_sales_cron_invoice_heading']                        = 'Invoice';
 
 # Tasks
@@ -1030,7 +1030,7 @@ $lang['time_ago_year']      = 'one year ago';
 $lang['time_ago_years']     = '%s years ago';
 
 # Estimates
-$lang['estimates']                                = 'Estimates';
+$lang['estimates']                                = 'Budget';
 $lang['estimate']                                 = 'Estimate';
 $lang['estimate_lowercase']                       = 'estimate';
 $lang['create_new_estimate']                      = 'Create New Estimate';
@@ -1097,10 +1097,10 @@ $lang['clients_estimate_dt_date']               = 'Date';
 $lang['clients_estimate_dt_duedate']            = 'Expiry Date';
 $lang['clients_estimate_dt_amount']             = 'Amount';
 $lang['clients_estimate_dt_status']             = 'Status';
-$lang['clients_nav_estimates']                  = 'Estimates';
+$lang['clients_nav_estimates']                  = 'Budget';
 $lang['clients_decline_estimate']               = 'Decline';
 $lang['clients_accept_estimate']                = 'Accept';
-$lang['clients_my_estimates']                   = 'Estimates';
+$lang['clients_my_estimates']                   = 'Budget';
 $lang['clients_estimate_invoiced_successfully'] = 'Thank you for accepting the estimate. Please review the created invoice for the estimate';
 $lang['clients_estimate_accepted_not_invoiced'] = 'Thank you for accepting this estimate';
 $lang['clients_estimate_declined']              = 'Estimate declined. You can accept the estimate any time before expiry date';
@@ -1463,7 +1463,7 @@ $lang['settings_gcal_main_calendar_id']                                      = '
 $lang['settings_gcal_main_calendar_id_help']                                 = 'This is the main company calendar. All events from this calendar will be shown. If you want to specify a calendar based on departments you can add in the department Google Calendar ID.';
 $lang['show_on_calendar']                                                    = 'Show on Calendar';
 $lang['show_invoices_on_calendar']                                           = 'Invoices';
-$lang['show_estimates_on_calendar']                                          = 'Estimates';
+$lang['show_estimates_on_calendar']                                          = 'Budget';
 $lang['show_contracts_on_calendar']                                          = 'Contracts';
 $lang['show_tasks_on_calendar']                                              = 'Tasks';
 $lang['show_customer_reminders_on_calendar']                                 = 'Customer Reminders';
@@ -1505,7 +1505,7 @@ $lang['kb_group_order'] = 'Order';
 # Utilities - BULK PDF Exporter
 $lang['bulk_pdf_exporter']             = 'Bulk PDF Export';
 $lang['bulk_export_pdf_payments']      = 'Payments';
-$lang['bulk_export_pdf_estimates']     = 'Estimates';
+$lang['bulk_export_pdf_estimates']     = 'Budget';
 $lang['bulk_export_pdf_invoices']      = 'Invoices';
 $lang['bulk_pdf_export_button']        = 'Export';
 $lang['bulk_pdf_export_select_type']   = 'Select Type';
@@ -1532,7 +1532,7 @@ $lang['welcome_top']     = 'Welcome %s';
 # Customers
 $lang['customer_permissions']         = 'Permissions';
 $lang['customer_permission_invoice']  = 'Invoices';
-$lang['customer_permission_estimate'] = 'Estimates';
+$lang['customer_permission_estimate'] = 'Budget';
 $lang['customer_permission_proposal'] = 'Proposals';
 $lang['customer_permission_contract'] = 'Contracts';
 $lang['customer_permission_support']  = 'RFI';
@@ -2193,7 +2193,7 @@ $lang['project_activity_visible_to_customer']          = 'Visible to customer';
 $lang['project_activity_project_file_removed']         = 'Removed project file';
 
 # Customers area
-$lang['clients_my_estimates']                                  = 'Estimates';
+$lang['clients_my_estimates']                                  = 'Budget';
 $lang['client_no_reply']                                       = 'No Reply';
 $lang['clients_nav_projects']                                  = 'Projects';
 $lang['clients_my_projects']                                   = 'Projects';

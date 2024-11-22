@@ -159,7 +159,7 @@
                $data_original_number = isset($estimate) ? $estimate->number : 'false';
                ?>
                 <div class="form-group">
-                    <label for="number"><?php echo _l('estimate_add_edit_number'); ?></label>
+                    <label for="number"><?php echo 'Budget Number'; ?></label>
                     <div class="input-group">
                         <span class="input-group-addon">
                             <?php if (isset($estimate)) { ?>
@@ -191,7 +191,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <?php $value = (isset($estimate) ? _d($estimate->date) : _d(date('Y-m-d'))); ?>
-                        <?php echo render_date_input('date', 'estimate_add_edit_date', $value); ?>
+                        <?php echo render_date_input('date', 'Budget Date', $value); ?>
                     </div>
                     <div class="col-md-6">
                         <?php

@@ -309,7 +309,7 @@
                       <thead>
                         <tr>
                           <th></th>
-                          <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
+                          <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
                           <th width="15%" align="right"><?php echo _l('description'); ?></th>
                           <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
                           <th width="10%" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>

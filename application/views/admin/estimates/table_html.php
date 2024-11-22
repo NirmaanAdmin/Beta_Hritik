@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 $table_data = array(
-   _l('estimate_dt_table_heading_number'),
+   'Budget #',
    _l('estimate_dt_table_heading_amount'),
    _l('estimates_total_tax'),
    array(

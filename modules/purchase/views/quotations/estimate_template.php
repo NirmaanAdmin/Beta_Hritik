@@ -85,7 +85,7 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label for="number"><?php echo _l('estimate_add_edit_number'); ?></label>
+              <label for="number">Budget Number</label>
               <div class="input-group">
                 <span class="input-group-addon">
                   <?php if (isset($estimate)) { ?>
@@ -200,7 +200,7 @@
             </div>
             <div class="col-md-6">
               <?php $value = (isset($estimate) ? _d($estimate->date) : _d(date('Y-m-d'))); ?>
-              <?php echo render_date_input('date', 'estimate_add_edit_date', $value); ?>
+              <?php echo render_date_input('date', 'Budget Date', $value); ?>
             </div>
             <div class="col-md-6">
               <?php
@@ -370,7 +370,7 @@
             <thead>
               <tr>
                 <th></th>
-                <th width="20%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+                <th width="20%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
                 <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
                 <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
                 <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>

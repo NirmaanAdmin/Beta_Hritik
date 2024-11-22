@@ -4,7 +4,7 @@
     <?php if (staff_can('create',  'estimates')) { ?>
     <a href="<?php echo admin_url('estimates/estimate'); ?>" class="btn btn-primary pull-left new new-estimate-btn">
         <i class="fa-regular fa-plus tw-mr-1"></i>
-        <?php echo _l('create_new_estimate'); ?>
+        <?php echo 'Create New Budget'; ?>
     </a>
     <?php } ?>
     <a href="<?php echo admin_url('estimates/pipeline/' . $switch_pipeline); ?>"

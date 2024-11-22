@@ -14,7 +14,7 @@
                             <a href="<?php echo admin_url('estimates/estimate'); ?>"
                                 class="btn btn-primary pull-left new">
                                 <i class="fa-regular fa-plus tw-mr-1"></i>
-                                <?php echo _l('create_new_estimate'); ?>
+                                <?php echo 'Create New Budget'; ?>
                             </a>
                             <div class="display-block pull-left mleft10">
                                 <a href="#" class="btn btn-default estimates-total"
