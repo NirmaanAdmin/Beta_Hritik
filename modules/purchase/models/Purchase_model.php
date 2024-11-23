@@ -6280,7 +6280,7 @@ class Purchase_model extends App_Model
             $data['add_from_type'] = 'admin';
         }
         $data['date_add'] = date('Y-m-d');
-        $data['payment_status'] = 'unpaid';
+        $data['payment_status'] = 0;
         $prefix = get_purchase_option('pur_inv_prefix');
 
         $this->db->where('invoice_number', $data['invoice_number']);

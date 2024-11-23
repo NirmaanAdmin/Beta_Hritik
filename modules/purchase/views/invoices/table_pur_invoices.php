@@ -212,14 +212,16 @@ foreach ($rResult as $aRow) {
                 $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $aRow['id'] . '" task-status-table="recevied_with_comments">' . _l('recevied_with_comments');
             } else if ($aRow['payment_status'] == 3) {
                 $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verification_in_process">' . _l('bill_verification_in_process');
-            }else if ($aRow['payment_status'] == 4) {
+            } else if ($aRow['payment_status'] == 4) {
                 $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verification_on_hold">' . _l('bill_verification_on_hold');
-            }else if ($aRow['payment_status'] == 5) {
+            } else if ($aRow['payment_status'] == 5) {
                 $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verified_by_ril">' . _l('bill_verified_by_ril');
-            }else if ($aRow['payment_status'] == 6) {
+            } else if ($aRow['payment_status'] == 6) {
                 $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="payment_certifiate_issued">' . _l('payment_certifiate_issued');
-            }else if ($aRow['payment_status'] == 7) {
+            } else if ($aRow['payment_status'] == 7) {
                 $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="payment_processed">' . _l('payment_processed');
+            } else if ($aRow['payment_status'] == 0) {
+                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="unpaid">' . _l('unpaid');
             }
             if (has_permission('purchase_invoices', '', 'edit') || is_admin()) {
                 $delivery_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
@@ -229,43 +231,47 @@ foreach ($rResult as $aRow) {
 
                 $delivery_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $aRow['id'] . '">';
 
-                
-                    $delivery_status .= '<li>
+                $delivery_status .= '<li>
+                            <a href="#" onclick="change_payment_status( 0,' . $aRow['id'] . '); return false;">
+                            ' . _l('unpaid') . '
+                            </a>
+                        </li>';
+                $delivery_status .= '<li>
                               <a href="#" onclick="change_payment_status( 1,' . $aRow['id'] . '); return false;">
                                  ' . _l('rejected') . '
                               </a>
                            </li>';
-                    $delivery_status .= '<li>
+                $delivery_status .= '<li>
                               <a href="#" onclick="change_payment_status( 2,' . $aRow['id'] . '); return false;">
                                  ' . _l('recevied_with_comments') . '
                               </a>
                            </li>';
-                    $delivery_status .= '<li>
+                $delivery_status .= '<li>
                               <a href="#" onclick="change_payment_status( 3,' . $aRow['id'] . '); return false;">
                                  ' . _l('bill_verification_in_process') . '
                               </a>
                            </li>';
-                    $delivery_status .= '<li>
+                $delivery_status .= '<li>
                            <a href="#" onclick="change_payment_status( 4,' . $aRow['id'] . '); return false;">
                               ' . _l('bill_verification_on_hold') . '
                            </a>
                         </li>';
-                    $delivery_status .= '<li>
+                $delivery_status .= '<li>
                            <a href="#" onclick="change_payment_status( 5,' . $aRow['id'] . '); return false;">
                               ' . _l('bill_verified_by_ril') . '
                            </a>
                         </li>';
-                    $delivery_status .= '<li>
+                $delivery_status .= '<li>
                         <a href="#" onclick="change_payment_status( 6,' . $aRow['id'] . '); return false;">
                            ' . _l('payment_certifiate_issued') . '
                         </a>
                      </li>';
-                     $delivery_status .= '<li>
+                $delivery_status .= '<li>
                         <a href="#" onclick="change_payment_status( 7,' . $aRow['id'] . '); return false;">
                            ' . _l('payment_processed') . '
                         </a>
                      </li>';
-                
+
 
                 $delivery_status .= '</ul>';
                 $delivery_status .= '</div>';

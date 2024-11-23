@@ -68,6 +68,10 @@ function change_payment_status(status, id){
             $('#status_span_'+id).removeClass('label-primary');
             $('#status_span_'+id).addClass(response.class);
             $('#status_span_'+id).html(response.status_str+' '+response.html);
+          }else if($('#status_span_'+id).hasClass('label-muted')){
+            $('#status_span_'+id).removeClass('label-muted');
+            $('#status_span_'+id).addClass(response.class);
+            $('#status_span_'+id).html(response.status_str+' '+response.html);
           }
           alert_float('success', response.mess);
         }else{
