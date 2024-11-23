@@ -519,7 +519,7 @@ class purchase extends AdminController
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['departments'] = $this->departments_model->get();
         $data['vendor_contacts'] = $this->purchase_model->get_contacts();
-        
+
         $this->load->view('purchase_request/manage', $data);
     }
 
@@ -2697,7 +2697,7 @@ class purchase extends AdminController
         }
 
         $pur_request = $this->purchase_model->get_purorder_pdf_html($id);
-        
+
         try {
             $pdf = $this->purchase_model->purorder_pdf($pur_request, $id);
         } catch (Exception $e) {
@@ -6177,7 +6177,314 @@ class purchase extends AdminController
             'html' => $html,
         ]);
     }
+    /**
+     * { change payment status }
+     *
+     * @param      integer  $status     The status
+     * @param         $invoice_id  The invoice id
+     * @return     json
+     */
 
+    public function change_payment_status($status, $invoice_id)
+    {
+        $success = $this->purchase_model->change_payment_status($status, $invoice_id);
+        $message = '';
+        $html = '';
+        $status_str = '';
+        $class = '';
+        if ($success == true) {
+            $message = _l('change_payment_status_successfully');
+        } else {
+            $message = _l('change_payment_status_fail');
+        }
+        if (has_permission('purchase_invoices', '', 'edit') || is_admin()) {
+            $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $invoice_id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+            $html .= '</a>';
+
+            $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $invoice_id . '">';
+
+            if ($status == 1) {
+
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                   ' . _l('recevied_with_comments') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                            <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verification_in_process') . '
+                            </a>
+                        </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                                ' . _l('bill_verification_on_hold') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                                    ' . _l('bill_verified_by_ril') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                                ' . _l('payment_processed') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+                                    ' . _l('payment_certifiate_issued') . '
+                                </a>
+                            </li>';
+                $status_str = _l('rejected');
+                $class = 'label-danger';
+            } elseif ($status == 2) {
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                   ' . _l('rejected') . '
+                </a>
+             </li>';
+
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_on_hold') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                        <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verified_by_ril') . '
+                        </a>
+                    </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                   ' . _l('payment_processed') . '
+                </a>
+             </li>';
+                $html .= '<li>
+          <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+             ' . _l('payment_certifiate_issued') . '
+          </a>
+       </li>';
+                $status_str = _l('recevied_with_comments');
+                $class = 'label-info';
+            } elseif ($status == 3) {
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                   ' . _l('rejected') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                   ' . _l('recevied_with_comments') . '
+                </a>
+             </li>';
+
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_on_hold') . '
+                </a>
+             </li>';
+                $html .= '<li>
+             <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                ' . _l('bill_verified_by_ril') . '
+             </a>
+          </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                   ' . _l('payment_processed') . '
+                </a>
+             </li>';
+                $html .= '<li>
+          <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+             ' . _l('payment_certifiate_issued') . '
+          </a>
+       </li>';
+                $status_str = _l('bill_verification_in_process');
+                $class = 'label-warning';
+            } elseif ($status == 4) {
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                                ' . _l('rejected') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                                ' . _l('recevied_with_comments') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                            <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verification_in_process') . '
+                            </a>
+                        </li>';
+
+
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                                    ' . _l('bill_verified_by_ril') . '
+                                </a>
+                            </li>';
+
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+                                    ' . _l('payment_certifiate_issued') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                            <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                            ' . _l('payment_processed') . '
+                            </a>
+                        </li>';
+                $status_str = _l('bill_verification_on_hold');
+                $class = 'label-primary';
+            } elseif ($status == 5) {
+                $html .= '<li>
+                            <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                            ' . _l('rejected') . '
+                            </a>
+                        </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                                ' . _l('recevied_with_comments') . '
+                                </a>
+                            </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                                ' . _l('bill_verification_in_process') . '
+                                </a>
+                            </li>';
+
+                $html .= '<li>
+                            <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verification_on_hold') . '
+                            </a>
+                        </li>';
+                $html .= '<li>
+                        <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+                            ' . _l('payment_certifiate_issued') . '
+                        </a>
+                    </li>';
+                $html .= '<li>
+                                <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                                    ' . _l('payment_processed') . '
+                                    </a>
+                                </li>';
+
+                $status_str = _l('bill_verified_by_ril');
+                $class = 'label-success';
+            } elseif ($status == 6) {
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                   ' . _l('rejected') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                   ' . _l('recevied_with_comments') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_on_hold') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                            <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                                ' . _l('bill_verified_by_ril') . '
+                            </a>
+                        </li>';
+                $html .= '<li>
+                        <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                        ' . _l('payment_processed') . '
+                        </a>
+                    </li>';
+
+                $status_str = _l('payment_certifiate_issued');
+                $class = 'label-success';
+            } elseif ($status == 7) {
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                   ' . _l('rejected') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                   ' . _l('recevied_with_comments') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                   ' . _l('bill_verification_in_process') . '
+                </a>
+             </li>';
+                $html .= '<li>
+                        <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                        ' . _l('bill_verification_on_hold') . '
+                        </a>
+                    </li>';
+                $html .= '<li>
+                        <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verified_by_ril') . '
+                        </a>
+                    </li>';
+
+                $html .= '<li>
+                        <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+                            ' . _l('payment_certifiate_issued') . '
+                        </a>
+                    </li>';
+                $status_str = _l('payment_processed');
+                $class = 'label-success';
+            }
+
+            $html .= '</ul>';
+            $html .= '</div>';
+        }
+
+        echo json_encode([
+            'success' => $success,
+            'status_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
     /**
      * { convert po payment }
      */
