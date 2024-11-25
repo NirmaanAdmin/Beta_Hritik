@@ -3306,7 +3306,7 @@ class warehouse extends AdminController {
 
 		if ($id != '') {
 			$data['loss_adjustment'] = $this->warehouse_model->get_loss_adjustment($id);
-			$loss_adjustments = $this->warehouse_model->get_loss_adjustment_detailt_by_masterid($id);
+			$loss_adjustments = $this->warehouse_model->get_loss_adjustment_detailt_by_masterid($id); 
 
 			if (count($loss_adjustments) > 0) {
 				$index_internal_delivery = 0;
@@ -3332,7 +3332,7 @@ class warehouse extends AdminController {
 
 		$data['current_day'] = date('Y-m-d');
 		$data['loss_adjustment_row_template'] = $loss_adjustment_row_template;
-
+		
 		$this->load->view('loss_adjustment/add_loss_adjustment', $data);
 	}
 
@@ -6700,7 +6700,8 @@ if(strlen($data['inventory_filter']) > 0){
 			$item->guarantee_new = $guarantee_new;
 			$html = '<option value=""></option>';
 			if((int)$get_warehouse ==  1){
-				$get_available_quantity = $this->warehouse_model->get_adjustment_stock_quantity($warehouse_id, $id, null, null);
+				
+				$get_available_quantity = $this->warehouse_model->get_quantity_inventory($warehouse_id,$id);
 				if($get_available_quantity){
 					$item->available_quantity = (float)$get_available_quantity->inventory_number;
 				}else{
