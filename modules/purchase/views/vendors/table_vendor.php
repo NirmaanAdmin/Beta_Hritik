@@ -110,19 +110,19 @@ $rResult = $result['rResult'];
 $table_order = $this->ci->input->post('order');
 $column = isset($table_order[0]['column']) ? $table_order[0]['column'] : '';
 $dir = isset($table_order[0]['dir']) ? $table_order[0]['dir'] : '';
-
+$sr = 1;
 foreach ($rResult as $key => $aRow) {
     $row = [];
 
     // Bulk actions
     $row[] = '<div class="checkbox"><input type="checkbox" value="' . $aRow['userid'] . '"><label></label></div>';
     // User id
-    if($column == 1 && $dir == "desc") {
-        $row[] = $output['iTotalDisplayRecords'] - $this->ci->input->post('start') - $key;
-    } else {
-        $row[] = $this->ci->input->post('start') + $key + 1;
-    }
-
+    // if($column == 1 && $dir == "desc") {
+    //     $row[] = $output['iTotalDisplayRecords'] - $this->ci->input->post('start') - $key;
+    // } else {
+    //     $row[] = $this->ci->input->post('start') + $key + 1;
+    // }
+    $row[] = $sr;
     // Company
     $company  = $aRow['company'];
     $isPerson = false;
@@ -206,4 +206,5 @@ foreach ($rResult as $key => $aRow) {
     $row = hooks()->apply_filters('customers_table_row_data', $row, $aRow);
 
     $output['aaData'][] = $row;
+    $sr++;
 }

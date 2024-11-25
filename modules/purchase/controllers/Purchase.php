@@ -6207,25 +6207,21 @@ class purchase extends AdminController
 
             if ($status == 1) {
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 0 ,' . $invoice_id . '); return false;">
-                ' . _l('unpaid') . '
-                </a>
-            </li>';
+                            <a href="#" onclick="change_payment_status( 0 ,' . $invoice_id . '); return false;">
+                            ' . _l('unpaid') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
-                   ' . _l('recevied_with_comments') . '
-                </a>
-             </li>';
-                $html .= '<li>
-                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_in_process') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                            ' . _l('recevied_with_comments') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
                             <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
                             ' . _l('bill_verification_in_process') . '
                             </a>
                         </li>';
+
                 $html .= '<li>
                                 <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
                                 ' . _l('bill_verification_on_hold') . '
@@ -6250,90 +6246,82 @@ class purchase extends AdminController
                 $class = 'label-danger';
             } elseif ($status == 2) {
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 0 ,' . $invoice_id . '); return false;">
-                ' . _l('unpaid') . '
-                </a>
-            </li>';
+                            <a href="#" onclick="change_payment_status( 0 ,' . $invoice_id . '); return false;">
+                            ' . _l('unpaid') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
-                   ' . _l('rejected') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                            ' . _l('rejected') . '
+                            </a>
+                        </li>';
 
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_in_process') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verification_in_process') . '
+                            </a>
+                        </li>';
+
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_in_process') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verification_on_hold') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_on_hold') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                                ' . _l('bill_verified_by_ril') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                        <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
-                            ' . _l('bill_verified_by_ril') . '
-                        </a>
-                    </li>';
+                            <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                            ' . _l('payment_processed') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
-                   ' . _l('payment_processed') . '
-                </a>
-             </li>';
-                $html .= '<li>
-          <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
-             ' . _l('payment_certifiate_issued') . '
-          </a>
-       </li>';
+                            <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+                                ' . _l('payment_certifiate_issued') . '
+                            </a>
+                        </li>';
                 $status_str = _l('recevied_with_comments');
                 $class = 'label-info';
             } elseif ($status == 3) {
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 0 ,' . $invoice_id . '); return false;">
-                ' . _l('unpaid') . '
-                </a>
-            </li>';
+                            <a href="#" onclick="change_payment_status( 0 ,' . $invoice_id . '); return false;">
+                            ' . _l('unpaid') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
-                   ' . _l('rejected') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 1 ,' . $invoice_id . '); return false;">
+                            ' . _l('rejected') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
-                   ' . _l('recevied_with_comments') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 2 ,' . $invoice_id . '); return false;">
+                            ' . _l('recevied_with_comments') . '
+                            </a>
+                        </li>';
 
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_in_process') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
+                            ' . _l('bill_verification_on_hold') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_on_hold') . '
-                </a>
-             </li>';
+                            <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
+                                ' . _l('bill_verified_by_ril') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-             <a href="#" onclick="change_payment_status( 5 ,' . $invoice_id . '); return false;">
-                ' . _l('bill_verified_by_ril') . '
-             </a>
-          </li>';
+                            <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
+                                ' . _l('payment_certifiate_issued') . '
+                            </a>
+                        </li>';
                 $html .= '<li>
-                <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
-                   ' . _l('payment_processed') . '
-                </a>
-             </li>';
-                $html .= '<li>
-          <a href="#" onclick="change_payment_status( 6 ,' . $invoice_id . '); return false;">
-             ' . _l('payment_certifiate_issued') . '
-          </a>
-       </li>';
+                            <a href="#" onclick="change_payment_status( 7 ,' . $invoice_id . '); return false;">
+                            ' . _l('payment_processed') . '
+                            </a>
+                        </li>';
+
                 $status_str = _l('bill_verification_in_process');
                 $class = 'label-warning';
             } elseif ($status == 4) {
@@ -6438,11 +6426,7 @@ class purchase extends AdminController
                    ' . _l('bill_verification_in_process') . '
                 </a>
              </li>';
-                $html .= '<li>
-                <a href="#" onclick="change_payment_status( 3 ,' . $invoice_id . '); return false;">
-                   ' . _l('bill_verification_in_process') . '
-                </a>
-             </li>';
+
                 $html .= '<li>
                 <a href="#" onclick="change_payment_status( 4 ,' . $invoice_id . '); return false;">
                    ' . _l('bill_verification_on_hold') . '
@@ -6539,7 +6523,7 @@ class purchase extends AdminController
                     </a>
                 </li>';
                 $status_str = _l('unpaid');
-                $class = 'label-success';
+                $class = 'label-danger';
             }
 
             $html .= '</ul>';

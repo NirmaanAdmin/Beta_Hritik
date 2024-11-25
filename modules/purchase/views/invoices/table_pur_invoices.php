@@ -221,7 +221,7 @@ foreach ($rResult as $aRow) {
             } else if ($aRow['payment_status'] == 7) {
                 $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="payment_processed">' . _l('payment_processed');
             } else if ($aRow['payment_status'] == 0) {
-                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="unpaid">' . _l('unpaid');
+                $delivery_status = '<span class="inline-block label label-danger" id="status_span_' . $aRow['id'] . '" task-status-table="unpaid">' . _l('unpaid');
             }
             if (has_permission('purchase_invoices', '', 'edit') || is_admin()) {
                 $delivery_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';

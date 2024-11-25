@@ -164,7 +164,7 @@ $output  = $result['output'];
 $rResult = $result['rResult'];
 
 $this->ci->load->model('purchase/purchase_model');
-
+$sr = 1;
 foreach ($rResult as $aRow) {
     $row = [];
 
@@ -185,8 +185,7 @@ foreach ($rResult as $aRow) {
         }elseif($aColumns[$i] == 'pur_order_number'){
 
             $numberOutput = '';
-    
-            $numberOutput = '<a href="' . admin_url('purchase/purchase_order/' . $aRow['id']) . '"  onclick="init_pur_order(' . $aRow['id'] . '); return false;" >'.$aRow['pur_order_number']. '</a>';
+            $numberOutput .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow['id']) . '"  onclick="init_pur_order(' . $aRow['id'] . '); return false;" >'.$aRow['pur_order_number']. '</a>';
             
             $numberOutput .= '<div class="row-options">';
 
@@ -365,5 +364,5 @@ foreach ($rResult as $aRow) {
         $row[] = $_data;
     }
     $output['aaData'][] = $row;
-
+    $sr++;
 }

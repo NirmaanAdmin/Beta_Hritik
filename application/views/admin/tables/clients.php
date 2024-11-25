@@ -65,14 +65,14 @@ return App_table::find('clients')
 
         $output  = $result['output'];
         $rResult = $result['rResult'];
-
+        $sr = 1;
         foreach ($rResult as $aRow) {
             $row = [];
 
             // Bulk actions
             $row[] = '<div class="checkbox"><input type="checkbox" value="' . $aRow['userid'] . '"><label></label></div>';
             // User id
-            $row[] = $aRow['userid'];
+            $row[] = $sr;
 
             // Company
             $company  = e($aRow['company']);
@@ -163,6 +163,7 @@ return App_table::find('clients')
             $row = hooks()->apply_filters('customers_table_row_data', $row, $aRow);
 
             $output['aaData'][] = $row;
+            $sr++;
         }
         return $output;
     })->setRules([
