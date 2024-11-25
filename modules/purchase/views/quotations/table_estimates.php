@@ -12,7 +12,7 @@ $aColumns = [
     'pur_request',
     'group_name',
     'sub_group_name',
-    'area_name',
+    // 'area_name',
     'date',
     'expirydate',
 
@@ -25,7 +25,7 @@ $join = [
     'LEFT JOIN ' . db_prefix() . 'pur_request ON ' . db_prefix() . 'pur_request.id = ' . db_prefix() . 'pur_estimates.pur_request',
     'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = ' . db_prefix() . 'pur_estimates.group_pur',
     'LEFT JOIN ' . db_prefix() . 'wh_sub_group ON ' . db_prefix() . 'wh_sub_group.id = ' . db_prefix() . 'pur_estimates.sub_groups_pur',
-    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_estimates.area_pur',
+    // 'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_estimates.area_pur',
 ];
 
 $sIndexColumn = 'id';

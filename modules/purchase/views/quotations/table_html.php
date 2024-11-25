@@ -15,7 +15,7 @@ $table_data = array(
    _l('pur_request'),
    _l('group_pur'),
    _l('sub_groups_pur'),
-   _l('area_pur'),
+   // _l('area_pur'),
    _l('estimate_dt_table_heading_date'),
    _l('estimate_dt_table_heading_expirydate'),
    _l('approval_status')

@@ -286,10 +286,8 @@
                                  <tr>
                                     <th align="center">#</th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
+                                    <th align="right"><?php echo _l('area') ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
-                                    <th align="right"><?php echo _l('group_pur'); ?></th>
-                                    <th align="right"><?php echo _l('sub_groups_pur'); ?></th>
-                                    <th align="right"><?php echo _l('area_pur') ?></th>
                                     <th align="right"><?php echo _l('purchase_unit_price'); ?></th>
                                     <th align="right"><?php echo _l('into_money'); ?></th>
                                     <?php if(get_option('show_purchase_tax_column') == 1){ ?>
@@ -317,6 +315,7 @@
                                        echo pur_html_entity_decode($es['item_name']);
                                     }
                                     ?></strong></td>
+                                    <td align="right"  width="30%"><?php echo get_area_name_by_id($es['area']); ?></td>
                                     <td align="right"  width="12%"><?php echo pur_html_entity_decode($es['quantity']); ?></td>
                                     <td align="right"><?php echo app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
                                     <td align="right"><?php echo app_format_money($es['into_money'],$base_currency->symbol); ?></td>

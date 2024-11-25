@@ -3201,3 +3201,53 @@ function format_pdf_vendor_info($vendor_id) {
         return $html;
     }
 }
+
+/**
+ * For html5 form accepted attributes
+ * This function is used for the items form attachments
+ * @return string
+ */
+function get_item_form_accepted_mimes()
+{
+    $item_allowed_extensions = '.png,.jpg,.jpeg';
+
+    $_item_allowed_extensions = array_map(function ($ext) {
+        return trim($ext);
+    }, explode(',', $item_allowed_extensions));
+
+    $all_form_ext = str_replace([' '], '', $item_allowed_extensions);
+
+    if (is_array($_item_allowed_extensions)) {
+        foreach ($_item_allowed_extensions as $ext) {
+            $all_form_ext .= ',' . get_mime_by_extension($ext);
+        }
+    }
+
+    return $all_form_ext;
+}
+
+function get_area_list($name_area, $area){
+    $CI = & get_instance();
+    $CI->load->model('purchase_model');
+    $get_area = $CI->purchase_model->get_area();
+    $selected = '';
+    foreach ($get_area as $value) {
+        if ($area == $value['id']) {
+          $selected = $value['id'];
+        }
+    }
+    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected);
+}
+
+function get_area_name_by_id($id)
+{
+    $CI = & get_instance();
+    $CI->db->select('area_name');
+    $CI->db->from(db_prefix() . 'area');
+    $CI->db->where('id', $id);
+    $row = $CI->db->get()->row();
+    if ($row) {
+        return $row->area_name;
+    }
+    return '';
+}

@@ -114,7 +114,7 @@
                            _l('order_date'),
                            _l('group_pur'),
                            _l('sub_groups_pur'),
-                           _l('area_pur'),
+                           // _l('area_pur'),
                            _l('type'),
                            _l('project'),
                            _l('department'),

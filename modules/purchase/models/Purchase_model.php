@@ -1156,6 +1156,7 @@ class Purchase_model extends App_Model
 
         unset($data['item_text']);
         unset($data['description']);
+        unset($data['area']);
         unset($data['unit_price']);
         unset($data['quantity']);
         unset($data['into_money']);
@@ -1232,6 +1233,7 @@ class Purchase_model extends App_Model
                     $dt_data['pur_request'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['description'] = nl2br($rqd['item_description']);
+                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
@@ -1319,6 +1321,7 @@ class Purchase_model extends App_Model
 
         unset($data['item_text']);
         unset($data['description']);
+        unset($data['area']);
         unset($data['unit_price']);
         unset($data['quantity']);
         unset($data['into_money']);
@@ -1364,6 +1367,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_request'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -1418,6 +1422,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_request'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -1682,6 +1687,7 @@ class Purchase_model extends App_Model
 
         unset($data['item_select']);
         unset($data['item_name']);
+        unset($data['area']);
         unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
@@ -1805,6 +1811,7 @@ class Purchase_model extends App_Model
                     $dt_data['pur_estimate'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
                     $dt_data['total'] = $rqd['total'];
@@ -1900,6 +1907,7 @@ class Purchase_model extends App_Model
 
         unset($data['item_select']);
         unset($data['item_name']);
+        unset($data['area']);
         unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
@@ -1971,6 +1979,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_estimate'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -2014,6 +2023,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_estimate'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -2326,6 +2336,7 @@ class Purchase_model extends App_Model
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
+        unset($data['area']);
         unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
@@ -2474,6 +2485,7 @@ class Purchase_model extends App_Model
                     $dt_data['total'] = $rqd['total'];
                     $dt_data['tax_value'] = $rqd['tax_value'];
                     $dt_data['item_name'] = $rqd['item_name'];
+                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                     $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['total_money'] = $rqd['total_money'];
                     $dt_data['discount_money'] = $rqd['discount_money'];
@@ -2543,6 +2555,7 @@ class Purchase_model extends App_Model
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
+        unset($data['area']);
         unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
@@ -2664,6 +2677,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -2711,6 +2725,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -3846,7 +3861,6 @@ class Purchase_model extends App_Model
                 <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($pur_request->requester) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($pur_request_id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($pur_request_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area($pur_request_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -3859,6 +3873,7 @@ class Purchase_model extends App_Model
           <tr>
             <th class="thead-dark">' . _l('items') . '</th>
             <th class="thead-dark">' . _l('decription') . '</th>
+            <th class="thead-dark">' . _l('area') . '</th>
             <th class="thead-dark" align="right">' . _l('unit') . '</th>
             <th class="thead-dark" align="right">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right">' . _l('quantity') . '</th>
@@ -3873,6 +3888,7 @@ class Purchase_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td>' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td>' . $row['description'] . '</td>
+            <td>' . get_area_name_by_id($row['area']) . '</td>
             <td align="right">' . $units->unit_name . '</td>
             <td align="right">' . app_format_money($row['unit_price'], '') . '</td>
             <td align="right">' . $row['quantity'] . '</td>
@@ -3972,7 +3988,6 @@ class Purchase_model extends App_Model
                 <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($pur_request->requester) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($pur_request_id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($pur_request_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area($pur_request_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -3985,9 +4000,10 @@ class Purchase_model extends App_Model
           <tr>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
             <th class="thead-dark" style="width: 25%">' . _l('decription') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('unit') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('unit_price') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('quantity') . '</th>
+            <th class="thead-dark" style="width: 15%">' . _l('area') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('unit') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 15%">' . _l('into_money') . '</th>
           </tr>
         </thead>
@@ -3998,9 +4014,10 @@ class Purchase_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 15%">' . $units->unit_name . '</td>
-            <td align="right" style="width: 15%">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 15%">' . $row['quantity'] . '</td>
+            <td style="width: 15%">' . get_area_name_by_id($row['area']) . '</td>
+            <td align="right" style="width: 10%">' . $units->unit_name . '</td>
+            <td align="right" style="width: 10%">' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 10%">' . $row['quantity'] . '</td>
             <td align="right" style="width: 15%">' . app_format_money($row['into_money'], '') . '</td>
           </tr>';
         }
@@ -4672,10 +4689,10 @@ class Purchase_model extends App_Model
                 if ($group_sub_head_po != '') {
                     $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
                 }
-                $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
-                if ($group_req_area_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
-                }
+                // $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
+                // if ($group_req_area_po != '') {
+                //     $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
+                // }
                 $html .= '            
             </td>
           </tr>
@@ -4691,7 +4708,8 @@ class Purchase_model extends App_Model
         <thead>
           <tr>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 30%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 20%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 11%">' . _l('unit_price') . '</th>
             
@@ -4713,7 +4731,8 @@ class Purchase_model extends App_Model
             $unit_name = pur_get_unit_name($row['unit_id']);
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="width: 30%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 20%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
             <td align="right" style="width: 10%">' . $row['quantity']  .' ' .$unit_name .'</td>
             <td align="right" style="width: 11%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
             
@@ -6996,7 +7015,6 @@ class Purchase_model extends App_Model
                 <span style="text-align: right;">' . format_pdf_vendor_info($pur_estimate->vendor->userid) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_estimate($pur_estimate_id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_estimate($pur_estimate_id) . '</span><br />
-                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_estimate($pur_estimate_id) . '</span><br />
             </td>
           </tr>
         </tbody>
@@ -7008,6 +7026,7 @@ class Purchase_model extends App_Model
         <thead>
           <tr>
             <th class="thead-dark">' . _l('items') . '</th>
+            <th class="thead-dark" align="left">' . _l('area') . '</th>
             <th class="thead-dark" align="right">' . _l('purchase_unit_price') . '</th>
             <th class="thead-dark" align="right">' . _l('purchase_quantity') . '</th>';
 
@@ -7028,6 +7047,7 @@ class Purchase_model extends App_Model
 
             $html .= '<tr nobr="true" class="sortable">
             <td >' . $item_name . '</td>
+            <td align="left">' . get_area_name_by_id($row['area'], '') . '</td>
             <td align="right">' . app_format_money($row['unit_price'], '') . '</td>
             <td align="right">' . $row['quantity'] . '</td>';
 
@@ -10251,7 +10271,7 @@ class Purchase_model extends App_Model
      * @param      array   $unit_data  The unit data
      * @param      string  $name       The name
      */
-    public function create_purchase_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $unit_price = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_purchase_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $area = '', $unit_price = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -10259,6 +10279,7 @@ class Purchase_model extends App_Model
         $name_item_code = 'item_code';
         $name_item_text = 'item_text';
         $name_item_description = 'description';
+        $name_area = 'area';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
         $name_unit_price = 'unit_price';
@@ -10294,6 +10315,7 @@ class Purchase_model extends App_Model
             $name_item_code = $name . '[item_code]';
             $name_item_text = $name . '[item_text]';
             $name_item_description = $name . '[item_description]';
+            $name_area = $name . '[area]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = $name . '[unit_name]';
             $name_unit_price = $name . '[unit_price]';
@@ -10341,6 +10363,7 @@ class Purchase_model extends App_Model
 
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10697,7 +10720,7 @@ class Purchase_model extends App_Model
      *
      * @return     string      
      */
-    public function create_quotation_row_template($name = '', $item_name = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_quotation_row_template($name = '', $item_name = '', $area = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
     {
 
         $this->load->model('invoice_items_model');
@@ -10705,6 +10728,7 @@ class Purchase_model extends App_Model
 
         $name_item_code = 'item_code';
         $name_item_name = 'item_name';
+        $name_area = 'area';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
         $name_quantity = 'quantity';
@@ -10747,6 +10771,7 @@ class Purchase_model extends App_Model
                     <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
             $name_item_code = $name . '[item_code]';
             $name_item_name = $name . '[item_name]';
+            $name_area = $name . '[area]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = '[unit_name]';
             $name_quantity = $name . '[quantity]';
@@ -10803,6 +10828,7 @@ class Purchase_model extends App_Model
 
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
+        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
 
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
@@ -10880,7 +10906,7 @@ class Purchase_model extends App_Model
      *
      * @return     string      
      */
-    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
     {
 
         $this->load->model('invoice_items_model');
@@ -10889,6 +10915,7 @@ class Purchase_model extends App_Model
         $name_item_code = 'item_code';
         $name_item_name = 'item_name';
         $name_item_description = 'description';
+        $name_area = 'area';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
         $name_quantity = 'quantity';
@@ -10932,6 +10959,7 @@ class Purchase_model extends App_Model
             $name_item_code = $name . '[item_code]';
             $name_item_name = $name . '[item_name]';
             $name_item_description = $name . '[item_description]';
+            $name_area = $name . '[area]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = '[unit_name]';
             $name_quantity = $name . '[quantity]';
@@ -10991,6 +11019,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
 
         $units_list = $this->get_units();
 
