@@ -2573,10 +2573,10 @@ class warehouse extends AdminController {
 									$flag = 1;
 								}
 
-								if (is_null($value_cell_commodity_group) == true) {
-									$string_error .= _l('commodity_group') . _l('not_yet_entered');
-									$flag = 1;
-								}
+								// if (is_null($value_cell_commodity_group) == true) {
+								// 	$string_error .= _l('commodity_group') . _l('not_yet_entered');
+								// 	$flag = 1;
+								// }
 
 
 								if (is_null($value_cell_description) == true) {
