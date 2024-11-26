@@ -594,7 +594,7 @@ class purchase extends AdminController
                         $item_text = pur_get_item_variatiom($request_detail['item_code']);
                     }
 
-                    $purchase_request_row_template .= $this->purchase_model->create_purchase_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['area'], $request_detail['unit_price'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency);
+                    $purchase_request_row_template .= $this->purchase_model->create_purchase_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['area'], $request_detail['image'], $request_detail['unit_price'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency, $request_detail);
                 }
             }
         }
@@ -7799,6 +7799,7 @@ class purchase extends AdminController
         $item_text = $this->input->post('item_text');
         $item_description = $this->input->post('item_description');
         $area = $this->input->post('area');
+        $image = $this->input->post('image');
         $unit_price = $this->input->post('unit_price');
         $quantity = $this->input->post('quantity');
         $unit_name = $this->input->post('unit_name');
@@ -7812,7 +7813,7 @@ class purchase extends AdminController
         $currency_rate = $this->input->post('currency_rate');
         $to_currency = $this->input->post('to_currency');
 
-        echo $this->purchase_model->create_purchase_request_row_template($name, $item_code, $item_text, $item_description, $area, $unit_price, $quantity, $unit_name, $unit_id, $into_money, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency);
+        echo $this->purchase_model->create_purchase_request_row_template($name, $item_code, $item_text, $item_description, $area, $image, $unit_price, $quantity, $unit_name, $unit_id, $into_money, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency);
     }
 
     /**

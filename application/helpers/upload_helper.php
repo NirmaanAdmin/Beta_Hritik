@@ -559,6 +559,77 @@ function handle_purchase_attachments_array($related, $id, $index_name = 'attachm
 }
 
 /**
+ * Purchase attachment upload array
+ * Multiple purchase item attachment can be upload if input type is array or dropzone plugin is used
+ * @param  mixed $related related
+ * @param  mixed $id id
+ * @param  string $index_name attachments index, in different forms different index name is used
+ * @return mixed
+ */
+function handle_purchase_item_attachment_array($related, $id, $item_path, $index_name, $key)
+{
+    if (!is_dir(get_upload_path_by_type('purchase'))) {
+        mkdir(get_upload_path_by_type('purchase'), 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('purchase') . $related)) {
+        mkdir(get_upload_path_by_type('purchase') . $related, 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('purchase') . $related . '/' . $id)) {
+        mkdir(get_upload_path_by_type('purchase') . $related . '/' . $id, 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('purchase') . $related . '/' . $id . '/'. $item_path)) {
+        mkdir(get_upload_path_by_type('purchase') . $related . '/' . $id . '/'. $item_path, 0755);
+    }
+    $uploaded_files = [];
+    $path           = get_upload_path_by_type('purchase') . $related . '/'. $id . '/'. $item_path . '/';
+    $CI             = &get_instance();
+
+    if (isset($_FILES[$index_name]['name'])
+        && ($_FILES[$index_name]['name'] != '' || is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)) {
+
+        // _file_attachments_index_fix($index_name);
+        // Get the temp file path
+        $tmpFilePath = $_FILES[$index_name]['tmp_name'][$key]['image'];
+
+        // Make sure we have a filepath
+        if (!empty($tmpFilePath) && $tmpFilePath != '') {
+            if (_perfex_upload_error($_FILES[$index_name]['error'][$key]['image'])
+                || !_upload_extension_allowed($_FILES[$index_name]['name'][$key]['image'])) {
+                return false;
+            }
+
+            _maybe_create_upload_path($path);
+            $filename    = unique_filename($path, $_FILES[$index_name]['name'][$key]['image']);
+            $newFilePath = $path . $filename;
+
+            // Upload the file into the temp dir
+            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                array_push($uploaded_files, [
+                    'item_id' => $item_path,
+                    'file_name' => $filename,
+                    'filetype'  => $_FILES[$index_name]['type'][$key]['image'],
+                ]);
+
+                if (is_image($newFilePath)) {
+                    // create_img_thumb($path, $filename);
+                }
+            }
+        }
+    }
+
+    if (count($uploaded_files) > 0) {
+        return $uploaded_files;
+    } else {
+        $other_attachments = list_files(get_upload_path_by_type('purchase') . $related . '/' . $id . '/'. $item_path);
+        if (count($other_attachments) == 0) {
+            delete_dir(get_upload_path_by_type('purchase') . $related . '/' . $id);
+        }
+    }
+
+    return false;
+}
+
+/**
  * Change order attachments upload array
  * Multiple changee attachments can be upload if input type is array or dropzone plugin is used
  * @param  mixed $related related
