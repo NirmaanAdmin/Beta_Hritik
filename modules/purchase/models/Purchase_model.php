@@ -2368,6 +2368,7 @@ class Purchase_model extends App_Model
         unset($data['item_name']);
         unset($data['description']);
         unset($data['area']);
+        unset($data['image']);
         unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
@@ -2543,6 +2544,16 @@ class Purchase_model extends App_Model
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                     $this->db->insert(db_prefix() . 'pur_order_detail', $dt_data);
+                    $last_insert_id = $this->db->insert_id();
+                    $iuploadedFiles = handle_purchase_item_attachment_array('pur_order', $insert_id, $last_insert_id, 'newitems', $key);
+                    if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                        foreach ($iuploadedFiles as $ifile) {
+                            $idata = array();
+                            $idata['image'] = $ifile['file_name'];
+                            $this->db->where('id', $ifile['item_id']);
+                            $this->db->update(db_prefix() . 'pur_order_detail', $idata);
+                        }
+                    }
                 }
             }
 
@@ -2587,6 +2598,7 @@ class Purchase_model extends App_Model
         unset($data['item_name']);
         unset($data['description']);
         unset($data['area']);
+        unset($data['image']);
         unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
@@ -2747,6 +2759,15 @@ class Purchase_model extends App_Model
                         $this->get_items_by_id($rqd['item_code'])->description,
                     ]));
                 }
+                $iuploadedFiles = handle_purchase_item_attachment_array('pur_order', $id, $new_quote_insert_id, 'newitems', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['image'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'pur_order_detail', $idata);
+                    }
+                }
             }
         }
 
@@ -2791,6 +2812,15 @@ class Purchase_model extends App_Model
                 $this->db->update(db_prefix() . 'pur_order_detail', $dt_data);
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
+                }
+                $iuploadedFiles = handle_purchase_item_attachment_array('pur_order', $id, $rqd['id'], 'items', $_key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['image'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'pur_order_detail', $idata);
+                    }
                 }
             }
         }
@@ -4753,8 +4783,9 @@ class Purchase_model extends App_Model
         <thead>
           <tr>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 20%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 11%">' . _l('unit_price') . '</th>
             
@@ -4774,10 +4805,16 @@ class Purchase_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = pur_get_unit_name($row['unit_id']);
+            $full_item_image = '';
+            if(!empty($row['image'])) {
+                $item_base_url = base_url('uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image']);
+                $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+            }
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="width: 20%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 10%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
+            <td align="left" style="width: 10%">' . $full_item_image . '</td>
             <td align="right" style="width: 10%">' . $row['quantity']  .' ' .$unit_name .'</td>
             <td align="right" style="width: 11%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
             
@@ -10958,7 +10995,7 @@ class Purchase_model extends App_Model
      *
      * @return     string      
      */
-    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array())
     {
 
         $this->load->model('invoice_items_model');
@@ -10968,6 +11005,7 @@ class Purchase_model extends App_Model
         $name_item_name = 'item_name';
         $name_item_description = 'description';
         $name_area = 'area';
+        $name_image = 'image';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
         $name_quantity = 'quantity';
@@ -11012,6 +11050,7 @@ class Purchase_model extends App_Model
             $name_item_name = $name . '[item_name]';
             $name_item_description = $name . '[item_description]';
             $name_area = $name . '[area]';
+            $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = '[unit_name]';
             $name_quantity = $name . '[quantity]';
@@ -11067,11 +11106,18 @@ class Purchase_model extends App_Model
             $amount = app_format_number($amount);
         }
 
+        $full_item_image = '';
+        if(!empty($image)) {
+            $item_base_url = base_url('uploads/purchase/pur_order/' . $order_detail['pur_order'] . '/' . $order_detail['id'] . '/' . $order_detail['image']);
+            $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
+        }
+
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
         $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
+        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
 
         $units_list = $this->get_units();
 

@@ -450,6 +450,7 @@
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
                                     <th align="left" width="100"><?php echo _l('decription'); ?></th>
                                     <th align="left" width="50"><?php echo _l('area'); ?></th>
+                                    <th align="left" width="50"><?php echo _l('Image'); ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
                                     <th align="right"><?php echo _l('purchase_unit_price'); ?></th>
                                     <th align="right"><?php echo _l('into_money'); ?></th>
@@ -482,6 +483,13 @@
                                     </div></td>
                                     <td align="left" ><div style="width: 300px"><?php echo $es['description']; ?></div></td>
                                     <td align="left" ><div style="width: 120px"><?php echo get_area_name_by_id($es['area']); ?></div></td>
+                                    <?php 
+                                    $full_item_image = '';
+                                    if(!empty($es['image'])) {
+                                        $item_base_url = base_url('uploads/purchase/pur_order/' . $es['pur_order'] . '/' . $es['id'] . '/' . $es['image']);
+                                        $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $es['image'] . '" >';
+                                    } ?>
+                                    <td align="left" ><div style="width: 120px"><?php echo $full_item_image; ?></div></td>
                                     <td align="right"  width="12%"><?php
                                     $unit_name = pur_get_unit_name($es['unit_id']);
                                      echo pur_html_entity_decode($es['quantity']) . ' '. $unit_name; ?></td>

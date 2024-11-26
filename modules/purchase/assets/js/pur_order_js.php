@@ -536,11 +536,19 @@ function pur_add_item_to_table(data, itemid) {
   var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
   lastAddedItemKey = item_key;
   $("body").append('<div class="dt-loader"></div>');
-  pur_get_item_row_template('newitems[' + item_key + ']',data.item_name, data.description, data.area, data.quantity, data.unit_name, data.unit_price, data.taxname, data.item_code, data.unit_id, data.tax_rate, data.discount, itemid, currency_rate, to_currency).done(function(output){
+  pur_get_item_row_template('newitems[' + item_key + ']',data.item_name, data.description, data.area, data.image, data.quantity, data.unit_name, data.unit_price, data.taxname, data.item_code, data.unit_id, data.tax_rate, data.discount, itemid, currency_rate, to_currency).done(function(output){
     table_row += output;
 
     $('.invoice-item table.invoice-items-table.items tbody').append(table_row);
-
+    var sourceInput = $("input[name='image']")[0];
+    var targetInput = $("input[name='newitems["+lastAddedItemKey+"][image]']")[0];
+    if (sourceInput.files.length > 0) {
+        var dataTransfer = new DataTransfer();
+        for (var i = 0; i < sourceInput.files.length; i++) {
+            dataTransfer.items.add(sourceInput.files[i]);
+        }
+        targetInput.files = dataTransfer.files;
+    }
     setTimeout(function () {
       pur_calculate_total();
     }, 15);
@@ -611,7 +619,7 @@ function pur_delete_item(row, itemid,parent) {
   }
 }
 
-function pur_get_item_row_template(name, item_name, description, area, quantity, unit_name, unit_price, taxname,  item_code, unit_id, tax_rate, discount, item_key, currency_rate, to_currency)  {
+function pur_get_item_row_template(name, item_name, description, area, image, quantity, unit_name, unit_price, taxname,  item_code, unit_id, tax_rate, discount, item_key, currency_rate, to_currency)  {
   "use strict";
 
   jQuery.ajaxSetup({
@@ -623,6 +631,7 @@ function pur_get_item_row_template(name, item_name, description, area, quantity,
     item_name : item_name,
     item_description : description,
     area : area,
+    image : image,
     quantity : quantity,
     unit_name : unit_name,
     unit_price : unit_price,
