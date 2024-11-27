@@ -145,6 +145,7 @@ $lang['stock_export_info']  = 'Inventory delivery voucher details';
 $lang['receiver']  = 'Receiver';
 $lang['stock_delivery_manage']  = 'Manage inventory deliveries';
 $lang['goods_delivery_code']  = 'Inventory delivery voucher code';
+$lang['goods_delivery_code_new']  = 'Inventory Issue voucher code';
 $lang['customer_code']  = 'Customer code';
 $lang['customer_name']  = 'Customer name';
 $lang['reason_for_export']  = 'Reason for export';
@@ -568,12 +569,17 @@ $lang['packing_date']  = 'Packaging Date';
 $lang['wh_change_delivery_status_successfully']  = 'Change delivery status successfully';
 $lang['wh_ready_for_packing']  = 'Ready For Packing';
 $lang['wh_ready_to_deliver']  = 'Ready To Deliver';
+$lang['wh_ready_to_deliver_new']  = 'Ready To Issue';
 $lang['wh_delivery_in_progress']  = 'Delivery In Progress';
+$lang['wh_delivery_in_progress_new']  = 'Issue In Progress';
 $lang['wh_delivered']  = 'Delivered';
+$lang['wh_delivered_new']  = 'Issue';
 $lang['wh_received']  = 'Received';
 $lang['wh_returned']  = 'Returned';
 $lang['wh_not_delivered']  = 'Not Delivered';
+$lang['wh_not_delivered_new']  = 'Not Issue';
 $lang['delivery_status']  = 'Delivery status';
+$lang['delivery_status_new']  = 'Issue status';
 $lang['can_be_inventory']  = 'Can be Inventory';
 $lang['can_be_loyalty']  = 'Can be Loyalty';
 $lang['can_be_omni_sale']  = 'Can be Omni Sale';
@@ -716,5 +722,6 @@ $lang['import_variation_product_description7']   = 'How to generate a list of pr
 $lang['import_variation_product_description8']   = 'If your excel file has many lines of data, we recommend you split the file into smaller files (maybe <200 lines per file) to ensure the file is successfully imported into the system.';
 $lang['wh_barcode_filter']   = 'Filter by barcode';
 $lang['wh_unit_name']   = 'Unit Name';
+
 
 

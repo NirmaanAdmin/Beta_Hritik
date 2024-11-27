@@ -43,7 +43,7 @@
                     <br/>
                     <?php render_datatable(array(
                         _l('id'),
-                        _l('goods_delivery_code'),
+                        _l('goods_delivery_code_new'),
                         _l('customer_name'),
                         _l('day_vouchers'),
                         _l('invoices'),
@@ -51,7 +51,7 @@
                         _l('address'),
                         _l('staff_id'),
                         _l('status_label'),
-                        _l('delivery_status'),
+                        _l('delivery_status_new'),
                         ),'table_manage_delivery',['delivery_sm' => 'delivery_sm']); ?>
 						
 					</div>

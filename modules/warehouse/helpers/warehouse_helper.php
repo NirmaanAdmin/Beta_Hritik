@@ -1596,31 +1596,25 @@ function delivery_list_status($status='')
 {
 
     $statuses = [
-        [
-            'id'             => 'ready_for_packing',
-            'color'          => '#28b8daed',
-            'name'           => _l('wh_ready_for_packing'),
-            'order'          => 1,
-            'filter_default' => true,
-        ],
+        
         [
             'id'             => 'ready_to_deliver',
             'color'          => '#03A9F4',
-            'name'           => _l('wh_ready_to_deliver'),
+            'name'           => _l('wh_ready_to_deliver_new'),
             'order'          => 2,
             'filter_default' => true,
         ],
         [
             'id'             => 'delivery_in_progress',
             'color'          => '#2196f3',
-            'name'           => _l('wh_delivery_in_progress'),
+            'name'           => _l('wh_delivery_in_progress_new'),
             'order'          => 3,
             'filter_default' => true,
         ],
         [
             'id'             => 'delivered',
             'color'          => '#3db8da',
-            'name'           => _l('wh_delivered'),
+            'name'           => _l('wh_delivered_new'),
             'order'          => 4,
             'filter_default' => true,
         ],
@@ -1641,7 +1635,7 @@ function delivery_list_status($status='')
         [
             'id'             => 'not_delivered',
             'color'          => '#ffa500',
-            'name'           => _l('wh_not_delivered'),
+            'name'           => _l('wh_not_delivered_new'),
             'order'          => 7,
             'filter_default' => false,
         ],
@@ -2073,4 +2067,31 @@ function handle_shipment_add_attachment($id)
         }
     }
 
+}
+function get_vendor_list($name_vendor, $vendor_id){
+    
+    $CI = & get_instance();
+    $CI->load->model('purchase/purchase_model');
+    $get_vendor = $CI->purchase_model->get_vendor();
+    
+    $selected = '';
+    foreach ($get_vendor as $value) {
+        if ($vendor_id == $value['userid']) {
+          $selected = $value['userid'];
+        }
+    }
+    return render_select($name_vendor, $get_vendor, array('userid', 'company'), '', $selected);
+}
+
+function get_vendor_name($id)
+{
+    $CI = & get_instance();
+    $CI->db->select('company');
+    $CI->db->from(db_prefix() . 'pur_vendor');
+    $CI->db->where('userid', $id);
+    $row = $CI->db->get()->row();
+    if ($row) {
+        return $row->company;
+    }
+    return '';
 }

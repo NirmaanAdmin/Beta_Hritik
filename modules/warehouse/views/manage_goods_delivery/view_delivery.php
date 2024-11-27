@@ -178,6 +178,7 @@
                                      <th align="right" colspan="1"><?php echo _l('subtotal') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('subtotal_after_tax') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('discount').'(%)' ?></th>
+                                     <th align="right" colspan="1"><?php echo _l('wh_vendor') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('lot_number').'/'._l('quantity') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('total_money') ?></th>
@@ -264,7 +265,9 @@
                              if(strlen($commodity_name) == 0){
                               $commodity_name = wh_get_item_variatiom($delivery_value['commodity_code']);
                             }
-
+                         
+                            $vendor_name = get_vendor_name($delivery_value['vendor_id']);
+                            
                             ?>
           
                               <tr>
@@ -278,6 +281,7 @@
                                   <td class="text-right"><?php echo app_format_money((float)$item_subtotal,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$total_money,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$discount,'') ?></td>
+                                  <td class="text-right"><?php echo $vendor_name; ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$discount_money,'') ?></td>
                                   <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$total_after_discount,'') ?></td>

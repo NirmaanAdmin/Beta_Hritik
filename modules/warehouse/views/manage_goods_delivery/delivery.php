@@ -319,6 +319,7 @@
                     <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                     <th width="10%" align="right"><?php echo _l('subtotal'); ?></th>
                     <th width="7%" align="right"><?php echo _l('discount'); ?></th>
+                    <th width="7%" align="right"><?php echo _l('wh_vendor'); ?></th>
                     <th width="10%" align="right"><?php echo _l('discount(money)'); ?></th>
                     <th width="10%" align="right"><?php echo _l('total_money'); ?></th>
 

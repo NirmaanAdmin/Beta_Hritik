@@ -116,7 +116,6 @@ function wh_add_item_to_preview(id) {
 
   requestGetJSON('warehouse/get_item_by_id/' + id +'/'+true).done(function (response) {
     clear_item_preview_values();
-
     $('.main input[name="commodity_code"]').val(response.itemid);
     $('.main textarea[name="commodity_name"]').val(response.code_description);
     $('.main input[name="unit_price"]').val(response.rate);
@@ -172,7 +171,7 @@ function after_wh_add_item_to_table(data, itemid, formdata) {
   "use strict";
 
   data = typeof (data) == 'undefined' || data == 'undefined' ? wh_get_item_preview_values() : data;
-
+ 
   if ((data.warehouse_id == "" ||  data.available_quantity == "" || data.quantities == "" || data.commodity_code == "" ) && (data.without_checking_warehouse == 0 || data.without_checking_warehouse == '0' ) ) {
     if(data.warehouse_id == ""){
       alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
@@ -193,8 +192,9 @@ function after_wh_add_item_to_table(data, itemid, formdata) {
   var table_row = '';
   var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
   lastAddedItemKey = item_key;
+ 
   $("body").append('<div class="dt-loader"></div>');
-  wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id, data.available_quantity, data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number, data.expiry_date, data.commodity_code, data.unit_id, data.tax_rate, data.discount, data.note, data.guarantee_period, itemid, item_key, formdata, data.without_checking_warehouse).done(function(output){
+  wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id, data.available_quantity, data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number, data.expiry_date, data.commodity_code, data.unit_id, data.tax_rate, data.discount,data.vendor_id, data.note, data.guarantee_period, itemid, item_key, formdata, data.without_checking_warehouse).done(function(output){
     table_row += output;
 
     lastAddedItemKey = parseInt(lastAddedItemKey) + parseInt(data.quantities);
@@ -233,6 +233,7 @@ function wh_get_item_preview_values() {
   response.unit_id = $('.invoice-item .main input[name="unit_id"]').val();
   response.tax_rate = $('.invoice-item .main input[name="tax_rate"]').val();
   response.discount = $('.invoice-item .main input[name="discount"]').val();
+  response.vendor_id = $('.invoice-item .main select[name="vendor_id"]').val();
   response.note = $('.invoice-item .main input[name="note"]').val();
   response.guarantee_period = $('.invoice-item .main input[name="guarantee_period"]').val();
   response.without_checking_warehouse = $('.invoice-item .main input[name="without_checking_warehouse"]').val();
@@ -249,7 +250,7 @@ function wh_clear_item_preview_values(parent) {
   previewArea.find('select').val('').selectpicker('refresh');
 }
 
-function wh_get_item_row_template(name, commodity_name, warehouse_id, available_quantity, quantities, unit_name, unit_price, taxname, lot_number, expiry_date, commodity_code, unit_id, tax_rate, discount, note, guarantee_period, item_key, item_index, formdata, without_checking_warehouse)  {
+function wh_get_item_row_template(name, commodity_name, warehouse_id, available_quantity, quantities, unit_name, unit_price, taxname, lot_number, expiry_date, commodity_code, unit_id, tax_rate, discount,vendor_id, note, guarantee_period, item_key, item_index, formdata, without_checking_warehouse)  {
   "use strict";
 
   jQuery.ajaxSetup({
@@ -269,6 +270,7 @@ function wh_get_item_row_template(name, commodity_name, warehouse_id, available_
     expiry_date : expiry_date,
     commodity_code : commodity_code,
     unit_id : unit_id,
+    vendor_id : vendor_id,
     tax_rate : tax_rate,
     discount : discount,
     note : note,
@@ -657,7 +659,7 @@ function invoice_change(){
   function wh_add_item_to_table(data, itemid) {
     "use strict";
     data = typeof (data) == 'undefined' || data == 'undefined' ? wh_get_item_preview_values() : data;
-
+    
     if ((data.warehouse_id == "" ||  data.available_quantity == "" || data.quantities == "" || data.commodity_code == "" ) && (data.without_checking_warehouse == 0 || data.without_checking_warehouse == '0' ) ) {
       if(data.warehouse_id == ""){
         alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
