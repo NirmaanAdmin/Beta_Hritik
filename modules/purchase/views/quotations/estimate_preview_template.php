@@ -287,6 +287,7 @@
                                     <th align="center">#</th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
                                     <th align="right"><?php echo _l('area') ?></th>
+                                    <th align="right"><?php echo _l('Image') ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
                                     <th align="right"><?php echo _l('purchase_unit_price'); ?></th>
                                     <th align="right"><?php echo _l('into_money'); ?></th>
@@ -316,6 +317,13 @@
                                     }
                                     ?></strong></td>
                                     <td align="right"  width="30%"><?php echo get_area_name_by_id($es['area']); ?></td>
+                                    <?php 
+                                    $full_item_image = '';
+                                    if(!empty($es['image'])) {
+                                        $item_base_url = base_url('uploads/purchase/pur_quotation/' . $es['pur_estimate'] . '/' . $es['id'] . '/' . $es['image']);
+                                        $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $es['image'] . '" >';
+                                    } ?>
+                                    <td align="right" width="25%"><?php echo $full_item_image; ?></td>
                                     <td align="right"  width="12%"><?php echo pur_html_entity_decode($es['quantity']); ?></td>
                                     <td align="right"><?php echo app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
                                     <td align="right"><?php echo app_format_money($es['into_money'],$base_currency->symbol); ?></td>
