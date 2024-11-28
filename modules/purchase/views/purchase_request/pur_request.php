@@ -309,16 +309,16 @@
                     <thead>
                       <tr>
                         <th></th>
-                        <th width="auto" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
-                        <th width="auto" align="right"><?php echo _l('description'); ?></th>
-                        <th width="15%" align="right"><?php echo _l('area'); ?></th>
-                        <th width="40%" align="right"><?php echo _l('Image'); ?></th>
-                        <th width="auto" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
-                        <th width="auto" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
-                        <th width="auto" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
-                        <th width="auto" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
-                        <th width="auto" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
-                        <th width="auto" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                        <th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
+                        <th align="right"><?php echo _l('description'); ?></th>
+                        <th align="right"><?php echo _l('area'); ?></th>
+                        <th align="right"><?php echo _l('Image'); ?></th>
+                        <th align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                        <th align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
+                        <th align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                        <th align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
+                        <th align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
+                        <th align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $pur_request_currency->name . ')'; ?></span></th>
                         <th align="right"><i class="fa fa-cog"></i></th>
                       </tr>
                     </thead>

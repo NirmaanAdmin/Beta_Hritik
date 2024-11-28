@@ -544,19 +544,19 @@
                   <thead>
                     <tr>
                       <th></th>
-                      <th width="auto" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
-                      <th width="auto" align="left"><?php echo _l('item_description'); ?></th>
-                      <th width="15%" align="right"><?php echo _l('area'); ?></th>
-                      <th width="40%" align="right"><?php echo _l('Image'); ?></th>
-                      <th width="auto" align="right" class="qty"><?php echo _l('quantity'); ?></th>
-                      <th width="auto" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                      <th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
+                      <th align="left"><?php echo _l('item_description'); ?></th>
+                      <th align="right"><?php echo _l('area'); ?></th>
+                      <th align="right"><?php echo _l('Image'); ?></th>
+                      <th align="right" class="qty"><?php echo _l('quantity'); ?></th>
+                      <th align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
 
-                      <th width="auto" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                      <th width="auto" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
-                      <th width="auto" align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
-                      <th width="auto" align="right"><?php echo _l('discount') . '(%)'; ?></th>
-                      <th width="auto" align="right"><?php echo _l('discount'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
-                      <th width="auto" align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                      <th align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                      <th align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                      <th align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                      <th align="right"><?php echo _l('discount') . '(%)'; ?></th>
+                      <th align="right"><?php echo _l('discount'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                      <th align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
                       <th align="center"><i class="fa fa-cog"></i></th>
                     </tr>
                   </thead>

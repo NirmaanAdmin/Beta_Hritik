@@ -10488,8 +10488,8 @@ class Purchase_model extends App_Model
         }
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
-        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
+        $row .= '<td class="area"><div style="width: 250px;">'.get_area_list($name_area, $area).'</div></td>';
+        $row .= '<td class=""><div style="width: 170px;"><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</div></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10961,8 +10961,8 @@ class Purchase_model extends App_Model
         }
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
-        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
-        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
+        $row .= '<td class="area"><div style="width: 250px;">'.get_area_list($name_area, $area).'</div></td>';
+        $row .= '<td class=""><div style="width: 170px;"><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</div></td>';
 
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
@@ -11161,16 +11161,16 @@ class Purchase_model extends App_Model
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
-        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
+        $row .= '<td class="area"><div style="width: 250px;">'.get_area_list($name_area, $area).'</div></td>';
+        $row .= '<td class=""><div style="width: 170px;"><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</div></td>';
 
         $units_list = $this->get_units();
 
-        $row .= '<td class="quantities">' .
+        $row .= '<td class="quantities"><div style="width: 160px;">' .
         render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
         // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
         render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
-        '</td>';
+        '</div></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
 
         if ($unit_price != '') {
