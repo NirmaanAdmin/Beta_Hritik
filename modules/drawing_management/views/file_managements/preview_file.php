@@ -25,6 +25,14 @@ if(is_image($path)){ ?>
    </video>
 <?php } else if(is_markdown_file($path) && $previewMarkdown = markdown_parse_preview($path)) {
    echo drawing_htmldecode($previewMarkdown);
-} else {
+} else if(strpos($file->name,'.dwg') !== false && empty($file->external)) { 
+    $rand = substr(uniqid('', true), -8);
+    ?>
+   <iframe src="https://beta.sharecad.org/cadframe/load?url=<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name); ?>?v=<?php echo $rand; ?>" style="width: 100%; height: 600px; border: none;"></iframe>
+<?php } else if(strpos($file->name,'.dxf') !== false && empty($file->external)) { 
+    $rand = substr(uniqid('', true), -8);
+    ?>
+   <iframe src="https://beta.sharecad.org/cadframe/load?url=<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name); ?>?v=<?php echo $rand; ?>" style="width: 100%; height: 600px; border: none;"></iframe>
+<?php } else {
    echo '<p class="text-muted">'._l('no_preview_available_for_file').'</p>';
 } ?>

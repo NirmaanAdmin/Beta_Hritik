@@ -422,6 +422,18 @@
 				</a>
 			<?php } ?>
 
+			<?php if(!(strpos($item->name, '.dwg') === false)){ ?>
+				<a href="<?php echo admin_url('drawing_management/preview?id='.$item->id) ?>" target="_blank" class="btn btn-default w100 mtop5 mbot5">
+					<i class="fa fa-eye"></i> View DWG
+				</a>
+			<?php } ?>
+
+			<?php if(!(strpos($item->name, '.dxf') === false)){ ?>
+				<a href="<?php echo admin_url('drawing_management/preview?id='.$item->id) ?>" target="_blank" class="btn btn-default w100 mtop5 mbot5">
+					<i class="fa fa-eye"></i> View DXF
+				</a>
+			<?php } ?>
+
 			<?php if(!(strpos($item->filetype, 'image') === false)){ ?>
 				<a href="<?php echo admin_url('drawing_management/preview?id='.$item->id) ?>" target="_blank" class="btn btn-default w100 mtop5 mbot5">
 					<i class="fa fa-eye"></i> <?php echo _l('dmg_view_image'); ?>
