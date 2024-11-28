@@ -523,6 +523,33 @@ function purorder_left_to_pay($id)
 
     return ($invoice_total - $totalPayments);
 }
+function woorder_left_to_pay($id)
+{
+    $CI = & get_instance();
+
+    
+        $CI->db->select('total')
+        ->where('id', $id);
+        $invoice_total = $CI->db->get(db_prefix() . 'wo_orders')->row()->total;
+
+
+    
+    $CI->load->model('purchase_model');
+    
+    $payments = $CI->purchase_model->get_payment_work_order($id);
+
+    $totalPayments = 0;
+
+    
+
+    foreach ($payments as $payment) {
+        
+        $totalPayments += $payment['amount'];
+        
+    }
+
+    return ($invoice_total - $totalPayments);
+}
 
 /**
  * Gets the payment mode by identifier.
@@ -1160,6 +1187,22 @@ function check_pur_order_restrictions($id, $hash)
     }
     
 }
+function check_wo_order_restrictions($id, $hash)
+{
+    $CI = & get_instance();
+    $CI->load->model('purchase/purchase_model');
+
+    if (!$hash || !$id) {
+        show_404();
+    }
+
+
+    $wo_order = $CI->purchase_model->get_wo_order($id);
+    if (!$wo_order || ($wo_order->hash != $hash)) {
+        show_404();
+    }
+    
+}
 
 /**
  * { check purchase request restrictions }
@@ -1456,9 +1499,9 @@ function purinvoice_left_to_pay($id)
     $CI = & get_instance();
 
     
-    $CI->db->select('total')
+    $CI->db->select('final_certified_amount')
         ->where('id', $id);
-        $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->total;
+        $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->final_certified_amount;
 
 
     $CI->db->where('pur_invoice',$id);
@@ -3016,7 +3059,9 @@ function get_vendor_language(){
 function pur_html_entity_decode($str){
     return html_entity_decode($str ?? '');
 }
-
+function wo_html_entity_decode($str){
+    return html_entity_decode($str ?? '');
+}
 /**
  * Render date picker input for admin area
  * @param  [type] $name             input name
@@ -3149,7 +3194,42 @@ function format_po_ship_to_info($pur_order) {
 
     return $html;
 }
+function format_wo_ship_to_info($pur_order) {
+    $html = '';
+    $CI = & get_instance();
 
+    if(!empty($pur_order->shipping_address) || !empty($pur_order->shipping_city) || !empty($pur_order->shipping_state) || !empty($pur_order->shipping_zip)) {
+        $html .= '<b>'._l('ship_to').'</b>';
+        if(!empty($pur_order->shipping_address)) {
+            $html .= '<br />'.$pur_order->shipping_address;
+        }
+        if(!empty($pur_order->shipping_city) || !empty($pur_order->shipping_state)) {
+            $html .= '<br />';
+            if(!empty($pur_order->shipping_city)) {
+                $html .= $pur_order->shipping_city." ";
+            }
+            if(!empty($pur_order->shipping_state)) {
+                $html .= $pur_order->shipping_state;
+            }
+        }
+        if(!empty($pur_order->shipping_country) || !empty($pur_order->shipping_zip)) {
+            $html .= '<br />';
+            if(!empty($pur_order->shipping_country)) {
+                $shipping_country = $CI->db->select('short_name')
+                ->where('country_id', $pur_order->shipping_country)
+                ->from(db_prefix() . 'countries')
+                ->get()
+                ->row();
+                $html .= $shipping_country->short_name." ";
+            }
+            if(!empty($pur_order->shipping_zip)) {
+                $html .= $pur_order->shipping_zip;
+            }
+        }
+    }
+
+    return $html;
+}
 function format_pdf_vendor_info($vendor_id) {
     $html = '';
     $CI = & get_instance();
@@ -3239,6 +3319,7 @@ function get_area_list($name_area, $area){
     return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected);
 }
 
+
 function get_area_name_by_id($id)
 {
     $CI = & get_instance();
@@ -3250,4 +3331,26 @@ function get_area_name_by_id($id)
         return $row->area_name;
     }
     return '';
+}
+function get_wo_option($name)
+{
+    $CI = & get_instance();
+    $options = [];
+    $val  = '';
+    $name = trim($name);
+    
+
+    if (!isset($options[$name])) {
+        // is not auto loaded
+        $CI->db->select('option_val');
+        $CI->db->where('option_name', $name);
+        $row = $CI->db->get(db_prefix() . 'wo_option')->row();
+        if ($row) {
+            $val = $row->option_val;
+        }
+    } else {
+        $val = $options[$name];
+    }
+
+    return $val;
 }
