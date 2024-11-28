@@ -172,7 +172,7 @@
 								</div> -->
 								<div class="col-md-6 pad_left_0" style="clear: both;">
 									<div class="form-group">
-										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount_without_tax'); ?> ( ₹ )</label>
+										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount_without_tax_new'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="vendor_submitted_amount_without_tax" name="vendor_submitted_amount_without_tax" value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount_without_tax : '') ?>">
 									</div>
 								</div>
