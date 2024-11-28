@@ -2,6 +2,15 @@
 
 <?php init_head(); ?>
 
+<style type="text/css">
+  .table-responsive {
+    overflow-x: visible !important;
+    scrollbar-width: none !important;
+  }
+  .area .dropdown-menu .open {
+    width: max-content !important;
+  }
+</style>
 <div id="wrapper">
   <div class="content">
     <?php echo form_open_multipart($this->uri->uri_string(), array('id' => 'add_edit_pur_request-form', 'class' => '_transaction_form')); ?>

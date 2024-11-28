@@ -1,4 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style type="text/css">
+  .table-responsive {
+    overflow-x: visible !important;
+    scrollbar-width: none !important;
+  }
+  .area .dropdown-menu .open {
+    width: max-content !important;
+  }
+</style>
 <div class="panel_s accounting-template estimate">
   <div class="panel-body">
 
@@ -379,8 +388,6 @@
             <th align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
             <th align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
             <th align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
-            <th align="right"><?php echo _l('discount') . '(%)'; ?></th>
-            <th align="right"><?php echo _l('discount(money)'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
             <th align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
             <th align="center"><i class="fa fa-cog"></i></th>
           </tr>
