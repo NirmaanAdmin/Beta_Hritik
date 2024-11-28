@@ -10519,9 +10519,12 @@ class Purchase_model extends App_Model
 
         $row .=  '</td>';
 
+        $units_list = $this->get_units();
+
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
-            render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
             '</td>';
 
         $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
