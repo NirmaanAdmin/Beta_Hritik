@@ -210,8 +210,38 @@
 	         				<div class="col-md-12 pad_left_0 pad_right_0">
 	         					<hr class="mtop5 mbot5">
 	         				</div>
-	         				<div class="col-md-6 pad_left_0">
+	         				<!-- <div class="col-md-6 pad_left_0  border-right">
 	         					<p><?php echo _l('invoice_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->total,$base_currency->symbol); ?></span></p>
+	         				</div> -->
+							 <div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('amount_without_tax').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->vendor_submitted_amount_without_tax,$base_currency->symbol); ?></span></p>
+	         				</div>
+							<div class="col-md-6 pad_right_0 ">
+	         					<p><?php echo _l('vendor_submitted_tax_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->vendor_submitted_tax_amount,$base_currency->symbol); ?></span></p>
+	         				</div>
+							 <div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							<div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('vendor_submitted_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->vendor_submitted_amount,$base_currency->symbol); ?></span></p>
+	         				</div>
+							<div class="col-md-6 pad_right_0 ">
+	         					<p><?php echo _l('final_certified_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->final_certified_amount,$base_currency->symbol); ?></span></p>
+	         				</div>
+							 <div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							<div class="col-md-6 pad_left_0 border-right">
+							 <p><?php echo _l('bill_accept_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->bill_accept_date); ?></span></p>
+	         				</div>
+							<div class="col-md-6 pad_right_0 ">
+							<p><?php echo _l('certified_bill_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->certified_bill_date); ?></span></p>
+	         				</div>
+							 <div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							 <div class="col-md-6 pad_left_0 border-right">
+							 <p><?php echo _l('payment_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date); ?></span></p>
 	         				</div>
 
 	         			</div>
@@ -249,7 +279,7 @@
 
 	         			</div>
 
-	         			<div class="col-md-12 pad_left_0 pad_right_0">
+	         			<!-- <div class="col-md-12 pad_left_0 pad_right_0">
 		         			<div class="table-responsive">
 	                           <table class="table items items-preview estimate-items-preview" data-type="estimate">
 	                              <thead>
@@ -304,9 +334,9 @@
 	                              </tbody>
 	                           </table>
 	                        </div>
-	                    </div>
+	                    </div> -->
 
-                        <div class="col-md-5 col-md-offset-7 pad_left_0 pad_right_0">
+                        <!-- <div class="col-md-5 col-md-offset-7 pad_left_0 pad_right_0">
 	                        <table class="table text-right">
 	                           <tbody>
 	                              <tr id="inv_subtotal">
@@ -354,9 +384,14 @@
 	                              </tr>
 	                           </tbody>
 	                        </table>
-	                     </div>
+	                    </div> -->
 
-
+						<div class="col-md-12 pad_left_0 pad_right_0 " style="margin-top: 10px;">
+         					<p><span class="bold"><?php echo _l('bank_transcation_detail').': '; ?></span><span><?php echo pur_html_entity_decode($pur_invoice->bank_transcation_detail); ?></span></p>
+         				</div>		
+						 <div class="col-md-12 pad_left_0 pad_right_0">
+         					<hr class="mtop5 mbot5">
+         				</div>	
 	         			<div class="col-md-12 pad_left_0 pad_right_0 ">
          					<p><span class="bold"><?php echo _l('adminnote').': '; ?></span><span><?php echo pur_html_entity_decode($pur_invoice->adminnote); ?></span></p>
          				</div>

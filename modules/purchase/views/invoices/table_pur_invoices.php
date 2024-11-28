@@ -15,10 +15,10 @@ $aColumns = [
     'contract',
     db_prefix() . 'pur_invoices.pur_order',
     'invoice_date',
-    'is_recurring_from',
-    'subtotal',
-    'tax',
-    'total',
+    'vendor_submitted_amount_without_tax',
+    'vendor_submitted_tax_amount',
+    'vendor_submitted_amount',
+    'final_certified_amount',
     'payment_request_status',
     'payment_status',
     'transactionid',
@@ -180,19 +180,21 @@ foreach ($rResult as $aRow) {
             $_data = render_tags($aRow['tags']);
         } elseif ($aColumns[$i] == 'invoice_date') {
             $_data = _d($aRow['invoice_date']);
-        } elseif ($aColumns[$i] == 'subtotal') {
-            $_data = app_format_money($aRow['subtotal'], $base_currency->symbol);
-        } elseif ($aColumns[$i] == 'tax') {
-            $tax = $this->ci->purchase_model->get_html_tax_pur_invoice($aRow['id']);
-            $total_tax = 0;
-            foreach ($tax['taxes_val'] as $tax_val) {
-                $total_tax += $tax_val;
-            }
+        } elseif ($aColumns[$i] == 'vendor_submitted_amount_without_tax') {
+            $_data = app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol);
+        } elseif ($aColumns[$i] == 'vendor_submitted_tax_amount') {
+            // $tax = $this->ci->purchase_model->get_html_tax_pur_invoice($aRow['id']);
+            // $total_tax = 0;
+            // foreach ($tax['taxes_val'] as $tax_val) {
+            //     $total_tax += $tax_val;
+            // }
 
-            $_data = app_format_money($total_tax, $base_currency->symbol);
-        } elseif ($aColumns[$i] == 'total') {
-            $_data = app_format_money($aRow['total'], $base_currency->symbol);
-        } elseif ($aColumns[$i] == 'payment_status') {
+            $_data = app_format_money($aRow['vendor_submitted_tax_amount'], $base_currency->symbol);
+        } elseif ($aColumns[$i] == 'final_certified_amount') {
+            $_data = app_format_money($aRow['final_certified_amount'], $base_currency->symbol);
+        } elseif ($aColumns[$i] == 'vendor_submitted_amount') {
+            $_data = app_format_money($aRow['vendor_submitted_amount'], $base_currency->symbol);
+        }elseif ($aColumns[$i] == 'payment_status') {
             // $class = ''; 
             // if($aRow['payment_status'] == 'unpaid'){
             //     $class = 'danger';
@@ -284,9 +286,7 @@ foreach ($rResult as $aRow) {
             $_data = get_payment_request_status_by_inv($aRow['id']);
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.pur_order') {
             $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
-        } elseif ($aColumns[$i] == 'is_recurring_from') {
-            $_data = ' <a href="' . admin_url('purchase/purchase_invoice/' . $aRow['is_recurring_from']) . '" >' . get_pur_invoice_number($aRow['is_recurring_from']) . '</a>';
-        } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
+        }  elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" >' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {

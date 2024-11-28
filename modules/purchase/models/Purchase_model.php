@@ -6428,7 +6428,15 @@ class Purchase_model extends App_Model
         if ($data['duedate'] != '') {
             $data['duedate'] = to_sql_date($data['duedate']);
         }
-
+        if ($data['bill_accept_date'] != '') {
+            $data['bill_accept_date'] = to_sql_date($data['bill_accept_date']);
+        }
+        if ($data['certified_bill_date'] != '') {
+            $data['certified_bill_date'] = to_sql_date($data['certified_bill_date']);
+        }
+        if ($data['payment_date'] != '') {
+            $data['payment_date'] = to_sql_date($data['payment_date']);
+        }
         $data['transaction_date'] = to_sql_date($data['transaction_date']);
 
         if (isset($data['order_discount'])) {
@@ -6615,7 +6623,15 @@ class Purchase_model extends App_Model
         if ($data['duedate'] != '') {
             $data['duedate'] = to_sql_date($data['duedate']);
         }
-
+        if ($data['bill_accept_date'] != '') {
+            $data['bill_accept_date'] = to_sql_date($data['bill_accept_date']);
+        }
+        if ($data['certified_bill_date'] != '') {
+            $data['certified_bill_date'] = to_sql_date($data['certified_bill_date']);
+        }
+        if ($data['payment_date'] != '') {
+            $data['payment_date'] = to_sql_date($data['payment_date']);
+        }
         if (isset($data['order_discount'])) {
             $order_discount = $data['order_discount'];
             if ($data['add_discount_type'] == 'percent') {

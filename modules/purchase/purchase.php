@@ -275,7 +275,7 @@ function purchase_module_init_menu_items() {
         if(has_permission('purchase_invoices', '', 'view') || has_permission('purchase_invoices', '', 'view_own')){
             $CI->app_menu->add_sidebar_children_item('purchase', [
                 'slug' => 'purchase-invoices',
-                'name' => 'Vendor Billing',
+                'name' => 'Vendor Billing Tracker',
                 'icon' => 'fa fa-clipboard',
                 'href' => admin_url('purchase/invoices'),
                 'position' => 10,
@@ -439,6 +439,10 @@ function purchase_add_footer_components() {
     if(!(strpos($viewuri, '/admin/purchase/purchase_order') === false)){
         echo '<script src="'. base_url('assets/plugins/signature-pad/signature_pad.min.js').'"></script>';
         echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/purchase_order_manage.js') .'?v=' . PURCHASE_REVISION.'"></script>';
+    }
+    if(!(strpos($viewuri, '/admin/purchase/work_order') === false)){
+        echo '<script src="'. base_url('assets/plugins/signature-pad/signature_pad.min.js').'"></script>';
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/work_order_manage.js') .'?v=' . PURCHASE_REVISION.'"></script>';
     }
     if(!(strpos($viewuri, '/admin/purchase/contracts') === false)){
         echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/contract_manage.js') .'?v=' . PURCHASE_REVISION.'"></script>';
