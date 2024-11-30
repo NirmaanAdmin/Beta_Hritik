@@ -230,7 +230,7 @@ class purchase extends AdminController
         $data['group'] = $this->input->get('group');
         $data['unit_tab'] = $this->input->get('tab');
 
-        $data['title']                 = _l('setting');
+        $data['title'] = _l('setting');
 
         $this->db->where('module_name', 'warehouse');
         $module = $this->db->get(db_prefix() . 'modules')->row();
@@ -240,6 +240,7 @@ class purchase extends AdminController
         $data['tab'][] = 'approval';
         $data['tab'][] = 'commodity_group';
         $data['tab'][] = 'sub_group';
+        $data['tab'][] = 'area';
         $data['tab'][] = 'vendor_category';
         $data['tab'][] = 'permissions';
         $data['tab'][] = 'order_return';
@@ -270,6 +271,7 @@ class purchase extends AdminController
         $data['vendor_categories'] = $this->purchase_model->get_vendor_category();
         $data['staffs'] = $this->staff_model->get();
         $data['projects'] = $this->projects_model->get_items();
+        $data['area'] = $this->purchase_model->get_area();
 
         $this->load->view('manage_setting', $data);
     }
@@ -1594,7 +1596,9 @@ class purchase extends AdminController
                     }
 
                     $pur_order_row_template .= $this->purchase_model->create_purchase_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['area'], $order_detail['image'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency, $order_detail);
+                    
                 }
+               
             }
         }
         $data['pur_order_row_template'] = $pur_order_row_template;
@@ -1640,7 +1644,7 @@ class purchase extends AdminController
         }
 
         $data['title'] = $title;
-
+       
         $this->load->view('purchase_order/pur_order', $data);
     }
 
@@ -2493,7 +2497,11 @@ class purchase extends AdminController
         $data['notes'] = $this->misc_model->get_notes($id, 'purchase_order');
         $this->load->view('admin/includes/sales_notes_template', $data);
     }
-
+    public function get_notes_wo($id)
+    {
+        $data['notes'] = $this->misc_model->get_notes($id, 'wo_order');
+        $this->load->view('admin/includes/sales_notes_template', $data);
+    }
     /**
      * Gets the purchase contract notes.
      *
@@ -2504,6 +2512,7 @@ class purchase extends AdminController
         $data['notes'] = $this->misc_model->get_notes($id, 'pur_contract');
         $this->load->view('admin/includes/sales_notes_template', $data);
     }
+    
 
     /**
      * Gets the purchase invoice notes.
@@ -2554,7 +2563,18 @@ class purchase extends AdminController
             echo pur_html_entity_decode($rel_id);
         }
     }
-
+    /**
+     * Adds a note.
+     *
+     * @param      <type>  $rel_id  The work order id
+     */
+    public function add_wo_note($rel_id)
+    {
+        if ($this->input->post()) {
+            $this->misc_model->add_note($this->input->post(), 'wo_order', $rel_id);
+            echo wo_html_entity_decode($rel_id);
+        }
+    }
     /**
      * Uploads a purchase order attachment.
      *
@@ -2658,6 +2678,19 @@ class purchase extends AdminController
             }
             set_alert('success', $message);
             redirect(admin_url('purchase/purchase_order/' . $pur_order));
+        }
+    }
+    public function add_payment_on_wo($wo_order)
+    {
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            $message = '';
+            $success = $this->purchase_model->add_payment_on_wo($data, $wo_order);
+            if ($success) {
+                $message = _l('added_successfully', _l('payment'));
+            }
+            set_alert('success', $message);
+            redirect(admin_url('purchase/work_order/' . $wo_order));
         }
     }
 
@@ -4020,6 +4053,35 @@ class purchase extends AdminController
             }
         }
     }
+    public function area($id = '')
+    {
+        if ($this->input->post()) {
+            $message = '';
+            $data = $this->input->post();
+
+            if (!$this->input->post('id')) {
+
+                $mess = $this->purchase_model->add_area($data);
+                if ($mess) {
+                    set_alert('success', _l('added_successfully'));
+                } else {
+                    set_alert('warning', _l('add_area_false'));
+                }
+                redirect(admin_url('purchase/setting?group=area'));
+            } else {
+                $id = $data['id'];
+                unset($data['id']);
+                $success = $this->purchase_model->add_area($data, $id);
+                if ($success) {
+                    set_alert('success', _l('updated_successfully'));
+                } else {
+                    set_alert('warning', _l('update_area_false'));
+                }
+
+                redirect(admin_url('purchase/setting?group=area'));
+            }
+        }
+    }
 
     /**
      * delete commodity group type
@@ -4041,7 +4103,21 @@ class purchase extends AdminController
         }
         redirect(admin_url('purchase/setting?group=commodity_group'));
     }
-
+    public function delete_area($id)
+    {
+        if (!$id) {
+            redirect(admin_url('purchase/setting?group=area'));
+        }
+        $response = $this->purchase_model->delete_area($id);
+        if (is_array($response) && isset($response['referenced'])) {
+            set_alert('warning', _l('is_referenced', _l('area')));
+        } elseif ($response == true) {
+            set_alert('success', _l('deleted', _l('area')));
+        } else {
+            set_alert('warning', _l('problem_deleting', _l('area')));
+        }
+        redirect(admin_url('purchase/setting?group=area'));
+    }
     /**
      * sub group
      * @param  integer $id
@@ -4812,7 +4888,7 @@ class purchase extends AdminController
         }
 
         $data['pur_invoice_row_template'] = $pur_invoice_row_template;
-
+        // $data['pur_invoice_row_template'] = '';
         $data['ajaxItems'] = false;
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
             $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased');
@@ -6567,11 +6643,23 @@ class purchase extends AdminController
         $data['comments'] = $this->purchase_model->get_comments($id, $type);
         $this->load->view('comments_template', $data);
     }
-
+    public function get_comments_wo($id, $type)
+    {
+        $data['comments'] = $this->purchase_model->get_comments($id, $type);
+        $this->load->view('comments_template', $data);
+    }
     /**
      * Adds a comment.
      */
     public function add_comment()
+    {
+        if ($this->input->post()) {
+            echo json_encode([
+                'success' => $this->purchase_model->add_comment($this->input->post()),
+            ]);
+        }
+    }
+    public function add_commen_wo()
     {
         if ($this->input->post()) {
             echo json_encode([
@@ -9194,5 +9282,326 @@ class purchase extends AdminController
             }
         }
         return true;
+    }
+    public function work_order($id = '')
+    {
+        // die(;asdasd);
+        // die('asda');
+        // if (!has_permission('work_orders', '', 'view') && !is_admin() && !has_permission('work_orders', '', 'view_own')) {
+        //     access_denied('work_order');
+        // }
+        $this->load->model('expenses_model');
+        $this->load->model('payment_modes_model');
+        $this->load->model('taxes_model');
+        $this->load->model('currencies_model');
+        $this->load->model('departments_model');
+        $this->load->model('projects_model');
+        $this->load->model('clients_model');
+
+        $data['work_orderid']  = $id;
+        $data['title'] = _l('work_order');
+        $data['departments'] = $this->departments_model->get();
+        $data['projects'] = $this->projects_model->get();
+        $data['currency'] = $this->currencies_model->get_base_currency();
+        $data['payment_modes'] = $this->payment_modes_model->get('', [], true);
+        $data['currencies']         = $this->currencies_model->get();
+        $data['taxes']              = $this->taxes_model->get();
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['expense_categories'] = $this->expenses_model->get_category();
+        $data['item_tags'] = $this->purchase_model->get_item_tag_filter();
+        $data['customers'] = $this->clients_model->get();
+        $data['pur_request'] = $this->purchase_model->get_pur_request_by_status(2);
+
+        $data['projects'] = $this->projects_model->get();
+        $this->load->view('work_order/manage', $data);
+    }
+    public function table_wo_order()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'work_order/table_wo_order'));
+    }
+    public function change_status_wo_order($status, $id)
+    {
+        $change = $this->purchase_model->change_status_wo_order($status, $id);
+        if ($change == true) {
+
+            $message = _l('change_status_wo_order') . ' ' . _l('successfully');
+            echo json_encode([
+                'result' => $message,
+            ]);
+        } else {
+            $message = _l('change_status_wo_order') . ' ' . _l('fail');
+            echo json_encode([
+                'result' => $message,
+            ]);
+        }
+    }
+    public function get_wo_order_data_ajax($id, $to_return = false)
+    {
+        if (!has_permission('work_orders', '', 'view') && !has_permission('work_orders', '', 'view_own')) {
+            echo _l('access_denied');
+            die;
+        }
+
+        if (!$id) {
+            die('No purchase order found');
+        }
+
+        $estimate = $this->purchase_model->get_wo_order($id);
+
+        if (has_permission('work_orders', '', 'view_own') && !is_admin()) {
+            $staffid = get_staff_user_id();
+
+            $approve_access = total_rows(db_prefix() . 'pur_approval_details', ['staffid' => $staffid, 'rel_type' => 'pur_order', 'rel_id' => $id]);
+
+            if ($estimate->buyer != $staffid && $estimate->addedfrom != $staffid && !is_vendor_admin($estimate->vendor) && $approve_access == 0) {
+                echo _l('access_denied');
+                die;
+            }
+        }
+
+        $this->load->model('payment_modes_model');
+        $data['payment_modes'] = $this->payment_modes_model->get('', [
+            'expenses_only !=' => 1,
+        ]);
+
+        $data['payment'] = $this->purchase_model->get_inv_payment_purchase_order($id);
+        // $data['pur_order_attachments'] = $this->purchase_model->get_purchase_order_attachments($id);
+        $data['estimate_detail'] = $this->purchase_model->get_wo_order_detail($id);
+        $data['estimate']          = $estimate;
+        $data['members']           = $this->staff_model->get('', ['active' => 1]);
+        $data['vendor_contacts'] = $this->purchase_model->get_contacts($estimate->vendor);
+        $send_mail_approve = $this->session->userdata("send_mail_approve");
+        if ((isset($send_mail_approve)) && $send_mail_approve != '') {
+            $data['send_mail_approve'] = $send_mail_approve;
+            $this->session->unset_userdata("send_mail_approve");
+        }
+        $data['invoices'] = $this->purchase_model->get_invoices_by_po($id);
+        $data['check_appr'] = $this->purchase_model->get_approve_setting('pur_order');
+        $data['get_staff_sign'] = $this->purchase_model->get_staff_sign($id, 'pur_order');
+        $data['check_approve_status'] = $this->purchase_model->check_approval_details($id, 'pur_order');
+        $data['list_approve_status'] = $this->purchase_model->get_list_approval_details($id, 'pur_order');
+        $data['tax_data'] = $this->purchase_model->get_html_tax_pur_order($id);
+        $data['check_approval_setting'] = $this->purchase_model->check_approval_setting($estimate->project, 'pur_order', 0);
+        $data['attachments'] = $this->purchase_model->get_work_order_attachments('wo_order', $id);
+        $data['pur_order'] = $this->purchase_model->get_wo_order($id);
+        $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['sub_groups'] = $this->purchase_model->get_sub_group();
+        $data['area'] = $this->purchase_model->get_area();
+        $data['activity'] = $this->purchase_model->get_wo_activity($id);
+        if ($to_return == false) {
+            $this->load->view('work_order/wo_order_preview', $data);
+        } else {
+            return $this->load->view('work_order/wo_order_preview', $data, true);
+        }
+    }
+    public function wo_order($id = '')
+    {
+        if ($this->input->post()) {
+            $wo_order_data = $this->input->post();
+
+            $wo_order_data['terms'] = $this->input->post('terms', false);
+            $wo_order_data['vendornote'] = $this->input->post('vendornote', false);
+            $wo_order_data['order_summary'] = $this->input->post('order_summary', false);
+
+            if ($id == '') {
+                if (!has_permission('work_orders', '', 'create')) {
+                    access_denied('work_order');
+                }
+                $id = $this->purchase_model->add_wo_order($wo_order_data);
+                if ($id) {
+                    set_alert('success', _l('added_successfully', _l('wo_order')));
+
+                    redirect(admin_url('purchase/work_order/' . $id));
+                }
+            } else {
+                if (!has_permission('work_orders', '', 'edit')) {
+                    access_denied('work_order');
+                }
+                $success = $this->purchase_model->update_wo_order($wo_order_data, $id);
+                if ($success) {
+                    set_alert('success', _l('updated_successfully', _l('wo_order')));
+                }
+                redirect(admin_url('purchase/work_order/' . $id));
+            }
+        }
+
+        $this->load->model('currencies_model');
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
+
+        $wo_order_row_template = $this->purchase_model->create_wo_order_row_template();
+
+        if ($id == '') {
+            $title = _l('create_new_wo_order');
+        } else {
+            
+            $data['wo_order_detail'] = $this->purchase_model->get_wo_order_detail($id);
+            
+            $data['wo_order'] = $this->purchase_model->get_wo_order($id);
+            $data['attachments'] = $this->purchase_model->get_work_order_attachments('wo_order', $id);
+
+            $currency_rate = 1;
+            if ($data['wo_order']->currency != 0 && $data['wo_order']->currency_rate != null) {
+                $currency_rate = $data['wo_order']->currency_rate;
+            }
+
+            $to_currency = $data['base_currency']->name;
+            if ($data['wo_order']->currency != 0 && $data['wo_order']->to_currency != null) {
+                $to_currency = $data['wo_order']->to_currency;
+            }
+
+
+            $data['tax_data'] = $this->purchase_model->get_html_tax_pur_order($id);
+            $title = _l('wo_order_detail');
+
+            if (count($data['wo_order_detail']) > 0) {
+                $index_order = 0;
+                foreach ($data['wo_order_detail'] as $order_detail) {
+                    $index_order++;
+                    $unit_name = pur_get_unit_name($order_detail['unit_id']);
+                    $taxname = $order_detail['tax_name'];
+                    $item_name = $order_detail['item_name'];
+
+                    if (strlen($item_name) == 0) {
+                        $item_name = pur_get_item_variatiom($order_detail['item_code']);
+                    }
+
+                    $wo_order_row_template .= $this->purchase_model->create_wo_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['area'],$order_detail['description'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency);
+                }
+            }
+        }
+        $data['wo_order_row_template'] = $wo_order_row_template;
+        $data['currencies'] = $this->currencies_model->get();
+        $this->load->model('clients_model');
+        $data['clients'] = $this->clients_model->get();
+        $this->load->model('departments_model');
+        $data['departments'] = $this->departments_model->get();
+        $data['invoices'] = $this->purchase_model->get_invoice_for_pr();
+        $data['pur_request'] = $this->purchase_model->get_pur_request_by_status(2);
+        $data['projects'] = $this->projects_model->get_items();
+        $data['ven'] = $this->input->get('vendor');
+        $data['taxes'] = $this->purchase_model->get_taxes();
+        $data['staff']             = $this->staff_model->get('', ['active' => 1]);
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['estimates'] = $this->purchase_model->get_estimates_by_status(2);
+        $data['units'] = $this->purchase_model->get_units();
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
+        $data['area_pur'] = $this->purchase_model->get_area();
+
+        $data['ajaxItems'] = false;
+
+        if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
+            $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased');
+        } else {
+            $data['items']     = [];
+            $data['ajaxItems'] = true;
+        }
+
+        $data['convert_po'] = false;
+        $pr = $this->input->get('pr', TRUE);
+        if (!empty($pr)) {
+            $purchase_request = $this->purchase_model->get_purchase_request($pr);
+            if (!empty($purchase_request)) {
+                $data['convert_po'] = true;
+                $data['selected_pr'] = $purchase_request->id;
+                $data['selected_project'] = $purchase_request->project;
+                $data['selected_head'] = $purchase_request->group_pur;
+                $data['selected_sub_head'] = $purchase_request->sub_groups_pur;
+                $data['selected_area'] = $purchase_request->area_pur;
+            }
+        }
+
+        $data['title'] = $title;
+
+        $this->load->view('work_order/wo_order', $data);
+    }
+    public function delete_wo_order($id)
+    {
+        if (!has_permission('work_orders', '', 'delete')) {
+            access_denied('work_order');
+        }
+        if (!$id) {
+            redirect(admin_url('purchase/work_order'));
+        }
+        $success = $this->purchase_model->delete_wo_order($id);
+        if (is_array($success)) {
+            set_alert('warning', _l('work_order'));
+        } elseif ($success == true) {
+            set_alert('success', _l('deleted', _l('work_order')));
+        } else {
+            set_alert('warning', _l('problem_deleting', _l('work_order')));
+        }
+        redirect(admin_url('purchase/work_order'));
+    }
+    public function woorder_pdf($id)
+    {
+        if (!$id) {
+            redirect(admin_url('purchase/purchase_request'));
+        }
+
+        $wo_order = $this->purchase_model->get_woorder_pdf_html($id);
+
+        try {
+            $pdf = $this->purchase_model->woorder_pdf($wo_order, $id);
+        } catch (Exception $e) {
+            echo pur_html_entity_decode($e->getMessage());
+            die;
+        }
+
+        $type = 'D';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+
+        $pdf->Output('work_order.pdf', $type);
+    }
+    public function mark_wo_order_as($status, $wo_order)
+    {
+
+        $this->db->where('id', $wo_order);
+        $this->db->update(db_prefix() . 'wo_orders', ['order_status' => $status]);
+        if ($this->db->affected_rows() > 0) {
+            if ($status == 'delivered') {
+                $this->db->where('id', $wo_order);
+                $this->db->update(db_prefix() . 'wo_orders', ['delivery_status' => 1, 'delivery_date' => date('Y-m-d')]);
+            } else {
+                $this->db->where('id', $wo_order);
+                $this->db->update(db_prefix() . 'wo_orders', ['delivery_status' => 0]);
+            }
+
+            set_alert('success', _l('updated_successfully', _l('order_status')));
+        }
+
+        redirect(admin_url('purchase/work_order/' . $wo_order));
+    }
+    public function delete_work_order_attachment($id)
+    {
+        $this->purchase_model->delete_wo_order_attachment($id);
+        redirect($_SERVER['HTTP_REFERER']);
+    }
+    public function send_wo()
+    {
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            $data['content'] = $this->input->post('content', false);
+            $send = $this->purchase_model->send_po($data);
+            if ($send) {
+                set_alert('success', _l('send_wo_successfully'));
+            } else {
+                set_alert('warning', _l('send_wo_fail'));
+            }
+            redirect(admin_url('purchase/work_order/' . $data['wo_id']));
+        }
+    }
+    public function wo_commodity_code_search($type = 'purchase_price', $can_be = 'can_be_purchased', $vendor = '')
+    {
+        if ($this->input->post() && $this->input->is_ajax_request()) {
+            echo json_encode($this->purchase_model->wo_commodity_code_search($this->input->post('q'), $type, $can_be, false, $vendor));
+        }
     }
 }

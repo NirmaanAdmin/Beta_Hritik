@@ -48,4 +48,6 @@
   require 'modules/purchase/assets/js/sub_group_js.php';
 }elseif($group == 'permissions'){
   require('modules/purchase/assets/js/permissions_js.php');
-} ?>
+}elseif($group == 'area'){
+  require 'modules/purchase/assets/js/area_js.php';
+}?>
