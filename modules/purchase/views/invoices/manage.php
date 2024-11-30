@@ -63,7 +63,7 @@
                         _l('total_included_tax'),
                         _l('certified_amount'),
                         _l('payment_request_status'),
-                        _l('payment_status'),
+                        _l('billing_status'),
                         _l('transaction_id'),
                         _l('tag'),
                         );
