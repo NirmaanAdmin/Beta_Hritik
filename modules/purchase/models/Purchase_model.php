@@ -3258,13 +3258,22 @@ class Purchase_model extends App_Model
         $sender = get_staff_user_id();
         $project = 0;
         if ($data['rel_type'] == 'pur_request') {
-            $project = $this->get_purchase_request($data['rel_id'])->project;
+            $rel_name = 'purchase_request';
+            $module = $this->get_purchase_request($data['rel_id']);
+            $project = $module->project;
+            $p_status = $module->status;
         }
         if ($data['rel_type'] == 'pur_order') {
-            $project = $this->get_pur_order($data['rel_id'])->project;
+            $rel_name = 'purchase_order';
+            $module = $this->get_pur_order($data['rel_id']);
+            $project = $module->project;
+            $p_status = $module->approve_status;
         }
         if ($data['rel_type'] == 'pur_quotation') {
-            $project = $this->get_estimate($data['rel_id'])->project;
+            $rel_name = 'quotation';
+            $module = $this->get_estimate($data['rel_id']);
+            $project = $module->project;
+            $p_status = $module->status;
         }
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
@@ -3284,6 +3293,21 @@ class Purchase_model extends App_Model
                 $this->db->insert('tblpur_approval_details', $row);
             }
         }
+
+        // Send an email to approver
+        $cron_email = array();
+        $cron_email_options = array();
+        $cron_email['type'] = "purchase";
+        $cron_email_options['rel_type'] = $data['rel_type'];
+        $cron_email_options['rel_name'] = $rel_name;
+        $cron_email_options['insert_id'] = $data['rel_id'];
+        $cron_email_options['user_id'] = get_staff_user_id();
+        $cron_email_options['status'] = $p_status;
+        $cron_email_options['approver'] = 'yes';
+        $cron_email_options['project'] = $project;
+        $cron_email_options['requester'] = $data['addedfrom'];
+        $cron_email['options'] = json_encode($cron_email_options, true);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
 
         // foreach ($data_new as $value) {
         //     $row = [];
