@@ -211,17 +211,17 @@ foreach ($rResult as $aRow) {
             if ($aRow['payment_status'] == 1) {
                 $delivery_status = '<span class="inline-block label label-danger" id="status_span_' . $aRow['id'] . '" task-status-table="rejected">' . _l('rejected');
             } else if ($aRow['payment_status'] == 2) {
-                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $aRow['id'] . '" task-status-table="recevied_with_comments">' . _l('recevied_with_comments');
+                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="recevied_with_comments">' . _l('recevied_with_comments');
             } else if ($aRow['payment_status'] == 3) {
-                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verification_in_process">' . _l('bill_verification_in_process');
+                $delivery_status = '<span class="inline-block label label-warning" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verification_in_process">' . _l('bill_verification_in_process');
             } else if ($aRow['payment_status'] == 4) {
-                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verification_on_hold">' . _l('bill_verification_on_hold');
+                $delivery_status = '<span class="inline-block label label-primary" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verification_on_hold">' . _l('bill_verification_on_hold');
             } else if ($aRow['payment_status'] == 5) {
-                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verified_by_ril">' . _l('bill_verified_by_ril');
+                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $aRow['id'] . '" task-status-table="bill_verified_by_ril">' . _l('bill_verified_by_ril');
             } else if ($aRow['payment_status'] == 6) {
-                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="payment_certifiate_issued">' . _l('payment_certifiate_issued');
+                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $aRow['id'] . '" task-status-table="payment_certifiate_issued">' . _l('payment_certifiate_issued');
             } else if ($aRow['payment_status'] == 7) {
-                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $aRow['id'] . '" task-status-table="payment_processed">' . _l('payment_processed');
+                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $aRow['id'] . '" task-status-table="payment_processed">' . _l('payment_processed');
             } else if ($aRow['payment_status'] == 0) {
                 $delivery_status = '<span class="inline-block label label-danger" id="status_span_' . $aRow['id'] . '" task-status-table="unpaid">' . _l('unpaid');
             }
