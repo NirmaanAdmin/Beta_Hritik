@@ -29,6 +29,7 @@ var pur_order_id = '<?php echo pur_html_entity_decode($estimate->id); ?>';
 });
 
   get_contract_comments();
+  get_wo_comments();
 })(jQuery);
 
  function send_po(id) {
@@ -37,11 +38,25 @@ var pur_order_id = '<?php echo pur_html_entity_decode($estimate->id); ?>';
   $('#additional_po').append(hidden_input('po_id',id));
   $('#send_po').modal('show');
  }
+ function send_wo(id) {
+  "use strict"; 
+  $('#additional_po').html('');
+  $('#additional_po').append(hidden_input('wo_id',id));
+  $('#send_wo').modal('show');
+ }
+
 
 function add_payment(id){
   "use strict"; 
    appValidateForm($('#purorder-add_payment-form'),{amount:'required', date:'required'});
    $('#payment_record_pur').modal('show');
+   $('.edit-title').addClass('hide');
+   $('#additional').html('');
+}
+function add_payment_wo(id){
+  "use strict"; 
+   appValidateForm($('#woorder-add_payment-form'),{amount:'required', date:'required'});
+   $('#payment_record_wo').modal('show');
    $('.edit-title').addClass('hide');
    $('#additional').html('');
 }
@@ -80,7 +95,14 @@ function change_status_pur_order(invoker,id){
     alert_float('success',reponse.result);
   });
 }
-
+function change_status_wo_order(invoker,id){
+  "use strict"; 
+   $.post(admin_url+'purchase/change_status_wo_order/'+invoker.value+'/'+id).done(function(reponse){
+    reponse = JSON.parse(reponse);
+    window.location.href = admin_url + 'purchase/work_order/'+id;
+    alert_float('success',reponse.result);
+  });
+}
 //preview purchase order attachment
 function preview_purorder_btn(invoker){
   "use strict"; 
@@ -359,6 +381,26 @@ function add_contract_comment() {
        }
     });
    }
+   function add_wo_comment() {
+  "use strict";
+    var comment = $('#comment').val();
+    if (comment == '') {
+       return;
+    }
+    var data = {};
+    data.content = comment;
+    data.rel_id = pur_order_id;
+    data.rel_type = 'wo_order';
+    $('body').append('<div class="dt-loader"></div>');
+    $.post(admin_url + 'purchase/add_commen_wo', data).done(function (response) {
+       response = JSON.parse(response);
+       $('body').find('.dt-loader').remove();
+       if (response.success == true) {
+          $('#comment').val('');
+          get_wo_comments();
+       }
+    });
+   }
 
    function get_contract_comments() {
     "use strict";
@@ -366,6 +408,23 @@ function add_contract_comment() {
        return;
     }
     requestGet('purchase/get_comments/' + pur_order_id+'/pur_order').done(function (response) {
+       $('#contract-comments').html(response);
+       var totalComments = $('[data-commentid]').length;
+       var commentsIndicator = $('.comments-indicator');
+       if(totalComments == 0) {
+            commentsIndicator.addClass('hide');
+       } else {
+         commentsIndicator.removeClass('hide');
+         commentsIndicator.text(totalComments);
+       }
+    });
+   }
+   function get_wo_comments() {
+    "use strict";
+    if (typeof (pur_order_id) == 'undefined') {
+       return;
+    }
+    requestGet('purchase/get_comments_wo/' + pur_order_id+'/wo_order').done(function (response) {
        $('#contract-comments').html(response);
        var totalComments = $('[data-commentid]').length;
        var commentsIndicator = $('.comments-indicator');

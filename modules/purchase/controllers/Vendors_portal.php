@@ -843,7 +843,55 @@ class Vendors_portal extends App_Controller
         $this->view('vendor_portal/pur_order');
         $this->layout();
     }
+    public function wo_order($id, $hash = '')
+    {
+        if (!is_vendor_logged_in()) {
+            check_wo_order_restrictions($id, $hash);
+        }
 
+        $data['pur_order_detail'] = $this->purchase_model->get_wo_order_detail($id);
+        $data['pur_order'] = $this->purchase_model->get_wo_order($id);
+        $title = _l('wo_order_detail');
+
+        if ($this->input->post()) {
+            $action = $this->input->post('action');
+
+            switch ($action) {
+                case 'wo_comment':
+                    // comment is blank
+                    if (!$this->input->post('content')) {
+                        redirect($this->uri->uri_string());
+                    }
+                    $data_cmt = $this->input->post();
+                    $data_cmt['rel_id'] = $id;
+                    $data_cmt['rel_type'] = 'wo_order';
+                    $this->purchase_model->add_comment_wo($data_cmt, true);
+                    redirect($this->uri->uri_string() . '?tab=discussion');
+
+                    break;
+            }
+        }
+
+        $files = $this->purchase_model->get_wo_order_files($id);
+        $data['files'] = $files;
+
+        $this->load->model('currencies_model');
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
+
+        $data['tax_data'] = $this->purchase_model->get_html_tax_pur_order($id);
+        $data['comments'] = $this->purchase_model->get_comments_wo($id, 'wo_order');
+        $data['taxes'] = $this->purchase_model->get_taxes();
+        $data['staff']             = $this->staff_model->get('', ['active' => 1]);
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['estimates'] = $this->purchase_model->get_estimates_by_status(2);
+        $data['units'] = $this->purchase_model->get_units();
+        $data['items'] = $this->purchase_model->get_items();
+        $data['title'] = $title;
+
+        $this->data($data);
+        $this->view('vendor_portal/wo_order');
+        $this->layout();
+    }
     /**
      * { view purchase request }
      */
@@ -1727,7 +1775,26 @@ class Vendors_portal extends App_Controller
 
         redirect(site_url('purchase/vendors_portal/pur_order/' . $pur_order . '?tab=attachment'));
     }
+    public function delete_wo_file($id, $pur_order)
+    {
+        if (!is_vendor_logged_in()) {
+            redirect(site_url('purchase/authentication_vendor/login'));
+        }
 
+        $this->db->where('id', $id);
+        $file = $this->db->get(db_prefix() . 'purchase_files')->row();
+
+        $contact_id = get_vendor_contact_user_id();
+
+        if ($file->contact_id != $contact_id) {
+            set_alert('warning', _l('file_not_found'));
+            redirect(site_url('purchase/vendors_portal/wo_order/' . $pur_order . '?tab=attachment'));
+        }
+
+        $this->purchase_model->delete_wo_order_attachment($id);
+
+        redirect(site_url('purchase/vendors_portal/wo_order/' . $pur_order . '?tab=attachment'));
+    }
     /**
      * { delete_estimate_file }
      *

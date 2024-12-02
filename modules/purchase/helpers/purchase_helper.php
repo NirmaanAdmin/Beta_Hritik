@@ -1521,6 +1521,36 @@ function purinvoice_left_to_pay($id)
         $totalPayments += $payment['amount'];
         
     }
+    
+    return ($invoice_total - $totalPayments);
+}
+function woinvoice_left_to_pay($id)
+{
+    $CI = & get_instance();
+
+    
+    $CI->db->select('final_certified_amount')
+        ->where('id', $id);
+        $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->final_certified_amount;
+
+
+    $CI->db->where('wo_invoice',$id);
+    $CI->db->where('approval_status', 2);
+    $payments = $CI->db->get(db_prefix().'wo_invoice_payment')->result_array();
+
+    $debits  = $CI->purchase_model->get_applied_invoice_debits($id);
+
+    $payments = array_merge($payments, $debits);
+    
+    
+    $totalPayments = 0;
+
+
+    foreach ($payments as $payment) {
+        
+        $totalPayments += $payment['amount'];
+        
+    }
 
     return ($invoice_total - $totalPayments);
 }
@@ -1807,6 +1837,7 @@ function total_inv_value_by_pur_order($pur_order){
     return $rs;
 }
 
+
 /**
  * Gets the item identifier by description.
  *
@@ -1855,7 +1886,29 @@ function purorder_inv_left_to_pay($pur_order){
     }
     return 0;
 }
+function woorder_inv_left_to_pay($wo_order){
+    $CI           = & get_instance();
+    $CI->load->model('purchase/purchase_model');
+    $list_payment = $CI->purchase_model->get_inv_payment_work_order($wo_order);
+    $po = $CI->purchase_model->get_wo_order($wo_order);
 
+    $list_applied_debit = $CI->purchase_model->get_inv_debit_work_order($wo_order);
+    $paid = 0;
+    foreach($list_payment as $payment){
+        if($payment['approval_status'] == 2){
+            $paid += $payment['amount'];
+        }
+    }
+
+    foreach($list_applied_debit as $debit){
+        $paid += $debit['amount'];
+    }
+
+    if($po){
+        return $po->total - $paid;
+    }
+    return 0;
+}
 /**
  * { row purcahse options exist }
  *
@@ -2213,6 +2266,7 @@ function list_purchase_permisstion()
     $hr_profile_permissions[]='purchase_request';
     $hr_profile_permissions[]='purchase_quotations';
     $hr_profile_permissions[]='purchase_orders';
+    $hr_profile_permissions[]='work_order';
     $hr_profile_permissions[]='purchase_order_return';
     $hr_profile_permissions[]='purchase_contracts';
     $hr_profile_permissions[]='purchase_invoices';
@@ -3331,26 +3385,4 @@ function get_area_name_by_id($id)
         return $row->area_name;
     }
     return '';
-}
-function get_wo_option($name)
-{
-    $CI = & get_instance();
-    $options = [];
-    $val  = '';
-    $name = trim($name);
-    
-
-    if (!isset($options[$name])) {
-        // is not auto loaded
-        $CI->db->select('option_val');
-        $CI->db->where('option_name', $name);
-        $row = $CI->db->get(db_prefix() . 'wo_option')->row();
-        if ($row) {
-            $val = $row->option_val;
-        }
-    } else {
-        $val = $options[$name];
-    }
-
-    return $val;
 }

@@ -185,6 +185,14 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $search = $CI->misc_model->_search_goods_delivery($q);
             $data   = $search['result'];
         }
+    }elseif ($type == 'wo_order') {
+        
+        if ($rel_id != '') {
+            
+        }else{
+            $search = $CI->misc_model->_search_wo_delivery($q);
+            $data   = $search['result'];
+        }
     }
 
     $data = hooks()->apply_filters('get_relation_data', $data, compact('type', 'rel_id', 'extra'));
@@ -434,9 +442,19 @@ function get_relation_values($relation, $type)
             $name      = $relation->goods_delivery_code;
         }
        $link = admin_url('warehouse/manage_delivery/' . $id);
+    }elseif ($type == 'wo_order') {
+      
+        if (is_array($relation)) {
+            $id        = $relation['id'];
+            $name      = $relation['wo_order_name'];
+        } else {
+            $id        = $relation->id;
+            $name      = $relation->wo_order_name;
+        }
+       $link = admin_url('purchase/work_order/' . $id);
     }
     
-    if($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export'){
+    if($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order'){
         return [
             'id'        => $id,
             'name'      => $name,

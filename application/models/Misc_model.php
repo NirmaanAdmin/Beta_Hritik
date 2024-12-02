@@ -1648,4 +1648,31 @@ class Misc_model extends App_Model
 
         return $result;
     }
+    public function _search_wo_delivery($q, $limit = 0)
+    {
+            $result = [
+                'result'         => [],
+                'type'           => 'wo_order',
+                'search_heading' => _l('work_orders'),
+            ];
+    
+
+            // Purchase Orders
+            $this->db->select();
+            $this->db->from(db_prefix() . 'wo_orders');
+    
+            $this->db->where('(wo_order_name LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
+                OR wo_order_number LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
+                OR vendor LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\')');
+    
+            if ($limit != 0) {
+                $this->db->limit($limit);
+            }
+    
+            $this->db->order_by('wo_order_name', 'ASC');
+            $result['result'] = $this->db->get()->result_array();
+            
+    
+        return $result;
+    }
 }

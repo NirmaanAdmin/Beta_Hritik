@@ -10,6 +10,7 @@
 
 $(window).on("load", function () {
   init_btn_with_tooltips();
+  
 });
 
 // Set datatables error throw console log
@@ -8265,6 +8266,17 @@ function delete_sales_note(wrapper, id) {
 // Get all estimate notes
 function get_sales_notes(id, controller) {
   requestGet(controller + "/get_notes/" + id).done(function (response) {
+    $("#sales_notes_area").html(response);
+    var totalNotesNow = $("#sales-notes-wrapper").attr("data-total");
+    if (totalNotesNow > 0) {
+      $(".notes-total")
+        .html('<span class="badge">' + totalNotesNow + "</span>")
+        .removeClass("hide");
+    }
+  });
+}
+function get_sales_notes_wo(id, controller) {
+  requestGet(controller + "/get_notes_wo/" + id).done(function (response) {
     $("#sales_notes_area").html(response);
     var totalNotesNow = $("#sales-notes-wrapper").attr("data-total");
     if (totalNotesNow > 0) {
