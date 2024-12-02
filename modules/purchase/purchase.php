@@ -35,7 +35,14 @@ hooks()->add_action('task_modal_rel_type_select', 'po_task_modal_rel_type_select
 hooks()->add_filter('relation_values', 'po_get_relation_values', 10, 2); // new
 hooks()->add_filter('get_relation_data', 'po_get_relation_data', 10, 4); // new
 hooks()->add_filter('tasks_table_row_data', 'po_add_table_row', 10, 3);
-
+//WO task
+hooks()->add_action('task_related_to_select', 'wo_related_to_select'); // old
+//hooks()->add_filter('before_return_relation_values', 'po_relation_values', 10, 2); // old
+hooks()->add_filter('before_return_relation_data', 'wo_relation_data', 10, 4); // old
+hooks()->add_action('task_modal_rel_type_select', 'wo_task_modal_rel_type_select'); // new
+hooks()->add_filter('relation_values', 'wo_get_relation_values', 10, 2); // new
+hooks()->add_filter('get_relation_data', 'wo_get_relation_data', 10, 4); // new
+hooks()->add_filter('tasks_table_row_data', 'wo_add_table_row', 10, 3);
 //Purchase quotation task
 hooks()->add_action('task_related_to_select', 'pq_related_to_select'); // old
 //hooks()->add_filter('before_return_relation_values', 'pq_relation_values', 10, 2); // old
@@ -507,6 +514,12 @@ function purchase_add_footer_components() {
         echo '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.css') . '"  rel="stylesheet" type="text/css" />';
         echo '<script src="https://momentjs.com/downloads/moment-timezone.min.js"></script>';
     }
+    if (!(strpos($viewuri, '/admin/purchase/setting?group=area') === false)) {
+       
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.js') . '"></script>';
+        echo '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.css') . '"  rel="stylesheet" type="text/css" />';
+        echo '<script src="https://momentjs.com/downloads/moment-timezone.min.js"></script>';
+    }
 
     if (!(strpos($viewuri, '/admin/purchase/setting?group=sub_group') === false)) {
         
@@ -838,7 +851,23 @@ function po_related_to_select($value)
                            </option>";
 
 }
+/**
+ * task related to select
+ * @param  string $value 
+ * @return string        
+ */
+function wo_related_to_select($value)
+{
 
+    $selected = '';
+    if($value == 'wo_order'){
+        $selected = 'selected';
+    }
+    echo "<option value='wo_order' ".$selected.">".
+                               _l('work_order')."
+                           </option>";
+
+}
 /**
  * PO relation values
  * @param  [type] $values   
@@ -885,6 +914,29 @@ function po_relation_data($data, $type, $rel_id, $q = '')
     }
     return $data;
 }
+/**
+ * WO relation data
+ * @param  array $data   
+ * @param  string $type   
+ * @param  id $rel_id 
+ * @param  array $q      
+ * @return array         
+ */
+function wo_relation_data($data, $type, $rel_id, $q = '')
+{
+
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+
+    if ($type == 'wo_order') {
+        if ($rel_id != '') {
+            $data = $CI->purchase_model->get_wo_order($rel_id);
+        } else {
+            $data   = [];
+        }
+    }
+    return $data;
+}
 
 
 /**
@@ -913,7 +965,32 @@ function po_add_table_row($row ,$aRow)
 
     return $row;
 }
+/**
+ * WO add table row
+ * @param  string $row  
+ * @param  string $aRow 
+ * @return [type]       
+ */
+function wo_add_table_row($row ,$aRow)
+{
 
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+
+    if($aRow['rel_type'] == 'wo_order'){
+        $po = $CI->purchase_model->get_wo_order($aRow['rel_id']);
+
+           if ($po) {
+
+                 $str = '<span class="hide"> - </span><a class="text-muted task-table-related" data-toggle="tooltip" title="' . _l('task_related_to') . '" href="' . admin_url('purchase/purchase_order/' . $po->id) . '">' . $po->wo_order_number . '</a><br />';
+
+                $row[2] =   $row[2].$str;
+            }
+
+    }
+
+    return $row;
+}
 /**
  * task related to select
  * @param  string $value 
@@ -1340,6 +1417,21 @@ function po_task_modal_rel_type_select($value) {
                            </option>";
 
 }
+/**
+ * wo task modal rel type select
+ * @param  object $value
+ * @return
+ */
+function wo_task_modal_rel_type_select($value) {
+    $selected = '';
+    if (isset($value) && isset($value['rel_type']) && $value['rel_type'] == 'wo_order') {
+        $selected = 'selected';
+    }
+    echo "<option value='wo_order' " . $selected . ">" .
+    _l('work_order') . "
+                           </option>";
+
+}
 
 /**
  * pq get relation values description
@@ -1357,6 +1449,26 @@ function po_get_relation_values($values, $relation = null) {
             $values['name'] = $relation->pur_order_number;
         }
         $values['link'] = admin_url('purchase/purchase_order/' . $values['id']);
+    }
+
+    return $values;
+}
+/**
+ * wo get relation values description
+ * @param  object $values
+ * @param  object $relation
+ * @return
+ */
+function wo_get_relation_values($values, $relation = null) {
+    if ($values['type'] == 'wo_order' || $values['type'] == 'work_order') {
+        if (is_array($relation)) {
+            $values['id'] = $relation['id'];
+            $values['name'] = $relation['wo_order_number'];
+        } else {
+            $values['id'] = $relation->id;
+            $values['name'] = $relation->wo_order_number;
+        }
+        $values['link'] = admin_url('purchase/work_order/' . $values['id']);
     }
 
     return $values;
@@ -1380,6 +1492,29 @@ function po_get_relation_data($data, $obj, $q = '') {
         } else {
             if($q != ''){
                 $data = $CI->purchase_model->get_pur_order_search($q);
+            }
+        }
+    }
+    return $data;
+}
+/**
+ * wo get relation data
+ * @param  object $data
+ * @param  object $obj
+ * @return
+ */
+function wo_get_relation_data($data, $obj, $q = '') {
+    $type = $obj['type'];
+    $rel_id = $obj['rel_id'];
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+
+    if ($type == 'wo_order' || $type == 'work_order') {
+        if ($rel_id != '') {
+            $data = $CI->purchase_model->get_wo_order($rel_id);
+        } else {
+            if($q != ''){
+                $data = $CI->purchase_model->get_wo_order_search($q);
             }
         }
     }

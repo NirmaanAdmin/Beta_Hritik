@@ -1219,7 +1219,7 @@ class Purchase_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_request', $insert_id);
         if ($insert_id) {
 
@@ -1587,7 +1587,7 @@ class Purchase_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
             return true;
         }
@@ -1829,7 +1829,7 @@ class Purchase_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_quotation', $insert_id);
 
         if ($insert_id) {
@@ -2286,7 +2286,7 @@ class Purchase_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
             return true;
         }
@@ -2321,27 +2321,27 @@ class Purchase_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
 
                 $from_status = '';
-                if($original_po->approve_status == 1) {
+                if ($original_po->approve_status == 1) {
                     $from_status = 'Draft';
-                } else if($original_po->approve_status == 2) {
+                } else if ($original_po->approve_status == 2) {
                     $from_status = 'Approved';
-                } else if($original_po->approve_status == 3) {
+                } else if ($original_po->approve_status == 3) {
                     $from_status = 'Rejected';
                 }
 
                 $to_status = '';
-                if($status == 1) {
+                if ($status == 1) {
                     $to_status = 'Draft';
-                } else if($status == 2) {
+                } else if ($status == 2) {
                     $to_status = 'Approved';
-                } else if($status == 3) {
+                } else if ($status == 3) {
                     $to_status = 'Rejected';
                 }
 
-                $this->log_po_activity($id, "Purchase order status updated from ".$from_status." to ".$to_status."");
+                $this->log_po_activity($id, "Purchase order status updated from " . $from_status . " to " . $to_status . "");
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
@@ -2525,7 +2525,7 @@ class Purchase_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_order', $insert_id);
         if ($insert_id) {
             // Update next purchase order number in settings
@@ -2732,14 +2732,14 @@ class Purchase_model extends App_Model
             $affectedRows++;
             $this->db->where('id', $id);
             $po = $this->db->get(db_prefix() . 'pur_orders')->row();
-            if($po->approve_status == 3) {
+            if ($po->approve_status == 3) {
                 $status_array = array();
                 $status_array['approve_status'] = 1;
                 $this->db->where('id', $id);
                 $this->db->update(db_prefix() . 'pur_orders', $status_array);
                 $from_status = 'Rejected';
                 $to_status = 'Draft';
-                $this->log_po_activity($id, "Purchase order status updated from ".$from_status." to ".$to_status."");
+                $this->log_po_activity($id, "Purchase order status updated from " . $from_status . " to " . $to_status . "");
             }
         }
 
@@ -3274,7 +3274,7 @@ class Purchase_model extends App_Model
             $this->db->where('rel_id', $data['rel_id']);
             $this->db->where('rel_type', $data['rel_type']);
             $rel_id_data = $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
-            if(empty($rel_id_data)) {
+            if (empty($rel_id_data)) {
                 $row['action'] = 'approve';
                 $row['staffid'] = $value['id'];
                 $row['date_send'] = $date_send;
@@ -3978,7 +3978,7 @@ class Purchase_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $full_item_image = '';
-            if(!empty($row['image'])) {
+            if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image']);
                 $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
             }
@@ -4111,7 +4111,7 @@ class Purchase_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $full_item_image = '';
-            if(!empty($row['image'])) {
+            if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image']);
                 $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
             }
@@ -4783,32 +4783,32 @@ class Purchase_model extends App_Model
                 ' . $delivery_date . '
                 ' . $delivery_person . '
                 ' . $pur_request_name . ' ';
-                if (!empty($pur_order->addedfrom)) {
-                    $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
-                }
-                $group_head_po = $this->get_budget_head_po($pur_order->id);
-                if ($group_head_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
-                }
-                $group_sub_head_po = $this->get_budget_sub_head_po($pur_order->id);
-                if ($group_sub_head_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
-                }
-                // $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
-                // if ($group_req_area_po != '') {
-                //     $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
-                // }
-                $html .= '            
+        if (!empty($pur_order->addedfrom)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
+        }
+        $group_head_po = $this->get_budget_head_po($pur_order->id);
+        if ($group_head_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
+        }
+        $group_sub_head_po = $this->get_budget_sub_head_po($pur_order->id);
+        if ($group_sub_head_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
+        }
+        // $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
+        // if ($group_req_area_po != '') {
+        //     $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
+        // }
+        $html .= '            
             </td>
           </tr>
         </tbody>
       </table>
       ';
-      $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
-      $html .= '<div class="col-md-12 ">
+        $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
+        $html .= '<div class="col-md-12 ">
       <p class="bold"> ' . $order_summary_with_break . '</p>';
-      $html .= '<div style="page-break-before:always"></div>';
-      $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
+        $html .= '<div style="page-break-before:always"></div>';
+        $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
@@ -4836,7 +4836,7 @@ class Purchase_model extends App_Model
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = pur_get_unit_name($row['unit_id']);
             $full_item_image = '';
-            if(!empty($row['image'])) {
+            if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image']);
                 $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
             }
@@ -4845,12 +4845,12 @@ class Purchase_model extends App_Model
             <td align="left" style="width: 10%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
             <td align="left" style="width: 10%">' . $full_item_image . '</td>
-            <td align="right" style="width: 10%">' . $row['quantity']  .' ' .$unit_name .'</td>
-            <td align="right" style="width: 11%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 10%">' . $row['quantity']  . ' ' . $unit_name . '</td>
+            <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
             
-            <td align="right" style="width: 10%">'. app_format_money($row['tax_rate'], '') . '</td>
-            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['total'] - $row['into_money'], '') . '</td>
-            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['total_money'], '') . '</td>
+            <td align="right" style="width: 10%">' . app_format_money($row['tax_rate'], '') . '</td>
+            <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
 
             $t_mn += $row['total_money'];
@@ -4859,14 +4859,14 @@ class Purchase_model extends App_Model
         }
         $html .=  '</tbody>
       </table><br><br>';
-      
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
             <td width="33%"></td>
             <td>' . _l('subtotal') . ' </td>
             <td class="subtotal">
-            ' .'₹ '. app_format_money($pur_order->subtotal, '') . '
+            ' . '₹ ' . app_format_money($pur_order->subtotal, '') . '
             </td>
             </tr>';
         }
@@ -4875,7 +4875,7 @@ class Purchase_model extends App_Model
             <td width="33%"></td>
             <td>' . _l('Tax') . ' </td>
             <td class="taxtotal">
-            ' .'₹ '. app_format_money($tax_total, '') . '
+            ' . '₹ ' . app_format_money($tax_total, '') . '
             </td>
             </tr>';
         }
@@ -4891,7 +4891,7 @@ class Purchase_model extends App_Model
                   <td width="33%"></td>
                      <td>' . _l('discount(money)') . '</td>
                      <td class="subtotal">
-                        ' .'₹ '. app_format_money($pur_order->discount_total, '') . '
+                        ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                      </td>
                   </tr>';
         }
@@ -4899,7 +4899,7 @@ class Purchase_model extends App_Model
                  <td width="33%"></td>
                  <td><strong>' . _l('total') . '</strong></td>
                  <td class="subtotal">
-                    ' .'₹ '. app_format_money($pur_order->total, '') . '
+                    ' . '₹ ' . app_format_money($pur_order->total, '') . '
                  </td>
               </tr>';
 
@@ -4925,7 +4925,7 @@ class Purchase_model extends App_Model
         </tbody>
       </table>';
         $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/pur_order_pdf.css') . '"  rel="stylesheet" type="text/css" />';
-        
+
         return $html;
     }
 
@@ -5550,7 +5550,7 @@ class Purchase_model extends App_Model
             if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id)) {
                 // Check if no attachments left, so we can delete the folder also
                 $other_attachments = list_files(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id);
-                if (count($other_attachments) == 0) { 
+                if (count($other_attachments) == 0) {
                     // okey only index.html so we can delete the folder also
                     delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id);
                 }
@@ -5845,6 +5845,72 @@ class Purchase_model extends App_Model
             return $results_update;
         }
     }
+    public function add_area($data, $id = false)
+    {
+        $data['area'] = str_replace(', ', '|/\|', $data['hot_area']);
+
+        $area = explode(',', $data['area']);
+        $results = 0;
+        $results_update = '';
+        $flag_empty = 0;
+
+        foreach ($area as $area_key => $area_value) {
+            if ($area_value == '') {
+                $area_value = 0;
+            }
+            if (($area_key + 1) % 4 == 0) {
+
+                $arr_temp['note'] = str_replace('|/\|', ', ', $area_value);
+
+                if ($id == false && $flag_empty == 1) {
+                    $this->db->insert(db_prefix() . 'area', $arr_temp);
+                    $insert_id = $this->db->insert_id();
+                    if ($insert_id) {
+                        $results++;
+                    }
+                }
+                if (is_numeric($id) && $flag_empty == 1) {
+                    $this->db->where('id', $id);
+                    $this->db->update(db_prefix() . 'area', $arr_temp);
+                    if ($this->db->affected_rows() > 0) {
+                        $results_update = true;
+                    } else {
+                        $results_update = false;
+                    }
+                }
+
+                $flag_empty = 0;
+                $arr_temp = [];
+            } else {
+                switch (($area_key + 1) % 4) {
+                    case 1:
+                        $arr_temp['area_name'] = str_replace('|/\|', ', ', $area_value);
+                        if ($area_value != '0') {
+                            $flag_empty = 1;
+                        }
+                        break;
+                    case 2:
+                        $arr_temp['order'] = $area_value;
+                        break;
+                    case 3:
+                        //display 1: display (yes) , 0: not displayed (no)
+                        if ($area_value == 'yes') {
+                            $display_value = 1;
+                        } else {
+                            $display_value = 0;
+                        }
+                        $arr_temp['display'] = $display_value;
+                        break;
+                }
+            }
+        }
+
+        if ($id == false) {
+            return $results > 0 ? true : false;
+        } else {
+            return $results_update;
+        }
+    }
 
     /**
      * delete commodity group type
@@ -5855,6 +5921,15 @@ class Purchase_model extends App_Model
     {
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'items_groups');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+    public function delete_area($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'area');
         if ($this->db->affected_rows() > 0) {
             return true;
         }
@@ -6914,6 +6989,48 @@ class Purchase_model extends App_Model
         }
         return false;
     }
+    public function add_invoice_payment_to_wo($data, $invoice)
+    {
+        $data['date'] = to_sql_date($data['date']);
+        $data['daterecorded'] = date('Y-m-d H:i:s');
+
+        $data['wo_invoice'] = $invoice;
+        $data['approval_status'] = 1;
+        $data['requester'] = get_staff_user_id();
+        $check_appr = $this->get_approve_setting('payment_request');
+        if ($check_appr && $check_appr != false) {
+            $data['approval_status'] = 1;
+        } else {
+            $data['approval_status'] = 2;
+        }
+
+        $this->db->insert(db_prefix() . 'wo_invoice_payment', $data);
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+
+            if ($data['approval_status'] == 2) {
+                $pur_invoice = $this->get_pur_invoice($invoice);
+                if ($pur_invoice) {
+                    $status_inv = $pur_invoice->payment_status;
+                    if (purinvoice_left_to_pay($invoice) > 0) {
+                        $status_inv = 'partially_paid';
+                        if (purinvoice_left_to_pay($invoice) == $pur_invoice->total) {
+                            $status_inv = 'unpaid';
+                        }
+                    } else {
+                        $status_inv = 'paid';
+                    }
+                    $this->db->where('id', $invoice);
+                    $this->db->update(db_prefix() . 'pur_invoices', ['payment_status' => $status_inv,]);
+                }
+            }
+
+            hooks()->do_action('after_payment_wo_invoice_added', $insert_id);
+
+            return $insert_id;
+        }
+        return false;
+    }
 
     /**
      * { delete invoice payment }
@@ -7173,7 +7290,7 @@ class Purchase_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $full_item_image = '';
-            if(!empty($row['image'])) {
+            if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_quotation/' . $row['pur_estimate'] . '/' . $row['id'] . '/' . $row['image']);
                 $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
             }
@@ -7530,7 +7647,7 @@ class Purchase_model extends App_Model
      * @return     boolean
      */
     public function change_delivery_status($status, $id)
-    { 
+    {
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_orders', ['delivery_status' => $status]);
         if ($this->db->affected_rows() > 0) {
@@ -7547,7 +7664,8 @@ class Purchase_model extends App_Model
         return false;
     }
 
-    public function change_payment_status($status, $id){
+    public function change_payment_status($status, $id)
+    {
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_invoices', ['payment_status' => $status]);
         if ($this->db->affected_rows() > 0) {
@@ -7647,6 +7765,21 @@ class Purchase_model extends App_Model
 
         return $data_rs;
     }
+    public function get_inv_payment_work_order($wo_order)
+    {
+        $this->db->where('wo_order', $wo_order);
+        $list_inv = $this->db->get(db_prefix() . 'pur_invoices')->result_array();
+        $data_rs = [];
+        foreach ($list_inv as $inv) {
+            $this->db->where('wo_invoice', $inv['id']);
+            $inv_payments = $this->db->get(db_prefix() . 'wo_invoice_payment')->result_array();
+            foreach ($inv_payments as $payment) {
+                $data_rs[] = $payment;
+            }
+        }
+
+        return $data_rs;
+    }
 
     /**
      * Gets the inv payment purchase order.
@@ -7656,6 +7789,21 @@ class Purchase_model extends App_Model
     public function get_inv_debit_purchase_order($pur_order)
     {
         $this->db->where('pur_order', $pur_order);
+        $list_inv = $this->db->get(db_prefix() . 'pur_invoices')->result_array();
+        $data_rs = [];
+        foreach ($list_inv as $inv) {
+            $this->db->where('invoice_id', $inv['id']);
+            $inv_debits = $this->db->get(db_prefix() . 'pur_debits')->result_array();
+            foreach ($inv_debits as $debit) {
+                $data_rs[] = $debit;
+            }
+        }
+
+        return $data_rs;
+    }
+    public function get_inv_debit_work_order($wo_order)
+    {
+        $this->db->where('wo_order', $wo_order);
         $list_inv = $this->db->get(db_prefix() . 'pur_invoices')->result_array();
         $data_rs = [];
         foreach ($list_inv as $inv) {
@@ -10498,14 +10646,14 @@ class Purchase_model extends App_Model
         }
 
         $full_item_image = '';
-        if(!empty($image)) {
+        if (!empty($image)) {
             $item_base_url = base_url('uploads/purchase/pur_request/' . $request_detail['pur_request'] . '/' . $request_detail['prd_id'] . '/' . $request_detail['image']);
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
-        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
+        $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
+        $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10974,14 +11122,14 @@ class Purchase_model extends App_Model
         }
 
         $full_item_image = '';
-        if(!empty($image)) {
+        if (!empty($image)) {
             $item_base_url = base_url('uploads/purchase/pur_quotation/' . $quote_detail['pur_estimate'] . '/' . $quote_detail['id'] . '/' . $quote_detail['image']);
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
-        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
-        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
+        $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
+        $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
@@ -11171,7 +11319,7 @@ class Purchase_model extends App_Model
         }
 
         $full_item_image = '';
-        if(!empty($image)) {
+        if (!empty($image)) {
             $item_base_url = base_url('uploads/purchase/pur_order/' . $order_detail['pur_order'] . '/' . $order_detail['id'] . '/' . $order_detail['image']);
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
@@ -11180,16 +11328,16 @@ class Purchase_model extends App_Model
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="area">'.get_area_list($name_area, $area).'</td>';
-        $row .= '<td class=""><input type="file" extension="'.str_replace(['.', ' '], '', '.png,.jpg,.jpeg').'" filesize="'.file_upload_max_size().'" class="form-control" name="'.$name_image.'" accept="'.get_item_form_accepted_mimes().'">'.$full_item_image.'</td>';
+        $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
+        $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
         $units_list = $this->get_units();
 
         $row .= '<td class="quantities">' .
-        render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
-        // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
-        render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
-        '</td>';
+            render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
+            // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
+            '</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
 
         if ($unit_price != '') {
@@ -11202,7 +11350,7 @@ class Purchase_model extends App_Model
             $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
         }
 
-        
+
 
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 
@@ -11587,6 +11735,91 @@ class Purchase_model extends App_Model
             }
 
             $payment_id = $this->add_invoice_payment($data, $insert_id);
+            if ($payment_id) {
+                return $payment_id;
+            }
+            return false;
+        }
+
+        return false;
+    }
+    public function add_payment_on_wo($data, $woorder)
+    {
+        $wo_order = $this->get_wo_order($woorder);
+
+        if (!$woorder) {
+            return false;
+        }
+
+        $inv_data = [];
+
+        $prefix = get_purchase_option('pur_inv_prefix');
+        $next_number = get_purchase_option('next_inv_number');
+
+        $inv_data['invoice_number'] = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
+        $inv_data['number'] = $next_number;
+
+        $this->db->where('invoice_number', $inv_data['invoice_number']);
+        $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+
+        while ($check_exist_number) {
+            $inv_data['number'] = $inv_data['number'] + 1;
+            $inv_data['invoice_number'] =  $prefix . str_pad($inv_data['number'], 5, '0', STR_PAD_LEFT);
+            $this->db->where('invoice_number', $inv_data['invoice_number']);
+            $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+        }
+
+        $wo_order_detail = $this->get_wo_order_detail($woorder);
+
+        $inv_data['add_from'] = get_staff_user_id();
+        $inv_data['add_from_type'] = 'admin';
+        $inv_data['vendor'] = $wo_order->vendor;
+        $inv_data['subtotal'] = $wo_order->subtotal;
+        $inv_data['tax'] = $wo_order->total_tax;
+        $inv_data['total'] = $wo_order->total;
+        $inv_data['discount_percent'] = $wo_order->discount_percent;
+        $inv_data['discount_total'] = $wo_order->discount_total;
+        $inv_data['transaction_date'] = date('Y-m-d');
+        $inv_data['invoice_date'] = date('Y-m-d');
+        $inv_data['duedate'] = to_sql_date($data['date']);
+        $inv_data['payment_status'] = 'unpaid';
+        $inv_data['date_add'] = date('Y-m-d');
+        $inv_data['wo_order'] = $woorder;
+        $inv_data['discount_type'] = $wo_order->discount_type;
+        $inv_data['currency'] = isset($wo_order->currency) ? $wo_order->currency : get_vendor_currency($wo_order->vendor);
+
+        $this->db->insert(db_prefix() . 'pur_invoices', $inv_data);
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+            $next_number = $inv_data['number'] + 1;
+            $this->db->where('option_name', 'next_inv_number');
+            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+
+            if (count($wo_order_detail) > 0) {
+                foreach ($wo_order_detail as $order_detail) {
+                    $inv_detail_data = [];
+                    $inv_detail_data['pur_invoice'] = $insert_id;
+                    $inv_detail_data['item_code'] = $order_detail['item_code'];
+                    $inv_detail_data['description'] = $order_detail['description'];
+                    $inv_detail_data['unit_id'] = $order_detail['unit_id'];
+                    $inv_detail_data['unit_price'] = $order_detail['unit_price'];
+                    $inv_detail_data['quantity'] = $order_detail['quantity'];
+                    $inv_detail_data['into_money'] = $order_detail['into_money'];
+                    $inv_detail_data['tax'] = $order_detail['tax'];
+                    $inv_detail_data['total'] = $order_detail['total'];
+                    $inv_detail_data['discount_percent'] = $order_detail['discount_%'];
+                    $inv_detail_data['discount_money'] = $order_detail['discount_money'];
+                    $inv_detail_data['total_money'] = $order_detail['total_money'];
+                    $inv_detail_data['tax_value'] = $order_detail['tax_value'];
+                    $inv_detail_data['tax_rate'] = $order_detail['tax_rate'];
+                    $inv_detail_data['tax_name'] = $order_detail['tax_name'];
+                    $inv_detail_data['item_name'] = $order_detail['item_name'];
+
+                    $this->db->insert(db_prefix() . 'pur_invoice_details', $inv_detail_data);
+                }
+            }
+
+            $payment_id = $this->add_invoice_payment_to_wo($data, $insert_id);
             if ($payment_id) {
                 return $payment_id;
             }
@@ -14376,35 +14609,35 @@ class Purchase_model extends App_Model
         $this->db->select('*');
         $this->db->where('related', $related);
         $this->db->where('project_id', $project);
-        $project_members = $this->db->get(db_prefix().'pur_approval_setting')->row();
+        $project_members = $this->db->get(db_prefix() . 'pur_approval_setting')->row();
 
-        if(!empty($project_members)) {
-            if(!empty($project_members->approver)) {
+        if (!empty($project_members)) {
+            if (!empty($project_members->approver)) {
                 $approver = $project_members->approver;
-                $approver = explode(',',$approver);
+                $approver = explode(',', $approver);
                 $this->db->select('staffid as id, "approve" as action', FALSE);
                 $this->db->where_in('staffid', $approver);
-                $intersect = $this->db->get(db_prefix().'staff')->result_array();
+                $intersect = $this->db->get(db_prefix() . 'staff')->result_array();
             }
         }
 
-        if($response == 1) {
+        if ($response == 1) {
             $intersect = array_values($intersect);
             $this->db->select('staffid as id, "approve" as action', FALSE);
             $this->db->where('admin', 1);
-            $this->db->order_by('staffid','desc');
-            $this->db->limit(1);  
+            $this->db->order_by('staffid', 'desc');
+            $this->db->limit(1);
             $staffs = $this->db->get('tblstaff')->result_array();
             $intersect = array_merge($intersect, $staffs);
             $intersect = array_unique($intersect, SORT_REGULAR);
             $intersect = array_values($intersect);
             return $intersect;
         } else {
-            if(!empty($intersect)) {
+            if (!empty($intersect)) {
                 $intersect = array_filter($intersect, function ($var) {
                     return ($var['id'] == $user_id);
                 });
-                if(!empty($intersect)) {
+                if (!empty($intersect)) {
                     $check_status = true;
                 }
             }
@@ -14414,7 +14647,7 @@ class Purchase_model extends App_Model
         $this->db->where('staffid', $user_id);
         $this->db->where('admin', 1);
         $staffs = $this->db->get('tblstaff')->result_array();
-        if(count($staffs) > 0) {
+        if (count($staffs) > 0) {
             $check_status = true;
         }
         return $check_status;
@@ -14426,13 +14659,13 @@ class Purchase_model extends App_Model
         $this->db->select('staffid as id, "approve" as action', FALSE);
         $this->db->where('admin', 1);
         $this->db->or_where('staffid', $user_id);
-        $this->db->order_by('staffid','desc');
+        $this->db->order_by('staffid', 'desc');
         $staffs = $this->db->get('tblstaff')->result_array();
         $approver_list = array_merge($approver_list, $staffs);
         $approver_list = array_unique($approver_list, SORT_REGULAR);
         $approver_list = array_values($approver_list);
 
-        if(!empty($approver_list)) {
+        if (!empty($approver_list)) {
             $approver_list = array_column($approver_list, 'id');
             $this->db->select('staffid as id, email, firstname, lastname');
             $this->db->where_in('staffid', $approver_list);
@@ -14440,33 +14673,33 @@ class Purchase_model extends App_Model
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
-            
+
             foreach ($approver_list as $key => $value) {
                 $data = array();
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
-                if($rel_name == 'purchase_request') {
+                if ($rel_name == 'purchase_request') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_request_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_request_to_approver','purchase',$data);
+                    $template = mail_template('purchase_request_to_approver', 'purchase', $data);
                     $template->send();
                 }
 
-                if($rel_name == 'purchase_order') {
+                if ($rel_name == 'purchase_order') {
                     $data['mail_to'] = $value['email'];
                     $data['po_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_order_to_approver','purchase',$data);
+                    $template = mail_template('purchase_order_to_approver', 'purchase', $data);
                     $template->send();
                 }
 
-                if($rel_name == 'quotation') {
+                if ($rel_name == 'quotation') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_quotation_to_approver','purchase',$data);
+                    $template = mail_template('purchase_quotation_to_approver', 'purchase', $data);
                     $template->send();
                 }
             }
@@ -14478,25 +14711,25 @@ class Purchase_model extends App_Model
         $requester = 0;
         $vendor_id = 0;
         $vendor_name = '';
-        if($type == 'purchase_request') {
+        if ($type == 'purchase_request') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'pur_request')->row();
             $requester = $row->requester;
         }
 
-        if($type == 'purchase_order') {
+        if ($type == 'purchase_order') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'pur_orders')->row();
             $requester = $row->addedfrom;
             $vendor_id = $row->vendor;
-            if($vendor_id != 0) {
+            if ($vendor_id != 0) {
                 $this->db->where('userid', $vendor_id);
                 $vendor_detail = $this->db->get(db_prefix() . 'pur_vendor')->row();
                 $vendor_name = $vendor_detail->company;
             }
         }
 
-        if($type == 'quotation') {
+        if ($type == 'quotation') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'pur_estimates')->row();
             $requester = $row->addedfrom;
@@ -14508,7 +14741,7 @@ class Purchase_model extends App_Model
         $this->db->or_where('staffid', $user_id);
         $staffs = $this->db->get('tblstaff')->result_array();
 
-        if($type == 'purchase_order') {
+        if ($type == 'purchase_order') {
             $this->db->select('email, firstname, lastname');
             $this->db->where('userid', $vendor_id);
             $this->db->where('is_primary', 1);
@@ -14517,7 +14750,7 @@ class Purchase_model extends App_Model
             $staffs = array_values($staffs);
         }
 
-        if(!empty($staffs)) {
+        if (!empty($staffs)) {
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
@@ -14527,28 +14760,28 @@ class Purchase_model extends App_Model
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
-                if($type == 'purchase_request') {
+                if ($type == 'purchase_request') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_request_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_request_to_sender','purchase',$data);
+                    $template = mail_template('purchase_request_to_sender', 'purchase', $data);
                     $template->send();
                 }
 
-                if($type == 'purchase_order') {
+                if ($type == 'purchase_order') {
                     $data['mail_to'] = $value['email'];
                     $data['po_id'] = $id;
                     $data['vendor_name'] = $vendor_name;
                     $data = (object) $data;
-                    $template = mail_template('purchase_order_to_sender','purchase',$data);
+                    $template = mail_template('purchase_order_to_sender', 'purchase', $data);
                     $template->send();
                 }
 
-                if($type == 'quotation') {
+                if ($type == 'quotation') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('purchase_quotation_to_sender','purchase',$data);
+                    $template = mail_template('purchase_quotation_to_sender', 'purchase', $data);
                     $template->send();
                 }
             }
@@ -14653,7 +14886,7 @@ class Purchase_model extends App_Model
     {
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'cron_email');
-        return true; 
+        return true;
     }
 
     /**
@@ -14667,6 +14900,13 @@ class Purchase_model extends App_Model
         $this->db->where('rel_type', 'purchase');
         $this->db->order_by('date', 'asc');
         return $this->db->get(db_prefix() . 'purchase_activity')->result_array();
+    }
+    public function get_wo_activity($id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'workorder');
+        $this->db->order_by('date', 'asc');
+        return $this->db->get(db_prefix() . 'workorder_activity')->result_array();
     }
 
     /**
@@ -14698,5 +14938,1252 @@ class Purchase_model extends App_Model
             'full_name'       => $full_name,
             'additional_data' => $additional_data,
         ]);
+    }
+    public function log_wo_activity($id, $description = '', $client = false, $additional_data = '')
+    {
+        if (DEFINED('CRON')) {
+            $staffid   = '[CRON]';
+            $full_name = '[CRON]';
+        } elseif (defined('STRIPE_SUBSCRIPTION_INVOICE')) {
+            $staffid   = null;
+            $full_name = '[Stripe]';
+        } elseif ($client == true) {
+            $staffid   = null;
+            $full_name = '';
+        } else {
+            $staffid   = get_staff_user_id();
+            $full_name = get_staff_full_name(get_staff_user_id());
+        }
+        $this->db->insert(db_prefix() . 'workorder_activity', [
+            'description'     => $description,
+            'date'            => date('Y-m-d H:i:s'),
+            'rel_id'          => $id,
+            'rel_type'        => 'workorder',
+            'staffid'         => $staffid,
+            'full_name'       => $full_name,
+            'additional_data' => $additional_data,
+        ]);
+    }
+    public function change_status_wo_order($status, $id)
+    {
+        $original_po = $this->get_wo_order($id);
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'wo_orders', ['approve_status' => $status]);
+        if ($this->db->affected_rows() > 0) {
+
+            hooks()->do_action('after_work_order_approve', $id);
+            if ($status == 2 || $status == 3) {
+                // $this->send_mail_to_sender('purchase_order', $status, $id);
+                $cron_email = array();
+                $cron_email_options = array();
+                $cron_email['type'] = "work";
+                $cron_email_options['rel_type'] = 'wo_order';
+                $cron_email_options['rel_name'] = 'work_order';
+                $cron_email_options['insert_id'] = $id;
+                $cron_email_options['user_id'] = get_staff_user_id();
+                $cron_email_options['status'] = $status;
+                $cron_email_options['sender'] = 'yes';
+                $cron_email['options'] = json_encode($cron_email_options, true);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+
+                $from_status = '';
+                if ($original_po->approve_status == 1) {
+                    $from_status = 'Draft';
+                } else if ($original_po->approve_status == 2) {
+                    $from_status = 'Approved';
+                } else if ($original_po->approve_status == 3) {
+                    $from_status = 'Rejected';
+                }
+
+                $to_status = '';
+                if ($status == 1) {
+                    $to_status = 'Draft';
+                } else if ($status == 2) {
+                    $to_status = 'Approved';
+                } else if ($status == 3) {
+                    $to_status = 'Rejected';
+                }
+
+                $this->log_wo_activity($id, "Work order status updated from " . $from_status . " to " . $to_status . "");
+            }
+
+            // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
+            return true;
+        }
+        return false;
+    }
+    public function get_payment_work_order($id)
+    {
+        $this->db->where('wo_order', $id);
+        return $this->db->get(db_prefix() . 'wo_order_payment')->result_array();
+    }
+    public function woorder_pdf($pur_order, $id)
+    {
+        $pur_order_data = $this->get_wo_order($id);
+        $footer_text = $pur_order_data->wo_order_name;
+        return app_pdf('wo_order', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Work_order_pdf'), $pur_order, $footer_text);
+    }
+    public function get_woorder_pdf_html($wo_order_id)
+    {
+
+        $pur_order = $this->get_wo_order($wo_order_id);
+        $pur_order_detail = $this->get_wo_order_detail($wo_order_id);
+        $company_name = get_option('invoice_company_name');
+        $address = get_option('invoice_company_address');
+        $day = date('d', strtotime($pur_order->order_date));
+        $month = date('m', strtotime($pur_order->order_date));
+        $year = date('Y', strtotime($pur_order->order_date));
+        $logo = '';
+        $delivery_date = '';
+        $project_detail = '';
+        $buyer = '';
+        $delivery_person = '';
+        $ship_to = format_wo_ship_to_info($pur_order);
+        $company_logo = get_option('company_logo_dark');
+        if (!empty($company_logo)) {
+            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="130" height="100">';
+        }
+        if (!empty($pur_order->delivery_date)) {
+            $delivery_date = '<span style="text-align: right;"><b>' . _l('delivery_date') . ':</b> ' . date('d-m-Y', strtotime($pur_order->delivery_date)) . '</span><br />';
+        }
+        if (!empty(get_project_name_by_id($pur_order->project))) {
+            $project_detail = '<br /><span><b>' . _l('project') . ':</b> ' . get_project_name_by_id($pur_order->project) . '<br /></span><br />';
+        }
+        if (!empty($pur_order->buyer)) {
+            $buyer = '<span style="text-align: right;"><b>' . _l('buyer') . ':</b> ' . get_staff_full_name($pur_order->buyer) . '</span><br />';
+        }
+        if (!empty(($pur_order->order_date))) {
+            $order_date = '<span><b>' . _l('order_date') . ':</b> ' . date('d M Y', strtotime($pur_order->order_date)) . '<br /></span><br />';
+        }
+        // if(!empty($pur_order->delivery_person)) {
+        //     $delivery_person = '<span style="text-align: right;"><b>'. _l('delivery_person').':</b> '. get_staff_full_name($pur_order->delivery_person).'</span><br />';
+        // }
+
+        $pur_request = $this->get_purchase_request($pur_order->pur_request);
+        $pur_request_name = '';
+        if (!empty($pur_request)) {
+            $pur_request_name = '<span style="text-align: right;"><b>' . _l('pur_request') . ':</b> #' . $pur_request->pur_rq_code . '</span><br />';
+        }
+        $ship_to_detail = '';
+        if (!empty($ship_to)) {
+            $ship_to_detail = '<span style="text-align: right;">' . $ship_to . '</span><br /><br />';
+        }
+        $html = '<table class="table">
+            <tbody>
+            <tr>
+                <td>
+                    ' . $logo . '
+                </td>
+                <td style="position: absolute; float: right;">
+                    <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('work_order')) . '</b></span><br />
+                    <span style="text-align: right;">' . $pur_order->wo_order_number . ' - ' . $pur_order->wo_order_name . '</span><br /><br />   
+                    ' . $order_date . '                
+                </td>
+            </tr>
+            </tbody>
+        </table>';
+
+        $html .= '<table class="table">
+        <tbody>
+          <tr>
+            <td>
+                ' . format_organization_info() . '
+                 ' . $project_detail . '
+            </td>
+            <td style="position: absolute; float: right;">
+                <span style="text-align: right;">' . format_pdf_vendor_info($pur_order->vendor) . '</span><br />
+                ' . $ship_to_detail . '
+                ' . $delivery_date . '
+                ' . $delivery_person . '
+                ' . $pur_request_name . ' ';
+        if (!empty($pur_order->addedfrom)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
+        }
+        $group_head_po = $this->get_budget_head_po($pur_order->id);
+        if ($group_head_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
+        }
+        $group_sub_head_po = $this->get_budget_sub_head_po($pur_order->id);
+        if ($group_sub_head_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
+        }
+        // $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
+        // if ($group_req_area_po != '') {
+        //     $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
+        // }
+        $html .= '            
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      ';
+        $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
+        $html .= '<div class="col-md-12 ">
+      <p class="bold"> ' . $order_summary_with_break . '</p>';
+        $html .= '<div style="page-break-before:always"></div>';
+        $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
+        $html .=  '<table class="table purorder-item" style="width: 100%">
+        <thead>
+          <tr>
+            <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
+            <th class="thead-dark" align="left" style="width: 20%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 11%">' . _l('unit_price') . '</th>
+            
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
+            <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
+ 
+            
+            <th class="thead-dark" align="right" style="width: 12%">' . _l('total') . '</th>
+          </tr>
+          </thead>
+          <tbody>';
+        $sub_total_amn = 0;
+        $tax_total = 0;
+        $t_mn = 0;
+        $discount_total = 0;
+        foreach ($pur_order_detail as $row) {
+            $items = $this->get_items_by_id($row['item_code']);
+            $units = $this->get_units_by_id($row['unit_id']);
+            $unit_name = pur_get_unit_name($row['unit_id']);
+            $html .= '<tr nobr="true" class="sortable">
+            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
+            <td align="left" style="width: 20%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
+            <td align="right" style="width: 10%">' . $row['quantity']  . ' ' . $unit_name . '</td>
+            <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
+            
+            <td align="right" style="width: 10%">' . app_format_money($row['tax_rate'], '') . '</td>
+            <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
+          </tr>';
+
+            $t_mn += $row['total_money'];
+            $tax_total += $row['total'] - $row['into_money'];
+            $sub_total_amn += $row['total_money'] - $tax_total;
+        }
+        $html .=  '</tbody>
+      </table><br><br>';
+
+        $html .= '<table class="table text-right"><tbody>';
+        if ($pur_order->discount_total > 0 || $tax_total > 0) {
+            $html .= '<tr id="subtotal">
+            <td width="33%"></td>
+            <td>' . _l('subtotal') . ' </td>
+            <td class="subtotal">
+            ' . '₹ ' . app_format_money($pur_order->subtotal, '') . '
+            </td>
+            </tr>';
+        }
+        if ($tax_total > 0) {
+            $html .= '<tr id="tax">
+            <td width="33%"></td>
+            <td>' . _l('Tax') . ' </td>
+            <td class="taxtotal">
+            ' . '₹ ' . app_format_money($tax_total, '') . '
+            </td>
+            </tr>';
+        }
+        if ($pur_order->discount_total > 0) {
+            $html .= '<tr id="subtotal">
+                  <td width="33%"></td>
+                     <td>' . _l('discount(%)') . '(%)' . '</td>
+                     <td class="subtotal">
+                        ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
+                     </td>
+                  </tr>
+                  <tr id="subtotal">
+                  <td width="33%"></td>
+                     <td>' . _l('discount(money)') . '</td>
+                     <td class="subtotal">
+                        ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
+                     </td>
+                  </tr>';
+        }
+        $html .= '<tr id="subtotal">
+                 <td width="33%"></td>
+                 <td><strong>' . _l('total') . '</strong></td>
+                 <td class="subtotal">
+                    ' . '₹ ' . app_format_money($pur_order->total, '') . '
+                 </td>
+              </tr>';
+
+        $html .= ' </tbody></table>';
+
+        $html .= '<div>&nbsp;</div>';
+        $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
+        $html .= '<div class="col-md-12 mtop15">
+            <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
+        $html .= '<div style="page-break-before:always"></div>';
+        $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
+            </div>';
+        $html .= '<br>
+      <br>
+      <br>
+      <br>
+      <table class="table">
+        <tbody>
+          <tr>';
+
+        $html .= '<td class="td_width_55"></td><td class="td_ali_font"><h3>' . mb_strtoupper(_l('signature_pur_order')) . '</h3></td>
+            </tr>
+        </tbody>
+      </table>';
+        $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/pur_order_pdf.css') . '"  rel="stylesheet" type="text/css" />';
+
+        return $html;
+    }
+    public function add_wo_order($data)
+    {
+
+        unset($data['item_select']);
+        unset($data['item_name']);
+        unset($data['description']);
+        unset($data['area']);
+        unset($data['total']);
+        unset($data['quantity']);
+        unset($data['unit_price']);
+        unset($data['unit_name']);
+        unset($data['item_code']);
+        unset($data['unit_id']);
+        unset($data['discount']);
+        unset($data['into_money']);
+        unset($data['tax_rate']);
+        unset($data['tax_name']);
+        unset($data['discount_money']);
+        unset($data['total_money']);
+        unset($data['additional_discount']);
+        unset($data['tax_value']);
+        if (isset($data['tax_select'])) {
+            unset($data['tax_select']);
+        }
+
+        // $check_appr = $this->get_approve_setting('pur_order');
+        // $data['approve_status'] = 1;
+        // if($check_appr && $check_appr != false){
+        //     $data['approve_status'] = 1;
+        // }else{
+        //     $data['approve_status'] = 2;
+        // }
+
+        $check_appr = $this->check_approval_setting($data['project'], 'po_order', 0);
+        $data['approve_status'] = ($check_appr == true) ? 2 : 1;
+
+        $data['to_currency'] = $data['currency'];
+
+        $order_detail = [];
+        if (isset($data['newitems'])) {
+            $order_detail = $data['newitems'];
+            unset($data['newitems']);
+        }
+
+        $prefix = get_purchase_option('wo_order_prefix');
+
+        $this->db->where('wo_order_number', $data['wo_order_number']);
+        $check_exist_number = $this->db->get(db_prefix() . 'wo_orders')->row();
+
+        while ($check_exist_number) {
+            $data['number'] = $data['number'] + 1;
+            $data['wo_order_number'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT) . '-' . date('M-Y') . '-' . get_vendor_company_name($data['vendor']);
+            if (get_option('po_only_prefix_and_number') == 1) {
+                $data['wo_order_number'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT);
+            }
+
+            $this->db->where('wo_order_number', $data['wo_order_number']);
+            $check_exist_number = $this->db->get(db_prefix() . 'wo_orders')->row();
+        }
+
+        $data['order_date'] = to_sql_date($data['order_date']);
+
+        $data['delivery_date'] = to_sql_date($data['delivery_date']);
+
+        $data['datecreated'] = date('Y-m-d H:i:s');
+
+        $data['addedfrom'] = get_staff_user_id();
+
+        $data['hash'] = app_generate_hash();
+
+        $data['order_status'] = 'new';
+
+
+
+        if (isset($data['clients']) && count($data['clients']) > 0) {
+            $data['clients'] = implode(',', $data['clients']);
+        }
+
+        if (isset($data['custom_fields'])) {
+            $custom_fields = $data['custom_fields'];
+            unset($data['custom_fields']);
+        }
+
+        $tags = '';
+        if (isset($data['tags'])) {
+            $tags = $data['tags'];
+            unset($data['tags']);
+        }
+
+        if (isset($data['order_discount'])) {
+            $order_discount = $data['order_discount'];
+            if ($data['add_discount_type'] == 'percent') {
+                $data['discount_percent'] = $order_discount;
+            }
+
+            unset($data['order_discount']);
+        }
+
+        unset($data['add_discount_type']);
+
+        if (isset($data['dc_total'])) {
+            $data['discount_total'] = $data['dc_total'];
+            unset($data['dc_total']);
+        }
+
+        if (isset($data['total_mn'])) {
+            $data['subtotal'] = $data['total_mn'];
+            unset($data['total_mn']);
+        }
+
+        if (isset($data['grand_total'])) {
+            $data['total'] = $data['grand_total'];
+            unset($data['grand_total']);
+        }
+
+        $this->db->insert(db_prefix() . 'wo_orders', $data);
+        $insert_id = $this->db->insert_id();
+
+        // $this->send_mail_to_approver($data, 'pur_order', 'purchase_order', $insert_id);
+        // if ($data['approve_status'] == 2) {
+        //     $this->send_mail_to_sender('purchase_order', $data['approve_status'], $insert_id);
+        // }
+        $cron_email = array();
+        $cron_email_options = array();
+        $cron_email['type'] = "purchase";
+        $cron_email_options['rel_type'] = 'wo_order';
+        $cron_email_options['rel_name'] = 'work_order';
+        $cron_email_options['insert_id'] = $insert_id;
+        $cron_email_options['user_id'] = get_staff_user_id();
+        $cron_email_options['status'] = $data['approve_status'];
+        $cron_email_options['approver'] = 'yes';
+        $cron_email_options['sender'] = 'yes';
+        $cron_email_options['project'] = $data['project'];
+        $cron_email_options['requester'] = $data['requester'];
+        $cron_email['options'] = json_encode($cron_email_options, true);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+
+        $this->save_work_order_files('wo_order', $insert_id);
+
+        if ($insert_id) {
+            // Update next work order number in settings
+            $next_number = $data['number'] + 1;
+            $this->db->where('option_name', 'next_wo_number');
+            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+
+            $total = [];
+            $total['total_tax'] = 0;
+
+            if (count($order_detail) > 0) {
+                foreach ($order_detail as $key => $rqd) {
+                    $dt_data = [];
+                    $dt_data['wo_order'] = $insert_id;
+                    $dt_data['item_code'] = $rqd['item_code'];
+                    $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['unit_price'] = $rqd['unit_price'];
+                    $dt_data['into_money'] = $rqd['into_money'];
+                    $dt_data['total'] = $rqd['total'];
+                    $dt_data['tax_value'] = $rqd['tax_value'];
+                    $dt_data['item_name'] = $rqd['item_name'];
+                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                    $dt_data['description'] = nl2br($rqd['item_description']);
+                    $dt_data['total_money'] = $rqd['total_money'];
+                    $dt_data['discount_money'] = $rqd['discount_money'];
+                    $dt_data['discount_%'] = $rqd['discount'];
+
+                    $tax_money = 0;
+                    $tax_rate_value = 0;
+                    $tax_rate = null;
+                    $tax_id = null;
+                    $tax_name = null;
+
+                    if (isset($rqd['tax_select'])) {
+                        $tax_rate_data = $this->pur_get_tax_rate($rqd['tax_select']);
+                        $tax_rate_value = $tax_rate_data['tax_rate'];
+                        $tax_rate = $tax_rate_data['tax_rate_str'];
+                        $tax_id = $tax_rate_data['tax_id_str'];
+                        $tax_name = $tax_rate_data['tax_name_str'];
+                    }
+
+                    $dt_data['tax'] = $tax_id;
+                    $dt_data['tax_rate'] = $tax_rate;
+                    $dt_data['tax_name'] = $tax_name;
+
+                    $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+
+                    $this->db->insert(db_prefix() . 'wo_order_detail', $dt_data);
+                }
+            }
+
+            handle_tags_save($tags, $insert_id, 'wo_order');
+
+            if (isset($custom_fields)) {
+
+                handle_custom_fields_post($insert_id, $custom_fields);
+            }
+
+            $_taxes = $this->get_html_tax_wo_order($insert_id);
+            foreach ($_taxes['taxes_val'] as $tax_val) {
+                $total['total_tax'] += $tax_val;
+            }
+
+            $this->db->where('id', $insert_id);
+            $this->db->update(db_prefix() . 'wo_orders', $total);
+
+            $this->log_wo_activity($insert_id, 'wo_activity_created');
+            // warehouse module hook after purchase order add
+            hooks()->do_action('after_work_order_add', $insert_id);
+
+            return $insert_id;
+        }
+
+        return false;
+    }
+    public function update_wo_order($data, $id)
+    {
+
+        $affectedRows = 0;
+        unset($data['item_select']);
+        unset($data['item_name']);
+        unset($data['description']);
+        unset($data['area']);
+        unset($data['total']);
+        unset($data['quantity']);
+        unset($data['unit_price']);
+        unset($data['unit_name']);
+        unset($data['item_code']);
+        unset($data['unit_id']);
+        unset($data['discount']);
+        unset($data['into_money']);
+        unset($data['tax_rate']);
+        unset($data['tax_name']);
+        unset($data['discount_money']);
+        unset($data['total_money']);
+        unset($data['additional_discount']);
+        unset($data['tax_value']);
+        unset($data['isedit']);
+        if (isset($data['tax_select'])) {
+            unset($data['tax_select']);
+        }
+
+        $new_order = [];
+        if (isset($data['newitems'])) {
+            $new_order = $data['newitems'];
+            unset($data['newitems']);
+        }
+
+        $update_order = [];
+        if (isset($data['items'])) {
+            $update_order = $data['items'];
+            unset($data['items']);
+        }
+
+        $remove_order = [];
+        if (isset($data['removed_items'])) {
+            $remove_order = $data['removed_items'];
+            unset($data['removed_items']);
+        }
+
+        $data['to_currency'] = $data['currency'];
+
+        $prefix = get_purchase_option('wo_order_prefix');
+        $data['po_order_number'] = $data['po_order_number'];
+
+        $data['order_date'] = to_sql_date($data['order_date']);
+
+        $data['delivery_date'] = to_sql_date($data['delivery_date']);
+
+        $data['datecreated'] = date('Y-m-d H:i:s');
+
+        $data['addedfrom'] = get_staff_user_id();
+
+        if (isset($data['clients']) && count($data['clients']) > 0) {
+            $data['clients'] = implode(',', $data['clients']);
+        }
+
+        if (isset($data['order_discount'])) {
+            $order_discount = $data['order_discount'];
+            if ($data['add_discount_type'] == 'percent') {
+                $data['discount_percent'] = $order_discount;
+            }
+
+            unset($data['order_discount']);
+        }
+
+        unset($data['add_discount_type']);
+
+        if (isset($data['dc_total'])) {
+            $data['discount_total'] = $data['dc_total'];
+            unset($data['dc_total']);
+        }
+
+        if (isset($data['total_mn'])) {
+            $data['subtotal'] = $data['total_mn'];
+            unset($data['total_mn']);
+        }
+
+        if (isset($data['grand_total'])) {
+            $data['total'] = $data['grand_total'];
+            unset($data['grand_total']);
+        }
+
+        if (isset($data['tags'])) {
+            if (handle_tags_save($data['tags'], $id, 'po_order')) {
+                $affectedRows++;
+            }
+            unset($data['tags']);
+        }
+
+        if (isset($data['custom_fields'])) {
+            $custom_fields = $data['custom_fields'];
+            if (handle_custom_fields_post($id, $custom_fields)) {
+                $affectedRows++;
+            }
+            unset($data['custom_fields']);
+        }
+
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'wo_orderss', $data);
+
+        $this->save_purchase_files('wo_order', $id);
+
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+            $this->db->where('id', $id);
+            $po = $this->db->get(db_prefix() . 'wo_orders')->row();
+            if ($po->approve_status == 3) {
+                $status_array = array();
+                $status_array['approve_status'] = 1;
+                $this->db->where('id', $id);
+                $this->db->update(db_prefix() . 'wo_orders', $status_array);
+                $from_status = 'Rejected';
+                $to_status = 'Draft';
+                $this->log_wo_activity($id, "Work order status updated from " . $from_status . " to " . $to_status . "");
+            }
+        }
+
+        if (count($new_order) > 0) {
+            foreach ($new_order as $key => $rqd) {
+
+                $dt_data = [];
+                $dt_data['wo_order'] = $id;
+                $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['unit_price'] = $rqd['unit_price'];
+                $dt_data['into_money'] = $rqd['into_money'];
+                $dt_data['total'] = $rqd['total'];
+                $dt_data['tax_value'] = $rqd['tax_value'];
+                $dt_data['item_name'] = $rqd['item_name'];
+                $dt_data['total_money'] = $rqd['total_money'];
+                $dt_data['discount_money'] = $rqd['discount_money'];
+                $dt_data['discount_%'] = $rqd['discount'];
+                $dt_data['description'] = nl2br($rqd['item_description']);
+
+                $tax_money = 0;
+                $tax_rate_value = 0;
+                $tax_rate = null;
+                $tax_id = null;
+                $tax_name = null;
+
+                if (isset($rqd['tax_select'])) {
+                    $tax_rate_data = $this->pur_get_tax_rate($rqd['tax_select']);
+                    $tax_rate_value = $tax_rate_data['tax_rate'];
+                    $tax_rate = $tax_rate_data['tax_rate_str'];
+                    $tax_id = $tax_rate_data['tax_id_str'];
+                    $tax_name = $tax_rate_data['tax_name_str'];
+                }
+
+                $dt_data['tax'] = $tax_id;
+                $dt_data['tax_rate'] = $tax_rate;
+                $dt_data['tax_name'] = $tax_name;
+
+                $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+
+                $this->db->insert(db_prefix() . 'wo_order_detail', $dt_data);
+                $new_quote_insert_id = $this->db->insert_id();
+                if ($new_quote_insert_id) {
+                    $affectedRows++;
+                    $this->log_wo_activity($id, 'work_order_activity_added_item', false, serialize([
+                        $this->get_items_by_id($rqd['item_code'])->description,
+                    ]));
+                }
+            }
+        }
+
+        if (count($update_order) > 0) {
+            foreach ($update_order as $_key => $rqd) {
+                $dt_data = [];
+                $dt_data['pur_order'] = $id;
+                $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['unit_price'] = $rqd['unit_price'];
+                $dt_data['into_money'] = $rqd['into_money'];
+                $dt_data['total'] = $rqd['total'];
+                $dt_data['tax_value'] = $rqd['tax_value'];
+                $dt_data['item_name'] = $rqd['item_name'];
+                $dt_data['total_money'] = $rqd['total_money'];
+                $dt_data['discount_money'] = $rqd['discount_money'];
+                $dt_data['discount_%'] = $rqd['discount'];
+                $dt_data['description'] = nl2br($rqd['item_description']);
+
+                $tax_money = 0;
+                $tax_rate_value = 0;
+                $tax_rate = null;
+                $tax_id = null;
+                $tax_name = null;
+
+                if (isset($rqd['tax_select'])) {
+                    $tax_rate_data = $this->pur_get_tax_rate($rqd['tax_select']);
+                    $tax_rate_value = $tax_rate_data['tax_rate'];
+                    $tax_rate = $tax_rate_data['tax_rate_str'];
+                    $tax_id = $tax_rate_data['tax_id_str'];
+                    $tax_name = $tax_rate_data['tax_name_str'];
+                }
+
+                $dt_data['tax'] = $tax_id;
+                $dt_data['tax_rate'] = $tax_rate;
+                $dt_data['tax_name'] = $tax_name;
+
+                $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+
+                $this->db->where('id', $rqd['id']);
+                $this->db->update(db_prefix() . 'wo_order_detail', $dt_data);
+                if ($this->db->affected_rows() > 0) {
+                    $affectedRows++;
+                }
+            }
+        }
+
+        if (count($remove_order) > 0) {
+            foreach ($remove_order as $remove_id) {
+                $this->db->where('id', $remove_id);
+                $pur_order_id = $this->db->get(db_prefix() . 'wo_order_detail')->row();
+                $item_detail = $this->get_items_by_id($pur_order_id->item_code);
+                $this->db->where('id', $remove_id);
+                if ($this->db->delete(db_prefix() . 'wo_order_detail')) {
+                    $affectedRows++;
+                    $this->log_wo_activity($id, 'work_order_activity_removed_item', false, serialize([
+                        $item_detail->description,
+                    ]));
+                }
+            }
+        }
+
+
+        $total = [];
+        $total['total_tax'] = 0;
+        $_taxes = $this->get_html_tax_wo_order($id);
+        foreach ($_taxes['taxes_val'] as $tax_val) {
+            $total['total_tax'] += $tax_val;
+        }
+
+
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'wo_orders', $total);
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+        }
+
+        if ($affectedRows > 0) {
+
+
+            return true;
+        }
+
+        return false;
+    }
+    public function save_work_order_files($related, $id)
+    {
+        $uploadedFiles = handle_purchase_attachments_array($related, $id);
+
+        if ($uploadedFiles && is_array($uploadedFiles)) {
+            foreach ($uploadedFiles as $file) {
+                $data = array();
+                $data['dateadded'] = date('Y-m-d H:i:s');
+                $data['rel_type'] = $related;
+                $data['rel_id'] = $id;
+                $data['staffid'] = get_staff_user_id();
+                $data['attachment_key'] = app_generate_hash();
+                $data['file_name'] = $file['file_name'];
+                $data['filetype']  = $file['filetype'];
+                $this->db->insert(db_prefix() . 'purchase_files', $data);
+            }
+        }
+        return true;
+    }
+    public function get_work_order_attachments($related, $id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', $related);
+        $this->db->order_by('dateadded', 'desc');
+        $attachments = $this->db->get(db_prefix() . 'purchase_files')->result_array();
+        return $attachments;
+    }
+    public function delete_wo_order($id)
+    {
+
+        hooks()->do_action('before_wo_order_deleted', $id);
+
+        $affectedRows = 0;
+        $this->db->where('wo_order', $id);
+        $this->db->delete(db_prefix() . 'wo_order_detail');
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+        }
+
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'wo_order');
+        $this->db->delete(db_prefix() . 'files');
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+        }
+
+        if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/wo_order/' . $id)) {
+            delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/wo_order/' . $id);
+        }
+
+        $this->db->where('wo_order', $id);
+        $this->db->delete(db_prefix() . 'wo_order_payment');
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+        }
+
+        $this->db->where('rel_type', 'work_order');
+        $this->db->where('rel_id', $id);
+        $this->db->delete(db_prefix() . 'notes');
+
+        $this->db->where('rel_type', 'work_order');
+        $this->db->where('rel_id', $id);
+        $this->db->delete(db_prefix() . 'reminders');
+
+        $this->db->where('fieldto', 'wo_order');
+        $this->db->where('relid', $id);
+        $this->db->delete(db_prefix() . 'customfieldsvalues');
+
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'wo_orders');
+
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'wo_order');
+        $this->db->delete(db_prefix() . 'taggables');
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+        }
+
+        if ($this->db->affected_rows() > 0) {
+            $affectedRows++;
+        }
+
+        if ($affectedRows > 0) {
+            return true;
+        }
+        return false;
+    }
+    public function send_wo($data)
+    {
+        $mail_data = [];
+        $count_sent = 0;
+        $po = $this->get_wo_order($data['wo_id']);
+        if (isset($data['attach_pdf'])) {
+            $pur_order = $this->get_woorder_pdf_html($data['wo_id']);
+
+            try {
+                $pdf = $this->purorder_pdf($pur_order);
+            } catch (Exception $e) {
+                echo pur_html_entity_decode($e->getMessage());
+                die;
+            }
+
+            $attach = $pdf->Output($po->wo_order_number . '.pdf', 'S');
+        }
+
+
+        if (strlen(get_option('smtp_host')) > 0 && strlen(get_option('smtp_password')) > 0) {
+            foreach ($data['send_to'] as $mail) {
+
+                $mail_data['wo_id'] = $data['wo_id'];
+                $mail_data['content'] = $data['content'];
+                $mail_data['mail_to'] = $mail;
+
+                $template = mail_template('work_order_to_contact', 'purchase', array_to_object($mail_data));
+
+                if (isset($data['attach_pdf'])) {
+                    $template->add_attachment([
+                        'attachment' => $attach,
+                        'filename'   => str_replace('/', '-', $po->wo_order_number . '.pdf'),
+                        'type'       => 'application/pdf',
+                    ]);
+                }
+
+                $rs = $template->send();
+
+                if ($rs) {
+                    $count_sent++;
+                }
+            }
+
+            if ($count_sent > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public function delete_wo_order_attachment($id)
+    {
+        $deleted = false;
+        $this->db->where('id', $id);
+        $attachment = $this->db->get(db_prefix() . 'purchase_files')->row();
+        if ($attachment) {
+            if (unlink(get_upload_path_by_type('purchase') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name)) {
+                $this->db->where('id', $attachment->id);
+                $this->db->delete(db_prefix() . 'purchase_files');
+                $deleted = true;
+            }
+            // Check if no attachments left, so we can delete the folder also
+            $other_attachments = list_files(get_upload_path_by_type('purchase') . $attachment->rel_type . '/' . $attachment->rel_id);
+            if (count($other_attachments) == 0) {
+                delete_dir(get_upload_path_by_type('purchase') . $attachment->rel_type . '/' . $attachment->rel_id);
+            }
+        }
+
+        return $deleted;
+    }
+    public function get_wo_order_detail($pur_request)
+    {
+        $this->db->where('wo_order', $pur_request);
+        $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
+
+        foreach ($pur_order_details as $key => $detail) {
+            $pur_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
+            $pur_order_details[$key]['into_money'] = (float) $detail['into_money'];
+            $pur_order_details[$key]['total'] = (float) $detail['total'];
+            $pur_order_details[$key]['total_money'] = (float) $detail['total_money'];
+            $pur_order_details[$key]['unit_price'] = (float) $detail['unit_price'];
+            $pur_order_details[$key]['tax_value'] = (float) $detail['tax_value'];
+        }
+
+        return $pur_order_details;
+    }
+    public function get_wo_order($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get(db_prefix() . 'wo_orders')->row();
+    }
+    public function get_html_tax_wo_order($id)
+    {
+        $html = '';
+        $preview_html = '';
+        $pdf_html = '';
+        $taxes = [];
+        $t_rate = [];
+        $tax_val = [];
+        $tax_val_rs = [];
+        $tax_name = [];
+        $rs = [];
+
+        $order = $this->get_wo_order($id);
+
+        $this->load->model('currencies_model');
+        $base_currency = $this->currencies_model->get_base_currency();
+
+        if ($order->currency != 0 && $order->currency != null) {
+            $base_currency = pur_get_currency_by_id($order->currency);
+        }
+
+
+        $this->db->where('wo_order', $id);
+        $details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
+        $item_discount = 0;
+
+        foreach ($details as $row) {
+            if ($row['tax'] != '') {
+                $tax_arr = explode('|', $row['tax']);
+
+                $tax_rate_arr = [];
+                if ($row['tax_rate'] != '') {
+                    $tax_rate_arr = explode('|', $row['tax_rate']);
+                }
+
+                foreach ($tax_arr as $k => $tax_it) {
+                    if (!isset($tax_rate_arr[$k])) {
+                        $tax_rate_arr[$k] = $this->tax_rate_by_id($tax_it);
+                    }
+
+                    if (!in_array($tax_it, $taxes)) {
+                        $taxes[$tax_it] = $tax_it;
+                        $t_rate[$tax_it] = $tax_rate_arr[$k];
+                        $tax_name[$tax_it] = $this->get_tax_name($tax_it) . ' (' . $tax_rate_arr[$k] . '%)';
+                    }
+                }
+            }
+
+            $item_discount += $row['discount_money'];
+        }
+
+        if (count($tax_name) > 0) {
+            $discount_total = $item_discount + $order->discount_total;
+
+            foreach ($tax_name as $key => $tn) {
+                $tax_val[$key] = 0;
+                foreach ($details as $row_dt) {
+                    if (!(strpos($row_dt['tax'] ?? '', $taxes[$key]) === false)) {
+                        $total = ($row_dt['into_money'] * $t_rate[$key] / 100);
+
+                        if ($order->discount_type == 'before_tax') {
+                            $t = 0;
+                            if ($order->subtotal > 0) {
+                                $t     = ($discount_total / $order->subtotal) * 100;
+                            }
+                            $tax_val[$key] += ($total - $total * $t / 100);
+                        } else {
+                            $tax_val[$key] += $total;
+                        }
+                    }
+                }
+
+
+
+                $pdf_html .= '<tr id="subtotal"><td width="33%"></td><td>' . $tn . '</td><td>' . app_format_money($tax_val[$key], '') . '</td></tr>';
+                $preview_html .= '<tr id="subtotal"><td>' . $tn . '</td><td>' . app_format_money($tax_val[$key], $base_currency->name) . '</td><tr>';
+                $html .= '<tr class="tax-area_pr"><td>' . $tn . '</td><td width="65%">' . app_format_money($tax_val[$key], '') . ' ' . ($base_currency->name) . '</td></tr>';
+                $tax_val_rs[] = $tax_val[$key];
+            }
+        }
+
+        $rs['pdf_html'] = $pdf_html;
+        $rs['preview_html'] = $preview_html;
+        $rs['html'] = $html;
+        $rs['taxes'] = $taxes;
+        $rs['taxes_val'] = $tax_val_rs;
+        return $rs;
+    }
+    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    {
+
+        $this->load->model('invoice_items_model');
+        $row = '';
+
+        $name_item_code = 'item_code';
+        $name_item_name = 'item_name';
+        $name_item_description = 'description';
+        $name_area = 'area';
+        $name_unit_id = 'unit_id';
+        $name_unit_name = 'unit_name';
+        $name_quantity = 'quantity';
+        $name_unit_price = 'unit_price';
+        $name_tax_id_select = 'tax_select';
+        $name_tax_id = 'tax_id';
+        $name_total = 'total';
+        $name_tax_rate = 'tax_rate';
+        $name_tax_name = 'tax_name';
+        $name_tax_value = 'tax_value';
+        $array_attr = [];
+        $array_attr_payment = ['data-payment' => 'invoice'];
+        $name_into_money = 'into_money';
+        $name_discount = 'discount';
+        $name_discount_money = 'discount_money';
+        $name_total_money = 'total_money';
+
+        $array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
+        $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
+        $array_rate_attr = ['min' => '0.0', 'step' => 'any'];
+        $array_discount_attr = ['min' => '0.0', 'step' => 'any'];
+        $array_discount_money_attr = ['min' => '0.0', 'step' => 'any'];
+        $str_rate_attr = 'min="0.0" step="any"';
+
+        $array_subtotal_attr = ['readonly' => true];
+        $text_right_class = 'text-right';
+
+        if ($name == '') {
+            $row .= '<tr class="main">
+                  <td></td>';
+            $vehicles = [];
+            $array_attr = ['placeholder' => _l('unit_price')];
+
+            $manual             = true;
+            $invoice_item_taxes = '';
+            $amount = '';
+            $sub_total = 0;
+        } else {
+            $row .= '<tr class="sortable item">
+                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
+            $name_item_code = $name . '[item_code]';
+            $name_item_name = $name . '[item_name]';
+            $name_item_description = $name . '[item_description]';
+            $name_area = $name . '[area]';
+            $name_unit_id = $name . '[unit_id]';
+            $name_unit_name = '[unit_name]';
+            $name_quantity = $name . '[quantity]';
+            $name_unit_price = $name . '[unit_price]';
+            $name_tax_id_select = $name . '[tax_select][]';
+            $name_tax_id = $name . '[tax_id]';
+            $name_total = $name . '[total]';
+            $name_tax_rate = $name . '[tax_rate]';
+            $name_tax_name = $name . '[tax_name]';
+            $name_into_money = $name . '[into_money]';
+            $name_discount = $name . '[discount]';
+            $name_discount_money = $name . '[discount_money]';
+            $name_total_money = $name . '[total_money]';
+            $name_tax_value = $name . '[tax_value]';
+
+
+            $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
+
+
+            $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('rate')];
+            $array_discount_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
+
+            $array_discount_money_attr = ['onblur' => 'pur_calculate_total(1);', 'onchange' => 'pur_calculate_total(1);', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
+
+
+            $manual             = false;
+
+            $tax_money = 0;
+            $tax_rate_value = 0;
+
+            if ($is_edit) {
+                $invoice_item_taxes = pur_convert_item_taxes($tax_id, $tax_rate, $taxname);
+                $arr_tax_rate = explode('|', $tax_rate ?? '');
+                foreach ($arr_tax_rate as $key => $value) {
+                    $tax_rate_value += (float)$value;
+                }
+            } else {
+                $invoice_item_taxes = $taxname;
+                $tax_rate_data = $this->pur_get_tax_rate($taxname);
+                $tax_rate_value = $tax_rate_data['tax_rate'];
+            }
+
+            if ((float)$tax_rate_value != 0) {
+                $tax_money = (float)$unit_price * (float)$quantity * (float)$tax_rate_value / 100;
+                $goods_money = (float)$unit_price * (float)$quantity + (float)$tax_money;
+                $amount = (float)$unit_price * (float)$quantity + (float)$tax_money;
+            } else {
+                $goods_money = (float)$unit_price * (float)$quantity;
+                $amount = (float)$unit_price * (float)$quantity;
+            }
+
+            $sub_total = (float)$unit_price * (float)$quantity;
+            $amount = app_format_number($amount);
+        }
+
+
+        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
+
+        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
+
+        $units_list = $this->get_units();
+
+        $row .= '<td class="quantities">' .
+            render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
+            // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
+            '</td>';
+        $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
+
+        if ($unit_price != '') {
+            $original_price = ($currency_rate > 0) ? round(($unit_price / $currency_rate), 2) : 0;
+            $base_currency = get_base_currency();
+            if ($to_currency != 0 && $to_currency != $base_currency->id) {
+                $row .= render_input('original_price', '', app_format_money($original_price, $base_currency), 'text', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => _l('original_price'), 'disabled' => true], [], 'no-margin', 'input-transparent text-right pur_input_none');
+            }
+
+            $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
+        }
+
+
+
+        $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
+
+        $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+
+        $row .= '<td class="_total" align="right">' . $total . '</td>';
+
+        if ($discount_money > 0) {
+            $discount = '';
+        }
+
+        $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
+        $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
+
+        $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
+        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
+
+        $row .= '<td class="hide _total_after_tax">' . render_input($name_total, '', $total, 'number', []) . '</td>';
+
+        //$row .= '<td class="hide discount_money">' . render_input($name_discount_money, '', $discount_money, 'number', []) . '</td>';
+        $row .= '<td class="hide total_after_discount">' . render_input($name_total_money, '', $total_money, 'number', []) . '</td>';
+        $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
+
+        if ($name == '') {
+            $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
+        } else {
+            $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
+        }
+        $row .= '</tr>';
+        return $row;
+    }
+    public function get_wo_order_files($wo_order)
+    {
+        $this->db->where('rel_id', $wo_order);
+        $this->db->where('rel_type', 'wo_order');
+        return $this->db->get(db_prefix() . 'purchase_files')->result_array();
+    }
+
+    public function wo_commodity_code_search($q, $type, $can_be = '', $search_all = false, $vendor = '', $group = '')
+    {
+        $this->db->select('rate, id, description as name, long_description as subtext, commodity_code, purchase_price');
+
+        $this->db->group_start();
+        $this->db->like('description', $q);
+        $this->db->or_like('long_description', $q);
+        $this->db->or_like('commodity_code', $q);
+        $this->db->or_like('sku_code', $q);
+        $this->db->group_end();
+        if (strlen($can_be) > 0) {
+            $this->db->where($can_be, $can_be);
+        }
+        $this->db->where('active', 1);
+
+        if ($vendor != '') {
+            $this->db->where('id in (SELECT items from ' . db_prefix() . 'pur_vendor_items WHERE vendor = ' . $vendor . ')');
+        }
+
+        if ($group != '') {
+            $this->db->where('group_id', $group);
+        }
+
+        $this->db->order_by('id', 'desc');
+        $this->db->limit(500);
+
+        $items = $this->db->get(db_prefix() . 'items')->result_array();
+
+        foreach ($items as $key => $item) {
+            $items[$key]['subtext'] = strip_tags(mb_substr($item['subtext'] ?? '', 0, 200)) . '...';
+            if ($type == 'rate') {
+                $items[$key]['name']    = '(' . app_format_number($item['rate']) . ') ' . $item['commodity_code'];
+            } else {
+                $items[$key]['name']    = '(' . app_format_number($item['purchase_price']) . ') ' . $item['commodity_code'] . ' ' . $item['name'];
+            }
+        }
+
+        return $items;
+    }
+    public function get_wo_order_search($q)
+    {
+        $this->db->where('1=1 AND (wo_order_number LIKE "%' . $this->db->escape_like_str($q) . '%")');
+        return $this->db->get(db_prefix() . 'wo_orders')->result_array();
     }
 }
