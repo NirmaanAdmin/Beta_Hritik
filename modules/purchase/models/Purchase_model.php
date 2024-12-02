@@ -14707,7 +14707,7 @@ class Purchase_model extends App_Model
             return $intersect;
         } else {
             if (!empty($intersect)) {
-                $intersect = array_filter($intersect, function ($var) {
+                $intersect = array_filter($intersect, function ($var) use ($user_id) {
                     return ($var['id'] == $user_id);
                 });
                 if (!empty($intersect)) {
