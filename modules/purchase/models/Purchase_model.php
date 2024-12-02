@@ -14416,7 +14416,21 @@ class Purchase_model extends App_Model
         if ($invoice->currency != 0) {
             $base_currency = pur_get_currency_by_id($invoice->currency);
         }
+        $invoice_date = (isset($invoice) ? _d($invoice->invoice_date) : '');
+        $due_date = (isset($invoice) ? _d($invoice->duedate) : '');
+        $contract = '';
+        if($invoice->contract != 0){
+            $contract = get_pur_contract_number($invoice->contract);
 
+        }else{
+            $contract = '';
+        }
+        $contract_url = admin_url("purchase/contract/" . $invoice->contract);
+        $purchase_url = admin_url("purchase/purchase_order/" . $invoice->pur_order);
+        $purchase = get_pur_order_subject($invoice->pur_order);
+        $tags = (isset($invoice) ? prep_tags_input(get_tags_in($invoice->id,'pur_invoice')) : '');
+        $add_from_url = admin_url('staff/profile/'.$invoice->add_from);
+        $add_from = get_staff_full_name($invoice->add_from);
         $address = '';
         $vendor_name = '';
 
@@ -14500,94 +14514,115 @@ class Purchase_model extends App_Model
           <br><br><br>
           ';
 
-        $html .=  '<table class="table purorder-item">
-        <thead>
-          <tr>
-            <th class="thead-dark" style="width: 30%;">' . _l('items') . '</th>
-            <th class="thead-dark" style="width: 15%;" align="right">' . _l('purchase_unit_price') . '</th>
-            <th class="thead-dark" style="width: 15%;" align="right">' . _l('purchase_quantity') . '</th>';
-
-        if (get_option('show_purchase_tax_column') == 1) {
-
-            $html .= '<th class="thead-dark" align="right" style="width: 10%;">' . _l('tax') . '</th>';
-        }
-
-        $html .= '<th class="thead-dark" align="right" style="width: 15%;">' . _l('discount') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%;">' . _l('total') . '</th>
-          </tr>
-          </thead>
-          <tbody>';
-        $t_mn = 0;
-        $item_discount = 0;
-        foreach ($invoice_detail as $row) {
-            $items = $this->get_items_by_id($row['item_code']);
-            $des_html = ($items) ? $items->commodity_code . ' - ' . $items->description : $row['item_name'];
-
-            $units = $this->get_units_by_id($row['unit_id']);
-            $unit_name = isset($units->unit_name) ? $units->unit_name : '';
-
-            $html .= '<tr nobr="true" class="sortable">
-                <td style="width: 30%;"><strong>' . $des_html . '</strong><br><span>' . $row['description'] . '</span></td>
-                <td style="width: 15%;"align="right">' . app_format_money($row['unit_price'], $base_currency->symbol) . '</td>
-                <td style="width: 15%;" align="right">' . app_format_number($row['quantity'], '') . ' ' . $unit_name . '</td>';
-
-            if (get_option('show_purchase_tax_column') == 1) {
-                $html .= '<td align="right" style="width: 10%;">' . app_format_money($row['total'] - $row['into_money'], $base_currency->symbol) . '</td>';
-            }
-
-            $html .= '<td align="right" style="width: 15%;">' . app_format_money($row['discount_money'], $base_currency->symbol) . '</td>
-            <td align="right" style="width: 15%;">' . app_format_money($row['total_money'], $base_currency->symbol) . '</td>
-          </tr>';
-
-            $t_mn += $row['total_money'];
-            $item_discount += $row['discount_money'];
-        }
-        $html .=  '</tbody>
-                </table><br><br>';
-
-        $html .= '<table class="table text-right"><tbody>';
-        $html .= '<tr id="subtotal">
-                    <td style="width: 33%"></td>
-                     <td>' . _l('subtotal') . ' </td>
-                     <td class="subtotal">
-                        ' . app_format_money($invoice->subtotal, $base_currency->symbol) . '
-                     </td>
-                  </tr>';
-
-        $html .= $tax_data['pdf_html'];
-
-        if (($invoice->discount_total + $item_discount) > 0) {
-            $html .= '
-                  
-                  <tr id="subtotal">
-                  <td style="width: 33%"></td>
-                     <td>' . _l('discount_total(money)') . '</td>
-                     <td class="subtotal">
-                        ' . app_format_money(($invoice->discount_total + $item_discount), $base_currency->symbol) . '
-                     </td>
-                  </tr>';
-        }
-
-        if ($invoice->shipping_fee  > 0) {
-            $html .= '
-                  
-                  <tr id="subtotal">
-                  <td style="width: 33%"></td>
-                     <td>' . _l('pur_shipping_fee') . '</td>
-                     <td class="subtotal">
-                        ' . app_format_money($invoice->shipping_fee, $base_currency->symbol) . '
-                     </td>
-                  </tr>';
-        }
-        $html .= '<tr id="subtotal">
-                 <td style="width: 33%"></td>
-                 <td>' . _l('total') . '</td>
-                 <td class="subtotal">
-                    ' . app_format_money($invoice->total, $base_currency->symbol) . '
-                 </td>
-              </tr>';
-
-        $html .= ' </tbody></table>';
+        $html .=  '<div role="tabpanel" class="tab-pane ptop10 active" id="tab_pur_invoice">
+             <table class="table table-bordered" style="width: 100%; border-collapse: collapse;">
+        <tbody>
+            <tr>
+                <td style="padding: 8px;">Invoice Code</td>
+                <td style="padding: 8px;  ">'.$invoice->invoice_number.'</td>
+                <td style="padding: 8px;">Invoice Number</td>
+                <td style="padding: 8px;">'.$invoice->invoice_number.'</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr style="margin-top: 5px; margin-bottom: 5px;"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Invoice Date</td>
+                <td style="padding: 8px;">'.$invoice_date.'</td>
+                <td style="padding: 8px;">Contract</td>
+                <td style="padding: 8px;"><a href="'.$contract_url.'">'.$contract.'</a></td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Due Date</td>
+                <td style="padding: 8px;">'.$due_date.'</td>
+                <td style="padding: 8px;">Purchase Order</td>
+                <td style="padding: 8px;"><a href="'.$purchase_url.'">'.$purchase.'</a></td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Amount w/o Tax</td>
+                <td style="padding: 8px;">'.app_format_money($invoice->vendor_submitted_amount_without_tax,$base_currency->symbol).'</td>
+                <td style="padding: 8px;">Vendor Submitted Tax Amount</td>
+                <td style="padding: 8px;">'.app_format_money($invoice->vendor_submitted_tax_amount,$base_currency->symbol).'</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Vendor Submitted Amount</td>
+                <td style="padding: 8px;">'.app_format_money($invoice->vendor_submitted_amount,$base_currency->symbol).'</td>
+                <td style="padding: 8px;">Final Certified Amount</td>
+                <td style="padding: 8px;">'.app_format_money($invoice->final_certified_amount,$base_currency->symbol).'</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Bill Accept Date</td>
+                <td style="padding: 8px;">'._d($invoice->bill_accept_date).'</td>
+                <td style="padding: 8px;">Certified Bill Date</td>
+                <td style="padding: 8px;">'._d($invoice->certified_bill_date).'</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Payment Date</td>
+                <td style="padding: 8px;">'._d($invoice->payment_date).'</td>
+                <td style="padding: 8px;"></td>
+                <td style="padding: 8px;"></td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;" colspan="4">
+                    <strong>Tags</strong>
+                    
+                    <span>'.$tags.'</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Transaction ID</td>
+                <td style="padding: 8px;">'.pur_html_entity_decode($invoice->transactionid).'</td>
+                <td style="padding: 8px;">Transaction Date</td>
+                <td style="padding: 8px;">'._d($invoice->transaction_date).'</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Add From</td>
+                <td style="padding: 8px;"><a href="'.$add_from_url.'">'.$add_from.'</a></td>
+                <td style="padding: 8px;">Date Added</td>
+                <td style="padding: 8px;">'._d($invoice->date_add).'</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;" colspan="4"><strong>Bank Transaction Detail</strong>: <span>'.pur_html_entity_decode($invoice->bank_transcation_detail).'</span></td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;" colspan="4"><strong>Admin Note</strong>: <span>'.pur_html_entity_decode($invoice->adminnote).'</span></td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr class="mtop5 mbot5"></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;" colspan="4"><strong>Vendor Note</strong>: <span>'.pur_html_entity_decode($invoice->vendor_note).'</span></td>
+';
 
         $html .= '<div class="col-md-12 mtop15">
                         <h4>' . _l('terms_and_conditions') . ':</h4><p>' . $invoice->terms . '</p>
