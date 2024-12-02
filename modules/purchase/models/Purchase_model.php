@@ -3275,6 +3275,15 @@ class Purchase_model extends App_Model
             $project = $module->project;
             $p_status = $module->status;
         }
+        if ($data['rel_type'] == 'payment_request') {
+            $this->db->select('pur_invoice');
+            $this->db->where('id', $data['rel_id']);
+            $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
+            if(!empty($pur_invoice_payment)) {
+                $module = $this->get_pur_invoice($pur_invoice_payment->pur_invoice);
+                $project = $module->project_id;
+            }
+        }
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
         foreach ($data_new as $key => $value) {
@@ -3295,19 +3304,21 @@ class Purchase_model extends App_Model
         }
 
         // Send an email to approver
-        $cron_email = array();
-        $cron_email_options = array();
-        $cron_email['type'] = "purchase";
-        $cron_email_options['rel_type'] = $data['rel_type'];
-        $cron_email_options['rel_name'] = $rel_name;
-        $cron_email_options['insert_id'] = $data['rel_id'];
-        $cron_email_options['user_id'] = get_staff_user_id();
-        $cron_email_options['status'] = $p_status;
-        $cron_email_options['approver'] = 'yes';
-        $cron_email_options['project'] = $project;
-        $cron_email_options['requester'] = $data['addedfrom'];
-        $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+        if($data['rel_type'] == 'pur_request' || $data['rel_type'] == 'pur_order' || $data['rel_type'] == 'pur_quotation') {
+            $cron_email = array();
+            $cron_email_options = array();
+            $cron_email['type'] = "purchase";
+            $cron_email_options['rel_type'] = $data['rel_type'];
+            $cron_email_options['rel_name'] = $rel_name;
+            $cron_email_options['insert_id'] = $data['rel_id'];
+            $cron_email_options['user_id'] = get_staff_user_id();
+            $cron_email_options['status'] = $p_status;
+            $cron_email_options['approver'] = 'yes';
+            $cron_email_options['project'] = $project;
+            $cron_email_options['requester'] = $data['addedfrom'];
+            $cron_email['options'] = json_encode($cron_email_options, true);
+            $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+        }
 
         // foreach ($data_new as $value) {
         //     $row = [];
@@ -6979,12 +6990,15 @@ class Purchase_model extends App_Model
         $data['pur_invoice'] = $invoice;
         $data['approval_status'] = 1;
         $data['requester'] = get_staff_user_id();
-        $check_appr = $this->get_approve_setting('payment_request');
-        if ($check_appr && $check_appr != false) {
-            $data['approval_status'] = 1;
-        } else {
-            $data['approval_status'] = 2;
-        }
+        $pur_invoice_detail = $this->get_pur_invoice($invoice);
+        $check_appr = $this->check_approval_setting($pur_invoice_detail->project_id, 'payment_request', 0);
+        $data['approval_status'] = ($check_appr == true) ? 2 : 1;
+        // $check_appr = $this->get_approve_setting('payment_request');
+        // if ($check_appr && $check_appr != false) {
+        //     $data['approval_status'] = 1;
+        // } else {
+        //     $data['approval_status'] = 2;
+        // }
 
         $this->db->insert(db_prefix() . 'pur_invoice_payment', $data);
         $insert_id = $this->db->insert_id();
@@ -14682,14 +14696,14 @@ class Purchase_model extends App_Model
 
         if ($response == 1) {
             $intersect = array_values($intersect);
-            $this->db->select('staffid as id, "approve" as action', FALSE);
-            $this->db->where('admin', 1);
-            $this->db->order_by('staffid', 'desc');
-            $this->db->limit(1);
-            $staffs = $this->db->get('tblstaff')->result_array();
-            $intersect = array_merge($intersect, $staffs);
-            $intersect = array_unique($intersect, SORT_REGULAR);
-            $intersect = array_values($intersect);
+            // $this->db->select('staffid as id, "approve" as action', FALSE);
+            // $this->db->where('admin', 1);
+            // $this->db->order_by('staffid', 'desc');
+            // $this->db->limit(1);
+            // $staffs = $this->db->get('tblstaff')->result_array();
+            // $intersect = array_merge($intersect, $staffs);
+            // $intersect = array_unique($intersect, SORT_REGULAR);
+            // $intersect = array_values($intersect);
             return $intersect;
         } else {
             if (!empty($intersect)) {
@@ -14699,12 +14713,15 @@ class Purchase_model extends App_Model
                 if (!empty($intersect)) {
                     $check_status = true;
                 }
+            } else {
+                $check_status = true;
             }
         }
 
         $this->db->select('staffid as id', 'email', 'firstname', 'lastname');
         $this->db->where('staffid', $user_id);
         $this->db->where('admin', 1);
+        $this->db->where('role', 0);
         $staffs = $this->db->get('tblstaff')->result_array();
         if (count($staffs) > 0) {
             $check_status = true;
@@ -14715,14 +14732,14 @@ class Purchase_model extends App_Model
     public function send_mail_to_approver($rel_type, $rel_name, $id, $user_id, $status, $project, $requester)
     {
         $approver_list = $this->check_approval_setting($project, $rel_type, 1, $user_id);
-        $this->db->select('staffid as id, "approve" as action', FALSE);
-        $this->db->where('admin', 1);
-        $this->db->or_where('staffid', $user_id);
-        $this->db->order_by('staffid', 'desc');
-        $staffs = $this->db->get('tblstaff')->result_array();
-        $approver_list = array_merge($approver_list, $staffs);
-        $approver_list = array_unique($approver_list, SORT_REGULAR);
-        $approver_list = array_values($approver_list);
+        // $this->db->select('staffid as id, "approve" as action', FALSE);
+        // $this->db->where('admin', 1);
+        // $this->db->or_where('staffid', $user_id);
+        // $this->db->order_by('staffid', 'desc');
+        // $staffs = $this->db->get('tblstaff')->result_array();
+        // $approver_list = array_merge($approver_list, $staffs);
+        // $approver_list = array_unique($approver_list, SORT_REGULAR);
+        // $approver_list = array_values($approver_list);
 
         if (!empty($approver_list)) {
             $approver_list = array_column($approver_list, 'id');
@@ -14795,8 +14812,8 @@ class Purchase_model extends App_Model
         }
 
         $this->db->select('email, firstname, lastname');
-        $this->db->where('admin', 1);
-        $this->db->or_where('staffid', $requester);
+        // $this->db->where('admin', 1);
+        $this->db->where('staffid', $requester);
         $this->db->or_where('staffid', $user_id);
         $staffs = $this->db->get('tblstaff')->result_array();
 
