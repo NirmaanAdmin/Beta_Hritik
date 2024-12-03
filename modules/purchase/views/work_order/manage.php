@@ -148,10 +148,10 @@
 	</div>
 </div>
 
-<div class="modal fade" id="pur_order_expense" tabindex="-1" role="dialog">
+<div class="modal fade" id="wo_order_expense" tabindex="-1" role="dialog">
    <div class="modal-dialog">
       <div class="modal-content">
-         <?php echo form_open(admin_url('purchase/add_expense'),array('id'=>'pur_order-expense-form','class'=>'dropzone dropzone-manual')); ?>
+         <?php echo form_open(admin_url('purchase/add_expense_wo'),array('id'=>'wo_order-expense-form','class'=>'dropzone dropzone-manual')); ?>
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title"><?php echo _l('add_new', _l('expense_lowercase')); ?></h4>
@@ -220,7 +220,7 @@
             <?php echo render_select('paymentmode',$expenses_modes,array('id','name'),'payment_mode'); ?>
             <div class="clearfix mbot15"></div>
             <?php echo render_custom_fields('expenses'); ?>
-        	<div id="pur_order_additional"></div>
+        	<div id="wo_order_additional"></div>
             <div class="clearfix"></div>
          </div>
          <div class="modal-footer">

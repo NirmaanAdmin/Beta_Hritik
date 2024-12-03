@@ -213,7 +213,7 @@ foreach ($rResult as $aRow) {
           $_data = app_format_money($total_tax, $base_currency->symbol);
         }elseif($aColumns[$i] == 'expense_convert'){
             if($aRow['expense_convert'] == 0){
-             $_data = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['total'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
+             $_data = '<a href="javascript:void(0)" onclick="convert_expense_wo('.$aRow['id'].','.$aRow['total'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
             }else{
                 $_data = '<a href="'.admin_url('expenses/list_expenses/'.$aRow['expense_convert']).'" class="btn btn-success btn-icon">'._l('view_expense').'</a>';
             }

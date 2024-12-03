@@ -1034,6 +1034,7 @@ class Purchase_model extends App_Model
 
         return $pur_request_lst;
     }
+    
     /**
      * Gets the pur estimate detail in order.
      *
@@ -5555,6 +5556,24 @@ class Purchase_model extends App_Model
         if ($this->db->affected_rows() > 0) {
             // accouting module hook after expense converted
             hooks()->do_action('pur_after_expense_converted', $expense);
+
+            return true;
+        }
+        return false;
+    }
+    /**
+     * { mark converted wo order }
+     *
+     * @param      <int>  $pur_order  The pur order
+     * @param      <int>  $expense    The expense
+     */
+    public function mark_converted_wo_order($wo_order, $expense)
+    {
+        $this->db->where('id', $wo_order);
+        $this->db->update(db_prefix() . 'wo_orders', ['expense_convert' => $expense]);
+        if ($this->db->affected_rows() > 0) {
+            // accouting module hook after expense converted
+            hooks()->do_action('wo_after_expense_converted', $expense);
 
             return true;
         }
@@ -15496,6 +15515,18 @@ class Purchase_model extends App_Model
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                     $this->db->insert(db_prefix() . 'wo_order_detail', $dt_data);
+                    $last_insert_id = $this->db->insert_id();
+                    
+                    $iuploadedFiles = handle_purchase_item_attachment_array('wo_order', $insert_id, $last_insert_id, 'newitems', $key);
+                    
+                    if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                        foreach ($iuploadedFiles as $ifile) {
+                            $idata = array();
+                            $idata['image'] = $ifile['file_name'];
+                            $this->db->where('id', $ifile['item_id']);
+                            $this->db->update(db_prefix() . 'wo_order_detail', $idata);
+                        }
+                    }
                 }
             }
 
@@ -15691,6 +15722,15 @@ class Purchase_model extends App_Model
                     $this->log_wo_activity($id, 'work_order_activity_added_item', false, serialize([
                         $this->get_items_by_id($rqd['item_code'])->description,
                     ]));
+                }
+                $iuploadedFiles = handle_purchase_item_attachment_array('wo_order', $id, $new_quote_insert_id, 'newitems', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['image'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'pur_order_detail', $idata);
+                    }
                 }
             }
         }
@@ -15935,9 +15975,9 @@ class Purchase_model extends App_Model
 
         return $deleted;
     }
-    public function get_wo_order_detail($pur_request)
+    public function get_wo_order_detail($wo_id)
     {
-        $this->db->where('wo_order', $pur_request);
+        $this->db->where('wo_order', $wo_id);
         $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
 
         foreach ($pur_order_details as $key => $detail) {
@@ -16044,7 +16084,7 @@ class Purchase_model extends App_Model
         $rs['taxes_val'] = $tax_val_rs;
         return $rs;
     }
-    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array())
     {
 
         $this->load->model('invoice_items_model');
@@ -16054,6 +16094,7 @@ class Purchase_model extends App_Model
         $name_item_name = 'item_name';
         $name_item_description = 'description';
         $name_area = 'area';
+        $name_image = 'image';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
         $name_quantity = 'quantity';
@@ -16098,6 +16139,7 @@ class Purchase_model extends App_Model
             $name_item_name = $name . '[item_name]';
             $name_item_description = $name . '[item_description]';
             $name_area = $name . '[area]';
+            $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = '[unit_name]';
             $name_quantity = $name . '[quantity]';
@@ -16153,11 +16195,18 @@ class Purchase_model extends App_Model
             $amount = app_format_number($amount);
         }
 
+        $full_item_image = '';
+        if (!empty($image)) {
+            $item_base_url = base_url('uploads/purchase/wo_order/' . $order_detail['wo_order'] . '/' . $order_detail['id'] . '/' . $order_detail['image']);
+            $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
+        }
+
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
         $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
+        $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
         $units_list = $this->get_units();
 
@@ -16190,8 +16239,8 @@ class Purchase_model extends App_Model
             $discount = '';
         }
 
-        $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
-        $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
+        // $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
+        // $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
         $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
 
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
@@ -16262,4 +16311,5 @@ class Purchase_model extends App_Model
         $this->db->where('1=1 AND (wo_order_number LIKE "%' . $this->db->escape_like_str($q) . '%")');
         return $this->db->get(db_prefix() . 'wo_orders')->result_array();
     }
+   
 }

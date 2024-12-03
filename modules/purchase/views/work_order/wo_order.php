@@ -119,13 +119,13 @@
                           <label for="estimate"><?php echo _l('estimates'); ?></label>
                           <select name="estimate" id="estimate" class="selectpicker  <?php if (isset($wo_order)) {
                                                                                         echo 'disabled';
-                                                                                      } ?>" onchange="coppy_pur_estimate(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                          } ?>" onchange="coppy_pur_estimate(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                             <?php if (isset($wo_order)) { ?>
                               <option value=""></option>
                               <?php foreach ($estimates as $s) { ?>
                                 <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($wo_order) && $wo_order->estimate != '' && $wo_order->estimate == $s['id']) {
-                                                                                                  echo 'selected';
-                                                                                                } ?>><?php echo format_pur_estimate_number($s['id']); ?></option>
+                                  echo 'selected';
+                                } ?>><?php echo format_pur_estimate_number($s['id']); ?></option>
                               <?php } ?>
                             <?php } ?>
                           </select>
@@ -366,7 +366,7 @@
 
                     </div> -->
 
-                    <div class="row">
+                    <!-- <div class="row">
                       <div class="col-md-6 ">
 
                         <?php
@@ -387,7 +387,7 @@
                         echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
                         ?>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
 
@@ -549,14 +549,14 @@
                         <th width="12%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
                         <th width="15%" align="left"><?php echo _l('item_description'); ?></th>
                         <th width="10%" align="right"><?php echo _l('area'); ?></th>
+                        <th align="right"><?php echo _l('Image'); ?></th>
                         <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
                         <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
 
                         <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                         <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
                         <th width="10%" align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
-                        <th width="7%" align="right"><?php echo _l('discount') . '(%)'; ?></th>
-                        <th width="10%" align="right"><?php echo _l('discount'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                        
                         <th width="10%" align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
                         <th align="center"><i class="fa fa-cog"></i></th>
                       </tr>

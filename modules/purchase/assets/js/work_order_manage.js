@@ -40,8 +40,8 @@ var expenseDropzone;
     });
 
     
-    if ($('#pur_order-expense-form').length > 0) {
-          expenseDropzone = new Dropzone("#pur_order-expense-form", appCreateDropzoneOptions({
+    if ($('#wo_order-expense-form').length > 0) {
+          expenseDropzone = new Dropzone("#wo_order-expense-form", appCreateDropzoneOptions({
               autoProcessQueue: false,
               clickable: '#dropzoneDragArea',
               previewsContainer: '.dropzone-previews',
@@ -55,7 +55,7 @@ var expenseDropzone;
         }));
     }
 
-    appValidateForm($('#pur_order-expense-form'), {
+    appValidateForm($('#wo_order-expense-form'), {
           category: 'required',
           date: 'required',
           amount: 'required'
@@ -137,10 +137,10 @@ function toggle_small_wo_order_view(table, main_data) {
     $(main_data).toggleClass('hide');
     $(window).trigger('resize');
 }
-function convert_expense(pur_order,total){
+function convert_expense_wo(wo_order,total){
     "use strict";
 
-    $.post(admin_url + 'purchase/get_project_info/'+pur_order).done(function(response){
+    $.post(admin_url + 'purchase/get_project_info_wo/'+wo_order).done(function(response){
       response = JSON.parse(response);
       $('select[name="project_id"]').val(response.project_id).change();
       $('select[name="clientid"]').val(response.customer).change();
@@ -148,10 +148,10 @@ function convert_expense(pur_order,total){
       $('input[name="vendor"]').val(response.vendor);
     });
 
-    $('#pur_order_expense').modal('show');
+    $('#wo_order_expense').modal('show');
     $('input[id="amount"]').val(total);
-    $('#pur_order_additional').html('');
-    $('#pur_order_additional').append(hidden_input('pur_order',pur_order));
+    $('#wo_order_additional').html('');
+    $('#wo_order_additional').append(hidden_input('wo_order',wo_order));
 }
 
 function projectExpenseSubmitHandler(form) {
