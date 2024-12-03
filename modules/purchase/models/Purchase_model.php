@@ -2394,7 +2394,7 @@ class Purchase_model extends App_Model
      */
     public function add_pur_order($data)
     {
-
+        
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
@@ -2542,7 +2542,7 @@ class Purchase_model extends App_Model
                     $dt_data = [];
                     $dt_data['pur_order'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
-                    $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
                     $dt_data['total'] = $rqd['total'];
@@ -2624,7 +2624,7 @@ class Purchase_model extends App_Model
     public function update_pur_order($data, $id)
     {
         $affectedRows = 0;
-
+        
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
@@ -2750,7 +2750,7 @@ class Purchase_model extends App_Model
                 $dt_data = [];
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -2807,7 +2807,7 @@ class Purchase_model extends App_Model
                 $dt_data = [];
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -10725,7 +10725,7 @@ class Purchase_model extends App_Model
         $row .=  '</td>';
 
         $units_list = $this->get_units();
-
+        
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
@@ -11321,7 +11321,7 @@ class Purchase_model extends App_Model
             $name_area = $name . '[area]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
-            $name_unit_name = '[unit_name]';
+            $name_unit_name = $name.'[unit_name]';
             $name_quantity = $name . '[quantity]';
             $name_unit_price = $name . '[unit_price]';
             $name_tax_id_select = $name . '[tax_select][]';
