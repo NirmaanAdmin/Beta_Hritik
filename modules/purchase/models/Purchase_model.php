@@ -1022,7 +1022,7 @@ class Purchase_model extends App_Model
     public function get_pur_request_detail_in_po($pur_request)
     {
 
-        $pur_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'pur_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.pur_request = ' . $pur_request)->result_array();
+        $pur_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, prq.description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total, prq.area, prq.image FROM ' . db_prefix() . 'pur_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.pur_request = ' . $pur_request)->result_array();
 
         foreach ($pur_request_lst as $key => $detail) {
             $pur_request_lst[$key]['into_money'] = (float) $detail['into_money'];
