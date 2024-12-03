@@ -53,10 +53,10 @@
                           <option value=""></option>
                           <?php foreach ($projects as $s) { ?>
                             <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($co_request) && $s['id'] == $co_request->project) {
-                                                                                              echo 'selected';
-                                                                                            } else if (!isset($co_request) && $s['id'] == $project_id) {
-                                                                                              echo 'selected';
-                                                                                            } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
+                                                                                                      echo 'selected';
+                                                                                                    } else if (!isset($co_request) && $s['id'] == $project_id) {
+                                                                                                      echo 'selected';
+                                                                                                    } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
                           <?php } ?>
                         </select>
                         <br><br>
@@ -68,8 +68,8 @@
                           <option value=""></option>
                           <?php foreach ($salse_estimates as $s) { ?>
                             <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($co_request) && $s['id'] == $co_request->sale_estimate) {
-                                                                                              echo 'selected';
-                                                                                            } ?>><?php echo format_estimate_number($s['id']); ?></option>
+                                                                                                      echo 'selected';
+                                                                                                    } ?>><?php echo format_estimate_number($s['id']); ?></option>
                           <?php } ?>
                         </select>
                         <br><br>
@@ -114,8 +114,8 @@
                       <option value=""></option>
                       <?php foreach ($departments as $s) { ?>
                         <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if (isset($co_request) && $s['departmentid'] == $co_request->department) {
-                                                                                                    echo 'selected';
-                                                                                                  } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
+                                                                                                            echo 'selected';
+                                                                                                          } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
                       <?php } ?>
                     </select>
                     <br><br>
@@ -128,8 +128,8 @@
                       <option value=""></option>
                       <?php foreach ($invoices as $inv) { ?>
                         <option value="<?php echo changee_pur_html_entity_decode($inv['id']); ?>" <?php if (isset($co_request) && $inv['id'] == $co_request->sale_invoice) {
-                                                                                            echo 'selected';
-                                                                                          } ?>><?php echo format_invoice_number($inv['id']); ?></option>
+                                                                                                    echo 'selected';
+                                                                                                  } ?>><?php echo format_invoice_number($inv['id']); ?></option>
                       <?php } ?>
                     </select>
 
@@ -142,10 +142,10 @@
                       <option value=""></option>
                       <?php foreach ($staffs as $s) { ?>
                         <option value="<?php echo changee_pur_html_entity_decode($s['staffid']); ?>" <?php if (isset($co_request) && $s['staffid'] == $co_request->requester) {
-                                                                                                echo 'selected';
-                                                                                              } elseif ($s['staffid'] == get_staff_user_id()) {
-                                                                                                echo 'selected';
-                                                                                              } ?>><?php echo changee_pur_html_entity_decode($s['lastname'] . ' ' . $s['firstname']); ?></option>
+                                                                                                        echo 'selected';
+                                                                                                      } elseif ($s['staffid'] == get_staff_user_id()) {
+                                                                                                        echo 'selected';
+                                                                                                      } ?>><?php echo changee_pur_html_entity_decode($s['lastname'] . ' ' . $s['firstname']); ?></option>
                       <?php } ?>
                     </select>
                     <br><br>
@@ -162,12 +162,26 @@
 
                       <?php foreach ($vendors as $s) { ?>
                         <option value="<?php echo changee_pur_html_entity_decode($s['userid']); ?>" <?php if (isset($co_request) && in_array($s['userid'], $vendors_arr)) {
-                                                                                              echo 'selected';
-                                                                                            } ?>><?php echo changee_pur_html_entity_decode($s['company']); ?></option>
+                                                                                                      echo 'selected';
+                                                                                                    } ?>><?php echo changee_pur_html_entity_decode($s['company']); ?></option>
                       <?php } ?>
                     </select>
                   </div>
-
+                  <div class="col-md-3 form-group <?php if ($pr_orders_status == false) {
+                                                    echo 'hide';
+                                                  }; ?>">
+                    <div class="form-group">
+                      <label for="po_order_id"><?php echo _l('purchase_order'); ?></label>
+                      <select name="po_order_id" id="po_order_id" onchange="coppy_pur_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                        <option value=""></option>
+                        <?php foreach ($pr_orders as $pr_order) { ?>
+                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_receipt) && ($goods_receipt->pr_order_id == $pr_order['id'])) {
+                                                                                                echo 'selected';
+                                                                                              } ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                  </div>
                   <div class="col-md-3 form-group" style="clear: both;">
                     <?php
                     $selected = '';

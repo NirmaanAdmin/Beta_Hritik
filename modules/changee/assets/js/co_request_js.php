@@ -549,5 +549,36 @@ function init_pr_currency(id, callback) {
             });
     }
 }
+function coppy_pur_orders(){
+  "use strict";
+  var pur_order = $('select[name="po_order_id"]').val();
+  var vendor = $('select[name="vendor"]').val();
+  if(pur_order != ''){
+    $.post(admin_url + 'changee/coppy_pur_order_for_co/'+pur_order).done(function(response){
+        response = JSON.parse(response);
+        if(response){ 
+          // $('select[name="estimate"]').html(response.estimate_html);
+          // $('select[name="estimate"]').selectpicker('refresh');
+
+          $('select[name="currency"]').val(response.currency).change();
+          $('input[name="currency_rate"]').val(response.currency_rate).change();
+
+          $('.invoice-item table.invoice-items-table.items tbody').html('');
+          $('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
+
+          setTimeout(function () {
+            pur_calculate_total();
+          }, 15);
+
+          init_selectpicker();
+          pur_reorder_items('.invoice-item');
+          pur_clear_item_preview_values('.invoice-item');
+          $('body').find('#items-warning').remove();
+          $("body").find('.dt-loader').remove();
+          $('#item_select').selectpicker('val', '');
+        }   
+    });
+  }
+}
 
 </script>

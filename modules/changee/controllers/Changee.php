@@ -535,6 +535,22 @@ class changee extends AdminController
         $this->load->model('staff_model');
         $this->load->model('projects_model');
         $this->load->model('currencies_model');
+        if (get_status_modules_co('purchase')) {
+			$this->load->model('purchase/purchase_model');
+			$data['pr_orders'] = get_po_order();
+			$data['pr_orders_status'] = true;
+
+			$data['vendors'] = $this->purchase_model->get_vendor();
+
+			$data['projects'] = $this->projects_model->get();
+			$data['staffs'] = $this->staff_model->get();
+			$data['departments'] = $this->departments_model->get();
+
+
+		} else {
+			$data['pr_orders'] = [];
+			$data['pr_orders_status'] = false;
+		}
         if ($id == '') {
 
             if ($this->input->post()) {
@@ -8828,5 +8844,74 @@ class changee extends AdminController
             }
         }
         return true;
+    }
+    public function coppy_pur_order_for_co($pur_order)
+    {
+        
+        $this->load->model('currencies_model');
+
+        $pur_order_detail = $this->changee_model->get_pur_order_detail_in_po($pur_order);
+        $purchase_order = $this->changee_model->get_purchase_order($pur_order);
+        $base_currency = $this->currencies_model->get_base_currency();
+        $taxes = [];
+        $tax_val = [];
+        $tax_name = [];
+        $subtotal = 0;
+        $total = 0;
+        $data_rs = [];
+        $tax_html = '';
+        $estimate_html = '';    
+
+        // $estimate_html .= $this->purchase_model->get_estimate_html_by_pr_vendor($pur_order, $vendor);
+
+        if (count($pur_order_detail) > 0) {
+            foreach ($pur_order_detail as $key => $item) {
+                $subtotal += $item['into_money'];
+                $total += $item['total'];
+            }
+        }
+
+        $list_item = $this->changee_model->create_changee_request_row_template();
+
+        $currency_rate = 1;
+        $to_currency = $base_currency->id;
+        if ($purchase_order->currency != 0 && $purchase_order->currency_rate != null) {
+            $currency_rate = $purchase_order->currency_rate;
+            $to_currency = $purchase_order->currency;
+        }
+
+
+        if (count($pur_order_detail) > 0) {
+            $index_quote = 0;
+            foreach ($pur_order_detail as $key => $item) {
+                $index_quote++;
+                $unit_name = pur_get_unit_name($item['unit_id']);
+                $taxname = $item['tax_name'];
+                $item_name = $item['item_text'];
+
+                if (strlen($item_name) == 0) {
+                    $item_name = pur_get_item_variatiom($item['item_code']);
+                }
+
+                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency);
+                
+               
+            }
+        }
+
+        $taxes_data = $this->purchase_model->get_html_tax_pur_request($pur_order);
+        $tax_html = $taxes_data['html'];
+
+        echo json_encode([
+            'result' => $pur_order_detail,
+            'subtotal' => app_format_money(round($subtotal, 2), ''),
+            'total' => app_format_money(round($total, 2), ''),
+            'tax_html' => $tax_html,
+            'taxes' => $taxes,
+            'list_item' => $list_item,
+            'currency' => $to_currency,
+            'currency_rate' => $currency_rate,
+            'estimate_html' => $estimate_html,
+        ]);
     }
 }

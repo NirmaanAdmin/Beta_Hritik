@@ -1135,6 +1135,7 @@ class Changee_model extends App_Model
      */
     public function add_co_request($data)
     {
+        
         $data['request_date'] = date('Y-m-d H:i:s');
         $check_appr = $this->check_approval_setting($data['project'], 'co_request', 0);
         $data['status'] = ($check_appr == true) ? 2 : 1;
@@ -1197,7 +1198,7 @@ class Changee_model extends App_Model
         }
 
         $data['hash'] = app_generate_hash();
-
+        
         $this->db->insert(db_prefix() . 'co_request', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'co_request', 'changee_request', $insert_id);
@@ -14499,5 +14500,56 @@ class Changee_model extends App_Model
             'full_name'       => $full_name,
             'additional_data' => $additional_data,
         ]);
+    }
+    /**
+     * Gets the pur order detail in po.
+     *
+     * @param      <int>  $pur_request  The pur request
+     *
+     * @return     <array>  The pur request detail in po.
+     */
+    public function get_pur_order_detail_in_po($pur_order)
+    {
+       
+        $pur_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
+        FROM ' . db_prefix() . 'pur_order_detail prq 
+        LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id 
+        WHERE prq.pur_order = ' . $pur_order)->result_array();
+
+        foreach ($pur_order_lst as $key => $detail) {
+            $pur_order_lst[$key]['into_money'] = (float) $detail['into_money'];
+            $pur_order_lst[$key]['total'] = (float) $detail['total'];
+            $pur_order_lst[$key]['total_money'] = (float) $detail['total_money'];
+            $pur_order_lst[$key]['unit_price'] = (float) $detail['unit_price'];
+            $pur_order_lst[$key]['tax_value'] = (float) $detail['tax_value'];
+        }
+
+        return $pur_order_lst;
+    }
+     /**
+     * Gets the purchase request.
+     *
+     * @param      string  $id     The identifier
+     *
+     * @return     <row or array>  The purchase request.
+     */
+    public function get_purchase_order($id = '')
+    {
+        if ($id == '') {
+            if (!has_permission('purchase_orders', '', 'view') && is_staff_logged_in()) {
+
+                $or_where = '';
+                $list_vendor = get_vendor_admin_list(get_staff_user_id());
+                foreach ($list_vendor as $vendor_id) {
+                    $or_where .= ' OR find_in_set(' . $vendor_id . ', ' . db_prefix() . 'pur_orders.vendor)';
+                }
+                $this->db->where('(' . db_prefix() . 'pur_orders.pur_request = ' . get_staff_user_id() .  $or_where . ')');
+            }
+
+            return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+        } else {
+            $this->db->where('id', $id);
+            return $this->db->get(db_prefix() . 'pur_orders')->row();
+        }
     }
 }
