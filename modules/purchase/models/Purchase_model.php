@@ -2323,26 +2323,52 @@ class Purchase_model extends App_Model
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
                 $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+            }
 
-                $from_status = '';
-                if ($original_po->approve_status == 1) {
-                    $from_status = 'Draft';
-                } else if ($original_po->approve_status == 2) {
-                    $from_status = 'Approved';
-                } else if ($original_po->approve_status == 3) {
-                    $from_status = 'Rejected';
-                }
+            $from_status = '';
+            if ($original_po->approve_status == 1) {
+                $from_status = 'Draft';
+            } else if ($original_po->approve_status == 2) {
+                $from_status = 'Approved';
+            } else if ($original_po->approve_status == 3) {
+                $from_status = 'Rejected';
+            }
 
-                $to_status = '';
-                if ($status == 1) {
-                    $to_status = 'Draft';
-                } else if ($status == 2) {
-                    $to_status = 'Approved';
-                } else if ($status == 3) {
-                    $to_status = 'Rejected';
-                }
+            $to_status = '';
+            if ($status == 1) {
+                $to_status = 'Draft';
+            } else if ($status == 2) {
+                $to_status = 'Approved';
+            } else if ($status == 3) {
+                $to_status = 'Rejected';
+            }
 
-                $this->log_po_activity($id, "Purchase order status updated from " . $from_status . " to " . $to_status . "");
+            $this->log_po_activity($id, "Purchase order status updated from " . $from_status . " to " . $to_status . "");
+
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'pur_order');
+            $this->db->order_by('id', 'asc');
+            $this->db->limit(1);
+            $pur_approval = $this->db->get(db_prefix() . 'pur_approval_details')->row();
+            if(!empty($pur_approval)) {
+                $pur_approval_details = array();
+                $pur_approval_details['approve'] = $status;
+                $pur_approval_details['note'] = NULL;
+                $pur_approval_details['date'] = date('Y-m-d H:i:s');
+                $pur_approval_details['staff_approve'] = get_staff_user_id();
+                $this->db->where('id', $pur_approval->id);
+                $this->db->update(db_prefix() . 'pur_approval_details', $pur_approval_details);
+            }
+
+            if($status == 1) {
+                $draft_array = array();
+                $draft_array['approve'] = NULL;
+                $draft_array['note'] = NULL;
+                $draft_array['date'] = NULL;
+                $draft_array['staff_approve'] = NULL;
+                $this->db->where('rel_id', $id);
+                $this->db->where('rel_type', 'pur_order');
+                $this->db->update(db_prefix() . 'pur_approval_details', $draft_array);
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
@@ -3767,9 +3793,42 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_approval_details', $data);
         if ($this->db->affected_rows() > 0) {
+            if($data['rel_type'] == "pur_order") {
+                $this->pur_order_approval_log($data);
+            }
             return true;
         }
         return false;
+    }
+
+    public function pur_order_approval_log($data) 
+    {
+        $original_po = $this->get_pur_order($data['rel_id']);
+
+        $from_status = '';
+        if ($original_po->approve_status == 1) {
+            $from_status = 'Draft';
+        } else if ($original_po->approve_status == 2) {
+            $from_status = 'Approved';
+        } else if ($original_po->approve_status == 3) {
+            $from_status = 'Rejected';
+        }
+
+        $to_status = '';
+        if ($data['approve'] == 1) {
+            $to_status = 'Draft';
+        } else if ($data['approve'] == 2) {
+            $to_status = 'Approved';
+        } else if ($data['approve'] == 3) {
+            $to_status = 'Rejected';
+        }
+
+        $comment = "";
+        if(!empty($data['note'])) {
+            $comment = " with reason ".$data['note'];
+        }
+
+        $this->log_po_activity($data['rel_id'], "Purchase order status updated from " . $from_status . " to " . $to_status . $comment . "");
     }
 
     /**
