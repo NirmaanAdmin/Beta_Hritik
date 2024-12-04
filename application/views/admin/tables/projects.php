@@ -103,13 +103,13 @@ return App_table::find('projects')
             ob_start();
             $percent = $this->ci->projects_model->calc_progress($aRow['id']);
             $progress_bar_percent = $percent / 100; ?>
-            <input type="hidden" value="<?php
-            echo '' . $progress_bar_percent; ?>" name="percent">
-            <div class="goal-progress" data-reverse="true">
-               <strong class="goal-percent pr-goal-percent"><?php
-                echo '' . $percent; ?>%</strong>
-            </div>
-            <?php
+        <input type="hidden" value="<?php
+                                    echo '' . $progress_bar_percent; ?>" name="percent">
+        <div class="goal-progress" data-reverse="true">
+            <strong class="goal-percent pr-goal-percent"><?php
+                                                            echo '' . $percent; ?>%</strong>
+        </div>
+<?php
             $progress = ob_get_contents();
             ob_end_clean();
             $row[] = $progress;
@@ -121,6 +121,7 @@ return App_table::find('projects')
             $membersOutput = '<div class="tw-flex -tw-space-x-1">';
             $members       = explode(',', $aRow['members']);
             $exportMembers = '';
+
             foreach ($members as $key => $member) {
                 if ($member != '') {
                     $members_ids = explode(',', $aRow['members_ids']);
@@ -134,6 +135,10 @@ return App_table::find('projects')
                         ]) . '</a>';
                     // For exporting
                     $exportMembers .= $member . ', ';
+                    // Add a break after every 15 members
+                    if (($key + 1) % 15 == 0) {
+                        $membersOutput .= '<br>'; // Add a line break
+                    }
                 }
             }
 
@@ -161,25 +166,25 @@ return App_table::find('projects')
         }
         return $output;
     })->setRules([
-        App_table_filter::new('name','TextRule')->label(_l('project_name')),
-        App_table_filter::new('start_date','DateRule')->label(_l('project_start_date')),
-        App_table_filter::new('deadline','DateRule')->label(_l('project_deadline')),
-        App_table_filter::new('billing_type','SelectRule')->label(_l('project_billing_type'))->options(function($ci) {
+        App_table_filter::new('name', 'TextRule')->label(_l('project_name')),
+        App_table_filter::new('start_date', 'DateRule')->label(_l('project_start_date')),
+        App_table_filter::new('deadline', 'DateRule')->label(_l('project_deadline')),
+        App_table_filter::new('billing_type', 'SelectRule')->label(_l('project_billing_type'))->options(function ($ci) {
             return [
-                ['value'=>1,'label'=>_l('project_billing_type_fixed_cost')],
-                ['value'=>2,'label'=>_l('project_billing_type_project_hours')],
-                ['value'=>3,'label'=>_l('project_billing_type_project_task_hours_hourly_rate')],
+                ['value' => 1, 'label' => _l('project_billing_type_fixed_cost')],
+                ['value' => 2, 'label' => _l('project_billing_type_project_hours')],
+                ['value' => 3, 'label' => _l('project_billing_type_project_task_hours_hourly_rate')],
             ];
         }),
-        App_table_filter::new('status','MultiSelectRule')->label(_l('project_status'))->options(function($ci){
-                return collect($ci->projects_model->get_project_statuses())->map(fn ($data) => [
-                    'value' => $data['id'],
-                    'label' => $data['name'],
-                ])->all();
+        App_table_filter::new('status', 'MultiSelectRule')->label(_l('project_status'))->options(function ($ci) {
+            return collect($ci->projects_model->get_project_statuses())->map(fn($data) => [
+                'value' => $data['id'],
+                'label' => $data['name'],
+            ])->all();
         }),
 
         App_table_filter::new('members', 'MultiSelectRule')->label(_l('project_members'))
-            ->isVisible(fn () => staff_can('view', 'projects'))
+            ->isVisible(fn() => staff_can('view', 'projects'))
             ->options(function ($ci) {
                 return collect($ci->projects_model->get_distinct_projects_members())->map(function ($staff) {
                     return [
