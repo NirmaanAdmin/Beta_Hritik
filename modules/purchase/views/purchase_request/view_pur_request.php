@@ -538,10 +538,22 @@
                                 <i class="fa fa-file-pdf"></i><span class="caret"></span>
                               </a>
                               <ul class="dropdown-menu dropdown-menu-right">
-                                <li class="hidden-xs"><a href="http://localhost/nirmaanbetacrm2/admin/purchase/compare_quotation_pdf/6?output_type=I">View PDF</a></li>
-                                <li class="hidden-xs"><a href="http://localhost/nirmaanbetacrm2/admin/purchase/compare_quotation_pdf/6?output_type=I" target="_blank">View PDF in New Tab</a></li>
-                                <li><a href="http://localhost/nirmaanbetacrm2/admin/purchase/compare_quotation_pdf/6">Download</a></li>
-                              </ul>
+                              <li class="hidden-xs"><a
+                                            href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a>
+                                    </li>
+                                    <li class="hidden-xs"><a
+                                            href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id . '?output_type=I'); ?>"
+                                            target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                                    <li><a
+                                            href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id); ?>"><?php echo _l('download'); ?></a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo admin_url('purchase/compare_quotation_pdf/' . $pur_request->id . '?print=true'); ?>"
+                                            target="_blank">
+                                            <?php echo _l('print'); ?>
+                                        </a>
+                                    </li>
+                              </ul> 
                             </div>
                           </td>
                         </tr>
