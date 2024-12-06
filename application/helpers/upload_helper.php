@@ -622,7 +622,7 @@ function handle_purchase_item_attachment_array($related, $id, $item_path, $index
     } else {
         $other_attachments = list_files(get_upload_path_by_type('purchase') . $related . '/' . $id . '/'. $item_path);
         if (count($other_attachments) == 0) {
-            delete_dir(get_upload_path_by_type('purchase') . $related . '/' . $id);
+            delete_dir(get_upload_path_by_type('purchase') . $related . '/' . $id . '/'. $item_path);
         }
     }
 
