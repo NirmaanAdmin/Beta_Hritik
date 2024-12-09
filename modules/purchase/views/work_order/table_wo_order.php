@@ -191,7 +191,7 @@ foreach ($rResult as $aRow) {
                 $numberOutput .= ' | <a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '">' . _l('edit') . '</a>';
             }
             if (has_permission('work_orders', '', 'delete') || is_admin()) {
-                $numberOutput .= ' | <a href="' . admin_url('purchase/delete_pur_order/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                $numberOutput .= ' | <a href="' . admin_url('purchase/delete_wo_order/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
             }
             $numberOutput .= '</div>';
 
