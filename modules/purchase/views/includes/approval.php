@@ -58,6 +58,7 @@ if(get_status_modules_pur('hr_profile') == true){
 								1 => ['id' => 'pur_quotation', 'name' => _l('pur_quotation')],
 								2 => ['id' => 'pur_order', 'name' => _l('pur_order')],
 								3 => ['id' => 'payment_request', 'name' => _l('payment_request')],
+								4 => ['id' => 'wo_order', 'name' => _l('wo_order')],
 							]; ?>
 						<?php echo render_select('related',$related,array('id','name'),'task_single_related'); ?>
 						<div class="select-placeholder form-group">

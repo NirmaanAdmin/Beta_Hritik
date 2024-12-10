@@ -9529,12 +9529,12 @@ class purchase extends AdminController
             $this->session->unset_userdata("send_mail_approve");
         }
         $data['invoices'] = $this->purchase_model->get_invoices_by_po($id);
-        $data['check_appr'] = $this->purchase_model->get_approve_setting('pur_order');
-        $data['get_staff_sign'] = $this->purchase_model->get_staff_sign($id, 'pur_order');
-        $data['check_approve_status'] = $this->purchase_model->check_approval_details($id, 'pur_order');
-        $data['list_approve_status'] = $this->purchase_model->get_list_approval_details($id, 'pur_order');
+        $data['check_appr'] = $this->purchase_model->get_approve_setting('wo_order');
+        $data['get_staff_sign'] = $this->purchase_model->get_staff_sign($id, 'wo_order');
+        $data['check_approve_status'] = $this->purchase_model->check_approval_details($id, 'wo_order');
+        $data['list_approve_status'] = $this->purchase_model->get_list_approval_details($id, 'wo_order');
         $data['tax_data'] = $this->purchase_model->get_html_tax_pur_order($id);
-        $data['check_approval_setting'] = $this->purchase_model->check_approval_setting($estimate->project, 'pur_order', 0);
+        $data['check_approval_setting'] = $this->purchase_model->check_approval_setting($estimate->project, 'wo_order', 0);
         $data['attachments'] = $this->purchase_model->get_work_order_attachments('wo_order', $id);
         $data['pur_order'] = $this->purchase_model->get_wo_order($id);
         $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();

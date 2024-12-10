@@ -753,3 +753,4 @@ $lang['add_area_false'] = 'Add Area Failed';
 $lang['edit_area'] = 'Edit Area';
 $lang['update_area_false'] = 'Update Area Failed';
 $lang['billing_status'] = 'Billing Status';
+$lang['wo_order']  = 'Work order';

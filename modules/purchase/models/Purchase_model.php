@@ -3311,11 +3311,16 @@ class Purchase_model extends App_Model
                 $project = $module->project_id;
             }
         }
+        if ($data['rel_type'] == 'wo_order') {
+            $module = $this->get_wo_order($data['rel_id']);
+            $project = $module->project;
+        }
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
         foreach ($data_new as $key => $value) {
             $row = [];
             $this->db->select('rel_id');
+            $this->db->where('staffid', $value['id']);
             $this->db->where('rel_id', $data['rel_id']);
             $this->db->where('rel_type', $data['rel_type']);
             $rel_id_data = $this->db->get(db_prefix() . 'pur_approval_details')->result_array();
@@ -15421,7 +15426,7 @@ class Purchase_model extends App_Model
         //     $data['approve_status'] = 2;
         // }
 
-        $check_appr = $this->check_approval_setting($data['project'], 'po_order', 0);
+        $check_appr = $this->check_approval_setting($data['project'], 'wo_order', 0);
         $data['approve_status'] = ($check_appr == true) ? 2 : 1;
 
         $data['to_currency'] = $data['currency'];

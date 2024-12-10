@@ -410,7 +410,7 @@
                          
                            <a href="<?php echo admin_url('purchase/purchase_order/'.$estimate->id); ?>">
                            <span id="estimate-number">
-                           <?php echo pur_html_entity_decode($estimate->pur_order_number.' - '.$estimate->pur_order_name); ?>
+                           <?php echo pur_html_entity_decode($estimate->wo_order_number.' - '.$estimate->wo_order_name); ?>
                            </span>
                            </a>
                         </h4>
@@ -899,4 +899,4 @@
           <?php echo form_close(); ?>
       </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-    <?php require 'modules/purchase/assets/js/pur_order_preview_js.php';?>
+    <?php require 'modules/purchase/assets/js/wo_order_preview_js.php';?>
