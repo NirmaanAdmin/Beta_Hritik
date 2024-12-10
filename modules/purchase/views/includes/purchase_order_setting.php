@@ -15,6 +15,10 @@
 </div>
 
 <div class="col-md-6">
+  <?php echo render_input('wo_order_prefix','wo_order_prefix',get_purchase_option('wo_order_prefix')); ?>
+</div>
+
+<div class="col-md-6">
   <?php echo render_input('pur_inv_prefix','pur_inv_prefix',get_purchase_option('pur_inv_prefix')); ?>
 </div>
 
@@ -28,6 +32,10 @@
 
 <div class="col-md-6">
   <?php echo render_input('next_pr_number','next_pr_number',get_purchase_option('next_pr_number'),'number'); ?>
+</div>
+
+<div class="col-md-6">
+  <?php echo render_input('next_wo_number','next_wo_number',get_purchase_option('next_wo_number'),'number'); ?>
 </div>
 
 <div class="col-md-6">

@@ -4376,6 +4376,14 @@ class Purchase_model extends App_Model
             $rs++;
         }
 
+        $this->db->where('option_name', 'wo_order_prefix');
+        $this->db->update(db_prefix() . 'purchase_option', [
+            'option_val' => $data['wo_order_prefix'],
+        ]);
+        if ($this->db->affected_rows() > 0) {
+            $rs++;
+        }
+
         $this->db->where('option_name', 'terms_and_conditions');
         $this->db->update(db_prefix() . 'purchase_option', [
             'option_val' => $data['terms_and_conditions'],
@@ -4403,6 +4411,14 @@ class Purchase_model extends App_Model
         $this->db->where('option_name', 'next_pr_number');
         $this->db->update(db_prefix() . 'purchase_option', [
             'option_val' => $data['next_pr_number'],
+        ]);
+        if ($this->db->affected_rows() > 0) {
+            $rs++;
+        }
+
+        $this->db->where('option_name', 'next_wo_number');
+        $this->db->update(db_prefix() . 'purchase_option', [
+            'option_val' => $data['next_wo_number'],
         ]);
         if ($this->db->affected_rows() > 0) {
             $rs++;

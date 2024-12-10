@@ -754,3 +754,5 @@ $lang['edit_area'] = 'Edit Area';
 $lang['update_area_false'] = 'Update Area Failed';
 $lang['billing_status'] = 'Billing Status';
 $lang['wo_order']  = 'Work order';
+$lang['wo_order_prefix']  = 'Work order number prefix';
+$lang['next_wo_number']  = 'Next work order number';
