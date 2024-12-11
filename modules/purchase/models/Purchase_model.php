@@ -15739,7 +15739,7 @@ class Purchase_model extends App_Model
         $data['to_currency'] = $data['currency'];
 
         $prefix = get_purchase_option('wo_order_prefix');
-        $data['po_order_number'] = $data['po_order_number'];
+        $data['wo_order_number'] = $data['wo_order_number'];
 
         $data['order_date'] = to_sql_date($data['order_date']);
 
@@ -15795,7 +15795,7 @@ class Purchase_model extends App_Model
         }
 
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'wo_orderss', $data);
+        $this->db->update(db_prefix() . 'wo_orders', $data);
 
         $this->save_purchase_files('wo_order', $id);
 
@@ -15866,7 +15866,7 @@ class Purchase_model extends App_Model
                         $idata = array();
                         $idata['image'] = $ifile['file_name'];
                         $this->db->where('id', $ifile['item_id']);
-                        $this->db->update(db_prefix() . 'pur_order_detail', $idata);
+                        $this->db->update(db_prefix() . 'wo_order_detail', $idata);
                     }
                 }
             }
@@ -15875,7 +15875,7 @@ class Purchase_model extends App_Model
         if (count($update_order) > 0) {
             foreach ($update_order as $_key => $rqd) {
                 $dt_data = [];
-                $dt_data['pur_order'] = $id;
+                $dt_data['wo_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                 $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
