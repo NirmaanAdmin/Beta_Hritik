@@ -3312,8 +3312,10 @@ class Purchase_model extends App_Model
             }
         }
         if ($data['rel_type'] == 'wo_order') {
+            $rel_name = 'work_order';
             $module = $this->get_wo_order($data['rel_id']);
             $project = $module->project;
+            $p_status = $module->approve_status;
         }
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
@@ -3336,7 +3338,7 @@ class Purchase_model extends App_Model
         }
 
         // Send an email to approver
-        if($data['rel_type'] == 'pur_request' || $data['rel_type'] == 'pur_order' || $data['rel_type'] == 'pur_quotation') {
+        if($data['rel_type'] == 'pur_request' || $data['rel_type'] == 'pur_order' || $data['rel_type'] == 'pur_quotation' || $data['rel_type'] == 'wo_order') {
             $cron_email = array();
             $cron_email_options = array();
             $cron_email['type'] = "purchase";
@@ -14877,6 +14879,14 @@ class Purchase_model extends App_Model
                     $template = mail_template('purchase_quotation_to_approver', 'purchase', $data);
                     $template->send();
                 }
+
+                if ($rel_name == 'work_order') {
+                    $data['mail_to'] = $value['email'];
+                    $data['wo_id'] = $id;
+                    $data = (object) $data;
+                    $template = mail_template('work_order_to_approver', 'purchase', $data);
+                    $template->send();
+                }
             }
         }
     }
@@ -14910,13 +14920,25 @@ class Purchase_model extends App_Model
             $requester = $row->addedfrom;
         }
 
+        if ($type == 'work_order') {
+            $this->db->where('id', $id);
+            $row = $this->db->get(db_prefix() . 'wo_orders')->row();
+            $requester = $row->addedfrom;
+            $vendor_id = $row->vendor;
+            if ($vendor_id != 0) {
+                $this->db->where('userid', $vendor_id);
+                $vendor_detail = $this->db->get(db_prefix() . 'pur_vendor')->row();
+                $vendor_name = $vendor_detail->company;
+            }
+        }
+
         $this->db->select('email, firstname, lastname');
         // $this->db->where('admin', 1);
         $this->db->where('staffid', $requester);
         $this->db->or_where('staffid', $user_id);
         $staffs = $this->db->get('tblstaff')->result_array();
 
-        if ($type == 'purchase_order') {
+        if ($type == 'purchase_order' || $type == 'work_order') {
             $this->db->select('email, firstname, lastname');
             $this->db->where('userid', $vendor_id);
             $this->db->where('is_primary', 1);
@@ -14957,6 +14979,15 @@ class Purchase_model extends App_Model
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
                     $template = mail_template('purchase_quotation_to_sender', 'purchase', $data);
+                    $template->send();
+                }
+
+                if ($type == 'work_order') {
+                    $data['mail_to'] = $value['email'];
+                    $data['wo_id'] = $id;
+                    $data['vendor_name'] = $vendor_name;
+                    $data = (object) $data;
+                    $template = mail_template('work_order_to_sender', 'purchase', $data);
                     $template->send();
                 }
             }
@@ -15151,7 +15182,7 @@ class Purchase_model extends App_Model
                 // $this->send_mail_to_sender('purchase_order', $status, $id);
                 $cron_email = array();
                 $cron_email_options = array();
-                $cron_email['type'] = "work";
+                $cron_email['type'] = "purchase";
                 $cron_email_options['rel_type'] = 'wo_order';
                 $cron_email_options['rel_name'] = 'work_order';
                 $cron_email_options['insert_id'] = $id;
@@ -15160,26 +15191,52 @@ class Purchase_model extends App_Model
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
                 $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+            }
 
-                $from_status = '';
-                if ($original_po->approve_status == 1) {
-                    $from_status = 'Draft';
-                } else if ($original_po->approve_status == 2) {
-                    $from_status = 'Approved';
-                } else if ($original_po->approve_status == 3) {
-                    $from_status = 'Rejected';
-                }
+            $from_status = '';
+            if ($original_po->approve_status == 1) {
+                $from_status = 'Draft';
+            } else if ($original_po->approve_status == 2) {
+                $from_status = 'Approved';
+            } else if ($original_po->approve_status == 3) {
+                $from_status = 'Rejected';
+            }
 
-                $to_status = '';
-                if ($status == 1) {
-                    $to_status = 'Draft';
-                } else if ($status == 2) {
-                    $to_status = 'Approved';
-                } else if ($status == 3) {
-                    $to_status = 'Rejected';
-                }
+            $to_status = '';
+            if ($status == 1) {
+                $to_status = 'Draft';
+            } else if ($status == 2) {
+                $to_status = 'Approved';
+            } else if ($status == 3) {
+                $to_status = 'Rejected';
+            }
 
-                $this->log_wo_activity($id, "Work order status updated from " . $from_status . " to " . $to_status . "");
+            $this->log_wo_activity($id, "Work order status updated from " . $from_status . " to " . $to_status . "");
+
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'wo_order');
+            $this->db->order_by('id', 'asc');
+            $this->db->limit(1);
+            $pur_approval = $this->db->get(db_prefix() . 'pur_approval_details')->row();
+            if(!empty($pur_approval)) {
+                $pur_approval_details = array();
+                $pur_approval_details['approve'] = $status;
+                $pur_approval_details['note'] = NULL;
+                $pur_approval_details['date'] = date('Y-m-d H:i:s');
+                $pur_approval_details['staff_approve'] = get_staff_user_id();
+                $this->db->where('id', $pur_approval->id);
+                $this->db->update(db_prefix() . 'pur_approval_details', $pur_approval_details);
+            }
+
+            if($status == 1) {
+                $draft_array = array();
+                $draft_array['approve'] = NULL;
+                $draft_array['note'] = NULL;
+                $draft_array['date'] = NULL;
+                $draft_array['staff_approve'] = NULL;
+                $this->db->where('rel_id', $id);
+                $this->db->where('rel_type', 'wo_order');
+                $this->db->update(db_prefix() . 'pur_approval_details', $draft_array);
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
