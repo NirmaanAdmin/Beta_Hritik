@@ -115,7 +115,8 @@ class Clients_model extends App_Model
      * Add new client to database
      */
     public function add($data, $withContact = false)
-    {
+    {   
+        unset($data['DataTables_Table_2_length']);
         $contact_data = [];
         // From Lead Convert to client
         if (isset($data['send_set_password_email'])) {
@@ -229,6 +230,7 @@ class Clients_model extends App_Model
      */
     public function update($data, $id, $client_request = false)
     {
+        unset($data['DataTables_Table_2_length']);
         $updated = false;
         $data    = $this->check_zero_columns($data);
 
