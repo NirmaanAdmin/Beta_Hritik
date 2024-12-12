@@ -3469,6 +3469,37 @@ class purchase extends AdminController
             }
         }
     }
+
+    /**
+     * Adds an expense.
+     */
+    public function add_invoice_expense()
+    {
+        if ($this->input->post()) {
+            $this->load->model('expenses_model');
+            $data = $this->input->post();
+
+            if (isset($data['pur_invoice'])) {
+                $pur_invoice = $data['pur_invoice'];
+                unset($data['pur_invoice']);
+            }
+
+            $id = $this->expenses_model->add($data);
+
+            if ($id) {
+
+                $this->purchase_model->mark_converted_pur_invoice($pur_invoice, $id);
+
+                set_alert('success', _l('converted', _l('expense')));
+                echo json_encode([
+                    'url'       => admin_url('expenses/list_expenses/' . $id),
+                    'expenseid' => $id,
+                ]);
+                die;
+            }
+        }
+    }
+
     public function add_expense_wo()
     {
         if ($this->input->post()) {
@@ -4895,10 +4926,20 @@ class purchase extends AdminController
      */
     public function invoices()
     {
+        $this->load->model('taxes_model');
+        $this->load->model('currencies_model');
+
         $data['title'] = _l('invoices');
         $data['contracts'] = $this->purchase_model->get_contract();
         $data['pur_orders'] = $this->purchase_model->get_list_pur_orders();
         $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['customers'] = $this->clients_model->get();
+        $data['projects'] = $this->projects_model->get();
+        $data['expense_categories'] = $this->expenses_model->get_category();
+        $data['taxes'] = $this->taxes_model->get();
+        $data['currencies'] = $this->currencies_model->get();
+        $data['currency'] = $this->currencies_model->get_base_currency();
+        $data['payment_modes'] = $this->payment_modes_model->get('', [], true);
         $this->load->view('invoices/manage', $data);
     }
 
@@ -8282,9 +8323,13 @@ class purchase extends AdminController
     /**
      * Gets the project information.
      */
-    public function get_project_info($pur_order)
+    public function get_project_info($pur_order, $module_type = 0)
     {
-        $po = $this->purchase_model->get_pur_order($pur_order);
+        if ($module_type == 1) {
+            $po = $this->purchase_model->get_pur_invoice($pur_order);
+        } else {
+            $po = $this->purchase_model->get_pur_order($pur_order);
+        }
 
         $this->load->model('projects_model');
 
@@ -8299,6 +8344,15 @@ class purchase extends AdminController
 
             if ($project) {
                 $project_id = $po->project;
+                $customer = $project->clientid;
+            }
+        }
+
+        if ($po->project_id != 0) {
+            $project = $this->projects_model->get($po->project_id);
+
+            if ($project) {
+                $project_id = $po->project_id;
                 $customer = $project->clientid;
             }
         }

@@ -247,6 +247,23 @@
                         <?php echo render_date_input('duedate', 'invoice_add_edit_duedate', $value); ?>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php
+                        $selected = '';
+                        foreach ($commodity_groups_pur as $group) {
+                            if (isset($invoice)) {
+                              if ($invoice->group_pur == $group['id']) {
+                                $selected = $group['id'];
+                              }
+                            }
+                        }
+                        echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
+                        ?>
+                    </div>
+                </div>
+
                 <?php if (is_invoices_overdue_reminders_enabled()) { ?>
                 <div class="form-group">
                     <div class="checkbox checkbox-danger">

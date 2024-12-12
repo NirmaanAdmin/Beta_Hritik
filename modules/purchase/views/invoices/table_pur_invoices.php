@@ -22,7 +22,8 @@ $aColumns = [
     'payment_request_status',
     'payment_status',
     'transactionid',
-    'vendor_note'
+    'vendor_note',
+    'expense_convert',
 ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'pur_invoices';
@@ -128,7 +129,8 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_invoices.id and rel_type="pur_invoice" ORDER by tag_order ASC) as tags',
     'contract_number',
     'invoice_number',
-    'currency'
+    'currency',
+    'expense_convert',
 ]);
 
 $output  = $result['output'];
@@ -288,6 +290,12 @@ foreach ($rResult as $aRow) {
             $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
         }  elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" >' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
+        } elseif ($aColumns[$i] == 'expense_convert') {
+            if($aRow['expense_convert'] == 0){
+             $_data = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
+            }else{
+                $_data = '<a href="'.admin_url('expenses/list_expenses/'.$aRow['expense_convert']).'" class="btn btn-success btn-icon">'._l('view_expense').'</a>';
+            }
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {
                 $_data = (strpos($_data, ' ') !== false ? _dt($_data) : _d($_data));

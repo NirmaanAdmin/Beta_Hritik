@@ -1,3 +1,5 @@
+Dropzone.autoDiscover = false;
+var expenseDropzone;
 (function($) {
 	"use strict"; 
 	var table_invoice = $('.table-table_pur_invoices');
@@ -28,6 +30,27 @@
                 .columns.adjust()
                 .responsive.recalc();
     });
+
+    if ($('#pur_invoice-expense-form').length > 0) {
+        expenseDropzone = new Dropzone("#pur_invoice-expense-form", appCreateDropzoneOptions({
+            autoProcessQueue: false,
+            clickable: '#dropzoneDragArea',
+            previewsContainer: '.dropzone-previews',
+            addRemoveLinks: true,
+            maxFiles: 1,
+            success: function(file, response) {
+                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                    window.location.reload();
+                }
+            }
+      }));
+    }
+
+    appValidateForm($('#pur_invoice-expense-form'), {
+          category: 'required',
+          date: 'required',
+          amount: 'required'
+    }, projectExpenseSubmitHandler);
 })(jQuery);
 /**
  * Changes the payment status of a purchase order.
@@ -80,3 +103,43 @@ function change_payment_status(status, id){
       });
     }
   }
+
+function convert_expense(pur_invoice,total){
+    "use strict";
+    var module_type = 1;
+
+    $.post(admin_url + 'purchase/get_project_info/'+pur_invoice+'/'+module_type).done(function(response){
+      response = JSON.parse(response);
+      $('select[name="project_id"]').val(response.project_id).change();
+      $('select[name="clientid"]').val(response.customer).change();
+      $('select[name="currency"]').val(response.currency).change();
+      $('input[name="vendor"]').val(response.vendor);
+    });
+
+    $('#pur_invoice_expense').modal('show');
+    $('input[id="amount"]').val(total);
+    $('#pur_invoice_additional').html('');
+    $('#pur_invoice_additional').append(hidden_input('pur_invoice',pur_invoice));
+}
+
+function projectExpenseSubmitHandler(form) {
+    "use strict";
+      $.post(form.action, $(form).serialize()).done(function(response) {
+          response = JSON.parse(response);
+          if (response.expenseid) {
+              if (typeof(expenseDropzone) !== 'undefined') {
+                  if (expenseDropzone.getQueuedFiles().length > 0) {
+                      expenseDropzone.options.url = admin_url + 'expenses/add_expense_attachment/' + response.expenseid;
+                      expenseDropzone.processQueue();
+                  } else {
+                      window.location.assign(response.url);
+                  }
+              } else {
+                  window.location.assign(response.url);
+              }
+          } else {
+              window.location.assign(response.url);
+          }
+      });
+      return false;
+}

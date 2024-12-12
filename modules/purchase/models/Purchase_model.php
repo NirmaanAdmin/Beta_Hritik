@@ -5643,6 +5643,26 @@ class Purchase_model extends App_Model
         }
         return false;
     }
+
+    /**
+     * { mark converted pur order }
+     *
+     * @param      <int>  $pur_order  The pur order
+     * @param      <int>  $expense    The expense
+     */
+    public function mark_converted_pur_invoice($pur_invoice, $expense)
+    {
+        $this->db->where('id', $pur_invoice);
+        $this->db->update(db_prefix() . 'pur_invoices', ['expense_convert' => $expense]);
+        if ($this->db->affected_rows() > 0) {
+            // accouting module hook after expense converted
+            hooks()->do_action('pur_after_expense_converted', $expense);
+
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * { mark converted wo order }
      *
