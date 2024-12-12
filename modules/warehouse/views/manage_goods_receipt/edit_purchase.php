@@ -141,6 +141,8 @@
 														<th align="right" colspan="1"><?php echo _l('total_money') ?></th>
 														<th align="right" colspan="1"><?php echo _l('tax_money') ?></th>
 														<th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
+														<th colspan="1"><?php echo _l('vendor') ?></th>
+														<th align="right" colspan="1"><?php echo _l('delivery_date') ?></th>
 														<th align="right" colspan="1"><?php echo _l('expiry_date') ?></th>
 
 													</tr>
@@ -165,6 +167,8 @@
 														$tax_money =(isset($receipt_value) ? $receipt_value->tax_money : '');
 														$expiry_date =(isset($receipt_value) ? $receipt_value->expiry_date : '');
 														$lot_number =(isset($receipt_value) ? $receipt_value->lot_number : '');
+														$vendor_name = !empty($receipt_value->vendor_id) ? wh_get_vendor_company_name($receipt_value->vendor_id) : '';
+                              							$delivery_date = !empty($receipt_value->delivery_date) ? $receipt_value->delivery_date : '';
 
 														?>
 														<tr>
@@ -177,6 +181,8 @@
 															<td class="text-right"><?php echo app_format_money((float)$goods_money,'') ?></td>
 															<td class="text-right"><?php echo app_format_money((float)$tax_money,'') ?></td>
 															<td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
+															<td><?php echo $vendor_name ?></td>
+															<td class="text-right"><?php echo _d($delivery_date) ?></td>
 															<td class="text-right"><?php echo _d($expiry_date) ?></td>
 														</tr>
 													<?php } ?>

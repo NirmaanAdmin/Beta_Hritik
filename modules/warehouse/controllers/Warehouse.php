@@ -810,6 +810,7 @@ class warehouse extends AdminController {
 					$taxname = '';
 					$date_manufacture = null;
 					$expiry_date = null;
+					$delivery_date = null;
 					$commodity_name = $receipt_detail['commodity_name'];
 					if($receipt_detail['date_manufacture'] != null && $receipt_detail['date_manufacture'] != ''){
 						$date_manufacture = _d($receipt_detail['date_manufacture']);
@@ -820,8 +821,11 @@ class warehouse extends AdminController {
 					if(strlen($commodity_name) == 0){
 						$commodity_name = wh_get_item_variatiom($receipt_detail['commodity_code']);
 					}
+					if($receipt_detail['delivery_date'] != null && $receipt_detail['delivery_date'] != ''){
+						$delivery_date = _d($receipt_detail['delivery_date']);
+					}
 
-					$goods_receipt_row_template .= $this->warehouse_model->create_goods_receipt_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $receipt_detail['warehouse_id'], $receipt_detail['quantities'], $unit_name, $receipt_detail['unit_price'], $taxname, $receipt_detail['lot_number'], $date_manufacture, $expiry_date, $receipt_detail['commodity_code'], $receipt_detail['unit_id'] , $receipt_detail['tax_rate'], $receipt_detail['tax_money'], $receipt_detail['goods_money'], $receipt_detail['note'], $receipt_detail['id'], $receipt_detail['sub_total'], $receipt_detail['tax_name'], $receipt_detail['tax'], true, $receipt_detail['serial_number']);
+					$goods_receipt_row_template .= $this->warehouse_model->create_goods_receipt_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $receipt_detail['warehouse_id'], $receipt_detail['quantities'], $unit_name, $receipt_detail['unit_price'], $taxname, $receipt_detail['lot_number'], $receipt_detail['vendor_id'], $delivery_date, $date_manufacture, $expiry_date, $receipt_detail['commodity_code'], $receipt_detail['unit_id'] , $receipt_detail['tax_rate'], $receipt_detail['tax_money'], $receipt_detail['goods_money'], $receipt_detail['note'], $receipt_detail['id'], $receipt_detail['sub_total'], $receipt_detail['tax_name'], $receipt_detail['tax'], true, $receipt_detail['serial_number']);
 					
 				}
 			}
@@ -6745,6 +6749,8 @@ if(strlen($data['inventory_filter']) > 0){
 		$unit_price = $this->input->post('unit_price');
 		$taxname = $this->input->post('taxname');
 		$lot_number = $this->input->post('lot_number');
+		$vendor_id = $this->input->post('vendor_id');
+		$delivery_date = $this->input->post('delivery_date');
 		$date_manufacture = $this->input->post('date_manufacture');
 		$expiry_date = $this->input->post('expiry_date');
 		$commodity_code = $this->input->post('commodity_code');
@@ -6755,7 +6761,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$note = $this->input->post('note');
 		$item_key = $this->input->post('item_key');
 
-		echo $this->warehouse_model->create_goods_receipt_row_template([], $name, $commodity_name, $warehouse_id, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $date_manufacture, $expiry_date, $commodity_code, $unit_id, $tax_rate, $tax_money, $goods_money, $note, $item_key);
+		echo $this->warehouse_model->create_goods_receipt_row_template([], $name, $commodity_name, $warehouse_id, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $commodity_code, $unit_id, $tax_rate, $tax_money, $goods_money, $note, $item_key);
 
 	}
 

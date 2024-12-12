@@ -1160,6 +1160,8 @@ class Warehouse_model extends App_Model {
 		unset($data['unit_price']);
 		unset($data['tax']);
 		unset($data['lot_number']);
+		unset($data['vendor_id']);
+		unset($data['delivery_date']);
 		unset($data['date_manufacture']);
 		unset($data['expiry_date']);
 		unset($data['note']);
@@ -1266,6 +1268,12 @@ class Warehouse_model extends App_Model {
 					$inventory_receipt['expiry_date'] = to_sql_date($inventory_receipt['expiry_date']);
 				}else{
 					$inventory_receipt['expiry_date'] = null;
+				}
+
+				if($inventory_receipt['delivery_date'] != ''){
+					$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
+				}else{
+					$inventory_receipt['delivery_date'] = null;
 				}
 
 				$tax_money = 0;
@@ -1436,12 +1444,14 @@ class Warehouse_model extends App_Model {
 				$date_manufacture = null;
 				$expiry_date = null;
 				$lot_number = null;
+				$vendor_id = null;
+				$delivery_date = null;
 				$note = null;
 				$commodity_name = wh_get_item_variatiom($value['commodity_code']);
 				$quantities = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
 				$sub_total = 0;
 
-				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, $unit_name, $unit_price, $taxname, $lot_number, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'] , $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true);
+				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'] , $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true);
 
 				$total_goods_money_temp = ((float)$value['quantities'] - (float)$value['wh_quantity_received'])*(float)$unit_price;
 				$total_goods_money += $total_goods_money_temp;
@@ -7673,6 +7683,8 @@ class Warehouse_model extends App_Model {
 		unset($data['unit_price']);
 		unset($data['tax']);
 		unset($data['lot_number']);
+		unset($data['vendor_id']);
+		unset($data['delivery_date']);
 		unset($data['date_manufacture']);
 		unset($data['expiry_date']);
 		unset($data['note']);
@@ -7786,6 +7798,12 @@ class Warehouse_model extends App_Model {
 				$inventory_receipt['expiry_date'] = null;
 			}
 
+			if($inventory_receipt['delivery_date'] != ''){
+				$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
+			}else{
+				$inventory_receipt['delivery_date'] = null;
+			}
+
 			$tax_money = 0;
 			$tax_rate_value = 0;
 			$tax_rate = null;
@@ -7846,6 +7864,12 @@ class Warehouse_model extends App_Model {
 				$inventory_receipt['expiry_date'] = to_sql_date($inventory_receipt['expiry_date']);
 			}else{
 				$inventory_receipt['expiry_date'] = null;
+			}
+
+			if($inventory_receipt['delivery_date'] != ''){
+				$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
+			}else{
+				$inventory_receipt['delivery_date'] = null;
 			}
 
 			$tax_money = 0;
@@ -15019,7 +15043,7 @@ class Warehouse_model extends App_Model {
      * @param  boolean $is_edit          
      * @return [type]                    
      */
-    public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '') {
+    public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '') {
 		
 		$this->load->model('invoice_items_model');
 		$row = '';
@@ -15039,6 +15063,8 @@ class Warehouse_model extends App_Model {
 		$name_expiry_date = 'expiry_date';
 		$name_note = 'note';
 		$name_lot_number = 'lot_number';
+		$name_vendor_id = 'vendor_id';
+		$name_delivery_date = 'delivery_date';
 		$name_tax_rate = 'tax_rate';
 		$name_tax_name = 'tax_name';
 		$array_attr = [];
@@ -15083,6 +15109,8 @@ class Warehouse_model extends App_Model {
 			$name_expiry_date = $name . '[expiry_date]';
 			$name_note = $name . '[note]';
 			$name_lot_number = $name . '[lot_number]';
+			$name_vendor_id = $name . '[vendor_id]';
+			$name_delivery_date = $name . '[delivery_date]';
 			$name_tax_rate = $name . '[tax_rate]';
 			$name_tax_name = $name .'[tax_name]';
 			$name_sub_total = $name .'[sub_total]';
@@ -15141,7 +15169,9 @@ class Warehouse_model extends App_Model {
 		$row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr) . '</td>';
 		$row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 		$row .= '<td>' . render_input($name_lot_number, '', $lot_number, 'text', ['placeholder' => _l('lot_number')]) . '</td>';
-		$row .= '<td>' . render_date_input($name_date_manufacture, '', $date_manufacture, ['placeholder' => _l('date_manufacture')]) . '</td>';
+		$row .= '<td class="vendor_select">'.get_vendor_list($name_vendor_id, $vendor_id).'</td>';
+		$row .= '<td class="delivery_date">'.render_date_input($name_delivery_date, '', $delivery_date, ['placeholder' => _l('delivery_date')]).'</td>';
+		$row .= '<td class="hide">' . render_date_input($name_date_manufacture, '', $date_manufacture, ['placeholder' => _l('date_manufacture')]) . '</td>';
 		$row .= '<td>' . render_date_input($name_expiry_date, '', $expiry_date, ['placeholder' => _l('expiry_date')]) . '</td>';
 		$row .= '<td class="amount" align="right">' . $amount . '</td>';
 

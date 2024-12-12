@@ -207,7 +207,7 @@ function wh_add_item_to_table(data, itemid) {
 	var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
 	lastAddedItemKey = item_key;
 	$("body").append('<div class="dt-loader"></div>');
-	wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id,data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number,data.date_manufacture,data.expiry_date, data.commodity_code, data.unit_id, data.tax_rate, data.tax_money, data.goods_money, data.note, itemid).done(function(output){
+	wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id,data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number, data.vendor_id, data.delivery_date, data.date_manufacture,data.expiry_date, data.commodity_code, data.unit_id, data.tax_rate, data.tax_money, data.goods_money, data.note, itemid).done(function(output){
 		table_row += output;
 
 		$('.invoice-item table.invoice-items-table.items tbody').append(table_row);
@@ -244,6 +244,8 @@ function wh_get_item_preview_values() {
 	response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
 	response.taxname = $('.main select.taxes').selectpicker('val');
 	response.lot_number = $('.invoice-item .main input[name="lot_number"]').val();
+	response.vendor_id = $('.invoice-item .main select[name="vendor_id"]').val();
+	response.delivery_date = $('.invoice-item .main input[name="delivery_date"]').val();
 	response.date_manufacture = $('.invoice-item .main input[name="date_manufacture"]').val();
 	response.expiry_date = $('.invoice-item .main input[name="expiry_date"]').val();
 	response.commodity_code = $('.invoice-item .main input[name="commodity_code"]').val();
@@ -265,7 +267,7 @@ function wh_clear_item_preview_values(parent) {
 	previewArea.find('select').val('').selectpicker('refresh');
 }
 
-function wh_get_item_row_template(name, commodity_name, warehouse_id, quantities, unit_name, unit_price, taxname, lot_number, date_manufacture, expiry_date, commodity_code, unit_id, tax_rate, tax_money, goods_money, note, item_key)  {
+function wh_get_item_row_template(name, commodity_name, warehouse_id, quantities, unit_name, unit_price, taxname, lot_number, vendor_id, delivery_date, date_manufacture, expiry_date, commodity_code, unit_id, tax_rate, tax_money, goods_money, note, item_key)  {
 	"use strict";
 
 	jQuery.ajaxSetup({
@@ -281,6 +283,8 @@ function wh_get_item_row_template(name, commodity_name, warehouse_id, quantities
 		unit_price : unit_price,
 		taxname : taxname,
 		lot_number : lot_number,
+		vendor_id : vendor_id,
+		delivery_date : delivery_date,
 		date_manufacture : date_manufacture,
 		expiry_date : expiry_date,
 		commodity_code : commodity_code,
