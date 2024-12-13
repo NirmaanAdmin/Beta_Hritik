@@ -3373,6 +3373,22 @@ function get_area_list($name_area, $area){
     return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected);
 }
 
+function get_pur_send_to_vendors_list($vendors) {
+    if (!empty($vendors)) {
+        $vendors = explode(',', $vendors);
+        $CI =& get_instance();
+        $CI->db->select('company');
+        $CI->db->from(db_prefix() . 'pur_vendor');
+        $CI->db->where_in('userid', $vendors);
+        $result = $CI->db->get()->result_array();
+        if (!empty($result)) {
+            $result = array_column($result, 'company');
+            $result = implode(', ', $result);
+            return $result;
+        }
+    }
+    return '';
+}
 
 /**
  * Gets the area name by identifier
