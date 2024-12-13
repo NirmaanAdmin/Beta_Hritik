@@ -495,6 +495,7 @@ class Expenses_model extends App_Model
      */
     public function convert_to_invoice($id, $draft_invoice = false, $params = [])
     {
+
         $expense          = $this->get($id);
         $new_invoice_data = [];
         $client           = $this->clients_model->get($expense->clientid);
@@ -568,7 +569,7 @@ class Expenses_model extends App_Model
             $expense->expenseid,
         ];
         $new_invoice_data['allowed_payment_modes']           = $temp_modes;
-        $new_invoice_data['newitems'][1]['description']      = _l('item_as_expense') . ' ' . $expense->name;
+        $new_invoice_data['newitems'][1]['description']      = $expense->name;
         $new_invoice_data['newitems'][1]['long_description'] = $expense->description;
 
         if (isset($params['include_note']) && $params['include_note'] == true && !empty($expense->note)) {
@@ -593,14 +594,15 @@ class Expenses_model extends App_Model
         $new_invoice_data['newitems'][1]['rate']  = $expense->amount;
         $new_invoice_data['newitems'][1]['order'] = 1;
         $this->load->model('invoices_model');
-
+       
         $invoiceid = $this->invoices_model->add($new_invoice_data, true);
+      
         if ($invoiceid) {
             $this->db->where('id', $expense->expenseid);
             $this->db->update(db_prefix() . 'expenses', [
                 'invoiceid' => $invoiceid,
             ]);
-
+           
             if (is_custom_fields_smart_transfer_enabled()) {
                 $this->db->where('fieldto', 'expenses');
                 $this->db->where('active', 1);
@@ -636,11 +638,11 @@ class Expenses_model extends App_Model
                     }
                 }
             }
-
+            
             log_activity('Expense Converted To Invoice [ExpenseID: ' . $expense->expenseid . ', InvoiceID: ' . $invoiceid . ']');
 
             hooks()->do_action('expense_converted_to_invoice', ['expense_id' => $expense->expenseid, 'invoice_id' => $invoiceid]);
-
+            
             return $invoiceid;
         }
 
