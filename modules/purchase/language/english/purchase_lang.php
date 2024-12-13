@@ -761,3 +761,4 @@ $lang['remarks']  = 'Remarks';
 $lang['kind'] = 'Kind';
 $lang['client_supply'] = 'Client Supply';
 $lang['bought_out_items'] = 'Bought out items';
+$lang['order_summary'] = 'Order Summary';
