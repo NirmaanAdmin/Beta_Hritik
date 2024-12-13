@@ -15483,7 +15483,7 @@ class Purchase_model extends App_Model
         <tbody>
           <tr>';
 
-        $html .= '<td class="td_width_55"></td><td class="td_ali_font"><h3>' . mb_strtoupper(_l('signature_pur_order')) . '</h3></td>
+        $html .= '
             </tr>
         </tbody>
       </table>';
