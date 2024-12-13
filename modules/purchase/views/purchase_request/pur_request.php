@@ -422,6 +422,19 @@
 
             </div>
 
+            <div class="row">
+              <div class="col-md-12 mtop15">
+                <div class="panel-body bottom-transaction">
+                  <?php 
+                  $value = (isset($pur_request) ? $pur_request->delivery_terms : '');
+                  echo render_textarea('delivery_terms', 'delivery_terms', $value, array(), array(), 'mtop15', 'tinymce'); ?>
+                  <?php 
+                  $value = (isset($pur_request) ? $pur_request->remarks : '');
+                  echo render_textarea('remarks', 'remarks', $value, array(), array(), 'mtop15', 'tinymce'); ?>
+                </div>
+              </div>
+            </div>
+
             <div class="clearfix"></div>
 
             <div class="btn-bottom-toolbar text-right">
