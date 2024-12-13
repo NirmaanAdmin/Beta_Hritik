@@ -725,3 +725,16 @@ function user_can_view_invoice($id, $staff_id = false)
 
     return false;
 }
+function get_hsn_sac_name_by_id($id){
+    $CI = & get_instance();
+    $CI->db->select('name');
+    $CI->db->from(db_prefix() . 'hsn_sac_code');
+    $CI->db->where('id', $id);
+    $row = $CI->db->get()->row();
+    if ($row) {
+        $words = explode(' ', $row->name);
+        $shortName = implode(' ', array_slice($words, 0, 7));
+        return $shortName;
+    }
+    return '';
+}

@@ -20,7 +20,7 @@ hooks()->add_action('app_admin_footer', 'changee_head_components');
 hooks()->add_action('app_admin_footer', 'changee_add_footer_components');
 hooks()->add_action('app_admin_head', 'changee_add_head_components');
 hooks()->add_action('admin_init', 'changee_module_init_menu_items');
-hooks()->add_action('before_expense_form_name','changee_init_vendor_option');
+hooks()->add_action('before_expense_form_namee','changee_init_vendor_option');
 hooks()->add_action('after_custom_fields_select_options','changee_init_vendor_customfield');
 hooks()->add_action('after_custom_fields_select_options','changee_init_po_customfield');
 hooks()->add_action('after_custom_fields_select_options','changee_init_vendor_contacts_customfield');
@@ -100,7 +100,7 @@ hooks()->add_filter('email_template_language', 'changee_update_email_lang_for_ve
 hooks()->add_filter('get_styling_areas', 'changee_before_load_theme_style');
 
 //Expense table vendor data
-hooks()->add_filter('expenses_table_columns', 'changee_add_vendor_column');
+hooks()->add_filter('expenses_table_columnss', 'changee_add_vendor_column');
 hooks()->add_filter('expenses_table_sql_columns', 'changee_add_vendor_sql_column');
 hooks()->add_filter('expenses_table_row_data', 'changee_add_vendor_row_data', 10, 2);
 hooks()->add_action('changee_init',CHANGEE_MODULE_NAME.'_appint');

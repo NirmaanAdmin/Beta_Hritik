@@ -400,6 +400,7 @@ class Invoices extends AdminController
             $data['items']     = [];
             $data['ajaxItems'] = true;
         }
+        
         $data['items_groups'] = $this->invoice_items_model->get_groups();
 
         $this->load->model('currencies_model');
@@ -409,8 +410,10 @@ class Invoices extends AdminController
 
         $data['staff']     = $this->staff_model->get('', ['active' => 1]);
         $data['commodity_groups_pur'] = $this->invoices_model->get_commodity_group_add_commodity();
+        $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
         $data['title']     = $title;
         $data['bodyclass'] = 'invoice';
+        
         $this->load->view('admin/invoices/invoice', $data);
     }
 
@@ -683,7 +686,7 @@ class Invoices extends AdminController
         $invoice        = $this->invoices_model->get($id);
         $invoice        = hooks()->apply_filters('before_admin_view_invoice_pdf', $invoice);
         $invoice_number = format_invoice_number($invoice->id);
-
+       
         try {
             $pdf = invoice_pdf($invoice);
         } catch (Exception $e) {

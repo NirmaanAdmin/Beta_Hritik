@@ -1899,4 +1899,9 @@ class Invoices_model extends App_Model
 
         return $this->db->query('select * from tblitems_groups where display = 1 order by tblitems_groups.order asc ')->result_array();
     }
+    public function get_hsn_sac_code()
+    {
+
+        return $this->db->query('select * from tblhsn_sac_code ')->result_array();
+    }
 }

@@ -142,6 +142,10 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                 <?php echo e(get_project_name_by_id($invoice->project_id)); ?>
             </p>
             <?php } ?>
+            <p class="no-mbot">
+                <span class="bold"><?php echo _l('hsn_sac'); ?>:</span>
+                <?php echo get_hsn_sac_name_by_id($invoice->hsn_sac); ?>
+            </p>
             <?php $pdf_custom_fields = get_custom_fields('invoice', ['show_on_pdf' => 1]);
             foreach ($pdf_custom_fields as $field) {
                 $value = get_custom_field_value($invoice->id, $field['id'], 'invoice');
