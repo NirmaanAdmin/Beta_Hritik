@@ -18,7 +18,7 @@ class Work_order_pdf extends App_pdf
         $this->footer_text = $footer_text;
         $this->wo_order = $wo_order;
         
-        $this->SetTitle(_l('pur_order'));
+        $this->SetTitle(_l('wo_order'));
         # Don't remove these lines - important for the PDF layout
         $this->wo_order = $this->fix_editor_html($this->wo_order);
     }

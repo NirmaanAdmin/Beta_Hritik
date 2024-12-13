@@ -3374,6 +3374,13 @@ function get_area_list($name_area, $area){
 }
 
 
+/**
+ * Gets the area name by identifier
+ *
+ * @param int $id The area identifier
+ *
+ * @return string The area name by identifier
+ */
 function get_area_name_by_id($id)
 {
     $CI = & get_instance();
@@ -3387,20 +3394,167 @@ function get_area_name_by_id($id)
     return '';
 }
 
-function get_pur_send_to_vendors_list($vendors) 
-{
-    if(!empty($vendors)) {
-        $vendors = explode(',', $vendors);
-        $CI = & get_instance();
-        $CI->db->select('company');
-        $CI->db->from(db_prefix() . 'pur_vendor');
-        $CI->db->where_in('userid', $vendors);
-        $result = $CI->db->get()->result_array();
-        if(!empty($result)) {
-            $result = array_column($result, 'company');
-            $result = implode(',', $result);
-            return $result;
-        }
-    }
-    return '';
+
+function get_by_deafult_order_summary(){
+    $val = '<p class="p1"></p>
+<p class="p2" style="text-align: center;"><span class="s1"><b>WORK ORDER</b></span></p>
+<p class="p1"><b><span class="Apple-converted-space">                                                                                                            </span></b></p>
+<p class="p3">Ref: Bl/JAMNAGR/24-25/026 <strong><br>Dated: 23.11.2024</strong></p>
+<p class="p5">To,<b></b></p>
+<p class="p6"><b>M/s. RASHI INTERIORS.<br></b>Pinnacolo, Flat No-2205, Beverly Park Road,<br>Mira Bhayandar, Thane, Maharashtra- 401107<br>Email:<span class="s2"> </span><span class="s1">kmistry@rashiinteriors.com</span> <br>Contact - +91-9820058771<br>GST Registration no- 27AFVPM8298L1Z5<br>Bank Details;<span class="s2"> </span>ACCOUNT NAME- RASHI INTERIOR,<br>BANK NAME: AXIS BANK,<br>ACCOUNT NUMBER: 923020048204026<br>IFSC CODE: UTIB0004251S</p>
+<p class="p5">Dear Mr. Kanaiyalal Misstry,</p>
+<p class="p5"><b>Sub: Work Order for External Hard Finishes Works at Basilius Guest House in Jamnagar, Gujarat. </b></p>
+<p class="p7">As subsequent discussions we had with you, We at <b>Basilius International LLP</b> (referred as Employer), accept your final offer and appoint <b>M/s. Rashi Interiors</b> (herein after called the Contractor) for<b> External Hard Finishes Works at Basilius Guest House in Jamnagar, Gujarat.</b> on the basis of detailed Bill of Quantities inclusive of remedying of any defects and safety measures of the above project for the item rate Contract Amount of <b>INR 1,50,23,359/- (Indian Rupees One Crore Fifty Lacs Twenty-Three Thousand Three Hundred Fifty-Nine only) inclusive of GST, as tabulated below; </b></p>
+<p class="p4"><b></b></p>
+<table cellspacing="0" cellpadding="0" class="t1">
+<tbody>
+<tr>
+<td valign="middle" class="td1">
+<p class="p8"><b>External Hard Finishes Works</b></p>
+</td>
+<td valign="middle" class="td2">
+<p class="p9">INR          1,27,31,660<span class="Apple-converted-space">       </span></p>
+</td>
+</tr>
+<tr>
+<td valign="middle" class="td3">
+<p class="p8"><b>GST @ 18% in INR </b></p>
+</td>
+<td valign="middle" class="td4">
+<p class="p9"><span class="Apple-converted-space">   </span>INR <span class="Apple-converted-space">        </span>22,91,699</p>
+</td>
+</tr>
+<tr>
+<td valign="middle" class="td1">
+<p class="p8"><b> GRAND TOTAL </b></p>
+</td>
+<td valign="middle" class="td2">
+<p class="p9"><b> INR<span class="Apple-converted-space">          </span>1,50,23,359</b></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="p4"></p>
+<p class="p10">We are pleased to inform you that your offer agreed in the negotiation is being hereby accepted by us with the terms and conditions given below. The salient terms and conditions of the work package will be as follows:</p>
+<p><b><span class="Apple-converted-space">1.  </span>Scope of work</b></p>
+<p class="p14">The scope of work shall be as per bill of quantities with the Contract rates as agreed, herewith enclosed as Annexure ‘A’. We reserve right to revise the scope of works. Quantities mentioned herein are indicative and may vary. Payment will be made as per actual quantum of work done as per agreed unit rate.</p>
+<p><b>2. Time Schedule</b></p>
+<p class="p15">Date of commencement of work shall be <b>immediately</b>.</p>
+<p><strong>3. Time of completion</strong></p>
+<p class="p16">The time of completion will be within <b>3 months</b> or earlier from the date of Work Order. Time is the essence of the contract and the work covered in this contract must be completed in all respects, with in the period stipulated in the label above. The period includes all holidays and rainy days.</p>
+<p><b>4. Total contract value</b><b></b></p>
+<ol class="ol2">
+<li class="li3">The contract price as mentioned in Annexure- A is Inclusive of all taxes.</li>
+<li class="li3">Actual payment shall be made as per actual work executed against each item of schedule of Quantities here with enclosed as Annexure ‘A’</li>
+<li class="li3">The quoted rates shall remain ‘FIRM’ only for External Finishes Works as approved by Project Head.</li>
+<li class="li3">It is agreed that the Contractor shall carryout modifications and minor additional works without charging for the same.</li>
+<li class="li3">Your rates are inclusive of all based on actual site conditions any additional work required at site to facilitate shall be done by you and no additional claims in this regard will be entertained.</li>
+<li class="li3">All rates are inclusive of scaffolding / staging at all heights, safety procedures, PPE etc; wherever required for all type of works / trades etc whether specified or not.</li>
+<li class="li3">All scaffolding to be used shall be of MS sections / materials.</li>
+</ol>
+<p class="p14"><b style="font-family: ‘-apple-system’, BlinkMacSystemFont, ‘Segoe UI’, Roboto, Oxygen, Ubuntu, Cantarell, ‘Open Sans’, ‘Helvetica Neue’, sans-serif; font-size: 12pt;">5. Taxes &amp; duties</b></p>
+<p class="p14">The quoted amount as contained in the Contract sum is Inclusive of all taxes. Applicable TDS will be deducted by <b>M/s. Basilius International LLP</b> while making the payments. It is the sole responsibility of you to comply with necessary statuary requirements like VAT, Service Tax, Labour laws etc. as per norms. <b>M/s. Basilius International LLP</b> shall not be anyway responsible for non-Compliance of the above by you.</p>
+<p><b>6. Free Issue Materials </b></p>
+<p class="p14">Cement will be provided by <b>M/s. Basilius International LLP</b> for Block Work and Plastering only.</p>
+<p class="p18">P &amp; M, Scaffolding Material will be provided by <b>M/s. Basilius International LLP. </b></p>
+<p><b>7. Quantities</b></p>
+<p class="p14">Quantities mentioned in BOQ are estimated Quantities subject to variation &amp; omission at any extent. Actual executed quantities will be paid. Variation of the quantities to any extent shall not attract any compensation or any rise in Item Rates.</p>
+<p><b>8. Payment Terms</b></p>
+<ul class="ul1">
+<li class="li3"><span class="s3"></span>20% of the contract value will be paid to the contractor as a mobilization advance.</li>
+<li class="li3"><span class="s3"></span>40% Payment Against Material delivery @ prorate basis.</li>
+<li class="li3"><span class="s3"></span>25% Against Approved Running Bill as per work done.</li>
+<li class="li3"><span class="s3"></span>10% payment upon successful completion and handover.</li>
+<li class="li3"><span class="s3"></span>5% Cash Retention during Contract in each RA Bill and Final bill, which will be released on successful completion of Defects liability period.</li>
+</ul>
+<p class="p21">Payment will be affected as per actual delivery/execution at site. Payment of final bill will be done in 30 working days from the date of Certification from Engineer and receiving all supporting documents.</p>
+<p><b>9. Payment of Final Bill</b></p>
+<p class="p14">30 days commencing on certification and receiving all supporting documents.</p>
+<p><b>10. Defect Liability Period</b></p>
+<p class="p14">12 Months from the completion certificate (on Virtual Completion) issued by Employer.</p>
+<p><b>11. Liquidity damages</b></p>
+<p class="p14">Amount of Liquidated Damage for non-completion of `work with in stipulated time is 0.5% of the contract price per week or part thereof subject to a maximum of 5 % of the Contract price. The LD will be imposed on final completion schedule or as per mutually agreed mile-stones. The contractor must abide to the time specified.</p>
+<p><b>12. Escalation</b></p>
+<p class="p14">Not applicable</p>
+<p><b>13. Basic Rate</b></p>
+<p class="p14">Not applicable</p>
+<p><b>14. Material Advance</b></p>
+<p class="p14">Not applicable</p>
+<p><b>15. ESIS, PF, Labour License </b><b></b></p>
+<p class="p14">Contractor will pay ESIS and PF as per the rules of the concerned authorities if applicable. This will not be reimbursed by us and we shall be indemnified against such a demand. In the event if we want to have the copies of ESIC and PF challans, you will submit the same. (If Applicable). As per the Contract Labour (Abolition and Regulation Act,(1970) you must apply for the license at the Deputy Labour Commissioner’s office by taking form V from the Project department. The copy of this license must be submitted by you within commencement period. (If applicable).</p>
+<p><b>16. Insurance Policies </b></p>
+<p class="p14">Not Applicable</p>
+<p><b>17. Programme for Works</b></p>
+<p class="p14">Contractor shall progress with the work keeping in view the completion date indicated under clause “Time of Completion”, You shall prepare a detailed schedule including major milestones based on the end date, which shall be mutually agreed to and accepted between us. In case of delays in achieving the target dates the Employer shall be entitled to charge the compensation for the delay and adjust the same against your running bills irrespective of consequential delays.<b></b></p>
+<p><b>18. Construction Power and Water<br><br></b>One power point connection may be provided by Employer at no cost, Contractor should arrange the distribution of power at his own cost. Water connection will be provided by Employer, Free of Cost, at one-point further distribution cost is in contractor scope including pump; etc.</p>
+<p><b>19. Amendment</b></p>
+<p class="p14">This work order may not be amended or modified except by an instrument in writing signed by us.</p>
+<p><b>20. Arbitration</b><b></b></p>
+<p class="p14">The venue of Arbitration shall be at Mumbai in English Language and the Arbitration shall be conducted in accordance with the provisions of the Arbitration and Conciliation Act, 1996 or any statuary modification or re-enactment thereof. The number of arbitrators shall be mutually agreed. The Arbitration award shall be final and binding upon the parties to arbitration. Costs of such arbitration shall be borne by the party that lost the arbitration case.</p>
+<p><b>21. Site Clearance / House Keeping</b></p>
+<p class="p14">During the execution of the works, you shall keep the site reasonably free from all unnecessary obstructions and shall store or dispose of any equipment and surplus materials. You shall also clear away, and remove from site any wreckage, rubbish or temporary works no longer required. You shall keep the site clean and all the debris generated shall be disposed outside the site.</p>
+<p><b>22. Extra Item</b></p>
+<p class="p14">The unit rates in the bill of quantities shall determine the valuation of work of similar character executed under similar condition as was priced therein as pr tender condition, otherwise the rate shall be finalized as under; Cost of material as prevailing rates at the time of execution of work actually incorporated in the project. Relevant vouchers are required as per supporting document. Cost of labour, workforce, trade supervisors at prevailing rates at the time of execution of work actually incorporated in the project including all liabilities due to statutory law as per contract condition. 15% towards contractor’s establishment, plant and machinery, electricity and water charges, overhead and profits. Refer Annexure B for template for Rate Analysis.</p>
+<p><b>23. Hoisting, Transportation Etc.</b><b></b></p>
+<p class="p14">Contractor shall arrange on his own for loading, unloading, lead, lift and shift; etc all complete as necessary.</p>
+<p><b>24. Force Majeure</b><b></b></p>
+<p class="p14">If at any time, during the continuance of the Contract works the performance in whole or part of any obligation under it shall be prevented or delayed by reason of war, hostility, acts of the public enemy, civil commotion, sabotage, fire, flood, explosion, epidemic, quarantine restriction, strikes, lock-outs or acts of God, etc, the Contractor shall not have any claim for damages against the Employer, in respect of non-performance or delay in performance of the Employer.</p>
+<p><b>25. Guarantee/Warrantee</b><b></b></p>
+<p class="p14">Guarantee of the work would be for one (1) year from hand over as applicable.<br><br><b>26. Idling of resources</b></p>
+<p class="p14">Idling time for all the equipment, plant and labour for whatever reason will be borne by contractor unless and otherwise specified by Project Head.</p>
+<p><b>27. Labour Accommodation</b></p>
+<p class="p14">No labour or staff accommodation shall be permitted at site. Contractor shall make his own arrangement for the same outside the site &amp; necessary transportation of their labour &amp; staff. </p>
+<p><b>28. Suspension of Work</b><b></b></p>
+<p class="p14">The Contractor shall, on the written order of the Employer/Employer’s Representative, suspend the progress of the works or any part thereof for such time or times and in such manner as the Employer/Employer’s Representative may consider necessary and shall, during such suspension, properly protect and secure the work, so far as is necessary in the opinion of the Employer/Employer’s Representative.</p>
+<p class="p14">The Contractor shall immediately notify the Project Manager of any plant or machinery left idle or unused as a consequence of the above clause, and comply with any instructions given to redeploy on or about the works.</p>
+<p><b>29. Termination</b></p>
+<p class="p14">Employer reserves the right to terminate the contract if not been executed to the desired quality and in the required time.</p>
+<p class="p14">Employer may, at its option, terminate for convenience any of the Work under this contract in whole or, from time to time, in part, at any time by written notice to Contractor. Such notice shall specify the extent to which the performance of the Work is terminated and the effective date of such termination at no compensation. In such event, the Employer shall pay the Contractor such portions of the Work as are due and properly completed.</p>
+<p><b>30. Temporary facilities</b><b></b></p>
+<p class="p14">Contractor has to make an arrangement for office, labour Toilets, stores, fabrication yard and shuttering yard with adequate access and approach to the work.</p>
+<p><b>31. Statutory Requirements</b></p>
+<p class="p14">As applicable<br><br><b>32. Safety &amp; Security</b></p>
+<ol class="ol2">
+<li class="li3">Comply with all applicable safety regulations,</li>
+<li class="li3">Take care for the safety of all persons entitled to be on the Site.</li>
+<li class="li3">All workers shall wear safety helmet and other safety gadgets as required.</li>
+<li class="li3">You shall store all the material properly and shall provide proper security until <span class="Apple-converted-space">  </span>handing over to the Employer.</li>
+</ol>
+<p class="p14">You shall take appropriate measures to secure your works and handover to us after completing all the works without any damage, scratches etc. to the satisfaction of the Engineer-in-charge. Also refer attached Safety Manual.</p>
+<p><b>33. Site office, Godown, Stores, Meeting Room Etc.</b><b></b></p>
+<p class="p14">You shall be provided sufficient area at our site for the construction of your facilities required for the project subject to the availability and mutual agreement.</p>
+<p class="p14">During the Contract period, if the site office / stores have to be relocated then it shall be at Contractor’s cost.</p>
+<p class="p14">Also, demolition and clean-up are to be done by Contractor to full satisfaction of Employer. The same has to be removed and clean–up by Contractor to the satisfaction of Employer after completion and handing over of the project at his own cost.</p>
+<p><b>34. Quality</b></p>
+<p class="p14">Quality of the work should be acceptable to the Employer, Consultant &amp; Architect. If the work not found suitable, the Contractor shall amend as required and directed. In case the work is not amended by Contractor after instructions, the same shall be carried out by other agencies which will be back charged by Employer with additional overhead of 15% towards Employer costs. Check list to be submitted location wise on timely based / as required by Project Manager. Protection of application in contractors’ scope for the works carried out by other agencies. </p>
+<p><b>35. Infrastructure to carry out the works</b><b></b></p>
+<p class="p14">The Contractor shall have all the tools, tackles, equipment, machinery etc all required to carry out the works at his own cost.</p>
+<p><b>36. Indemnification</b><b></b></p>
+<p class="p14">Contractor has to keep Employer indemnify in all matters.</p>
+<p class="p13"><b>37. Co-Ordination<br><br></b><span style="font-family: ‘-apple-system’, BlinkMacSystemFont, ‘Segoe UI’, Roboto, Oxygen, Ubuntu, Cantarell, ‘Open Sans’, ‘Helvetica Neue’, sans-serif; font-size: 12pt;">You shall coordinate with the all-other agencies involved in the project and take necessary action to ensure smooth progress of the work.</span></p>
+<p><b>38.PROTECTION OF WORKS</b></p>
+<p class="p14">The Contractor shall take full responsibility for the proper care and protection of the work carried out in respect of the Project from commencement until completion and handing over of the Project to the Employer’s representatives.<span class="Apple-converted-space">  </span>The Contractor shall protect and preserve the work carried out in respect of the Project in every way from any damage, fire or accident, including by providing temporary roofs, boxing, protection film on glass / aluminum / fins / window / façade works / canopy etc; or other construction as required by the Employer’s representatives. This protection shall be provided for all property on the Site as well as adjacent to the Site. The Contractor shall adequately protect, to the satisfaction of the Employer’s representatives, all the items of finishing work to prevent any chipping, cracking, breaking of edges or any damage of any kind whatsoever and to prevent such work from getting marked or stained or dirty. <span class="Apple-converted-space">  </span>Should the Contractor fail to protect the work in respect of the Project or any part thereof and should any damage be caused<span class="Apple-converted-space">  </span>to<span class="Apple-converted-space">  </span>the<span class="Apple-converted-space">  </span>same,<span class="Apple-converted-space">  </span>the Contractor<span class="Apple-converted-space">  </span>shall<span class="Apple-converted-space">  </span>be<span class="Apple-converted-space">  </span>responsible<span class="Apple-converted-space">  </span>for<span class="Apple-converted-space">  </span>all<span class="Apple-converted-space">  </span>replacement<span class="Apple-converted-space">  </span>and<span class="Apple-converted-space">  </span>rectification,<span class="Apple-converted-space">  </span>as directed by the Employer’s representatives, and all costs and expenses in connection with<span class="Apple-converted-space">  </span>such<span class="Apple-converted-space">  </span>replacement<span class="Apple-converted-space">  </span>and<span class="Apple-converted-space">  </span>rectification<span class="Apple-converted-space">  </span>shall<span class="Apple-converted-space">  </span>be<span class="Apple-converted-space">  </span>to<span class="Apple-converted-space">  </span>the<span class="Apple-converted-space">  </span>account<span class="Apple-converted-space">  </span>of<span class="Apple-converted-space">  </span>the Contractor and shall be borne by contractor.</p>
+<p class="p5">You are requested to sign the enclosed duplicate copy of this work order as the token of your acceptance of this contract and return the same to us.</p>
+<p class="p25"></p>
+<p class="p26"><b>Yours faithfully,</b></p>
+<p class="p5"><b>for Basilius International LLP</b></p>
+<p class="p4"><b></b></p>
+<p class="p5"><b>Authorized Signatory</b></p>
+<p class="p5"></p>
+<p class="p5">Encl:<span class="Apple-tab-span"> </span>Annexure – A - Bill of Quantities</p>
+<p class="p1"><span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span> <span class="Apple-converted-space">     </span></p>
+<p class="p27"><b><span class="Apple-tab-span"> ____________________________________</span></b></p>
+<p class="p28"><b>ACKNOWLEDGMENT</b></p>
+<p class="p29"></p>
+<p class="p7">I, ____________________________________ in the capacity of Authorized Signatory to sign for and on behalf of <b>Rashi Interior, </b>hereby acknowledge the receipt of your Work Order and confirm acceptance of the terms and conditions stated therein.</p>
+<p class="p1"></p>
+<p class="p1"></p>
+<p class="p1"></p>
+<p class="p1"></p>
+<p class="p1"><b></b></p>
+<p class="p5"><b>Sign &amp; Seal of Contractor<span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span><span class="Apple-tab-span"> </span> <span class="Apple-converted-space">                                                                                                                                                         </span>Date</b></p>
+<p class="p4"></p>
+<p class="p1"></p>';
+
+return $val;
 }

@@ -366,21 +366,28 @@
 
                     </div> -->
 
-                    <div class="row">
-                      <div class="col-md-6 form-group">
-                        <label for="kind"><?php echo _l('kind'); ?></label>
-                        <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                          <option value=""></option>
-                          <option value="Client Supply" <?php if (isset($wo_order) && $wo_order->kind == 'Client Supply') {
-                            echo 'selected';
-                          } ?>><?php echo _l('client_supply'); ?></option>
-                          <option value="Bought out items" <?php if (isset($wo_order) && $wo_order->kind == 'Bought out items') {
-                            echo 'selected';
-                          } ?>><?php echo _l('bought_out_items'); ?></option>
-                        </select>
+                    <!-- <div class="row">
+                      <div class="col-md-6 ">
+
+                        <?php
+
+                        $selected = '';
+                        foreach ($area_pur as $area) {
+                          if (isset($wo_order)) {
+                            if ($wo_order->area_pur == $area['id']) {
+                              $selected = $area['id'];
+                            }
+                          }
+                          if (isset($selected_area)) {
+                            if ($selected_area == $area['id']) {
+                              $selected = $area['id'];
+                            }
+                          }
+                        }
+                        echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
+                        ?>
                       </div>
-                    </div>
-                    
+                    </div> -->
                   </div>
                 </div>
 
@@ -638,341 +645,17 @@
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
                 <?php $value = (isset($wo_order) ? $wo_order->order_summary : get_purchase_option('order_summary'));
-                  if (!isset($wo_order) && $wo_order->order_summary == '') {
-                    $value = '<strong>WORK ORDER</strong><br><br>
-    
-                    <strong>M/S SURFACES PLUS</strong><br>
-                    G.F. PREMIER HOUSE-1, SARKHEJ- GANDHINAGAR HIGHWAY, OPP. GURUDWARA, THALTEJ, <br>
-                    AHMEDABAD - 380 054, INDIA<br><br>
-    
-                    <strong>P.O. Number:</strong> BI/JAMNAGAR/24-25/027<br>
-                    <strong>P.O. Date:</strong> 22-Oct-24<br>
-                    <strong>Rev. No.:</strong><br>
-                    <strong>Rev. Date:</strong><br><br>
-    
-                    <strong>PAN No.:</strong> AAHFS1631G<br>
-                    <strong>Beneficiary name:</strong> SURFACES PLUS<br>
-                    <strong>GST No.:</strong> 24AAHFS1631G1ZI<br>
-                    <strong>Bank name:</strong> Yes Bank.<br>
-                    <strong>Bank branch:</strong> Yes bank C.G.Road branch<br>
-                    <strong>Bank A/c no.:</strong> 000784600000404<br>
-                    <strong>SWIFT/RTGS code:</strong> YESB0000007<br><br>
-    
-                    <strong>Contact Person:</strong> Anand Patel<br>
-                    <strong>Telephone:</strong> +91 7575001193<br>
-                    <strong>Email:</strong> Sales1@surfacesplus.in<br><br>
-    
-                    <strong>Project:</strong> Basilius International Jamnagar<br>
-                    <strong>Subject:</strong> Supply and Installation of “Mathios Stone and Tiles” for Proposed BGJ Guest House Project<br><br>
-    
-                    Dear Sir/Madam,<br>
-                    This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
-    
-                    <strong>Currency:</strong> INR<br><br>
-    
-                    <strong>Terms:</strong> F.O.R. at Site<br><br>
-    
-                    <strong>Type of Order:</strong> Item Rate Order<br><br>
-    
-                    <strong>Price Escalation:</strong> The agreed amount shall remain fixed for this project. No escalation shall be paid in contract duration and for this project for any reason whatsoever. Price shall be valid for 6 Months from the date of Sign of PO.<br><br>
-    
-                    <strong>Destination:</strong> M/s BASILIUS INTERNATIONAL<br>
-                    3rd Floor, 304, Benison Commercial Complex, Old Padra Road, Opposite Hari Bhakti, Vadodara, Gujarat – 390007<br><br>
-    
-                    <strong>Delivery Schedule:</strong> Within 65 to 70 days from the date of receipt of confirm order.<br><br>
-    
-                    <strong>Payment Terms:</strong><br>
-                    100% advance along with the confirm order.<br><br>
-    
-                    <strong>Part Shipment:</strong> Allowed.<br><br>
-    
-                    <strong>Trans-Shipment:</strong> Allowed<br><br>
-    
-                    <strong>Shipping, Delivery & Acceptance:</strong><br>
-                    The supplier will export quality packaging and ship all goods in industry standards as may be applicable to ensure that the goods are received by the buyer in good condition. The applicable Purchase Order number must appear on all shipping containers, packing lists, delivery tickets, and Invoice.<br><br>
-    
-                    <strong>Packing Charges:</strong> Inclusive. Material must be preserved, packaged, handled, and packed to permit efficient handling, provide protection from loss or damage, and comply with industry standards and carrier requirements. Supplier will be liable for any loss or damage due to its failure to properly preserve, package, handle, or pack any shipment. You shall provide the packing list along with Invoice and other documents.<br><br>
-    
-                    <strong>Other Terms & Conditions:</strong><br>
-                    (a) All items should be as per approved specification, ratings, and protection level of by consultant / Basilius team.<br>
-                    (b) All material & accessories should be delivered as per purchase order only and subject to MAS/ Consultant approval.<br>
-                    (c) Third party inspection can be organized from our side, pre dispatch inspection will be done, if required.<br>
-                    (d) Replacement/Rectification: Within 7-10 days if found any damage.<br>
-                    (e) All material should be strictly as per applicable standard.<br>
-                    (f) Goods shall be packaged properly to ensure safe arrival at the project site.<br>
-                    (g) Transportation to the site and transit insurance shall be in your scope.<br>
-                    (h) Service / complain response time: Within 48 hours from the time of complaint logged, if required.<br>
-                    Supplier shall provide all the documents incl. delivery challan, invoice, materials test certificate/ Declaration of Conformity, Serial no, technical details of the product being supplied being asked by Basilius etc.<br><br>
-    
-                    <strong>Annexures:</strong><br>
-                    Annexure A (Order Summary)<br>
-                    Annexure B (Special conditions of purchase)<br>
-                    Annexure C (General terms & conditions of purchase)<br><br>
-    
-                    We hereby acknowledge and accept the purchase order and the annexures.<br><br>
-    
-                    <table border="1" style="width: 99.9909%; height: 287px;"><colgroup><col style="width: 49.9602%;"><col style="width: 49.9602%;"></colgroup>
-                    <tbody>
-                    <tr style="height: 92.8px;">
-                    <td style="height: 92.8px;">
-                    <p><span style="color: rgb(0,0,0); font-family: verdana, geneva, sans-serif; font-size: 10pt;"><b>On behalf of Basilius International<span class="Apple-tab-span"> </span></b></span></p>
-                    <p><span style="color: rgb(0,0,0); font-family: verdana, geneva, sans-serif; font-size: 10pt;"><b>the annexures</b></span></p>
-                    </td>
-                    <td style="height: 92.8px;"><span style="color: rgb(0,0,0); font-family: verdana, geneva, sans-serif; font-size: 10pt;"><b><span class="Apple-tab-span">W</span>e hereby acknowledge and accept the purchase order</b></span></td>
-                    </tr>
-                    <tr>
-                    <td>
-                    <p><span style="font-size: 10pt; font-family: verdana, geneva, sans-serif;"><span style="color: rgb(0,0,0);"></span></span></p>
-                    <p><span style="font-size: 10pt; font-family: verdana, geneva, sans-serif;"><span style="color: rgb(0,0,0);">Authorized Signatory</span></span></p>
-                    <p><span style="font-size: 10pt; font-family: verdana, geneva, sans-serif;"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0); font-family: verdana, geneva, sans-serif; font-size: 10pt;">(Affix stamp)</span></span></span></p>
-                    <p><span style="font-size: 10pt; font-family: verdana, geneva, sans-serif;"><span style="color: rgb(0,0,0);"> </span></span></p>
-                    </td>
-                    <td>
-                    <p></p>
-                    <p>Authorized Signatory of the supplier</p>
-                    <p><span style="font-size: 10pt; font-family: verdana, geneva, sans-serif;"><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0); font-family: verdana, geneva, sans-serif; font-size: 10pt;">(Affix stamp)</span></span></span></p>
-                    <p><span style="font-size: 10pt; font-family: verdana, geneva, sans-serif;"></span></p>
-                    </td>
-                    </tr>
-                    </tbody>
-                    </table>';
+                  if (!isset($pur_order) && $pur_order->order_summary == '') {
+                    $value = get_by_deafult_order_summary();
                   }
 
                 ?>
 
 
                 <?php echo render_textarea('order_summary', 'estimate_add_edit_order_summary', $value, array(), array(), 'mtop15', 'tinymce'); ?>
-                <?php $value = (isset($wo_order) ? $wo_order->vendornote : get_purchase_option('vendor_note'));
-
-                  if (!isset($wo_order) && $wo_order->vendornote == '') {
-                $value = '
-
-                <h4 style="font-size: 20px;text-align: center;"><strong>ANNEXURE - B</strong><br>
-                <strong>SPECIAL CONDITIONS OF PURCHASE</strong></h4><br><br>
-
-                <strong>BUYER ADDRESS:</strong><br>
-                BASILIUS INTERNATIONAL LLP<br>
-                3rd Floor, 304 Benison Commercial Complex, Old PADRA Road<br>
-                Opposite Hari Bhakti, Vadodara, Gujarat - 390007<br>
-                <strong>GST:</strong> 24AAYFB0472D1ZJ<br><br>
-
-                <strong>SITE ADDRESS:</strong><br>
-                BASILIUS INTERNATIONAL<br>
-                Guest House Property at Jamnagar, Gujarat<br><br>
-
-                <strong>Contact Person:</strong> Rupesh Singh, Project Coordinator (+91)7300618065<br><br>
-
-                <strong>CORRESPONDENCE</strong><br>
-                Acknowledgment of this Purchase Order, invoices, and commercial correspondence shall be sent by courier to the above address, attention Rupesh, with a scanned copy sent by mail to <strong>bgj.project@basilius.in</strong>.<br>
-                All telephone communications and email correspondence for coordination purposes shall be addressed to our Project Head, M/s Basilius International (<strong>bgj.project@basilius.in</strong>), +91 7300618065.<br>
-                All documents should be sent to the following correspondence address:<br><br>
-
-                Mr. Rupesh Singh: Project Coordinator: +91 7300618065<br>
-                Address: BASILIUS INTERNATIONAL LLP<br>
-                Guest House Property at Jamnagar, Gujarat<br><br>
-
-                <strong>WARRANTY:</strong> 18 months from date of Installation.<br><br>
-
-                <strong>SPECIAL CONDITIONS</strong><br>
-                <strong>TEST CERTIFICATE:</strong><br>
-                Vendor shall provide all the test certificate, certificate of origin, warranty certificate etc.<br><br>
-
-                <strong>PACKAGING LABELLING / MARKS</strong><br>
-                - Name of Purchaser<br>
-                - Description of Goods<br>
-                - Name of Supplier<br>
-                - Quantity / Volume<br>
-                - Delivery Address<br>
-                - Gross / Net Weight<br><br>
-
-                <strong>SPECIAL REMARKS:</strong><br>
-                <strong>PACKAGING LABELLING / MARKS</strong><br>
-                Name of Purchaser<br>
-                Description of Goods<br>
-                Name of Supplier<br>
-                Delivery Address<br>
-                Quantity / Volume<br>
-                Gross / Net Weight<br>
-                ';
-              }
-                ?>
-
-
+                <?php $value = (isset($wo_order) ? $wo_order->vendornote : get_purchase_option('vendor_note')); ?>
                 <?php echo render_textarea('vendornote', 'estimate_add_edit_vendor_note', $value, array(), array(), 'mtop15', 'tinymce'); ?>
-                <?php $value = (isset($wo_order) ? $wo_order->terms :  get_purchase_option('terms_and_conditions'));
-                    if (!isset($wo_order) && $wo_order->terms == '') {
-                      $value = "<h4 style='font-size: 20px;text-align: center;'><strong>ANNEXURE - C<br>GENERAL TERMS & CONDITIONS OF PURCHASE</strong></h4><br><br>
-      
-                      <strong>1. Definitions.</strong><br>
-                      1.1 In these Conditions: 'BASILLUS' means “BASILIUS INTERNATIONAL LLP INTERNATIONAL LLP”; 'Completion Date' means the date or dates shown on the Order Form overleaf; 'The Vendor' means the supplier or service provider to whom the Order overleaf is addressed; 'The Contract' means terms and conditions signed between BASILLUS and the Vendor, governing the subject matter of this Order (inclusive of the Order Form set out overleaf); 'The Goods' means the goods (if any) to be supplied under the Contract, and; 'The Services' means the services (if any) to be provided and any work carried out under the Contract.<br><br>
-      
-                      <strong>2. Subcontracting.</strong><br>
-                      2.1 The Vendor shall not assign, transfer or encumber any part or all of the Vendor's rights and obligations under this Order, directly or indirectly, without the written approval of BASILLUS. Any assignment or transfer of this Order or any interest herein, without the written consent of BASILLUS, shall be void and of no effect and will, at the option of BASILLUS, render this Order void. Notwithstanding any such consent or approval, the Vendor shall continue to remain liable for and under this Contract.<br><br>
-      
-                      <strong>3. Delivery.</strong><br>
-                      3.1 Unless otherwise specified by BASILLUS in writing, the Services must be provided, and the Goods must be delivered (allowing sufficient time for unloading) in accordance with the Order, for time of delivery and in case of no time specification in the Order, the Vendor shall deliver Goods as agreed between the parties. The Vendor shall be responsible for delivering Goods in good working condition at the address for delivery shown overleaf or as per the terms specified in the Order in this regard.<br><br>
-      
-                      3.2 Delivery terms of this Purchase Order shall be interpreted in accordance with 'Incoterms (International Rules for the Interpretation of Trade Terms) 2000' and any amendment and supplement thereto.<br><br>
-      
-                      3.3 Time is of the essence and the Vendor shall be liable for damages as mentioned herein incurred due to delays in delivery. If Goods are not available for delivery or the Services cannot be provided at the due time, the Vendor shall (without prejudice to BASILLUS's rights under the Contract) immediately inform BASILLUS by telephone, facsimile or e-mail and confirm such communication in writing. BASILLUS also reserves the right to charge the Vendor liquidated damages for each day of such delay, which shall be equivalent to 1% of the value of Goods or Services per week of delay subject to a Maximum 5% of the value of the order.<br><br>
-      
-                      3.4 The Parties acknowledge that the liquidated damages are genuine pre-estimates of reasonable compensation for the loss and damage that will be suffered by BASILLUS in the event of any failure on the part of the Vendor to complete the supply of the Goods or performance of the Services. The Vendor irrevocably undertakes that it will not, whether by legal proceedings or otherwise, contend that the levels of liquidated damages are not reasonable, nor will it put BASILLUS to the proof thereof.<br><br>
-      
-                      <strong>4. Quality of goods and services.</strong><br>
-                      4.1 The Vendor warrants to BASILLUS that:<br>
-                      (a) The Goods and Services would conform in all respects with the Order and to recognized international or equivalent standards and codes (where applicable) and be to the reasonable satisfaction of BASILLUS; and<br>
-                      (b) The Goods and Services would be as per the required specifications of BASILLUS as set out in the Order; and conform to the IS codes, drawings samples or other description(s) furnished or adopted by BASILLUS. Goods furnished to BASILLUS's patterns, specifications, drawings or fabricated with its tools shall not be furnished or quoted to any other person or concern.<br>
-                      (c) The Goods must be of sound materials and good manufacture i.e., they must be obtained by the Vendor from authorized dealers and free from defects and encumbrances; and<br>
-                      (d) The Goods so required by BASILLUS, must be original and not second hand when delivered.<br>
-                      (e) The Goods and Services manufactured and shipped or performed are in compliance with all applicable laws, rules and regulations including but not limited to any foreign exchange regulations, pollution control, occupation safety, hazardous materials transportation regulations and any other statutory rules, regulations, codes, ordinances, statutes and laws that may be introduced from time to time.<br>
-                      (f) Vendor shall not make any expenditure for any unlawful purposes (i.e., unlawful under the laws or regulations of India or any law which BASILLUS or the Vendor shall be subject to including the Foreign Corrupt Practices Act) in the performance of its Services /Supply of Goods under this Order and in connection with its activities in relation thereto. Neither the Vendor nor any person acting for or on its behalf shall bribe or offer to bribe any government official, any political party or official thereof, or any candidate for political office, for the purpose of influencing any action or decision of such person in their official capacity or any governmental authority of any jurisdiction.<br><br>
-      
-                      4.2 If any part of the Goods or Services is not in accordance with this Condition 4 or as per BASILLUS's satisfaction, BASILLUS may by a written notice to the Vendor return or reject all or part of the Goods and Services at the cost and expense of the Vendor.<br><br>
-                      4.3 BASILLUS or its duly authorized representative shall, with reasonable notice, have reasonable access to the Vendor's works and full cooperation to assess standards during manufacture.<br><br>
-      
-                      <strong>5. Guarantee.</strong><br>
-                      5.1 The Vendor shall at its own cost promptly remedy (by, at BASILLUS's option, repair, replacement, modification or refund of the full purchase price) any defects in Goods notified by BASILLUS and which become apparent within 15 months from the date of Installation and 18 months from the date of supply, whichever is earlier, against any manufacturing defect (or such period as may be agreed in writing) from delivery (in case of Goods) or completion (in case of services), due to:<br>
-                      (a) Poor or defective workmanship or materials.<br>
-                      (b) Faulty design, other than a design made or furnished or specified by BASILLUS and for which the Vendor has previously disclaimed responsibility in writing within a reasonable time of receipt; or<br>
-                      (c) Any act, neglect, or omission by the Vendor.<br><br>
-      
-                      5.2 The Vendor shall:<br>
-                      (a) Ensure that where the manufacturer provides a warranty along with the Goods, then the same shall be passed on to BASILLUS as was provided by the manufacturer; and<br>
-                      (b) Ensure that any remedied part of Goods is compatible with all Goods; and<br>
-                      (c) Complete the remedy to the satisfaction of BASILLUS within the timescales specified in the Order (or, if none are specified, within a reasonable time); and<br>
-                      (d) Ensure that defective Goods are not remedied on BASILLUS premises without BASILLUS's consent, unless, for operational or technical reasons they can only be removed or replaced with difficulty; and<br>
-                      (e) Cause the minimum of disruption to BASILLUS and/or its customers in effecting any remedy. The time at which any remedy is to be effected shall be agreed with BASILLUS, and BASILLUS may, at its discretion, direct the Vendor to work outside normal working hours at no cost to BASILLUS.<br><br>
-      
-                      5.3 All repaired or replaced Goods shall benefit from the provisions of this Condition, and a new guarantee period shall apply to them from their respective date of delivery to BASILLUS. Carriage charges for the return of the faulty items will be charged to the Vendor.<br><br>
-      
-                      5.4 This Condition shall survive the Order.<br><br>
-      
-                      <strong>6. Damage or loss in transit.</strong><br>
-                      6.1 Subject to the terms of the Order, the Vendor undertakes at its own expense to repair or replace (at the option of BASILLUS) Goods lost or damaged in transit, and delivery will not be deemed to have taken place until replacement or repaired items have been delivered to the satisfaction of BASILLUS. The Vendor shall procure and maintain adequate insurance for the Goods while in transit.<br><br>
-      
-                      <strong>7. Ownership and risk.</strong><br>
-                      7.1 Subject to the terms of delivery and without prejudice to BASILLUS's other rights under the Conditions of the Order:<br>
-                      (a) Ownership in the Goods shall pass to BASILLUS on delivery.<br>
-                      (b) Risk in the Goods shall pass to BASILLUS on delivery, whereas the Order includes installation, in which case risk shall not pass to BASILLUS until completion of the installation work.<br><br>
-      
-                      <strong>8. Price.</strong><br>
-                      8.1 The price(s) payable by BASILLUS for Goods and Services, unless otherwise expressly stated in the Order, shall be inclusive, where relevant, of all packing, delivery to Site, off-loading, any license fees, use of any intellectual property for purposes of delivering the Order, installation, testing and commissioning, and all other charges associated with Supplies, GST is included in rates quoted and also included intra-site shifting and resifting whenever required - after off-loading.<br><br>
-      
-                      <strong>9. Invoice payment.</strong><br>
-                      9.1 Subject to the terms of the Order, the Vendor shall, following supply of all or (where agreed by BASILLUS in writing) each accepted (not rejected in accordance with Condition 4) installment of the Goods or Services, submit an invoice, within 10 days, for the price of the Goods and Services supplied in accordance with the Order, the Order number shown overleaf, and any other particulars prescribed in the Order and shall be sent to the address specified in the Order.<br><br>
-      
-                      9.2 Payment of an undisputed invoice submitted in accordance with this Condition shall be made in an average of 21 calendar days from the date of the invoice.<br><br>
-      
-                      9.3 BASILLUS reserves the right to refuse payment of any invoice which is not submitted in accordance with the Order. In such a situation, the Vendor shall correct the invoice and submit it to BASILLUS within 15 days of notification or error by BASILLUS.<br><br>
-      
-                      9.4 BASILLUS shall be entitled to deduct any payments and accrued liquidated or other damages against the Vendor's invoices. Furthermore, any amounts owed by the Vendor to BASILLUS may be set-off against the Vendor's invoices.<br><br>
-      
-                      <strong>10. BASILLUS's Property.</strong><br>
-                      10.1 Unless otherwise agreed in writing, all tools, equipment, or materials of every description, if any, furnished to the Vendor by BASILLUS or specifically paid for by BASILLUS and any replacement thereof, or any materials affixed or attached thereto, shall be and shall remain the sole property of BASILLUS. Such property:<br>
-                      (a) Shall be clearly marked “Property of BASILLUS.”<br>
-                      (b) Shall not be used except in performing BASILLUS's Orders.<br>
-                      (c) Shall be held at Vendor's risk, and<br>
-                      (d) Shall be delivered without costs to BASILLUS promptly at its written request.<br><br>
-      
-                      10.2 Whenever applicable, the Vendor shall supply BASILLUS with an inventory of such property quarterly. Any specification, drawings, sketches, models, samples, tools, technical information or data, and any other confidential or proprietary information, written, oral or otherwise (all hereinafter designated “information”) furnished to Vendor hereunder or in contemplation hereof shall remain BASILLUS's property. All copies of such information in written, graphic, or other tangible form shall be immediately returned to BASILLUS without cost upon its request. The information shall be kept confidential by the Vendor, employing the same security precautions as it takes to safeguard its own confidential information.<br><br>
-      
-                      <strong>11. Drawings.</strong><br>
-                      11.1 BASILLUS's review and approval of drawings submitted by the Vendor will cover only general conformity to the specifications. Such approval will not constitute approval of any dimensions, quantities, or details of the material shown by such drawings and shall not relieve the Vendor of its responsibility for meeting all specifications of this Order or as may have been specified by BASILLUS in any other document. BASILLUS retains rights of final approval for all finished products.<br><br>
-      
-                      <strong>12. Inspection.</strong><br>
-                      12.1 The Vendor shall be solely responsible for the inspection of all Goods and Services, whether supplied by Vendor or any approved sub-Vendor, and shall ensure that Goods and Services conform in every respect to this Order and that Goods accord with good design, engineering, and manufacturing practices. If any inspection or test of the Goods/Services is required by laws, ordinances, or public activity, the Vendor shall promptly have such inspection or test performed pursuant to such laws, ordinance, or public authority at Vendor's expense.<br><br>
-      
-                      12.2 BASILLUS shall have the right to inspect or test any of the Goods/Services whenever deemed necessary for conformance to this Order. Inspection or failure to inspect by BASILLUS shall not relieve the Vendor from its responsibilities or liabilities under this Order, nor be interpreted in any way as implying acceptance of such Goods/Services. On request by BASILLUS, the Vendor shall provide all test certificates and documents relating to quality and performance and carry out further tests as BASILLUS may request.<br><br>
-      
-                      12.3 The Vendor shall advise BASILLUS in writing immediately upon becoming aware of any defect or deficiency in the Goods/Services during execution of this Order and shall not modify the Goods/Services unless and until instructed to do so in writing by BASILLUS.<br><br>
-      
-                      12.4 Unless otherwise directed by BASILLUS, the Vendor shall not delay the fabrication or manufacturing of Goods/Services pending inspection by BASILLUS.<br><br>
-      
-                      12.5 BASILLUS may reject any Goods/Services which fail in any way to conform to this Order. Any rejection of Goods/Services or parts thereof by BASILLUS shall be final, and any act of the Vendor with respect to delivery or provision of non-conforming Goods/Services shall constitute a breach by Vendor of this Order as a whole.<br><br>
-      
-                      <strong>13. Cancellation.</strong><br>
-                      BASILLUS may cancel this Order at any time for any reason whatsoever by giving the Vendor seven days' written notice of cancellation. In the event BASILLUS cancels the Order, BASILLUS shall reimburse the Vendor for all its direct costs reasonably incurred, at actuals, in performing the Order up to the date of cancellation, including unavoidable cancellation charges from its Vendors and sub-Vendors. BASILLUS shall, however, be credited by the Vendor for the realizable value of the Goods and works and materials appropriated to this Order at the cancellation date in reduction of such repayment costs. Alternatively, at BASILLUS's option, the Vendor shall deliver/perform the Goods/Services to the Purchaser. The Vendor shall not, however, be entitled to any sums in respect of profit. If BASILLUS requests the Vendor to give details of its cancellation costs prior to such proposed cancellation, then BASILLUS shall review and agree on the quantum of such costs. In the absence of agreement, the parties may refer such to arbitration in accordance with this Order. The same is to be done after mutual discussion only.<br><br>
-      
-                      <strong>14. Work on BASILLUS's premises.</strong><br>
-                      14.1 If the Vendor's performance under this Order involves operations by the Vendor on the premises of the Purchaser, the Vendor shall comply with all applicable provisions of central, state, and local laws and regulations and shall take all necessary precautions to prevent occurrence of any injury to persons or property during the progress of such performances.<br><br>
-      
-                      14.2 Except to the extent that any such injury is attributable solely and directly to BASILLUS's gross negligence, the Vendor shall indemnify BASILLUS against all loss and damage which may result from any act or omission of the Vendor, its agents, employees, or sub-Vendors.<br><br>
-      
-                      14.3 The Vendor shall maintain adequate insurance, including but not limited to public liability property damage and employees liability insurance policies, to protect BASILLUS from such risks and from any claims under any applicable central, state, and local laws and regulations.<br><br>
-      
-                      <strong>15. Confidentiality.</strong><br>
-                      15.1 The Vendor shall keep confidential all information belonging to, or held by, BASILLUS which may come into the Vendor's possession while the Order is placed and all obligations of the parties are discharged to the fullest ('The Confidential Information') and shall not without the prior written consent of BASILLUS divulge the existence of the Order or disclose any of the Confidential Information to a third party or use the Confidential Information for any purpose, other than is necessary for performance of its obligations under the terms and conditions of the Order.<br><br>
-      
-                      15.2 The above provisions of this Condition shall not apply to:<br>
-                      (a) Information which is in the public domain/published otherwise than through a breach of this Condition; or<br>
-                      (b) Information lawfully known to the Vendor prior to disclosure hereunder and not the subject of any other obligation of confidentiality; or<br>
-                      (c) Information obtained from a third party who is free to disclose the same; and<br>
-                      (d) Information required to be disclosed by applicable law or in relation to any regulatory permission, governmental body or regulatory body, provided that the Vendor uses all reasonable endeavors to ensure that the party receiving the Confidential Information maintains the information in the strictest of confidence and does not use it except for the purposes for which the disclosure is made.<br><br>
-      
-                      15.3 The Vendor shall ensure that any sub-Vendor used in relation to this Order is bound by confidentiality provisions on similar terms to this Condition in relation to information belonging to, or held by, BASILLUS.<br><br>
-      
-                      15.4 This Condition shall survive the Order.<br><br>
-      
-                      <strong>16. Intellectual property.</strong><br>
-                      16.1 Neither the Vendor nor BASILLUS acquires any rights to the other's patents, copyrights, or other intellectual property under this Order.<br><br>
-      
-                      16.2 Without prejudice to any other rights or remedies available to BASILLUS, the Vendor warrants that neither the Services nor any of the Goods infringe any intellectual property rights (including, without limitation, patents, copyright, registered designs, and design rights) and undertakes to indemnify BASILLUS against any claims in respect of any such infringement or alleged infringement.<br><br>
-      
-                      16.3 This condition shall survive the Order.<br><br>
-                      <strong>17. Indemnity.</strong><br>
-                      17.1 Without prejudice to any other rights or remedies available to BASILLUS, the Vendor shall indemnify BASILLUS against all claims, liability, demands, proceedings, costs, and expenses arising as a result of the negligence or willful acts or omissions of the Vendor, its employees, agents, or sub-Vendors (or their employees or agents) in respect of:<br>
-                      (a) Loss of or damage to any property; or<br>
-                      (b) Death or personal injury of any person,<br>
-                      While performing or purporting to perform the Conditions of this Order, except to the extent such loss, damage, death, or personal injury is caused directly and solely by the gross negligence of BASILLUS.<br><br>
-      
-                      <strong>18. Insurance.</strong><br>
-                      18.1 The Vendor shall have in force and shall maintain (at its own cost and expense) a policy of insurance in respect of its liabilities under Condition 17, with a limit of indemnity not less than 110% of total value of goods for any one claim arising out of any one incident or event and without limit as to the number of claims during the period of insurance.<br><br>
-      
-                      18.2 Upon request by BASILLUS, the Vendor shall provide reasonable satisfactory summarized evidence of the insurance cover in force.<br><br>
-      
-                      <strong>19. Termination.</strong><br>
-                      19.1 Without prejudice to any other remedies that it may have, BASILLUS shall have the right to terminate the Order forthwith, with a written notice and to claim the excess cost of obtaining replacement goods and services if:<br>
-                      (a) The Vendor commits a breach of any of the Conditions and fails to remedy the breach within 15 days of receipt of a written notice by BASILLUS to make such remedies; or<br>
-                      (b) The Vendor becomes insolvent or ceases to trade, or compounds with its creditors or, commits an act of bankruptcy, or a bankruptcy petition or bankruptcy order is presented or made in relation to the Vendor, or the Vendor has a receiver or receiver, and manager appointed, or a petition for a management order is presented or such an order is made in relation to the Vendor, or a resolution or petition to wind up the Vendor is passed or presented (otherwise than for reconstruction or amalgamation); or<br>
-                      (c) The Vendor's ownership or control is materially changed to (in BASILLUS's reasonable opinion) BASILLUS's detriment.<br><br>
-      
-                      <strong>20. Compliance with legislation and instructions.</strong><br>
-                      20.1 The Vendor shall comply with all applicable legislation including and without prejudice to the generality thereof the provisions of any relevant occupational Health and Safety Acts and any modifications thereof plus any homologation requirements and any other applicable regulation or By-Law of any Local or other Authority as well as any BASILLUS site regulations that may be notified to the Vendor.<br><br>
-      
-                      20.2 BASILLUS shall bear no liability for claims arising due to the Vendor's non-compliance with legislation and BASILLUS's site regulations.<br><br>
-      
-                      20.3 The Vendor indemnifies BASILLUS against all claims, actions, costs, damages, and proceedings arising out of the Vendor's obligations under this Condition 20.<br><br>
-      
-                      20.4 This condition shall survive the Order.<br><br>
-      
-                      <strong>21. General.</strong><br>
-                      21.1 The terms of the Order are in addition to and shall not be deemed to prejudice or affect any terms or rights implied by or available under statute or common law. Otherwise, the Order forms overleaf and these Conditions set out the entire Order between BASILLUS and the Vendor.<br><br>
-      
-                      21.2 No variation to the Order shall have any effect unless agreed in writing by duly authorized representatives of BASILLUS and the Vendor, which shall not be unreasonably withheld.<br><br>
-      
-                      21.3 The headings in these Conditions are for ease of reference only and shall not affect their interpretation or construction of this Order.<br><br>
-      
-                      21.4 If any Condition of this Order is held to be void, illegal, unenforceable, or inconsistent, then such Condition (so far as it is invalid or unenforceable) shall be severable to the Condition of the Order and not given effect to and deemed to be severable to this Order without invalidating any of the remaining provisions of this Order.<br><br>
-      
-                      21.5 If the Order form overleaf is used to place orders against a Contract which already exists between BASILLUS and the Vendor, then the provisions of that contract shall apply and shall prevail over these Conditions to the extent of inconsistency between the two contracts.<br><br>
-      
-                      <strong>22. Dispute Resolution.</strong><br>
-                      22.1 BASILLUS and the Vendor will work together in good faith to amicably resolve any dispute or differences arising out of or related to the subject matter of this Order or their relationship thereto. Failing which, both the parties shall be entitled to refer such dispute or differences to binding arbitration in accordance with the Arbitration and Conciliation Act, 1996. The arbitration shall be conducted by an arbitration tribunal consisting of three (03) arbitrators. BASILLUS and the Vendor shall appoint one (01) arbitrator each, and the third arbitrator shall be appointed by mutual agreement between the two arbitrators so appointed. The venue of the arbitration proceedings shall be Goa and the proceedings shall be conducted in English. The cost of arbitration shall be borne by the losing party as arrived at after the conclusion of the proceedings.<br><br>
-      
-                      <strong>23. Governing Law and Jurisdiction.</strong><br>
-                      23.1 This Order and the rights and obligations of BASILLUS and the Vendor under or arising out of this Order shall be governed and construed in accordance with the laws of India.<br><br>
-      
-                      23.2 Subject to Clause 22, the Purchaser and the Vendor irrevocably submit to the exclusive jurisdiction of any competent Court situated at Goa on all matters arising out of, concerning to, or related with this Order and waive any objection to such proceedings having been brought in an inconvenient forum.<br><br>
-      
-                      <strong>24. Water & Electricity.</strong><br>
-                      BASILLUS Shall provide the Water and Electricity free of cost for executing this order at one point. Vendor shall arrange the further distribution/ extension at their own cost.<br>
-      
-                      ";
-                    }
-
-
-
-                ?>
+                <?php $value = (isset($wo_order) ? $wo_order->terms :  get_purchase_option('terms_and_conditions'));?>
                 <?php echo render_textarea('terms', 'terms_and_conditions', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <div id="vendor_data">
 
