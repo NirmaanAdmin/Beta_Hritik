@@ -65,8 +65,9 @@ if ($invoice->project_id && get_option('show_project_on_invoice') == 1) {
     $invoice_info .= _l('project') . ': ' . get_project_name_by_id($invoice->project_id) . '<br />';
     $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_project_name', $invoice_info, $invoice);
 }
-$invoice_info .= _l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
-  
+if ($invoice->hsn_sac ) {
+    $invoice_info .= _l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
+}
 $invoice_info = hooks()->apply_filters('invoice_pdf_header_before_custom_fields', $invoice_info, $invoice);
 
 foreach ($pdf_custom_fields as $field) {

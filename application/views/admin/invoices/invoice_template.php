@@ -496,7 +496,6 @@
                     <?php $value = (isset($invoice) ? $invoice->adminnote : ''); ?>
                     <?php echo render_textarea('adminnote', 'invoice_add_edit_admin_note', $value); ?>
                     <div class="form-group " style="display: grid;">
-
                         <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
                         <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true">
                             <option value=""></option>
@@ -504,12 +503,11 @@
                                 <?php
                                 $selected = '';
                                 if (isset($invoice)) {
-
                                     if ($invoice->hsn_sac == $item['id']) {
                                         $selected = 'selected';
                                     }
                                 }
-                                // Split the name into words and get the first 7
+                               
                                 $words = explode(' ', $item['name']);
                                 $shortName = implode(' ', array_slice($words, 0, 7));
                                 ?>
@@ -518,9 +516,6 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
-
-
                     </div>
 
                 </div>
