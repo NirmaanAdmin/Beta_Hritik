@@ -645,7 +645,7 @@
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
                 <?php $value = (isset($wo_order) ? $wo_order->order_summary : get_purchase_option('order_summary'));
-                  if (!isset($pur_order) && $pur_order->order_summary == '') {
+                  if (!isset($wo_order) && $wo_order->order_summary == '') {
                     $value = get_by_deafult_order_summary();
                   }
 
