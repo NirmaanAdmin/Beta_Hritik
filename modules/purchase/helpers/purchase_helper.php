@@ -3386,3 +3386,21 @@ function get_area_name_by_id($id)
     }
     return '';
 }
+
+function get_pur_send_to_vendors_list($vendors) 
+{
+    if(!empty($vendors)) {
+        $vendors = explode(',', $vendors);
+        $CI = & get_instance();
+        $CI->db->select('company');
+        $CI->db->from(db_prefix() . 'pur_vendor');
+        $CI->db->where_in('userid', $vendors);
+        $result = $CI->db->get()->result_array();
+        if(!empty($result)) {
+            $result = array_column($result, 'company');
+            $result = implode(',', $result);
+            return $result;
+        }
+    }
+    return '';
+}

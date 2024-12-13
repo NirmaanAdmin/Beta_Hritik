@@ -225,6 +225,15 @@
 
                 </tr>
                 <tr class="project-overview">
+                  <td width="50%">
+                    <span class="bold"><?php echo _l('pur_send_to_vendors'); ?> :</span>
+                    <span><?php echo get_pur_send_to_vendors_list($pur_request->send_to_vendors); ?></span>
+                  </td>
+                  <td width="50%">
+                  </td>
+                </tr>
+
+                <tr class="project-overview">
                   <td class="bold"><?php echo _l('rq_description'); ?></td>
                   <td><?php echo pur_html_entity_decode($pur_request->rq_description); ?></td>
                 </tr>
