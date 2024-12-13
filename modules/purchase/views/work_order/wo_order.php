@@ -366,28 +366,21 @@
 
                     </div> -->
 
-                    <!-- <div class="row">
-                      <div class="col-md-6 ">
-
-                        <?php
-
-                        $selected = '';
-                        foreach ($area_pur as $area) {
-                          if (isset($wo_order)) {
-                            if ($wo_order->area_pur == $area['id']) {
-                              $selected = $area['id'];
-                            }
-                          }
-                          if (isset($selected_area)) {
-                            if ($selected_area == $area['id']) {
-                              $selected = $area['id'];
-                            }
-                          }
-                        }
-                        echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
-                        ?>
+                    <div class="row">
+                      <div class="col-md-6 form-group">
+                        <label for="kind"><?php echo _l('kind'); ?></label>
+                        <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                          <option value=""></option>
+                          <option value="Client Supply" <?php if (isset($wo_order) && $wo_order->kind == 'Client Supply') {
+                            echo 'selected';
+                          } ?>><?php echo _l('client_supply'); ?></option>
+                          <option value="Bought out items" <?php if (isset($wo_order) && $wo_order->kind == 'Bought out items') {
+                            echo 'selected';
+                          } ?>><?php echo _l('bought_out_items'); ?></option>
+                        </select>
                       </div>
-                    </div> -->
+                    </div>
+                    
                   </div>
                 </div>
 
@@ -645,7 +638,7 @@
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
                 <?php $value = (isset($wo_order) ? $wo_order->order_summary : get_purchase_option('order_summary'));
-                  if (!isset($pur_order) && $pur_order->order_summary == '') {
+                  if (!isset($wo_order) && $wo_order->order_summary == '') {
                     $value = '<strong>WORK ORDER</strong><br><br>
     
                     <strong>M/S SURFACES PLUS</strong><br>
@@ -751,7 +744,7 @@
                 <?php echo render_textarea('order_summary', 'estimate_add_edit_order_summary', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <?php $value = (isset($wo_order) ? $wo_order->vendornote : get_purchase_option('vendor_note'));
 
-                  if (!isset($pur_order) && $pur_order->vendornote == '') {
+                  if (!isset($wo_order) && $wo_order->vendornote == '') {
                 $value = '
 
                 <h4 style="font-size: 20px;text-align: center;"><strong>ANNEXURE - B</strong><br>
@@ -807,7 +800,7 @@
 
                 <?php echo render_textarea('vendornote', 'estimate_add_edit_vendor_note', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <?php $value = (isset($wo_order) ? $wo_order->terms :  get_purchase_option('terms_and_conditions'));
-                    if (!isset($pur_order) && $pur_order->terms == '') {
+                    if (!isset($wo_order) && $wo_order->terms == '') {
                       $value = "<h4 style='font-size: 20px;text-align: center;'><strong>ANNEXURE - C<br>GENERAL TERMS & CONDITIONS OF PURCHASE</strong></h4><br><br>
       
                       <strong>1. Definitions.</strong><br>

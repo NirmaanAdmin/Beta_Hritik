@@ -147,6 +147,13 @@
                   <a href="<?php echo admin_url('clients/client/'.$ids); ?>"><span class="label label-tag"><?php echo get_company_name($ids); ?></span></a>
                <?php } ?>
              <?php } ?>
+
+             <p class="bold p_mar"><?php echo _l('kind').': '?> 
+               <?php 
+               if(!empty($estimate->kind)){
+                 echo $estimate->kind;
+               } ?> 
+             </p>
              
              <p class="bold p_mar"><?php echo _l('group_pur').': '?> <?php  foreach ($commodity_groups as $group) {
                if($group['id'] == $pur_order->group_pur){

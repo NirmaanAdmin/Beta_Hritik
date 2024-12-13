@@ -4904,6 +4904,9 @@ class Purchase_model extends App_Model
         if (!empty($pur_order->addedfrom)) {
             $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
         }
+        if(!empty($pur_order->kind)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('kind') . ':</b> ' . $pur_order->kind . '</span><br />';
+        }
         $group_head_po = $this->get_budget_head_po($pur_order->id);
         if ($group_head_po != '') {
             $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
@@ -15350,6 +15353,9 @@ class Purchase_model extends App_Model
                 ' . $pur_request_name . ' ';
         if (!empty($pur_order->addedfrom)) {
             $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
+        }
+        if(!empty($pur_order->kind)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('kind') . ':</b> ' . $pur_order->kind . '</span><br />';
         }
         $group_head_po = $this->get_budget_head_po($pur_order->id);
         if ($group_head_po != '') {
