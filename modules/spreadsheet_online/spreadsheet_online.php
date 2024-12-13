@@ -122,7 +122,7 @@ function spreadsheet_online_add_head_component(){
         echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/css/manage.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
         echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/plugins/luckysheet/css/iconfont.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
         echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/plugins/luckysheet/css/luckysheet.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
-        echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/plugins/luckysheet/css/plugins.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
+        // echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/plugins/luckysheet/css/plugins.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
         echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/plugins/luckysheet/css/pluginsCss.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
 
         echo '<link href="' . module_dir_url(SPREAD_ONLINE_MODULE_NAME, 'assets/plugins/luckysheet/css/iconCustom.css') . '?v=' . VERSION_SREADSHEET. '"  rel="stylesheet" type="text/css" />';
