@@ -15639,7 +15639,7 @@ class Purchase_model extends App_Model
                     $dt_data = [];
                     $dt_data['wo_order'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
-                    $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
                     $dt_data['total'] = $rqd['total'];
@@ -15840,7 +15840,7 @@ class Purchase_model extends App_Model
                 $dt_data = [];
                 $dt_data['wo_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -15897,7 +15897,7 @@ class Purchase_model extends App_Model
                 $dt_data = [];
                 $dt_data['wo_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -16298,7 +16298,7 @@ class Purchase_model extends App_Model
             $name_area = $name . '[area]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
-            $name_unit_name = '[unit_name]';
+            $name_unit_name = $name . '[unit_name]';
             $name_quantity = $name . '[quantity]';
             $name_unit_price = $name . '[unit_price]';
             $name_tax_id_select = $name . '[tax_select][]';
