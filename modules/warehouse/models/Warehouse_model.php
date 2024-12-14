@@ -1156,6 +1156,7 @@ class Warehouse_model extends App_Model {
 		unset($data['item_select']);
 		unset($data['commodity_name']);
 		unset($data['warehouse_id']);
+		unset($data['po_quantities']);
 		unset($data['quantities']);
 		unset($data['unit_price']);
 		unset($data['tax']);
@@ -1451,7 +1452,7 @@ class Warehouse_model extends App_Model {
 				$quantities = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
 				$sub_total = 0;
 
-				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'] , $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true);
+				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'] , $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true);
 
 				$total_goods_money_temp = ((float)$value['quantities'] - (float)$value['wh_quantity_received'])*(float)$unit_price;
 				$total_goods_money += $total_goods_money_temp;
@@ -3075,11 +3076,11 @@ class Warehouse_model extends App_Model {
 		<tbody>
 
 		<tr>
-		<th class="thead-dark-ip">'. _l('_order').'</th>
 		<th class="thead-dark-ip">' . _l('commodity_code') . '</th>
 		<th class="thead-dark-ip">' . _l('warehouse_name') . '</th>
 		<th class="thead-dark-ip">' . _l('unit_name') . '</th>
-		<th class="thead-dark-ip">' . _l('quantity') . '</th>
+		<th class="thead-dark-ip">' . _l('po_quantity') . '</th>
+		<th class="thead-dark-ip">' . _l('received_quantity') . '</th>
 		<th class="thead-dark-ip">' . _l('unit_price') . '</th>
 		<th class="thead-dark-ip">' . _l('total_money') . '</th>
 		<th class="thead-dark-ip">' . _l('tax_money') . '</th>
@@ -3090,6 +3091,7 @@ class Warehouse_model extends App_Model {
 		foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
 
 			$commodity_name = (isset($receipt_value) ? $receipt_value['commodity_name'] : '');
+			$po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : '');
 			$quantities = (isset($receipt_value) ? $receipt_value['quantities'] : '');
 			$unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
 			$goods_money = (isset($receipt_value) ? $receipt_value['goods_money'] : '');
@@ -3113,10 +3115,10 @@ class Warehouse_model extends App_Model {
 			$key = $receipt_key+1;
 
 			$html .= '<tr>';
-			$html .= '<td class="td_style_r_ep_c"><b>' . $key . '</b></td>
-			<td class="td_style_r_ep_c"><b>' . $commodity_name.'</b></td>
+			$html .= '<td class="td_style_r_ep_c"><b>' . $commodity_name.'</b></td>
 			<td class="td_style_r_ep_c">' . $warehouse_code . '</td>
 			<td class="td_style_r_ep_c">' . $unit_name . '</td>
+			<td class="td_style_r_ep_c">' . $po_quantities . '</td>
 			<td class="td_style_r_ep_c">' . $quantities . '</td>
 			<td class="td_style_r_ep_c">' . app_format_money((float) $unit_price, '') . '</td>
 			<td class="td_style_r_ep_c">' . app_format_money((float) $goods_money, '') . '</td>
@@ -7679,6 +7681,7 @@ class Warehouse_model extends App_Model {
 		unset($data['item_select']);
 		unset($data['commodity_name']);
 		unset($data['warehouse_id']);
+		unset($data['po_quantities']);
 		unset($data['quantities']);
 		unset($data['unit_price']);
 		unset($data['tax']);
@@ -15043,16 +15046,17 @@ class Warehouse_model extends App_Model {
      * @param  boolean $is_edit          
      * @return [type]                    
      */
-    public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '') {
+    public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $po_quantities = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '') {
 		
 		$this->load->model('invoice_items_model');
 		$row = '';
-
+		
 		$name_commodity_code = 'commodity_code';
 		$name_commodity_name = 'commodity_name';
 		$name_warehouse_id = 'warehouse_id';
 		$name_unit_id = 'unit_id';
 		$name_unit_name = 'unit_name';
+		$name_po_quantities = 'po_quantities';
 		$name_quantities = 'quantities';
 		$name_unit_price = 'unit_price';
 		$name_tax_id_select = 'tax_select';
@@ -15099,6 +15103,7 @@ class Warehouse_model extends App_Model {
 			$name_warehouse_id = $name . '[warehouse_id]';
 			$name_unit_id = $name . '[unit_id]';
 			$name_unit_name = '[unit_name]';
+			$name_po_quantities = $name . '[po_quantities]';
 			$name_quantities = $name . '[quantities]';
 			$name_unit_price = $name . '[unit_price]';
 			$name_tax_id_select = $name . '[tax_select][]';
@@ -15161,6 +15166,7 @@ class Warehouse_model extends App_Model {
 		render_select($name_warehouse_id, $warehouse_data,array('warehouse_id','warehouse_name'),'',$warehouse_id,[], ["data-none-selected-text" => _l('warehouse_name')], 'no-margin').
 		render_input($name_note, '', $note, 'text', ['placeholder' => _l('commodity_notes')], [], 'no-margin', 'input-transparent text-left').
 		'</td>';
+		$row .= '<td class="quantities">'.render_input($name_po_quantities, '', $po_quantities, 'number', ['readonly' => true], [], 'no-margin').'</td>';
 		$row .= '<td class="quantities">' . 
 		render_input($name_quantities, '', $quantities, 'number', $array_qty_attr, [], 'no-margin') . 
 		render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right wh_input_none').

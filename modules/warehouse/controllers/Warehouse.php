@@ -825,7 +825,7 @@ class warehouse extends AdminController {
 						$delivery_date = _d($receipt_detail['delivery_date']);
 					}
 
-					$goods_receipt_row_template .= $this->warehouse_model->create_goods_receipt_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $receipt_detail['warehouse_id'], $receipt_detail['quantities'], $unit_name, $receipt_detail['unit_price'], $taxname, $receipt_detail['lot_number'], $receipt_detail['vendor_id'], $delivery_date, $date_manufacture, $expiry_date, $receipt_detail['commodity_code'], $receipt_detail['unit_id'] , $receipt_detail['tax_rate'], $receipt_detail['tax_money'], $receipt_detail['goods_money'], $receipt_detail['note'], $receipt_detail['id'], $receipt_detail['sub_total'], $receipt_detail['tax_name'], $receipt_detail['tax'], true, $receipt_detail['serial_number']);
+					$goods_receipt_row_template .= $this->warehouse_model->create_goods_receipt_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $receipt_detail['warehouse_id'], $receipt_detail['po_quantities'], $receipt_detail['quantities'], $unit_name, $receipt_detail['unit_price'], $taxname, $receipt_detail['lot_number'], $receipt_detail['vendor_id'], $delivery_date, $date_manufacture, $expiry_date, $receipt_detail['commodity_code'], $receipt_detail['unit_id'] , $receipt_detail['tax_rate'], $receipt_detail['tax_money'], $receipt_detail['goods_money'], $receipt_detail['note'], $receipt_detail['id'], $receipt_detail['sub_total'], $receipt_detail['tax_name'], $receipt_detail['tax'], true, $receipt_detail['serial_number']);
 					
 				}
 			}
@@ -6744,6 +6744,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$name = $this->input->post('name');
 		$commodity_name = $this->input->post('commodity_name');
 		$warehouse_id = $this->input->post('warehouse_id');
+		$po_quantities = $this->input->post('po_quantities');
 		$quantities = $this->input->post('quantities');
 		$unit_name = $this->input->post('unit_name');
 		$unit_price = $this->input->post('unit_price');
@@ -6761,7 +6762,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$note = $this->input->post('note');
 		$item_key = $this->input->post('item_key');
 
-		echo $this->warehouse_model->create_goods_receipt_row_template([], $name, $commodity_name, $warehouse_id, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $commodity_code, $unit_id, $tax_rate, $tax_money, $goods_money, $note, $item_key);
+		echo $this->warehouse_model->create_goods_receipt_row_template([], $name, $commodity_name, $warehouse_id, $po_quantities, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $commodity_code, $unit_id, $tax_rate, $tax_money, $goods_money, $note, $item_key);
 
 	}
 

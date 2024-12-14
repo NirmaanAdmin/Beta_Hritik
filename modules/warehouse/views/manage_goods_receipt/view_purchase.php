@@ -139,7 +139,8 @@
                                     <th  colspan="1"><?php echo _l('commodity_code') ?></th>
                                      <th colspan="1"><?php echo _l('warehouse_name') ?></th>
                                      <th  colspan="1"><?php echo _l('unit_name') ?></th>
-                                     <th  colspan="2" class="text-center"><?php echo _l('quantity') ?></th>
+                                     <th  colspan="2" class="text-center"><?php echo _l('po_quantity') ?></th>
+                                     <th  colspan="2" class="text-center"><?php echo _l('received_quantity') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('unit_price') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('total_money') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('tax_money') ?></th>
@@ -155,6 +156,7 @@
                               foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
 
                                 $receipt_key++;
+                             $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : '');
                              $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : '');
                              $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                              $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
@@ -194,6 +196,8 @@
                                   <td ><?php echo html_entity_decode($commodity_name) ?></td>
                                   <td ><?php echo html_entity_decode($warehouse_code) ?></td>
                                   <td ><?php echo html_entity_decode($unit_name) ?></td>
+                                  <td ></td>
+                                  <td class="text-right" ><?php echo html_entity_decode($po_quantities) ?></td>
                                   <td ></td>
                                   <td class="text-right" ><?php echo html_entity_decode($quantities) ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$unit_price,'') ?></td>
