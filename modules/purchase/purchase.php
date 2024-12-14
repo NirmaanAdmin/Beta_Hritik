@@ -14,6 +14,7 @@ Author URI: https://codecanyon.net/user/greentech_solutions
 define('PURCHASE_MODULE_NAME', 'purchase');
 define('PURCHASE_MODULE_UPLOAD_FOLDER', module_dir_path(PURCHASE_MODULE_NAME, 'uploads'));
 define('PURCHASE_ORDER_RETURN_MODULE_UPLOAD_FOLDER', module_dir_path(PURCHASE_MODULE_NAME, 'uploads/order_return/'));
+define('PURCHASE_ORDER_IMPORT_ITEMS_ERROR', 'modules/purchase/uploads/import_items_pur_order_error/');
 
 hooks()->add_action('admin_init', 'purchase_permissions');
 hooks()->add_action('app_admin_footer', 'purchase_head_components');

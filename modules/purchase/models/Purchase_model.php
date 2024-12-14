@@ -1034,7 +1034,7 @@ class Purchase_model extends App_Model
 
         return $pur_request_lst;
     }
-    
+
     /**
      * Gets the pur estimate detail in order.
      *
@@ -2350,7 +2350,7 @@ class Purchase_model extends App_Model
             $this->db->order_by('id', 'asc');
             $this->db->limit(1);
             $pur_approval = $this->db->get(db_prefix() . 'pur_approval_details')->row();
-            if(!empty($pur_approval)) {
+            if (!empty($pur_approval)) {
                 $pur_approval_details = array();
                 $pur_approval_details['approve'] = $status;
                 $pur_approval_details['note'] = NULL;
@@ -2360,7 +2360,7 @@ class Purchase_model extends App_Model
                 $this->db->update(db_prefix() . 'pur_approval_details', $pur_approval_details);
             }
 
-            if($status == 1) {
+            if ($status == 1) {
                 $draft_array = array();
                 $draft_array['approve'] = NULL;
                 $draft_array['note'] = NULL;
@@ -2420,7 +2420,7 @@ class Purchase_model extends App_Model
      */
     public function add_pur_order($data)
     {
-        
+
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
@@ -2440,6 +2440,7 @@ class Purchase_model extends App_Model
         unset($data['total_money']);
         unset($data['additional_discount']);
         unset($data['tax_value']);
+        unset($data['leads_import']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -2532,13 +2533,13 @@ class Purchase_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
-
         $this->db->insert(db_prefix() . 'pur_orders', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_order', 'purchase_order', $insert_id);
         // if ($data['approve_status'] == 2) {
         //     $this->send_mail_to_sender('purchase_order', $data['approve_status'], $insert_id);
         // }
+        
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "purchase";
@@ -2562,7 +2563,6 @@ class Purchase_model extends App_Model
 
             $total = [];
             $total['total_tax'] = 0;
-
             if (count($order_detail) > 0) {
                 foreach ($order_detail as $key => $rqd) {
                     $dt_data = [];
@@ -2650,7 +2650,7 @@ class Purchase_model extends App_Model
     public function update_pur_order($data, $id)
     {
         $affectedRows = 0;
-        
+
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
@@ -3306,7 +3306,7 @@ class Purchase_model extends App_Model
             $this->db->select('pur_invoice');
             $this->db->where('id', $data['rel_id']);
             $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
-            if(!empty($pur_invoice_payment)) {
+            if (!empty($pur_invoice_payment)) {
                 $module = $this->get_pur_invoice($pur_invoice_payment->pur_invoice);
                 $project = $module->project_id;
             }
@@ -3338,7 +3338,7 @@ class Purchase_model extends App_Model
         }
 
         // Send an email to approver
-        if($data['rel_type'] == 'pur_request' || $data['rel_type'] == 'pur_order' || $data['rel_type'] == 'pur_quotation' || $data['rel_type'] == 'wo_order') {
+        if ($data['rel_type'] == 'pur_request' || $data['rel_type'] == 'pur_order' || $data['rel_type'] == 'pur_quotation' || $data['rel_type'] == 'wo_order') {
             $cron_email = array();
             $cron_email_options = array();
             $cron_email['type'] = "purchase";
@@ -3800,7 +3800,7 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_approval_details', $data);
         if ($this->db->affected_rows() > 0) {
-            if($data['rel_type'] == "pur_order") {
+            if ($data['rel_type'] == "pur_order") {
                 $this->pur_order_approval_log($data);
             }
             return true;
@@ -3808,7 +3808,7 @@ class Purchase_model extends App_Model
         return false;
     }
 
-    public function pur_order_approval_log($data) 
+    public function pur_order_approval_log($data)
     {
         $original_po = $this->get_pur_order($data['rel_id']);
 
@@ -3831,8 +3831,8 @@ class Purchase_model extends App_Model
         }
 
         $comment = "";
-        if(!empty($data['note'])) {
-            $comment = " with reason ".$data['note'];
+        if (!empty($data['note'])) {
+            $comment = " with reason " . $data['note'];
         }
 
         $this->log_po_activity($data['rel_id'], "Purchase order status updated from " . $from_status . " to " . $to_status . $comment . "");
@@ -4904,7 +4904,7 @@ class Purchase_model extends App_Model
         if (!empty($pur_order->addedfrom)) {
             $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
         }
-        if(!empty($pur_order->kind)) {
+        if (!empty($pur_order->kind)) {
             $html .= '<span style="text-align: right;"><b>' . _l('kind') . ':</b> ' . $pur_order->kind . '</span><br />';
         }
         $group_head_po = $this->get_budget_head_po($pur_order->id);
@@ -5665,7 +5665,7 @@ class Purchase_model extends App_Model
         }
         return false;
     }
-    
+
     /**
      * { mark converted wo order }
      *
@@ -10830,7 +10830,7 @@ class Purchase_model extends App_Model
         $row .=  '</td>';
 
         $units_list = $this->get_units();
-        
+
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
@@ -11426,7 +11426,7 @@ class Purchase_model extends App_Model
             $name_area = $name . '[area][]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
-            $name_unit_name = $name.'[unit_name]';
+            $name_unit_name = $name . '[unit_name]';
             $name_quantity = $name . '[quantity]';
             $name_unit_price = $name . '[unit_price]';
             $name_tax_id_select = $name . '[tax_select][]';
@@ -14557,17 +14557,16 @@ class Purchase_model extends App_Model
         $invoice_date = (isset($invoice) ? _d($invoice->invoice_date) : '');
         $due_date = (isset($invoice) ? _d($invoice->duedate) : '');
         $contract = '';
-        if($invoice->contract != 0){
+        if ($invoice->contract != 0) {
             $contract = get_pur_contract_number($invoice->contract);
-
-        }else{
+        } else {
             $contract = '';
         }
         $contract_url = admin_url("purchase/contract/" . $invoice->contract);
         $purchase_url = admin_url("purchase/purchase_order/" . $invoice->pur_order);
         $purchase = get_pur_order_subject($invoice->pur_order);
-        $tags = (isset($invoice) ? prep_tags_input(get_tags_in($invoice->id,'pur_invoice')) : '');
-        $add_from_url = admin_url('staff/profile/'.$invoice->add_from);
+        $tags = (isset($invoice) ? prep_tags_input(get_tags_in($invoice->id, 'pur_invoice')) : '');
+        $add_from_url = admin_url('staff/profile/' . $invoice->add_from);
         $add_from = get_staff_full_name($invoice->add_from);
         $address = '';
         $vendor_name = '';
@@ -14657,61 +14656,61 @@ class Purchase_model extends App_Model
         <tbody>
             <tr>
                 <td style="padding: 8px;">Invoice Code</td>
-                <td style="padding: 8px;  ">'.$invoice->invoice_number.'</td>
+                <td style="padding: 8px;  ">' . $invoice->invoice_number . '</td>
                 <td style="padding: 8px;">Invoice Number</td>
-                <td style="padding: 8px;">'.$invoice->invoice_number.'</td>
+                <td style="padding: 8px;">' . $invoice->invoice_number . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr style="margin-top: 5px; margin-bottom: 5px;"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Invoice Date</td>
-                <td style="padding: 8px;">'.$invoice_date.'</td>
+                <td style="padding: 8px;">' . $invoice_date . '</td>
                 <td style="padding: 8px;">Contract</td>
-                <td style="padding: 8px;"><a href="'.$contract_url.'">'.$contract.'</a></td>
+                <td style="padding: 8px;"><a href="' . $contract_url . '">' . $contract . '</a></td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Due Date</td>
-                <td style="padding: 8px;">'.$due_date.'</td>
+                <td style="padding: 8px;">' . $due_date . '</td>
                 <td style="padding: 8px;">Purchase Order</td>
-                <td style="padding: 8px;"><a href="'.$purchase_url.'">'.$purchase.'</a></td>
+                <td style="padding: 8px;"><a href="' . $purchase_url . '">' . $purchase . '</a></td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Amount w/o Tax</td>
-                <td style="padding: 8px;">'.app_format_money($invoice->vendor_submitted_amount_without_tax,$base_currency->symbol).'</td>
+                <td style="padding: 8px;">' . app_format_money($invoice->vendor_submitted_amount_without_tax, $base_currency->symbol) . '</td>
                 <td style="padding: 8px;">Vendor Submitted Tax Amount</td>
-                <td style="padding: 8px;">'.app_format_money($invoice->vendor_submitted_tax_amount,$base_currency->symbol).'</td>
+                <td style="padding: 8px;">' . app_format_money($invoice->vendor_submitted_tax_amount, $base_currency->symbol) . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Vendor Submitted Amount</td>
-                <td style="padding: 8px;">'.app_format_money($invoice->vendor_submitted_amount,$base_currency->symbol).'</td>
+                <td style="padding: 8px;">' . app_format_money($invoice->vendor_submitted_amount, $base_currency->symbol) . '</td>
                 <td style="padding: 8px;">Final Certified Amount</td>
-                <td style="padding: 8px;">'.app_format_money($invoice->final_certified_amount,$base_currency->symbol).'</td>
+                <td style="padding: 8px;">' . app_format_money($invoice->final_certified_amount, $base_currency->symbol) . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Bill Accept Date</td>
-                <td style="padding: 8px;">'._d($invoice->bill_accept_date).'</td>
+                <td style="padding: 8px;">' . _d($invoice->bill_accept_date) . '</td>
                 <td style="padding: 8px;">Certified Bill Date</td>
-                <td style="padding: 8px;">'._d($invoice->certified_bill_date).'</td>
+                <td style="padding: 8px;">' . _d($invoice->certified_bill_date) . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Payment Date</td>
-                <td style="padding: 8px;">'._d($invoice->payment_date).'</td>
+                <td style="padding: 8px;">' . _d($invoice->payment_date) . '</td>
                 <td style="padding: 8px;"></td>
                 <td style="padding: 8px;"></td>
             </tr>
@@ -14722,7 +14721,7 @@ class Purchase_model extends App_Model
                 <td style="padding: 8px;" colspan="4">
                     <strong>Tags</strong>
                     
-                    <span>'.$tags.'</span>
+                    <span>' . $tags . '</span>
                 </td>
             </tr>
             <tr>
@@ -14730,36 +14729,36 @@ class Purchase_model extends App_Model
             </tr>
             <tr>
                 <td style="padding: 8px;">Transaction ID</td>
-                <td style="padding: 8px;">'.pur_html_entity_decode($invoice->transactionid).'</td>
+                <td style="padding: 8px;">' . pur_html_entity_decode($invoice->transactionid) . '</td>
                 <td style="padding: 8px;">Transaction Date</td>
-                <td style="padding: 8px;">'._d($invoice->transaction_date).'</td>
+                <td style="padding: 8px;">' . _d($invoice->transaction_date) . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
                 <td style="padding: 8px;">Add From</td>
-                <td style="padding: 8px;"><a href="'.$add_from_url.'">'.$add_from.'</a></td>
+                <td style="padding: 8px;"><a href="' . $add_from_url . '">' . $add_from . '</a></td>
                 <td style="padding: 8px;">Date Added</td>
-                <td style="padding: 8px;">'._d($invoice->date_add).'</td>
+                <td style="padding: 8px;">' . _d($invoice->date_add) . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
-                <td style="padding: 8px;" colspan="4"><strong>Bank Transaction Detail</strong>: <span>'.pur_html_entity_decode($invoice->bank_transcation_detail).'</span></td>
+                <td style="padding: 8px;" colspan="4"><strong>Bank Transaction Detail</strong>: <span>' . pur_html_entity_decode($invoice->bank_transcation_detail) . '</span></td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
-                <td style="padding: 8px;" colspan="4"><strong>Admin Note</strong>: <span>'.pur_html_entity_decode($invoice->adminnote).'</span></td>
+                <td style="padding: 8px;" colspan="4"><strong>Admin Note</strong>: <span>' . pur_html_entity_decode($invoice->adminnote) . '</span></td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>
             </tr>
             <tr>
-                <td style="padding: 8px;" colspan="4"><strong>Vendor Note</strong>: <span>'.pur_html_entity_decode($invoice->vendor_note).'</span></td>
+                <td style="padding: 8px;" colspan="4"><strong>Vendor Note</strong>: <span>' . pur_html_entity_decode($invoice->vendor_note) . '</span></td>
 ';
 
         $html .= '<div class="col-md-12 mtop15">
@@ -15241,7 +15240,7 @@ class Purchase_model extends App_Model
             $this->db->order_by('id', 'asc');
             $this->db->limit(1);
             $pur_approval = $this->db->get(db_prefix() . 'pur_approval_details')->row();
-            if(!empty($pur_approval)) {
+            if (!empty($pur_approval)) {
                 $pur_approval_details = array();
                 $pur_approval_details['approve'] = $status;
                 $pur_approval_details['note'] = NULL;
@@ -15251,7 +15250,7 @@ class Purchase_model extends App_Model
                 $this->db->update(db_prefix() . 'pur_approval_details', $pur_approval_details);
             }
 
-            if($status == 1) {
+            if ($status == 1) {
                 $draft_array = array();
                 $draft_array['approve'] = NULL;
                 $draft_array['note'] = NULL;
@@ -15354,7 +15353,7 @@ class Purchase_model extends App_Model
         if (!empty($pur_order->addedfrom)) {
             $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
         }
-        if(!empty($pur_order->kind)) {
+        if (!empty($pur_order->kind)) {
             $html .= '<span style="text-align: right;"><b>' . _l('kind') . ':</b> ' . $pur_order->kind . '</span><br />';
         }
         $group_head_po = $this->get_budget_head_po($pur_order->id);
@@ -15678,9 +15677,9 @@ class Purchase_model extends App_Model
 
                     $this->db->insert(db_prefix() . 'wo_order_detail', $dt_data);
                     $last_insert_id = $this->db->insert_id();
-                    
+
                     $iuploadedFiles = handle_purchase_item_attachment_array('wo_order', $insert_id, $last_insert_id, 'newitems', $key);
-                    
+
                     if ($iuploadedFiles && is_array($iuploadedFiles)) {
                         foreach ($iuploadedFiles as $ifile) {
                             $idata = array();
@@ -16473,5 +16472,4 @@ class Purchase_model extends App_Model
         $this->db->where('1=1 AND (wo_order_number LIKE "%' . $this->db->escape_like_str($q) . '%")');
         return $this->db->get(db_prefix() . 'wo_orders')->result_array();
     }
-   
 }

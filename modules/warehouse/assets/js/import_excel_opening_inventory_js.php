@@ -25,7 +25,7 @@ function uploadfilecsv(event){
     formData.append("file_csv", $('#file_csv')[0].files[0]);
     formData.append("csrf_token_name", $('input[name="csrf_token_name"]').val());
     formData.append("leads_import", $('input[name="leads_import"]').val());
-
+      
     //show box loading
     var html = '';
         html += '<div class="Box">';
