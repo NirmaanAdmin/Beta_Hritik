@@ -15511,6 +15511,7 @@ class Purchase_model extends App_Model
         unset($data['total_money']);
         unset($data['additional_discount']);
         unset($data['tax_value']);
+        unset($data['leads_import']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
