@@ -515,7 +515,7 @@
               <?php if (!$is_edit) { ?>
                 <div class="col-md-8">
                   <div class="col-md-3 pull-right" >
-                    <div id="dowload_file_sample">
+                    <div id="dowload_file_sample" style="margin-top: 22px;">
                       <label for="file_csv" class="control-label"> </label>
                       <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_import_item_en.xlsx') ?>" class="btn btn-primary">Template</a>
                     </div>
