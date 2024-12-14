@@ -9585,6 +9585,7 @@ class purchase extends AdminController
 
         if ($id == '') {
             $title = _l('create_new_wo_order');
+            $is_edit = false;
         } else {
 
             $data['wo_order_detail'] = $this->purchase_model->get_wo_order_detail($id);
@@ -9623,7 +9624,9 @@ class purchase extends AdminController
                     $wo_order_row_template .= $this->purchase_model->create_wo_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['area'], $order_detail['image'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency, $order_detail);
                 }
             }
+            $is_edit = true;
         }
+        $data['is_edit'] = $is_edit;
         $data['wo_order_row_template'] = $wo_order_row_template;
         $data['currencies'] = $this->currencies_model->get();
         $this->load->model('clients_model');
@@ -9760,7 +9763,7 @@ class purchase extends AdminController
         }
     }
     /**
-     * import file xlsx opening stock
+     * import file xlsx pur order items
      * @return json 
      */
     public function import_file_xlsx_pur_order_items()
@@ -9882,6 +9885,17 @@ class purchase extends AdminController
                                     $flag2 = 1;
                                 }
                             }
+
+                            if (!is_numeric(trim($value_cell_quantity, " "))) {
+
+                                $string_error .= _l('quantity') . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+                            if (!is_numeric(trim($value_cell_unit_price, " "))) {
+
+                                $string_error .= _l('unit_price') . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
                             if (($flag == 1) || ($flag2 == 1)) {
                                 //write error file
                                 $writer->writeSheetRow('Sheet1', [
@@ -9897,7 +9911,7 @@ class purchase extends AdminController
                                 $message = 'Import Error In Some Item';
                             }
                             if (($flag == 0) && ($flag2 == 0)) {
-                                $item_name = $value_cell_commodity_code. ' ' .$item_value->description;
+                                $item_name = $value_cell_commodity_code . ' ' . $item_value->description;
 
                                 if (is_null($value_cell_commodity_code) != true) {
                                     $rows[] = $row;
@@ -9909,18 +9923,203 @@ class purchase extends AdminController
                             }
                         }
                         $total_rows = $total_rows;
-						$data['total_rows_post'] = count($rows);
-						$total_row_success = count($rows);
-						$total_row_false = $total_rows - (int) count($rows);
-                        if(($total_rows_data_error > 0) || ($total_row_false != 0)){
+                        $data['total_rows_post'] = count($rows);
+                        $total_row_success = count($rows);
+                        $total_row_false = $total_rows - (int) count($rows);
+                        if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
 
-							$filename = 'FILE_ERROR_IMPORT_ITEMS_PURCHASE_ORDER' .get_staff_user_id().strtotime(date('Y-m-d H:i:s')). '.xlsx';
-							$writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ITEMS_ERROR.$filename, $filename));
+                            $filename = 'FILE_ERROR_IMPORT_ITEMS_PURCHASE_ORDER' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename, $filename));
 
-							$filename = PURCHASE_ORDER_IMPORT_ITEMS_ERROR.$filename;
+                            $filename = PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename;
+                        }
+                        $list_item = $list_item;
+                        @delete_dir($tmpDir);
+                    }
+                } else {
+                    set_alert('warning', 'Import Item failed');
+                }
+            }
+        }
+        echo json_encode([
+            'message' => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false' => $total_rows_data_error,
+            'total_rows' => $total_rows_data,
+            'site_url' => site_url(),
+            'staff_id' => get_staff_user_id(),
+            'total_rows_data_error' => $total_rows_data_error,
+            'filename' => $filename,
+            'list_item' => $list_item
+        ]);
+    }
+
+    public function import_file_xlsx_wo_order_items()
+    {
+        if (!is_admin() && !has_permission('purchase', '', 'create')) {
+            access_denied(_l('purchase'));
+        }
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if ($this->input->post()) {
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                //do_action('before_import_leads');
+
+                // Get the temp file path
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                // Make sure we have a filepath
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+
+                    // Setup our new file path
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+
+                        $import_result = true;
+                        $rows = [];
+
+                        //Writer file
+                        $writer_header = array(
+                            "(*)" . _l('product_code') => 'string',
+                            _l('item_description') => 'string',
+                            _l('quantity') => 'string',
+                            _l('unit_price')    => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+
+                        $col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+                        $style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
+
+                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
+
+                        //init file error end
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+
+                        // start row write 2
+                        $numRow = 2;
+                        $total_rows = 0;
+
+                        $total_rows_actualy = 0;
+                        $list_item = $this->purchase_model->create_purchase_order_row_template();
+                        //get data for compare
+                        $index_quote = 0;
+                        for ($row = 1; $row < count($data); $row++) {
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+                            $flag_mail = 0;
+                            $string_error = '';
+                            $flag_contract_form = 0;
+
+                            $flag_id_commodity_code;
+                            $flag_id_item_description;
+
+                            $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_item_description = isset($data[$row][1]) ? $data[$row][1] : null;
+                            $value_cell_quantity = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_cell_unit_price = isset($data[$row][3]) ? $data[$row][3] : '';
+
+                            /*check null*/
+                            if (is_null($value_cell_commodity_code) == true) {
+                                $string_error .= _l('product_code') . _l('not_yet_entered');
+                                $flag = 1;
+                            }
+
+                            //check commodity_code exist  (input: code or name item)
+                            if (is_null($value_cell_commodity_code) != true && $value_cell_commodity_code != '0') {
+                                /*case input  id*/
+                                $this->db->where('commodity_code', trim($value_cell_commodity_code, " "));
+                                $this->db->or_where('description', trim($value_cell_commodity_code, " "));
+
+                                $item_value =  $this->db->get(db_prefix() . 'items')->row();
 
 
-						}
+                                if ($item_value) {
+                                    /*get id commodity_type*/
+                                    $flag_id_commodity_code = $item_value->id;
+                                } else {
+                                    $string_error .= _l('product_code') . _l('does_not_exist');
+                                    $flag2 = 1;
+                                }
+                            }
+                            if (!is_numeric(trim($value_cell_quantity, " "))) {
+
+                                $string_error .= _l('quantity'). _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+                            if (!is_numeric(trim($value_cell_unit_price, " "))) {
+
+                                $string_error .= _l('unit_price') . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+                            if (($flag == 1) || ($flag2 == 1)) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_cell_commodity_code,
+                                    $value_cell_item_description,
+                                    $value_cell_quantity,
+                                    $value_cell_unit_price,
+                                    $string_error,
+                                ]);
+
+                                $numRow++;
+                                $total_rows_data_error++;
+                                $message = 'Import Error In Some Item';
+                            }
+                            if (($flag == 0) && ($flag2 == 0)) {
+                                $item_name = $value_cell_commodity_code . ' ' . $item_value->description;
+
+                                if (is_null($value_cell_commodity_code) != true) {
+                                    $rows[] = $row;
+                                    $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']',  $item_name, $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', '', true, '', '');
+                                }
+                                $index_quote++;
+                                $total_rows_data++;
+                                $message = 'Import Item successfully';
+                            }
+                        }
+                        $total_rows = $total_rows;
+                        $data['total_rows_post'] = count($rows);
+                        $total_row_success = count($rows);
+                        $total_row_false = $total_rows - (int) count($rows);
+                        if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
+
+                            $filename = 'FILE_ERROR_IMPORT_ITEMS_WORK_ORDER' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, WORK_ORDER_IMPORT_ITEMS_ERROR . $filename, $filename));
+
+                            $filename = WORK_ORDER_IMPORT_ITEMS_ERROR . $filename;
+                        }
                         $list_item = $list_item;
                         @delete_dir($tmpDir);
                     }

@@ -119,13 +119,13 @@
                           <label for="estimate"><?php echo _l('estimates'); ?></label>
                           <select name="estimate" id="estimate" class="selectpicker  <?php if (isset($wo_order)) {
                                                                                         echo 'disabled';
-                          } ?>" onchange="coppy_pur_estimate(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                                                                                      } ?>" onchange="coppy_pur_estimate(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                             <?php if (isset($wo_order)) { ?>
                               <option value=""></option>
                               <?php foreach ($estimates as $s) { ?>
                                 <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($wo_order) && $wo_order->estimate != '' && $wo_order->estimate == $s['id']) {
-                                  echo 'selected';
-                                } ?>><?php echo format_pur_estimate_number($s['id']); ?></option>
+                                                                                                  echo 'selected';
+                                                                                                } ?>><?php echo format_pur_estimate_number($s['id']); ?></option>
                               <?php } ?>
                             <?php } ?>
                           </select>
@@ -481,12 +481,12 @@
 
             <?php
             if (isset($attachments) && count($attachments) > 0) {
-              
+
               foreach ($attachments as $value) {
                 echo '<div class="col-md-3">';
-               $path = get_upload_path_by_type('purchase') . 'wo_order/' . $value['rel_id'] . '/' . $value['file_name'];
+                $path = get_upload_path_by_type('purchase') . 'wo_order/' . $value['rel_id'] . '/' . $value['file_name'];
 
-               $is_image = is_image($path);
+                $is_image = is_image($path);
                 if ($is_image) {
                   echo '<div class="preview_image">';
                 }
@@ -512,6 +512,36 @@
               <div class="col-md-4">
                 <?php $this->load->view('purchase/item_include/main_item_select'); ?>
               </div>
+              <?php if (!$is_edit) { ?>
+                <div class="col-md-8">
+                  <div class="col-md-2 pull-right">
+                    <div id="dowload_file_sample" style="margin-top: 22px;">
+                      <label for="file_csv" class="control-label"> </label>
+                      <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_import_item_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                    </div>
+                  </div>
+                  <div class="col-md-4 pull-right" style="display: flex;align-items: end;padding: 0px;">
+                    <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_wo_order_items'), array('id' => 'import_form')); ?>
+                    <?php echo form_hidden('leads_import', 'true'); ?>
+                    <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+
+                    <div class="form-group" style="margin-left: 10px;">
+                      <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadfilecsv(this);"><?php echo _l('import'); ?></button>
+                    </div>
+                    <?php echo form_close(); ?>
+                  </div>
+
+                </div>
+                <div class="col-md-12 ">
+                  <div class="form-group pull-right" id="file_upload_response">
+
+                  </div>
+
+                </div>
+                <div id="box-loading" class="pull-right">
+
+                </div>
+              <?php } ?>
               <?php
               $po_currency = $base_currency;
               if (isset($wo_order) && $wo_order->currency != 0) {
@@ -556,7 +586,7 @@
                         <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                         <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
                         <th width="10%" align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
-                        
+
                         <th width="10%" align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
                         <th align="center"><i class="fa fa-cog"></i></th>
                       </tr>
@@ -645,9 +675,9 @@
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
                 <?php $value = (isset($wo_order) ? $wo_order->order_summary : get_purchase_option('order_summary'));
-                  if (!isset($wo_order) && $wo_order->order_summary == '') {
-                    $value = get_by_deafult_order_summary();
-                  }
+                if (!isset($wo_order) && $wo_order->order_summary == '') {
+                  $value = get_by_deafult_order_summary();
+                }
 
                 ?>
 
@@ -655,7 +685,7 @@
                 <?php echo render_textarea('order_summary', 'estimate_add_edit_order_summary', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <?php $value = (isset($wo_order) ? $wo_order->vendornote : get_purchase_option('vendor_note')); ?>
                 <?php echo render_textarea('vendornote', 'estimate_add_edit_vendor_note', $value, array(), array(), 'mtop15', 'tinymce'); ?>
-                <?php $value = (isset($wo_order) ? $wo_order->terms :  get_purchase_option('terms_and_conditions'));?>
+                <?php $value = (isset($wo_order) ? $wo_order->terms :  get_purchase_option('terms_and_conditions')); ?>
                 <?php echo render_textarea('terms', 'terms_and_conditions', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <div id="vendor_data">
 
@@ -728,5 +758,5 @@
     });
   }
 </script>
-
+<?php require 'modules/purchase/assets/js/import_excel_items_wo_order_js.php'; ?>
 <?php require 'modules/purchase/assets/js/wo_order_js.php'; ?>
