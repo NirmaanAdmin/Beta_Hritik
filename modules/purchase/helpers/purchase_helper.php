@@ -3364,13 +3364,11 @@ function get_area_list($name_area, $area){
     $CI = & get_instance();
     $CI->load->model('purchase_model');
     $get_area = $CI->purchase_model->get_area();
-    $selected = '';
-    foreach ($get_area as $value) {
-        if ($area == $value['id']) {
-          $selected = $value['id'];
-        }
+    $selected = !empty($area) ? $area : array();
+    if(!is_array($selected)) {
+        $selected = explode(",", $selected);
     }
-    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected);
+    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple'=>true), array(), '', '', false);
 }
 
 function get_pur_send_to_vendors_list($vendors) {
@@ -3399,13 +3397,18 @@ function get_pur_send_to_vendors_list($vendors) {
  */
 function get_area_name_by_id($id)
 {
-    $CI = & get_instance();
-    $CI->db->select('area_name');
-    $CI->db->from(db_prefix() . 'area');
-    $CI->db->where('id', $id);
-    $row = $CI->db->get()->row();
-    if ($row) {
-        return $row->area_name;
+    if(!empty($id)) {
+        $id = explode(',', $id);
+        $CI = & get_instance();
+        $CI->db->select('area_name');
+        $CI->db->from(db_prefix() . 'area');
+        $CI->db->where_in('id', $id);
+        $result = $CI->db->get()->result_array();
+        if(!empty($result)) {
+            $result = array_column($result, 'area_name');
+            $result = implode(',', $result);
+            return $result;
+        }
     }
     return '';
 }

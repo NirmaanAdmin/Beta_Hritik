@@ -1235,7 +1235,7 @@ class Purchase_model extends App_Model
                     $dt_data['pur_request'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['description'] = nl2br($rqd['item_description']);
-                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                    $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
@@ -1380,7 +1380,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_request'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -1445,7 +1445,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_request'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -1844,7 +1844,7 @@ class Purchase_model extends App_Model
                     $dt_data['pur_estimate'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
-                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                    $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
                     $dt_data['total'] = $rqd['total'];
@@ -2023,7 +2023,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_estimate'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -2076,7 +2076,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_estimate'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -2574,7 +2574,7 @@ class Purchase_model extends App_Model
                     $dt_data['total'] = $rqd['total'];
                     $dt_data['tax_value'] = $rqd['tax_value'];
                     $dt_data['item_name'] = $rqd['item_name'];
-                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                    $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                     $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['total_money'] = $rqd['total_money'];
                     $dt_data['discount_money'] = $rqd['discount_money'];
@@ -2777,7 +2777,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -2834,7 +2834,7 @@ class Purchase_model extends App_Model
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -10761,7 +10761,7 @@ class Purchase_model extends App_Model
             $name_item_code = $name . '[item_code]';
             $name_item_text = $name . '[item_text]';
             $name_item_description = $name . '[item_description]';
-            $name_area = $name . '[area]';
+            $name_area = $name . '[area][]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = $name . '[unit_name]';
@@ -11227,7 +11227,7 @@ class Purchase_model extends App_Model
                     <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
             $name_item_code = $name . '[item_code]';
             $name_item_name = $name . '[item_name]';
-            $name_area = $name . '[area]';
+            $name_area = $name . '[area][]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = '[unit_name]';
@@ -11423,7 +11423,7 @@ class Purchase_model extends App_Model
             $name_item_code = $name . '[item_code]';
             $name_item_name = $name . '[item_name]';
             $name_item_description = $name . '[item_description]';
-            $name_area = $name . '[area]';
+            $name_area = $name . '[area][]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = $name.'[unit_name]';
@@ -15650,7 +15650,7 @@ class Purchase_model extends App_Model
                     $dt_data['total'] = $rqd['total'];
                     $dt_data['tax_value'] = $rqd['tax_value'];
                     $dt_data['item_name'] = $rqd['item_name'];
-                    $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                    $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                     $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['total_money'] = $rqd['total_money'];
                     $dt_data['discount_money'] = $rqd['discount_money'];
@@ -15846,7 +15846,7 @@ class Purchase_model extends App_Model
                 $dt_data['wo_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -15903,7 +15903,7 @@ class Purchase_model extends App_Model
                 $dt_data['wo_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
-                $dt_data['area'] = isset($rqd['area']) ? $rqd['area'] : null;
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -16300,7 +16300,7 @@ class Purchase_model extends App_Model
             $name_item_code = $name . '[item_code]';
             $name_item_name = $name . '[item_name]';
             $name_item_description = $name . '[item_description]';
-            $name_area = $name . '[area]';
+            $name_area = $name . '[area][]';
             $name_image = $name . '[image]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = $name . '[unit_name]';
