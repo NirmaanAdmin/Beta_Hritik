@@ -9894,7 +9894,7 @@ class purchase extends AdminController
 
                                 $numRow++;
                                 $total_rows_data_error++;
-                                $message = 'Import Some Item fail';
+                                $message = 'Import Error In Some Item fail';
                             }
                             if (($flag == 0) && ($flag2 == 0)) {
                                 $item_name = $value_cell_commodity_code. '_' .$item_value->description;
