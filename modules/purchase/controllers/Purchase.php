@@ -9894,6 +9894,7 @@ class purchase extends AdminController
 
                                 $numRow++;
                                 $total_rows_data_error++;
+                                $message = 'Import Some Item fail';
                             }
                             if (($flag == 0) && ($flag2 == 0)) {
                                 $item_name = $value_cell_commodity_code. '_' .$item_value->description;
@@ -9904,6 +9905,7 @@ class purchase extends AdminController
                                 }
                                 $index_quote++;
                                 $total_rows_data++;
+                                $message = 'Import Item successfully';
                             }
                         }
                         $total_rows = $total_rows;
@@ -9928,7 +9930,7 @@ class purchase extends AdminController
             }
         }
         echo json_encode([
-            'message' => 'Not enought rows for importing',
+            'message' => $message,
             'total_row_success' => $total_row_success,
             'total_row_false' => $total_rows_data_error,
             'total_rows' => $total_rows_data,
