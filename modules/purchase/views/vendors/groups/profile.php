@@ -45,6 +45,11 @@
                   <?php echo _l( 'vendor_admins' ); ?>
                   </a>
                </li>
+               <li role="presentation">
+                  <a href="#vendor_ratings" aria-controls="vendor_ratings" role="tab" data-toggle="tab">
+                  <?php echo _l( 'vendor_ratings' ); ?>
+                  </a>
+               </li>
       
                <?php } ?>
             </ul>
@@ -198,6 +203,11 @@
             </table>
          </div>
          <?php } ?>
+         <div role="tabpanel" class="tab-pane" id="vendor_ratings">
+            <?php //load view 
+            $this->load->view('vendor_ratings');
+            ?>
+         </div>
          <div role="tabpanel" class="tab-pane" id="billing_and_shipping">
             <div class="row">
                <div class="col-md-12">

@@ -254,9 +254,22 @@ class Purchase_model extends App_Model
      */
     public function update_vendor($data, $id, $client_request = false)
     {
+        unset($data['vendor_id']);
+        unset($data['quality_rating']);
+        unset($data['delivery_rating']);
+        unset($data['pricing_rating']);
+        unset($data['service_rating']);
+        unset($data['compliance_rating']);
+        unset($data['comments']);
+        unset($data['rated_by']);
+        unset($data['rating_date']);
+        unset($data['id']);
+        unset($data['DataTables_Table_1_length']);
+        unset($data['rating_id']);
         if (isset($data['DataTables_Table_0_length'])) {
             unset($data['DataTables_Table_0_length']);
         }
+       
 
         if (isset($data['balance'])) {
             $data['balance'] = str_replace(',', '', $data['balance']);
@@ -2539,7 +2552,7 @@ class Purchase_model extends App_Model
         // if ($data['approve_status'] == 2) {
         //     $this->send_mail_to_sender('purchase_order', $data['approve_status'], $insert_id);
         // }
-        
+
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "purchase";
@@ -16480,5 +16493,70 @@ class Purchase_model extends App_Model
     {
         $this->db->where('1=1 AND (wo_order_number LIKE "%' . $this->db->escape_like_str($q) . '%")');
         return $this->db->get(db_prefix() . 'wo_orders')->result_array();
+    }
+    /**
+     * Fetch all ratings for a vendor
+     */
+    public function get_ratings($vendor_id = null)
+    {
+        if ($vendor_id) {
+            $this->db->where('vendor_id', $vendor_id);
+        }
+        return $this->db->get('tblvendor_ratings')->result_array();
+    }
+
+
+    public function save_rating($data)
+    {
+       
+        // List of keys to keep
+        $keys_to_keep = [
+            'id',
+            'vendor_id',
+            'quality_rating',
+            'delivery_rating',
+            'pricing_rating',
+            'service_rating',
+            'compliance_rating',
+            'comments',
+            'rating_date',
+            'rated_by'
+            
+        ];
+
+        // Filter the array
+        $data = array_filter($data, function ($key) use ($keys_to_keep) {
+            return in_array($key, $keys_to_keep);
+        }, ARRAY_FILTER_USE_KEY);
+       
+        if (isset($data['id']) && $data['id']) {
+            $this->db->where('id', $data['id']);
+            return $this->db->update('tblvendor_ratings', $data);
+        } else {
+
+            $query =  $this->db->insert('tblvendor_ratings', $data);
+            $last_id = $this->db->insert_id();
+            if ($last_id) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Delete vendor rating
+     */
+    public function delete_rating($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->delete('tblvendor_ratings');
+    }
+
+    public function get_rating_by_id($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get('tblvendor_ratings')->row_array();
     }
 }

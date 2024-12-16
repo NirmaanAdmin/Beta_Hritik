@@ -86,9 +86,15 @@ class purchase extends AdminController
                         access_denied('purchase');
                     }
                 }
+                $data = $this->input->post();
+                $data['rating_date'] = date('Y-m-d H:i:s');
+                $data['rated_by'] = get_staff_user_id();
+                unset($data['rating_id']);
+              
+                $success1 = $this->purchase_model->save_rating($data);
 
                 $success = $this->purchase_model->update_vendor($this->input->post(), $id);
-                if ($success == true) {
+                if ($success == true || $success1 == true) {
                     set_alert('success', _l('updated_successfully', _l('vendor')));
                 }
                 redirect(admin_url('purchase/vendor/' . $id));
@@ -181,6 +187,8 @@ class purchase extends AdminController
                     $data['client']->company = '';
                 }
             }
+            $data['vendor_id'] = $id;
+            $data['ratings'] = $this->purchase_model->get_ratings($id);
         }
 
         $this->load->model('currencies_model');
@@ -1687,7 +1695,7 @@ class purchase extends AdminController
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
         $data['area_pur'] = $this->purchase_model->get_area();
-        $this->load->model('invoices_model'); 
+        $this->load->model('invoices_model');
         $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
         $data['ajaxItems'] = false;
 
@@ -9699,7 +9707,7 @@ class purchase extends AdminController
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
         $data['area_pur'] = $this->purchase_model->get_area();
-        $this->load->model('invoices_model'); 
+        $this->load->model('invoices_model');
         $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
         $data['ajaxItems'] = false;
 
@@ -10130,7 +10138,7 @@ class purchase extends AdminController
                             }
                             if (!is_numeric(trim($value_cell_quantity, " "))) {
 
-                                $string_error .= _l('quantity'). _l('_not_a_number');
+                                $string_error .= _l('quantity') . _l('_not_a_number');
                                 $flag2 = 1;
                             }
                             if (!is_numeric(trim($value_cell_unit_price, " "))) {
@@ -10194,5 +10202,23 @@ class purchase extends AdminController
             'filename' => $filename,
             'list_item' => $list_item
         ]);
+    }
+
+    public function get_rating($id)
+    {
+        $rating = $this->purchase_model->get_rating_by_id($id);
+        if ($rating) {
+            echo json_encode($rating);
+        } else {
+            echo json_encode(['error' => 'Rating not found']);
+        }
+    }
+    public function delete_rating($id, $vendor_id)
+    {
+        $success = $this->purchase_model->delete_rating($id);
+        if ($success == true) {
+            set_alert('success', _l('deleted_successfully', _l('vendor')));
+        }
+        redirect(admin_url('purchase/vendor/' . $vendor_id));
     }
 }
