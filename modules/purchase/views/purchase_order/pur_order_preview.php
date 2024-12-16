@@ -165,11 +165,7 @@
                  echo $group['sub_group_name'];
                }
              }?> </p>
-             <p class="bold p_mar"><?php echo _l('area_pur').': '?> <?php  foreach ($area as $area) {
-               if($area['id'] == $pur_order->area_pur){
-                 echo $area['area_name'];
-               }
-             }?> </p>
+             <p class="bold p_mar"><?php echo _l('hsn_sac').': '?>  <?php echo get_hsn_sac_name_by_id($pur_order->hsn_sac); ?></p>
               
             </div>
             <div class="col-md-8">

@@ -1687,7 +1687,8 @@ class purchase extends AdminController
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
         $data['area_pur'] = $this->purchase_model->get_area();
-
+        $this->load->model('invoices_model'); 
+        $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
         $data['ajaxItems'] = false;
 
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
@@ -9645,7 +9646,8 @@ class purchase extends AdminController
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
         $data['area_pur'] = $this->purchase_model->get_area();
-
+        $this->load->model('invoices_model'); 
+        $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
         $data['ajaxItems'] = false;
 
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {

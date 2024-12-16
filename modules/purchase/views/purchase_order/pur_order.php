@@ -389,6 +389,28 @@
                                                             } ?>><?php echo _l('bought_out_items'); ?></option>
                         </select>
                       </div>
+                      <div class="col-md-6 form-group" >
+                        <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
+                        <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true"  data-width="100%">
+                          <option value=""></option>
+                          <?php foreach ($get_hsn_sac_code as $item): ?>
+                            <?php
+                            $selected = '';
+                            if (isset($pur_order)) {
+                              if ($pur_order->hsn_sac == $item['id']) {
+                                $selected = 'selected';
+                              }
+                            }
+
+                            $words = explode(' ', $item['name']);
+                            $shortName = implode(' ', array_slice($words, 0, 7));
+                            ?>
+                            <option value="<?= $item['id'] ?>" <?= $selected  ?>>
+                              <?= htmlspecialchars($shortName) ?>
+                            </option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -514,7 +536,7 @@
               </div>
               <?php if (!$is_edit) { ?>
                 <div class="col-md-8">
-                  <div class="col-md-2 pull-right" >
+                  <div class="col-md-2 pull-right">
                     <div id="dowload_file_sample" style="margin-top: 22px;">
                       <label for="file_csv" class="control-label"> </label>
                       <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_import_item_en.xlsx') ?>" class="btn btn-primary">Template</a>
@@ -530,14 +552,14 @@
                     </div>
                     <?php echo form_close(); ?>
                   </div>
-                 
+
                 </div>
                 <div class="col-md-12 ">
-                    <div class="form-group pull-right" id="file_upload_response">
-
-                    </div>
+                  <div class="form-group pull-right" id="file_upload_response">
 
                   </div>
+
+                </div>
                 <div id="box-loading" class="pull-right">
 
                 </div>

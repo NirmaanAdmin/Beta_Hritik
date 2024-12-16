@@ -305,6 +305,7 @@
                         }
                         echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
                         ?>
+                        
                       </div>
                       <div class="col-md-6 ">
 
@@ -326,6 +327,28 @@
                         echo render_select('sub_groups_pur', $sub_groups_pur, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
                         ?>
                       </div>
+                      <div class="col-md-6 ">
+                      <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
+                      <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true" data-width="100%">
+                        <option value=""></option>
+                        <?php foreach ($get_hsn_sac_code as $item): ?>
+                          <?php
+                          $selected = '';
+                          if (isset($wo_order)) {
+                            if ($wo_order->hsn_sac == $item['id']) {
+                              $selected = 'selected';
+                            }
+                          }
+
+                          $words = explode(' ', $item['name']);
+                          $shortName = implode(' ', array_slice($words, 0, 7));
+                          ?>
+                          <option value="<?= $item['id'] ?>" <?= $selected  ?>>
+                            <?= htmlspecialchars($shortName) ?>
+                          </option>
+                        <?php endforeach; ?>
+                      </select>
+                    </div>
                       <!-- <div class="col-md-6 form-group select-placeholder">
                         <label for="clients" class="control-label"><?php echo _l('clients'); ?></label>
                         <select id="clients" name="clients[]" data-live-search="true" onchange="client_change(this); return false;" multiple data-width="100%" class="ajax-search client-ajax-search" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
@@ -388,6 +411,7 @@
                         ?>
                       </div>
                     </div> -->
+                    
                   </div>
                 </div>
 

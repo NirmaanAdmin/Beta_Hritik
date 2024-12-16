@@ -4915,6 +4915,10 @@ class Purchase_model extends App_Model
         if ($group_sub_head_po != '') {
             $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
         }
+        if (!empty($pur_order->hsn_sac)) {
+            $hsn_sac = get_hsn_sac_name_by_id($pur_order->hsn_sac);
+            $html .= '<span style="text-align: right;"><b>' . _l('hsn_sac') . ':</b> ' . $hsn_sac . '</span><br />';
+        }
         // $group_req_area_po = $this->get_pur_request_area_po($pur_order->id);
         // if ($group_req_area_po != '') {
         //     $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
@@ -15368,6 +15372,10 @@ class Purchase_model extends App_Model
         // if ($group_req_area_po != '') {
         //     $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area_po($pur_order->id) . '</span><br />';
         // }
+        if (!empty($pur_order->hsn_sac)) {
+            $hsn_sac = get_hsn_sac_name_by_id($pur_order->hsn_sac);
+            $html .= '<span style="text-align: right;"><b>' . _l('hsn_sac') . ':</b> ' . $hsn_sac . '</span><br />';
+        }
         $html .= '            
             </td>
           </tr>
