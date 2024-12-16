@@ -1157,7 +1157,9 @@ class Changee_model extends App_Model
 
         unset($data['item_text']);
         unset($data['description']);
+        unset($data['original_unit_price']);
         unset($data['unit_price']);
+        unset($data['original_quantity']);
         unset($data['quantity']);
         unset($data['into_money']);
         unset($data['tax_select']);
@@ -1234,6 +1236,7 @@ class Changee_model extends App_Model
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
                     $dt_data['total'] = $rqd['total'];
@@ -1258,6 +1261,7 @@ class Changee_model extends App_Model
                     $dt_data['tax_rate'] = $tax_rate;
                     $dt_data['tax_name'] = $tax_name;
 
+                    $dt_data['original_quantity'] = ($rqd['original_quantity'] != '' && $rqd['original_quantity'] != null) ? $rqd['original_quantity'] : 0;
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                     if ($data['status'] == 2 && ($rqd['item_code'] == '' || $rqd['item_code'] == null)) {
@@ -1320,7 +1324,9 @@ class Changee_model extends App_Model
 
         unset($data['item_text']);
         unset($data['description']);
+        unset($data['original_unit_price']);
         unset($data['unit_price']);
+        unset($data['original_quantity']);
         unset($data['quantity']);
         unset($data['into_money']);
         unset($data['tax_select']);
@@ -1366,6 +1372,7 @@ class Changee_model extends App_Model
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -1390,6 +1397,7 @@ class Changee_model extends App_Model
                 $dt_data['tax_rate'] = $tax_rate;
                 $dt_data['tax_name'] = $tax_name;
 
+                $dt_data['original_quantity'] = ($rqd['original_quantity'] != '' && $rqd['original_quantity'] != null) ? $rqd['original_quantity'] : 0;
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                 if ($purq->status == 2 && ($rqd['item_code'] == '' || $rqd['item_code'] == null)) {
@@ -1420,6 +1428,7 @@ class Changee_model extends App_Model
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
@@ -1444,6 +1453,7 @@ class Changee_model extends App_Model
                 $dt_data['tax_rate'] = $tax_rate;
                 $dt_data['tax_name'] = $tax_name;
 
+                $dt_data['original_quantity'] = ($rqd['original_quantity'] != '' && $rqd['original_quantity'] != null) ? $rqd['original_quantity'] : 0;
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                 if ($purq->status == 2 && ($rqd['item_code'] == '' || $rqd['item_code'] == null)) {
@@ -3861,8 +3871,10 @@ class Changee_model extends App_Model
             <th class="thead-dark">' . _l('items') . '</th>
             <th class="thead-dark">' . _l('decription') . '</th>
             <th class="thead-dark" align="right">' . _l('unit') . '</th>
-            <th class="thead-dark" align="right">' . _l('unit_price') . '</th>
-            <th class="thead-dark" align="right">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="right">' . _l('original_unit_price') . '</th>
+            <th class="thead-dark" align="right">' . _l('updated_unit_price') . '</th>
+            <th class="thead-dark" align="right">' . _l('original_quantity') . '</th>
+            <th class="thead-dark" align="right">' . _l('updated_quantity') . '</th>
             <th class="thead-dark" align="right">' . _l('into_money') . '</th>
             <th class="thead-dark" align="right">' . _l('inventory_quantity') . '</th>
           </tr>
@@ -3875,7 +3887,9 @@ class Changee_model extends App_Model
             <td>' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td>' . $row['description'] . '</td>
             <td align="right">' . $units->unit_name . '</td>
+            <td align="right">' . app_format_money($row['original_unit_price'], '') . '</td>
             <td align="right">' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right">' . $row['original_quantity'] . '</td>
             <td align="right">' . $row['quantity'] . '</td>
             <td align="right">' . app_format_money($row['into_money'], '') . '</td>
             <td align="right">' . $row['inventory_quantity'] . '</td>
@@ -3986,10 +4000,12 @@ class Changee_model extends App_Model
           <tr>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
             <th class="thead-dark" style="width: 25%">' . _l('decription') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('unit') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('unit_price') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('quantity') . '</th>
-            <th class="thead-dark" align="right" style="width: 15%">' . _l('into_money') . '</th>
+            <th class="thead-dark" align="right" style="width: 5%">' . _l('unit') . '</th>
+            <th class="thead-dark" align="right" style="width: 12.5%">' . _l('original_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 12.5%">' . _l('updated_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('original_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('updated_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('into_money') . '</th>
           </tr>
         </thead>
         <tbody>';
@@ -3999,10 +4015,12 @@ class Changee_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 15%">' . $units->unit_name . '</td>
-            <td align="right" style="width: 15%">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 15%">' . $row['quantity'] . '</td>
-            <td align="right" style="width: 15%">' . app_format_money($row['into_money'], '') . '</td>
+            <td align="right" style="width: 5%">' . $units->unit_name . '</td>
+            <td align="right" style="width: 12.5%">' . app_format_money($row['original_unit_price'], '') . '</td>
+            <td align="right" style="width: 12.5%">' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 10%">' . $row['original_quantity'] . '</td>
+            <td align="right" style="width: 10%">' . $row['quantity'] . '</td>
+            <td align="right" style="width: 10%">' . app_format_money($row['into_money'], '') . '</td>
           </tr>';
         }
         $html .=  '</tbody>
@@ -10244,7 +10262,7 @@ class Changee_model extends App_Model
      * @param      array   $unit_data  The unit data
      * @param      string  $name       The name
      */
-    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $unit_price = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -10254,7 +10272,9 @@ class Changee_model extends App_Model
         $name_item_description = 'description';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
+        $name_original_unit_price = 'original_unit_price';
         $name_unit_price = 'unit_price';
+        $name_original_quantity = 'original_quantity';
         $name_quantity = 'quantity';
         $name_into_money = 'into_money';
         $name_tax = 'tax';
@@ -10289,7 +10309,9 @@ class Changee_model extends App_Model
             $name_item_description = $name . '[item_description]';
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = $name . '[unit_name]';
+            $name_original_unit_price = $name . '[original_unit_price]';
             $name_unit_price = $name . '[unit_price]';
+            $name_original_quantity = $name . '[original_quantity]';
             $name_quantity = $name . '[quantity]';
             $name_into_money = $name . '[into_money]';
             $name_tax = $name . '[tax]';
@@ -10334,6 +10356,7 @@ class Changee_model extends App_Model
 
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]) . '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin');
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10347,6 +10370,7 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
+        $row .= '<td class="original_quantities">'.render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin').'</td>';
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .

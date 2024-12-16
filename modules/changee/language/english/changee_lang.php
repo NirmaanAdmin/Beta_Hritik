@@ -707,3 +707,7 @@ $lang['signature_pur_order'] = 'Signature';
 $lang['po_activity_created'] = 'created the change order';
 $lang['changee_order_activity_added_item'] = 'added new item <b>%s</b>';
 $lang['changee_order_activity_removed_item'] = 'removed item <b>%s</b>';
+$lang['original_unit_price'] = 'Original unit price';
+$lang['updated_unit_price'] = 'Updated unit price';
+$lang['original_quantity'] = 'Original quantity';
+$lang['updated_quantity'] = 'Updated quantity';

@@ -246,13 +246,15 @@
                         <thead>
                           <tr>
 
-                            <th width="20%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
+                            <th width="15%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
                             <th width="15%" align="right" class="qty"><?php echo _l('decription'); ?></th>
-                            <th width="10%" align="right" class="qty"><?php echo _l('changee_quantity'); ?></th>
-                            <th width="10%" align="right"><?php echo _l('unit_price'); ?></th>
+                            <th width="10%" align="right" class="qty"><?php echo _l('original_quantity'); ?></th>
+                            <th width="10%" align="right" class="qty"><?php echo _l('updated_quantity'); ?></th>
+                            <th width="10%" align="right"><?php echo _l('original_unit_price'); ?></th>
+                            <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?></th>
 
                             <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?></th>
-                            <th width="15%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
+                            <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
                             <th width="10%" align="right"><?php echo _l('tax_value'); ?></th>
                             <th width="10%" align="right"><?php echo _l('debit_note_total'); ?></th>
                           </tr>
@@ -282,7 +284,9 @@
                                 $unit_name = changee_pur_get_unit_name($es['unit_id']);
                                 ?>
                                 <td align="right"><?php echo nl2br($es['description']); ?></td>
-                                <td align="right" width="12%"><?php echo changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
+                                <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></td>
+                                <td align="right"><?php echo changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
+                                <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></td>
                                 <td align="right"><?php echo app_format_money($es['unit_price'], $base_currency->symbol); ?></td>
                                 <td align="right"><?php echo app_format_money($es['into_money'], $base_currency->symbol); ?></td>
                                 <td align="right"><?php

@@ -257,7 +257,7 @@ function tax_rate_by_id(tax_id){
   return tax_rate;
 }
 
-function pur_get_item_row_template(name, item_code, item_text, description, unit_price, quantity, unit_name, unit_id, into_money, item_key, tax_value, total, taxname, currency_rate, to_currency)  {
+function pur_get_item_row_template(name, item_code, item_text, description, original_unit_price, unit_price, original_quantity, quantity, unit_name, unit_id, into_money, item_key, tax_value, total, taxname, currency_rate, to_currency)  {
   "use strict";
 
   jQuery.ajaxSetup({
@@ -268,7 +268,9 @@ function pur_get_item_row_template(name, item_code, item_text, description, unit
     name: name,
     item_text : item_text,
     item_description : description,
+    original_unit_price : original_unit_price,
     unit_price : unit_price,
+    original_quantity : original_quantity,
     quantity : quantity,
     unit_name : unit_name,
     unit_id : unit_id,
@@ -304,7 +306,7 @@ function pur_add_item_to_table(data, itemid) {
   var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
   lastAddedItemKey = item_key;
   $("body").append('<div class="dt-loader"></div>');
-  pur_get_item_row_template('newitems[' + item_key + ']', data.item_code, data.item_text, data.description, data.unit_price,data.quantity, data.unit_name, data.unit_id, data.into_money, item_key, data.tax_value, data.total, data.taxname, currency_rate, to_currency).done(function(output){
+  pur_get_item_row_template('newitems[' + item_key + ']', data.item_code, data.item_text, data.description, data.original_unit_price, data.unit_price, data.original_quantity, data.quantity, data.unit_name, data.unit_id, data.into_money, item_key, data.tax_value, data.total, data.taxname, currency_rate, to_currency).done(function(output){
     table_row += output;
 
     $('.invoice-item table.invoice-items-table.items tbody').append(table_row);
@@ -352,9 +354,11 @@ function pur_get_item_preview_values() {
   response.item_text = $('.invoice-item .main textarea[name="item_text"]').val();
   response.item_code = $('.invoice-item .main input[name="item_code"]').val();
   response.description = $('.invoice-item .main textarea[name="description"]').val();
+  response.original_quantity = $('.invoice-item .main input[name="original_quantity"]').val();
   response.quantity = $('.invoice-item .main input[name="quantity"]').val();
   response.unit_name = $('.invoice-item .main input[name="unit_name"]').val();
   response.unit_id = $('.invoice-item .main input[name="unit_id"]').val();
+  response.original_unit_price = $('.invoice-item .main input[name="original_unit_price"]').val();
   response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
   response.taxname = $('.main select.taxes').selectpicker('val');
   response.tax_rate = $('.invoice-item .main input[name="tax_rate"]').val();
