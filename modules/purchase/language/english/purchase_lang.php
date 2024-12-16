@@ -764,3 +764,4 @@ $lang['bought_out_items'] = 'Bought out items';
 $lang['order_summary'] = 'Order Summary';
 $lang['hsn_sac'] = 'HSN/SAC Code'; 
 $lang['vendor_ratings'] = 'Vendor Ratings';
+$lang['updated_successfully'] = 'Updated successfully';
