@@ -15166,7 +15166,7 @@ class Warehouse_model extends App_Model {
 		render_select($name_warehouse_id, $warehouse_data,array('warehouse_id','warehouse_name'),'',$warehouse_id,[], ["data-none-selected-text" => _l('warehouse_name')], 'no-margin').
 		render_input($name_note, '', $note, 'text', ['placeholder' => _l('commodity_notes')], [], 'no-margin', 'input-transparent text-left').
 		'</td>';
-		$row .= '<td class="quantities">'.render_input($name_po_quantities, '', $po_quantities, 'number', ['readonly' => true], [], 'no-margin').'</td>';
+		$row .= '<td class="po_quantities">'.render_input($name_po_quantities, '', $po_quantities, 'number', ['readonly' => true], [], 'no-margin').'</td>';
 		$row .= '<td class="quantities">' . 
 		render_input($name_quantities, '', $quantities, 'number', $array_qty_attr, [], 'no-margin') . 
 		render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right wh_input_none').
