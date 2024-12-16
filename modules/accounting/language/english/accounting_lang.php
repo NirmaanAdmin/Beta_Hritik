@@ -1,6 +1,6 @@
 <?php
 
-$lang['als_accounting'] = 'Accounting';
+$lang['als_accounting'] = 'Project Accounting';
 $lang['transaction'] = 'Transactions';
 $lang['journal_entry'] = 'Journal Entry';
 $lang['transfer'] = 'Transfer';
@@ -1004,7 +1004,7 @@ $lang['acc_status'] = 'Status';
 $lang['bulk_approve'] = 'Bulk Approve';
 $lang['expand_table'] = 'Expand Table';
 $lang['approve_payable'] = 'Approve Payable';
-$lang['bills'] = 'Billing Tracker';
+$lang['bills'] = 'Bills';
 $lang['acc_bills'] = 'Bills';
 $lang['pay_bill'] = 'Pay bill';
 $lang['ref_number'] = 'Ref number';
