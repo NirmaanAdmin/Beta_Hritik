@@ -3577,3 +3577,19 @@ function get_by_deafult_order_summary(){
 
 return $val;
 }
+
+function get_expense_data($expenseid = '')
+{
+    if(!empty($expenseid)) {
+        $CI = & get_instance();
+        $expense = $CI->db->select('id')
+        ->where('id', $expenseid)
+        ->from(db_prefix() . 'expenses')
+        ->get()
+        ->row();
+        if ($expense) {
+            return $expense->id;
+        }
+    }
+    return '';
+}
