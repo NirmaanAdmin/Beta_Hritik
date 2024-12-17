@@ -1386,7 +1386,7 @@ class purchase extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index . ']',  $item_name, '', $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total_money'], $item['discount_%'], $item['discount_money'], $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index, true, $currency_rate, $to_currency);
+                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index . ']',  $item_name, '', $item['area'], '', $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total_money'], $item['discount_%'], $item['discount_money'], $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index, true, $currency_rate, $to_currency);
             }
         }
 
@@ -7102,7 +7102,7 @@ class purchase extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_request . ']', $item_text, $item['long_description'], $item['qty'], $unit_name, $unit_price, $tax_name, $item_code, '', $tax_rate, $total, '', '', $total, $into_money, $tax, $tax_value, $index_request, false, $currency_rate, $to_currency);
+                    $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_request . ']', $item_text, $item['long_description'], '', '', $item['qty'], $unit_name, $unit_price, $tax_name, $item_code, '', $tax_rate, $total, '', '', $total, $into_money, $tax, $tax_value, $index_request, false, $currency_rate, $to_currency);
                 }
             }
         }
