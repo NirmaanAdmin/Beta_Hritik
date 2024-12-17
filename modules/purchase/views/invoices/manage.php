@@ -53,7 +53,8 @@
                     $table_data = array(
                         _l('invoice_code'),
                         _l('invoice_number'),
-                        _l('vendor'),                        
+                        _l('vendor'), 
+                        _l('group_pur'),                       
                         _l('project'),
                         _l('contract'),
                         _l('pur_order'),

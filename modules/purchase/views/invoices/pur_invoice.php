@@ -110,8 +110,8 @@
 									</select>
 								</div>
 								<!-- <div id="recurring_div" class="<?php if (isset($pur_invoice) && $pur_invoice->pur_order != null) {
-																	echo 'remove';
-																} ?>">
+																		echo 'remove';
+																	} ?>">
 
 									<div class="form-group col-md-12 pad_left_0 pad_right_0">
 										<label for="recurring"><?php echo _l('invoice_add_edit_recurring'); ?></label>
@@ -176,7 +176,7 @@
 										<input type="number" class="form-control" id="vendor_submitted_amount_without_tax" name="vendor_submitted_amount_without_tax" value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount_without_tax : '') ?>">
 									</div>
 								</div>
-								<div class="col-md-6 pad_right_0" >
+								<div class="col-md-6 pad_right_0">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_tax_amount'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="vendor_submitted_tax_amount" name="vendor_submitted_tax_amount" value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_tax_amount : '') ?>">
@@ -298,6 +298,25 @@
 										<?php $payment_date = (isset($pur_invoice) ? _d($pur_invoice->payment_date) : _d(date('Y-m-d')));
 										echo render_date_input('payment_date', '', $payment_date, array('required' => 'false')); ?>
 									</div>
+								</div>
+								<div class="col-md-6 pad_left_0">
+									<?php
+									$selected = '';
+									
+									foreach ($commodity_groups_pur as $group) {
+										if (isset($pur_invoice)) {
+											if ($pur_invoice->group_pur == $group['id']) {
+												$selected = $group['id'];
+											}
+										}
+										if (isset($selected_head)) {
+											if ($selected_head == $group['id']) {
+												$selected = $group['id'];
+											}
+										}
+									}
+									echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), '<span class="text-danger">* </span>Budget Head', $selected ,['required' => 'true']);
+									?>
 								</div>
 
 							</div>
@@ -490,20 +509,20 @@
 <?php require 'modules/purchase/assets/js/pur_invoice_js.php'; ?>
 <script>
 	$(document).ready(function() {
-    // Function to calculate sum and update input
-    function calculateSum() {
-        // Get the values from the input fields
-        var value1 = parseFloat($('#vendor_submitted_amount_without_tax').val()) || 0;
-        var value2 = parseFloat($('#vendor_submitted_tax_amount').val()) || 0;
-        
-        // Calculate the sum
-        var sum = value1 + value2;
-        
-        // Update the sum in another input field
-        $('#vendor_submitted_amount').val(sum);
-    }
+		// Function to calculate sum and update input
+		function calculateSum() {
+			// Get the values from the input fields
+			var value1 = parseFloat($('#vendor_submitted_amount_without_tax').val()) || 0;
+			var value2 = parseFloat($('#vendor_submitted_tax_amount').val()) || 0;
 
-    // Attach the function to the keypress event of the second input
-    $('#vendor_submitted_amount_without_tax,#vendor_submitted_tax_amount').on('input', calculateSum);
-});
+			// Calculate the sum
+			var sum = value1 + value2;
+
+			// Update the sum in another input field
+			$('#vendor_submitted_amount').val(sum);
+		}
+
+		// Attach the function to the keypress event of the second input
+		$('#vendor_submitted_amount_without_tax,#vendor_submitted_tax_amount').on('input', calculateSum);
+	});
 </script>

@@ -11,6 +11,7 @@ $aColumns = [
     'invoice_number',
     'vendor_invoice_number',
     db_prefix() . 'pur_invoices.vendor',
+    db_prefix() . 'items_groups.name',
     db_prefix() . 'projects.name',
     'contract',
     db_prefix() . 'pur_invoices.pur_order',
@@ -30,6 +31,7 @@ $sTable       = db_prefix() . 'pur_invoices';
 $join         = [
     'LEFT JOIN ' . db_prefix() . 'pur_contracts ON ' . db_prefix() . 'pur_contracts.id = ' . db_prefix() . 'pur_invoices.contract',
     'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'pur_invoices.project_id = ' . db_prefix() . 'projects.id',
+    'LEFT JOIN ' . db_prefix() . 'items_groups ON ' . db_prefix() . 'pur_invoices.group_pur = ' . db_prefix() . 'items_groups.id',
 ];
 
 $i = 0;

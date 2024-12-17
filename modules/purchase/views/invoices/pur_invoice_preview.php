@@ -243,8 +243,9 @@
 							 <div class="col-md-6 pad_left_0 border-right">
 							 <p><?php echo _l('payment_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date); ?></span></p>
 	         				</div>
-
-	         			</div>
+							 <div class="col-md-6 pad_right_0 ">
+							<p><?php echo _l('group_pur').':'; ?><span class="pull-right bold"><?php echo get_group_name_by_id($pur_invoice->group_pur) ?></span></p>
+									</div></div>
 
 	         			<div class="col-md-6">
 
