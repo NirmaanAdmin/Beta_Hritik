@@ -495,8 +495,9 @@ class Expenses_model extends App_Model
      */
     public function convert_to_invoice($id, $draft_invoice = false, $params = [])
     {
-
+        
         $expense          = $this->get($id);
+      
         $new_invoice_data = [];
         $client           = $this->clients_model->get($expense->clientid);
 
@@ -507,7 +508,7 @@ class Expenses_model extends App_Model
         $new_invoice_data['number']   = get_option('next_invoice_number');
         $invoice_date                 = (isset($params['invoice_date']) ? $params['invoice_date'] : date('Y-m-d'));
         $new_invoice_data['date']     = _d($invoice_date);
-
+        $new_invoice_data['group_pur'] = $expense->category;
         if (get_option('invoice_due_after') != 0) {
             $new_invoice_data['duedate'] = _d(date('Y-m-d', strtotime('+' . get_option('invoice_due_after') . ' DAY', strtotime($invoice_date))));
         }
