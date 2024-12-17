@@ -110,10 +110,12 @@ function convert_expense(pur_invoice,total){
 
     $.post(admin_url + 'purchase/get_project_info/'+pur_invoice+'/'+module_type).done(function(response){
       response = JSON.parse(response);
+      console.log(response);
       $('select[name="project_id"]').val(response.project_id).change();
       $('select[name="clientid"]').val(response.customer).change();
       $('select[name="currency"]').val(response.currency).change();
       $('input[name="vendor"]').val(response.vendor);
+      $('select[name="category"]').val(response.category).change();
     });
 
     $('#pur_invoice_expense').modal('show');

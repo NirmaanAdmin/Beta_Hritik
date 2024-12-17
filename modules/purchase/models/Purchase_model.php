@@ -14731,8 +14731,8 @@ class Purchase_model extends App_Model
             <tr>
                 <td style="padding: 8px;">Payment Date</td>
                 <td style="padding: 8px;">' . _d($invoice->payment_date) . '</td>
-                <td style="padding: 8px;"></td>
-                <td style="padding: 8px;"></td>
+                <td style="padding: 8px;">Budget Head</td>
+                <td style="padding: 8px;">' . get_group_name_by_id($invoice->group_pur) . '</td>
             </tr>
             <tr>
                 <td colspan="4"><hr class="mtop5 mbot5"></td>

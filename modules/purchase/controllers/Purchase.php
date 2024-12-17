@@ -5040,7 +5040,7 @@ class purchase extends AdminController
             $data['items']     = [];
             $data['ajaxItems'] = true;
         }
-
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $this->load->view('invoices/pur_invoice', $data);
     }
 
@@ -5279,6 +5279,7 @@ class purchase extends AdminController
         $data['members']           = $this->staff_model->get('', ['active' => 1]);
         $data['payment'] = $this->purchase_model->get_payment_invoice($id);
         $data['pur_invoice_attachments'] = $this->purchase_model->get_purchase_invoice_attachments($id);
+        $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();        
         $this->load->view('invoices/pur_invoice_preview', $data);
     }
 
@@ -8369,11 +8370,14 @@ class purchase extends AdminController
             $currency = $po->currency;
         }
 
+        
+
         echo json_encode([
             'project_id' => $project_id,
             'customer' => $customer,
             'currency' => $currency,
-            'vendor' => $po->vendor
+            'vendor' => $po->vendor,
+            'category' => $po->group_pur
         ]);
     }
     /**

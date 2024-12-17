@@ -3593,3 +3593,22 @@ function get_expense_data($expenseid = '')
     }
     return '';
 }
+
+
+
+function get_group_name_by_id($id)
+{
+    if(!empty($id)) {
+        
+        $CI = & get_instance();
+        $CI->db->select('name');
+        $CI->db->from(db_prefix() . 'items_groups');
+        $CI->db->where('id', $id);
+        $result = $CI->db->get()->row_array();
+        if(!empty($result)) {
+            return $result['name'];
+           
+        }
+    }
+    return '';
+}
