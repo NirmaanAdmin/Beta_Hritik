@@ -6916,7 +6916,7 @@ class purchase extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->purchase_model->create_purchase_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $unit_price, $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency);
+                    $list_item .= $this->purchase_model->create_purchase_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', '', $unit_price, $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency);
                 }
             }
         }
@@ -6991,7 +6991,7 @@ class purchase extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->purchase_model->create_purchase_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $unit_price, $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency);
+                    $list_item .= $this->purchase_model->create_purchase_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', '', $unit_price, $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency);
                 }
             }
         }
