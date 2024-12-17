@@ -1,4 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style type="text/css">
+  .table-responsive {
+    overflow-x: visible !important;
+    scrollbar-width: none !important;
+  }
+  .area .dropdown-menu .open {
+    width: max-content !important;
+  }
+</style>
 <?php hooks()->do_action('app_admin_head'); ?>
 <div id="wrapper">
   <div class="content">
@@ -271,23 +280,7 @@
                       </div>
                       <div class="col-md-6" style="clear: both;">
                         <div class="form-group select-placeholder">
-                          <?php
-
-                          $selected = '';
-                          // foreach ($area_pur as $area) {
-                          //   if (isset($estimate)) {
-                          //     if ($estimate->area_pur == $area['id']) {
-                          //       $selected = $area['id'];
-                          //     }
-                          //   }
-                          //   if (isset($selected_area)) {
-                          //     if ($selected_area == $area['id']) {
-                          //       $selected = $area['id'];
-                          //     }
-                          //   }
-                          // }
-                          echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
-                          ?>
+                          
                         </div>
                       </div>
                     </div>
@@ -389,16 +382,16 @@
                     <thead>
                       <tr>
                         <th></th>
-                        <th width="17%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
-                        <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
-                        <th width="7%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
-                        <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
-                        <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                        <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
-                        <th width="10%" align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
-                        <th width="7%" align="right"><?php echo _l('discount') . '(%)'; ?></th>
-                        <th width="10%" align="right"><?php echo _l('discount'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
-                        <th width="15%" align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
+                        <th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+                        <th align="right"><?php echo _l('area'); ?></th>
+                        <th align="right"><?php echo _l('Image'); ?></th>
+                        <th align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
+                        <th align="right" class="qty"><?php echo _l('quantity'); ?></th>
+                        <th align="right"><?php echo _l('subtotal_before_tax'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
+                        <th align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                        <th align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
+                        <th align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
+                        <th align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $estimate_currency->name . ')'; ?></span></th>
                         <th align="center"><i class="fa fa-cog"></i></th>
                       </tr>
                     </thead>
