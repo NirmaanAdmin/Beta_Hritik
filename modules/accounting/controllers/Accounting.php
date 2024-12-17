@@ -10991,7 +10991,7 @@ class Accounting extends AdminController
 
             $select_purchase = '0 as count_purchases';
             if(acc_get_status_modules('purchase')){
-                $select_purchase = '(select count(*) from ' . db_prefix() . 'pur_orders where ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_invoices.pur_order) as count_purchases';
+                $select_purchase = '(select count(*) from ' . db_prefix() . 'pur_orders where ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_invoices.pur_order) as count_purchases, final_certified_amount';
             }
 
             $aColumns     = $select;
@@ -11045,7 +11045,7 @@ class Accounting extends AdminController
                 $row[] = _d($aRow['invoice_date']);
                 $row[] = ' <a href="' . admin_url('purchase/purchase_invoice/' . $aRow['is_recurring_from']) . '" >' . get_pur_invoice_number($aRow['is_recurring_from']) . '</a>'; 
 
-                $row[] = app_format_money($aRow['subtotal'],$base_currency->symbol);
+                $row[] = app_format_money($aRow['final_certified_amount'],$base_currency->symbol);
                 $row[] = app_format_money($aRow['tax'],$base_currency->symbol);
                 $row[] = app_format_money($aRow['total'],$base_currency->symbol);
 
