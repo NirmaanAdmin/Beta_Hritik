@@ -9484,8 +9484,9 @@ class purchase extends AdminController
                         $rel_type = $options['rel_type'];
                         $project = $options['project'];
                         $requester = $options['requester'];
+                        $vendors = isset($options['vendors']) ? $options['vendors'] : '';
 
-                        $this->purchase_model->send_mail_to_approver($rel_type, $rel_name, $insert_id, $user_id, $status, $project, $requester);
+                        $this->purchase_model->send_mail_to_approver($rel_type, $rel_name, $insert_id, $user_id, $status, $project, $requester, $vendors);
                     }
                     if (isset($options['sender'])) {
                         if ($status == 2 || $status == 3) {

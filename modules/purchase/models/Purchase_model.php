@@ -1232,6 +1232,7 @@ class Purchase_model extends App_Model
         $cron_email_options['sender'] = 'yes';
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
+        $cron_email_options['vendors'] = !empty($data['send_to_vendors']) ? $data['send_to_vendors'] : NULL;
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_request', $insert_id);
@@ -1842,6 +1843,7 @@ class Purchase_model extends App_Model
         $cron_email_options['sender'] = 'yes';
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
+        $cron_email_options['vendors'] = !empty($data['vendor']) ? $data['vendor'] : NULL;
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_quotation', $insert_id);
@@ -2565,6 +2567,7 @@ class Purchase_model extends App_Model
         $cron_email_options['sender'] = 'yes';
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
+        $cron_email_options['vendors'] = !empty($data['vendor']) ? $data['vendor'] : NULL;
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_order', $insert_id);
@@ -14869,7 +14872,7 @@ class Purchase_model extends App_Model
         return $check_status;
     }
 
-    public function send_mail_to_approver($rel_type, $rel_name, $id, $user_id, $status, $project, $requester)
+    public function send_mail_to_approver($rel_type, $rel_name, $id, $user_id, $status, $project, $requester, $vendors = '')
     {
         $approver_list = $this->check_approval_setting($project, $rel_type, 1, $user_id);
         // $this->db->select('staffid as id, "approve" as action', FALSE);
@@ -14925,6 +14928,57 @@ class Purchase_model extends App_Model
                     $data = (object) $data;
                     $template = mail_template('work_order_to_approver', 'purchase', $data);
                     $template->send();
+                }
+            }
+        }
+
+        if(!empty($vendors)) {
+            $vendor_list = explode(',', $vendors);
+
+            $this->db->select('userid as id, email, firstname, lastname');
+            $this->db->where_in('userid', $vendor_list);
+            $vendor_list = $this->db->get('tblpur_contacts')->result_array();
+
+            $this->db->where('staffid', $user_id);
+            $login_staff = $this->db->get('tblstaff')->row();
+
+            if(!empty($vendor_list)) {
+                foreach ($vendor_list as $key => $value) {
+                    $data = array();
+                    $data['contact_firstname'] = $login_staff->firstname;
+                    $data['contact_lastname'] = $login_staff->lastname;
+
+                    if ($rel_name == 'purchase_request') {
+                        $data['mail_to'] = $value['email'];
+                        $data['pur_request_id'] = $id;
+                        $data = (object) $data;
+                        $template = mail_template('purchase_request_to_approver', 'purchase', $data);
+                        $template->send();
+                    }
+
+                    if ($rel_name == 'purchase_order') {
+                        $data['mail_to'] = $value['email'];
+                        $data['po_id'] = $id;
+                        $data = (object) $data;
+                        $template = mail_template('purchase_order_to_approver', 'purchase', $data);
+                        $template->send();
+                    }
+
+                    if ($rel_name == 'quotation') {
+                        $data['mail_to'] = $value['email'];
+                        $data['pur_estimate_id'] = $id;
+                        $data = (object) $data;
+                        $template = mail_template('purchase_quotation_to_approver', 'purchase', $data);
+                        $template->send();
+                    }
+
+                    if ($rel_name == 'work_order') {
+                        $data['mail_to'] = $value['email'];
+                        $data['wo_id'] = $id;
+                        $data = (object) $data;
+                        $template = mail_template('work_order_to_approver', 'purchase', $data);
+                        $template->send();
+                    }
                 }
             }
         }
