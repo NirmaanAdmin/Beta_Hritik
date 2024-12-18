@@ -62,7 +62,7 @@
                         <br><br>
                       </div>
 
-                      <div class="col-md-3 form-group">
+                      <!-- <div class="col-md-3 form-group">
                         <label for="sale_estimate"><?php echo _l('co_sale_estimate'); ?></label>
                         <select name="sale_estimate" id="sale_estimate" onchange="coppy_sale_estimate(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
@@ -73,7 +73,19 @@
                           <?php } ?>
                         </select>
                         <br><br>
-                      </div>
+                      </div> -->
+                      <div class="col-md-3 form-group">
+                    <label for="department"><?php echo _l('department'); ?></label>
+                    <select name="department" id="department" class="selectpicker" onchange="department_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                      <option value=""></option>
+                      <?php foreach ($departments as $s) { ?>
+                        <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if (isset($co_request) && $s['departmentid'] == $co_request->department) {
+                                                                                                            echo 'selected';
+                                                                                                          } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
+                      <?php } ?>
+                    </select>
+                    <br><br>
+                  </div>
 
                       <div class="col-md-3 form-group">
                         <label for="type"><?php echo _l('type'); ?></label>
@@ -108,18 +120,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-3 form-group">
-                    <label for="department"><?php echo _l('department'); ?></label>
-                    <select name="department" id="department" class="selectpicker" onchange="department_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                      <option value=""></option>
-                      <?php foreach ($departments as $s) { ?>
-                        <option value="<?php echo changee_pur_html_entity_decode($s['departmentid']); ?>" <?php if (isset($co_request) && $s['departmentid'] == $co_request->department) {
-                                                                                                            echo 'selected';
-                                                                                                          } ?>><?php echo changee_pur_html_entity_decode($s['name']); ?></option>
-                      <?php } ?>
-                    </select>
-                    <br><br>
-                  </div>
+                  
 
 
                   <!-- <div class="col-md-3 form-group ">
@@ -178,6 +179,21 @@
                           <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_receipt) && ($goods_receipt->pr_order_id == $pr_order['id'])) {
                                                                                                 echo 'selected';
                                                                                               } ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3 form-group">
+                    <div class="form-group">
+                      <label for="wo_order_id"><?php echo _l('wo_order'); ?></label>
+                      <select name="wo_order_id" id="wo_order_id" onchange="coppy_wo_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                        <option value=""></option>
+                        <?php 
+                        
+                        foreach ($wo_orders as $pr_order) { ?>
+                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($co_request) && ($co_request->wo_order_id == $pr_order['id'])) {
+                                                                                                echo 'selected';
+                                                                                              } ?>><?php echo html_entity_decode($pr_order['wo_order_number'] . ' - ' . $pr_order['wo_order_name']); ?></option>
                         <?php } ?>
                       </select>
                     </div>
@@ -330,6 +346,7 @@
                           <th width="10%" align="right" class="qty"><?php echo _l('original_quantity'); ?></th>
                           <th width="10%" align="right" class="qty"><?php echo _l('updated_quantity'); ?></th>
                           <th width="10%" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('updated_subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th width="5%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
                           <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>

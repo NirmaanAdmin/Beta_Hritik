@@ -1135,7 +1135,7 @@ class Changee_model extends App_Model
      */
     public function add_co_request($data)
     {
-        
+       
         $data['request_date'] = date('Y-m-d H:i:s');
         $check_appr = $this->check_approval_setting($data['project'], 'co_request', 0);
         $data['status'] = ($check_appr == true) ? 2 : 1;
@@ -1162,6 +1162,7 @@ class Changee_model extends App_Model
         unset($data['original_quantity']);
         unset($data['quantity']);
         unset($data['into_money']);
+        unset($data['into_money_updated']);
         unset($data['tax_select']);
         unset($data['tax_value']);
         unset($data['total']);
@@ -1239,6 +1240,7 @@ class Changee_model extends App_Model
                     $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
+                    $dt_data['into_money_updated'] = $rqd['into_money_updated'];
                     $dt_data['total'] = $rqd['total'];
                     $dt_data['tax_value'] = $rqd['tax_value'];
                     $dt_data['item_text'] = nl2br($rqd['item_text']);
@@ -3824,7 +3826,6 @@ class Changee_model extends App_Model
     public function get_co_request_pdf_html($co_request_id)
     {
         $this->load->model('departments_model');
-
         $co_request = $this->get_changee_request($co_request_id);
         $co_request_detail = $this->get_co_request_detail($co_request_id);
         $company_name = get_option('invoice_company_name');
@@ -3883,13 +3884,15 @@ class Changee_model extends App_Model
         foreach ($co_request_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
+            $diff =  $row['unit_price'] - $row['original_unit_price'];
+            $diff_unit = $row['quantity'] - $row['original_quantity'];
             $html .= '<tr nobr="true" class="sortable">
             <td>' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td>' . $row['description'] . '</td>
             <td align="right">' . $units->unit_name . '</td>
-            <td align="right">' . app_format_money($row['original_unit_price'], '') . '</td>
+            <td align="right">' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block;">Diff : ' . $diff . '</span></td>
             <td align="right">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right">' . $row['original_quantity'] . '</td>
+            <td align="right">' . $row['original_quantity'] . '<br><span style="display: block;">Diff : ' . $diff_unit . '</span></td>
             <td align="right">' . $row['quantity'] . '</td>
             <td align="right">' . app_format_money($row['into_money'], '') . '</td>
             <td align="right">' . $row['inventory_quantity'] . '</td>
@@ -10262,7 +10265,7 @@ class Changee_model extends App_Model
      * @param      array   $unit_data  The unit data
      * @param      string  $name       The name
      */
-    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '',$into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -10300,6 +10303,7 @@ class Changee_model extends App_Model
             $invoice_item_taxes = '';
             $total = '';
             $into_money = 0;
+            $into_money_updated = 0;
         } else {
             $manual             = false;
             $row .= '<tr class="sortable item">
@@ -10314,6 +10318,7 @@ class Changee_model extends App_Model
             $name_original_quantity = $name . '[original_quantity]';
             $name_quantity = $name . '[quantity]';
             $name_into_money = $name . '[into_money]';
+            $name_into_money_updated = $name . '[into_money_updated]';
             $name_tax = $name . '[tax]';
             $name_tax_value = $name . '[tax_value]';
             $name_tax_name = $name . '[tax_name]';
@@ -10349,14 +10354,14 @@ class Changee_model extends App_Model
                 $amount = (float)$unit_price * (float)$quantity;
             }
 
-            $into_money = (float)$unit_price * (float)$quantity;
+            $into_money_updated = (float)$unit_price * (float)$quantity;
             $total = $amount;
         }
 
 
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]) . '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin');
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation">Var : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10370,13 +10375,14 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
-        $row .= '<td class="original_quantities">'.render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin').'</td>';
+        $row .= '<td class="original_quantities">'.render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation_unit">Diff : </span> '.$unit_name.'</td>';
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
             '</td>';
 
         $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="into_money_updated">' . render_input($name_into_money_updated, '', $into_money_updated, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
         $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="hide item_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
@@ -14550,6 +14556,31 @@ class Changee_model extends App_Model
 
         return $pur_order_lst;
     }
+    /**
+     * Gets the pur order detail in po.
+     *
+     * @param      <int>  $pur_request  The pur request
+     *
+     * @return     <array>  The pur request detail in po.
+     */
+    public function get_wo_order_detail_in_po($wo_order)
+    {
+       
+        $wo_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
+        FROM ' . db_prefix() . 'wo_order_detail prq 
+        LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id 
+        WHERE prq.wo_order = ' . $wo_order)->result_array();
+
+        foreach ($wo_order_lst as $key => $detail) {
+            $wo_order_lst[$key]['into_money'] = (float) $detail['into_money'];
+            $wo_order_lst[$key]['total'] = (float) $detail['total'];
+            $wo_order_lst[$key]['total_money'] = (float) $detail['total_money'];
+            $wo_order_lst[$key]['unit_price'] = (float) $detail['unit_price'];
+            $wo_order_lst[$key]['tax_value'] = (float) $detail['tax_value'];
+        }
+
+        return $wo_order_lst;
+    }
      /**
      * Gets the purchase request.
      *
@@ -14574,6 +14605,15 @@ class Changee_model extends App_Model
         } else {
             $this->db->where('id', $id);
             return $this->db->get(db_prefix() . 'pur_orders')->row();
+        }
+    }
+    public function get_work_order($id = '')
+    {
+        if ($id == '') {
+           
+        } else {
+            $this->db->where('id', $id);
+            return $this->db->get(db_prefix() . 'wo_orders')->row();
         }
     }
 }

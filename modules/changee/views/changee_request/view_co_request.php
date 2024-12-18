@@ -254,6 +254,7 @@
                             <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?></th>
 
                             <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?></th>
+                            <th width="10%" align="right"><?php echo _l('updated_subtotal_before_tax'); ?></th>
                             <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
                             <th width="10%" align="right"><?php echo _l('tax_value'); ?></th>
                             <th width="10%" align="right"><?php echo _l('debit_note_total'); ?></th>
@@ -267,7 +268,7 @@
                             $count = 1;
                             $t_mn = 0;
                             foreach ($co_request_detail as $es) {
-                              $_subtotal += $es['into_money'];
+                              $_subtotal += $es['into_money_updated'];
                               $_total += $es['total'];
                           ?>
                               <tr nobr="true" class="sortable">
@@ -281,14 +282,17 @@
                                                                                     }
                                                                                     ?></strong></td>
                                 <?php
+                                $diff =  $es['unit_price'] - $es['original_unit_price'];
+                                $diff_unit = $es['quantity'] - $es['original_quantity'];
                                 $unit_name = changee_pur_get_unit_name($es['unit_id']);
                                 ?>
                                 <td align="right"><?php echo nl2br($es['description']); ?></td>
-                                <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></td>
+                                <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></br><span>Diff :<?php echo  $diff_unit; ?></span></td>
                                 <td align="right"><?php echo changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
-                                <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></td>
+                                <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></br><span>Diff :<?php echo  $diff; ?></span></td>
                                 <td align="right"><?php echo app_format_money($es['unit_price'], $base_currency->symbol); ?></td>
                                 <td align="right"><?php echo app_format_money($es['into_money'], $base_currency->symbol); ?></td>
+                                <td align="right"><?php echo app_format_money($es['into_money_updated'], $base_currency->symbol); ?></td>
                                 <td align="right"><?php
                                                   if ($es['tax_name'] != '') {
                                                     echo changee_pur_html_entity_decode($es['tax_name']);

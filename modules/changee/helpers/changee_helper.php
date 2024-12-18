@@ -3270,6 +3270,19 @@ function get_po_order($id = false)
         return $CI->db->query('select * from tblpur_orders where approve_status = 2 AND status_goods = 0')->result_array();
     }
 }
+function get_wo_order($id = false)
+{
+    $CI = &get_instance();
+
+    if (is_numeric($id)) {
+        $CI->db->where('id', $id);
+        return $CI->db->get(db_prefix() . 'wo_orders')->row();
+    }
+    if ($id == false) {
+        return $CI->db->query('select * from tblwo_orders where approve_status = 2 AND status_goods = 0')->result_array();
+    }
+}
+
 
 function get_status_modules_co($module_name)
 {

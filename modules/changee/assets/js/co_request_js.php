@@ -257,7 +257,7 @@ function tax_rate_by_id(tax_id){
   return tax_rate;
 }
 
-function pur_get_item_row_template(name, item_code, item_text, description, original_unit_price, unit_price, original_quantity, quantity, unit_name, unit_id, into_money, item_key, tax_value, total, taxname, currency_rate, to_currency)  {
+function pur_get_item_row_template(name, item_code, item_text, description, original_unit_price, unit_price, original_quantity, quantity, unit_name, unit_id, into_money,into_money_updated, item_key, tax_value, total, taxname, currency_rate, to_currency)  {
   "use strict";
 
   jQuery.ajaxSetup({
@@ -275,6 +275,7 @@ function pur_get_item_row_template(name, item_code, item_text, description, orig
     unit_name : unit_name,
     unit_id : unit_id,
     into_money : into_money,
+    into_money_updated : into_money_updated,
     item_key : item_key,
     tax_value : tax_value,
     taxname : taxname,
@@ -306,7 +307,7 @@ function pur_add_item_to_table(data, itemid) {
   var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
   lastAddedItemKey = item_key;
   $("body").append('<div class="dt-loader"></div>');
-  pur_get_item_row_template('newitems[' + item_key + ']', data.item_code, data.item_text, data.description, data.original_unit_price, data.unit_price, data.original_quantity, data.quantity, data.unit_name, data.unit_id, data.into_money, item_key, data.tax_value, data.total, data.taxname, currency_rate, to_currency).done(function(output){
+  pur_get_item_row_template('newitems[' + item_key + ']', data.item_code, data.item_text, data.description, data.original_unit_price, data.unit_price, data.original_quantity, data.quantity, data.unit_name, data.unit_id, data.into_money,data.into_money_updated, item_key, data.tax_value, data.total, data.taxname, currency_rate, to_currency).done(function(output){
     table_row += output;
 
     $('.invoice-item table.invoice-items-table.items tbody').append(table_row);
@@ -364,6 +365,7 @@ function pur_get_item_preview_values() {
   response.tax_rate = $('.invoice-item .main input[name="tax_rate"]').val();
   response.tax_value = $('.invoice-item .main input[name="tax_value"]').val();
   response.into_money = $('.invoice-item .main input[name="into_money"]').val();
+  response.into_money_updated = $('.invoice-item .main input[name="into_money_updated"]').val();
   response.total = $('.invoice-item .main input[name="total"]').val();
 
   return response;
@@ -414,7 +416,15 @@ function pur_calculate_total(){
     var tax_value = 0;
     var row_total = _amount;
 
-    $(this).find('td.into_money input').val(_amount);
+    $(this).find('td.into_money_updated input').val(_amount);
+    var variation =  $(this).find('td.rate input').val() - $(this).find('td.original_rate input').val();
+
+    $(this).find('td.original_rate span').html('Diff: ' + variation);
+
+
+    var variation_unit = $(this).find('td.quantities input').val() - $(this).find('td.original_quantities input').val() ;
+
+    $(this).find('td.original_quantities span').html('Diff: ' + variation_unit);
 
     subtotal += _amount;
     row = $(this);
@@ -559,6 +569,37 @@ function coppy_pur_orders(){
   var vendor = $('select[name="vendor"]').val();
   if(pur_order != ''){
     $.post(admin_url + 'changee/coppy_pur_order_for_co/'+pur_order).done(function(response){
+        response = JSON.parse(response);
+        if(response){ 
+          // $('select[name="estimate"]').html(response.estimate_html);
+          // $('select[name="estimate"]').selectpicker('refresh');
+
+          $('select[name="currency"]').val(response.currency).change();
+          $('input[name="currency_rate"]').val(response.currency_rate).change();
+
+          $('.invoice-item table.invoice-items-table.items tbody').html('');
+          $('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
+
+          setTimeout(function () {
+            pur_calculate_total();
+          }, 15);
+
+          init_selectpicker();
+          pur_reorder_items('.invoice-item');
+          pur_clear_item_preview_values('.invoice-item');
+          $('body').find('#items-warning').remove();
+          $("body").find('.dt-loader').remove();
+          $('#item_select').selectpicker('val', '');
+        }   
+    });
+  }
+}
+function coppy_wo_orders(){
+  "use strict";
+  var wo_order = $('select[name="wo_order_id"]').val();
+  var vendor = $('select[name="vendor"]').val();
+  if(wo_order != ''){
+    $.post(admin_url + 'changee/coppy_wo_order_for_co/'+wo_order).done(function(response){
         response = JSON.parse(response);
         if(response){ 
           // $('select[name="estimate"]').html(response.estimate_html);
