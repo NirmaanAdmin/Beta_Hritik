@@ -3490,6 +3490,7 @@ class purchase extends AdminController
 
             if (isset($data['pur_order'])) {
                 $pur_order = $data['pur_order'];
+                $data['po_id'] = $pur_order;
                 unset($data['pur_order']);
             }
 
@@ -3516,6 +3517,7 @@ class purchase extends AdminController
 
             if (isset($data['wo_order'])) {
                 $wo_order = $data['wo_order'];
+                $data['wo_id'] = $wo_order;
                 unset($data['wo_order']);
             }
 

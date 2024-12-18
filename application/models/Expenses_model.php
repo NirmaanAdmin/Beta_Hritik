@@ -570,32 +570,74 @@ class Expenses_model extends App_Model
             $expense->expenseid,
         ];
         $new_invoice_data['allowed_payment_modes']           = $temp_modes;
-        $new_invoice_data['newitems'][1]['description']      = $expense->name;
-        $new_invoice_data['newitems'][1]['long_description'] = $expense->description;
+        if(!empty($expense->po_id)) {
+            $pur_order_detail = $this->pur_order_detail($expense->po_id);
+            if(!empty($pur_order_detail)) {
+                foreach ($pur_order_detail as $key => $po_value) {
+                    $new_invoice_data['newitems'][$key+1]['description'] = $po_value['item_name'];
+                    $new_invoice_data['newitems'][$key+1]['long_description'] = $po_value['description'];
+                    $new_invoice_data['newitems'][$key+1]['unit'] = 'nos';
+                    $new_invoice_data['newitems'][$key+1]['qty'] = $po_value['quantity'];
+                    $new_invoice_data['newitems'][$key+1]['rate'] = $po_value['unit_price'];
+                    $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
+                    $new_invoice_data['newitems'][$key+1]['taxname'] = [];
+                    if(!empty($po_value['tax'])) {
+                        $po_tax_array = explode('|', $po_value['tax']);
+                        foreach ($po_tax_array as $ptkey => $ptvalue) {
+                            $tax_data = get_tax_by_id($ptvalue);
+                            array_push($new_invoice_data['newitems'][$key+1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
+                        }
+                    }
+                }
+            }
+        } else if(!empty($expense->wo_id)) {
+            $work_order_detail = $this->work_order_detail($expense->wo_id);
+            if(!empty($work_order_detail)) {
+                foreach ($work_order_detail as $key => $wo_value) {
+                    $new_invoice_data['newitems'][$key+1]['description'] = $wo_value['item_name'];
+                    $new_invoice_data['newitems'][$key+1]['long_description'] = $wo_value['description'];
+                    $new_invoice_data['newitems'][$key+1]['unit'] = 'nos';
+                    $new_invoice_data['newitems'][$key+1]['qty'] = $wo_value['quantity'];
+                    $new_invoice_data['newitems'][$key+1]['rate'] = $wo_value['unit_price'];
+                    $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
+                    $new_invoice_data['newitems'][$key+1]['taxname'] = [];
+                    if(!empty($wo_value['tax'])) {
+                        $wo_tax_array = explode('|', $wo_value['tax']);
+                        foreach ($wo_tax_array as $wtkey => $wtvalue) {
+                            $tax_data = get_tax_by_id($wtvalue);
+                            array_push($new_invoice_data['newitems'][$key+1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
+                        }
+                    }
+                }
+            }
+        } else {
+            $new_invoice_data['newitems'][1]['description']      = $expense->name;
+            $new_invoice_data['newitems'][1]['long_description'] = $expense->description;
 
-        if (isset($params['include_note']) && $params['include_note'] == true && !empty($expense->note)) {
-            $new_invoice_data['newitems'][1]['long_description'] .= PHP_EOL . $expense->note;
-        }
-        if (isset($params['include_name']) && $params['include_name'] == true && !empty($expense->expense_name)) {
-            $new_invoice_data['newitems'][1]['long_description'] .= PHP_EOL . $expense->expense_name;
-        }
+            if (isset($params['include_note']) && $params['include_note'] == true && !empty($expense->note)) {
+                $new_invoice_data['newitems'][1]['long_description'] .= PHP_EOL . $expense->note;
+            }
+            if (isset($params['include_name']) && $params['include_name'] == true && !empty($expense->expense_name)) {
+                $new_invoice_data['newitems'][1]['long_description'] .= PHP_EOL . $expense->expense_name;
+            }
 
-        $new_invoice_data['newitems'][1]['unit']    = '';
-        $new_invoice_data['newitems'][1]['qty']     = 1;
-        $new_invoice_data['newitems'][1]['taxname'] = [];
-        if ($expense->tax != 0) {
-            $tax_data = get_tax_by_id($expense->tax);
-            array_push($new_invoice_data['newitems'][1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
-        }
-        if ($expense->tax2 != 0) {
-            $tax_data = get_tax_by_id($expense->tax2);
-            array_push($new_invoice_data['newitems'][1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
-        }
+            $new_invoice_data['newitems'][1]['unit']    = '';
+            $new_invoice_data['newitems'][1]['qty']     = 1;
+            $new_invoice_data['newitems'][1]['taxname'] = [];
+            if ($expense->tax != 0) {
+                $tax_data = get_tax_by_id($expense->tax);
+                array_push($new_invoice_data['newitems'][1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
+            }
+            if ($expense->tax2 != 0) {
+                $tax_data = get_tax_by_id($expense->tax2);
+                array_push($new_invoice_data['newitems'][1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
+            }
 
-        $new_invoice_data['newitems'][1]['rate']  = $expense->amount;
-        $new_invoice_data['newitems'][1]['order'] = 1;
+            $new_invoice_data['newitems'][1]['rate']  = $expense->amount;
+            $new_invoice_data['newitems'][1]['order'] = 1;
+        }
         $this->load->model('invoices_model');
-       
+        
         $invoiceid = $this->invoices_model->add($new_invoice_data, true);
       
         if ($invoiceid) {
@@ -803,5 +845,19 @@ class Expenses_model extends App_Model
     public function get_expenses_years()
     {
         return $this->db->query('SELECT DISTINCT(YEAR(date)) as year FROM ' . db_prefix() . 'expenses ORDER by year DESC')->result_array();
+    }
+
+    public function pur_order_detail($po_id)
+    {
+        $this->db->where('pur_order', $po_id);
+        $this->db->order_by('id', 'desc');
+        return $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+    }
+
+    public function work_order_detail($wo_id)
+    {
+        $this->db->where('wo_order', $wo_id);
+        $this->db->order_by('id', 'desc');
+        return $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
     }
 }
