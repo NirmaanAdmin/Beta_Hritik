@@ -176,7 +176,7 @@
                       <select name="po_order_id" id="po_order_id" onchange="coppy_pur_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                         <option value=""></option>
                         <?php foreach ($pr_orders as $pr_order) { ?>
-                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_receipt) && ($goods_receipt->pr_order_id == $pr_order['id'])) {
+                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($co_request) && ($co_request->po_order_id == $pr_order['id'])) {
                                                                                                 echo 'selected';
                                                                                               } ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?></option>
                         <?php } ?>
