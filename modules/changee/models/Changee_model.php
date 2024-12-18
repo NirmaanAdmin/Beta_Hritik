@@ -1378,6 +1378,7 @@ class Changee_model extends App_Model
                 $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
+                $dt_data['into_money_updated'] = $rqd['into_money_updated'];
                 $dt_data['total'] = $rqd['total'];
                 $dt_data['tax_value'] = $rqd['tax_value'];
                 $dt_data['item_text'] = nl2br($rqd['item_text']);
