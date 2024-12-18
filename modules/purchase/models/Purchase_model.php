@@ -10833,7 +10833,11 @@ class Purchase_model extends App_Model
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
-        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $style_description = '';
+        if($is_edit) {
+            $style_description = 'width: 290px; height: 200px';
+        }
+        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
         $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
@@ -11509,7 +11513,11 @@ class Purchase_model extends App_Model
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
-        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $style_description = '';
+        if($is_edit) {
+            $style_description = 'width: 290px; height: 200px';
+        }
+        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
         $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
@@ -16441,7 +16449,11 @@ class Purchase_model extends App_Model
 
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
-        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $style_description = '';
+        if($is_edit) {
+            $style_description = 'width: 290px; height: 200px';
+        }
+        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
         $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
