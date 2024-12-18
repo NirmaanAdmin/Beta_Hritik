@@ -348,8 +348,9 @@
                           <th width="10%" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th width="10%" align="right"><?php echo _l('updated_subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
                           <th width="5%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
-                          <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                          <!-- <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th> -->
                           <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                           <th width="5%" align="right"><?php echo _l('remarks'); ?></th>
                           <th align="right"><i class="fa fa-cog"></i></th>
                         </tr>
                       </thead>

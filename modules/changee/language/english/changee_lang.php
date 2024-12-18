@@ -714,3 +714,5 @@ $lang['updated_unit_price'] = 'Updated unit price';
 $lang['original_quantity'] = 'Original quantity';
 $lang['updated_quantity'] = 'Updated quantity';
 $lang['wo_order'] = 'Work Order';
+$lang['remarks'] = 'Remarks';
+$lang['change_request_quotation'] = 'Change Request Quotation';

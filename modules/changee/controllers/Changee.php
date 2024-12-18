@@ -612,7 +612,7 @@ class changee extends AdminController
                         $item_text = changee_pur_get_item_variatiom($request_detail['item_code']);
                     }
 
-                    $changee_request_row_template .= $this->changee_model->create_changee_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['original_unit_price'], $request_detail['unit_price'], $request_detail['original_quantity'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'],$request_detail['into_money_updated'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency);
+                    $changee_request_row_template .= $this->changee_model->create_changee_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['original_unit_price'], $request_detail['unit_price'], $request_detail['original_quantity'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'],$request_detail['into_money_updated'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency, $request_detail['remarks']);
                 }
             }
         }
@@ -6342,7 +6342,7 @@ class changee extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency);
+                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency,'');
                 }
             }
         }
@@ -6417,7 +6417,7 @@ class changee extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money,'', $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency);
+                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money,'', $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency,'');
                 }
             }
         }
@@ -7471,8 +7471,9 @@ class changee extends AdminController
         $item_code = $this->input->post('item_code');
         $currency_rate = $this->input->post('currency_rate');
         $to_currency = $this->input->post('to_currency');
+        $remarks = $this->input->post('remarks');
 
-        echo $this->changee_model->create_changee_request_row_template($name, $item_code, $item_text, $item_description, $original_unit_price, $unit_price, $original_quantity, $quantity, $unit_name, $unit_id, $into_money,$into_money_updated, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency);
+        echo $this->changee_model->create_changee_request_row_template($name, $item_code, $item_text, $item_description, $original_unit_price, $unit_price, $original_quantity, $quantity, $unit_name, $unit_id, $into_money,$into_money_updated, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency,$remarks);
     }
 
     /**
@@ -8898,7 +8899,7 @@ class changee extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency);
+                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks']);
                 
                
             }
@@ -8967,7 +8968,7 @@ class changee extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency);
+                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks']);
                 
                
             }
