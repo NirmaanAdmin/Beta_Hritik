@@ -874,11 +874,9 @@
 
 <div class="btn-bottom-pusher"></div>
 <div class="btn-bottom-toolbar text-right">
-    <?php if (!isset($invoice)) { ?>
-        <button class="btn-tr btn btn-default mright5 text-right invoice-form-submit save-as-draft transaction-submit">
-            <?php echo _l('save_as_draft'); ?>
-        </button>
-    <?php } ?>
+    <button class="btn-tr btn btn-default mright5 text-right invoice-form-submit save-as-draft transaction-submit">
+        <?php echo _l('save_as_draft'); ?>
+    </button>
     <div class="btn-group dropup">
         <button type="button"
             class="btn-tr btn btn-primary invoice-form-submit transaction-submit"><?php echo _l('submit'); ?></button>

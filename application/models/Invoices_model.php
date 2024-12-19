@@ -744,6 +744,14 @@ class Invoices_model extends App_Model
         serialize($data['allowed_payment_modes']) :
         serialize([]);
 
+        if (isset($data['save_as_draft'])) {
+            $data['status'] = self::STATUS_DRAFT;
+            unset($data['save_as_draft']);
+        } elseif (isset($data['save_and_send_later'])) {
+            $data['status'] = self::STATUS_DRAFT;
+            unset($data['save_and_send_later']);
+        }
+
         if (isset($data['recurring'])) {
             if ($data['recurring'] == 'custom') {
                 $data['recurring_type']   = $data['repeat_type_custom'];
