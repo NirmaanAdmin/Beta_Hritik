@@ -121,13 +121,13 @@
                            _l('po_description'),
                            _l('po_value'),
                            _l('tax_value'),
+                           _l('convert_expense'),
                            _l('po_value_included_tax'),
                            _l('tags'),
                            _l('approval_status'),
                            _l('delivery_date'),
                            _l('delivery_status'),
                            _l('payment_status'),
-                           _l('convert_expense'),
                            );
                        $custom_fields = get_custom_fields('pur_order',array('show_on_table'=>1));
                     

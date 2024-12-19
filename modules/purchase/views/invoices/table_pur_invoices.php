@@ -18,13 +18,13 @@ $aColumns = [
     'invoice_date',
     'vendor_submitted_amount_without_tax',
     'vendor_submitted_tax_amount',
+    'expense_convert',
     'vendor_submitted_amount',
     'final_certified_amount',
     'payment_request_status',
     'payment_status',
     'transactionid',
     'vendor_note',
-    'expense_convert',
 ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'pur_invoices';

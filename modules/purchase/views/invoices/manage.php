@@ -61,13 +61,13 @@
                         _l('invoice_date'),
                         _l('amount_without_tax'),
                         _l('tax_value'),
+                        _l('convert_expense'),
                         _l('total_included_tax'),
                         _l('certified_amount'),
                         _l('payment_request_status'),
                         _l('billing_status'),
                         _l('transaction_id'),
                         _l('tag'),
-                        _l('convert_expense'),
                         );
 
                     $custom_fields = get_custom_fields('pur_invoice',array('show_on_table'=>1));

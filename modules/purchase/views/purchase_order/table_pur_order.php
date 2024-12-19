@@ -19,13 +19,13 @@ $aColumns = [
     'pur_order_name',
     'subtotal',
     'total_tax',
+    'expense_convert',
     'total',
     '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags', 
     'approve_status',
     'delivery_date',
     'delivery_status',
     'number',
-    'expense_convert',
     ];
 
 if(isset($vendor) || isset($project)){
