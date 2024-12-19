@@ -146,6 +146,11 @@ function convert_expense_wo(wo_order,total){
       $('select[name="clientid"]').val(response.customer).change();
       $('select[name="currency"]').val(response.currency).change();
       $('input[name="vendor"]').val(response.vendor);
+      if(response.budget_head) {
+        $('#category').val(response.budget_head).change();
+      } else {
+        $('#category').val('').change();
+      }
     });
 
     $('#wo_order_expense').modal('show');

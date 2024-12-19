@@ -125,6 +125,11 @@ function convert_expense(pur_order,total){
       $('select[name="clientid"]').val(response.customer).change();
       $('select[name="currency"]').val(response.currency).change();
       $('input[name="vendor"]').val(response.vendor);
+      if(response.budget_head) {
+        $('#category').val(response.budget_head).change();
+      } else {
+        $('#category').val('').change();
+      }
     });
 
     $('#pur_order_expense').modal('show');

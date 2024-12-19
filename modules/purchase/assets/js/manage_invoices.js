@@ -116,6 +116,11 @@ function convert_expense(pur_invoice,total){
       $('select[name="currency"]').val(response.currency).change();
       $('input[name="vendor"]').val(response.vendor);
       $('select[name="category"]').val(response.category).change();
+      if(response.budget_head) {
+        $('#category').val(response.budget_head).change();
+      } else {
+        $('#category').val('').change();
+      }
     });
 
     $('#pur_invoice_expense').modal('show');

@@ -508,7 +508,7 @@ class Expenses_model extends App_Model
         $new_invoice_data['number']   = get_option('next_invoice_number');
         $invoice_date                 = (isset($params['invoice_date']) ? $params['invoice_date'] : date('Y-m-d'));
         $new_invoice_data['date']     = _d($invoice_date);
-        $new_invoice_data['group_pur'] = $expense->category;
+        $new_invoice_data['group_pur'] = $this->find_budget_head_value($expense->category);
         if (get_option('invoice_due_after') != 0) {
             $new_invoice_data['duedate'] = _d(date('Y-m-d', strtotime('+' . get_option('invoice_due_after') . ' DAY', strtotime($invoice_date))));
         }
@@ -859,5 +859,19 @@ class Expenses_model extends App_Model
         $this->db->where('wo_order', $wo_id);
         $this->db->order_by('id', 'desc');
         return $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
+    }
+
+    public function find_budget_head_value($exp_id)
+    {
+        $this->db->where('id', $exp_id);
+        $expenses_categories = $this->db->get('tblexpenses_categories')->row();
+
+        $this->db->select('id');
+        $this->db->where('name', $expenses_categories->name);
+        $budget_head = $this->db->get('tblitems_groups')->row();
+        if(!empty($budget_head)) {
+            return $budget_head->id;
+        }
+        return '';
     }
 }

@@ -16625,4 +16625,18 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->get('tblvendor_ratings')->row_array();
     }
+
+    public function find_budget_head_value($group_pur)
+    {
+        $this->db->where('id', $group_pur);
+        $budget_head = $this->db->get('tblitems_groups')->row();
+
+        $this->db->select('id');
+        $this->db->where('name', $budget_head->name);
+        $expenses_categories = $this->db->get('tblexpenses_categories')->row();
+        if(!empty($expenses_categories)) {
+            return $expenses_categories->id;
+        }
+        return '';
+    }
 }

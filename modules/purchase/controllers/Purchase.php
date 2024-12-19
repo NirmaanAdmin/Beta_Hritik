@@ -8336,10 +8336,17 @@ class purchase extends AdminController
      */
     public function get_project_info($pur_order, $module_type = 0)
     {
+        $budget_head = '';
         if ($module_type == 1) {
             $po = $this->purchase_model->get_pur_invoice($pur_order);
+            if(!empty($po->group_pur)) {
+                $budget_head = $this->purchase_model->find_budget_head_value($po->group_pur);
+            }
         } else {
             $po = $this->purchase_model->get_pur_order($pur_order);
+            if(!empty($po->group_pur)) {
+                $budget_head = $this->purchase_model->find_budget_head_value($po->group_pur);
+            }
         }
 
         $this->load->model('projects_model');
@@ -8375,6 +8382,7 @@ class purchase extends AdminController
         
 
         echo json_encode([
+            'budget_head' => $budget_head,
             'project_id' => $project_id,
             'customer' => $customer,
             'currency' => $currency,
@@ -8387,7 +8395,11 @@ class purchase extends AdminController
      */
     public function get_project_info_wo($wo_order)
     {
+        $budget_head = '';
         $wo = $this->purchase_model->get_wo_order($wo_order);
+        if(!empty($wo->group_pur)) {
+            $budget_head = $this->purchase_model->find_budget_head_value($wo->group_pur);
+        }
 
         $this->load->model('projects_model');
 
@@ -8411,6 +8423,7 @@ class purchase extends AdminController
         }
 
         echo json_encode([
+            'budget_head' => $budget_head,
             'project_id' => $project_id,
             'customer' => $customer,
             'currency' => $currency,
