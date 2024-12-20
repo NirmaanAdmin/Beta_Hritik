@@ -3939,3 +3939,4 @@ $lang['proposal_auto_convert_to_invoice_on_client_accept'] = 'Auto convert the p
 $lang['invoice_activity_auto_converted_from_proposal']      = 'Invoice auto created from proposal with number %s';
 $lang['clients_proposal_invoiced_successfully'] = 'Thank you for accepting the proposal. Please review the created invoice for the proposal';
 $lang['hsn_sac'] = 'HSN/SAC Code'; 
+$lang['invoice_title'] = 'Invoice title'; 

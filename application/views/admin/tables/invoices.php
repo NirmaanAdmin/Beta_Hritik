@@ -11,6 +11,7 @@ return App_table::find('invoices')
 
         $aColumns = [
             'number',
+            'title',
             'total',
             'YEAR(date) as year',
             'date',
@@ -74,6 +75,7 @@ return App_table::find('invoices')
             'hash',
             'recurring',
             'deleted_customer_name',
+            'title',
         ]);
         $output  = $result['output'];
         $rResult = $result['rResult'];
@@ -103,6 +105,8 @@ return App_table::find('invoices')
             $numberOutput .= '</div>';
 
             $row[] = $numberOutput;
+
+            $row[] = $aRow['title'];
 
             $row[] = e(app_format_money($aRow['total'], $aRow['currency_name']));
 

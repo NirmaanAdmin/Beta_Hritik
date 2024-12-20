@@ -2,6 +2,7 @@
 
 $table_data = array(
   _l('invoice_dt_table_heading_number'),
+  _l('invoice_title'),
   _l('invoice_dt_table_heading_amount'),
   _l('invoice_amount_due'),
   array(

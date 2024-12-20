@@ -18,7 +18,7 @@
         <div class="tw-flex tw-justify-between tw-items-center tw-mb-2 last:tw-mb-0">
             <div>
                 <a href="<?php echo admin_url('invoices/list_invoices/' . $_inv->id); ?>" target="_blank"
-                    class="tw-font-medium"><?php echo e(format_invoice_number($_inv->id)); ?></a> -
+                    class="tw-font-medium"><?php echo e(format_invoice_number($_inv->id))." (".$_inv->title.")"; ?></a> -
                 <span class="tw-text-neutral-500">
                     <?php echo e(app_format_money($_inv->total, $_inv->currency_name)); ?>
                 </span>

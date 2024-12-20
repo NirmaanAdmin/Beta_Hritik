@@ -8,7 +8,7 @@ if (count($invoices_to_merge) > 0) { ?>
         <label for="">
             <a href="<?php echo admin_url('invoices/list_invoices/' . $_inv->id); ?>" data-toggle="tooltip"
                 data-title="<?php echo format_invoice_status($_inv->status, '', false); ?>" target="_blank">
-                <?php echo e(format_invoice_number($_inv->id)); ?>
+                <?php echo e(format_invoice_number($_inv->id))." (".$_inv->title.")"; ?>
             </a> - <?php echo e(app_format_money($_inv->total, $_inv->currency_name)); ?>
         </label>
     </div>
