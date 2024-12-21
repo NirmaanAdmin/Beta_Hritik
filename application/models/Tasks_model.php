@@ -2370,4 +2370,11 @@ class Tasks_model extends App_Model
 
         return $kanBan->get();
     }
+    public function get_commodity_group_add_commodity()
+    {
+        return $this->db->query('select * from tblitems_groups where display = 1 order by tblitems_groups.order asc ')->result_array();
+    }
+    public function get_task_unit(){
+        return $this->db->query('select * from tblunit  order by tblunit.unit_name asc')->result_array();
+    }
 }

@@ -624,3 +624,20 @@ function is_task_created_by_staff($taskId, $staffId = null)
 
     return $CI->db->count_all_results(db_prefix() . 'tasks') > 0 ? true : false;
 }
+function get_task_unit_by_id($id){
+   
+
+    if(!empty($id)) {
+        
+        $CI = & get_instance();
+        $CI->db->select('unit_name');
+        $CI->db->from(db_prefix() . 'unit');
+        $CI->db->where('unit_id', $id);
+        $result = $CI->db->get()->row_array();
+        if(!empty($result)) {
+            return $result['unit_name'];
+           
+        }
+    }
+    return '';
+}

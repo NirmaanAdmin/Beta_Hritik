@@ -41,6 +41,8 @@ class Tasks extends AdminController
 
         $data['title'] = _l('tasks');
         $data['tasks_table'] = App_table::find('tasks');
+        
+        
         $this->load->view('admin/tasks/manage', $data);
     }
 
@@ -382,6 +384,8 @@ class Tasks extends AdminController
                 ];
             }
         }
+        $data['commodity_groups_pur'] = $this->tasks_model->get_commodity_group_add_commodity();
+        $data['units'] = $this->tasks_model->get_task_unit();
         $data['members'] = $this->staff_model->get();
         $data['id']      = $id;
         $data['title']   = $title;

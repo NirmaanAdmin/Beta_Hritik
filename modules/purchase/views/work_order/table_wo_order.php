@@ -204,7 +204,7 @@ foreach ($rResult as $aRow) {
         }elseif($aColumns[$i] == 'approve_status'){
             $_data = get_status_approve($aRow['approve_status']);
         }elseif($aColumns[$i] == 'total_tax'){
-          $tax = $this->ci->purchase_model->get_html_tax_pur_order($aRow['id']);
+          $tax = $this->ci->purchase_model->get_html_tax_wo_order($aRow['id']);
           $total_tax = 0;
           foreach($tax['taxes_val'] as $tax_val){
             $total_tax += $tax_val;
