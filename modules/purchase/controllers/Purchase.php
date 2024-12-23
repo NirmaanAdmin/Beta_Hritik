@@ -113,13 +113,14 @@ class purchase extends AdminController
 
         if ($id == '') {
             $title = _l('add_new', _l('vendor_lowercase'));
+            $is_edit = false;
         } else {
             if (has_permission('purchase_vendors', '', 'view_own') && !is_admin()) {
                 if (!is_vendor_admin($id, get_staff_user_id())) {
                     access_denied('purchase');
                 }
             }
-
+            $is_edit = true;
             $client                = $this->purchase_model->get_vendor($id);
             $data['customer_tabs'] = get_customer_profile_tabs();
 
@@ -223,7 +224,7 @@ class purchase extends AdminController
         $data['bodyclass'] = 'customer-profile dynamic-create-groups';
         $data['vendor_categories'] = $this->purchase_model->get_vendor_category();
         $data['title']     = $title;
-
+        $data['is_edit']   = $is_edit;
         $this->load->view('vendors/vendor', $data);
     }
 

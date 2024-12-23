@@ -205,7 +205,10 @@
          <?php } ?>
          <div role="tabpanel" class="tab-pane" id="vendor_ratings">
             <?php //load view 
-            $this->load->view('vendor_ratings');
+            if($is_edit){
+               $this->load->view('vendor_ratings');
+            }
+            
             ?>
          </div>
          <div role="tabpanel" class="tab-pane" id="billing_and_shipping">
