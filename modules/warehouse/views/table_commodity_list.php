@@ -18,7 +18,7 @@ $aColumns = [
 	'commodity_barcode',
 	'unit_id',
 	'rate',
-	'purchase_price',
+	db_prefix() . 'items.purchase_price',
 	't1.taxrate as taxrate_1',
     't2.taxrate as taxrate_2',
 	'origin',
@@ -49,6 +49,7 @@ $join = [
 	'LEFT JOIN ' . db_prefix() . 'taxes t1 ON t1.id = ' . db_prefix() . 'items.tax',
 	'LEFT JOIN ' . db_prefix() . 'taxes t2 ON t2.id = ' . db_prefix() . 'items.tax2',
 	'LEFT JOIN ' . db_prefix() . 'items_groups ON ' . db_prefix() . 'items_groups.id = ' . db_prefix() . 'items.group_id',
+	'LEFT JOIN ' . db_prefix() . 'inventory_manage  ON ' . db_prefix() . 'inventory_manage.commodity_id = ' . db_prefix() . 'items.id',
 ];
 
 
@@ -200,10 +201,10 @@ if (count($custom_fields) > 4) {
     @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
 }
 
-
+$module = 'warehouse';
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix() . 'items.id', db_prefix() . 'items.description', db_prefix() . 'items.unit_id', db_prefix() . 'items.commodity_code', db_prefix() . 'items.commodity_barcode', db_prefix() . 'items.commodity_type', db_prefix() . 'items.warehouse_id', db_prefix() . 'items.origin', db_prefix() . 'items.color_id', db_prefix() . 'items.style_id', db_prefix() . 'items.model_id', db_prefix() . 'items.size_id', db_prefix() . 'items.rate', db_prefix() . 'items.tax', db_prefix() . 'items.group_id', db_prefix() . 'items.long_description', db_prefix() . 'items.sku_code', db_prefix() . 'items.sku_name', db_prefix() . 'items.sub_group', db_prefix() . 'items.color', db_prefix() . 'items.guarantee', db_prefix().'items.profif_ratio', db_prefix().'items.without_checking_warehouse', db_prefix().'items.parent_id', db_prefix().'items.tax2', 
 	db_prefix().'items.can_be_sold', db_prefix().'items.can_be_purchased', db_prefix().'items.can_be_manufacturing', db_prefix().'items.can_be_inventory', 'area',
-    'specification']);
+    'specification'],'',[],'',$module);
 
 $output = $result['output'];
 $rResult = $result['rResult'];

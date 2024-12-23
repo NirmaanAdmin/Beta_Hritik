@@ -13,7 +13,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @param  string $sGroupBy group results
  * @return array
  */
-function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where = [], $additionalSelect = [], $sGroupBy = '', $searchAs = [], $having = '')
+function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where = [], $additionalSelect = [], $sGroupBy = '', $searchAs = [], $having = '', $module = '')
 {
     $CI          = &get_instance();
     $data      = $CI->input->post();
@@ -95,7 +95,18 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
         if (trim($sOrder) == 'ORDER BY') {
             $sOrder = '';
         }
+        // If the $module parameter is set, add custom ordering
+        if (!empty($module)) {
+            $additionalOrder = '';
 
+            // Add specific ordering logic based on the module value
+            if ($module === 'warehouse') {
+                $additionalOrder = db_prefix() . 'inventory_manage.inventory_number DESC, ';
+            }
+
+            // Prepend additional order conditions
+            $sOrder = 'ORDER BY ' . $additionalOrder . ltrim($sOrder, 'ORDER BY ');
+        }
         $sOrder = rtrim($sOrder, ', ');
 
         if (
