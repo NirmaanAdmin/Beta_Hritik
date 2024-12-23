@@ -253,6 +253,7 @@
 									<tr>
 										<th></th>
 										<th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+										<th align="left" class="description"><?php echo _l('description'); ?></th>
 										<th align="left"><?php echo _l('warehouse_name'); ?></th>
 										<th width="7%" align="right" class="qty"><?php echo _l('po_quantity'); ?></th>
 										<th width="7%" align="right" class="qty"><?php echo _l('received_quantity'); ?></th>
@@ -261,11 +262,11 @@
 										<th align="right"><?php echo _l('lot_number'); ?></th>
 										<th align="left"><?php echo _l('vendor'); ?></th>
 										<th align="right"><?php echo _l('delivery_date'); ?></th>
-										<th align="right"><?php echo _l('expiry_date'); ?></th>
+										<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
 										<th align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
 
 										<th align="center"><i class="fa fa-cog"></i></th>
-										<th align="center"></th>
+										<!-- <th align="center"></th> -->
 									</tr>
 								</thead>
 								<tbody>
