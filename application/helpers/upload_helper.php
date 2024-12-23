@@ -649,7 +649,7 @@ function handle_changee_attachments_array($related, $id, $index_name = 'attachme
     $path           = get_upload_path_by_type('changee') . $related . '/'. $id . '/';
     $CI             = &get_instance();
 
-    if (isset($_FILES[$index_name]['name'])
+    if (isset($_FILES['items[1][attachments_new][2]']['name'])
         && ($_FILES[$index_name]['name'] != '' || is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)) {
         if (!is_array($_FILES[$index_name]['name'])) {
             $_FILES[$index_name]['name']     = [$_FILES[$index_name]['name']];
@@ -1616,7 +1616,9 @@ function get_upload_path_by_type($type)
         break;
         case 'ticket':
         $path = TICKET_ATTACHMENTS_FOLDER;
-
+        break;
+        case 'form':
+        $path = FORM_ATTACHMENTS_FOLDER;
         break;
         case 'contact_profile_images':
         $path = CONTACT_PROFILE_IMAGES_FOLDER;
@@ -1634,3 +1636,113 @@ function get_upload_path_by_type($type)
 
     return hooks()->apply_filters('get_upload_path_by_type', $path, $type);
 }
+
+function handle_form_attachments($formid, $index_name = 'attachments')
+{
+    $hookData = hooks()->apply_filters('before_handle_form_attachment', [
+        'form_id' => $formid,
+        'index_name' => $index_name,
+        'uploaded_files' => [],
+        'handled_externally' => false, // e.g. module upload to s3
+        'files' => $_FILES
+    ]);
+    if ($hookData['handled_externally']) {
+        return count($hookData['uploaded_files']) > 0 ? $hookData['uploaded_files'] : false;
+    }
+    if (!is_dir(get_upload_path_by_type('form'))) {
+        mkdir(get_upload_path_by_type('form'), 0755);
+    }
+    $path           = get_upload_path_by_type('form') . $formid . '/';
+    $uploaded_files = [];
+    if (isset($_FILES[$index_name])) {
+        _file_attachments_index_fix($index_name);
+        for ($i = 0; $i < count($_FILES[$index_name]['name']); $i++) {
+            hooks()->do_action('before_upload_form_attachment', $formid);
+            if ($i <= get_option('maximum_allowed_form_attachments')) {
+                // Get the temp file path
+                $tmpFilePath = $_FILES[$index_name]['tmp_name'][$i];
+                // Make sure we have a filepath
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    // Getting file extension
+                    $extension = strtolower(pathinfo($_FILES[$index_name]['name'][$i], PATHINFO_EXTENSION));
+                    $allowed_extensions = explode(',', get_option('form_attachments_file_extensions'));
+                    $allowed_extensions = array_map('trim', $allowed_extensions);
+                    // Check for all cases if this extension is allowed
+                    if (!in_array('.' . $extension, $allowed_extensions)) {
+                        continue;
+                    }
+                    _maybe_create_upload_path($path);
+                    $filename    = unique_filename($path, $_FILES[$index_name]['name'][$i]);
+                    $newFilePath = $path . $filename;
+                    // Upload the file into the temp dir
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        array_push($uploaded_files, [
+                                'file_name' => $filename,
+                                'filetype'  => $_FILES[$index_name]['type'][$i],
+                                ]);
+                    }
+                }
+            }
+        }
+    }
+    if (count($uploaded_files) > 0) {
+        return $uploaded_files;
+    }
+    return false;
+}
+function handle_ckecklist_item_attachment_array($related, $form_id, $item_id, $index_name, $itemIndex)
+{
+    // Define the base path for the attachments
+    $base_path = get_upload_path_by_type('form');
+    $item_path = $base_path . $related . '/' . $form_id . '/' . $item_id . '/';
+
+    $uploaded_files = [];
+    $CI = &get_instance();
+
+    // Ensure $item_path directory exists only when needed
+    if (!is_dir($item_path)) {
+        mkdir($item_path, 0755, true);
+    }
+
+    // Process the $_FILES array for the specific item index
+    if (isset($_FILES[$index_name]['name'][$itemIndex]['attachments_new']) && is_array($_FILES[$index_name]['name'][$itemIndex]['attachments_new'])) {
+        foreach ($_FILES[$index_name]['name'][$itemIndex]['attachments_new'] as $attachmentKey => $attachmentFileName) {
+            if (!empty($attachmentFileName)) {
+                $tmpFilePath = $_FILES[$index_name]['tmp_name'][$itemIndex]['attachments_new'][$attachmentKey];
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    // Skip if there's an error or the file type is not allowed
+                    if (
+                        _perfex_upload_error($_FILES[$index_name]['error'][$itemIndex]['attachments_new'][$attachmentKey])
+                        || !_upload_extension_allowed($attachmentFileName)
+                    ) {
+                        continue;
+                    }
+
+                    // Generate a unique filename and move the uploaded file
+                    $filename = unique_filename($item_path, $attachmentFileName);
+                    $newFilePath = $item_path . $filename;
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        $uploaded_files[] = [
+                            'item_id'  => $item_id, // Map to the item ID
+                            'file_name' => $filename,
+                            'filetype'  => $_FILES[$index_name]['type'][$itemIndex]['attachments_new'][$attachmentKey],
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
+    // Return uploaded files or clean up the empty directory if no files were uploaded
+    if (!empty($uploaded_files)) {
+        return $uploaded_files;
+    } else {
+        if (is_dir($item_path) && count(list_files($item_path)) == 0) {
+            delete_dir($item_path);
+        }
+    }
+
+    return false;
+}
+
