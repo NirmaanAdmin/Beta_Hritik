@@ -18,7 +18,7 @@ var expenseDropzone;
         "purchase_request": "[name='pur_request[]']"
     };
 
-    initDataTable('.table-table_wo_order', admin_url+'purchase/table_wo_order', [], [], Params,[2, 'desc']);
+    initDataTable('.table-table_wo_order', admin_url+'purchase/table_wo_order', [], [], Params,[3, 'desc']);
 	init_wo_order();
     $.each(Params, function(i, obj) {
         $('select' + obj).on('change', function() {  

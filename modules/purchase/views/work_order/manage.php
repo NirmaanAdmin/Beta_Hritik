@@ -111,6 +111,7 @@
 	                    <?php $table_data = array(
                            _l('work_order'),
                            _l('vendor'),
+                           _l('wo_description'),
                            _l('order_date'),
                            _l('group_pur'),
                            _l('sub_groups_pur'),
@@ -118,13 +119,13 @@
                            _l('type'),
                            _l('project'),
                            _l('department'),
-                           _l('wo_description'),
+                           _l('approval_status'), 
+                           _l('convert_expense'),                          
                            _l('wo_value'),
                            _l('tax_value'),
-                           _l('convert_expense'),
                            _l('wo_value_included_tax'),
                            _l('tags'),
-                           _l('approval_status'),
+                          
                            _l('payment_status'),
                            );
                        $custom_fields = get_custom_fields('pur_order',array('show_on_table'=>1));
