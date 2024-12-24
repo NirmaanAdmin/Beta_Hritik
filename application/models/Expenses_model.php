@@ -580,6 +580,7 @@ class Expenses_model extends App_Model
                     $new_invoice_data['newitems'][$key+1]['qty'] = $po_value['quantity'];
                     $new_invoice_data['newitems'][$key+1]['rate'] = $po_value['unit_price'];
                     $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
+                    $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
                     $new_invoice_data['newitems'][$key+1]['taxname'] = [];
                     if(!empty($po_value['tax'])) {
                         $po_tax_array = explode('|', $po_value['tax']);
@@ -600,6 +601,7 @@ class Expenses_model extends App_Model
                     $new_invoice_data['newitems'][$key+1]['qty'] = $wo_value['quantity'];
                     $new_invoice_data['newitems'][$key+1]['rate'] = $wo_value['unit_price'];
                     $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
+                    $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
                     $new_invoice_data['newitems'][$key+1]['taxname'] = [];
                     if(!empty($wo_value['tax'])) {
                         $wo_tax_array = explode('|', $wo_value['tax']);
@@ -635,6 +637,7 @@ class Expenses_model extends App_Model
 
             $new_invoice_data['newitems'][1]['rate']  = $expense->amount;
             $new_invoice_data['newitems'][1]['order'] = 1;
+            $new_invoice_data['newitems'][1]['annexure'] = $new_invoice_data['group_pur'];
         }
         $this->load->model('invoices_model');
         

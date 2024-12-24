@@ -363,6 +363,8 @@ class Invoices extends AdminController
         if ($id == '') {
             $title                  = _l('create_new_invoice');
             $data['billable_tasks'] = [];
+            $data['final_invoice'] = [];
+            $data['indexa'] = [];
         } else {
             $invoice = $this->invoices_model->get($id);
 
@@ -376,6 +378,8 @@ class Invoices extends AdminController
             $data['invoice']        = $invoice;
             $data['edit']           = true;
             $data['billable_tasks'] = $this->tasks_model->get_billable_tasks($invoice->clientid, !empty($invoice->project_id) ? $invoice->project_id : '');
+            $data['final_invoice'] = $this->invoices_model->get_final_invoice($invoice);
+            $data['indexa'] = $this->invoices_model->get_indexa($invoice);
 
             $title = _l('edit', _l('invoice_lowercase')) . ' - ' . format_invoice_number($invoice->id);
         }

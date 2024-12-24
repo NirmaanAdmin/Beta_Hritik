@@ -1912,4 +1912,40 @@ class Invoices_model extends App_Model
 
         return $this->db->query('select * from tblhsn_sac_code ')->result_array();
     }
+
+    public function get_final_invoice($invoice)
+    {
+        $final_invoice = array();
+        $final_invoice['name'] = 'The final invoice by all annexures';
+        $final_invoice['description'] = '';
+        $final_invoice['qty'] = 1;
+        $final_invoice['rate'] = $invoice->subtotal;
+        $final_invoice['tax'] = $invoice->total_tax;
+        $final_invoice['amount'] = $invoice->subtotal;
+        return $final_invoice;
+    }
+
+    public function get_indexa($invoice)
+    {
+        $indexa = array();
+        $items = $invoice->items;
+        foreach ($items as $key => $value) {
+            $annexure = $value['annexure'];
+            $items_group = $this->get_items_groups($annexure);
+            $indexa[$annexure]['name'] = $items_group->name." (".$items_group->annexure_name.")";
+            $indexa[$annexure]['description'] = '';
+            $indexa[$annexure]['qty'] = 1;
+            $indexa[$annexure]['rate'] += $value['rate'];
+            $indexa[$annexure]['tax'] = $invoice->total_tax;
+            $indexa[$annexure]['amount'] = $invoice->subtotal;
+        }
+        $indexa = !empty($indexa) ? array_values($indexa) : array();
+        return $indexa;
+    }
+
+    public function get_items_groups($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get(db_prefix() . 'items_groups')->row();
+    }
 }

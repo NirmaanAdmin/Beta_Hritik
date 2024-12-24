@@ -687,6 +687,7 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'rel_type'         => $rel_type,
                     'item_order'       => $item['order'],
                     'unit'             => $item['unit'],
+                    'annexure'         => isset($item['annexure']) ? $item['annexure'] : NULL,
                 ]);
 
     $id = $CI->db->insert_id();
@@ -914,4 +915,10 @@ function amount_format($num, $type = 1)
         $thecash = $sign.$thecash;
         return $thecash; // writes the final format where $currency is the currency symbol.
     }
+}
+
+function get_all_annexures()
+{
+    $CI = & get_instance();
+    return $CI->db->get(db_prefix() . 'items_groups')->result_array();
 }
