@@ -225,8 +225,15 @@
 
                         </tr>
                         <tr class="project-overview">
-                          <td class="bold"><?php echo _l('rq_description'); ?></td>
-                          <td><?php echo changee_pur_html_entity_decode($co_request->rq_description); ?></td>
+                          <td class="bold" width="50%">
+                            <span class="bold"><?php echo _l('rq_description'); ?> :</span>
+                            <span><?php echo changee_pur_html_entity_decode($co_request->rq_description); ?></span>
+                          </td>
+                          <td class="bold" width="50%">
+                            <span class="bold"><?php echo _l('kind'); ?> :</span>
+                            <span><?php echo $co_request->kind; ?></span>
+                          </td>      
+
                         </tr>
 
                       </tbody>
@@ -533,7 +540,7 @@
                         <tbody>
                           <tr class="project-overview">
                             <td class="bold" width="30%">PR Code</td>
-                            <td><?php echo changee_pur_html_entity_decode($co_request->pur_rq_code); ?><div class="btn-group  mright5" style="margin-left: 10px;"  data-toggle="tooltip" title="" data-original-title="Preview/Download compare quotation pdf">
+                            <td><?php echo changee_pur_html_entity_decode($co_request->pur_rq_code); ?><div class="btn-group  mright5" style="margin-left: 10px;" data-toggle="tooltip" title="" data-original-title="Preview/Download compare quotation pdf">
                                 <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   <i class="fa fa-file-pdf"></i><span class="caret"></span>
                                 </a>

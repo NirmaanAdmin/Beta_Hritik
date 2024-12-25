@@ -765,3 +765,5 @@ $lang['order_summary'] = 'Order Summary';
 $lang['hsn_sac'] = 'HSN/SAC Code'; 
 $lang['vendor_ratings'] = 'Vendor Ratings';
 $lang['updated_successfully'] = 'Updated successfully';
+$lang['changes'] = 'Changes';
+$lang['change_order'] = 'Change Order';

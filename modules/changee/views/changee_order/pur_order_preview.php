@@ -103,10 +103,10 @@
                      </a>
                   </li>
                   
-                  <li role="presentation" data-toggle="tooltip" data-title="<?php echo _l('toggle_full_view'); ?>" class="tab-separator toggle_view">
+                  <!-- <li role="presentation" data-toggle="tooltip" data-title="<?php echo _l('toggle_full_view'); ?>" class="tab-separator toggle_view">
                      <a href="#" onclick="small_table_full_view(); return false;">
                      <i class="fa fa-expand"></i></a>
-                  </li>
+                  </li> -->
                </ul>
             </div>
          </div>
@@ -163,6 +163,7 @@
                  echo $area['area_name'];
                }
              }?> </p>
+             <p class="bold p_mar"><?php echo _l('kind').': '?> <?php echo $pur_order->kind ?> </p>
               
             </div>
             <div class="col-md-8">
@@ -252,7 +253,10 @@
                  <option value="4" class="<?php if($estimate->approve_status == 4) { echo 'hide';}?>"><?php echo _l('pur_canceled'); ?></option>
                </select>
               <?php } ?>
-   
+              <div class="pull-right" style="margin-right: 10px;font-size: 18px;margin-top: 4px;">
+                  <a href="#" onclick="small_table_full_view(); return false;">
+                     <i class="fa fa-expand" style="color: #000000 !important;"></i></a>
+               </div>   
                <div class="col-md-12 padr_div_0">
                   <br>
                   <div class="pull-right _buttons  ">

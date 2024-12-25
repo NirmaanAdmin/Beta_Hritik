@@ -238,6 +238,18 @@
                     echo render_select('area_pur', $area_co_request, array('id', 'area_name'), 'Area', $selected);
                     ?>
                   </div>
+                  <div class="col-md-3 form-group">
+                        <label for="kind"><?php echo _l('kind'); ?></label>
+                        <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                          <option value=""></option>
+                          <option value="Client Supply" <?php if (isset($co_request) && $co_request->kind == 'Client Supply') {
+                                                          echo 'selected';
+                                                        } ?>><?php echo _l('client_supply'); ?></option>
+                          <option value="Bought out items" <?php if (isset($co_request) && $co_request->kind == 'Bought out items') {
+                                                              echo 'selected';
+                                                            } ?>><?php echo _l('bought_out_items'); ?></option>
+                        </select>
+                      </div>
 
 
                   <div class="col-md-12">

@@ -1590,6 +1590,7 @@ class purchase extends AdminController
         $data['sub_groups'] = $this->purchase_model->get_sub_group();
         $data['area'] = $this->purchase_model->get_area();
         $data['activity'] = $this->purchase_model->get_po_activity($id);
+        $data['changes'] = $this->purchase_model->get_po_changes($id);
         if ($to_return == false) {
             $this->load->view('purchase_order/pur_order_preview', $data);
         } else {
@@ -9624,6 +9625,7 @@ class purchase extends AdminController
         $data['sub_groups'] = $this->purchase_model->get_sub_group();
         $data['area'] = $this->purchase_model->get_area();
         $data['activity'] = $this->purchase_model->get_wo_activity($id);
+        $data['changes'] = $this->purchase_model->get_change_wo_order($id);
         if ($to_return == false) {
             $this->load->view('work_order/wo_order_preview', $data);
         } else {
