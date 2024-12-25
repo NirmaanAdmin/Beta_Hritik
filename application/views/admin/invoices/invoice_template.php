@@ -538,7 +538,7 @@
                                 Annexures
                                 <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="tab_child_items" style="width: max-content;">
+                            <ul class="dropdown-menu annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
                                 <?php
                                 foreach ($annexures as $key => $annexure) { ?>
                                     <li>
@@ -586,22 +586,22 @@
                                     <tr class="main">
                                         <td></td>
                                         <td align="left">
-                                            <?php echo !empty($final_invoice) ? $final_invoice['name'] : ''; ?>
+                                            <?php echo $annexure_invoice['final_invoice']['name']; ?>
                                         </td>
                                         <td align="left">
-                                            <?php echo !empty($final_invoice) ? $final_invoice['description'] : ''; ?>
+                                            <?php echo $annexure_invoice['final_invoice']['description']; ?>
                                         </td>
                                         <td align="right">
-                                            <?php echo !empty($final_invoice) ? $final_invoice['qty'] : ''; ?>
-                                        </td>
-                                        <td align="right" class="subtotal">
-                                
+                                            <?php echo $annexure_invoice['final_invoice']['qty']; ?>
                                         </td>
                                         <td align="right">
-                                            <?php echo !empty($final_invoice) ? app_format_money($final_invoice['tax'], $base_currency) : ''; ?>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
                                         </td>
                                         <td align="right">
-                                            <?php echo !empty($final_invoice) ? app_format_money($final_invoice['amount'], $base_currency) : ''; ?>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -614,7 +614,8 @@
                                         <td>
                                             <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
                                         </td>
-                                        <td class="subtotal">
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
                                         </td>
                                     </tr>
                                     <tr id="discount_area">
@@ -675,6 +676,14 @@
                                         </td>
                                         <td class="discount-total"></td>
                                     </tr>
+                                    <tr id="total_tax">
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td>
                                             <div class="row">
@@ -697,14 +706,14 @@
                                     <tr>
                                         <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
                                         </td>
-                                        <td class="total">
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
                                         </td>
                                     </tr>
                                     <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
                                 </tbody>
                             </table>
                         </div>
-                        <div id="removed-items"></div>
                     </div>
 
                     <div role="tabpanel" class="tab-pane" id="indexa">
@@ -737,10 +746,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="main">
-                                        <?php
-                                        if(!empty($indexa)) { 
-                                            foreach($indexa as $ikey => $ivalue) { ?>
+                                    <?php
+                                    if(!empty($annexure_invoice['indexa'])) {
+                                        $indexa = $annexure_invoice['indexa'];
+                                        foreach($indexa as $ikey => $ivalue) { ?>
+                                            <tr class="main">
                                                 <td></td>
                                                 <td align="left">
                                                     <?php echo $ivalue['name']; ?>
@@ -751,8 +761,8 @@
                                                 <td align="right">
                                                     <?php echo $ivalue['qty']; ?>
                                                 </td>
-                                                <td align="right" class="subtotal">
-                                                    
+                                                <td align="right">
+                                                    <?php echo app_format_money($ivalue['subtotal'], $base_currency); ?>
                                                 </td>
                                                 <td align="right">
                                                     <?php echo app_format_money($ivalue['tax'], $base_currency); ?>
@@ -760,9 +770,9 @@
                                                 <td align="right">
                                                     <?php echo app_format_money($ivalue['amount'], $base_currency); ?>
                                                 </td>
-                                            <?php } 
-                                        } ?>
-                                    </tr>
+                                            </tr>
+                                        <?php } 
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -773,20 +783,29 @@
                                         <td>
                                             <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
                                         </td>
-                                        <td class="subtotal">
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr id="total_tax">
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
                                         </td>
-                                        <td class="total">
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
                                         </td>
                                     </tr>
                                     <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
                                 </tbody>
                             </table>
                         </div>
-                        <div id="removed-items"></div>
                     </div>
 
                     <?php
@@ -950,13 +969,13 @@
                                             <td>
                                                 <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
                                             </td>
-                                            <td class="subtotal">
+                                            <td class="annexture_subtotal">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
                                             </td>
-                                            <td class="total">
+                                            <td class="annexture_total">
                                             </td>
                                         </tr>
                                         <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
@@ -984,13 +1003,13 @@
 
 <div class="btn-bottom-pusher"></div>
 <div class="btn-bottom-toolbar text-right">
-    <button class="btn-tr btn btn-default mright5 text-right invoice-form-submit save-as-draft transaction-submit">
+    <button class="btn-tr btn btn-default mright5 text-right invoice-form-submit save-as-draft transaction-submit disabled">
         <?php echo _l('save_as_draft'); ?>
     </button>
     <div class="btn-group dropup">
         <button type="button"
-        class="btn-tr btn btn-primary invoice-form-submit transaction-submit"><?php echo _l('submit'); ?></button>
-        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+        class="btn-tr btn btn-primary invoice-form-submit transaction-submit disabled"><?php echo _l('submit'); ?></button>
+        <button type="button" class="btn btn-primary dropdown-toggle disabled" data-toggle="dropdown" aria-haspopup="true"
         aria-expanded="false">
         <span class="caret"></span>
     </button>

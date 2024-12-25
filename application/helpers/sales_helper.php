@@ -922,3 +922,78 @@ function get_all_annexures()
     $CI = & get_instance();
     return $CI->db->get(db_prefix() . 'items_groups')->result_array();
 }
+
+function get_annexurewise_tax($id, $annexure)
+{
+    $CI = &get_instance();
+    $CI->db->select('discount_percent, discount_type, discount_total, subtotal');
+    $CI->db->from('tblinvoices');
+    $CI->db->where('id', $id);
+    $data = $CI->db->get()->row();
+
+    $items = get_items_by_annexure($id, $annexure);
+
+    $total_tax = 0;
+    $taxes = [];
+    $_calculated_taxes = [];
+
+    $func_taxes = 'get_invoice_item_taxes';
+
+    foreach ($items as $item) {
+        $item_taxes = call_user_func($func_taxes, $item['id']);
+        if (count($item_taxes) > 0) {
+            foreach ($item_taxes as $tax) {
+                $calc_tax     = 0;
+                $tax_not_calc = false;
+                if (!in_array($tax['taxname'], $_calculated_taxes)) {
+                    array_push($_calculated_taxes, $tax['taxname']);
+                    $tax_not_calc = true;
+                }
+
+                if ($tax_not_calc == true) {
+                    $taxes[$tax['taxname']]          = [];
+                    $taxes[$tax['taxname']]['total'] = [];
+                    array_push($taxes[$tax['taxname']]['total'], (($item['qty'] * $item['rate']) / 100 * $tax['taxrate']));
+                    $taxes[$tax['taxname']]['tax_name'] = $tax['taxname'];
+                    $taxes[$tax['taxname']]['taxrate']  = $tax['taxrate'];
+                } else {
+                    array_push($taxes[$tax['taxname']]['total'], (($item['qty'] * $item['rate']) / 100 * $tax['taxrate']));
+                }
+            }
+        }
+    }
+
+    foreach ($taxes as $tax) {
+        $total = array_sum($tax['total']);
+        if ($data->discount_percent != 0 && $data->discount_type == 'before_tax') {
+            $total_tax_calculated = ($total * $data->discount_percent) / 100;
+            $total                = ($total - $total_tax_calculated);
+        } elseif ($data->discount_total != 0 && $data->discount_type == 'before_tax') {
+            $t     = ($data->discount_total / $data->subtotal) * 100;
+            $total = ($total - $total * $t / 100);
+        }
+        $total_tax += $total;
+    }
+
+    return $total_tax;
+}
+
+function get_items_by_annexure($id, $annexure)
+{
+    $CI = &get_instance();
+    $CI->db->select();
+    $CI->db->from(db_prefix() . 'itemable');
+    $CI->db->where('rel_id', $id);
+    $CI->db->where('rel_type', 'invoice');
+    $CI->db->where('annexure', $annexure);
+    $CI->db->order_by('item_order', 'asc');
+    return $CI->db->get()->result_array();
+}
+
+function get_all_applied_invoices()
+{
+    $CI = &get_instance();
+    $CI->db->select('id');
+    $CI->db->from('tblinvoices');
+    return $CI->db->get()->result_array();
+}

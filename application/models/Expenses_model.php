@@ -573,6 +573,8 @@ class Expenses_model extends App_Model
         if(!empty($expense->po_id)) {
             $pur_order_detail = $this->pur_order_detail($expense->po_id);
             if(!empty($pur_order_detail)) {
+                $pur_order = $this->pur_order($expense->po_id);
+                $new_invoice_data['subtotal'] = $pur_order->subtotal;
                 foreach ($pur_order_detail as $key => $po_value) {
                     $new_invoice_data['newitems'][$key+1]['description'] = $po_value['item_name'];
                     $new_invoice_data['newitems'][$key+1]['long_description'] = $po_value['description'];
@@ -594,6 +596,8 @@ class Expenses_model extends App_Model
         } else if(!empty($expense->wo_id)) {
             $work_order_detail = $this->work_order_detail($expense->wo_id);
             if(!empty($work_order_detail)) {
+                $wo_order = $this->wo_order($expense->wo_id);
+                $new_invoice_data['subtotal'] = $wo_order->subtotal;
                 foreach ($work_order_detail as $key => $wo_value) {
                     $new_invoice_data['newitems'][$key+1]['description'] = $wo_value['item_name'];
                     $new_invoice_data['newitems'][$key+1]['long_description'] = $wo_value['description'];
@@ -850,6 +854,18 @@ class Expenses_model extends App_Model
         return $this->db->query('SELECT DISTINCT(YEAR(date)) as year FROM ' . db_prefix() . 'expenses ORDER by year DESC')->result_array();
     }
 
+    public function pur_order($po_id)
+    {
+        $this->db->where('id', $po_id);
+        return $this->db->get(db_prefix() . 'pur_orders')->row();
+    }
+
+    public function wo_order($wo_id)
+    {
+        $this->db->where('id', $wo_id);
+        return $this->db->get(db_prefix() . 'wo_orders')->row();
+    }
+
     public function pur_order_detail($po_id)
     {
         $this->db->where('pur_order', $po_id);
@@ -876,5 +892,149 @@ class Expenses_model extends App_Model
             return $budget_head->id;
         }
         return '';
+    }
+
+    public function applied_to_invoice($data)
+    {
+        $invoice_id = $data['invoice_id'];
+        $expense_id = $data['expense_id'];
+        $invoice = $this->find_invoice_data($invoice_id);
+        $expense = $this->get($expense_id);
+        $annexure = $this->find_budget_head_value($expense->category);
+        $item_order = $this->get_item_order_annexure($invoice_id, $annexure);
+        
+        if(!empty($expense->po_id)) {
+            $pur_order = $this->pur_order($expense->po_id);
+            $pur_order_detail = $this->pur_order_detail($expense->po_id);
+
+            if(!empty($pur_order_detail)) {
+                foreach ($pur_order_detail as $pkey => $po_value) {
+                    $new_item_data = array();
+                    $new_item_data['rel_id'] = $invoice_id;
+                    $new_item_data['rel_type'] = 'invoice';
+                    $new_item_data['description'] = $po_value['item_name'];
+                    $new_item_data['long_description'] = $po_value['description'];
+                    $new_item_data['qty'] = $po_value['quantity'];
+                    $new_item_data['rate'] = $po_value['unit_price'];
+                    $new_item_data['unit'] = 'nos';
+                    $new_item_data['item_order'] = $item_order;
+                    $new_item_data['annexure'] = $annexure;
+                    $this->db->insert(db_prefix() . 'itemable', $new_item_data);
+                    $insert_id = $this->db->insert_id();
+
+                    if(!empty($po_value['tax'])) {
+                        $po_tax_array = explode('|', $po_value['tax']);
+                        foreach ($po_tax_array as $ttkey => $ttvalue) {
+                            $tax_data = get_tax_by_id($ttvalue);
+                            $item_tax = array();
+                            $item_tax['itemid'] = $insert_id;
+                            $item_tax['rel_id'] = $invoice_id;
+                            $item_tax['rel_type'] = 'invoice';
+                            $item_tax['taxrate'] = $tax_data->taxrate;
+                            $item_tax['taxname'] = $tax_data->name;
+                            $this->db->insert(db_prefix() . 'item_tax', $item_tax);
+                        }
+                    }
+                    $item_order++;
+                }
+
+                $update_invoice = array();
+                $update_invoice['subtotal'] = $invoice->subtotal + $pur_order->subtotal;
+                $update_invoice['total_tax'] = $invoice->total_tax + $pur_order->total_tax;
+                $update_invoice['total'] = $invoice->total + $pur_order->total;
+                $this->db->where('id', $invoice_id);
+                $this->db->update(db_prefix() . 'invoices', $update_invoice);
+            }
+        } else if(!empty($expense->wo_id)) {
+            $wo_order = $this->wo_order($expense->wo_id);
+            $work_order_detail = $this->work_order_detail($expense->wo_id);
+
+            if(!empty($work_order_detail)) {
+                foreach ($work_order_detail as $wkey => $wo_value) {
+                    $new_item_data = array();
+                    $new_item_data['rel_id'] = $invoice_id;
+                    $new_item_data['rel_type'] = 'invoice';
+                    $new_item_data['description'] = $wo_value['item_name'];
+                    $new_item_data['long_description'] = $wo_value['description'];
+                    $new_item_data['qty'] = $wo_value['quantity'];
+                    $new_item_data['rate'] = $wo_value['unit_price'];
+                    $new_item_data['unit'] = 'nos';
+                    $new_item_data['item_order'] = $item_order;
+                    $new_item_data['annexure'] = $annexure;
+                    $this->db->insert(db_prefix() . 'itemable', $new_item_data);
+                    $insert_id = $this->db->insert_id();
+
+                    if(!empty($wo_value['tax'])) {
+                        $wo_tax_array = explode('|', $wo_value['tax']);
+                        foreach ($wo_tax_array as $ttkey => $ttvalue) {
+                            $tax_data = get_tax_by_id($ttvalue);
+                            $item_tax = array();
+                            $item_tax['itemid'] = $insert_id;
+                            $item_tax['rel_id'] = $invoice_id;
+                            $item_tax['rel_type'] = 'invoice';
+                            $item_tax['taxrate'] = $tax_data->taxrate;
+                            $item_tax['taxname'] = $tax_data->name;
+                            $this->db->insert(db_prefix() . 'item_tax', $item_tax);
+                        }
+                    }
+                    $item_order++;
+                }
+
+                $update_invoice = array();
+                $update_invoice['subtotal'] = $invoice->subtotal + $wo_order->subtotal;
+                $update_invoice['total_tax'] = $invoice->total_tax + $wo_order->total_tax;
+                $update_invoice['total'] = $invoice->total + $wo_order->total;
+                $this->db->where('id', $invoice_id);
+                $this->db->update(db_prefix() . 'invoices', $update_invoice);
+            }
+        } else {
+            $new_item_data = array();
+            $new_item_data['rel_id'] = $invoice_id;
+            $new_item_data['rel_type'] = 'invoice';
+            $new_item_data['description'] = $expense->name;
+            $new_item_data['long_description'] = $expense->description;
+            if (!empty($expense->note)) {
+                $new_item_data['long_description'] .= PHP_EOL . $expense->note;
+            }
+            if (!empty($expense->expense_name)) {
+                $new_item_data['long_description'] .= PHP_EOL . $expense->expense_name;
+            }
+            $new_item_data['qty'] = 1;
+            $new_item_data['rate'] = $expense->amount;
+            $new_item_data['unit'] = 'nos';
+            $new_item_data['item_order'] = $item_order;
+            $new_item_data['annexure'] = $annexure;
+            $this->db->insert(db_prefix() . 'itemable', $new_item_data);
+
+            $update_invoice = array();
+            $update_invoice['subtotal'] = $invoice->subtotal + $expense->amount;
+            $update_invoice['total'] = $invoice->total + $expense->amount;
+            $this->db->where('id', $invoice_id);
+            $this->db->update(db_prefix() . 'invoices', $update_invoice);
+        }
+
+        $this->db->where('id', $expense_id);
+        $this->db->update(db_prefix() . 'expenses', [
+            'invoiceid' => $invoice_id,
+        ]);
+
+        return $invoice_id;
+    }
+
+    public function get_item_order_annexure($invoice_id, $annexure)
+    {
+        $this->db->where('rel_id', $invoice_id);
+        $this->db->where('rel_type', 'invoice');
+        $this->db->where('annexure', $annexure);
+        $this->db->order_by('item_order', 'desc');
+        $result = $this->db->get(db_prefix() . 'itemable')->row();
+        $result = !empty($result) ? $result->item_order + 1 : 1;
+        return $result;
+    }
+
+    public function find_invoice_data($invoice_id)
+    {
+        $this->db->where('id', $invoice_id);
+        return $this->db->get(db_prefix() . 'invoices')->row();
     }
 }

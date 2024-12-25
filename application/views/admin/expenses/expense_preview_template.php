@@ -79,11 +79,25 @@
                     </div>
                     <?php if ($expense->billable == 1 && $expense->invoiceid == null) { ?>
                     <?php if (staff_can('create',  'invoices')) { ?>
-                    <button type="button" class="btn btn-success pull-right mleft5 expense_convert_btn"
-                        data-id="<?php echo e($expense->expenseid); ?>" data-toggle="modal"
-                        data-target="#expense_convert_helper_modal">
-                        <?php echo _l('expense_convert_to_invoice'); ?>
-                    </button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select name="applied_to_invoice" id="applied_to_invoice" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('applied_to_invoice'); ?>">
+                                  <option value=""></option>
+                                  <?php 
+                                  $invoices = get_all_applied_invoices();
+                                  foreach ($invoices as $i) { ?>
+                                    <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])); ?></option>
+                                  <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-success pull-right mleft5 expense_convert_btn"
+                                data-id="<?php echo e($expense->expenseid); ?>" data-toggle="modal"
+                                data-target="#expense_convert_helper_modal">
+                                <?php echo _l('expense_convert_to_invoice'); ?>
+                            </button>
+                        </div>
+                    </div>
                     <?php } ?>
                     <?php } elseif ($expense->invoiceid != null) { ?>
                     <a href="<?php echo admin_url('invoices/list_invoices/' . $expense->invoiceid); ?>"
@@ -391,4 +405,25 @@ if ($('#dropzoneDragArea').length > 0) {
         }
     }));
 }
+
+$("body").on('change', 'select[name="applied_to_invoice"]', function () {
+    var invoice_id = $(this).val();
+    if(invoice_id != '') {
+        if (confirm("Are you sure?")) {
+            $.post(admin_url + 'expenses/applied_to_invoice', {invoice_id: invoice_id, expense_id: <?php echo e($expense->expenseid); ?>}).done(function(response) {
+                response = JSON.parse(response);
+                if(response.status) {
+                    alert_float('success',response.message);
+                } else {
+                    alert_float('warning',response.message);
+                }
+                window.location.assign(response.url);
+            });
+        }
+
+    } else {
+        alert_float('warning', "Please select the valid invoice." )
+    }
+});
+
 </script>

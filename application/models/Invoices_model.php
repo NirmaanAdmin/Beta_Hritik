@@ -1913,34 +1913,41 @@ class Invoices_model extends App_Model
         return $this->db->query('select * from tblhsn_sac_code ')->result_array();
     }
 
-    public function get_final_invoice($invoice)
+    public function get_annexure_invoice_details($invoiceid)
     {
-        $final_invoice = array();
-        $final_invoice['name'] = 'The final invoice by all annexures';
-        $final_invoice['description'] = '';
-        $final_invoice['qty'] = 1;
-        $final_invoice['rate'] = $invoice->subtotal;
-        $final_invoice['tax'] = $invoice->total_tax;
-        $final_invoice['amount'] = $invoice->subtotal;
-        return $final_invoice;
-    }
+        $this->db->where('id', $invoiceid);
+        $invoice = $this->db->get(db_prefix() . 'invoices')->row();
+        $items = get_items_by_type('invoice', $invoiceid);
 
-    public function get_indexa($invoice)
-    {
         $indexa = array();
-        $items = $invoice->items;
+        $final_invoice = array();
+
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
             $items_group = $this->get_items_groups($annexure);
             $indexa[$annexure]['name'] = $items_group->name." (".$items_group->annexure_name.")";
             $indexa[$annexure]['description'] = '';
             $indexa[$annexure]['qty'] = 1;
-            $indexa[$annexure]['rate'] += $value['rate'];
-            $indexa[$annexure]['tax'] = $invoice->total_tax;
-            $indexa[$annexure]['amount'] = $invoice->subtotal;
+            $indexa[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
+            $indexa[$annexure]['tax'] = get_annexurewise_tax($invoice->id, $annexure);
+            $indexa[$annexure]['amount'] = $indexa[$annexure]['subtotal'] + $indexa[$annexure]['tax'];
         }
         $indexa = !empty($indexa) ? array_values($indexa) : array();
-        return $indexa;
+
+        foreach ($indexa as $key => $value) {
+            $final_invoice['name'] = _l('final_invoice_by_all_annexures');
+            $final_invoice['description'] = '';
+            $final_invoice['qty'] = 1;
+            $final_invoice['subtotal'] += $value['subtotal'];
+            $final_invoice['tax'] += $value['tax'];
+            $final_invoice['amount'] += $value['amount'];
+        }
+    
+        $response = array();
+        $response['indexa'] = $indexa;
+        $response['final_invoice'] = $final_invoice;
+
+        return $response;
     }
 
     public function get_items_groups($id)

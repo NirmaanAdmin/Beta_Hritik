@@ -483,4 +483,21 @@ class Expenses extends AdminController
             access_denied('expenses');
         }
     }
+
+    public function applied_to_invoice() 
+    {
+        $response = array();
+        $data = $this->input->post();
+        $invoiceid = $this->expenses_model->applied_to_invoice($data);
+        if ($invoiceid) {
+            $response['status'] = true;
+            $response['message'] = _l('expense_applied_to_invoice');
+            $response['url'] = admin_url('invoices/invoice/' . $invoiceid);
+        } else {
+            $response['status'] = false;
+            $response['message'] = _l('expense_converted_to_invoice_fail');
+            $response['url'] = admin_url('expenses/list_expenses/' . $data['expense_id']);
+        }
+        echo json_encode($response);
+    }
 }
