@@ -80,16 +80,19 @@
                     <?php if ($expense->billable == 1 && $expense->invoiceid == null) { ?>
                     <?php if (staff_can('create',  'invoices')) { ?>
                     <div class="row">
-                        <div class="col-md-6">
-                            <select name="applied_to_invoice" id="applied_to_invoice" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('applied_to_invoice'); ?>">
-                                  <option value=""></option>
-                                  <?php 
-                                  $invoices = get_all_applied_invoices();
-                                  foreach ($invoices as $i) { ?>
-                                    <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])); ?></option>
-                                  <?php } ?>
-                            </select>
-                        </div>
+                        <?php 
+                        $invoices = get_all_applied_invoices();
+                        if(!empty($invoices)) { ?>
+                            <div class="col-md-6">
+                                <select name="applied_to_invoice" id="applied_to_invoice" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('applied_to_invoice'); ?>">
+                                      <option value=""></option>
+                                      <?php
+                                      foreach ($invoices as $i) { ?>
+                                        <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])); ?></option>
+                                      <?php } ?>
+                                </select>
+                            </div>
+                        <?php } ?>
                         <div class="col-md-6">
                             <button type="button" class="btn btn-success pull-right mleft5 expense_convert_btn"
                                 data-id="<?php echo e($expense->expenseid); ?>" data-toggle="modal"
@@ -420,9 +423,8 @@ $("body").on('change', 'select[name="applied_to_invoice"]', function () {
                 window.location.assign(response.url);
             });
         }
-
     } else {
-        alert_float('warning', "Please select the valid invoice." )
+        alert_float('warning', "Please select the valid invoice." );
     }
 });
 
