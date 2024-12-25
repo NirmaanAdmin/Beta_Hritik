@@ -2826,8 +2826,10 @@ class purchase extends AdminController
         if ($this->input->get('print')) {
             $type = 'I';
         }
-
-        $pdf->Output('purchase_order.pdf', $type);
+        $pur_order = $this->purchase_model->get_pur_order($id);
+        $vendor_name = get_vendor_name_by_id($pur_order->vendor);
+        $pdf_name = $pur_order->pur_order_number.'-'.$vendor_name.'-'.$pur_order->pur_order_name.'.pdf';
+        $pdf->Output($pdf_name, $type);
     }
 
     /**
@@ -9801,8 +9803,10 @@ class purchase extends AdminController
         if ($this->input->get('print')) {
             $type = 'I';
         }
-
-        $pdf->Output('work_order.pdf', $type);
+        $wo_order = $this->purchase_model->get_wo_order($id);
+        $vendor_name = get_vendor_name_by_id($wo_order->vendor);
+        $pdf_name = $wo_order->wo_order_number.'-'.$vendor_name.'-'.$wo_order->wo_order_name.'.pdf';
+        $pdf->Output($pdf_name, $type);
     }
     public function mark_wo_order_as($status, $wo_order)
     {

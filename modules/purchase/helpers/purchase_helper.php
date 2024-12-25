@@ -3284,6 +3284,16 @@ function format_wo_ship_to_info($pur_order) {
 
     return $html;
 }
+function get_vendor_name_by_id($vendor_id) {
+    $CI = & get_instance();
+     $vendor = $CI->db->select('*')
+    ->where('userid', $vendor_id)
+    ->from(db_prefix() . 'pur_vendor')
+    ->get()
+    ->row();
+
+    return $vendor->company;
+}
 function format_pdf_vendor_info($vendor_id) {
     $html = '';
     $CI = & get_instance();

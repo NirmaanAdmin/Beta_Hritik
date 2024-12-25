@@ -474,6 +474,9 @@ if ($estimate->currency != 0) {
 
                   </div>
                   <div class="row">
+                  <div class="col-md-12">
+                        <button id="export-csv" class="btn btn-primary pull-right">Export to CSV</button>
+                     </div>
                      <div class="col-md-12">
 
                         <?php if ($estimate->approve_status != 2) { ?>
@@ -980,3 +983,36 @@ if ($estimate->currency != 0) {
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php require 'modules/purchase/assets/js/wo_order_preview_js.php'; ?>
+<script>
+  document.getElementById('export-csv').addEventListener('click', function () {
+    // Select the table
+    const table = document.querySelector('.items-preview');
+    const rows = Array.from(table.querySelectorAll('tr'));
+
+    // Initialize CSV content
+    let csvContent = '';
+
+    // Loop through each row
+    rows.forEach(row => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
+        csvContent += rowContent + '\n';
+    });
+
+    // Add UTF-8 BOM
+    const bom = '\uFEFF';
+
+    // Create a Blob and downloadable link
+    const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'items_export.csv');
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+</script>

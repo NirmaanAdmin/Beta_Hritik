@@ -4953,6 +4953,7 @@ class Purchase_model extends App_Model
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
+            <th class="thead-dark" align="left" style="width: 3%">#</th>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
@@ -4972,6 +4973,7 @@ class Purchase_model extends App_Model
         $tax_total = 0;
         $t_mn = 0;
         $discount_total = 0;
+        $sr = 1;
         foreach ($pur_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
@@ -4982,6 +4984,7 @@ class Purchase_model extends App_Model
                 $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
             }
             $html .= '<tr nobr="true" class="sortable">
+            <td style="width: 3%">' . $sr++ . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="width: 10%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
@@ -15465,6 +15468,7 @@ class Purchase_model extends App_Model
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
+            <th class="thead-dark" style="width: 3%">#</th>
             <th class="thead-dark" style="width: 10%">' . _l('items') . '</th>
             <th class="thead-dark" align="left" style="width: 29%">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
@@ -15482,11 +15486,13 @@ class Purchase_model extends App_Model
         $tax_total = 0;
         $t_mn = 0;
         $discount_total = 0;
+        $sr = 1;
         foreach ($pur_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = pur_get_unit_name($row['unit_id']);
             $html .= '<tr nobr="true" class="sortable">
+            <td style="width: 3%">' . $sr++ . '</td>
             <td style="width: 10%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="width: 29%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
