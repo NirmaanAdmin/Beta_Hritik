@@ -15,7 +15,7 @@
         <?php if (!isset($invoice_from_project)) { ?>
             <div id="expenses_to_bill" class="col-md-6">
                 <?php if (isset($invoice) && $invoice->status != Invoices_model::STATUS_CANCELLED) {
-                    $this->load->view('admin/invoices/bill_expenses', ['expenses_to_bill' => $expenses_to_bill]);
+                    $this->load->view('admin/invoices/bill_expenses', ['expenses_to_bill' => $expenses_to_bill, 'invoice' => $invoice]);
                 } ?>
             </div>
         <?php } ?>

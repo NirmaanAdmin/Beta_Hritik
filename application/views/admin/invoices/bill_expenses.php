@@ -33,8 +33,7 @@ foreach ($expenses_to_bill as $expense) {
     }
     $expense['currency_data'] = $this->currencies_model->get($expense['currency']); ?>
 <div class="checkbox">
-    <input type="checkbox" name="bill_expenses[]" value="<?php echo e($expense['id']); ?>" data-toggle="popover"
-        data-html="true" data-content="<?php echo $additional_action; ?>" data-placement="bottom">
+    <input type="checkbox" name="invoice_bill_expenses[]" value="<?php echo e($expense['id']); ?>" data-invoice="<?php echo $invoice->id; ?>" data-html="true" data-content="<?php echo $additional_action; ?>" data-placement="bottom">
     <label for=""><a href="<?php echo admin_url('expenses/list_expenses/' . $expense['id']); ?>"
             target="_blank"><?php echo e($expense['category_name']); ?>
             <?php if (!empty($expense['expense_name'])) {
