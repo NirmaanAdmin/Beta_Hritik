@@ -269,7 +269,7 @@ class Purchase_model extends App_Model
         if (isset($data['DataTables_Table_0_length'])) {
             unset($data['DataTables_Table_0_length']);
         }
-       
+
 
         if (isset($data['balance'])) {
             $data['balance'] = str_replace(',', '', $data['balance']);
@@ -4859,6 +4859,17 @@ class Purchase_model extends App_Model
         $project_detail = '';
         $buyer = '';
         $delivery_person = '';
+        $show_image_column = false;
+        $width = 'width: 17%';
+        // Check if any record has an image
+        foreach ($pur_order_detail as $row) {
+            if (!empty($row['image'])) {
+                $show_image_column = true;
+                $width = 'width: 10%';
+                break;
+            }
+        }
+
         $ship_to = format_po_ship_to_info($pur_order);
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
@@ -4955,10 +4966,14 @@ class Purchase_model extends App_Model
           <tr>
             <th class="thead-dark" align="left" style="width: 3%">#</th>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 10%">' . _l('item_description') . '</th>
-            <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
-            <th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="left" style="'.$width.'">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>';
+
+        if ($show_image_column) {
+            $html .= '<th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>';
+        }
+
+        $html .= '<th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 11%">' . _l('unit_price') . '</th>
             
             <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
@@ -4986,10 +5001,14 @@ class Purchase_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 3%">' . $sr++ . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="width: 10%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
-            <td align="left" style="width: 10%">' . $full_item_image . '</td>
-            <td align="right" style="width: 10%">' . $row['quantity']  . ' ' . $unit_name . '</td>
+            <td align="left" style="'.$width.'">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>';
+
+            if ($show_image_column) {
+                $html .= '<td align="left" style="width: 10%">' . $full_item_image . '</td>';
+            }
+
+            $html .= '<td align="right" style="width: 10%">' . $row['quantity']  . ' ' . $unit_name . '</td>
             <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
             
             <td align="right" style="width: 10%">' . app_format_money($row['tax_rate'], '') . '</td>
@@ -10837,7 +10856,7 @@ class Purchase_model extends App_Model
         }
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
         $style_description = '';
-        if($is_edit) {
+        if ($is_edit) {
             $style_description = 'width: 290px; height: 200px';
         }
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
@@ -11517,7 +11536,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $style_description = '';
-        if($is_edit) {
+        if ($is_edit) {
             $style_description = 'width: 290px; height: 200px';
         }
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
@@ -14943,7 +14962,7 @@ class Purchase_model extends App_Model
             }
         }
 
-        if(!empty($vendors)) {
+        if (!empty($vendors)) {
             $vendor_list = explode(',', $vendors);
 
             $this->db->select('userid as id, email, firstname, lastname');
@@ -14953,7 +14972,7 @@ class Purchase_model extends App_Model
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
 
-            if(!empty($vendor_list)) {
+            if (!empty($vendor_list)) {
                 foreach ($vendor_list as $key => $value) {
                     $data = array();
                     $data['contact_firstname'] = $login_staff->firstname;
@@ -15374,6 +15393,7 @@ class Purchase_model extends App_Model
         $project_detail = '';
         $buyer = '';
         $delivery_person = '';
+        
         $ship_to = format_wo_ship_to_info($pur_order);
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
@@ -16456,7 +16476,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
 
         $style_description = '';
-        if($is_edit) {
+        if ($is_edit) {
             $style_description = 'width: 290px; height: 200px';
         }
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
@@ -16580,7 +16600,7 @@ class Purchase_model extends App_Model
 
     public function save_rating($data)
     {
-       
+
         // List of keys to keep
         $keys_to_keep = [
             'id',
@@ -16593,14 +16613,14 @@ class Purchase_model extends App_Model
             'comments',
             'rating_date',
             'rated_by'
-            
+
         ];
 
         // Filter the array
         $data = array_filter($data, function ($key) use ($keys_to_keep) {
             return in_array($key, $keys_to_keep);
         }, ARRAY_FILTER_USE_KEY);
-       
+
         if (isset($data['id']) && $data['id']) {
             $this->db->where('id', $data['id']);
             return $this->db->update('tblvendor_ratings', $data);
@@ -16640,19 +16660,20 @@ class Purchase_model extends App_Model
         $this->db->select('id');
         $this->db->where('name', $budget_head->name);
         $expenses_categories = $this->db->get('tblexpenses_categories')->row();
-        if(!empty($expenses_categories)) {
+        if (!empty($expenses_categories)) {
             return $expenses_categories->id;
         }
         return '';
     }
 
-    public function get_po_changes($id){
+    public function get_po_changes($id)
+    {
         $this->db->where('po_order_id', $id);
         return $this->db->get('tblco_request')->result_array();
     }
-    public function get_change_wo_order($id){
+    public function get_change_wo_order($id)
+    {
         $this->db->where('wo_order_id', $id);
         return $this->db->get('tblco_request')->result_array();
     }
-    
 }
