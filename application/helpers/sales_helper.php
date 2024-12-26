@@ -923,7 +923,7 @@ function get_all_annexures()
     return $CI->db->get(db_prefix() . 'items_groups')->result_array();
 }
 
-function get_annexurewise_tax($id, $annexure)
+function get_annexurewise_tax($id, $annexure, $item_id = '')
 {
     $CI = &get_instance();
     $CI->db->select('discount_percent, discount_type, discount_total, subtotal');
@@ -931,7 +931,7 @@ function get_annexurewise_tax($id, $annexure)
     $CI->db->where('id', $id);
     $data = $CI->db->get()->row();
 
-    $items = get_items_by_annexure($id, $annexure);
+    $items = get_items_by_annexure($id, $annexure, $item_id);
 
     $total_tax = 0;
     $taxes = [];
@@ -978,13 +978,16 @@ function get_annexurewise_tax($id, $annexure)
     return $total_tax;
 }
 
-function get_items_by_annexure($id, $annexure)
+function get_items_by_annexure($id, $annexure, $item_id = '')
 {
     $CI = &get_instance();
     $CI->db->select();
     $CI->db->from(db_prefix() . 'itemable');
     $CI->db->where('rel_id', $id);
     $CI->db->where('rel_type', 'invoice');
+    if(!empty($item_id)) {
+        $CI->db->where('id', $item_id);
+    }
     $CI->db->where('annexure', $annexure);
     $CI->db->order_by('item_order', 'asc');
     return $CI->db->get()->result_array();
@@ -995,5 +998,18 @@ function get_all_applied_invoices()
     $CI = &get_instance();
     $CI->db->select('id');
     $CI->db->from('tblinvoices');
+    return $CI->db->get()->result_array();
+}
+
+function get_annexure_list_from_invoice($id)
+{
+    $CI = &get_instance();
+    $CI->db->select(db_prefix() . 'items_groups.*');
+    $CI->db->from(db_prefix() . 'itemable');
+    $CI->db->join(db_prefix() . 'items_groups', db_prefix() . 'items_groups.id = ' . db_prefix() . 'itemable.annexure', 'left');
+    $CI->db->where('rel_id', $id);
+    $CI->db->where('rel_type', 'invoice');
+    $CI->db->where('annexure IS NOT NULL');
+    $CI->db->group_by('annexure');
     return $CI->db->get()->result_array();
 }
