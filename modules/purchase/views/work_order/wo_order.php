@@ -2,6 +2,9 @@
 <?php init_head(); ?>
 <div id="wrapper">
   <div class="content">
+  <div class="loader-container hide" id="loader-container">
+      <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
+    </div>
     <div class="row">
       <?php
       echo form_open_multipart($this->uri->uri_string(), array('id' => 'wo_order-form', 'class' => '_transaction_form'));
@@ -536,7 +539,7 @@
 
             <div class="row">
               <div class="col-md-4">
-                <?php $this->load->view('purchase/item_include/main_item_select'); ?>
+                <!-- <?php $this->load->view('purchase/item_include/main_item_select'); ?> -->
               </div>
               <?php if (!$is_edit) { ?>
                 <div class="col-md-8">
@@ -786,3 +789,149 @@
 </script>
 <?php require 'modules/purchase/assets/js/import_excel_items_wo_order_js.php'; ?>
 <?php require 'modules/purchase/assets/js/wo_order_js.php'; ?>
+<script>
+  $(document).ready(function() {
+    "use strict";
+
+    // Initialize item select input logic
+    initItemSelect();
+  });
+  /**
+   * Initializes the logic for handling item selection and input events.
+   */
+  function initItemSelect() {
+    // Listen for input events on the search box of specific dropdowns
+    $(document).on('input', '.item-select  .bs-searchbox input', function() {
+      let query = $(this).val(); // Get the user's query
+      let $bootstrapSelect = $(this).closest('.bootstrap-select'); // Get the parent bootstrap-select wrapper
+      let $selectElement = $bootstrapSelect.find('select.item-select'); // Get the associated select element
+
+      // console.log("Target Select Element:", $selectElement); // Debug the target <select> element
+
+      if (query.length >= 3) {
+        fetchItems(query, $selectElement); // Fetch items dynamically
+      }
+    });
+
+    // Handle the change event for the item-select dropdown
+    $(document).on('change', '.item-select', function() {
+      handleItemChange($(this)); // Handle item selection change
+    });
+  }
+
+  /**
+   * Fetches items dynamically based on the search query and populates the target select element.
+   * @param {string} query - The search query entered by the user.
+   * @param {jQuery} $selectElement - The select element to populate.
+   */
+
+  function fetchItems(query, $selectElement) {
+    var admin_url = '<?php echo admin_url(); ?>';
+    $.ajax({
+      url: admin_url + 'purchase/fetch_items', // Controller method URL
+      type: 'GET',
+      data: {
+        search: query
+      },
+      success: function(data) {
+        // console.log("Raw Response Data:", data); // Debug the raw data
+
+        try {
+          let items = JSON.parse(data); // Parse JSON response
+          // console.log("Parsed Items:", items); // Debug parsed items
+
+          if ($selectElement.length === 0) {
+            console.error("Target select element not found.");
+            return;
+          }
+
+          // Clear existing options in the specific select element
+          $selectElement.empty();
+
+          // Add default "Type to search..." option
+          $selectElement.append('<option value="">Type to search...</option>');
+
+          // Get the pre-selected ID if available (from a data attribute or a hidden field)
+          let preSelectedId = $selectElement.data('selected-id') || null;
+
+          // Populate the specific select element with new options
+          items.forEach(function(item) {
+            let isSelected = preSelectedId && item.id === preSelectedId ? 'selected' : '';
+            let option = `<option  data-commodity-code="${item.id}" value="${item.id}"> ${item.commodity_code} ${item.description}</option>`;
+            // console.log("Appending Option:", option); // Debug each option
+            $selectElement.append(option);
+          });
+
+          // Refresh the selectpicker to reflect changes
+          $selectElement.selectpicker('refresh');
+
+          // console.log("Updated Select Element HTML:", $selectElement.html()); // Debug the final HTML
+        } catch (error) {
+          console.error("Error Processing Response:", error);
+        }
+      },
+      error: function() {
+        console.error('Failed to fetch items.');
+      }
+    });
+  }
+
+  /**
+   * Handles the change event for the item-select dropdown.
+   * @param {jQuery} $selectElement - The select element that triggered the change.
+   */
+  function handleItemChange($selectElement) {
+    let selectedId = $selectElement.val(); // Get the selected item's ID
+    let selectedCommodityCode = $selectElement.find(':selected').data('commodity-code'); // Get the commodity code
+    let $inputField = $selectElement.closest('tr').find('input[name="item_code"]'); // Find the associated input field
+
+    if ($inputField.length > 0) {
+      $inputField.val(selectedCommodityCode || ''); // Update the input field with the commodity code
+      // console.log("Updated Input Field:", $inputField, "Value:", selectedCommodityCode); // Debug input field
+    }
+  }
+  $(document).ready(function() {
+    // Attach click handler to the submit button
+    $('.save_detail').on('click', function(e) {
+      let isValid = true; // Track overall validation state
+
+      // Target only `select` elements with the `item-select` class
+      $('select.item-select').each(function(index) {
+        if (index === 0) return; // Skip the first element
+        let $this = $(this);
+        let value = $this.val() || $this.data('selected-id'); // Use value or fallback to data-selected-id
+
+        // console.log(`Validating select with id: ${$this.attr('id')}, value: ${value}`); // Debugging
+
+        // Check if the value is empty or null
+        if (!value || value.trim() === '') {
+          isValid = false; // Mark as invalid
+
+          // Add error message and class if not already added
+          if (!$this.next('.error-message').length) {
+            $this.after('<span class="error-message" style="color: red;">This field is required.</span>');
+          }
+          $this.addClass('error-border'); // Highlight the invalid field
+          $this.addClass('error-border'); // Highlight the Bootstrap select wrapper
+        } else {
+          // If valid, remove any error messages or classes
+          $this.siblings('.error-message').remove();
+          $this.removeClass('error-border');
+          $this.closest('.bootstrap-select').removeClass('error-border');
+        }
+      });
+
+      // Prevent form submission if validation fails
+      if (!isValid) {
+        // console.log('Form validation failed.'); // Debugging
+        // e.preventDefault(); // Explicitly prevent form submission
+        return false;
+      }
+
+      // If all validations pass
+      // console.log('Form validation passed.');
+    });
+
+
+  });
+</script>

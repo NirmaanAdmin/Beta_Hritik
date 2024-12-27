@@ -527,8 +527,12 @@ function pur_add_item_to_table(data, itemid) {
 
   data = typeof (data) == 'undefined' || data == 'undefined' ? pur_get_item_preview_values() : data;
 
-  if (data.quantity == "" || data.item_code == "" ) {
+  // if (data.quantity == "" || data.item_code == "" ) {
     
+  //   return;
+  // }
+  if(data.item_name == "" || data.item_code == ""){
+    alert_float('warning', "Please select item");
     return;
   }
   var currency_rate = $('input[name="currency_rate"]').val();
@@ -573,7 +577,7 @@ function pur_get_item_preview_values() {
   response.description = $('.invoice-item .main textarea[name="description"]').val();
   response.area = $('.invoice-item .main select[name="area"]').val();
   response.quantity = $('.invoice-item .main input[name="quantity"]').val();
-  response.unit_name = $('.invoice-item .main input[name="unit_name"]').val();
+  response.unit_name = $('.invoice-item .main select[name="unit_name"]').val();
   response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
   response.taxname = $('.main select.taxes').selectpicker('val');
   response.item_code = $('.invoice-item .main input[name="item_code"]').val();

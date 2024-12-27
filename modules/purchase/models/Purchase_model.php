@@ -2576,14 +2576,16 @@ class Purchase_model extends App_Model
             $next_number = $data['number'] + 1;
             $this->db->where('option_name', 'next_po_number');
             $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
-
+            // echo '<pre>';
+            // print_r($order_detail);
+            // die;
             $total = [];
             $total['total_tax'] = 0;
             if (count($order_detail) > 0) {
                 foreach ($order_detail as $key => $rqd) {
                     $dt_data = [];
                     $dt_data['pur_order'] = $insert_id;
-                    $dt_data['item_code'] = $rqd['item_code'];
+                    $dt_data['item_code'] = $rqd['item_name'];
                     $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
@@ -2791,7 +2793,7 @@ class Purchase_model extends App_Model
 
                 $dt_data = [];
                 $dt_data['pur_order'] = $id;
-                $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['item_code'] = $rqd['item_name'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
@@ -2848,7 +2850,7 @@ class Purchase_model extends App_Model
             foreach ($update_order as $_key => $rqd) {
                 $dt_data = [];
                 $dt_data['pur_order'] = $id;
-                $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['item_code'] = $rqd['item_name'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
@@ -4966,7 +4968,7 @@ class Purchase_model extends App_Model
           <tr>
             <th class="thead-dark" align="left" style="width: 3%">#</th>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="'.$width.'">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="' . $width . '">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>';
 
         if ($show_image_column) {
@@ -5001,7 +5003,7 @@ class Purchase_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 3%">' . $sr++ . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="'.$width.'">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="' . $width . '">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>';
 
             if ($show_image_column) {
@@ -11415,7 +11417,7 @@ class Purchase_model extends App_Model
      *
      * @return     string      
      */
-    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array())
+    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false)
     {
 
         $this->load->model('invoice_items_model');
@@ -11533,7 +11535,18 @@ class Purchase_model extends App_Model
         }
 
 
-        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
+        // $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
+        $get_selected_item = pur_get_item_selcted_select($item_code,$name_item_name);
+       
+        if ($item_code == '') {
+            $row .= '<td class="">
+            <select id="'.$name_item_name.'" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
+                <option value="">Type at least 3 letters...</option>
+            </select>
+         </td>';
+        } else {
+            $row .= '<td class="">' .$get_selected_item . '</td>';
+        }
 
         $style_description = '';
         if ($is_edit) {
@@ -11548,7 +11561,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
-            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_name, ['id']) .
             '</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
 
@@ -11558,7 +11571,6 @@ class Purchase_model extends App_Model
             if ($to_currency != 0 && $to_currency != $base_currency->id) {
                 $row .= render_input('original_price', '', app_format_money($original_price, $base_currency), 'text', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => _l('original_price'), 'disabled' => true], [], 'no-margin', 'input-transparent text-right pur_input_none');
             }
-
             $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
         }
 
@@ -11577,7 +11589,7 @@ class Purchase_model extends App_Model
         // $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
         // $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
         $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
-
+        
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
 
@@ -11588,7 +11600,12 @@ class Purchase_model extends App_Model
         $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
 
         if ($name == '') {
-            $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
+            if($hide_add_button == true){
+                $add_class= 'hide';
+            }else{
+                $add_class= '';
+            }
+            $row .= '<td class="' . $add_class . '"><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info "><i class="fa fa-check"></i></button></td>';
         } else {
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }
@@ -15393,7 +15410,7 @@ class Purchase_model extends App_Model
         $project_detail = '';
         $buyer = '';
         $delivery_person = '';
-        
+
         $ship_to = format_wo_ship_to_info($pur_order);
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
@@ -15752,7 +15769,7 @@ class Purchase_model extends App_Model
                 foreach ($order_detail as $key => $rqd) {
                     $dt_data = [];
                     $dt_data['wo_order'] = $insert_id;
-                    $dt_data['item_code'] = $rqd['item_code'];
+                    $dt_data['item_code'] = $rqd['item_name'];
                     $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
@@ -15953,7 +15970,7 @@ class Purchase_model extends App_Model
 
                 $dt_data = [];
                 $dt_data['wo_order'] = $id;
-                $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['item_code'] = $rqd['item_name'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
@@ -16010,7 +16027,7 @@ class Purchase_model extends App_Model
             foreach ($update_order as $_key => $rqd) {
                 $dt_data = [];
                 $dt_data['wo_order'] = $id;
-                $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['item_code'] = $rqd['item_name'];
                 $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $dt_data['unit_price'] = $rqd['unit_price'];
@@ -16355,7 +16372,7 @@ class Purchase_model extends App_Model
         $rs['taxes_val'] = $tax_val_rs;
         return $rs;
     }
-    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array())
+    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(),$hide_add_button = false)
     {
 
         $this->load->model('invoice_items_model');
@@ -16473,7 +16490,18 @@ class Purchase_model extends App_Model
         }
 
 
-        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
+        // $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
+        $get_selected_item = pur_get_item_selcted_select($item_code,$name_item_name);
+       
+        if ($item_code == '') {
+            $row .= '<td class="">
+            <select id="'.$name_item_name.'" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
+                <option value="">Type at least 3 letters...</option>
+            </select>
+         </td>';
+        } else {
+            $row .= '<td class="">' .$get_selected_item . '</td>';
+        }
 
         $style_description = '';
         if ($is_edit) {
@@ -16488,7 +16516,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
-            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_name, ['id']) .
             '</td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
 
@@ -16519,7 +16547,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
 
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
-        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
+        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_name, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
 
         $row .= '<td class="hide _total_after_tax">' . render_input($name_total, '', $total, 'number', []) . '</td>';
 
@@ -16528,7 +16556,12 @@ class Purchase_model extends App_Model
         $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
 
         if ($name == '') {
-            $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
+             if($hide_add_button == true){
+                $add_class= 'hide';
+            }else{
+                $add_class= '';
+            }
+            $row .= '<td class="' . $add_class . '"><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
         } else {
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }

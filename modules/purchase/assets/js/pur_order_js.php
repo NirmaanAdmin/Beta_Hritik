@@ -24,13 +24,14 @@ $(function(){
             vendor: 'required',
             project: 'required',
             group_pur: 'required',
+            
         });
     }
 
     $("body").on('change', 'select[name="item_select"]', function () {
       var itemid = $(this).selectpicker('val');
       if (itemid != '') {
-        pur_add_item_to_preview(itemid);
+        // pur_add_item_to_preview(itemid);
       }
     });
 
@@ -469,7 +470,7 @@ function pur_calculate_total(from_discount_money){
 
 function pur_add_item_to_preview(id) {
   "use strict";
-
+  
   var currency_rate = $('input[name="currency_rate"]').val();
 
   requestGetJSON('purchase/get_item_by_id/' + id+'/'+ currency_rate ).done(function (response) {
@@ -523,12 +524,17 @@ function pur_add_item_to_preview(id) {
 }
 
 function pur_add_item_to_table(data, itemid) {
+  
   "use strict";
 
   data = typeof (data) == 'undefined' || data == 'undefined' ? pur_get_item_preview_values() : data;
 
-  if (data.quantity == "" || data.item_code == "" ) {
+  // if (data.quantity == "" || data.item_code == "" ) {
     
+  //   return;
+  // }
+  if(data.item_name == "" || data.item_code == ""){
+    alert_float('warning', "Please select item");
     return;
   }
   var currency_rate = $('input[name="currency_rate"]').val();
@@ -558,7 +564,8 @@ function pur_add_item_to_table(data, itemid) {
     pur_clear_item_preview_values('.invoice-item');
     $('body').find('#items-warning').remove();
     $("body").find('.dt-loader').remove();
-        $('#item_select').selectpicker('val', '');
+    $('#item_select').selectpicker('val', '');
+    
 
     return true;
   });
@@ -573,7 +580,7 @@ function pur_get_item_preview_values() {
   response.description = $('.invoice-item .main textarea[name="description"]').val();
   response.area = $('.invoice-item .main select[name="area"]').val();
   response.quantity = $('.invoice-item .main input[name="quantity"]').val();
-  response.unit_name = $('.invoice-item .main input[name="unit_name"]').val();
+  response.unit_name = $('.invoice-item .main select[name="unit_name"]').val();
   response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
   response.taxname = $('.main select.taxes').selectpicker('val');
   response.item_code = $('.invoice-item .main input[name="item_code"]').val();

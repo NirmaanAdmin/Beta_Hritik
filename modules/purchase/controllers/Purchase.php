@@ -90,7 +90,7 @@ class purchase extends AdminController
                 $data['rating_date'] = date('Y-m-d H:i:s');
                 $data['rated_by'] = get_staff_user_id();
                 unset($data['rating_id']);
-              
+
                 $success1 = $this->purchase_model->save_rating($data);
 
                 $success = $this->purchase_model->update_vendor($this->input->post(), $id);
@@ -1311,7 +1311,7 @@ class purchase extends AdminController
             $index_quote = 0;
             foreach ($pur_request_detail as $key => $item) {
                 $index_quote++;
-                $unit_name = pur_get_unit_name($item['unit_id']);
+                $unit_name = $item['unit_id'];
                 $taxname = $item['tax_name'];
                 $item_name = $item['item_text'];
 
@@ -1616,6 +1616,7 @@ class purchase extends AdminController
                 if (!has_permission('purchase_orders', '', 'create')) {
                     access_denied('purchase_order');
                 }
+               
                 $id = $this->purchase_model->add_pur_order($pur_order_data);
                 if ($id) {
                     set_alert('success', _l('added_successfully', _l('pur_order')));
@@ -1665,7 +1666,7 @@ class purchase extends AdminController
                 $index_order = 0;
                 foreach ($data['pur_order_detail'] as $order_detail) {
                     $index_order++;
-                    $unit_name = pur_get_unit_name($order_detail['unit_id']);
+                    $unit_name = $order_detail['unit_id'];
                     $taxname = $order_detail['tax_name'];
                     $item_name = $order_detail['item_name'];
 
@@ -2828,7 +2829,7 @@ class purchase extends AdminController
         }
         $pur_order = $this->purchase_model->get_pur_order($id);
         $vendor_name = get_vendor_name_by_id($pur_order->vendor);
-        $pdf_name = $pur_order->pur_order_number.'-'.$vendor_name.'-'.$pur_order->pur_order_name.'.pdf';
+        $pdf_name = $pur_order->pur_order_number . '-' . $vendor_name . '-' . $pur_order->pur_order_name . '.pdf';
         $pdf->Output($pdf_name, $type);
     }
 
@@ -5286,7 +5287,7 @@ class purchase extends AdminController
         $data['members']           = $this->staff_model->get('', ['active' => 1]);
         $data['payment'] = $this->purchase_model->get_payment_invoice($id);
         $data['pur_invoice_attachments'] = $this->purchase_model->get_purchase_invoice_attachments($id);
-        $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();        
+        $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();
         $this->load->view('invoices/pur_invoice_preview', $data);
     }
 
@@ -8344,12 +8345,12 @@ class purchase extends AdminController
         $budget_head = '';
         if ($module_type == 1) {
             $po = $this->purchase_model->get_pur_invoice($pur_order);
-            if(!empty($po->group_pur)) {
+            if (!empty($po->group_pur)) {
                 $budget_head = $this->purchase_model->find_budget_head_value($po->group_pur);
             }
         } else {
             $po = $this->purchase_model->get_pur_order($pur_order);
-            if(!empty($po->group_pur)) {
+            if (!empty($po->group_pur)) {
                 $budget_head = $this->purchase_model->find_budget_head_value($po->group_pur);
             }
         }
@@ -8384,7 +8385,7 @@ class purchase extends AdminController
             $currency = $po->currency;
         }
 
-        
+
 
         echo json_encode([
             'budget_head' => $budget_head,
@@ -8402,7 +8403,7 @@ class purchase extends AdminController
     {
         $budget_head = '';
         $wo = $this->purchase_model->get_wo_order($wo_order);
-        if(!empty($wo->group_pur)) {
+        if (!empty($wo->group_pur)) {
             $budget_head = $this->purchase_model->find_budget_head_value($wo->group_pur);
         }
 
@@ -9694,14 +9695,12 @@ class purchase extends AdminController
 
             $data['tax_data'] = $this->purchase_model->get_html_tax_pur_order($id);
             $title = _l('wo_order_detail');
-            // echo '<pre>';
-            // print_r($data);
-            // die;
+            
             if (count($data['wo_order_detail']) > 0) {
                 $index_order = 0;
                 foreach ($data['wo_order_detail'] as $order_detail) {
                     $index_order++;
-                    $unit_name = pur_get_unit_name($order_detail['unit_id']);
+                    $unit_name = $order_detail['unit_id'];
                     $taxname = $order_detail['tax_name'];
                     $item_name = $order_detail['item_name'];
 
@@ -9806,7 +9805,7 @@ class purchase extends AdminController
         }
         $wo_order = $this->purchase_model->get_wo_order($id);
         $vendor_name = get_vendor_name_by_id($wo_order->vendor);
-        $pdf_name = $wo_order->wo_order_number.'-'.$vendor_name.'-'.$wo_order->wo_order_name.'.pdf';
+        $pdf_name = $wo_order->wo_order_number . '-' . $vendor_name . '-' . $wo_order->wo_order_name . '.pdf';
         $pdf->Output($pdf_name, $type);
     }
     public function mark_wo_order_as($status, $wo_order)
@@ -9904,8 +9903,7 @@ class purchase extends AdminController
 
                         //Writer file
                         $writer_header = array(
-                            "(*)" . _l('product_code') => 'string',
-                            _l('item_description') => 'string',
+                            "(*)" . _l('item_description') => 'string',
                             _l('quantity') => 'string',
                             _l('unit_price')    => 'string',
                         );
@@ -9934,7 +9932,7 @@ class purchase extends AdminController
                         $total_rows = 0;
 
                         $total_rows_actualy = 0;
-                        $list_item = $this->purchase_model->create_purchase_order_row_template();
+                        $list_item = $this->purchase_model->create_purchase_order_row_template('', '','' , '', '','' , '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '',[],true);
                         //get data for compare
                         $index_quote = 0;
                         for ($row = 1; $row < count($data); $row++) {
@@ -9948,33 +9946,15 @@ class purchase extends AdminController
                             $flag_id_commodity_code;
                             $flag_id_item_description;
 
-                            $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
-                            $value_cell_item_description = isset($data[$row][1]) ? $data[$row][1] : null;
-                            $value_cell_quantity = isset($data[$row][2]) ? $data[$row][2] : '';
-                            $value_cell_unit_price = isset($data[$row][3]) ? $data[$row][3] : '';
+                            // $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_item_description = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_quantity = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_cell_unit_price = isset($data[$row][2]) ? $data[$row][2] : '';
 
                             /*check null*/
-                            if (is_null($value_cell_commodity_code) == true) {
-                                $string_error .= _l('product_code') . _l('not_yet_entered');
+                            if (is_null($value_cell_item_description) == true) {
+                                $string_error .= _l('item_description') . _l('not_yet_entered');
                                 $flag = 1;
-                            }
-
-                            //check commodity_code exist  (input: code or name item)
-                            if (is_null($value_cell_commodity_code) != true && $value_cell_commodity_code != '0') {
-                                /*case input  id*/
-                                $this->db->where('commodity_code', trim($value_cell_commodity_code, " "));
-                                $this->db->or_where('description', trim($value_cell_commodity_code, " "));
-
-                                $item_value =  $this->db->get(db_prefix() . 'items')->row();
-
-
-                                if ($item_value) {
-                                    /*get id commodity_type*/
-                                    $flag_id_commodity_code = $item_value->id;
-                                } else {
-                                    $string_error .= _l('product_code') . _l('does_not_exist');
-                                    $flag2 = 1;
-                                }
                             }
 
                             if (!is_numeric(trim($value_cell_quantity, " "))) {
@@ -9990,7 +9970,6 @@ class purchase extends AdminController
                             if (($flag == 1) || ($flag2 == 1)) {
                                 //write error file
                                 $writer->writeSheetRow('Sheet1', [
-                                    $value_cell_commodity_code,
                                     $value_cell_item_description,
                                     $value_cell_quantity,
                                     $value_cell_unit_price,
@@ -10002,12 +9981,10 @@ class purchase extends AdminController
                                 $message = 'Import Error In Some Item';
                             }
                             if (($flag == 0) && ($flag2 == 0)) {
-                                $item_name = $value_cell_commodity_code . ' ' . $item_value->description;
 
-                                if (is_null($value_cell_commodity_code) != true) {
-                                    $rows[] = $row;
-                                    $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']',  $item_name, $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', '', true, '', '');
-                                }
+                                $rows[] = $row;
+                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '',[],true);
+
                                 $index_quote++;
                                 $total_rows_data++;
                                 $message = 'Import Item successfully';
@@ -10092,8 +10069,7 @@ class purchase extends AdminController
 
                         //Writer file
                         $writer_header = array(
-                            "(*)" . _l('product_code') => 'string',
-                            _l('item_description') => 'string',
+                            "(*)" ._l('item_description') => 'string',
                             _l('quantity') => 'string',
                             _l('unit_price')    => 'string',
                         );
@@ -10122,7 +10098,8 @@ class purchase extends AdminController
                         $total_rows = 0;
 
                         $total_rows_actualy = 0;
-                        $list_item = $this->purchase_model->create_purchase_order_row_template();
+                        // $list_item = $this->purchase_model->create_wo_order_row_template();
+                        $list_item = $this->purchase_model->create_wo_order_row_template('', '','' , '', '','' , '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '',[],true);
                         //get data for compare
                         $index_quote = 0;
                         for ($row = 1; $row < count($data); $row++) {
@@ -10136,33 +10113,15 @@ class purchase extends AdminController
                             $flag_id_commodity_code;
                             $flag_id_item_description;
 
-                            $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
-                            $value_cell_item_description = isset($data[$row][1]) ? $data[$row][1] : null;
-                            $value_cell_quantity = isset($data[$row][2]) ? $data[$row][2] : '';
-                            $value_cell_unit_price = isset($data[$row][3]) ? $data[$row][3] : '';
+                            // $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_item_description = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_quantity = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_cell_unit_price = isset($data[$row][2]) ? $data[$row][2] : '';
 
                             /*check null*/
-                            if (is_null($value_cell_commodity_code) == true) {
-                                $string_error .= _l('product_code') . _l('not_yet_entered');
+                            if (is_null($value_cell_item_description) == true) {
+                                $string_error .= _l('item_description') . _l('not_yet_entered');
                                 $flag = 1;
-                            }
-
-                            //check commodity_code exist  (input: code or name item)
-                            if (is_null($value_cell_commodity_code) != true && $value_cell_commodity_code != '0') {
-                                /*case input  id*/
-                                $this->db->where('commodity_code', trim($value_cell_commodity_code, " "));
-                                $this->db->or_where('description', trim($value_cell_commodity_code, " "));
-
-                                $item_value =  $this->db->get(db_prefix() . 'items')->row();
-
-
-                                if ($item_value) {
-                                    /*get id commodity_type*/
-                                    $flag_id_commodity_code = $item_value->id;
-                                } else {
-                                    $string_error .= _l('product_code') . _l('does_not_exist');
-                                    $flag2 = 1;
-                                }
                             }
                             if (!is_numeric(trim($value_cell_quantity, " "))) {
 
@@ -10177,7 +10136,6 @@ class purchase extends AdminController
                             if (($flag == 1) || ($flag2 == 1)) {
                                 //write error file
                                 $writer->writeSheetRow('Sheet1', [
-                                    $value_cell_commodity_code,
                                     $value_cell_item_description,
                                     $value_cell_quantity,
                                     $value_cell_unit_price,
@@ -10191,10 +10149,11 @@ class purchase extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
                                 $item_name = $value_cell_commodity_code . ' ' . $item_value->description;
 
-                                if (is_null($value_cell_commodity_code) != true) {
+                                // if (is_null($value_cell_commodity_code) != true) {
                                     $rows[] = $row;
-                                    $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']',  $item_name, $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', '', true, '', '');
-                                }
+                                    // $list_item .= $this->purchase_model->create_wo_order_row_template('newitems[' . $index_quote . ']',  $item_name, $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', '', true, '', '');
+                                    $list_item .= $this->purchase_model->create_wo_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '',[],true);
+                                // }
                                 $index_quote++;
                                 $total_rows_data++;
                                 $message = 'Import Item successfully';
@@ -10249,4 +10208,65 @@ class purchase extends AdminController
         }
         redirect(admin_url('purchase/vendor/' . $vendor_id));
     }
+    public function export_tblitems_to_json()
+    {
+        // Load the database library
+        $this->load->database();
+
+        // Query to fetch data from tblitems
+        $query = $this->db->get('tblitems');
+
+        // Check if there are records
+        if ($query->num_rows() > 0) {
+            $items = $query->result_array();
+
+            // Convert data to JSON format
+            $jsonData = json_encode($items, JSON_PRETTY_PRINT);
+
+            // File path to save the JSON file
+            // $filePath = './uploads/tblitems.json';
+            $base_path = get_upload_path_by_type('item_json');
+            $filePath = $base_path . 'tblitems.json';
+
+            // Write JSON data to file
+            if (file_put_contents($filePath, $jsonData)) {
+                // Set response or flash message
+                $this->session->set_flashdata('success', 'JSON file created successfully: ' . $filePath);
+            } else {
+                // Set response or flash message
+                $this->session->set_flashdata('error', 'Error writing JSON file.');
+            }
+        } else {
+            // Set response or flash message
+            $this->session->set_flashdata('info', 'No records found in the table.');
+        }
+
+        // Redirect to a page (optional)
+        // redirect('items');
+    }
+
+    public function fetch_items()
+    {
+        // Get the search term from the request
+        $search = $this->input->get('search');
+        $items = [];
+
+        // Path to the JSON file
+        $base_path = get_upload_path_by_type('item_json');
+        $jsonFilePath = $base_path . 'tblitems.json';
+
+        if (file_exists($jsonFilePath)) {
+            $jsonData = file_get_contents($jsonFilePath);
+            $allItems = json_decode($jsonData, true);
+
+            // Filter items that match the search term in `description` or `commodity_code`
+            $items = array_filter($allItems, function ($item) use ($search) {
+                return (stripos($item['description'], $search) !== false ||
+                    stripos($item['commodity_code'], $search) !== false);
+            });
+        }
+        // Send the filtered items as JSON response
+        echo json_encode(array_values($items)); // Reindex array
+    }
+    
 }

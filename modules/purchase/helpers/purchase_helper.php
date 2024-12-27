@@ -18,7 +18,7 @@ hooks()->add_action('after_email_templates', 'add_purchase_email_templates');
  */
 function is_empty_vendor_company($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->db->select('company');
     $CI->db->from(db_prefix() . 'pur_vendor');
     $CI->db->where('userid', $id);
@@ -86,13 +86,13 @@ function get_vendor_company_name($userid, $prevent_empty_company = false)
     if ($userid !== '') {
         $_userid = $userid;
     }
-    $CI = & get_instance();
+    $CI = &get_instance();
 
     $client = $CI->db->select('company')
-    ->where('userid', $_userid)
-    ->from(db_prefix() . 'pur_vendor')
-    ->get()
-    ->row();
+        ->where('userid', $_userid)
+        ->from(db_prefix() . 'pur_vendor')
+        ->get()
+        ->row();
     if ($client) {
         return $client->company;
     }
@@ -107,20 +107,20 @@ function get_vendor_company_name($userid, $prevent_empty_company = false)
  *
  * @return     string          The status approve.
  */
-function get_status_approve($status){
+function get_status_approve($status)
+{
     $result = '';
-    if($status == 1){
-        $result = '<span class="label label-primary"> '._l('purchase_draft').' </span>';
-    }elseif($status == 2){
-        $result = '<span class="label label-success"> '._l('purchase_approved').' </span>';
-    }elseif($status == 3){
-        $result = '<span class="label label-warning"> '._l('pur_rejected').' </span>';
-    }elseif($status == 4){
-        $result = '<span class="label label-danger"> '._l('pur_canceled').' </span>';
+    if ($status == 1) {
+        $result = '<span class="label label-primary"> ' . _l('purchase_draft') . ' </span>';
+    } elseif ($status == 2) {
+        $result = '<span class="label label-success"> ' . _l('purchase_approved') . ' </span>';
+    } elseif ($status == 3) {
+        $result = '<span class="label label-warning"> ' . _l('pur_rejected') . ' </span>';
+    } elseif ($status == 4) {
+        $result = '<span class="label label-danger"> ' . _l('pur_canceled') . ' </span>';
     }
 
     return $result;
-
 }
 
 /**
@@ -130,20 +130,20 @@ function get_status_approve($status){
  *
  * @return     string   The status approve string.
  */
-function get_status_approve_str($status){
+function get_status_approve_str($status)
+{
     $result = '';
-    if($status == 1){
+    if ($status == 1) {
         $result = _l('purchase_draft');
-    }elseif($status == 2){
+    } elseif ($status == 2) {
         $result = _l('purchase_approved');
-    }elseif($status == 3){
+    } elseif ($status == 3) {
         $result = _l('pur_rejected');
-    }elseif($status == 4){
+    } elseif ($status == 4) {
         $result = _l('pur_canceled');
     }
 
     return $result;
-
 }
 
 /**
@@ -153,16 +153,17 @@ function get_status_approve_str($status){
  *
  * @return     string          The status pur order.
  */
-function get_status_pur_order($status){
+function get_status_pur_order($status)
+{
     $result = '';
-    if($status == 1){
-        $result = '<span class="label label inline-block project-status-'.$status.' status-pur-order-1"> '._l('not_start').' </span>';
-    }elseif($status == 2){
-        $result = '<span class="label label inline-block project-status-'.$status.' status-pur-order-2"> '._l('in_proccess').' </span>';
-    }elseif($status == 3){
-        $result = '<span class="label label inline-block project-status-'.$status.' status-pur-order-3"> '._l('complete').' </span>';
-    }elseif($status == 4){
-        $result = '<span class="label label inline-block project-status-'.$status.' status-pur-order-4"> '._l('cancel').' </span>';
+    if ($status == 1) {
+        $result = '<span class="label label inline-block project-status-' . $status . ' status-pur-order-1"> ' . _l('not_start') . ' </span>';
+    } elseif ($status == 2) {
+        $result = '<span class="label label inline-block project-status-' . $status . ' status-pur-order-2"> ' . _l('in_proccess') . ' </span>';
+    } elseif ($status == 3) {
+        $result = '<span class="label label inline-block project-status-' . $status . ' status-pur-order-3"> ' . _l('complete') . ' </span>';
+    } elseif ($status == 4) {
+        $result = '<span class="label label inline-block project-status-' . $status . ' status-pur-order-4"> ' . _l('cancel') . ' </span>';
     }
 
     return $result;
@@ -177,8 +178,8 @@ function get_status_pur_order($status){
  */
 function format_pur_estimate_number($id)
 {
-    $CI = & get_instance();
-    $CI->db->select('date,number,prefix,number_format')->from(db_prefix().'pur_estimates')->where('id', $id);
+    $CI = &get_instance();
+    $CI->db->select('date,number,prefix,number_format')->from(db_prefix() . 'pur_estimates')->where('id', $id);
     $estimate = $CI->db->get()->row();
 
     if (!$estimate) {
@@ -200,13 +201,14 @@ function format_pur_estimate_number($id)
  *
  * @return     <type>  a item or list item.
  */
-function get_item_hp($id = ''){
-    $CI           = & get_instance();
-    if($id != ''){
+function get_item_hp($id = '')
+{
+    $CI           = &get_instance();
+    if ($id != '') {
         $CI->db->where('id', $id);
-        return $CI->db->get(db_prefix().'items')->row();
-    }elseif ($id == '') {
-        return $CI->db->get(db_prefix().'items')->result_array();
+        return $CI->db->get(db_prefix() . 'items')->row();
+    } elseif ($id == '') {
+        return $CI->db->get(db_prefix() . 'items')->result_array();
     }
 }
 
@@ -217,12 +219,12 @@ function get_item_hp($id = ''){
  *
  * @return     <type>  a item or list item.
  */
-function get_item_hp2($id){
-    $CI           = & get_instance();
-    
+function get_item_hp2($id)
+{
+    $CI           = &get_instance();
+
     $CI->db->where('id', $id);
-    return $CI->db->get(db_prefix().'items')->row();
-   
+    return $CI->db->get(db_prefix() . 'items')->row();
 }
 
 /**
@@ -232,13 +234,14 @@ function get_item_hp2($id){
  *
  * @return     boolean  The status modules pur.
  */
-function get_status_modules_pur($module_name){
+function get_status_modules_pur($module_name)
+{
     $CI             = &get_instance();
-    $sql = 'select * from '.db_prefix().'modules where module_name = "'.$module_name.'" AND active =1 ';
+    $sql = 'select * from ' . db_prefix() . 'modules where module_name = "' . $module_name . '" AND active =1 ';
     $module = $CI->db->query($sql)->row();
-    if($module){
+    if ($module) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
@@ -257,15 +260,15 @@ function reformat_currency_pur($value, $currency = 0)
 
     $base_currency = $CI->currencies_model->get_base_currency();
 
-    if($currency != 0){
+    if ($currency != 0) {
         $base_currency = pur_get_currency_by_id($currency);
     }
 
-    if($base_currency->decimal_separator == ','){
+    if ($base_currency->decimal_separator == ',') {
         $new_val = str_replace('.', '', $value);
-        return str_replace(',','.', $new_val);
+        return str_replace(',', '.', $new_val);
     }
-    return str_replace(',','', $value);
+    return str_replace(',', '', $value);
 }
 
 /**
@@ -296,7 +299,7 @@ function purchase_process_digital_signature_image($partBase64, $path, $image_nam
     }
 
     _maybe_create_upload_path($path);
-    $filename = unique_filename($path, $image_name.'.png');
+    $filename = unique_filename($path, $image_name . '.png');
 
     $decoded_image = base64_decode($partBase64);
 
@@ -323,11 +326,12 @@ function purchase_process_digital_signature_image($partBase64, $path, $image_nam
  *
  * @return     boolean   
  */
-function handle_request_quotation($id){
-     if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
+function handle_request_quotation($id)
+{
+    if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
 
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/request_quotation/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/request_quotation/' . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['attachment']['tmp_name'];
         // Make sure we have a filepath
@@ -354,7 +358,7 @@ function handle_request_quotation($id){
  */
 function get_staff_email_by_id_pur($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
     $staff = $CI->app_object_cache->get('staff-email-by-id-' . $id);
 
@@ -376,11 +380,11 @@ function get_staff_email_by_id_pur($id)
  */
 function get_purchase_option($name)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $options = [];
     $val  = '';
     $name = trim($name);
-    
+
 
     if (!isset($options[$name])) {
         // is not auto loaded
@@ -404,13 +408,14 @@ function get_purchase_option($name)
  *
  * @return     integer  ( 1 or 0 )
  */
-function row_purchase_options_exist($name){
-    $CI = & get_instance();
-    $i = count($CI->db->query('Select * from '.db_prefix().'purchase_option where option_name = '.$name)->result_array());
-    if($i == 0){
+function row_purchase_options_exist($name)
+{
+    $CI = &get_instance();
+    $i = count($CI->db->query('Select * from ' . db_prefix() . 'purchase_option where option_name = ' . $name)->result_array());
+    if ($i == 0) {
         return 0;
     }
-    if($i > 0){
+    if ($i > 0) {
         return 1;
     }
 }
@@ -426,7 +431,7 @@ function handle_purchase_order_file($id)
 {
     if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_order/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order/' . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['file']['tmp_name'];
         // Make sure we have a filepath
@@ -436,12 +441,12 @@ function handle_purchase_order_file($id)
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI           = & get_instance();
+                $CI           = &get_instance();
                 $attachment   = [];
                 $attachment[] = [
                     'file_name' => $filename,
                     'filetype'  => $_FILES['file']['type'],
-                    ];
+                ];
                 $CI->misc_model->add_attachment_to_database($id, 'pur_order', $attachment);
 
                 return true;
@@ -463,7 +468,7 @@ function handle_purchase_request_file($id)
 {
     if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_request/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['file']['tmp_name'];
         // Make sure we have a filepath
@@ -473,12 +478,12 @@ function handle_purchase_request_file($id)
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI           = & get_instance();
+                $CI           = &get_instance();
                 $attachment   = [];
                 $attachment[] = [
                     'file_name' => $filename,
                     'filetype'  => $_FILES['file']['type'],
-                    ];
+                ];
                 $CI->misc_model->add_attachment_to_database($id, 'pur_request', $attachment);
 
                 return true;
@@ -498,54 +503,52 @@ function handle_purchase_request_file($id)
  */
 function purorder_left_to_pay($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
-    
-        $CI->db->select('total')
+
+    $CI->db->select('total')
         ->where('id', $id);
-        $invoice_total = $CI->db->get(db_prefix() . 'pur_orders')->row()->total;
+    $invoice_total = $CI->db->get(db_prefix() . 'pur_orders')->row()->total;
 
 
-    
+
     $CI->load->model('purchase_model');
-    
+
     $payments = $CI->purchase_model->get_payment_purchase_order($id);
 
     $totalPayments = 0;
 
-    
+
 
     foreach ($payments as $payment) {
-        
+
         $totalPayments += $payment['amount'];
-        
     }
 
     return ($invoice_total - $totalPayments);
 }
 function woorder_left_to_pay($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
-    
-        $CI->db->select('total')
+
+    $CI->db->select('total')
         ->where('id', $id);
-        $invoice_total = $CI->db->get(db_prefix() . 'wo_orders')->row()->total;
+    $invoice_total = $CI->db->get(db_prefix() . 'wo_orders')->row()->total;
 
 
-    
+
     $CI->load->model('purchase_model');
-    
+
     $payments = $CI->purchase_model->get_payment_work_order($id);
 
     $totalPayments = 0;
 
-    
+
 
     foreach ($payments as $payment) {
-        
+
         $totalPayments += $payment['amount'];
-        
     }
 
     return ($invoice_total - $totalPayments);
@@ -558,13 +561,14 @@ function woorder_left_to_pay($id)
  *
  * @return     string  The payment mode by identifier.
  */
-function get_payment_mode_by_id($id){
-    $CI = & get_instance();
-    $CI->db->where('id',$id);
-    $mode = $CI->db->get(db_prefix().'payment_modes')->row();
-    if($mode){
+function get_payment_mode_by_id($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $mode = $CI->db->get(db_prefix() . 'payment_modes')->row();
+    if ($mode) {
         return $mode->name;
-    }else{
+    } else {
         return '';
     }
 }
@@ -574,18 +578,17 @@ function get_payment_mode_by_id($id){
  * @param  integer $id
  * @return array or row
  */
- function get_unit_type_item($id = false)
+function get_unit_type_item($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
-    $CI->db->where('unit_type_id', $id);
+        $CI->db->where('unit_type_id', $id);
         return $CI->db->get(db_prefix() . 'ware_unit_type')->row();
     }
     if ($id == false) {
         return $CI->db->query('select * from tblware_unit_type')->result_array();
     }
-
 }
 
 
@@ -603,7 +606,7 @@ function handle_item_attachments($id)
         die;
     }
     $path = PURCHASE_MODULE_ITEM_UPLOAD_FOLDER . $id . '/';
-    $CI   = & get_instance();
+    $CI   = &get_instance();
 
     if (isset($_FILES['file']['name'])) {
 
@@ -622,13 +625,12 @@ function handle_item_attachments($id)
                 $attachment[] = [
                     'file_name' => $filename,
                     'filetype'  => $_FILES['file']['type'],
-                    ];
+                ];
 
                 $CI->misc_model->add_attachment_to_database($id, 'commodity_item_file', $attachment);
             }
         }
     }
-
 }
 
 
@@ -637,20 +639,19 @@ function handle_item_attachments($id)
  * @param  integer $id
  * @return array or row
  */
- function get_tax_rate_item($id = false)
-    {
-        $CI           = & get_instance();
+function get_tax_rate_item($id = false)
+{
+    $CI           = &get_instance();
 
-        if (is_numeric($id)) {
+    if (is_numeric($id)) {
         $CI->db->where('id', $id);
 
-            return $CI->db->get(db_prefix() . 'taxes')->row();
-        }
-        if ($id == false) {
-            return $CI->db->query('select * from tbltaxes')->result_array();
-        }
-
+        return $CI->db->get(db_prefix() . 'taxes')->row();
     }
+    if ($id == false) {
+        return $CI->db->query('select * from tbltaxes')->result_array();
+    }
+}
 
 
 /**
@@ -660,17 +661,16 @@ function handle_item_attachments($id)
  */
 function get_group_name_item($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
-    $CI->db->where('id', $id);
+        $CI->db->where('id', $id);
 
         return $CI->db->get(db_prefix() . 'items_groups')->row();
     }
     if ($id == false) {
         return $CI->db->query('select * from tblitems_groups')->result_array();
     }
-
 }
 
 /**
@@ -678,9 +678,10 @@ function get_group_name_item($id = false)
  *
  * @return     <type>  ( description_of_the_return_value )
  */
-function max_number_pur_order(){
-    $CI           = & get_instance();
-    $max = $CI->db->query('select MAX(number) as max from '.db_prefix().'pur_orders')->row();
+function max_number_pur_order()
+{
+    $CI           = &get_instance();
+    $max = $CI->db->query('select MAX(number) as max from ' . db_prefix() . 'pur_orders')->row();
     return $max->max;
 }
 
@@ -717,13 +718,15 @@ function get_all_pur_vendor_attachments($id)
  */
 function handle_pur_vendor_attachments_upload($id, $customer_upload = false)
 {
-   
-    $path           = PURCHASE_MODULE_UPLOAD_FOLDER.'/pur_vendor/'.$id .'/';
-    $CI            = & get_instance();
+
+    $path           = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $id . '/';
+    $CI            = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['file']['name'])
-        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+    if (
+        isset($_FILES['file']['name'])
+        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+    ) {
         if (!is_array($_FILES['file']['name'])) {
             $_FILES['file']['name']     = [$_FILES['file']['name']];
             $_FILES['file']['type']     = [$_FILES['file']['type']];
@@ -739,8 +742,10 @@ function handle_pur_vendor_attachments_upload($id, $customer_upload = false)
             $tmpFilePath = $_FILES['file']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['file']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['file']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['file']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['file']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -751,8 +756,8 @@ function handle_pur_vendor_attachments_upload($id, $customer_upload = false)
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                     $attachment   = [];
                     $attachment[] = [
-                    'file_name' => $filename,
-                    'filetype'  => $_FILES['file']['type'][$i],
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['file']['type'][$i],
                     ];
 
                     if (is_image($newFilePath)) {
@@ -790,7 +795,7 @@ function get_template_part_pur($name, $data = [], $return = false)
         return '';
     }
 
-    $CI   = & get_instance();
+    $CI   = &get_instance();
     $path = 'vendor_portal/template_parts/';
 
     if ($return == true) {
@@ -812,7 +817,7 @@ function handle_vendor_contact_profile_image_upload($contact_id = '')
         if ($contact_id == '') {
             $contact_id = get_vendor_contact_user_id();
         }
-        $path =  PURCHASE_MODULE_UPLOAD_FOLDER.'/contact_profile/'. $contact_id . '/';
+        $path =  PURCHASE_MODULE_UPLOAD_FOLDER . '/contact_profile/' . $contact_id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['profile_image']['tmp_name'];
         // Make sure we have a filepath
@@ -838,7 +843,7 @@ function handle_vendor_contact_profile_image_upload($contact_id = '')
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI                       = & get_instance();
+                $CI                       = &get_instance();
                 $config                   = [];
                 $config['image_library']  = 'gd2';
                 $config['source_image']   = $newFilePath;
@@ -859,7 +864,7 @@ function handle_vendor_contact_profile_image_upload($contact_id = '')
                 $CI->image_lib->resize();
 
                 $CI->db->where('id', $contact_id);
-                $CI->db->update(db_prefix().'pur_contacts', [
+                $CI->db->update(db_prefix() . 'pur_contacts', [
                     'profile_image' => $filename,
                 ]);
                 // Remove original image
@@ -882,7 +887,7 @@ function handle_vendor_contact_profile_image_upload($contact_id = '')
 function vendor_contact_profile_image_url($contact_id, $type = 'small')
 {
     $url  = base_url('assets/images/user-placeholder.jpg');
-    $CI   = & get_instance();
+    $CI   = &get_instance();
     $path = $CI->app_object_cache->get('contact-profile-image-path-' . $contact_id);
 
     if (!$path) {
@@ -894,7 +899,7 @@ function vendor_contact_profile_image_url($contact_id, $type = 'small')
         $contact = $CI->db->get()->row();
 
         if ($contact && !empty($contact->profile_image)) {
-            $path = PURCHASE_PATH.'contact_profile/' . $contact_id . '/' . $type . '_' . $contact->profile_image;
+            $path = PURCHASE_PATH . 'contact_profile/' . $contact_id . '/' . $type . '_' . $contact->profile_image;
             $CI->app_object_cache->set('contact-profile-image-path-' . $contact_id, $path);
         }
     }
@@ -913,14 +918,15 @@ function vendor_contact_profile_image_url($contact_id, $type = 'small')
  *
  * @return     string  The pur order subject.
  */
-function get_pur_order_subject($pur_order){
-    $CI   = & get_instance();
-    $CI->db->where('id',$pur_order);
-    $po = $CI->db->get(db_prefix().'pur_orders')->row();
+function get_pur_order_subject($pur_order)
+{
+    $CI   = &get_instance();
+    $CI->db->where('id', $pur_order);
+    $po = $CI->db->get(db_prefix() . 'pur_orders')->row();
 
-    if($po){
+    if ($po) {
         return $po->pur_order_number;
-    }else{
+    } else {
         return '';
     }
 }
@@ -930,9 +936,10 @@ function get_pur_order_subject($pur_order){
  *
  * @return     <type>  ( description_of_the_return_value )
  */
-function max_number_estimates(){
-    $CI           = & get_instance();
-    $max = $CI->db->query('select MAX(number) as max from '.db_prefix().'pur_estimates')->row();
+function max_number_estimates()
+{
+    $CI           = &get_instance();
+    $max = $CI->db->query('select MAX(number) as max from ' . db_prefix() . 'pur_estimates')->row();
     return $max->max;
 }
 
@@ -944,7 +951,7 @@ function max_number_estimates(){
  */
 function is_rtl_pur($client_area = false)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     if (is_vendor_logged_in()) {
         $CI->db->select('direction')->from(db_prefix() . 'pur_contacts')->where('id', get_vendor_contact_user_id());
         $direction = $CI->db->get()->row()->direction;
@@ -1048,9 +1055,11 @@ function app_theme_vendor_head_hook()
     ob_start();
     echo get_custom_fields_hyperlink_js_function();
 
-    if (get_option('use_recaptcha_customers_area') == 1
+    if (
+        get_option('use_recaptcha_customers_area') == 1
         && get_option('recaptcha_secret_key') != ''
-        && get_option('recaptcha_site_key') != '') {
+        && get_option('recaptcha_site_key') != ''
+    ) {
         echo "<script src='https://www.google.com/recaptcha/api.js'></script>";
     }
 
@@ -1066,13 +1075,13 @@ function app_theme_vendor_head_hook()
     <script>
         <?php if (is_staff_logged_in()) {
         ?>
-        var admin_url = '<?php echo admin_url(); ?>';
+            var admin_url = '<?php echo admin_url(); ?>';
         <?php
-    } ?>
+        } ?>
 
         var site_url = '<?php echo site_url(''); ?>',
-        app = {},
-        cfh_popover_templates  = {};
+            app = {},
+            cfh_popover_templates = {};
 
         app.isRTL = '<?php echo pur_html_entity_decode($isRTL); ?>';
         app.is_mobile = '<?php echo is_mobile(); ?>';
@@ -1108,11 +1117,11 @@ function app_theme_vendor_head_hook()
             datatables: <?php echo json_encode(get_datatables_language_array()); ?>,
             discussions_lang: <?php echo json_encode(get_project_discussions_language_array()); ?>,
         };
-        window.addEventListener('load',function(){
+        window.addEventListener('load', function() {
             custom_fields_hyperlink();
         });
     </script>
-    <?php
+<?php
 
     _do_clients_area_deprecated_js_vars($date_format, $locale, $maxUploadSize, $isRTL);
 
@@ -1128,12 +1137,12 @@ function app_theme_vendor_head_hook()
  */
 function get_user_id_by_contact_id_pur($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
     $userid = $CI->app_object_cache->get('user-id-by-contact-id-' . $id);
     if (!$userid) {
         $CI->db->select('userid')
-        ->where('id', $id);
+            ->where('id', $id);
         $client = $CI->db->get(db_prefix() . 'pur_contacts')->row();
 
         if ($client) {
@@ -1152,17 +1161,16 @@ function get_user_id_by_contact_id_pur($id)
  */
 function get_group_name_pur($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
-    $CI->db->where('id', $id);
+        $CI->db->where('id', $id);
 
         return $CI->db->get(db_prefix() . 'items_groups')->row();
     }
     if ($id == false) {
         return $CI->db->query('select * from tblitems_groups')->result_array();
     }
-
 }
 
 /**
@@ -1173,7 +1181,7 @@ function get_group_name_pur($id = false)
  */
 function check_pur_order_restrictions($id, $hash)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     if (!$hash || !$id) {
@@ -1185,11 +1193,10 @@ function check_pur_order_restrictions($id, $hash)
     if (!$pur_order || ($pur_order->hash != $hash)) {
         show_404();
     }
-    
 }
 function check_wo_order_restrictions($id, $hash)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     if (!$hash || !$id) {
@@ -1201,7 +1208,6 @@ function check_wo_order_restrictions($id, $hash)
     if (!$wo_order || ($wo_order->hash != $hash)) {
         show_404();
     }
-    
 }
 
 /**
@@ -1212,7 +1218,7 @@ function check_wo_order_restrictions($id, $hash)
  */
 function check_pur_request_restrictions($id, $hash)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     if (!$hash || !$id) {
@@ -1224,14 +1230,14 @@ function check_pur_request_restrictions($id, $hash)
     if (!$pur_request || ($pur_request->hash != $hash)) {
         show_404();
     }
-    
 }
 
 
-function get_pur_order_by_client($client){
-    $CI = & get_instance();
-    $CI->db->where('find_in_set('.$client.', clients)');
-    return $CI->db->get(db_prefix().'pur_orders')->result_array();
+function get_pur_order_by_client($client)
+{
+    $CI = &get_instance();
+    $CI->db->where('find_in_set(' . $client . ', clients)');
+    return $CI->db->get(db_prefix() . 'pur_orders')->result_array();
 }
 
 /**
@@ -1241,14 +1247,17 @@ function get_pur_order_by_client($client){
  *
  * @return     boolean 
  */
-function handle_pur_contract_file($id){
-     
-    $path           = PURCHASE_MODULE_UPLOAD_FOLDER.'/pur_contract/'.$id .'/';
-    $CI            = & get_instance();
+function handle_pur_contract_file($id)
+{
+
+    $path           = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_contract/' . $id . '/';
+    $CI            = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['attachments']['name'])
-        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)) {
+    if (
+        isset($_FILES['attachments']['name'])
+        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)
+    ) {
         if (!is_array($_FILES['attachments']['name'])) {
             $_FILES['attachments']['name']     = [$_FILES['attachments']['name']];
             $_FILES['attachments']['type']     = [$_FILES['attachments']['type']];
@@ -1259,13 +1268,15 @@ function handle_pur_contract_file($id){
 
         _file_attachments_index_fix('attachments');
         for ($i = 0; $i < count($_FILES['attachments']['name']); $i++) {
-           
+
             // Get the temp file path
             $tmpFilePath = $_FILES['attachments']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['attachments']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['attachments']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -1276,8 +1287,8 @@ function handle_pur_contract_file($id){
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                     $attachment   = [];
                     $attachment[] = [
-                    'file_name' => $filename,
-                    'filetype'  => $_FILES['attachments']['type'][$i],
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['attachments']['type'][$i],
                     ];
 
                     $CI->misc_model->add_attachment_to_database($id, 'pur_contract', $attachment);
@@ -1318,7 +1329,7 @@ function get_vendor_user_id()
  */
 function get_vendor_contact_user_id()
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     if (!$CI->session->has_userdata('vendor_contact_user_id')) {
         return false;
     }
@@ -1356,7 +1367,7 @@ function handle_purchase_estimate_file($id)
 {
     if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_estimate/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_estimate/' . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['file']['tmp_name'];
         // Make sure we have a filepath
@@ -1366,12 +1377,12 @@ function handle_purchase_estimate_file($id)
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI           = & get_instance();
+                $CI           = &get_instance();
                 $attachment   = [];
                 $attachment[] = [
                     'file_name' => $filename,
                     'filetype'  => $_FILES['file']['type'],
-                    ];
+                ];
                 $CI->misc_model->add_attachment_to_database($id, 'pur_estimate', $attachment);
 
                 return true;
@@ -1382,13 +1393,14 @@ function handle_purchase_estimate_file($id)
     return false;
 }
 
-function get_vendor_cate_name_by_id($id){
-    $CI = & get_instance();
+function get_vendor_cate_name_by_id($id)
+{
+    $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     $category = $CI->purchase_model->get_vendor_category($id);
-    if($category){
+    if ($category) {
         return $category->category_name;
-    }else{
+    } else {
         return '';
     }
 }
@@ -1398,14 +1410,15 @@ function get_vendor_cate_name_by_id($id){
  *
  * @param      string  $category  The category
  */
-function get_vendor_category_html($category){
+function get_vendor_category_html($category)
+{
     $rs = '';
-    if($category != ''){
+    if ($category != '') {
         $cates = explode(',', $category);
-        foreach($cates as $cat){
+        foreach ($cates as $cat) {
             $cat_name = get_vendor_cate_name_by_id($cat);
-            if($cat_name != ''){
-                $rs .= '<span class="label label-tag">'.$cat_name.'</span>';
+            if ($cat_name != '') {
+                $rs .= '<span class="label label-tag">' . $cat_name . '</span>';
             }
         }
     }
@@ -1419,12 +1432,13 @@ function get_vendor_category_html($category){
  *
  * @return     string  
  */
-function department_pur_request_name($dpm){
-    $CI = & get_instance();
+function department_pur_request_name($dpm)
+{
+    $CI = &get_instance();
     $CI->load->model('departments_model');
     $department = $CI->departments_model->get($dpm);
     $name_rs = '';
-    if($department){
+    if ($department) {
         $name_repl = str_replace(' ', '', $department->name);
         $name_rs = strtoupper($name_repl);
     }
@@ -1437,15 +1451,16 @@ function department_pur_request_name($dpm){
  *
  * @param  $pur_request  The pur request
  */
-function get_po_html_by_pur_request($pur_request){
-    $CI = & get_instance();
-    $CI->db->where('pur_request',$pur_request);
-    $list = $CI->db->get(db_prefix().'pur_orders')->result_array();
+function get_po_html_by_pur_request($pur_request)
+{
+    $CI = &get_instance();
+    $CI->db->where('pur_request', $pur_request);
+    $list = $CI->db->get(db_prefix() . 'pur_orders')->result_array();
     $rs = '';
     $count = 0;
-    if(count($list) > 0){
-        foreach($list as $li){
-            $rs .= '<a href="'.admin_url('purchase/purchase_order/'.$li['id']).'" ><span class="label label-tag mbot5">'.$li['pur_order_number'].'</span></a>&nbsp;';
+    if (count($list) > 0) {
+        foreach ($list as $li) {
+            $rs .= '<a href="' . admin_url('purchase/purchase_order/' . $li['id']) . '" ><span class="label label-tag mbot5">' . $li['pur_order_number'] . '</span></a>&nbsp;';
         }
     }
     return $rs;
@@ -1458,13 +1473,14 @@ function get_po_html_by_pur_request($pur_request){
  *
  * @return       The pur contract number.
  */
-function get_pur_contract_number($id){
-    $CI = & get_instance();
-    $CI->db->where('id',$id);
-    $contract = $CI->db->get(db_prefix().'pur_contracts')->row();
-    if($contract){
+function get_pur_contract_number($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $contract = $CI->db->get(db_prefix() . 'pur_contracts')->row();
+    if ($contract) {
         return $contract->contract_number;
-    }else{
+    } else {
         return '';
     }
 }
@@ -1476,13 +1492,14 @@ function get_pur_contract_number($id){
  *
  * @return     string  The pur invoice number.
  */
-function get_pur_invoice_number($id){
-    $CI = & get_instance();
-    $CI->db->where('id',$id);
-    $inv = $CI->db->get(db_prefix().'pur_invoices')->row();
-    if($inv){
+function get_pur_invoice_number($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $inv = $CI->db->get(db_prefix() . 'pur_invoices')->row();
+    if ($inv) {
         return $inv->invoice_number;
-    }else{
+    } else {
         return '';
     }
 }
@@ -1496,60 +1513,58 @@ function get_pur_invoice_number($id){
  */
 function purinvoice_left_to_pay($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
-    
+
     $CI->db->select('final_certified_amount')
         ->where('id', $id);
-        $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->final_certified_amount;
+    $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->final_certified_amount;
 
 
-    $CI->db->where('pur_invoice',$id);
+    $CI->db->where('pur_invoice', $id);
     $CI->db->where('approval_status', 2);
-    $payments = $CI->db->get(db_prefix().'pur_invoice_payment')->result_array();
+    $payments = $CI->db->get(db_prefix() . 'pur_invoice_payment')->result_array();
 
     $debits  = $CI->purchase_model->get_applied_invoice_debits($id);
 
     $payments = array_merge($payments, $debits);
-    
-    
+
+
     $totalPayments = 0;
 
 
     foreach ($payments as $payment) {
-        
+
         $totalPayments += $payment['amount'];
-        
     }
-    
+
     return ($invoice_total - $totalPayments);
 }
 function woinvoice_left_to_pay($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
-    
+
     $CI->db->select('final_certified_amount')
         ->where('id', $id);
-        $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->final_certified_amount;
+    $invoice_total = $CI->db->get(db_prefix() . 'pur_invoices')->row()->final_certified_amount;
 
 
-    $CI->db->where('wo_invoice',$id);
+    $CI->db->where('wo_invoice', $id);
     $CI->db->where('approval_status', 2);
-    $payments = $CI->db->get(db_prefix().'wo_invoice_payment')->result_array();
+    $payments = $CI->db->get(db_prefix() . 'wo_invoice_payment')->result_array();
 
     $debits  = $CI->purchase_model->get_applied_invoice_debits($id);
 
     $payments = array_merge($payments, $debits);
-    
-    
+
+
     $totalPayments = 0;
 
 
     foreach ($payments as $payment) {
-        
+
         $totalPayments += $payment['amount'];
-        
     }
 
     return ($invoice_total - $totalPayments);
@@ -1562,13 +1577,14 @@ function woinvoice_left_to_pay($id)
  *
  * @return     string  The payment mode name by identifier.
  */
-function get_payment_mode_name_by_id($id){
-    $CI = & get_instance();
-    $CI->db->where('id',$id);
-    $mode = $CI->db->get(db_prefix().'payment_modes')->row();
-    if($mode){
+function get_payment_mode_name_by_id($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $mode = $CI->db->get(db_prefix() . 'payment_modes')->row();
+    if ($mode) {
         return $mode->name;
-    }else{
+    } else {
         return '';
     }
 }
@@ -1580,33 +1596,33 @@ function get_payment_mode_name_by_id($id){
  *
  * @return     string  The payment request status by inv.
  */
-function get_payment_request_status_by_inv($id){
-    $CI = & get_instance();
-    $CI->db->where('pur_invoice',$id);
-    $payments = $CI->db->get(db_prefix().'pur_invoice_payment')->result_array();
+function get_payment_request_status_by_inv($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('pur_invoice', $id);
+    $payments = $CI->db->get(db_prefix() . 'pur_invoice_payment')->result_array();
     $status = '';
     $class = '';
-    if(count($payments) > 0){
+    if (count($payments) > 0) {
         $status = 'created';
         $class = 'info';
-        $CI->db->where('pur_invoice',$id);
+        $CI->db->where('pur_invoice', $id);
         $CI->db->where('approval_status', 2);
-        $payments_approved = $CI->db->get(db_prefix().'pur_invoice_payment')->result_array();
-        if(count($payments_approved)){
+        $payments_approved = $CI->db->get(db_prefix() . 'pur_invoice_payment')->result_array();
+        if (count($payments_approved)) {
             $status = 'approved';
             $class = 'success';
         }
-    }else{
+    } else {
         $status = 'blank';
         $class = 'warning';
     }
 
-    if($status != ''){
-        return '<span class="label label-'.$class.' s-status invoice-status-3">'._l($status).'</span>';
-    }else{
+    if ($status != '') {
+        return '<span class="label label-' . $class . ' s-status invoice-status-3">' . _l($status) . '</span>';
+    } else {
         return '';
     }
-
 }
 
 /**
@@ -1616,14 +1632,17 @@ function get_payment_request_status_by_inv($id){
  *
  * @return     boolean  
  */
-function handle_pur_invoice_file($id) {
+function handle_pur_invoice_file($id)
+{
     $type = 'pur_invoice';
     $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/' . $type . '/' . $id . '/';
     $CI = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['attachments']['name'])
-        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)) {
+    if (
+        isset($_FILES['attachments']['name'])
+        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)
+    ) {
         if (!is_array($_FILES['attachments']['name'])) {
             $_FILES['attachments']['name'] = [$_FILES['attachments']['name']];
             $_FILES['attachments']['type'] = [$_FILES['attachments']['type']];
@@ -1639,8 +1658,10 @@ function handle_pur_invoice_file($id) {
             $tmpFilePath = $_FILES['attachments']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['attachments']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['attachments']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -1672,10 +1693,11 @@ function handle_pur_invoice_file($id) {
  *
  * @return     boolean   
  */
-function handle_send_quotation($id){
-     if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
+function handle_send_quotation($id)
+{
+    if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
 
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/send_quotation/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/send_quotation/' . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['attachment']['tmp_name'];
         // Make sure we have a filepath
@@ -1700,10 +1722,11 @@ function handle_send_quotation($id){
  *
  * @return     boolean   
  */
-function handle_send_po($id){
-     if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
+function handle_send_po($id)
+{
+    if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
 
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/send_po/'. $id . '/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/send_po/' . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['attachment']['tmp_name'];
         // Make sure we have a filepath
@@ -1726,7 +1749,8 @@ if (!function_exists('add_purchase_email_templates')) {
      * Init appointly email templates and assign languages
      * @return void
      */
-    function add_purchase_email_templates() {
+    function add_purchase_email_templates()
+    {
         $CI = &get_instance();
 
         $data['purchase_templates'] = $CI->emails_model->get(['type' => 'purchase_order', 'language' => 'english']);
@@ -1738,17 +1762,16 @@ if (!function_exists('add_purchase_email_templates')) {
 /*
 * php delete function that deals with directories recursively
 */
-function delete_files_pur($target) {
+function delete_files_pur($target)
+{
     if (is_dir($target)) {
-        $files = glob( $target . '*', GLOB_MARK ); //GLOB_MARK adds a slash to directories returned
-        foreach( $files as $file )
-        {   
-            if( $file != $target.'signature\\' && is_dir($file)){
-                delete_dir( $file );
+        $files = glob($target . '*', GLOB_MARK); //GLOB_MARK adds a slash to directories returned
+        foreach ($files as $file) {
+            if ($file != $target . 'signature\\' && is_dir($file)) {
+                delete_dir($file);
             }
         }
-
-    } 
+    }
 }
 
 
@@ -1763,7 +1786,7 @@ function handle_po_logo()
 {
     if (isset($_FILES['po_logo']['name']) && $_FILES['po_logo']['name'] != '') {
 
-        $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/po_logo/'.'0/';
+        $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/po_logo/' . '0/';
         // Get the temp file path
         $tmpFilePath = $_FILES['po_logo']['tmp_name'];
         // Make sure we have a filepath
@@ -1771,16 +1794,16 @@ function handle_po_logo()
             _maybe_create_upload_path($path);
             $filename    = unique_filename($path, $_FILES['po_logo']['name']);
             $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-            $filename = 'po_logo_'.time().'.'.$extension;
+            $filename = 'po_logo_' . time() . '.' . $extension;
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI           = & get_instance();
+                $CI           = &get_instance();
                 $attachment   = [];
                 $attachment[] = [
                     'file_name' => $filename,
                     'filetype'  => $_FILES['po_logo']['type'],
-                    ];
+                ];
                 $CI->misc_model->add_attachment_to_database(0, 'po_logo', $attachment);
 
                 return true;
@@ -1794,23 +1817,24 @@ function handle_po_logo()
 /**
  * Gets the po logo.
  */
-function get_po_logo($width = 120, $class = '', $type = 'pdf'){
-    $CI           = & get_instance();
+function get_po_logo($width = 120, $class = '', $type = 'pdf')
+{
+    $CI           = &get_instance();
     $CI->db->where('rel_id', 0);
-    $CI->db->where('rel_type','po_logo');
-    $logo = $CI->db->get(db_prefix().'files')->result_array();
-    
+    $CI->db->where('rel_type', 'po_logo');
+    $logo = $CI->db->get(db_prefix() . 'files')->result_array();
+
     $logoUrl                   = '';
-    if(count($logo) > 0){
-        $logoUrl = APP_MODULES_PATH. 'purchase/uploads/po_logo/0/'.$logo[0]['file_name'];
-        if($type != 'pdf'){
-            $logoUrl = base_url(PURCHASE_PATH .'po_logo/0/'.$logo[0]['file_name']);
+    if (count($logo) > 0) {
+        $logoUrl = APP_MODULES_PATH . 'purchase/uploads/po_logo/0/' . $logo[0]['file_name'];
+        if ($type != 'pdf') {
+            $logoUrl = base_url(PURCHASE_PATH . 'po_logo/0/' . $logo[0]['file_name']);
         }
     }
 
     $logoImage = '';
-    if($logoUrl != ''){
-       $logoImage = '<img style="width:' . $width . 'px" src="' . $logoUrl . '" class="'.$class.'">';
+    if ($logoUrl != '') {
+        $logoImage = '<img style="width:' . $width . 'px" src="' . $logoUrl . '" class="' . $class . '">';
     }
 
 
@@ -1824,13 +1848,14 @@ function get_po_logo($width = 120, $class = '', $type = 'pdf'){
  *
  * @return     int     ( description of the return value )
  */
-function total_inv_value_by_pur_order($pur_order){
-    $CI           = & get_instance();
+function total_inv_value_by_pur_order($pur_order)
+{
+    $CI           = &get_instance();
     $CI->db->where('pur_order', $pur_order);
-    $list_inv = $CI->db->get(db_prefix().'pur_invoices')->result_array();
+    $list_inv = $CI->db->get(db_prefix() . 'pur_invoices')->result_array();
     $rs = 0;
-    if(count($list_inv) > 0){
-        foreach($list_inv as $inv){
+    if (count($list_inv) > 0) {
+        foreach ($list_inv as $inv) {
             $rs += $inv['total'];
         }
     }
@@ -1846,13 +1871,14 @@ function total_inv_value_by_pur_order($pur_order){
  *
  * @return     string  The item identifier by description.
  */
-function get_item_id_by_des($des, $long_des = ''){
-    $CI           = & get_instance();
+function get_item_id_by_des($des, $long_des = '')
+{
+    $CI           = &get_instance();
     $CI->db->where('description', $des);
-   
-    $item = $CI->db->get(db_prefix().'items')->row();
 
-    if($item){
+    $item = $CI->db->get(db_prefix() . 'items')->row();
+
+    if ($item) {
         return $item->id;
     }
     return '';
@@ -1863,48 +1889,50 @@ function get_item_id_by_des($des, $long_des = ''){
  *
  * @param        $pur_order  The pur order
  */
-function purorder_inv_left_to_pay($pur_order){
-    $CI           = & get_instance();
+function purorder_inv_left_to_pay($pur_order)
+{
+    $CI           = &get_instance();
     $CI->load->model('purchase/purchase_model');
     $list_payment = $CI->purchase_model->get_inv_payment_purchase_order($pur_order);
     $po = $CI->purchase_model->get_pur_order($pur_order);
 
     $list_applied_debit = $CI->purchase_model->get_inv_debit_purchase_order($pur_order);
     $paid = 0;
-    foreach($list_payment as $payment){
-        if($payment['approval_status'] == 2){
+    foreach ($list_payment as $payment) {
+        if ($payment['approval_status'] == 2) {
             $paid += $payment['amount'];
         }
     }
 
-    foreach($list_applied_debit as $debit){
+    foreach ($list_applied_debit as $debit) {
         $paid += $debit['amount'];
     }
 
-    if($po){
+    if ($po) {
         return $po->total - $paid;
     }
     return 0;
 }
-function woorder_inv_left_to_pay($wo_order){
-    $CI           = & get_instance();
+function woorder_inv_left_to_pay($wo_order)
+{
+    $CI           = &get_instance();
     $CI->load->model('purchase/purchase_model');
     $list_payment = $CI->purchase_model->get_inv_payment_work_order($wo_order);
     $po = $CI->purchase_model->get_wo_order($wo_order);
 
     $list_applied_debit = $CI->purchase_model->get_inv_debit_work_order($wo_order);
     $paid = 0;
-    foreach($list_payment as $payment){
-        if($payment['approval_status'] == 2){
+    foreach ($list_payment as $payment) {
+        if ($payment['approval_status'] == 2) {
             $paid += $payment['amount'];
         }
     }
 
-    foreach($list_applied_debit as $debit){
+    foreach ($list_applied_debit as $debit) {
         $paid += $debit['amount'];
     }
 
-    if($po){
+    if ($po) {
         return $po->total - $paid;
     }
     return 0;
@@ -1916,7 +1944,8 @@ function woorder_inv_left_to_pay($wo_order){
  *
  * @return     integer  ( 1 or 0 )
  */
-function row_purchase_tbl_options_exist($name) {
+function row_purchase_tbl_options_exist($name)
+{
     $CI = &get_instance();
     $i = count($CI->db->query('Select * from ' . db_prefix() . 'options where name = ' . $name)->result_array());
     if ($i == 0) {
@@ -1932,8 +1961,9 @@ function row_purchase_tbl_options_exist($name) {
  *
  * @return       The base currency pur.
  */
-function get_base_currency_pur(){
-    $CI           = & get_instance();
+function get_base_currency_pur()
+{
+    $CI           = &get_instance();
     $CI->load->model('currencies_model');
     $base_currency = $CI->currencies_model->get_base_currency();
     return $base_currency;
@@ -1946,17 +1976,18 @@ function get_base_currency_pur(){
  *
  * @return     array   The arr vendors by pr.
  */
-function get_arr_vendors_by_pr($pur_request){
-    $CI           = & get_instance();
+function get_arr_vendors_by_pr($pur_request)
+{
+    $CI           = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     $CI->db->where('pur_request', $pur_request);
-    $quotes = $CI->db->get(db_prefix().'pur_estimates')->result_array();
+    $quotes = $CI->db->get(db_prefix() . 'pur_estimates')->result_array();
     $arr_vendor = [];
     $arr_vendor_rs = [];
-    if(count($quotes) > 0){
-        foreach($quotes as $quote){
-            if(!in_array($quote['vendor'], $arr_vendor)){
+    if (count($quotes) > 0) {
+        foreach ($quotes as $quote) {
+            if (!in_array($quote['vendor'], $arr_vendor)) {
                 $arr_vendor[] = $quote['vendor'];
                 $arr_vendor_rs[] = $CI->purchase_model->get_vendor($quote['vendor']);
             }
@@ -1968,11 +1999,12 @@ function get_arr_vendors_by_pr($pur_request){
 /**
  * Gets the quotations by pur request.
  */
-function get_quotations_by_pur_request($pur_request){
-    $CI           = & get_instance();
+function get_quotations_by_pur_request($pur_request)
+{
+    $CI           = &get_instance();
 
     $CI->db->where('pur_request', $pur_request);
-    $quotes = $CI->db->get(db_prefix().'pur_estimates')->result_array();
+    $quotes = $CI->db->get(db_prefix() . 'pur_estimates')->result_array();
     return $quotes;
 }
 
@@ -1982,11 +2014,12 @@ function get_quotations_by_pur_request($pur_request){
  * @param        $item           The item
  * @param        $pur_estimates  The pur estimates
  */
-function get_item_detail_in_quote($item, $pur_estimates){
-    $CI           = & get_instance();
+function get_item_detail_in_quote($item, $pur_estimates)
+{
+    $CI           = &get_instance();
     $CI->db->where('pur_estimate', $pur_estimates);
     $CI->db->where('item_code', $item);
-    $item_row = $CI->db->get(db_prefix().'pur_estimate_detail')->row();
+    $item_row = $CI->db->get(db_prefix() . 'pur_estimate_detail')->row();
     return $item_row;
 }
 
@@ -2019,10 +2052,10 @@ function get_debit_note_item_taxes($itemid)
  */
 function format_debit_note_number($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->db->select('date,number,prefix,number_format')
-    ->from(db_prefix() . 'pur_debit_notes')
-    ->where('id', $id);
+        ->from(db_prefix() . 'pur_debit_notes')
+        ->where('id', $id);
     $debit_note = $CI->db->get()->row();
 
     if (!$debit_note) {
@@ -2072,95 +2105,95 @@ function format_debit_note_status($status, $text = false)
 }
 
 /**
-     * Format vendor address info
-     * @param  object  $data        vendor object from database
-     * @param  string  $for         where this format will be used? Eq statement invoice etc
-     * @param  string  $type        billing/shipping
-     * @param  boolean $companyLink company link to be added on vendor company/name, this is used in admin area only
-     * @return string
-     */
-    function format_vendor_info($data, $for, $type, $companyLink = false)
-    {
-        $format   = get_option('customer_info_format');
-        $vendorId = '';
+ * Format vendor address info
+ * @param  object  $data        vendor object from database
+ * @param  string  $for         where this format will be used? Eq statement invoice etc
+ * @param  string  $type        billing/shipping
+ * @param  boolean $companyLink company link to be added on vendor company/name, this is used in admin area only
+ * @return string
+ */
+function format_vendor_info($data, $for, $type, $companyLink = false)
+{
+    $format   = get_option('customer_info_format');
+    $vendorId = '';
 
-        if ($for == 'statement') {
-            $vendorId = $data->userid;
-        } elseif ($type == 'billing') {
-            $vendorId = $data->vendorid;
-        }
-
-        $filterData = [
-            'data'         => $data,
-            'for'          => $for,
-            'type'         => $type,
-            'client_id'    => $vendorId,
-            'company_link' => $companyLink,
-        ];
-
-        $companyName = '';
-        if ($for == 'statement') {
-            $companyName = get_vendor_company_name($vendorId);
-        } elseif ($type == 'billing') {
-            $companyName = $data->vendor->company;
-        }
-
-        $acceptsPrimaryContactDisplay = ['debit_note'];
-
-        $street  = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_street'} : '';
-        $city    = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_city'} : '';
-        $state   = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_state'} : '';
-        $zipCode = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_zip'} : '';
-
-        $countryCode = '';
-        $countryName = '';
-
-        if ($country = in_array($type, ['billing', 'shipping']) ? get_country($data->{$type . '_country'}) : '') {
-            $countryCode = $country->iso2;
-            $countryName = $country->short_name;
-        }
-
-        $phone = '';
-        if ($for == 'statement' && isset($data->phonenumber)) {
-            $phone = $data->phonenumber;
-        } elseif ($type == 'billing' && isset($data->client->phonenumber)) {
-            $phone = $data->client->phonenumber;
-        }
-
-        $vat = '';
-        if ($for == 'statement' && isset($data->vat)) {
-            $vat = $data->vat;
-        } elseif ($type == 'billing' && isset($data->client->vat)) {
-            $vat = $data->client->vat;
-        }
-
-        if ($companyLink && (!isset($data->deleted_customer_name) ||
-            (isset($data->deleted_customer_name) &&
-                empty($data->deleted_customer_name)))) {
-            $companyName = '<a href="' . admin_url('purchase/vendor/' . $vendorId) . '" target="_blank"><b>' . $companyName . '</b></a>';
-        } elseif ($companyName != '') {
-            $companyName = '<b>' . $companyName . '</b>';
-        }
-
-        $format = _info_format_replace('company_name', $companyName, $format);
-        $format = _info_format_replace('customer_id', $vendorId, $format);
-        $format = _info_format_replace('street', $street, $format);
-        $format = _info_format_replace('city', $city, $format);
-        $format = _info_format_replace('state', $state, $format);
-        $format = _info_format_replace('zip_code', $zipCode, $format);
-        $format = _info_format_replace('country_code', $countryCode, $format);
-        $format = _info_format_replace('country_name', $countryName, $format);
-        $format = _info_format_replace('phone', $phone, $format);
-        $format = _info_format_replace('vat_number', $vat, $format);
-        $format = _info_format_replace('vat_number_with_label', $vat == '' ? '' : _l('client_vat_number') . ': ' . $vat, $format);
-
-
-        // Remove multiple white spaces
-        $format = preg_replace('/\s+/', ' ', $format);
-        $format = trim($format);
-
-        return hooks()->apply_filters('customer_info_text', $format, $filterData);
+    if ($for == 'statement') {
+        $vendorId = $data->userid;
+    } elseif ($type == 'billing') {
+        $vendorId = $data->vendorid;
     }
+
+    $filterData = [
+        'data'         => $data,
+        'for'          => $for,
+        'type'         => $type,
+        'client_id'    => $vendorId,
+        'company_link' => $companyLink,
+    ];
+
+    $companyName = '';
+    if ($for == 'statement') {
+        $companyName = get_vendor_company_name($vendorId);
+    } elseif ($type == 'billing') {
+        $companyName = $data->vendor->company;
+    }
+
+    $acceptsPrimaryContactDisplay = ['debit_note'];
+
+    $street  = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_street'} : '';
+    $city    = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_city'} : '';
+    $state   = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_state'} : '';
+    $zipCode = in_array($type, ['billing', 'shipping']) ? $data->{$type . '_zip'} : '';
+
+    $countryCode = '';
+    $countryName = '';
+
+    if ($country = in_array($type, ['billing', 'shipping']) ? get_country($data->{$type . '_country'}) : '') {
+        $countryCode = $country->iso2;
+        $countryName = $country->short_name;
+    }
+
+    $phone = '';
+    if ($for == 'statement' && isset($data->phonenumber)) {
+        $phone = $data->phonenumber;
+    } elseif ($type == 'billing' && isset($data->client->phonenumber)) {
+        $phone = $data->client->phonenumber;
+    }
+
+    $vat = '';
+    if ($for == 'statement' && isset($data->vat)) {
+        $vat = $data->vat;
+    } elseif ($type == 'billing' && isset($data->client->vat)) {
+        $vat = $data->client->vat;
+    }
+
+    if ($companyLink && (!isset($data->deleted_customer_name) ||
+        (isset($data->deleted_customer_name) &&
+            empty($data->deleted_customer_name)))) {
+        $companyName = '<a href="' . admin_url('purchase/vendor/' . $vendorId) . '" target="_blank"><b>' . $companyName . '</b></a>';
+    } elseif ($companyName != '') {
+        $companyName = '<b>' . $companyName . '</b>';
+    }
+
+    $format = _info_format_replace('company_name', $companyName, $format);
+    $format = _info_format_replace('customer_id', $vendorId, $format);
+    $format = _info_format_replace('street', $street, $format);
+    $format = _info_format_replace('city', $city, $format);
+    $format = _info_format_replace('state', $state, $format);
+    $format = _info_format_replace('zip_code', $zipCode, $format);
+    $format = _info_format_replace('country_code', $countryCode, $format);
+    $format = _info_format_replace('country_name', $countryName, $format);
+    $format = _info_format_replace('phone', $phone, $format);
+    $format = _info_format_replace('vat_number', $vat, $format);
+    $format = _info_format_replace('vat_number_with_label', $vat == '' ? '' : _l('client_vat_number') . ': ' . $vat, $format);
+
+
+    // Remove multiple white spaces
+    $format = preg_replace('/\s+/', ' ', $format);
+    $format = trim($format);
+
+    return hooks()->apply_filters('customer_info_text', $format, $filterData);
+}
 
 /**
  * Prepare general debit note pdf
@@ -2200,7 +2233,7 @@ function debit_note_status_color_pdf($status_id)
  */
 function debits_can_be_applied_to_invoice($status)
 {
-    if(in_array($status, ["unpaid", "partially_paid"]) ){
+    if (in_array($status, ["unpaid", "partially_paid"])) {
         return true;
     }
     return false;
@@ -2222,28 +2255,27 @@ function purchase_statement_pdf($statement)
  */
 function purchase_get_staff_id_permissions()
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $array_staff_id = [];
-    $index=0;
+    $index = 0;
 
-    $str_permissions ='';
+    $str_permissions = '';
     foreach (list_purchase_permisstion() as $per_key =>  $per_value) {
-        if(strlen($str_permissions) > 0){
-            $str_permissions .= ",'".$per_value."'";
-        }else{
-            $str_permissions .= "'".$per_value."'";
+        if (strlen($str_permissions) > 0) {
+            $str_permissions .= ",'" . $per_value . "'";
+        } else {
+            $str_permissions .= "'" . $per_value . "'";
         }
-
     }
 
 
-    $sql_where = "SELECT distinct staff_id FROM ".db_prefix()."staff_permissions
-    where feature IN (".$str_permissions.")
+    $sql_where = "SELECT distinct staff_id FROM " . db_prefix() . "staff_permissions
+    where feature IN (" . $str_permissions . ")
     ";
-    
+
     $staffs = $CI->db->query($sql_where)->result_array();
 
-    if(count($staffs)>0){
+    if (count($staffs) > 0) {
         foreach ($staffs as $key => $value) {
             $array_staff_id[$index] = $value['staff_id'];
             $index++;
@@ -2259,23 +2291,23 @@ function purchase_get_staff_id_permissions()
  */
 function list_purchase_permisstion()
 {
-    $hr_profile_permissions=[];
-    $hr_profile_permissions[]='purchase_items';
-    $hr_profile_permissions[]='purchase_vendors';
-    $hr_profile_permissions[]='purchase_vendor_items';
-    $hr_profile_permissions[]='purchase_request';
-    $hr_profile_permissions[]='purchase_quotations';
-    $hr_profile_permissions[]='purchase_orders';
-    $hr_profile_permissions[]='work_order';
-    $hr_profile_permissions[]='purchase_order_return';
-    $hr_profile_permissions[]='purchase_contracts';
-    $hr_profile_permissions[]='purchase_invoices';
-    $hr_profile_permissions[]='purchase_reports';
-    $hr_profile_permissions[]='purchase_debit_notes';
-    $hr_profile_permissions[]='purchase_settings';
-    $hr_profile_permissions[]='purchase_order_change_approve_status';
-    $hr_profile_permissions[]='purchase_estimate_change_approve_status';
-    $hr_profile_permissions[]='purchase_request_change_approve_status';
+    $hr_profile_permissions = [];
+    $hr_profile_permissions[] = 'purchase_items';
+    $hr_profile_permissions[] = 'purchase_vendors';
+    $hr_profile_permissions[] = 'purchase_vendor_items';
+    $hr_profile_permissions[] = 'purchase_request';
+    $hr_profile_permissions[] = 'purchase_quotations';
+    $hr_profile_permissions[] = 'purchase_orders';
+    $hr_profile_permissions[] = 'work_order';
+    $hr_profile_permissions[] = 'purchase_order_return';
+    $hr_profile_permissions[] = 'purchase_contracts';
+    $hr_profile_permissions[] = 'purchase_invoices';
+    $hr_profile_permissions[] = 'purchase_reports';
+    $hr_profile_permissions[] = 'purchase_debit_notes';
+    $hr_profile_permissions[] = 'purchase_settings';
+    $hr_profile_permissions[] = 'purchase_order_change_approve_status';
+    $hr_profile_permissions[] = 'purchase_estimate_change_approve_status';
+    $hr_profile_permissions[] = 'purchase_request_change_approve_status';
 
 
     return $hr_profile_permissions;
@@ -2287,33 +2319,33 @@ function list_purchase_permisstion()
  */
 function purchase_get_staff_id_dont_permissions()
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
 
     $CI->db->where('admin != ', 1);
 
-    if(count(purchase_get_staff_id_permissions()) > 0){
+    if (count(purchase_get_staff_id_permissions()) > 0) {
         $CI->db->where_not_in('staffid', purchase_get_staff_id_permissions());
     }
-    return $CI->db->get(db_prefix().'staff')->result_array();
-    
+    return $CI->db->get(db_prefix() . 'staff')->result_array();
 }
 
-function check_valid_number_with_setting($number){
+function check_valid_number_with_setting($number)
+{
     $decimal_separator = get_option('decimal_separator');
     $thousand_separator = get_option('thousand_separator');
 
     $decimal_separator_index = strpos($number, $decimal_separator);
     $thousand_separator_index = strpos($number, $thousand_separator);
 
-    if($decimal_separator_index == false || $thousand_separator_index == false){
+    if ($decimal_separator_index == false || $thousand_separator_index == false) {
         return true;
     }
 
-    if($decimal_separator_index <= $thousand_separator_index){
+    if ($decimal_separator_index <= $thousand_separator_index) {
         return false;
     }
 
-    return true; 
+    return true;
 }
 
 function pur_convert_item_taxes($tax, $tax_rate, $tax_name)
@@ -2322,30 +2354,29 @@ function pur_convert_item_taxes($tax, $tax_rate, $tax_name)
     5.00    TAX5
     id      rate        name
     2|1 ; 6.00|10.00 ; TAX5|TAX10%*/
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $taxes = [];
-    if($tax != null && strlen($tax) > 0){
+    if ($tax != null && strlen($tax) > 0) {
         $arr_tax_id = explode('|', $tax);
-        if($tax_name != null && strlen($tax_name) > 0){
+        if ($tax_name != null && strlen($tax_name) > 0) {
             $arr_tax_name = explode('|', $tax_name);
             $arr_tax_rate = explode('|', $tax_rate);
             foreach ($arr_tax_name as $key => $value) {
                 $taxes[]['taxname'] = $value . '|' .  $arr_tax_rate[$key];
             }
-        }elseif($tax_rate != null && strlen($tax_rate) > 0){
+        } elseif ($tax_rate != null && strlen($tax_rate) > 0) {
             $CI->load->model('purchase/purchase_model');
             $arr_tax_id = explode('|', $tax);
             $arr_tax_rate = explode('|', $tax_rate);
             foreach ($arr_tax_id as $key => $value) {
                 $_tax_name = $CI->purchase_model->get_tax_name($value);
-                if(isset($arr_tax_rate[$key])){
+                if (isset($arr_tax_rate[$key])) {
                     $taxes[]['taxname'] = $_tax_name . '|' .  $arr_tax_rate[$key];
-                }else{
+                } else {
                     $taxes[]['taxname'] = $_tax_name . '|' .  $CI->purchase_model->tax_rate_by_id($value);
-
                 }
             }
-        }else{
+        } else {
             $CI->load->model('purchase/purchase_model');
             $arr_tax_id = explode('|', $tax);
             $arr_tax_rate = explode('|', $tax_rate);
@@ -2353,9 +2384,8 @@ function pur_convert_item_taxes($tax, $tax_rate, $tax_name)
                 $_tax_name = $CI->purchase_model->get_tax_name($value);
                 $_tax_rate = $CI->purchase_model->tax_rate_by_id($value);
                 $taxes[]['taxname'] = $_tax_name . '|' .  $_tax_rate;
-            } 
+            }
         }
-
     }
 
     return $taxes;
@@ -2368,12 +2398,12 @@ function pur_convert_item_taxes($tax, $tax_rate, $tax_name)
  */
 function pur_get_unit_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     if (is_numeric($id)) {
         $CI->db->where('unit_type_id', $id);
 
         $unit = $CI->db->get(db_prefix() . 'ware_unit_type')->row();
-        if($unit){
+        if ($unit) {
             return $unit->unit_name;
         }
         return '';
@@ -2387,17 +2417,17 @@ function pur_get_unit_name($id = false)
  */
 function pur_get_item_variatiom($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     $CI->db->where('id', $id);
     $item_value = $CI->db->get(db_prefix() . 'items')->row();
 
     $name = '';
-    if($item_value){
+    if ($item_value) {
         $CI->load->model('purchase/purchase_model');
         $new_item_value = $CI->purchase_model->row_item_to_variation($item_value);
 
-        $name .= $item_value->commodity_code.'_'.$new_item_value->new_description;
+        $name .= $item_value->commodity_code . '_' . $new_item_value->new_description;
     }
 
     return $name;
@@ -2415,7 +2445,7 @@ function pur_get_invoice_item_taxes($itemid)
     $CI->db->where('rel_type', 'invoice');
     $taxes = $CI->db->get(db_prefix() . 'item_tax')->result_array();
     $i     = 0;
- 
+
 
     return $taxes;
 }
@@ -2427,14 +2457,17 @@ function pur_get_invoice_item_taxes($itemid)
  *
  * @return     boolean
  */
-function handle_vendor_item_attachment($id) {
+function handle_vendor_item_attachment($id)
+{
 
     $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/vendor_items/' . $id . '/';
     $CI = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['attachments']['name'])
-        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)) {
+    if (
+        isset($_FILES['attachments']['name'])
+        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)
+    ) {
         if (!is_array($_FILES['attachments']['name'])) {
             $_FILES['attachments']['name'] = [$_FILES['attachments']['name']];
             $_FILES['attachments']['type'] = [$_FILES['attachments']['type']];
@@ -2450,8 +2483,10 @@ function handle_vendor_item_attachment($id) {
             $tmpFilePath = $_FILES['attachments']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['attachments']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['attachments']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -2481,7 +2516,8 @@ function handle_vendor_item_attachment($id) {
  *
  * @param        $item_id  The item identifier
  */
-function vendor_item_images($item_id){
+function vendor_item_images($item_id)
+{
     $CI = &get_instance();
 
     $CI->db->order_by('dateadded', 'desc');
@@ -2498,7 +2534,7 @@ function vendor_item_images($item_id){
  */
 function pur_get_tax_rate($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -2508,7 +2544,6 @@ function pur_get_tax_rate($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tbltaxes')->result_array();
     }
-
 }
 
 /**
@@ -2517,12 +2552,12 @@ function pur_get_tax_rate($id = false)
  * @param  string $column 
  * @return [type]         
  */
-function pur_get_currency_name_symbol($id, $column='')
+function pur_get_currency_name_symbol($id, $column = '')
 {
-    $CI   = & get_instance();
-    $currency_value='';
+    $CI   = &get_instance();
+    $currency_value = '';
 
-    if($column == ''){
+    if ($column == '') {
         $column = 'name';
     }
 
@@ -2530,7 +2565,7 @@ function pur_get_currency_name_symbol($id, $column='')
     $CI->db->from(db_prefix() . 'currencies');
     $CI->db->where('id', $id);
     $currency = $CI->db->get()->row();
-    if($currency){
+    if ($currency) {
         $currency_value = $currency->$column;
     }
 
@@ -2545,8 +2580,8 @@ function pur_get_currency_name_symbol($id, $column='')
  */
 function pur_get_currency_rate($from, $to)
 {
-    $CI   = & get_instance();
-    if($from == $to){
+    $CI   = &get_instance();
+    if ($from == $to) {
         return 1;
     }
 
@@ -2554,9 +2589,9 @@ function pur_get_currency_rate($from, $to)
 
     $CI->db->where('from_currency_name', strtoupper($from));
     $CI->db->where('to_currency_name', strtoupper($to));
-    $currency_rates = $CI->db->get(db_prefix().'currency_rates')->row();
-    
-    if($currency_rates){
+    $currency_rates = $CI->db->get(db_prefix() . 'currency_rates')->row();
+
+    if ($currency_rates) {
         $amount_after_convertion = $currency_rates->to_currency_rate;
     }
 
@@ -2569,11 +2604,12 @@ function pur_get_currency_rate($from, $to)
  *
  * @param        $id     The identifier
  */
-function pur_get_currency_by_id($id){
-    $CI   = & get_instance();
+function pur_get_currency_by_id($id)
+{
+    $CI   = &get_instance();
 
     $CI->db->where('id', $id);
-    return  $CI->db->get(db_prefix().'currencies')->row();
+    return  $CI->db->get(db_prefix() . 'currencies')->row();
 }
 
 /**
@@ -2581,23 +2617,25 @@ function pur_get_currency_by_id($id){
  *
  * @param        $vendor_id  The vendor identifier
  */
-function get_vendor_currency($vendor_id){
-    $CI   = & get_instance();
+function get_vendor_currency($vendor_id)
+{
+    $CI   = &get_instance();
 
     $CI->db->where('userid', $vendor_id);
-    $vendor = $CI->db->get(db_prefix().'pur_vendor')->row();
+    $vendor = $CI->db->get(db_prefix() . 'pur_vendor')->row();
 
-    if($vendor){
+    if ($vendor) {
         return $vendor->default_currency;
     }
     return 0;
 }
 
-function get_invoice_currency_id($invoice_id){
-    $CI   = & get_instance();
+function get_invoice_currency_id($invoice_id)
+{
+    $CI   = &get_instance();
     $CI->db->where('id', $invoice_id);
-    $invoice = $CI->db->get(db_prefix().'pur_invoices')->row();
-    if($invoice){
+    $invoice = $CI->db->get(db_prefix() . 'pur_invoices')->row();
+    if ($invoice) {
         return $invoice->currency;
     }
     return 0;
@@ -2608,14 +2646,16 @@ function get_invoice_currency_id($invoice_id){
  * @param  mixed $clientid Client ID to add attachments
  * @return array  - Result values
  */
-function handle_vendor_po_attachments_upload($id, $customer_upload = false, $purorder='')
+function handle_vendor_po_attachments_upload($id, $customer_upload = false, $purorder = '')
 {
-    $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_order/'. $purorder . '/';
-    $CI            = & get_instance();
+    $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order/' . $purorder . '/';
+    $CI            = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['file']['name'])
-        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+    if (
+        isset($_FILES['file']['name'])
+        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+    ) {
         if (!is_array($_FILES['file']['name'])) {
             $_FILES['file']['name']     = [$_FILES['file']['name']];
             $_FILES['file']['type']     = [$_FILES['file']['type']];
@@ -2631,8 +2671,10 @@ function handle_vendor_po_attachments_upload($id, $customer_upload = false, $pur
             $tmpFilePath = $_FILES['file']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['file']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['file']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['file']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['file']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -2643,8 +2685,8 @@ function handle_vendor_po_attachments_upload($id, $customer_upload = false, $pur
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                     $attachment   = [];
                     $attachment[] = [
-                    'file_name' => $filename,
-                    'filetype'  => $_FILES['file']['type'][$i],
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['file']['type'][$i],
                     ];
 
                     if (is_image($newFilePath)) {
@@ -2672,14 +2714,16 @@ function handle_vendor_po_attachments_upload($id, $customer_upload = false, $pur
  * @param  mixed $clientid Client ID to add attachments
  * @return array  - Result values
  */
-function handle_vendor_estimate_attachments_upload($id, $customer_upload = false, $purorder='')
+function handle_vendor_estimate_attachments_upload($id, $customer_upload = false, $purorder = '')
 {
-    $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_estimate/'. $purorder . '/';
-    $CI            = & get_instance();
+    $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_estimate/' . $purorder . '/';
+    $CI            = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['file']['name'])
-        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+    if (
+        isset($_FILES['file']['name'])
+        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+    ) {
         if (!is_array($_FILES['file']['name'])) {
             $_FILES['file']['name']     = [$_FILES['file']['name']];
             $_FILES['file']['type']     = [$_FILES['file']['type']];
@@ -2695,8 +2739,10 @@ function handle_vendor_estimate_attachments_upload($id, $customer_upload = false
             $tmpFilePath = $_FILES['file']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['file']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['file']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['file']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['file']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -2707,8 +2753,8 @@ function handle_vendor_estimate_attachments_upload($id, $customer_upload = false
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                     $attachment   = [];
                     $attachment[] = [
-                    'file_name' => $filename,
-                    'filetype'  => $_FILES['file']['type'][$i],
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['file']['type'][$i],
                     ];
 
                     if (is_image($newFilePath)) {
@@ -2737,7 +2783,7 @@ function handle_vendor_estimate_attachments_upload($id, $customer_upload = false
  * @return [type]       
  */
 function pur_check_approval_setting($type)
-{   
+{
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
@@ -2755,11 +2801,11 @@ function pur_check_approval_setting($type)
  */
 function get_purchase_option_v2($name)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $options = [];
     $val  = '';
     $name = trim($name);
-    
+
 
     if (!isset($options[$name])) {
         // is not auto loaded
@@ -2783,7 +2829,7 @@ function get_purchase_option_v2($name)
  */
 function pur_get_commodity_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -2793,7 +2839,6 @@ function pur_get_commodity_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblitems')->result_array();
     }
-
 }
 
 /**
@@ -2807,12 +2852,12 @@ function pur_render_taxes_html($item_tax, $width)
     $itemHTML = '';
     $itemHTML .= '<td align="right" width="' . $width . '%">';
 
-    if(is_array($item_tax) && isset($item_tax)){
+    if (is_array($item_tax) && isset($item_tax)) {
         if (count($item_tax) > 0) {
             foreach ($item_tax as $tax) {
 
                 $item_tax = '';
-                if ( get_option('remove_tax_name_from_item_table') == false || multiple_taxes_found_for_item($item_tax)) {
+                if (get_option('remove_tax_name_from_item_table') == false || multiple_taxes_found_for_item($item_tax)) {
                     $tmp      = explode('|', $tax['taxname']);
                     $item_tax = $tmp[0] . ' ' . app_format_number($tmp[1]) . '%<br />';
                 } else {
@@ -2840,13 +2885,13 @@ function pur_format_approve_status($status, $text = false, $clean = false)
 {
 
     $status_name = '';
-    if($status == 1){
+    if ($status == 1) {
         $status_name = _l('purchase_draft');
-    }elseif($status == 2){
+    } elseif ($status == 2) {
         $status_name = _l('purchase_approved');
-    }elseif($status == 3){
+    } elseif ($status == 3) {
         $status_name = _l('pur_rejected');
-    }elseif($status == 4){
+    } elseif ($status == 4) {
         $status_name = _l('pur_canceled');
     }
 
@@ -2857,26 +2902,26 @@ function pur_format_approve_status($status, $text = false, $clean = false)
     $style = '';
     $class = '';
     if ($text == false) {
-        if($status == 1){
+        if ($status == 1) {
             $class = 'label label-primary';
-        }elseif($status == 2){
+        } elseif ($status == 2) {
             $class = 'label label-success';
-        }elseif($status == 3){
+        } elseif ($status == 3) {
             $class = 'label label-warning';
-        }elseif($status == 4){
+        } elseif ($status == 4) {
             $class = 'label label-danger';
         }
     } else {
-        if($status == 1){
+        if ($status == 1) {
             $class = 'label text-info';
-        }elseif($status == 2){
+        } elseif ($status == 2) {
             $class = 'label text-success';
-        }elseif($status == 3){
+        } elseif ($status == 3) {
             $class = 'label text-warning';
-        }elseif($status == 4){
+        } elseif ($status == 4) {
             $class = 'label text-danger';
         }
-    }    
+    }
 
     return '<span class="' . $class . '" >' . $status_name . '</span>';
 }
@@ -2887,14 +2932,16 @@ function pur_format_approve_status($status, $text = false, $clean = false)
  * @param  mixed $clientid Client ID to add attachments
  * @return array  - Result values
  */
-function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $purorder='')
+function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $purorder = '')
 {
-    $path = PURCHASE_MODULE_UPLOAD_FOLDER .'/pur_request/'. $purorder . '/';
-    $CI            = & get_instance();
+    $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $purorder . '/';
+    $CI            = &get_instance();
     $totalUploaded = 0;
 
-    if (isset($_FILES['file']['name'])
-        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+    if (
+        isset($_FILES['file']['name'])
+        && ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+    ) {
         if (!is_array($_FILES['file']['name'])) {
             $_FILES['file']['name']     = [$_FILES['file']['name']];
             $_FILES['file']['type']     = [$_FILES['file']['type']];
@@ -2910,8 +2957,10 @@ function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $pur
             $tmpFilePath = $_FILES['file']['tmp_name'][$i];
             // Make sure we have a filepath
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
-                if (_perfex_upload_error($_FILES['file']['error'][$i])
-                    || !_upload_extension_allowed($_FILES['file']['name'][$i])) {
+                if (
+                    _perfex_upload_error($_FILES['file']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['file']['name'][$i])
+                ) {
                     continue;
                 }
 
@@ -2922,8 +2971,8 @@ function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $pur
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                     $attachment   = [];
                     $attachment[] = [
-                    'file_name' => $filename,
-                    'filetype'  => $_FILES['file']['type'][$i],
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['file']['type'][$i],
                     ];
 
                     if (is_image($newFilePath)) {
@@ -2955,12 +3004,12 @@ function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $pur
  */
 function get_total_order_return_refunded($order_return)
 {
-    $CI            = & get_instance();
+    $CI            = &get_instance();
     $CI->db->where('order_return_id', $order_return);
-    $refunds = $CI->db->get(db_prefix().'wh_order_returns_refunds')->result_array();
+    $refunds = $CI->db->get(db_prefix() . 'wh_order_returns_refunds')->result_array();
 
     $total_refunded = 0;
-    if(count($refunds) > 0){
+    if (count($refunds) > 0) {
         foreach ($refunds as $key => $refund) {
             $total_refunded += $refund['amount'];
         }
@@ -2969,8 +3018,9 @@ function get_total_order_return_refunded($order_return)
     return $total_refunded;
 }
 
-function get_order_return_remaining_refund($order_return){
-    $CI            = & get_instance();
+function get_order_return_remaining_refund($order_return)
+{
+    $CI            = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     $order = $CI->purchase_model->get_order_return($order_return);
@@ -2983,20 +3033,20 @@ function get_order_return_remaining_refund($order_return){
     $remaining_refund = $order->total_after_discount - $total_refunded;
 
     return $remaining_refund;
-
 }
 
-function get_object_comment($rel_id, $rel_type){
-    $CI            = & get_instance();
+function get_object_comment($rel_id, $rel_type)
+{
+    $CI            = &get_instance();
     $table = '';
-    if($rel_type == 'pur_order'){
-        $table = db_prefix().'pur_orders';
-    }else if($rel_type == 'pur_quotation'){
-        $table = db_prefix().'pur_estimates';
-    }else if($rel_type == 'pur_contract'){
-        $table = db_prefix().'pur_contracts';
-    }else if($rel_type == 'pur_invoice'){
-        $table = db_prefix().'pur_invoices';
+    if ($rel_type == 'pur_order') {
+        $table = db_prefix() . 'pur_orders';
+    } else if ($rel_type == 'pur_quotation') {
+        $table = db_prefix() . 'pur_estimates';
+    } else if ($rel_type == 'pur_contract') {
+        $table = db_prefix() . 'pur_contracts';
+    } else if ($rel_type == 'pur_invoice') {
+        $table = db_prefix() . 'pur_invoices';
     }
 
     $CI->db->where('id', $rel_id);
@@ -3027,15 +3077,16 @@ function pur_get_primary_contact_user_id($userid)
 /**
  * Gets the vendor language by email.
  */
-function get_vendor_language_by_email($email){
+function get_vendor_language_by_email($email)
+{
     $CI = &get_instance();
     $CI->db->where('email', $email);
-    $contact = $CI->db->get(db_prefix().'pur_contacts')->row();
+    $contact = $CI->db->get(db_prefix() . 'pur_contacts')->row();
 
-    if($contact){
+    if ($contact) {
         $CI->db->where('userid', $contact->userid);
-        $vendor = $CI->db->get(db_prefix().'pur_vendor')->row();
-        if($vendor){
+        $vendor = $CI->db->get(db_prefix() . 'pur_vendor')->row();
+        if ($vendor) {
             return $vendor->default_language;
         }
     }
@@ -3090,13 +3141,14 @@ function pur_send_contract_signed_notification_to_staff($contract_id)
 /**
  * Gets the vendor language.
  */
-function get_vendor_language(){
+function get_vendor_language()
+{
     $vendor_id = get_vendor_user_id();
     $CI = &get_instance();
     $CI->db->where('userid', $vendor_id);
-    $vendor = $CI->db->get(db_prefix().'pur_vendor')->row();
+    $vendor = $CI->db->get(db_prefix() . 'pur_vendor')->row();
 
-    if($vendor){
+    if ($vendor) {
         return $vendor->default_language;
     }
 
@@ -3110,10 +3162,12 @@ function get_vendor_language(){
  *
  * @return     <string>  
  */
-function pur_html_entity_decode($str){
+function pur_html_entity_decode($str)
+{
     return html_entity_decode($str ?? '');
 }
-function wo_html_entity_decode($str){
+function wo_html_entity_decode($str)
+{
     return html_entity_decode($str ?? '');
 }
 /**
@@ -3180,23 +3234,23 @@ function pur_render_date_input($name, $label = '', $value = '', $input_attrs = [
  *
  * @param        $staffid  The staffid
  */
-function get_vendor_admin_list($staffid){
+function get_vendor_admin_list($staffid)
+{
 
     $CI = &get_instance();
     $CI->db->where('staff_id', $staffid);
-    $list = $CI->db->get(db_prefix().'pur_vendor_admin')->result_array();
+    $list = $CI->db->get(db_prefix() . 'pur_vendor_admin')->result_array();
 
     $vendor_ids = [];
-    if(count($list) > 0){
-        foreach($list as $row){
-            if(!in_array($row['vendor_id'], $vendor_ids)){
+    if (count($list) > 0) {
+        foreach ($list as $row) {
+            if (!in_array($row['vendor_id'], $vendor_ids)) {
                 $vendor_ids[] = $row['vendor_id'];
             }
         }
     }
 
     return $vendor_ids;
-
 }
 
 /**
@@ -3206,41 +3260,42 @@ function get_vendor_admin_list($staffid){
  */
 function pur_check_csrf_protection()
 {
-    if(config_item('csrf_protection')){
+    if (config_item('csrf_protection')) {
         return 'true';
     }
     return 'false';
 }
 
-function format_po_ship_to_info($pur_order) {
+function format_po_ship_to_info($pur_order)
+{
     $html = '';
-    $CI = & get_instance();
+    $CI = &get_instance();
 
-    if(!empty($pur_order->shipping_address) || !empty($pur_order->shipping_city) || !empty($pur_order->shipping_state) || !empty($pur_order->shipping_zip)) {
-        $html .= '<b>'._l('ship_to').'</b>';
-        if(!empty($pur_order->shipping_address)) {
-            $html .= '<br />'.$pur_order->shipping_address;
+    if (!empty($pur_order->shipping_address) || !empty($pur_order->shipping_city) || !empty($pur_order->shipping_state) || !empty($pur_order->shipping_zip)) {
+        $html .= '<b>' . _l('ship_to') . '</b>';
+        if (!empty($pur_order->shipping_address)) {
+            $html .= '<br />' . $pur_order->shipping_address;
         }
-        if(!empty($pur_order->shipping_city) || !empty($pur_order->shipping_state)) {
+        if (!empty($pur_order->shipping_city) || !empty($pur_order->shipping_state)) {
             $html .= '<br />';
-            if(!empty($pur_order->shipping_city)) {
-                $html .= $pur_order->shipping_city." ";
+            if (!empty($pur_order->shipping_city)) {
+                $html .= $pur_order->shipping_city . " ";
             }
-            if(!empty($pur_order->shipping_state)) {
+            if (!empty($pur_order->shipping_state)) {
                 $html .= $pur_order->shipping_state;
             }
         }
-        if(!empty($pur_order->shipping_country) || !empty($pur_order->shipping_zip)) {
+        if (!empty($pur_order->shipping_country) || !empty($pur_order->shipping_zip)) {
             $html .= '<br />';
-            if(!empty($pur_order->shipping_country)) {
+            if (!empty($pur_order->shipping_country)) {
                 $shipping_country = $CI->db->select('short_name')
-                ->where('country_id', $pur_order->shipping_country)
-                ->from(db_prefix() . 'countries')
-                ->get()
-                ->row();
-                $html .= $shipping_country->short_name." ";
+                    ->where('country_id', $pur_order->shipping_country)
+                    ->from(db_prefix() . 'countries')
+                    ->get()
+                    ->row();
+                $html .= $shipping_country->short_name . " ";
             }
-            if(!empty($pur_order->shipping_zip)) {
+            if (!empty($pur_order->shipping_zip)) {
                 $html .= $pur_order->shipping_zip;
             }
         }
@@ -3248,35 +3303,36 @@ function format_po_ship_to_info($pur_order) {
 
     return $html;
 }
-function format_wo_ship_to_info($pur_order) {
+function format_wo_ship_to_info($pur_order)
+{
     $html = '';
-    $CI = & get_instance();
+    $CI = &get_instance();
 
-    if(!empty($pur_order->shipping_address) || !empty($pur_order->shipping_city) || !empty($pur_order->shipping_state) || !empty($pur_order->shipping_zip)) {
-        $html .= '<b>'._l('ship_to').'</b>';
-        if(!empty($pur_order->shipping_address)) {
-            $html .= '<br />'.$pur_order->shipping_address;
+    if (!empty($pur_order->shipping_address) || !empty($pur_order->shipping_city) || !empty($pur_order->shipping_state) || !empty($pur_order->shipping_zip)) {
+        $html .= '<b>' . _l('ship_to') . '</b>';
+        if (!empty($pur_order->shipping_address)) {
+            $html .= '<br />' . $pur_order->shipping_address;
         }
-        if(!empty($pur_order->shipping_city) || !empty($pur_order->shipping_state)) {
+        if (!empty($pur_order->shipping_city) || !empty($pur_order->shipping_state)) {
             $html .= '<br />';
-            if(!empty($pur_order->shipping_city)) {
-                $html .= $pur_order->shipping_city." ";
+            if (!empty($pur_order->shipping_city)) {
+                $html .= $pur_order->shipping_city . " ";
             }
-            if(!empty($pur_order->shipping_state)) {
+            if (!empty($pur_order->shipping_state)) {
                 $html .= $pur_order->shipping_state;
             }
         }
-        if(!empty($pur_order->shipping_country) || !empty($pur_order->shipping_zip)) {
+        if (!empty($pur_order->shipping_country) || !empty($pur_order->shipping_zip)) {
             $html .= '<br />';
-            if(!empty($pur_order->shipping_country)) {
+            if (!empty($pur_order->shipping_country)) {
                 $shipping_country = $CI->db->select('short_name')
-                ->where('country_id', $pur_order->shipping_country)
-                ->from(db_prefix() . 'countries')
-                ->get()
-                ->row();
-                $html .= $shipping_country->short_name." ";
+                    ->where('country_id', $pur_order->shipping_country)
+                    ->from(db_prefix() . 'countries')
+                    ->get()
+                    ->row();
+                $html .= $shipping_country->short_name . " ";
             }
-            if(!empty($pur_order->shipping_zip)) {
+            if (!empty($pur_order->shipping_zip)) {
                 $html .= $pur_order->shipping_zip;
             }
         }
@@ -3284,61 +3340,63 @@ function format_wo_ship_to_info($pur_order) {
 
     return $html;
 }
-function get_vendor_name_by_id($vendor_id) {
-    $CI = & get_instance();
-     $vendor = $CI->db->select('*')
-    ->where('userid', $vendor_id)
-    ->from(db_prefix() . 'pur_vendor')
-    ->get()
-    ->row();
-
-    return $vendor->company;
-}
-function format_pdf_vendor_info($vendor_id) {
-    $html = '';
-    $CI = & get_instance();
-
-    if(!empty($vendor_id)) {
-        $vendor = $CI->db->select('*')
+function get_vendor_name_by_id($vendor_id)
+{
+    $CI = &get_instance();
+    $vendor = $CI->db->select('*')
         ->where('userid', $vendor_id)
         ->from(db_prefix() . 'pur_vendor')
         ->get()
         ->row();
 
-        if(!empty($vendor)) {
-            $html .= '<b>'._l('vendor').'</b>';
-            $html .= '<br /><b>'.$vendor->company.'</b>';
-            if(!empty($vendor->address)) {
-                $html .= '<br />'.$vendor->address;
+    return $vendor->company;
+}
+function format_pdf_vendor_info($vendor_id)
+{
+    $html = '';
+    $CI = &get_instance();
+
+    if (!empty($vendor_id)) {
+        $vendor = $CI->db->select('*')
+            ->where('userid', $vendor_id)
+            ->from(db_prefix() . 'pur_vendor')
+            ->get()
+            ->row();
+
+        if (!empty($vendor)) {
+            $html .= '<b>' . _l('vendor') . '</b>';
+            $html .= '<br /><b>' . $vendor->company . '</b>';
+            if (!empty($vendor->address)) {
+                $html .= '<br />' . $vendor->address;
             }
-            if(!empty($vendor->city) || !empty($vendor->state)) {
+            if (!empty($vendor->city) || !empty($vendor->state)) {
                 $html .= '<br />';
-                if(!empty($vendor->city)) {
-                    $html .= $vendor->city." ";
+                if (!empty($vendor->city)) {
+                    $html .= $vendor->city . " ";
                 }
-                if(!empty($vendor->state)) {
+                if (!empty($vendor->state)) {
                     $html .= $vendor->state;
                 }
             }
-            if(!empty($vendor->country) || !empty($vendor->zip)) {
+            if (!empty($vendor->country) || !empty($vendor->zip)) {
                 $html .= '<br />';
-                if(!empty($vendor->country)) {
+                if (!empty($vendor->country)) {
                     $country = $CI->db->select('short_name')
-                    ->where('country_id', $vendor->country)
-                    ->from(db_prefix() . 'countries')
-                    ->get()
-                    ->row();
-                    $html .= $country->short_name." ";
+                        ->where('country_id', $vendor->country)
+                        ->from(db_prefix() . 'countries')
+                        ->get()
+                        ->row();
+                    $html .= $country->short_name . " ";
                 }
-                if(!empty($vendor->zip)) {
+                if (!empty($vendor->zip)) {
                     $html .= $vendor->zip;
                 }
             }
-            if(!empty($vendor->vat)) {
-                $html .= '<br />'._l('company_vat_number').': '.$vendor->vat;
+            if (!empty($vendor->vat)) {
+                $html .= '<br />' . _l('company_vat_number') . ': ' . $vendor->vat;
             }
-            if(!empty($vendor->phonenumber)) {
-                $html .= '<br />'.$vendor->phonenumber;
+            if (!empty($vendor->phonenumber)) {
+                $html .= '<br />' . $vendor->phonenumber;
             }
         }
 
@@ -3370,21 +3428,23 @@ function get_item_form_accepted_mimes()
     return $all_form_ext;
 }
 
-function get_area_list($name_area, $area){
-    $CI = & get_instance();
+function get_area_list($name_area, $area)
+{
+    $CI = &get_instance();
     $CI->load->model('purchase_model');
     $get_area = $CI->purchase_model->get_area();
     $selected = !empty($area) ? $area : array();
-    if(!is_array($selected)) {
+    if (!is_array($selected)) {
         $selected = explode(",", $selected);
     }
-    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple'=>true), array(), '', '', false);
+    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple' => true), array(), '', '', false);
 }
 
-function get_pur_send_to_vendors_list($vendors) {
+function get_pur_send_to_vendors_list($vendors)
+{
     if (!empty($vendors)) {
         $vendors = explode(',', $vendors);
-        $CI =& get_instance();
+        $CI = &get_instance();
         $CI->db->select('company');
         $CI->db->from(db_prefix() . 'pur_vendor');
         $CI->db->where_in('userid', $vendors);
@@ -3407,14 +3467,14 @@ function get_pur_send_to_vendors_list($vendors) {
  */
 function get_area_name_by_id($id)
 {
-    if(!empty($id)) {
+    if (!empty($id)) {
         $id = explode(',', $id);
-        $CI = & get_instance();
+        $CI = &get_instance();
         $CI->db->select('area_name');
         $CI->db->from(db_prefix() . 'area');
         $CI->db->where_in('id', $id);
         $result = $CI->db->get()->result_array();
-        if(!empty($result)) {
+        if (!empty($result)) {
             $result = array_column($result, 'area_name');
             $result = implode(',', $result);
             return $result;
@@ -3424,7 +3484,8 @@ function get_area_name_by_id($id)
 }
 
 
-function get_by_deafult_order_summary(){
+function get_by_deafult_order_summary()
+{
     $val = '<p class="p1"></p>
 <p class="p2" style="text-align: center;"><span class="s1"><b>WORK ORDER</b></span></p>
 <p class="p1"><b><span class="Apple-converted-space">                                                                                                            </span></b></p>
@@ -3585,18 +3646,18 @@ function get_by_deafult_order_summary(){
 <p class="p4"></p>
 <p class="p1"></p>';
 
-return $val;
+    return $val;
 }
 
 function get_expense_data($expenseid = '')
 {
-    if(!empty($expenseid)) {
-        $CI = & get_instance();
+    if (!empty($expenseid)) {
+        $CI = &get_instance();
         $expense = $CI->db->select('id')
-        ->where('id', $expenseid)
-        ->from(db_prefix() . 'expenses')
-        ->get()
-        ->row();
+            ->where('id', $expenseid)
+            ->from(db_prefix() . 'expenses')
+            ->get()
+            ->row();
         if ($expense) {
             return $expense->id;
         }
@@ -3608,17 +3669,67 @@ function get_expense_data($expenseid = '')
 
 function get_group_name_by_id($id)
 {
-    if(!empty($id)) {
-        
-        $CI = & get_instance();
+    if (!empty($id)) {
+
+        $CI = &get_instance();
         $CI->db->select('name');
         $CI->db->from(db_prefix() . 'items_groups');
         $CI->db->where('id', $id);
         $result = $CI->db->get()->row_array();
-        if(!empty($result)) {
+        if (!empty($result)) {
             return $result['name'];
-           
         }
     }
     return '';
+}
+
+function pur_get_item_selcted_select($id, $name_item_name)
+{
+    $selct = '';
+    if ($id != '') {
+
+        // Path to the JSON file
+        $base_path = get_upload_path_by_type('item_json');
+        $jsonFilePath = $base_path . 'tblitems.json';
+
+        if (file_exists($jsonFilePath)) {
+            $jsonData = file_get_contents($jsonFilePath);
+            $allItems = json_decode($jsonData, true);
+
+            // Filter items that match the search term in `description` or `commodity_code`
+            $items = array_filter($allItems, function ($item) use ($id) {
+                return (stripos($item['id'], $id) !== false);
+            });
+        }
+        // Send the filtered items as JSON response
+        // $items = json_encode(array_values($items)); // Reindex array
+
+        $preSelectedId = $id;
+        
+        // Begin the select element
+        $selct .= '<select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="' . $preSelectedId . '" class="form-control selectpicker item-select" data-live-search="true"  >';
+        $selct .=  '<option value="">Type at least 3 letters..</option>';
+        // Iterate over the items to create options
+        foreach ($items as $item) {
+            $isSelected = $preSelectedId == $item['id'] ? 'selected' : '';
+            $selct .=  '<option value="' . $item['id'] . '" ' . $isSelected . ' 
+            data-commodity-code="' . htmlspecialchars($item['commodity_code'], ENT_QUOTES, 'UTF-8') . '" 
+            data-subtext="' . htmlspecialchars(substr($item['long_description'], 0, 200), ENT_QUOTES, 'UTF-8') . '">'
+                . htmlspecialchars($item['commodity_code'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($item['description'], ENT_QUOTES, 'UTF-8') . '
+          </option>';
+        }
+
+        // Close the select element
+        $selct .=  '</select>';
+    } else {
+        // Begin the select element
+        $selct .= '<select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true"  >';
+        $selct .=  '<option value="">Type at least 3 letters..</option>';
+
+        // Close the select element
+        $selct .=  '</select>';
+    }
+
+
+    return $selct;
 }
