@@ -1616,7 +1616,7 @@ class purchase extends AdminController
                 if (!has_permission('purchase_orders', '', 'create')) {
                     access_denied('purchase_order');
                 }
-               
+
                 $id = $this->purchase_model->add_pur_order($pur_order_data);
                 if ($id) {
                     set_alert('success', _l('added_successfully', _l('pur_order')));
@@ -3225,6 +3225,8 @@ class purchase extends AdminController
                 $ids = $this->purchase_model->add_commodity_one_item($data);
                 if ($ids) {
 
+                    $this->export_tblitems_to_json();
+                   
                     // handle commodity list add edit file
                     $success = true;
                     $message = _l('added_successfully');
@@ -3248,7 +3250,7 @@ class purchase extends AdminController
                 /*update file*/
 
                 if ($success == true) {
-
+                    $this->export_tblitems_to_json();
                     $message = _l('updated_successfully');
                     set_alert('success', $message);
                 }
@@ -9695,7 +9697,7 @@ class purchase extends AdminController
 
             $data['tax_data'] = $this->purchase_model->get_html_tax_pur_order($id);
             $title = _l('wo_order_detail');
-            
+
             if (count($data['wo_order_detail']) > 0) {
                 $index_order = 0;
                 foreach ($data['wo_order_detail'] as $order_detail) {
@@ -9932,7 +9934,7 @@ class purchase extends AdminController
                         $total_rows = 0;
 
                         $total_rows_actualy = 0;
-                        $list_item = $this->purchase_model->create_purchase_order_row_template('', '','' , '', '','' , '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '',[],true);
+                        $list_item = $this->purchase_model->create_purchase_order_row_template('', '', '', '', '', '', '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '', [], true);
                         //get data for compare
                         $index_quote = 0;
                         for ($row = 1; $row < count($data); $row++) {
@@ -9983,7 +9985,7 @@ class purchase extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
-                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '',[],true);
+                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '', [], true);
 
                                 $index_quote++;
                                 $total_rows_data++;
@@ -10069,7 +10071,7 @@ class purchase extends AdminController
 
                         //Writer file
                         $writer_header = array(
-                            "(*)" ._l('item_description') => 'string',
+                            "(*)" . _l('item_description') => 'string',
                             _l('quantity') => 'string',
                             _l('unit_price')    => 'string',
                         );
@@ -10099,7 +10101,7 @@ class purchase extends AdminController
 
                         $total_rows_actualy = 0;
                         // $list_item = $this->purchase_model->create_wo_order_row_template();
-                        $list_item = $this->purchase_model->create_wo_order_row_template('', '','' , '', '','' , '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '',[],true);
+                        $list_item = $this->purchase_model->create_wo_order_row_template('', '', '', '', '', '', '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '', [], true);
                         //get data for compare
                         $index_quote = 0;
                         for ($row = 1; $row < count($data); $row++) {
@@ -10150,9 +10152,9 @@ class purchase extends AdminController
                                 $item_name = $value_cell_commodity_code . ' ' . $item_value->description;
 
                                 // if (is_null($value_cell_commodity_code) != true) {
-                                    $rows[] = $row;
-                                    // $list_item .= $this->purchase_model->create_wo_order_row_template('newitems[' . $index_quote . ']',  $item_name, $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', '', true, '', '');
-                                    $list_item .= $this->purchase_model->create_wo_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '',[],true);
+                                $rows[] = $row;
+                                // $list_item .= $this->purchase_model->create_wo_order_row_template('newitems[' . $index_quote . ']',  $item_name, $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', '', true, '', '');
+                                $list_item .= $this->purchase_model->create_wo_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '', [], true);
                                 // }
                                 $index_quote++;
                                 $total_rows_data++;
@@ -10210,6 +10212,8 @@ class purchase extends AdminController
     }
     public function export_tblitems_to_json()
     {
+        
+
         // Load the database library
         $this->load->database();
 
@@ -10268,5 +10272,4 @@ class purchase extends AdminController
         // Send the filtered items as JSON response
         echo json_encode(array_values($items)); // Reindex array
     }
-    
 }
