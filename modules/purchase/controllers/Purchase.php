@@ -3464,6 +3464,7 @@ class purchase extends AdminController
 
             if (isset($data['pur_invoice'])) {
                 $pur_invoice = $data['pur_invoice'];
+                $data['vbt_id'] = $pur_invoice;
                 unset($data['pur_invoice']);
             }
 

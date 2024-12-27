@@ -817,11 +817,11 @@
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                            <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
                                             aria-hidden="true" data-toggle="tooltip"
                                             data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
                                             <?php echo _l('invoice_table_item_heading'); ?></th>
-                                            <th width="25%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
+                                            <th width="20%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
                                             <?php
                                             $custom_fields = get_custom_fields('items');
                                             foreach ($custom_fields as $cf) {
@@ -834,9 +834,11 @@
                                                 $qty_heading = _l('invoice_table_quantity_heading') . '/' . _l('invoice_table_hours_heading');
                                             }
                                             ?>
-                                            <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th>
+                                            <th width="13%" align="left"><?php echo _l('vendor'); ?></th>
+                                            <th width="13%" align="left"><?php echo _l('invoice_no'); ?></th>
+                                            <th width="5%" align="right" class="qty"><?php echo e($qty_heading); ?></th>
                                             <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
-                                            <th width="20%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                            <th width="10%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                                             <th width="10%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                             <th align="center"><i class="fa fa-cog"></i></th>
                                         </tr>
@@ -853,6 +855,8 @@
                                                 placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
                                             </td>
                                             <?php echo render_custom_fields_items_table_add_edit_preview(); ?>
+                                            <td></td>
+                                            <td></td>
                                             <td>
                                                 <input type="number" name="quantity" min="0" value="1" class="form-control"
                                                 placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
@@ -906,6 +910,26 @@
                                             foreach ($add_items as $item) {
                                                 if($item['annexure'] == $annexure['id']) {
                                                     $manual    = false;
+                                                    $vendor_name = '';
+                                                    $invoice_no = '';
+                                                    if(!empty($item['po_id'])) {
+                                                        $pur_orders = get_pur_orders($item['po_id']);
+                                                        $vendor = get_vendor_details($pur_orders->vendor);
+                                                        $vendor_name = $vendor->company;
+                                                        $invoice_no = $pur_orders->pur_order_number;
+                                                    }
+                                                    if(!empty($item['wo_id'])) {
+                                                        $wo_orders = get_wo_orders($item['wo_id']);
+                                                        $vendor = get_vendor_details($wo_orders->vendor);
+                                                        $vendor_name = $vendor->company;
+                                                        $invoice_no = $wo_orders->wo_order_number;
+                                                    }
+                                                    if(!empty($item['vbt_id'])) {
+                                                        $pur_invoices = get_pur_invoices($item['vbt_id']);
+                                                        $vendor = get_vendor_details($pur_invoices->vendor);
+                                                        $vendor_name = $vendor->company;
+                                                        $invoice_no = $pur_invoices->invoice_number;
+                                                    }
                                                     $table_row = '<tr class="sortable item">';
                                                     $table_row .= '<td class="dragger">';
                                                     if (!is_numeric($item['qty'])) {
@@ -925,6 +949,9 @@
                                                     $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
 
                                                     $table_row .= render_custom_fields_items_table_in($item, $items_indicator . '[' . $i . ']');
+
+                                                    $table_row .= '<td>'.$vendor_name.'</td>';
+                                                    $table_row .= '<td>'.$invoice_no.'</td>';
 
                                                     $table_row .= '<td><input type="number" min="0" onblur="calculate_total();" onchange="calculate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
 

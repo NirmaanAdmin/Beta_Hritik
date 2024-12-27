@@ -688,6 +688,9 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'item_order'       => $item['order'],
                     'unit'             => $item['unit'],
                     'annexure'         => isset($item['annexure']) ? $item['annexure'] : NULL,
+                    'po_id'            => isset($item['po_id']) ? $item['po_id'] : NULL,
+                    'wo_id'            => isset($item['wo_id']) ? $item['wo_id'] : NULL,
+                    'vbt_id'           => isset($item['vbt_id']) ? $item['vbt_id'] : NULL,
                 ]);
 
     $id = $CI->db->insert_id();
@@ -1012,4 +1015,40 @@ function get_annexure_list_from_invoice($id)
     $CI->db->where('annexure IS NOT NULL');
     $CI->db->group_by('annexure');
     return $CI->db->get()->result_array();
+}
+
+function get_pur_orders($id)
+{
+    $CI = &get_instance();
+    $CI->db->select();
+    $CI->db->from(db_prefix() . 'pur_orders');
+    $CI->db->where('id', $id);
+    return $CI->db->get()->row();
+}
+
+function get_wo_orders($id)
+{
+    $CI = &get_instance();
+    $CI->db->select();
+    $CI->db->from(db_prefix() . 'wo_orders');
+    $CI->db->where('id', $id);
+    return $CI->db->get()->row();
+}
+
+function get_pur_invoices($id)
+{
+    $CI = &get_instance();
+    $CI->db->select();
+    $CI->db->from(db_prefix() . 'pur_invoices');
+    $CI->db->where('id', $id);
+    return $CI->db->get()->row();
+}
+
+function get_vendor_details($id)
+{
+    $CI = &get_instance();
+    $CI->db->select();
+    $CI->db->from(db_prefix() . 'pur_vendor');
+    $CI->db->where('userid', $id);
+    return $CI->db->get()->row();
 }

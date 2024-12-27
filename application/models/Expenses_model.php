@@ -583,6 +583,7 @@ class Expenses_model extends App_Model
                     $new_invoice_data['newitems'][$key+1]['rate'] = $po_value['unit_price'];
                     $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
                     $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
+                    $new_invoice_data['newitems'][$key+1]['po_id'] = $pur_order->id;
                     $new_invoice_data['newitems'][$key+1]['taxname'] = [];
                     if(!empty($po_value['tax'])) {
                         $po_tax_array = explode('|', $po_value['tax']);
@@ -606,6 +607,7 @@ class Expenses_model extends App_Model
                     $new_invoice_data['newitems'][$key+1]['rate'] = $wo_value['unit_price'];
                     $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
                     $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
+                    $new_invoice_data['newitems'][$key+1]['wo_id'] = $wo_order->id;
                     $new_invoice_data['newitems'][$key+1]['taxname'] = [];
                     if(!empty($wo_value['tax'])) {
                         $wo_tax_array = explode('|', $wo_value['tax']);
@@ -642,6 +644,7 @@ class Expenses_model extends App_Model
             $new_invoice_data['newitems'][1]['rate']  = $expense->amount;
             $new_invoice_data['newitems'][1]['order'] = 1;
             $new_invoice_data['newitems'][1]['annexure'] = $new_invoice_data['group_pur'];
+            $new_invoice_data['newitems'][1]['vbt_id'] = $expense->vbt_id;
         }
         $this->load->model('invoices_model');
         
@@ -896,6 +899,7 @@ class Expenses_model extends App_Model
 
     public function applied_to_invoice($data)
     {
+        $this->load->model('Invoices_model');
         $invoice_id = $data['invoice_id'];
         $expense_id = $data['expense_id'];
         $invoice = $this->find_invoice_data($invoice_id);
@@ -919,6 +923,7 @@ class Expenses_model extends App_Model
                     $new_item_data['unit'] = 'nos';
                     $new_item_data['item_order'] = $item_order;
                     $new_item_data['annexure'] = $annexure;
+                    $new_item_data['po_id'] = $pur_order->id;
                     $this->db->insert(db_prefix() . 'itemable', $new_item_data);
                     $insert_id = $this->db->insert_id();
 
@@ -938,10 +943,11 @@ class Expenses_model extends App_Model
                     $item_order++;
                 }
 
+                $annexure_invoice = $this->invoices_model->get_annexure_invoice_details($invoice_id);
                 $update_invoice = array();
-                $update_invoice['subtotal'] = $invoice->subtotal + $pur_order->subtotal;
-                $update_invoice['total_tax'] = $invoice->total_tax + $pur_order->total_tax;
-                $update_invoice['total'] = $invoice->total + $pur_order->total;
+                $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
+                $update_invoice['total_tax'] = $annexure_invoice['final_invoice']['tax'];
+                $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
                 $this->db->where('id', $invoice_id);
                 $this->db->update(db_prefix() . 'invoices', $update_invoice);
             }
@@ -961,6 +967,7 @@ class Expenses_model extends App_Model
                     $new_item_data['unit'] = 'nos';
                     $new_item_data['item_order'] = $item_order;
                     $new_item_data['annexure'] = $annexure;
+                    $new_item_data['wo_id'] = $wo_order->id;
                     $this->db->insert(db_prefix() . 'itemable', $new_item_data);
                     $insert_id = $this->db->insert_id();
 
@@ -980,10 +987,11 @@ class Expenses_model extends App_Model
                     $item_order++;
                 }
 
+                $annexure_invoice = $this->invoices_model->get_annexure_invoice_details($invoice_id);
                 $update_invoice = array();
-                $update_invoice['subtotal'] = $invoice->subtotal + $wo_order->subtotal;
-                $update_invoice['total_tax'] = $invoice->total_tax + $wo_order->total_tax;
-                $update_invoice['total'] = $invoice->total + $wo_order->total;
+                $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
+                $update_invoice['total_tax'] = $annexure_invoice['final_invoice']['tax'];
+                $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
                 $this->db->where('id', $invoice_id);
                 $this->db->update(db_prefix() . 'invoices', $update_invoice);
             }
@@ -1004,11 +1012,13 @@ class Expenses_model extends App_Model
             $new_item_data['unit'] = 'nos';
             $new_item_data['item_order'] = $item_order;
             $new_item_data['annexure'] = $annexure;
+            $new_item_data['vbt_id'] = $expense->vbt_id;
             $this->db->insert(db_prefix() . 'itemable', $new_item_data);
 
+            $annexure_invoice = $this->invoices_model->get_annexure_invoice_details($invoice_id);
             $update_invoice = array();
-            $update_invoice['subtotal'] = $invoice->subtotal + $expense->amount;
-            $update_invoice['total'] = $invoice->total + $expense->amount;
+            $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
+            $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
             $this->db->where('id', $invoice_id);
             $this->db->update(db_prefix() . 'invoices', $update_invoice);
         }
