@@ -142,7 +142,7 @@ $indexa = $basic_invoice['indexa'];
 foreach($indexa as $ikey => $ivalue) {
     $tblindexahtml .= '
     <tr style="font-size:13px;">
-        <td width="7%;" align="center">1</td>
+        <td width="7%;" align="center">'.($ikey + 1).'</td>
         <td width="33%" align="left;"><span style="font-size:13px;"><strong>'.$ivalue['name'].'</strong></span></td>
         <td width="10%" align="right">'.$ivalue['qty'].'</td>
         <td width="15%" align="right">'.app_format_money($ivalue['subtotal'], $invoice->currency_name).'</td>
@@ -154,44 +154,87 @@ $tblindexahtml .= '</tbody>';
 $tblindexahtml .= '</table>';
 
 $pdf->writeHTML($tblindexahtml, true, false, false, false, '');
+$pdf->Ln(3);
+$tblindexafinalhtml = '';
+$tblindexafinalhtml .= '<table cellpadding="6" style="font-size:14px">';
+$tblindexafinalhtml .= '
+<tr>
+    <td align="right" width="85%"><strong>' . _l('invoice_subtotal') . '</strong></td>
+    <td align="right" width="15%">'.app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name).'</td>
+</tr>';
+$tblindexafinalhtml .= '
+<tr>
+    <td align="right" width="85%"><strong>' . _l('tax') . '</strong></td>
+    <td align="right" width="15%">'.app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name).'</td>
+</tr>';
+$tblindexafinalhtml .= '
+<tr>
+    <td align="right" width="85%"><strong>' . _l('invoice_total') . '</strong></td>
+    <td align="right" width="15%">'.app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name).'</td>
+</tr>';
+$tblindexafinalhtml .= '</table>';
+$pdf->writeHTML($tblindexafinalhtml, true, false, false, false, '');
 
-$annexure_list = get_annexure_list_from_invoice($invoice->id);
-if(!empty($annexure_list)) {
-    foreach ($annexure_list as $akey => $avalue) {
+if(!empty($indexa)) {
+    foreach ($indexa as $akey => $avalue) {
         $tblannexurehtml = '';
-        $tblannexurehtml .= '<h3 style="text-align:center; ">'.$avalue['name']." (".$avalue['annexure_name'].")".'</h3>';
-        $tblannexurehtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="8">';
+        $tblannexurehtml .= '<h3 style="text-align:center; ">'.$avalue['name'].'</h3>';
+        $tblannexurehtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="5">';
         $tblannexurehtml .= '
             <thead>
-              <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:14px;">
+              <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
                  <th width="5%;" align="center">'._l('the_number_sign').'</th>
-                 <th width="18%" align="left">'._l('sales_item').'</th>
-                 <th width="25%" align="left">'._l('invoice_items_list_description').'</th>
+                 <th width="13%" align="left">'._l('sales_item').'</th>
+                 <th width="16%" align="left">'._l('invoice_items_list_description').'</th>
+                 <th width="10%" align="left">'._l('vendor').'</th>
+                 <th width="12%" align="left">'._l('invoice_no').'</th>
                  <th width="6%" align="right">'._l('invoice_table_quantity_heading').'</th>
-                 <th width="15%" align="right">'._l('invoice_table_rate_heading').'</th>
-                 <th width="12%" align="right">'._l('invoice_table_tax_heading').'</th>
-                 <th width="19%" align="right">'._l('invoice_table_amount_heading').'</th>
+                 <th width="12%" align="right">'._l('invoice_table_rate_heading').'</th>
+                 <th width="11%" align="right">'._l('invoice_table_tax_heading').'</th>
+                 <th width="15%" align="right">'._l('invoice_table_amount_heading').'</th>
               </tr>
             </thead>';
         $tblannexurehtml .= '<tbody>';
         $invoice_items = $invoice->items;
         $inv = 1;
         foreach ($invoice_items as $item) {
-            if($item['annexure'] == $avalue['id']) {
+            if($item['annexure'] == $avalue['annexure']) {
                 if (!is_numeric($item['qty'])) {
                     $item['qty'] = 1;
                 }
                 $amount = $item['rate'] * $item['qty'];
-                $total_tax = get_annexurewise_tax($invoice->id, $avalue['id'], $item['id']);
+                $total_tax = get_annexurewise_tax($invoice->id, $avalue['annexure'], $item['id']);
+                $vendor_name = '';
+                $invoice_no = '';
+                if(!empty($item['po_id'])) {
+                    $pur_orders = get_pur_orders($item['po_id']);
+                    $vendor = get_vendor_details($pur_orders->vendor);
+                    $vendor_name = $vendor->company;
+                    $invoice_no = $pur_orders->pur_order_number;
+                }
+                if(!empty($item['wo_id'])) {
+                    $wo_orders = get_wo_orders($item['wo_id']);
+                    $vendor = get_vendor_details($wo_orders->vendor);
+                    $vendor_name = $vendor->company;
+                    $invoice_no = $wo_orders->wo_order_number;
+                }
+                if(!empty($item['vbt_id'])) {
+                    $pur_invoices = get_pur_invoices($item['vbt_id']);
+                    $vendor = get_vendor_details($pur_invoices->vendor);
+                    $vendor_name = $vendor->company;
+                    $invoice_no = $pur_invoices->invoice_number;
+                }
                 $tblannexurehtml .= '
-                <tr style="font-size:13px;">
+                <tr style="font-size:12px;">
                     <td width="5%;" align="center">'.$inv.'</td>
-                    <td width="18%" align="left;"><span style="font-size:13px;"><strong>'.clear_textarea_breaks($item['description']).'</strong></span></td>
-                    <td width="25%" align="left"><span style="color:#424242;">'.clear_textarea_breaks($item['long_description']).'</span></td>
+                    <td width="13%" align="left;"><span style="font-size:11px;"><strong>'.clear_textarea_breaks($item['description']).'</strong></span></td>
+                    <td width="16%" align="left"><span style="color:#424242;">'.clear_textarea_breaks($item['long_description']).'</span></td>
+                    <td width="10%" align="left">'.$vendor_name.'</td>
+                    <td width="12%" align="left">'.$invoice_no.'</td>
                     <td width="6%" align="right">'.$item['qty'].'</td>
-                    <td width="15%" align="right">'.app_format_money($item['rate'], $invoice->currency_name).'</td>
-                    <td width="12%" align="right">'.app_format_money($total_tax, $invoice->currency_name).'</td>
-                    <td width="19%" align="right">'.app_format_money($amount, $invoice->currency_name).'</td>
+                    <td width="12%" align="right">'.app_format_money($item['rate'], $invoice->currency_name).'</td>
+                    <td width="11%" align="right">'.app_format_money($total_tax, $invoice->currency_name).'</td>
+                    <td width="15%" align="right">'.app_format_money($amount, $invoice->currency_name).'</td>
                 </tr>';
                 $inv++;
             }
@@ -201,6 +244,26 @@ if(!empty($annexure_list)) {
 
         $pdf->AddPage();
         $pdf->writeHTML($tblannexurehtml, true, false, false, false, '');
+        $pdf->Ln(3);
+        $tblannexurefinalhtml = '';
+        $tblannexurefinalhtml .= '<table cellpadding="6" style="font-size:14px">';
+        $tblannexurefinalhtml .= '
+        <tr>
+            <td align="right" width="85%"><strong>' . _l('invoice_subtotal') . '</strong></td>
+            <td align="right" width="15%">'.app_format_money($avalue['subtotal'], $invoice->currency_name).'</td>
+        </tr>';
+        $tblannexurefinalhtml .= '
+        <tr>
+            <td align="right" width="85%"><strong>' . _l('tax') . '</strong></td>
+            <td align="right" width="15%">'.app_format_money($avalue['tax'], $invoice->currency_name).'</td>
+        </tr>';
+        $tblannexurefinalhtml .= '
+        <tr>
+            <td align="right" width="85%"><strong>' . _l('invoice_total') . '</strong></td>
+            <td align="right" width="15%">'.app_format_money($avalue['amount'], $invoice->currency_name).'</td>
+        </tr>';
+        $tblannexurefinalhtml .= '</table>';
+        $pdf->writeHTML($tblannexurefinalhtml, true, false, false, false, '');
     }
 }
 
@@ -281,7 +344,7 @@ if (get_option('show_amount_due_on_invoice') == 1 && $invoice->status != Invoice
 }
 
 $tbltotal .= '</table>';
-$pdf->writeHTML($tbltotal, true, false, false, false, '');
+// $pdf->writeHTML($tbltotal, true, false, false, false, '');
 
 if (get_option('total_to_words_enabled') == 1) {
     // Set the font bold

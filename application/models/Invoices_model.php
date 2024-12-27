@@ -1931,8 +1931,15 @@ class Invoices_model extends App_Model
             $indexa[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
             $indexa[$annexure]['tax'] = get_annexurewise_tax($invoice->id, $annexure);
             $indexa[$annexure]['amount'] = $indexa[$annexure]['subtotal'] + $indexa[$annexure]['tax'];
+            $indexa[$annexure]['annexure'] = $annexure;
         }
         $indexa = !empty($indexa) ? array_values($indexa) : array();
+        if(!empty($indexa)) {
+            usort($indexa, function($a, $b) {
+                return $a['annexure'] <=> $b['annexure'];
+            });
+            $indexa = array_values($indexa);
+        }
 
         foreach ($indexa as $key => $value) {
             $final_invoice['name'] = _l('final_invoice_by_all_annexures');

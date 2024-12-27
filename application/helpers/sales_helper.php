@@ -1004,19 +1004,6 @@ function get_all_applied_invoices()
     return $CI->db->get()->result_array();
 }
 
-function get_annexure_list_from_invoice($id)
-{
-    $CI = &get_instance();
-    $CI->db->select(db_prefix() . 'items_groups.*');
-    $CI->db->from(db_prefix() . 'itemable');
-    $CI->db->join(db_prefix() . 'items_groups', db_prefix() . 'items_groups.id = ' . db_prefix() . 'itemable.annexure', 'left');
-    $CI->db->where('rel_id', $id);
-    $CI->db->where('rel_type', 'invoice');
-    $CI->db->where('annexure IS NOT NULL');
-    $CI->db->group_by('annexure');
-    return $CI->db->get()->result_array();
-}
-
 function get_pur_orders($id)
 {
     $CI = &get_instance();
