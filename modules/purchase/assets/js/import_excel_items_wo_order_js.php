@@ -15,6 +15,7 @@
       html += '</span>';
       html += '</div>';
       $('#box-loading').html(html);
+      $('#loader-container').removeClass('hide');
       $(event).attr("disabled", "disabled");
 
       $.ajax({
@@ -28,6 +29,7 @@
         response = JSON.parse(response);
         //hide boxloading
         $('#box-loading').html('');
+        $('#loader-container').addClass('hide');
         $(event).removeAttr('disabled')
 
         $("#file_csv").val(null);

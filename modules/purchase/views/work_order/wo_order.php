@@ -1,5 +1,29 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
+<style>
+  .error-border {
+    border: 1px solid red;
+  }
+
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+  }
+
+  .loader-gif {
+    width: 100px;
+    /* Adjust the size as needed */
+    height: 100px;
+  }
+</style>
 <div id="wrapper">
   <div class="content">
   <div class="loader-container hide" id="loader-container">
