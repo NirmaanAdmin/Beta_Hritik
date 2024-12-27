@@ -334,7 +334,7 @@
                         ?>
                         
                       </div>
-                      <div class="col-md-6 ">
+                      <!-- <div class="col-md-6 ">
 
                         <?php
 
@@ -353,7 +353,7 @@
                         }
                         echo render_select('sub_groups_pur', $sub_groups_pur, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
                         ?>
-                      </div>
+                      </div> -->
                       <div class="col-md-6 ">
                       <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
                       <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true" data-width="100%">
@@ -631,13 +631,14 @@
                         <th></th>
                         <th width="12%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
                         <th width="15%" align="left"><?php echo _l('item_description'); ?></th>
+                        <th align="left"><?php echo _l('sub_groups_pur'); ?></th>
                         <th width="10%" align="right"><?php echo _l('area'); ?></th>
                         <th align="right"><?php echo _l('Image'); ?></th>
                         <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
                         <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
 
                         <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                        <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
+                        <!-- <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th> -->
                         <th width="10%" align="right"><?php echo _l('pur_subtotal_after_tax'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>
 
                         <th width="10%" align="right"><?php echo _l('total'); ?><span class="th_currency"><?php echo '(' . $po_currency->name . ')'; ?></span></th>

@@ -2456,6 +2456,7 @@ class Purchase_model extends App_Model
         unset($data['additional_discount']);
         unset($data['tax_value']);
         unset($data['leads_import']);
+        unset($data['sub_groups_pur']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -2597,6 +2598,7 @@ class Purchase_model extends App_Model
                     $dt_data['total_money'] = $rqd['total_money'];
                     $dt_data['discount_money'] = $rqd['discount_money'];
                     $dt_data['discount_%'] = $rqd['discount'];
+                    $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
 
                     $tax_money = 0;
                     $tax_rate_value = 0;
@@ -2689,6 +2691,7 @@ class Purchase_model extends App_Model
         unset($data['additional_discount']);
         unset($data['tax_value']);
         unset($data['isedit']);
+        unset($data['sub_groups_pur']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -2805,6 +2808,7 @@ class Purchase_model extends App_Model
                 $dt_data['discount_money'] = $rqd['discount_money'];
                 $dt_data['discount_%'] = $rqd['discount'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
+                $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -2862,6 +2866,7 @@ class Purchase_model extends App_Model
                 $dt_data['discount_money'] = $rqd['discount_money'];
                 $dt_data['discount_%'] = $rqd['discount'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
+                $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -4969,6 +4974,7 @@ class Purchase_model extends App_Model
             <th class="thead-dark" align="left" style="width: 3%">#</th>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
             <th class="thead-dark" align="left" style="' . $width . '">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('sub_groups_pur') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>';
 
         if ($show_image_column) {
@@ -4979,13 +4985,14 @@ class Purchase_model extends App_Model
             <th class="thead-dark" align="right" style="width: 11%">' . _l('unit_price') . '</th>
             
             <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
+           
  
             
             <th class="thead-dark" align="right" style="width: 12%">' . _l('total') . '</th>
           </tr>
           </thead>
           <tbody>';
+        //   <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
         $sub_total_amn = 0;
         $tax_total = 0;
         $t_mn = 0;
@@ -4995,6 +5002,7 @@ class Purchase_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = pur_get_unit_name($row['unit_id']);
+            $get_sub_head = get_sub_head_name_by_id($row['sub_groups_pur']);
             $full_item_image = '';
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image']);
@@ -5004,6 +5012,7 @@ class Purchase_model extends App_Model
             <td style="width: 3%">' . $sr++ . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="' . $width . '">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 10%">' . $get_sub_head . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>';
 
             if ($show_image_column) {
@@ -5014,10 +5023,10 @@ class Purchase_model extends App_Model
             <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
             
             <td align="right" style="width: 10%">' . app_format_money($row['tax_rate'], '') . '</td>
-            <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            
             <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
-
+        //   <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
             $t_mn += $row['total_money'];
             $tax_total += $row['total'] - $row['into_money'];
             $sub_total_amn += $row['total_money'] - $tax_total;
@@ -11417,7 +11426,7 @@ class Purchase_model extends App_Model
      *
      * @return     string      
      */
-    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false)
+    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '')
     {
 
         $this->load->model('invoice_items_model');
@@ -11444,6 +11453,7 @@ class Purchase_model extends App_Model
         $name_discount = 'discount';
         $name_discount_money = 'discount_money';
         $name_total_money = 'total_money';
+        $name_sub_groups_pur = 'sub_groups_pur';
 
         $array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
         $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
@@ -11487,6 +11497,7 @@ class Purchase_model extends App_Model
             $name_discount_money = $name . '[discount_money]';
             $name_total_money = $name . '[total_money]';
             $name_tax_value = $name . '[tax_value]';
+            $name_sub_groups_pur = $name . '[sub_groups_pur]';
 
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
@@ -11553,6 +11564,7 @@ class Purchase_model extends App_Model
             $style_description = 'width: 290px; height: 200px';
         }
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
+        $row .= '<td class="area">' . get_sub_head_list($name_sub_groups_pur, $sub_groups_pur) . '</td>';
         $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
@@ -11578,7 +11590,7 @@ class Purchase_model extends App_Model
 
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 
-        $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="hide tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
 
         $row .= '<td class="_total" align="right">' . $total . '</td>';
 
@@ -15508,17 +15520,16 @@ class Purchase_model extends App_Model
             <th class="thead-dark" style="width: 3%">#</th>
             <th class="thead-dark" style="width: 10%">' . _l('items') . '</th>
             <th class="thead-dark" align="left" style="width: 29%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('sub_groups_pur') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 9%">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
-            <th class="thead-dark" align="right" style="width: 11%">' . _l('tax') . '</th>
- 
-            
             <th class="thead-dark" align="right" style="width: 11%">' . _l('total') . '</th>
           </tr>
           </thead>
           <tbody>';
+        //   <th class="thead-dark" align="right" style="width: 11%">' . _l('tax') . '</th>
         $sub_total_amn = 0;
         $tax_total = 0;
         $t_mn = 0;
@@ -15528,19 +15539,21 @@ class Purchase_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = pur_get_unit_name($row['unit_id']);
+            $get_sub_head = get_sub_head_name_by_id($row['sub_groups_pur']);
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 3%">' . $sr++ . '</td>
             <td style="width: 10%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="width: 29%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 10%">' . $get_sub_head . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
             <td align="right" style="width: 10%">' . $row['quantity']  . ' ' . $unit_name . '</td>
             <td align="right" style="width: 9%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
             
             <td align="right" style="width: 10%">' . app_format_money($row['tax_rate'], '') . '</td>
-            <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            
             <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
-
+        //   <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
             $t_mn += $row['total_money'];
             $tax_total += $row['total'] - $row['into_money'];
             $sub_total_amn += $row['total_money'] - $tax_total;
@@ -15638,6 +15651,7 @@ class Purchase_model extends App_Model
         unset($data['additional_discount']);
         unset($data['tax_value']);
         unset($data['leads_import']);
+        unset($data['sub_groups_pur']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -15781,6 +15795,7 @@ class Purchase_model extends App_Model
                     $dt_data['total_money'] = $rqd['total_money'];
                     $dt_data['discount_money'] = $rqd['discount_money'];
                     $dt_data['discount_%'] = $rqd['discount'];
+                    $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
 
                     $tax_money = 0;
                     $tax_rate_value = 0;
@@ -15865,6 +15880,7 @@ class Purchase_model extends App_Model
         unset($data['additional_discount']);
         unset($data['tax_value']);
         unset($data['isedit']);
+        unset($data['sub_groups_pur']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -15982,6 +15998,7 @@ class Purchase_model extends App_Model
                 $dt_data['discount_money'] = $rqd['discount_money'];
                 $dt_data['discount_%'] = $rqd['discount'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
+                $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -16039,7 +16056,7 @@ class Purchase_model extends App_Model
                 $dt_data['discount_money'] = $rqd['discount_money'];
                 $dt_data['discount_%'] = $rqd['discount'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
-
+                $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -16372,7 +16389,7 @@ class Purchase_model extends App_Model
         $rs['taxes_val'] = $tax_val_rs;
         return $rs;
     }
-    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(),$hide_add_button = false)
+    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(),$hide_add_button = false,$sub_groups_pur = '')
     {
 
         $this->load->model('invoice_items_model');
@@ -16399,6 +16416,7 @@ class Purchase_model extends App_Model
         $name_discount = 'discount';
         $name_discount_money = 'discount_money';
         $name_total_money = 'total_money';
+        $name_sub_groups_pur = 'sub_groups_pur';
 
         $array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
         $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
@@ -16442,7 +16460,7 @@ class Purchase_model extends App_Model
             $name_discount_money = $name . '[discount_money]';
             $name_total_money = $name . '[total_money]';
             $name_tax_value = $name . '[tax_value]';
-
+            $name_sub_groups_pur = $name . '[sub_groups_pur]';
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
 
@@ -16508,6 +16526,7 @@ class Purchase_model extends App_Model
             $style_description = 'width: 290px; height: 200px';
         }
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'style' => $style_description]) . '</td>';
+        $row .= '<td class="area">' . get_sub_head_list($name_sub_groups_pur, $sub_groups_pur) . '</td>';
         $row .= '<td class="area">' . get_area_list($name_area, $area) . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_image . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
@@ -16534,7 +16553,7 @@ class Purchase_model extends App_Model
 
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 
-        $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="hide tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
 
         $row .= '<td class="_total" align="right">' . $total . '</td>';
 

@@ -490,6 +490,7 @@ if ($estimate->currency != 0) {
                                     <th align="center">#</th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
                                     <th align="left" width="100"><?php echo _l('decription'); ?></th>
+                                    <th align="left"> <?php echo _l('sub_groups_pur'); ?></th>
                                     <th align="left" width="50"><?php echo _l('area'); ?></th>
                                     <th align="left" width="50"><?php echo _l('Image'); ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
@@ -526,6 +527,9 @@ if ($estimate->currency != 0) {
                                           </td>
                                           <td align="left">
                                              <div style="width: 300px"><?php echo $es['description']; ?></div>
+                                          </td>
+                                          <td align="left">
+                                             <div style="width: 120px"><?php echo get_sub_head_name_by_id($es['sub_groups_pur']); ?></div>
                                           </td>
                                           <td align="left">
                                              <div style="width: 120px"><?php echo get_area_name_by_id($es['area']); ?></div>

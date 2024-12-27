@@ -3439,6 +3439,22 @@ function get_area_list($name_area, $area)
     }
     return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple' => true), array(), '', '', false);
 }
+function get_sub_head_list($name_sub_head, $sub_head)
+{
+    $CI = &get_instance();
+    $CI->load->model('purchase_model');
+    $get_sub_group = $CI->purchase_model->get_sub_group();
+    $selected = '';
+    foreach ($get_sub_group as $sub_group) {
+        if (isset($sub_head)) {
+            if ($sub_head == $sub_group['id']) {
+                $selected = $sub_group['id'];
+            }
+        }
+        
+    }
+    return render_select($name_sub_head, $get_sub_group, array('id', 'sub_group_name'), '', $selected);
+}
 
 function get_pur_send_to_vendors_list($vendors)
 {
@@ -3483,6 +3499,27 @@ function get_area_name_by_id($id)
     return '';
 }
 
+/**
+ * Gets the sub head name by identifier
+ *
+ * @param int $id The sub head identifier
+ *
+ * @return string The sub head name by identifier
+ */
+function get_sub_head_name_by_id($id)
+{
+    if (!empty($id)) {
+        $CI = &get_instance();
+        $CI->db->select('sub_group_name');
+        $CI->db->from(db_prefix() . 'wh_sub_group');
+        $CI->db->where('id', $id);
+        $result = $CI->db->get()->row();
+        if (!empty($result)) {
+            return $result->sub_group_name;
+        }
+    }
+    return '';
+}
 
 function get_by_deafult_order_summary()
 {
@@ -3705,7 +3742,7 @@ function pur_get_item_selcted_select($id, $name_item_name)
         // $items = json_encode(array_values($items)); // Reindex array
 
         $preSelectedId = $id;
-        
+
         // Begin the select element
         $selct .= '<select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="' . $preSelectedId . '" class="form-control selectpicker item-select" data-live-search="true"  >';
         $selct .=  '<option value="">Type at least 3 letters..</option>';

@@ -479,9 +479,9 @@ if ($estimate->currency != 0) {
                      </div>
                      <div class="col-md-12">
 
-                        <?php if ($estimate->approve_status != 2) { ?>
+                        <!-- <?php if ($estimate->approve_status != 2) { ?>
                            <a href="javascript:void(0)" onclick="refresh_order_value(<?php echo pur_html_entity_decode($estimate->id); ?>); return false;" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="<?php echo _l('refresh_value_note'); ?>"><i class="fa fa-refresh"></i> <?php echo ' ' . _l('refresh_order_value'); ?></a>
-                        <?php } ?>
+                        <?php } ?> -->
 
 
                         <div class="table-responsive">
@@ -491,6 +491,7 @@ if ($estimate->currency != 0) {
                                     <th align="center">#</th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
                                     <th align="left" width="100"><?php echo _l('decription'); ?></th>
+                                    <th align="left"> <?php echo _l('sub_groups_pur'); ?></th>
                                     <th align="left" width="50"><?php echo _l('area'); ?></th>
                                     <th align="right"><?php echo _l('purchase_quantity'); ?></th>
                                     <th align="right"><?php echo _l('purchase_unit_price'); ?></th>
@@ -526,6 +527,9 @@ if ($estimate->currency != 0) {
                                           </td>
                                           <td align="left">
                                              <div style="width: 300px"><?php echo $es['description']; ?></div>
+                                          </td>
+                                          <td align="left">
+                                             <div style="width: 120px"><?php echo get_sub_head_name_by_id($es['sub_groups_pur']); ?></div>
                                           </td>
                                           <td align="left">
                                              <div style="width: 120px"><?php echo get_area_name_by_id($es['area']); ?></div>
