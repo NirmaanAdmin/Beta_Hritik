@@ -928,7 +928,7 @@
                                                         $pur_invoices = get_pur_invoices($item['vbt_id']);
                                                         $vendor = get_vendor_details($pur_invoices->vendor);
                                                         $vendor_name = $vendor->company;
-                                                        $invoice_no = $pur_invoices->invoice_number;
+                                                        $invoice_no = $pur_invoices->vendor_invoice_number;
                                                     }
                                                     $table_row = '<tr class="sortable item">';
                                                     $table_row .= '<td class="dragger">';
