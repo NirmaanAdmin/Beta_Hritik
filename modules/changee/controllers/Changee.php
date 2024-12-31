@@ -1628,7 +1628,7 @@ class changee extends AdminController
         $data['taxes'] = $this->changee_model->get_taxes();
         $data['staff']             = $this->staff_model->get('', ['active' => 1]);
         $data['vendors'] = $this->changee_model->get_vendor();
-        $data['estimates'] = $this->changee_model->get_estimates_by_status(2);
+        $data['estimates'] = $this->changee_model->get_sale_estimate_for_pr();
         $data['units'] = $this->changee_model->get_units();
         $data['commodity_groups_pur'] = $this->changee_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->changee_model->get_sub_group();

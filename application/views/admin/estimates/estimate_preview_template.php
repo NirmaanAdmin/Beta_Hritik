@@ -426,6 +426,16 @@
                                         <tr>
                                             <td>
                                                 <span class="bold tw-text-neutral-700">
+                                                    Change Order Total
+                                                </span>
+                                            </td>
+                                            <td class="total">
+                                                <?php echo e(app_format_money($co_total, $estimate->currency_name)); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="bold tw-text-neutral-700">
                                                     <?php echo _l('estimate_total'); ?>
                                                 </span>
                                             </td>

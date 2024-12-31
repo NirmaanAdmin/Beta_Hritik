@@ -17,11 +17,13 @@ return App_table::find('estimates')
             'YEAR(date) as year',
             get_sql_select_client_company(),
             db_prefix() . 'projects.name as project_name',
-            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'estimates.id and rel_type="estimate" ORDER by tag_order ASC) as tags',
             'date',
-            'expirydate',
-            'reference_no',
+            // 'expirydate',
+            // 'reference_no',
             db_prefix() . 'estimates.status',
+            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'estimates.id and rel_type="estimate" ORDER by tag_order ASC) as tags',
+            '(SELECT SUM(total) FROM ' . db_prefix() . 'invoices WHERE estimate = ' . db_prefix() . 'estimates.id) as invoice_amount',
+            '(SELECT SUM(total) FROM ' . db_prefix() . 'co_orders WHERE estimate = ' . db_prefix() . 'estimates.id and approve_status = "2") as co_amount',
         ];
 
         $join = [
@@ -110,6 +112,16 @@ return App_table::find('estimates')
 
             $row[] = $amount;
 
+            $row[] = e(app_format_money($aRow['invoice_amount'], $aRow['currency_name']));
+
+            $row[] = e(app_format_money($aRow['co_amount'], $aRow['currency_name']));
+
+            $total_amount = $aRow['total'] + $aRow['co_amount'];
+            $row[] = e(app_format_money($total_amount, $aRow['currency_name']));
+
+            $remain_amount = $total_amount - $aRow['invoice_amount'];
+            $row[] = e(app_format_money($remain_amount, $aRow['currency_name']));
+
             $row[] = e(app_format_money($aRow['total_tax'], $aRow['currency_name']));
 
             $row[] = $aRow['year'];
@@ -122,13 +134,11 @@ return App_table::find('estimates')
 
             $row[] = '<a href="' . admin_url('projects/view/' . $aRow['project_id']) . '">' . e($aRow['project_name']) . '</a>';
 
-            $row[] = render_tags($aRow['tags']);
-
             $row[] = e(_d($aRow['date']));
 
-            $row[] = e(_d($aRow['expirydate']));
+            // $row[] = e(_d($aRow['expirydate']));
 
-            $row[] = e($aRow['reference_no']);
+            // $row[] = e($aRow['reference_no']);
 
             $row[] = format_estimate_status($aRow[db_prefix() . 'estimates.status']);
 
@@ -136,6 +146,8 @@ return App_table::find('estimates')
             foreach ($customFieldsColumns as $customFieldColumn) {
                 $row[] = (strpos($customFieldColumn, 'date_picker_') !== false ? _d($aRow[$customFieldColumn]) : $aRow[$customFieldColumn]);
             }
+
+            $row[] = render_tags($aRow['tags']);
 
             $row['DT_RowClass'] = 'has-row-options';
 

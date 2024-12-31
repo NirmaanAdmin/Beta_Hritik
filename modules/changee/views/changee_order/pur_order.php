@@ -114,29 +114,18 @@
                     </div>
 
                     <div class="row">
-                      <?php if (changee_get_changee_option('changee_order_setting') == 0) { ?>
-                        <div class="col-md-6 form-group">
-                          <label for="estimate"><?php echo _l('estimates'); ?></label>
-                          <select name="estimate" id="estimate" class="selectpicker  <?php if (isset($pur_order)) {
-                                                                                        echo 'disabled';
-                                                                                      } ?>" onchange="coppy_pur_estimate(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                            <?php if (isset($pur_order)) { ?>
-                              <option value=""></option>
-                              <?php foreach ($estimates as $s) { ?>
-                                <option value="<?php echo changee_pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $pur_order->estimate != '' && $pur_order->estimate == $s['id']) {
-                                                                                                          echo 'selected';
-                                                                                                        } ?>><?php echo changee_format_pur_estimate_number($s['id']); ?></option>
-                              <?php } ?>
-                            <?php } ?>
-                          </select>
-
-                        </div>
-                      <?php } ?>
-                      <div class="col-md-<?php if (changee_get_changee_option('changee_order_setting') == 1) {
-                                            echo '12';
-                                          } else {
-                                            echo '6';
-                                          }; ?> form-group">
+                      <div class="col-md-6 form-group">
+                        <label for="budget"><?php echo _l('budget'); ?></label>
+                        <select name="estimate" id="estimate" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                          <option value=""></option>
+                          <?php foreach ($estimates as $s) { ?>
+                              <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $s['id'] == $pur_order->estimate) {
+                                echo 'selected';
+                              } ?>><?php echo format_estimate_number($s['id']); ?></option>
+                          <?php } ?>
+                        </select>
+                      </div>
+                      <div class="col-md-6 form-group">
                         <label for="department"><?php echo _l('department'); ?></label>
                         <select name="department" id="department" class="selectpicker" <?php if (isset($pur_order)) {
                                                                                           echo 'disabled';
@@ -707,8 +696,8 @@
     $.post(admin_url + 'changee/coppy_co_request_for_po/' + co_request + '/' + vendor).done(function(response) {
       response = JSON.parse(response);
       if (response) {
-        $('select[name="estimate"]').html(response.estimate_html);
-        $('select[name="estimate"]').selectpicker('refresh');
+        // $('select[name="estimate"]').html(response.estimate_html);
+        // $('select[name="estimate"]').selectpicker('refresh');
 
         $('select[name="currency"]').val(response.currency).change();
         $('input[name="currency_rate"]').val(response.currency_rate).change();

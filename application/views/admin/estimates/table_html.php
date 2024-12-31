@@ -2,7 +2,11 @@
 
 $table_data = array(
    'Budget #',
-   _l('estimate_dt_table_heading_amount'),
+   'Budgeted Amount',
+   'Invoice Amount',
+   'Change Order Amount',
+   'Total Amount',
+   'Remaining Amount',
    _l('estimates_total_tax'),
    array(
       'name'=>_l('invoice_estimate_year'),
@@ -13,11 +17,12 @@ $table_data = array(
       'th_attrs'=>array('class'=> (isset($client) ? 'not_visible' : ''))
    ),
    _l('project'),
-   _l('tags'),
    _l('estimate_dt_table_heading_date'),
-   _l('estimate_dt_table_heading_expirydate'),
-   _l('reference_no'),
-   _l('estimate_dt_table_heading_status'));
+   // _l('estimate_dt_table_heading_expirydate'),
+   // _l('reference_no'),
+   _l('estimate_dt_table_heading_status'),
+   _l('tags'),
+);
 
 $custom_fields = get_custom_fields('estimate',array('show_on_table'=>1));
 

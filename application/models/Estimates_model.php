@@ -1383,4 +1383,10 @@ class Estimates_model extends App_Model
 
         return $kanBan->get();
     }
+
+    public function get_co_total_for_estimate($id)
+    {
+        $co_total = $this->db->query('SELECT SUM(total) as co_total FROM ' . db_prefix() . 'co_orders WHERE estimate = '.$id.' AND approve_status = 2')->result_array();
+        return !empty($co_total) ? $co_total[0]['co_total'] : 0;
+    }
 }

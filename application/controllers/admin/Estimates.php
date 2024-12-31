@@ -271,6 +271,7 @@ class Estimates extends AdminController
         $data['members']           = $this->staff_model->get('', ['active' => 1]);
         $data['estimate_statuses'] = $this->estimates_model->get_statuses();
         $data['totalNotes']        = total_rows(db_prefix() . 'notes', ['rel_id' => $id, 'rel_type' => 'estimate']);
+        $data['co_total']          = $this->estimates_model->get_co_total_for_estimate($id);
 
         $data['send_later'] = false;
         if ($this->session->has_userdata('send_later')) {

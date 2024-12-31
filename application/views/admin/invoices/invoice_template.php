@@ -477,27 +477,43 @@
                             </div>
                             <?php $value = (isset($invoice) ? $invoice->adminnote : ''); ?>
                             <?php echo render_textarea('adminnote', 'invoice_add_edit_admin_note', $value); ?>
-                            <div class="form-group " style="display: grid;">
-                                <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
-                                <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true">
-                                    <option value=""></option>
-                                    <?php foreach ($get_hsn_sac_code as $item): ?>
-                                        <?php
-                                        $selected = '';
-                                        if (isset($invoice)) {
-                                            if ($invoice->hsn_sac == $item['id']) {
-                                                $selected = 'selected';
-                                            }
-                                        }
 
-                                        $words = explode(' ', $item['name']);
-                                        $shortName = implode(' ', array_slice($words, 0, 7));
-                                        ?>
-                                        <option value="<?= $item['id'] ?>" <?= $selected  ?>>
-                                            <?= htmlspecialchars($shortName) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="budget"><?php echo _l('budget'); ?></label>
+                                    <select name="estimate" id="estimate" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                                    <option value=""></option>
+                                    <?php foreach ($estimates as $s) { ?>
+                                        <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($invoice) && $s['id'] == $invoice->estimate) {
+                                          echo 'selected';
+                                        } ?>><?php echo format_estimate_number($s['id']); ?></option>
+                                    <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
+                                        <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true" data-width="100%">
+                                            <option value=""></option>
+                                            <?php foreach ($get_hsn_sac_code as $item): ?>
+                                                <?php
+                                                $selected = '';
+                                                if (isset($invoice)) {
+                                                    if ($invoice->hsn_sac == $item['id']) {
+                                                        $selected = 'selected';
+                                                    }
+                                                }
+
+                                                $words = explode(' ', $item['name']);
+                                                $shortName = implode(' ', array_slice($words, 0, 7));
+                                                ?>
+                                                <option value="<?= $item['id'] ?>" <?= $selected  ?>>
+                                                    <?= htmlspecialchars($shortName) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -510,7 +526,7 @@
             <div class="panel-body" style="padding-bottom: 0px !important;">
                 <div class="row">
                     <div class="col-md-4">
-                        <?php $this->load->view('admin/invoice_items/item_select'); ?>
+                        <?php /* <?php $this->load->view('admin/invoice_items/item_select'); ?> */ ?>
                     </div>
                     <div class="col-md-8 text-right show_quantity_as_wrapper">
                     </div>
@@ -1030,13 +1046,13 @@
 
 <div class="btn-bottom-pusher"></div>
 <div class="btn-bottom-toolbar text-right">
-    <button class="btn-tr btn btn-default mright5 text-right invoice-form-submit save-as-draft transaction-submit disabled">
+    <button class="btn-tr btn btn-default mright5 text-right invoice-form-submit save-as-draft transaction-submit">
         <?php echo _l('save_as_draft'); ?>
     </button>
     <div class="btn-group dropup">
         <button type="button"
-        class="btn-tr btn btn-primary invoice-form-submit transaction-submit disabled"><?php echo _l('submit'); ?></button>
-        <button type="button" class="btn btn-primary dropdown-toggle disabled" data-toggle="dropdown" aria-haspopup="true"
+        class="btn-tr btn btn-primary invoice-form-submit transaction-submit"><?php echo _l('submit'); ?></button>
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
         aria-expanded="false">
         <span class="caret"></span>
     </button>

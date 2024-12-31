@@ -723,6 +723,13 @@ class Invoices_model extends App_Model
     {
         $original_invoice = $this->get($id);
         $updated          = false;
+        unset($data['discount_percent'], $data['discount_total'], $data['adjustment'], $data['adjustment'], $data['items']);
+        if(isset($data['newitems'])) {
+            unset($data['newitems']);
+        }
+        if(isset($data['removed_items'])) {
+            unset($data['removed_items']);
+        }
 
         // Perhaps draft?
         if (isset($data['nubmer'])) {
@@ -1961,5 +1968,12 @@ class Invoices_model extends App_Model
     {
         $this->db->where('id', $id);
         return $this->db->get(db_prefix() . 'items_groups')->row();
+    }
+
+    public function get_all_estimates()
+    {
+        $this->db->where('status != 3');
+        $this->db->order_by('number', 'desc');
+        return $this->db->get(db_prefix() . 'estimates')->result_array();
     }
 }

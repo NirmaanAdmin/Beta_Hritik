@@ -413,6 +413,7 @@ class Invoices extends AdminController
         $data['staff']     = $this->staff_model->get('', ['active' => 1]);
         $data['commodity_groups_pur'] = $this->invoices_model->get_commodity_group_add_commodity();
         $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
+        $data['estimates'] = $this->invoices_model->get_all_estimates();
         $data['title']     = $title;
         $data['bodyclass'] = 'invoice';
         

@@ -94,9 +94,9 @@ function estimate_by_vendor(invoker){
   if(invoker.value != 0){
     $.post(admin_url + 'changee/estimate_by_vendor/'+invoker.value).done(function(response){
       response = JSON.parse(response);
-      $('select[name="estimate"]').html('');
-      $('select[name="estimate"]').append(response.result);
-      $('select[name="estimate"]').selectpicker('refresh');
+      // $('select[name="estimate"]').html('');
+      // $('select[name="estimate"]').append(response.result);
+      // $('select[name="estimate"]').selectpicker('refresh');
       $('#vendor_data').html('');
       $('#vendor_data').append(response.ven_html);
       $('select[name="currency"]').val(response.currency_id).change();
@@ -156,8 +156,8 @@ function coppy_co_request(){
     $.post(admin_url + 'changee/coppy_co_request_for_po/'+co_request+'/'+vendor).done(function(response){
         response = JSON.parse(response);
         if(response){ 
-          $('select[name="estimate"]').html(response.estimate_html);
-          $('select[name="estimate"]').selectpicker('refresh');
+          // $('select[name="estimate"]').html(response.estimate_html);
+          // $('select[name="estimate"]').selectpicker('refresh');
 
           $('select[name="currency"]').val(response.currency).change();
           $('input[name="currency_rate"]').val(response.currency_rate).change();
