@@ -999,7 +999,7 @@ function get_items_by_annexure($id, $annexure, $item_id = '')
 function get_all_applied_invoices()
 {
     $CI = &get_instance();
-    $CI->db->select('id');
+    $CI->db->select('id, title');
     $CI->db->from('tblinvoices');
     return $CI->db->get()->result_array();
 }

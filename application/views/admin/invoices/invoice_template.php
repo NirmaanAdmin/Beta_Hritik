@@ -31,6 +31,8 @@
         } ?>
         <div class="row">
             <div class="col-md-6">
+                <?php $invoice_title = (isset($invoice) ? $invoice->title : '');
+                echo render_input('title', 'invoice_title', $invoice_title); ?>
                 <div class="f_client_id">
                     <div class="form-group select-placeholder">
                         <label for="clientid" class="control-label"><?php echo _l('invoice_select_customer'); ?></label>

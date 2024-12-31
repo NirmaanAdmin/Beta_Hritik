@@ -88,7 +88,7 @@
                                       <option value=""></option>
                                       <?php
                                       foreach ($invoices as $i) { ?>
-                                        <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])); ?></option>
+                                        <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])). " (".$i['title'].")"; ?></option>
                                       <?php } ?>
                                 </select>
                             </div>
