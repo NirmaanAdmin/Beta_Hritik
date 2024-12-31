@@ -19,7 +19,7 @@ class Misc_model extends App_Model
         return hooks()->apply_filters('notifications_limit', $this->notifications_limit);
     }
 
-    public function get_taxes_dropdown_template($name, $taxname, $type = '', $item_id = '', $is_edit = false, $manual = false)
+    public function get_taxes_dropdown_template($name, $taxname, $type = '', $item_id = '', $is_edit = false, $manual = false, $disable_dropdown = false)
     {
         // if passed manually - like in proposal convert items or project
         if ($manual == true) {
@@ -102,8 +102,9 @@ class Misc_model extends App_Model
 
         // Clear the duplicates
         $taxes = Arr::uniqueByKey($taxes, 'name');
+        $disable = $disable_dropdown ? 'disabled' : '';
 
-        $select = '<select class="selectpicker display-block tax" data-width="100%" name="' . $name . '" multiple data-none-selected-text="' . _l('no_tax') . '">';
+        $select = '<select class="selectpicker display-block tax" data-width="100%" name="' . $name . '" multiple data-none-selected-text="' . _l('no_tax') . '" '.$disable.'>';
 
         foreach ($taxes as $tax) {
             $selected = '';

@@ -860,6 +860,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php /*
                                         <tr class="main">
                                             <td></td>
                                             <td>
@@ -914,6 +915,7 @@
                                                 class="btn pull-right btn-primary"><i class="fa fa-check"></i></button>
                                             </td>
                                         </tr>
+                                        */ ?>
                                         <?php 
                                         if (isset($invoice) || isset($add_items)) 
                                         {
@@ -961,15 +963,15 @@
                                                     $amount = app_format_number($amount);
                                                     $table_row .= '<input type="hidden" class="order" name="' . $items_indicator . '[' . $i . '][order]">';
                                                     $table_row .= '</td>';
-                                                    $table_row .= '<td class="bold description"><textarea name="' . $items_indicator . '[' . $i . '][description]" class="form-control" rows="5">' . clear_textarea_breaks($item['description']) . '</textarea></td>';
-                                                    $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
+                                                    $table_row .= '<td class="bold description"><textarea name="' . $items_indicator . '[' . $i . '][description]" class="form-control" rows="5" disabled>' . clear_textarea_breaks($item['description']) . '</textarea></td>';
+                                                    $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5" disabled>' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
 
                                                     $table_row .= render_custom_fields_items_table_in($item, $items_indicator . '[' . $i . ']');
 
                                                     $table_row .= '<td>'.$vendor_name.'</td>';
                                                     $table_row .= '<td>'.$invoice_no.'</td>';
 
-                                                    $table_row .= '<td><input type="number" min="0" onblur="calculate_total();" onchange="calculate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
+                                                    $table_row .= '<td><input type="number" min="0" onblur="calculate_total();" onchange="calculate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control" disabled>';
 
                                                     $unit_placeholder = '';
                                                     if (!$item['unit']) {
@@ -980,8 +982,8 @@
                                                     $table_row .= '<input type="text" placeholder="' . $unit_placeholder . '" name="' . $items_indicator . '[' . $i . '][unit]" class="form-control input-transparent text-right" value="' . $item['unit'] . '">';
 
                                                     $table_row .= '</td>';
-                                                    $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_total();" onchange="calculate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control"></td>';
-                                                    $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $invoice_item_taxes, 'invoice', $item['id'], true, $manual) . '</td>';
+                                                    $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_total();" onchange="calculate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control" disabled></td>';
+                                                    $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $invoice_item_taxes, 'invoice', $item['id'], true, $manual, true) . '</td>';
                                                     $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
                                                     $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
                                                     if (isset($item['task_id'])) {
