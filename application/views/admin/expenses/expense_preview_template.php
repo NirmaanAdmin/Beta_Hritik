@@ -104,7 +104,7 @@
                     <?php } ?>
                     <?php } elseif ($expense->invoiceid != null) { ?>
                     <a href="<?php echo admin_url('invoices/list_invoices/' . $expense->invoiceid); ?>"
-                        class="btn btn-primary mleft10 pull-right"><?php echo e(format_invoice_number($invoice->id)); ?></a>
+                        class="btn btn-primary mleft10 pull-right"><?php echo e(format_invoice_number($invoice->id)). " (".$invoice->title.")"; ?></a>
                     <?php } ?>
                     <div class="pull-right">
                         <?php if (staff_can('edit',  'expenses')) { ?>
