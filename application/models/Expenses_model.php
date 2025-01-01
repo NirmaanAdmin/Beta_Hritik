@@ -646,6 +646,16 @@ class Expenses_model extends App_Model
             $new_invoice_data['newitems'][1]['annexure'] = $new_invoice_data['group_pur'];
             $new_invoice_data['newitems'][1]['vbt_id'] = $expense->vbt_id;
         }
+        $management_fees = array();
+        $management_fees['description'] = 'Management Fees';
+        $management_fees['long_description'] = '';
+        $management_fees['unit'] = 'nos';
+        $management_fees['qty'] = 0.07;
+        $management_fees['rate'] = $new_invoice_data['subtotal'];
+        $management_fees['order'] = 1;
+        $management_fees['annexure'] = 17;
+        $management_fees['taxname'] = array();
+        $new_invoice_data['newitems'][] = $management_fees;
         $this->load->model('invoices_model');
         
         $invoiceid = $this->invoices_model->add($new_invoice_data, true);
@@ -942,14 +952,6 @@ class Expenses_model extends App_Model
                     }
                     $item_order++;
                 }
-
-                $annexure_invoice = $this->invoices_model->get_annexure_invoice_details($invoice_id);
-                $update_invoice = array();
-                $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
-                $update_invoice['total_tax'] = $annexure_invoice['final_invoice']['tax'];
-                $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
-                $this->db->where('id', $invoice_id);
-                $this->db->update(db_prefix() . 'invoices', $update_invoice);
             }
         } else if(!empty($expense->wo_id)) {
             $wo_order = $this->wo_order($expense->wo_id);
@@ -986,14 +988,6 @@ class Expenses_model extends App_Model
                     }
                     $item_order++;
                 }
-
-                $annexure_invoice = $this->invoices_model->get_annexure_invoice_details($invoice_id);
-                $update_invoice = array();
-                $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
-                $update_invoice['total_tax'] = $annexure_invoice['final_invoice']['tax'];
-                $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
-                $this->db->where('id', $invoice_id);
-                $this->db->update(db_prefix() . 'invoices', $update_invoice);
             }
         } else {
             $new_item_data = array();
@@ -1014,14 +1008,10 @@ class Expenses_model extends App_Model
             $new_item_data['annexure'] = $annexure;
             $new_item_data['vbt_id'] = $expense->vbt_id;
             $this->db->insert(db_prefix() . 'itemable', $new_item_data);
-
-            $annexure_invoice = $this->invoices_model->get_annexure_invoice_details($invoice_id);
-            $update_invoice = array();
-            $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
-            $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
-            $this->db->where('id', $invoice_id);
-            $this->db->update(db_prefix() . 'invoices', $update_invoice);
         }
+
+        $this->invoices_model->update_management_fees($invoice_id);
+        $this->invoices_model->update_basic_invoice_details($invoice_id);
 
         $this->db->where('id', $expense_id);
         $this->db->update(db_prefix() . 'expenses', [

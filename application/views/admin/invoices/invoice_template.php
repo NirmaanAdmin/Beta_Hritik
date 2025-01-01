@@ -636,6 +636,7 @@
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
                                         </td>
                                     </tr>
+                                    <?php /*
                                     <tr id="discount_area">
                                         <td>
                                             <div class="row">
@@ -694,6 +695,7 @@
                                         </td>
                                         <td class="discount-total"></td>
                                     </tr>
+                                    */ ?>
                                     <tr id="total_tax">
                                         <td>
                                             <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
@@ -702,6 +704,7 @@
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
                                         </td>
                                     </tr>
+                                    <?php /*
                                     <tr>
                                         <td>
                                             <div class="row">
@@ -721,6 +724,7 @@
                                         </td>
                                         <td class="adjustment"></td>
                                     </tr>
+                                    */ ?>
                                     <tr>
                                         <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
                                         </td>

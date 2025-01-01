@@ -544,13 +544,16 @@ function get_decimal_places()
  * @param  string $type rel_type value
  * @return array
  */
-function get_items_by_type($type, $id)
+function get_items_by_type($type, $id, $ignore_management_fess = false)
 {
     $CI = &get_instance();
     $CI->db->select();
     $CI->db->from(db_prefix() . 'itemable');
     $CI->db->where('rel_id', $id);
     $CI->db->where('rel_type', $type);
+    if($ignore_management_fess) {
+        $CI->db->where('annexure !=', 17);
+    }
     $CI->db->order_by('item_order', 'asc');
 
     return $CI->db->get()->result_array();
@@ -922,8 +925,179 @@ function amount_format($num, $type = 1)
 
 function get_all_annexures()
 {
-    $CI = & get_instance();
-    return $CI->db->get(db_prefix() . 'items_groups')->result_array();
+    $result = [
+        [
+            'id' => 1,
+            'name' => 'Audio and Video Equipment',
+            'commodity_group_code' => 'AV',
+            'annexure_key' => 'annexure1',
+            'annexure_name' => 'Annexure - 1',
+            'order' => 1,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 2,
+            'name' => 'Civil and Str Works',
+            'commodity_group_code' => 'CVL',
+            'annexure_key' => 'annexure2',
+            'annexure_name' => 'Annexure - 2',
+            'order' => 2,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 3,
+            'name' => 'Consultant',
+            'commodity_group_code' => 'CON',
+            'annexure_key' => 'annexure3',
+            'annexure_name' => 'Annexure - 3',
+            'order' => 3,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 4,
+            'name' => 'Elevators',
+            'commodity_group_code' => 'LIF',
+            'annexure_key' => 'annexure4',
+            'annexure_name' => 'Annexure - 4',
+            'order' => 4,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 5,
+            'name' => 'External works',
+            'commodity_group_code' => 'EXT',
+            'annexure_key' => 'annexure5',
+            'annexure_name' => 'Annexure - 5',
+            'order' => 5,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 6,
+            'name' => 'Facade works',
+            'commodity_group_code' => 'FCD',
+            'annexure_key' => 'annexure6',
+            'annexure_name' => 'Annexure - 6',
+            'order' => 6,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 7,
+            'name' => 'Interior Works and FF&E',
+            'commodity_group_code' => 'ID',
+            'annexure_key' => 'annexure7',
+            'annexure_name' => 'Annexure - 7',
+            'order' => 7,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 8,
+            'name' => 'IT Active & EPABX',
+            'commodity_group_code' => 'IT',
+            'annexure_key' => 'annexure8',
+            'annexure_name' => 'Annexure - 8',
+            'order' => 8,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 9,
+            'name' => 'Kitchen',
+            'commodity_group_code' => 'KIT',
+            'annexure_key' => 'annexure9',
+            'annexure_name' => 'Annexure - 9',
+            'order' => 9,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 10,
+            'name' => 'MEP Works',
+            'commodity_group_code' => 'MEP',
+            'annexure_key' => 'annexure10',
+            'annexure_name' => 'Annexure - 10',
+            'order' => 10,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 11,
+            'name' => 'OS&E',
+            'commodity_group_code' => 'OSE',
+            'annexure_key' => 'annexure11',
+            'annexure_name' => 'Annexure - 11',
+            'order' => 11,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 12,
+            'name' => 'Other Equipment',
+            'commodity_group_code' => 'EQP',
+            'annexure_key' => 'annexure12',
+            'annexure_name' => 'Annexure - 12',
+            'order' => 12,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 13,
+            'name' => 'Pool waterbody plant',
+            'commodity_group_code' => 'POL',
+            'annexure_key' => 'annexure13',
+            'annexure_name' => 'Annexure - 13',
+            'order' => 13,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 14,
+            'name' => 'Site Attendance',
+            'commodity_group_code' => 'SA',
+            'annexure_key' => 'annexure14',
+            'annexure_name' => 'Annexure - 14',
+            'order' => 14,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 15,
+            'name' => 'MUR',
+            'commodity_group_code' => 'MUR',
+            'annexure_key' => 'annexure15',
+            'annexure_name' => 'Annexure - 15',
+            'order' => 15,
+            'display' => 1,
+            'note' => ''
+        ],
+        [
+            'id' => 16,
+            'name' => 'Others',
+            'commodity_group_code' => 'OTH',
+            'annexure_key' => 'annexure16',
+            'annexure_name' => 'Annexure - 16',
+            'order' => 16,
+            'display' => 1,
+            'note' => '0'
+        ],
+        [
+            'id' => 17,
+            'name' => 'Management Fees',
+            'commodity_group_code' => 'MF',
+            'annexure_key' => 'annexure17',
+            'annexure_name' => 'Annexure - 17',
+            'order' => 17,
+            'display' => 1,
+            'note' => ''
+        ],
+    ];
+    return $result;
 }
 
 function get_annexurewise_tax($id, $annexure, $item_id = '')

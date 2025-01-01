@@ -518,6 +518,7 @@ class Invoices_model extends App_Model
             }
 
             update_sales_total_tax_column($insert_id, 'invoice', db_prefix() . 'invoices');
+            $this->update_basic_invoice_details($insert_id);
 
             if (!DEFINED('CRON') && $expense == false) {
                 $lang_key = 'invoice_activity_created';
@@ -920,6 +921,8 @@ class Invoices_model extends App_Model
         if ($save_and_send === true) {
             $this->send_invoice_to_client($id, '', true, '', true);
         }
+
+        $this->update_basic_invoice_details($id);
 
         do_action_deprecated('after_invoice_updated', [$id], '3.0.0', 'invoice_updated');
         hooks()->do_action('invoice_updated', array_merge($hookData, ['updated' => &$updated]));
@@ -1920,11 +1923,11 @@ class Invoices_model extends App_Model
         return $this->db->query('select * from tblhsn_sac_code ')->result_array();
     }
 
-    public function get_annexure_invoice_details($invoiceid)
+    public function get_annexure_invoice_details($invoiceid, $ignore_management_fess = false)
     {
         $this->db->where('id', $invoiceid);
         $invoice = $this->db->get(db_prefix() . 'invoices')->row();
-        $items = get_items_by_type('invoice', $invoiceid);
+        $items = get_items_by_type('invoice', $invoiceid, $ignore_management_fess);
 
         $indexa = array();
         $final_invoice = array();
@@ -1966,8 +1969,15 @@ class Invoices_model extends App_Model
 
     public function get_items_groups($id)
     {
-        $this->db->where('id', $id);
-        return $this->db->get(db_prefix() . 'items_groups')->row();
+        $all_annexures = get_all_annexures();
+        $result = array_filter($all_annexures, function ($item) use ($id) {
+            return $item['id'] == $id;
+        });
+        $result = array_values($result);
+        if(!empty($result)) {
+            $result = $result[0];
+        }
+        return (object) $result;
     }
 
     public function get_all_estimates()
@@ -1975,5 +1985,28 @@ class Invoices_model extends App_Model
         $this->db->where('status != 3');
         $this->db->order_by('number', 'desc');
         return $this->db->get(db_prefix() . 'estimates')->result_array();
+    }
+
+    public function update_basic_invoice_details($invoice_id)
+    {
+        $annexure_invoice = $this->get_annexure_invoice_details($invoice_id);
+        $update_invoice = array();
+        $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
+        $update_invoice['total_tax'] = $annexure_invoice['final_invoice']['tax'];
+        $update_invoice['total'] = $annexure_invoice['final_invoice']['amount'];
+        $this->db->where('id', $invoice_id);
+        $this->db->update(db_prefix() . 'invoices', $update_invoice);
+        return true;
+    }
+
+    public function update_management_fees($invoice_id) 
+    {
+        $annexure_invoice = $this->get_annexure_invoice_details($invoice_id, true);
+        $this->db->where('rel_id', $invoice_id);
+        $this->db->where('annexure', 17);
+        $this->db->update(db_prefix() . 'itemable', [
+            'rate' => $annexure_invoice['final_invoice']['subtotal'],
+        ]);
+        return true;
     }
 }
