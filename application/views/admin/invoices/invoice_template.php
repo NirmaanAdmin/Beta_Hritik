@@ -866,62 +866,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php /*
-                                        <tr class="main">
-                                            <td></td>
-                                            <td>
-                                                <textarea name="description" class="form-control" rows="4"
-                                                placeholder="<?php echo _l('item_description_placeholder'); ?>"></textarea>
-                                            </td>
-                                            <td>
-                                                <textarea name="long_description" rows="4" class="form-control"
-                                                placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
-                                            </td>
-                                            <?php echo render_custom_fields_items_table_add_edit_preview(); ?>
-                                            <td></td>
-                                            <td></td>
-                                            <td>
-                                                <input type="number" name="quantity" min="0" value="1" class="form-control"
-                                                placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
-                                                <input type="text" placeholder="<?php echo _l('unit'); ?>" data-toggle="tooltip"
-                                                data-title="e.q kg, lots, packs" name="unit"
-                                                class="form-control input-transparent text-right">
-                                            </td>
-                                            <td>
-                                                <input type="number" name="rate" class="form-control"
-                                                placeholder="<?php echo _l('item_rate_placeholder'); ?>">
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $default_tax = unserialize(get_option('default_tax'));
-                                                $select      = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="taxname" multiple data-none-selected-text="' . _l('no_tax') . '">';
-                                                foreach ($taxes as $tax) {
-                                                    $selected = '';
-                                                    if (is_array($default_tax)) {
-                                                        if (in_array($tax['name'] . '|' . $tax['taxrate'], $default_tax)) {
-                                                            $selected = ' selected ';
-                                                        }
-                                                    }
-                                                    $select .= '<option value="' . $tax['name'] . '|' . $tax['taxrate'] . '"' . $selected . 'data-taxrate="' . $tax['taxrate'] . '" data-taxname="' . $tax['name'] . '" data-subtext="' . $tax['name'] . '">' . $tax['taxrate'] . '%</option>';
-                                                }
-                                                $select .= '</select>';
-                                                echo $select;
-                                                ?>
-                                            </td>
-                                            <td></td>
-                                            <td>
-                                                <?php
-                                                $new_item = 'undefined';
-                                                if (isset($invoice)) {
-                                                    $new_item = true;
-                                                }
-                                                ?>
-                                                <button type="button"
-                                                onclick="add_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
-                                                class="btn pull-right btn-primary"><i class="fa fa-check"></i></button>
-                                            </td>
-                                        </tr>
-                                        */ ?>
                                         <?php 
                                         if (isset($invoice) || isset($add_items)) 
                                         {

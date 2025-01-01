@@ -724,12 +724,9 @@ class Invoices_model extends App_Model
     {
         $original_invoice = $this->get($id);
         $updated          = false;
-        unset($data['discount_percent'], $data['discount_total'], $data['adjustment'], $data['adjustment'], $data['items']);
+        unset($data['discount_percent'], $data['discount_total'], $data['adjustment'], $data['items']);
         if(isset($data['newitems'])) {
             unset($data['newitems']);
-        }
-        if(isset($data['removed_items'])) {
-            unset($data['removed_items']);
         }
 
         // Perhaps draft?
@@ -922,11 +919,12 @@ class Invoices_model extends App_Model
             $this->send_invoice_to_client($id, '', true, '', true);
         }
 
-        $this->update_basic_invoice_details($id);
-
         do_action_deprecated('after_invoice_updated', [$id], '3.0.0', 'invoice_updated');
         hooks()->do_action('invoice_updated', array_merge($hookData, ['updated' => &$updated]));
 
+        $this->update_management_fees($id);
+        $this->update_basic_invoice_details($id);
+        
         return $updated;
     }
 
@@ -938,6 +936,8 @@ class Invoices_model extends App_Model
 
             if (handle_removed_sales_item_post($itemId, 'invoice')) {
                 $updated = true;
+                $expense_id = $original_item->expense_id;
+                $this->update_expense_to_invoice_relation($expense_id);
 
                 $this->log_invoice_activity($id, 'invoice_estimate_activity_removed_item', false, serialize([
                     $original_item->description,
@@ -2007,6 +2007,19 @@ class Invoices_model extends App_Model
         $this->db->update(db_prefix() . 'itemable', [
             'rate' => $annexure_invoice['final_invoice']['subtotal'],
         ]);
+        return true;
+    }
+
+    public function update_expense_to_invoice_relation($expense_id)
+    {
+        $this->db->where('expense_id', $expense_id);
+        $result = $this->db->get(db_prefix() . 'itemable')->result_array();
+        if(empty($result)) {
+            $this->db->where('id', $expense_id);
+            $this->db->update(db_prefix() . 'expenses', [
+                'invoiceid' => NULL,
+            ]);
+        }
         return true;
     }
 }

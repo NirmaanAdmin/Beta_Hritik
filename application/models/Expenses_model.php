@@ -584,6 +584,7 @@ class Expenses_model extends App_Model
                     $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
                     $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
                     $new_invoice_data['newitems'][$key+1]['po_id'] = $pur_order->id;
+                    $new_invoice_data['newitems'][$key+1]['expense_id'] = $expense->id;
                     $new_invoice_data['newitems'][$key+1]['taxname'] = [];
                     if(!empty($po_value['tax'])) {
                         $po_tax_array = explode('|', $po_value['tax']);
@@ -608,6 +609,7 @@ class Expenses_model extends App_Model
                     $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
                     $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
                     $new_invoice_data['newitems'][$key+1]['wo_id'] = $wo_order->id;
+                    $new_invoice_data['newitems'][$key+1]['expense_id'] = $expense->id;
                     $new_invoice_data['newitems'][$key+1]['taxname'] = [];
                     if(!empty($wo_value['tax'])) {
                         $wo_tax_array = explode('|', $wo_value['tax']);
@@ -645,6 +647,7 @@ class Expenses_model extends App_Model
             $new_invoice_data['newitems'][1]['order'] = 1;
             $new_invoice_data['newitems'][1]['annexure'] = $new_invoice_data['group_pur'];
             $new_invoice_data['newitems'][1]['vbt_id'] = $expense->vbt_id;
+            $new_invoice_data['newitems'][1]['expense_id'] = $expense->id;
         }
         $management_fees = array();
         $management_fees['description'] = 'Management Fees';
@@ -934,6 +937,7 @@ class Expenses_model extends App_Model
                     $new_item_data['item_order'] = $item_order;
                     $new_item_data['annexure'] = $annexure;
                     $new_item_data['po_id'] = $pur_order->id;
+                    $new_item_data['expense_id'] = $expense_id;
                     $this->db->insert(db_prefix() . 'itemable', $new_item_data);
                     $insert_id = $this->db->insert_id();
 
@@ -970,6 +974,7 @@ class Expenses_model extends App_Model
                     $new_item_data['item_order'] = $item_order;
                     $new_item_data['annexure'] = $annexure;
                     $new_item_data['wo_id'] = $wo_order->id;
+                    $new_item_data['expense_id'] = $expense_id;
                     $this->db->insert(db_prefix() . 'itemable', $new_item_data);
                     $insert_id = $this->db->insert_id();
 
@@ -1007,6 +1012,7 @@ class Expenses_model extends App_Model
             $new_item_data['item_order'] = $item_order;
             $new_item_data['annexure'] = $annexure;
             $new_item_data['vbt_id'] = $expense->vbt_id;
+            $new_item_data['expense_id'] = $expense_id;
             $this->db->insert(db_prefix() . 'itemable', $new_item_data);
         }
 
