@@ -3340,6 +3340,7 @@ class warehouse extends AdminController {
 
 		$data['current_day'] = date('Y-m-d');
 		$data['loss_adjustment_row_template'] = $loss_adjustment_row_template;
+		$data['projects'] = $this->projects_model->get();
 		
 		$this->load->view('loss_adjustment/add_loss_adjustment', $data);
 	}
@@ -5036,6 +5037,7 @@ class warehouse extends AdminController {
 		}else{
 			$data['base_currency_id'] = 0;
 		}
+		$data['projects'] = $this->projects_model->get();
 
 		$this->load->view('manage_internal_delivery/add_internal_delivery', $data);
 
