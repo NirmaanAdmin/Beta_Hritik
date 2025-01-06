@@ -84,16 +84,12 @@
                                           echo 'hide';
                                         }; ?> ">
                     <div class="form-group">
-                      <label for="invoice_id"><?php echo _l('invoices'); ?></label>
-                      <select onchange="invoice_change(this); return false;" name="invoice_id" id="invoice_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" <?php if ($edit_approval == 'true') {
-                                                                                                                                                                                                                                                              echo 'disabled';
-                                                                                                                                                                                                                                                            }; ?>>
-                        <option value=""></option>
-                        <?php foreach ($invoices as $invoice) { ?>
-                          <option value="<?php echo html_entity_decode($invoice['id']); ?>" <?php if (isset($goods_delivery) && $goods_delivery->invoice_id == $invoice['id']) {
-                                                                                              echo 'selected';
-                                                                                            } ?>><?php echo format_invoice_number($invoice['id']) . ' - ' . $invoice['company'] . ' - ' . $invoice['name']; ?></option>
-                        <?php } ?>
+                      <label for="stock_import"><?php echo _l('stock_import'); ?></label>
+                      <select onchange="stock_import_change(this); return false;" name="goods_receipt_id" id="goods_receipt_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" <?php if($edit_approval == 'true'){ echo 'disabled';} ; ?> >
+                          <option value=""></option>
+                          <?php foreach($goods_receipt as $value) { ?>
+                          <option value="<?php echo html_entity_decode($value['id']); ?>" <?php if(isset($goods_delivery) && $goods_delivery->goods_receipt_id == $value['id']){ echo 'selected'; } ?>><?php echo $value['goods_receipt_code']; ?></option>
+                            <?php } ?>
                       </select>
                     </div>
                   </div>
@@ -317,10 +313,12 @@
                     <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
                     <th width="10%" align="right"><?php echo _l('rate'); ?></th>
                     <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('subtotal'); ?></th>
-                    <th width="7%" align="right"><?php echo _l('discount'); ?></th>
+                    <th width="10%" align="right"><?php echo _l('lot_number'); ?></th>
                     <th width="7%" align="right"><?php echo _l('wh_vendor'); ?></th>
+                    <th width="10%" align="right"><?php echo _l('subtotal'); ?></th>
+                    <?php /* <th width="7%" align="right"><?php echo _l('discount'); ?></th>
                     <th width="10%" align="right"><?php echo _l('discount(money)'); ?></th>
+                    */ ?>
                     <th width="10%" align="right"><?php echo _l('total_money'); ?></th>
 
                     <th align="center"></th>

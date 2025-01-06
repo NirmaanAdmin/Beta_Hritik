@@ -260,7 +260,7 @@
 										<th align="right"><?php echo _l('unit_price'); ?></th>
 										<th align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
 										<th align="right"><?php echo _l('lot_number'); ?></th>
-										<th align="left"><?php echo _l('vendor'); ?></th>
+										<?php /* <th align="left"><?php echo _l('vendor'); ?></th> */ ?>
 										<th align="right"><?php echo _l('delivery_date'); ?></th>
 										<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
 										<th align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
