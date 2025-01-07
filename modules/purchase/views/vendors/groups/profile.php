@@ -27,17 +27,17 @@
                   </a>
                </li>
                <?php } ?>
-               <li role="presentation">
+               <!-- <li role="presentation">
                   <a href="#billing_and_shipping" aria-controls="billing_and_shipping" role="tab" data-toggle="tab">
                   <?php echo _l( 'billing_shipping'); ?>
                   </a>
-               </li>
+               </li> -->
 
-               <li role="presentation">
+               <!-- <li role="presentation">
                   <a href="#return_policies" aria-controls="return_policies" role="tab" data-toggle="tab">
                   <?php echo _l( 'pur_return_policies'); ?>
                   </a>
-               </li>
+               </li> -->
 
                <?php if(isset($client)){ ?>
                <li role="presentation">
@@ -78,7 +78,7 @@
                   <?php $attrs = (isset($client) ? array() : array('autofocus'=>true)); ?>
                   <?php echo render_input( 'company', 'client_company',$value,'text',$attrs); ?>
                   <div id="company_exists_info" class="hide"></div>
-                  <?php hooks()->do_action('after_pur_vendor_profile_company_field', $client ?? null); ?>
+                  <!-- <?php hooks()->do_action('after_pur_vendor_profile_company_field', $client ?? null); ?> -->
                   <?php 
                      $value=( isset($client) ? $client->vat : '');
                      echo render_input( 'vat', 'vendor_vat',$value);
@@ -161,8 +161,8 @@
                      ?>
                   <?php $bank_detail=( isset($client) ? $client->bank_detail : ''); ?>
                   <?php echo render_textarea( 'bank_detail', 'bank_detail',$bank_detail); ?>
-                  <?php $payment_terms=( isset($client) ? $client->payment_terms : ''); ?>
-                  <?php echo render_textarea( 'payment_terms', 'payment_terms',$payment_terms); ?>
+                  <!-- <?php $payment_terms=( isset($client) ? $client->payment_terms : ''); ?>
+                  <?php echo render_textarea( 'payment_terms', 'payment_terms',$payment_terms); ?> -->
                </div>
             </div>
          </div>
@@ -211,7 +211,7 @@
             
             ?>
          </div>
-         <div role="tabpanel" class="tab-pane" id="billing_and_shipping">
+         <!-- <div role="tabpanel" class="tab-pane" id="billing_and_shipping">
             <div class="row">
                <div class="col-md-12">
                   <div class="row">
@@ -269,9 +269,9 @@
                   </div>
                </div>
             </div>
-         </div>
+         </div> -->
 
-         <div role="tabpanel" class="tab-pane" id="return_policies">
+         <!-- <div role="tabpanel" class="tab-pane" id="return_policies">
             <div class="row">
                <div class="col-md-6">
                    <?php $return_within_day = (isset($client->return_within_day) &&  $client->return_within_day != null) ? $client->return_within_day : get_option('pur_return_request_within_x_day');
@@ -286,7 +286,7 @@
                    echo render_textarea('return_policies', 'pur_return_policies_information', $return_policies, array(), array()); ?>  
                </div>
             </div>
-         </div>
+         </div> -->
 
       </div>
    </div>

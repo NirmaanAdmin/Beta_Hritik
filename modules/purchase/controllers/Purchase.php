@@ -140,7 +140,7 @@ class purchase extends AdminController
             $data['tab'][] = ['name' => 'profile', 'icon' => '<i class="fa fa-user-circle menu-icon"></i>'];
             $data['tab'][] = ['name' => 'contacts', 'icon' => '<i class="fa fa-users menu-icon"></i>'];
             $data['tab'][] = ['name' => 'quotations', 'icon' => '<i class="fa fa-file-powerpoint menu-icon"></i>'];
-            $data['tab'][] = ['name' => 'contracts', 'icon' => '<i class="fa fa-file-text menu-icon"></i>'];
+            // $data['tab'][] = ['name' => 'contracts', 'icon' => '<i class="fa fa-file-text menu-icon"></i>'];
             $data['tab'][] = ['name' => 'purchase_order', 'icon' => '<i class="fa fa-cart-plus menu-icon"></i>'];
             $data['tab'][] = ['name' => 'purchase_invoice', 'icon' => '<i class="fa fa-clipboard menu-icon"></i>'];
             $data['tab'][] = ['name' => 'debit_notes', 'icon' => '<i class="fa fa-credit-card menu-icon"></i>'];
