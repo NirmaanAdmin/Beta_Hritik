@@ -405,7 +405,7 @@
 
                     <div class="row">
                       <div class="col-md-6 form-group">
-                        <label for="kind"><?php echo _l('kind'); ?></label>
+                        <label for="kind"><?php echo _l('cat'); ?></label>
                         <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <option value="Client Supply" <?php if (isset($pur_order) && $pur_order->kind == 'Client Supply') {

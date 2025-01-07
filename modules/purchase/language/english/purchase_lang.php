@@ -767,3 +767,4 @@ $lang['vendor_ratings'] = 'Vendor Ratings';
 $lang['updated_successfully'] = 'Updated successfully';
 $lang['changes'] = 'Changes';
 $lang['change_order'] = 'Change Order';
+$lang['cat'] = 'Category';
