@@ -8,23 +8,30 @@
                 }
             ?>
             <div class="col-md-6">
-                <div class="f_client_id">
-                    <div class="form-group select-placeholder">
-                        <label for="clientid"
-                            class="control-label"><?php echo _l('estimate_select_customer'); ?></label>
-                        <select id="clientid" name="clientid" data-live-search="true" data-width="100%" class="ajax-search<?php if (isset($estimate) && empty($estimate->clientid)) {
-                echo ' customer-removed';
-            } ?>" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                            <?php $selected = (isset($estimate) ? $estimate->clientid : '');
-                 if ($selected == '') {
-                     $selected = (isset($customer_id) ? $customer_id: '');
-                 }
-                 if ($selected != '') {
-                     $rel_data = get_relation_data('customer', $selected);
-                     $rel_val  = get_relation_values($rel_data, 'customer');
-                     echo '<option value="' . $rel_val['id'] . '" selected>' . $rel_val['name'] . '</option>';
-                 } ?>
-                        </select>
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php $budget_description = (isset($estimate) ? $estimate->budget_description : '');
+                        echo render_input('budget_description', 'budget_description', $budget_description); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="f_client_id">
+                            <div class="form-group select-placeholder">
+                                <label for="clientid"
+                                    class="control-label"><?php echo _l('estimate_select_customer'); ?></label>
+                                <select id="clientid" name="clientid" data-live-search="true" data-width="100%" class="ajax-search<?php if (isset($estimate) && empty($estimate->clientid)) {
+                                    echo ' customer-removed';} ?>" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
+                                    <?php $selected = (isset($estimate) ? $estimate->clientid : '');
+                                     if ($selected == '') {
+                                         $selected = (isset($customer_id) ? $customer_id: '');
+                                     }
+                                     if ($selected != '') {
+                                         $rel_data = get_relation_data('customer', $selected);
+                                         $rel_val  = get_relation_values($rel_data, 'customer');
+                                         echo '<option value="' . $rel_val['id'] . '" selected>' . $rel_val['name'] . '</option>';
+                                     } ?>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group select-placeholder projects-wrapper<?php if ((!isset($estimate)) || (isset($estimate) && !customer_has_projects($estimate->clientid))) {
@@ -301,7 +308,34 @@
                         </div>
                     </div>
                     <?php $value = (isset($estimate) ? $estimate->adminnote : ''); ?>
-                    <?php echo render_textarea('adminnote', 'estimate_add_edit_admin_note', $value); ?>
+                    <?php echo render_textarea('adminnote', 'estimate_add_edit_admin_note', $value, array('rows' => 2)); ?>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
+                                <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true" data-width="100%">
+                                    <option value=""></option>
+                                    <?php foreach ($get_hsn_sac_code as $item): ?>
+                                        <?php
+                                        $selected = '';
+                                        if (isset($estimate)) {
+                                            if ($estimate->hsn_sac == $item['id']) {
+                                                $selected = 'selected';
+                                            }
+                                        }
+
+                                        $words = explode(' ', $item['name']);
+                                        $shortName = implode(' ', array_slice($words, 0, 7));
+                                        ?>
+                                        <option value="<?= $item['id'] ?>" <?= $selected  ?>>
+                                            <?= htmlspecialchars($shortName) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>

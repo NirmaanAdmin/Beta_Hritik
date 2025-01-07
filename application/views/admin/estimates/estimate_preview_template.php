@@ -307,6 +307,11 @@
                                     <a href="<?php echo admin_url('estimates/estimate/' . $estimate->id); ?>">
                                         <span id="estimate-number">
                                             <?php echo e(format_estimate_number($estimate->id)); ?>
+                                            <?php
+                                            if(!empty($estimate->budget_description)) {
+                                                echo " (".$estimate->budget_description.")";
+                                            }
+                                            ?>
                                         </span>
                                     </a>
                                 </h4>

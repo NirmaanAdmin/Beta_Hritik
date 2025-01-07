@@ -3,9 +3,9 @@
 $table_data = array(
    'Budget #',
    'Budgeted Amount',
-   'Invoice Amount',
    'Change Order Amount',
    'Total Amount',
+   'Invoiced Amount',
    'Remaining Amount',
    _l('estimates_total_tax'),
    array(

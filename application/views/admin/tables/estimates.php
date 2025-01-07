@@ -112,12 +112,12 @@ return App_table::find('estimates')
 
             $row[] = $amount;
 
-            $row[] = e(app_format_money($aRow['invoice_amount'], $aRow['currency_name']));
-
             $row[] = e(app_format_money($aRow['co_amount'], $aRow['currency_name']));
 
             $total_amount = $aRow['total'] + $aRow['co_amount'];
             $row[] = e(app_format_money($total_amount, $aRow['currency_name']));
+
+            $row[] = e(app_format_money($aRow['invoice_amount'], $aRow['currency_name']));
 
             $remain_amount = $total_amount - $aRow['invoice_amount'];
             $row[] = e(app_format_money($remain_amount, $aRow['currency_name']));

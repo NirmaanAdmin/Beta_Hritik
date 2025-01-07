@@ -4158,3 +4158,4 @@ $lang['expense_applied_to_invoice'] = 'Expense successfully applied to invoice';
 $lang['applied_to_invoice'] = 'Applied to invoice';
 $lang['final_invoice_by_all_annexures'] = 'The final invoice by all annexures';
 $lang['invoice_title'] = 'Invoice title';
+$lang['budget_description'] = 'Budget description';
