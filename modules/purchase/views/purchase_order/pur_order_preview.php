@@ -522,8 +522,8 @@ if ($estimate->currency != 0) {
                                                                                        } else {
                                                                                           echo pur_html_entity_decode($es['item_name']);
                                                                                        }
-                                                                                       ?>
-                                                                                       <!-- </strong><?php if ($es['description'] != '') { ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?> -->
+                                                                                       ?></strong>
+                                                                                       <!-- <?php if ($es['description'] != '') { ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?> -->
                                              </div>
                                           </td>
                                           <td align="left">
