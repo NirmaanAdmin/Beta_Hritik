@@ -152,7 +152,7 @@ if ($estimate->currency != 0) {
                   <?php } ?>
                <?php } ?>
 
-               <p class="bold p_mar"><?php echo _l('kind') . ': ' ?>
+               <p class="bold p_mar"><?php echo _l('cat') . ': ' ?>
                   <?php
                   if (!empty($estimate->kind)) {
                      echo $estimate->kind;

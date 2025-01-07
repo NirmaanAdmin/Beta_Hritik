@@ -116,7 +116,7 @@
                            _l('group_pur'),
                            _l('sub_groups_pur'),
                            // _l('area_pur'),
-                           _l('kind'),
+                           _l('cat'),
                            _l('project'),
                            _l('department'),
                            _l('approval_status'), 
