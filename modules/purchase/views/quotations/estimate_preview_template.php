@@ -83,7 +83,7 @@
                   <a href="<?php echo admin_url('purchase/estimate/'.$estimate->id); ?>" class="btn btn-default btn-with-tooltip" data-toggle="tooltip" title="<?php echo _l('edit_estimate_tooltip'); ?>" data-placement="bottom"><i class="fa fa-pencil-square"></i></a>
                   <?php } ?>
                 <?php } ?>
-                  <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><?php if(is_mobile()){echo ' PDF';} ?> <span class="caret"></span></a>
+                  <!-- <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><?php if(is_mobile()){echo ' PDF';} ?> <span class="caret"></span></a> -->
                   <ul class="dropdown-menu dropdown-menu-right">
                      <li class="hidden-xs"><a href="<?php echo admin_url('purchase/purestimate_pdf/'.$estimate->id.'?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
                      <li class="hidden-xs"><a href="<?php echo admin_url('purchase/purestimate_pdf/'.$estimate->id.'?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
@@ -278,7 +278,7 @@
                      </div>
                      
                   </div>
-                  <div class="row">
+                  <!-- <div class="row">
                      <div class="col-md-12">
                         <div class="table-responsive">
                            <table class="table items items-preview estimate-items-preview" data-type="estimate">
@@ -392,7 +392,7 @@
                         <p><?php echo pur_html_entity_decode($estimate->terms); ?></p>
                      </div>
                      <?php } ?>
-                  </div>
+                  </div> -->
                </div>
             </div>
 

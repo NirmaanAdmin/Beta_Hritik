@@ -18,6 +18,7 @@
         vendor: 'required',
         date: 'required',
         currency: 'required',
+        total: 'required',
         number: {
             required: true
         },

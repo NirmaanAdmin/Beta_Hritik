@@ -1735,7 +1735,7 @@ class Purchase_model extends App_Model
         unset($data['item_name']);
         unset($data['area']);
         unset($data['image']);
-        unset($data['total']);
+        // unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
         unset($data['unit_name']);
@@ -1824,7 +1824,7 @@ class Purchase_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
-
+      
         $this->db->insert(db_prefix() . 'pur_estimates', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_quotation', 'quotation', $insert_id);
@@ -1967,7 +1967,7 @@ class Purchase_model extends App_Model
         unset($data['item_name']);
         unset($data['area']);
         unset($data['image']);
-        unset($data['total']);
+        // unset($data['total']);
         unset($data['quantity']);
         unset($data['unit_price']);
         unset($data['unit_name']);

@@ -94,7 +94,7 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label for="number">Budget Number</label>
+              <label for="number">Quote Number</label>
               <div class="input-group">
                 <span class="input-group-addon">
                   <?php if (isset($estimate)) { ?>
@@ -207,10 +207,10 @@
               ?>
               <?php echo render_select('currency', $currencies, array('id', 'name', 'symbol'), 'estimate_add_edit_currency', $selected, $currency_attr); ?>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <?php $value = (isset($estimate) ? _d($estimate->date) : _d(date('Y-m-d'))); ?>
               <?php echo render_date_input('date', 'Budget Date', $value); ?>
-            </div>
+            </div> -->
             <div class="col-md-6">
               <?php
               $value = '';
@@ -221,7 +221,7 @@
                   $value = _d(date('Y-m-d', strtotime('+' . get_option('estimate_due_after') . ' DAY', strtotime(date('Y-m-d')))));
                 }
               }
-              echo render_date_input('expirydate', 'estimate_add_edit_expirydate', $value); ?>
+              echo render_date_input('expirydate', 'Validity', $value); ?>
             </div>
 
             <div class="col-md-6">
@@ -247,7 +247,7 @@
               </select>
             </div>
           </div>
-          <div class="row">
+          
             <div class="col-md-6 ">
 
               <?php
@@ -266,6 +266,12 @@
                 }
               }
               echo render_select('sub_groups_pur', $sub_groups_pur, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
+              ?>
+            </div>
+            <div class="col-md-6 ">
+
+              <?php
+              echo render_input('total','<small class="req text-danger">* </small>Quote Value ( ₹ )', (isset($estimate) ? $estimate->total : ''), 'number', array(), array(), '','');
               ?>
             </div>
             <?php /* <div class="col-md-6 ">
@@ -288,7 +294,7 @@
               echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
               ?>
             </div> */ ?>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -341,9 +347,9 @@
 
 <div class="panel-body mtop10 invoice-item">
   <div class="row">
-    <div class="col-md-4">
+    <!-- <div class="col-md-4">
       <?php $this->load->view('purchase/item_include/main_item_select'); ?>
-    </div>
+    </div> -->
     <?php
     $estimate_currency = $base_currency;
     if (isset($estimate) && $estimate->currency != 0) {
@@ -372,7 +378,7 @@
   </div>
 </div>
 
-<div class="row">
+<!-- <div class="row">
   <div class="col-md-12">
     <div class="table-responsive">
       <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
@@ -446,7 +452,7 @@
     </div>
     <div id="removed-items"></div>
   </div>
-</div>
+</div> -->
 </div>
 <div class="row">
   <div class="col-md-12 mtop15">
