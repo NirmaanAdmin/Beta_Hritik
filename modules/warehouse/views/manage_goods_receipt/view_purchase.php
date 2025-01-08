@@ -146,7 +146,7 @@
                                      <th align="right" colspan="1"><?php echo _l('total_money') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('tax_money') ?></th> -->
                                      <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
-                                     <th colspan="1"><?php echo _l('vendor') ?></th>
+                                     <!-- <th colspan="1"><?php echo _l('vendor') ?></th> -->
                                      <th align="right" colspan="1"><?php echo _l('delivery_date') ?></th>
                                      <!-- <th align="right" colspan="1"><?php echo _l('expiry_date') ?></th> -->
                                  </tr>
@@ -207,7 +207,7 @@
                                   <td class="text-right"><?php echo app_format_money((float)$goods_money,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$tax_money,'') ?></td> -->
                                   <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
-                                  <td><?php echo $vendor_name ?></td>
+                                  <!-- <td><?php echo $vendor_name ?></td> -->
                                   <td class="text-right"><?php echo _d($delivery_date) ?></td>
                                   <!-- <td class="text-right"><?php echo _d($expiry_date) ?></td> -->
                                 </tr>
