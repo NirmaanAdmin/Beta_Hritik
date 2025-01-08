@@ -248,8 +248,7 @@
 						</div>
 
 						<div class="table-responsive s_table ">
-							<table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop" style="font-size: 10px;
-">
+							<table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop" >
 								<thead>
 									<tr>
 										<th width="1%"></th>
