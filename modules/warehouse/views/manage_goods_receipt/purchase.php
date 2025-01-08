@@ -238,34 +238,35 @@
 					</div>
 					<div class="panel-body mtop10 invoice-item">
 						<div class="row">
-							<div class="col-md-4">
+							<!-- <div class="col-md-4">
 								<?php $this->load->view('warehouse/item_include/main_item_select'); ?>
-							</div>
-							<div class="col-md-8 text-right">
+							</div> -->
+							<div class="col-md-12 text-right">
 								<label class="bold mtop10 text-right" data-toggle="tooltip" title="" data-original-title="<?php echo _l('support_barcode_scanner_tooltip'); ?>"><?php echo _l('support_barcode_scanner'); ?>
 									<i class="fa fa-question-circle i_tooltip"></i></label>
 							</div>
 						</div>
 
 						<div class="table-responsive s_table ">
-							<table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+							<table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop" style="font-size: 10px;
+">
 								<thead>
 									<tr>
-										<th></th>
-										<th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
-										<th align="left" class="description"><?php echo _l('description'); ?></th>
-										<th align="left"><?php echo _l('warehouse_name'); ?></th>
-										<th width="7%" align="right" class="qty"><?php echo _l('po_quantity'); ?></th>
-										<th width="7%" align="right" class="qty"><?php echo _l('received_quantity'); ?></th>
-										<th align="right"><?php echo _l('unit_price'); ?></th>
-										<th align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-										<th align="right"><?php echo _l('lot_number'); ?></th>
-										<?php /* <th align="left"><?php echo _l('vendor'); ?></th> */ ?>
-										<th align="right"><?php echo _l('delivery_date'); ?></th>
+										<th width="1%"></th>
+										<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+										<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
+										<th align="left" style="width: 5%;"><?php echo _l('warehouse_name'); ?></th>
+										<th align="right" style="width: 7%;" class="qty"><?php echo _l('po_quantity'); ?></th>
+										<th align="right" style="width: 7%;" class="qty"><?php echo _l('received_quantity'); ?></th>
+										<!-- <th align="right" style="width: 8%;"><?php echo _l('unit_price'); ?></th> -->
+										<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
+										<th align="right" style="width: 10%;"><?php echo _l('lot_number'); ?></th>
+										<!-- <th align="left" style="width: 7%;"><?php echo _l('vendor'); ?></th> -->
+										<th align="right" style="width: 10%;"><?php echo _l('delivery_date'); ?></th>
 										<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
-										<th align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+										<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_amount_heading'); ?></th> -->
 
-										<th align="center"><i class="fa fa-cog"></i></th>
+										<th align="center"  style="width: 1%;" ><i class="fa fa-cog"></i></th>
 										<!-- <th align="center"></th> -->
 									</tr>
 								</thead>
@@ -274,7 +275,7 @@
 								</tbody>
 							</table>
 						</div>
-						<div class="col-md-8 col-md-offset-4">
+						<!-- <div class="col-md-8 col-md-offset-4">
 							<table class="table text-right">
 								<tbody>
 									<tr id="subtotal">
@@ -291,7 +292,7 @@
 									</tr>
 								</tbody>
 							</table>
-						</div>
+						</div> -->
 						<div id="removed-items"></div>
 					</div>
 

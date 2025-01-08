@@ -52,6 +52,7 @@
                         _l('staff_id'),
                         _l('status_label'),
                         _l('delivery_status_new'),
+                        _l('options'),
                         ),'table_manage_delivery',['delivery_sm' => 'delivery_sm']); ?>
 						
 					</div>

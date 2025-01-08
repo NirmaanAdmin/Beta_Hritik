@@ -85,11 +85,15 @@
                                         }; ?> ">
                     <div class="form-group">
                       <label for="stock_import"><?php echo _l('stock_import'); ?></label>
-                      <select onchange="stock_import_change(this); return false;" name="goods_receipt_id" id="goods_receipt_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" <?php if($edit_approval == 'true'){ echo 'disabled';} ; ?> >
-                          <option value=""></option>
-                          <?php foreach($goods_receipt as $value) { ?>
-                          <option value="<?php echo html_entity_decode($value['id']); ?>" <?php if(isset($goods_delivery) && $goods_delivery->goods_receipt_id == $value['id']){ echo 'selected'; } ?>><?php echo $value['goods_receipt_code']; ?></option>
-                            <?php } ?>
+                      <select onchange="stock_import_change(this); return false;" name="goods_receipt_id" id="goods_receipt_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" <?php if ($edit_approval == 'true') {
+                                                                                                                                                                                                                                                                              echo 'disabled';
+                                                                                                                                                                                                                                                                            }; ?>>
+                        <option value=""></option>
+                        <?php foreach ($goods_receipt as $value) { ?>
+                          <option value="<?php echo html_entity_decode($value['id']); ?>" <?php if (isset($goods_delivery) && $goods_delivery->goods_receipt_id == $value['id']) {
+                                                                                            echo 'selected';
+                                                                                          } ?>><?php echo $value['goods_receipt_code']; ?></option>
+                        <?php } ?>
                       </select>
                     </div>
                   </div>
@@ -293,10 +297,10 @@
           </div>
           <div class="panel-body mtop10 invoice-item">
             <div class="row">
-              <div class="col-md-4">
+              <!-- <div class="col-md-4">
                 <?php $this->load->view('warehouse/item_include/main_item_select'); ?>
-              </div>
-              <div class="col-md-8 text-right">
+              </div> -->
+              <div class="col-md-12 text-right">
                 <label class="bold mtop10 text-right" data-toggle="tooltip" title="" data-original-title="<?php echo _l('support_barcode_scanner_tooltip'); ?>"><?php echo _l('support_barcode_scanner'); ?>
                   <i class="fa fa-question-circle i_tooltip"></i></label>
               </div>
@@ -306,23 +310,23 @@
               <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
                 <thead>
                   <tr>
-                    <th></th>
+                    <th width="1%"></th>
                     <th width="20%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
                     <th width="15%" align="left"><?php echo _l('warehouse_name'); ?></th>
                     <th width="10%" align="right" class="available_quantity"><?php echo _l('available_quantity'); ?></th>
                     <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('rate'); ?></th>
-                    <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                    <!-- <th width="10%" align="right"><?php echo _l('rate'); ?></th>
+                    <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
                     <th width="10%" align="right"><?php echo _l('lot_number'); ?></th>
                     <th width="7%" align="right"><?php echo _l('wh_vendor'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('subtotal'); ?></th>
+                    <!-- <th width="10%" align="right"><?php echo _l('subtotal'); ?></th> -->
                     <?php /* <th width="7%" align="right"><?php echo _l('discount'); ?></th>
                     <th width="10%" align="right"><?php echo _l('discount(money)'); ?></th>
                     */ ?>
-                    <th width="10%" align="right"><?php echo _l('total_money'); ?></th>
+                    <!-- <th width="10%" align="right"><?php echo _l('total_money'); ?></th> -->
 
-                    <th align="center"></th>
-                    <th align="center"><i class="fa fa-cog"></i></th>
+                    <!-- <th align="center"></th> -->
+                    <th align="center" width='1%'><i class="fa fa-cog"></i></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -330,7 +334,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="col-md-8 col-md-offset-4">
+            <!-- <div class="col-md-8 col-md-offset-4">
               <table class="table text-right">
                 <tbody>
                   <tr id="subtotal">
@@ -360,7 +364,7 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div> -->
             <div id="removed-items"></div>
           </div>
 
