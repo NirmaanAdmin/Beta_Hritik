@@ -120,7 +120,7 @@ $lang['warehouse_history']  = 'Inventory history';
 $lang['quantity']  = 'Quantity';
 $lang['stock_import']  = 'Stock Received';
 $lang['stock_export']  = 'Stock Issued';
-$lang['stock_import_new']  = 'Stock Received';
+$lang['stock_import_new']  = 'Item Tracker';
 $lang['stock_export_new']  = 'Stock Issued';
 $lang['increase']  = 'Increase';
 $lang['reduction']  = 'Reduction';
@@ -724,6 +724,6 @@ $lang['wh_barcode_filter']   = 'Filter by barcode';
 $lang['wh_unit_name']   = 'Unit Name';
 $lang['po_quantity'] = 'PO quantity';
 $lang['received_quantity'] = 'Received quantity';
-
+$lang['category'] = 'Category';
 
 

@@ -3747,7 +3747,7 @@ class Warehouse_model extends App_Model {
 	 */
 	public function get_vendor_ajax($pur_orders_id) {
 		$data = [];
-		$sql = 'SELECT *, ' . db_prefix() . 'pur_orders.project, ' . db_prefix() . 'pur_orders.type, ' . db_prefix() . 'pur_orders.department, ' . db_prefix() . 'pur_request.requester FROM ' . db_prefix() . 'pur_vendor
+		$sql = 'SELECT *, ' . db_prefix() . 'pur_orders.project, ' . db_prefix() . 'pur_orders.kind, ' . db_prefix() . 'pur_orders.type, ' . db_prefix() . 'pur_orders.department, ' . db_prefix() . 'pur_request.requester FROM ' . db_prefix() . 'pur_vendor
 		left join ' . db_prefix() . 'pur_orders on ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'pur_orders.vendor
 		left join ' . db_prefix() . 'pur_request on ' . db_prefix() . 'pur_orders.pur_request = ' . db_prefix() . 'pur_request.id
 		where ' . db_prefix() . 'pur_orders.id = ' . $pur_orders_id;
@@ -3776,6 +3776,10 @@ class Warehouse_model extends App_Model {
 			
 			if(isset($result_array->requester)){
 				$data['requester'] 	.= $result_array->requester;
+			}
+
+			if(isset($result_array->kind)){
+				$data['kind'] 	.= $result_array->kind;
 			}
 			
 		}

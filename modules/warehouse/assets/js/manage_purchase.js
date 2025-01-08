@@ -3,6 +3,7 @@
 
      var GoodsreceiptParams = {
         "day_vouchers": "input[name='date_add']",
+        "kind": "select[name='kind']",
      };
 
 var table_manage_goods_receipt = $('.table-table_manage_goods_receipt');
@@ -15,6 +16,9 @@ $('.purchase_sm').DataTable().columns([0]).visible(false, false);
     table_manage_goods_receipt.DataTable().ajax.reload();
 });
 
+$('#kind').on('change', function() {
+    table_manage_goods_receipt.DataTable().ajax.reload();
+});
   init_goods_receipt();
   function init_goods_receipt(id) {
     "use strict";

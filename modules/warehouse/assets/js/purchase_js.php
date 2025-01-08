@@ -121,6 +121,7 @@ $('select[name="pr_order_id"]').on('change', function() {
 				$('select[name="type"]').val(response_vendor.type).change();
 				$('select[name="department"]').val(response_vendor.department).change();
 				$('select[name="requester"]').val(response_vendor.requester).change();
+				$('input[name="kind"]').val(response_vendor.kind);
 
 			});
 		}else{

@@ -7,6 +7,7 @@ $aColumns = [
     'goods_receipt_code',
     'supplier_name',
     'buyer_id',
+    'kind',
     'pr_order_id',
     'date_add',
     // 'total_tax_money', 
@@ -25,11 +26,18 @@ if ($this->ci->input->post('day_vouchers')) {
     $day_vouchers = to_sql_date($this->ci->input->post('day_vouchers'));
 }
 
+if ($this->ci->input->post('kind')) {
+    $kind = $this->ci->input->post('kind');
+}
+
 if (isset($day_vouchers)) {
 
     $where[] = 'AND tblgoods_receipt.date_add <= "' . $day_vouchers . '"';
 }
 
+if (isset($kind)) {
+    $where[] = 'AND tblgoods_receipt.kind = "' . $kind . '"';
+}
 
 
 

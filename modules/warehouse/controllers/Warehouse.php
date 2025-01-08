@@ -884,12 +884,13 @@ class warehouse extends AdminController {
 
 		echo json_encode([
 
-			'userid' => $pur_vendor['id'] ? $pur_vendor['id'] : '',
-			'buyer' => $pur_vendor['buyer'] ? $pur_vendor['buyer'] : '',
-			'project' => $pur_vendor['project'] ? $pur_vendor['project'] : '',
-			'type' => $pur_vendor['type'] ? $pur_vendor['type'] : '',
+			'userid'  	 => $pur_vendor['id'] ? $pur_vendor['id'] : '',
+			'buyer'   	 => $pur_vendor['buyer'] ? $pur_vendor['buyer'] : '',
+			'project' 	 => $pur_vendor['project'] ? $pur_vendor['project'] : '',
+			'type'    	 => $pur_vendor['type'] ? $pur_vendor['type'] : '',
 			'department' => $pur_vendor['department'] ? $pur_vendor['department'] : '',
-			'requester' => $pur_vendor['requester'] ? $pur_vendor['requester'] : '',
+			'requester'  => $pur_vendor['requester'] ? $pur_vendor['requester'] : '',
+			'kind'       => $pur_vendor['kind'] ? $pur_vendor['kind'] : '',
 
 		]);
 	}

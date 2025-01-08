@@ -89,6 +89,10 @@
                     <td class="bold"><?php echo _l('note_'); ?></td>
                     <td><?php echo html_entity_decode($goods_receipt->description) ; ?></td>
                  </tr>
+                 <tr class="project-overview">
+                    <td class="bold"><?php echo _l('category'); ?></td>
+                    <td><?php echo html_entity_decode($goods_receipt->kind) ; ?></td>
+                 </tr>
 
                  <?php 
                    if (get_status_modules_wh('purchase')) {

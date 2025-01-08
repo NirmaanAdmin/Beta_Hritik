@@ -192,6 +192,10 @@
 								<?php $invoice_no = (isset($goods_receipt) ? $goods_receipt->invoice_no : '');
 								echo render_input('invoice_no', 'invoice_no', $invoice_no) ?>
 							</div>
+							<div class="col-md-3 form-group">
+								<?php $kind = (isset($goods_receipt) ? $goods_receipt->kind : '');
+								echo render_input('kind', 'Category', $kind, '',array('readonly' => 'true')) ?>
+							</div>
 						</div>
 					</div>
 					<div class="panel_s">
