@@ -725,5 +725,5 @@ $lang['wh_unit_name']   = 'Unit Name';
 $lang['po_quantity'] = 'PO quantity';
 $lang['received_quantity'] = 'Received quantity';
 $lang['category'] = 'Category';
-
+$lang['est_delivery_date'] = 'Estimated Delivery Date';
 

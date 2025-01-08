@@ -14,7 +14,7 @@
 								<hr>
 							</div>
 						</div>
- 
+
 						<?php
 						$id = '';
 						if (isset($goods_receipt)) {
@@ -194,7 +194,7 @@
 							</div>
 							<div class="col-md-3 form-group">
 								<?php $kind = (isset($goods_receipt) ? $goods_receipt->kind : '');
-								echo render_input('kind', 'Category', $kind, '',array('readonly' => 'true')) ?>
+								echo render_input('kind', 'Category', $kind, '', array('readonly' => 'true')) ?>
 							</div>
 						</div>
 					</div>
@@ -251,33 +251,76 @@
 							</div>
 						</div>
 
-						<div class="table-responsive s_table ">
-							<table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop" >
-								<thead>
-									<tr>
-										<th width="1%"></th>
-										<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
-										<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
-										<th align="left" style="width: 5%;"><?php echo _l('warehouse_name'); ?></th>
-										<th align="right" style="width: 7%;" class="qty"><?php echo _l('po_quantity'); ?></th>
-										<th align="right" style="width: 7%;" class="qty"><?php echo _l('received_quantity'); ?></th>
-										<!-- <th align="right" style="width: 8%;"><?php echo _l('unit_price'); ?></th> -->
-										<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
-										<th align="right" style="width: 10%;"><?php echo _l('lot_number'); ?></th>
-										<!-- <th align="left" style="width: 7%;"><?php echo _l('vendor'); ?></th> -->
-										<th align="right" style="width: 10%;"><?php echo _l('delivery_date'); ?></th>
-										<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
-										<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_amount_heading'); ?></th> -->
+						<div class="horizontal-tabs">
+							<ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+								<li role="presentation" class="active">
+									<a href="#final_items" aria-controls="final_items" role="tab" id="tab_final_items" data-toggle="tab">
+										Items
+									</a>
+								</li>
+								<li role="presentation">
+									<a href="#production_approvals" class="hide" aria-controls="production_approvals" role="tab" id="tab_production_approvals" data-toggle="tab">
+										Production Approvals
+									</a>
+								</li>
 
-										<th align="center"  style="width: 1%;" ><i class="fa fa-cog"></i></th>
-										<!-- <th align="center"></th> -->
-									</tr>
-								</thead>
-								<tbody>
-									<?php echo html_entity_decode($goods_receipt_row_template); ?>
-								</tbody>
-							</table>
+
+							</ul>
 						</div>
+
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active" id="final_items">
+								<div class="table-responsive s_table ">
+									<table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+										<thead>
+											<tr>
+												<th width="1%"></th>
+												<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+												<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
+												<th align="left" style="width: 5%;"><?php echo _l('warehouse_name'); ?></th>
+												<th align="right" style="width: 7%;" class="qty"><?php echo _l('po_quantity'); ?></th>
+												<th align="right" style="width: 7%;" class="qty"><?php echo _l('received_quantity'); ?></th>
+												<!-- <th align="right" style="width: 8%;"><?php echo _l('unit_price'); ?></th> -->
+												<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
+												<th align="right" style="width: 10%;"><?php echo _l('lot_number'); ?></th>
+												<!-- <th align="left" style="width: 7%;"><?php echo _l('vendor'); ?></th> -->
+												<th align="right" style="width: 10%;"><?php echo _l('delivery_date'); ?></th>
+												<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
+												<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_amount_heading'); ?></th> -->
+
+												<!-- <th align="center" style="width: 1%;"><i class="fa fa-cog"></i></th> -->
+												<!-- <th align="center"></th> -->
+											</tr>
+										</thead>
+										<tbody>
+											<?php echo html_entity_decode($goods_receipt_row_template); ?>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div role="tabpanel" class="tab-pane" id="production_approvals">
+								<div class="table-responsive s_table ">
+									<table class="table invoice-production-approvals-table items table-main-invoice-edit has-calculations no-mtop">
+										<thead>
+											<tr>
+												<th width="1%"></th>
+												<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+												<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
+												<th align="left" style="width: 10%;"><?php echo _l('payment_date'); ?></th>
+												<th align="left" style="width: 10%;"><?php echo _l('est_delivery_date'); ?></th>
+												<th align="left" style="width: 8%;"><?php echo _l('status'); ?></th>
+											</tr>
+										</thead>
+										<tbody>
+											<?php echo html_entity_decode($goods_receipt_production_approvals_template); ?>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+
 						<!-- <div class="col-md-8 col-md-offset-4">
 							<table class="table text-right">
 								<tbody>

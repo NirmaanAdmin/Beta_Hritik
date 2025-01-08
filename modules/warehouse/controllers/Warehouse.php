@@ -790,7 +790,7 @@ class warehouse extends AdminController {
 		$warehouse_data = $this->warehouse_model->get_warehouse();
         //sample
 		$goods_receipt_row_template = $this->warehouse_model->create_goods_receipt_row_template();
-
+		$goods_receipt_production_approvals_template = $this->warehouse_model->create_goods_receipt_production_approvals_template();
 		//check status module purchase
 		if($id != ''){
 			$goods_receipt = $this->warehouse_model->get_goods_receipt($id);
@@ -798,6 +798,7 @@ class warehouse extends AdminController {
 				blank_page('Stock received Not Found', 'danger');
 			}
 			$data['goods_receipt_detail'] = $this->warehouse_model->get_goods_receipt_detail($id);
+			$data['goods_production_approvals'] = $this->warehouse_model->get_goods_receipt_production_approvals($id);
 			$data['goods_receipt'] = $goods_receipt;
 			$data['tax_data'] = $this->warehouse_model->get_html_tax_receip($id);
 			$data['total_item'] = count($data['goods_receipt_detail']);
@@ -829,12 +830,27 @@ class warehouse extends AdminController {
 					
 				}
 			}
+			if(count($data['goods_production_approvals']) > 0){
+				$index_receipt = 0;
+				foreach ($data['goods_production_approvals'] as $pro_approvals_detail) {
+					$commodity_name = $pro_approvals_detail['commodity_name'];
+					$description = $pro_approvals_detail['description'];
+					$payment_date = $pro_approvals_detail['payment_date'];
+					$est_delivery_date = $pro_approvals_detail['est_delivery_date'];
+					$key = $pro_approvals_detail['id'];
+					$status = $pro_approvals_detail['status'];
+					$commodity_code = $pro_approvals_detail['commodity_code'];
+					$goods_receipt_production_approvals_template .= $this->warehouse_model->create_goods_receipt_production_approvals_template('newapprovalsitems[' . $index_receipt . ']',$description,$commodity_name,$payment_date,$est_delivery_date,$key,$status,$commodity_code);
+					$index_receipt++;
+				}
+			}
 
 			$data['goods_receipt_detail'] = json_encode($this->warehouse_model->get_goods_receipt_detail($id));
 
 		}
 
 		$data['goods_receipt_row_template'] = $goods_receipt_row_template;
+		$data['goods_receipt_production_approvals_template'] = $goods_receipt_production_approvals_template;
 		$get_base_currency =  get_base_currency();
 		if($get_base_currency){
 			$data['base_currency_id'] = $get_base_currency->id;
@@ -864,11 +880,14 @@ class warehouse extends AdminController {
 				'total_money' => $pur_request_detail[4] ? $pur_request_detail[4] : '',
 				'total_row' => $pur_request_detail[5] ? $pur_request_detail[5] : '',
 				'list_item' => $pur_request_detail[6] ? $pur_request_detail[6] : '',
+				'production_approval_item' => $pur_request_detail[7] ? $pur_request_detail[7] : '',
 			]);
 		}else{
 			$list_item = $this->warehouse_model->create_goods_receipt_row_template();
+			$production_approval_item = $this->warehouse_model->create_goods_receipt_production_approvals_template();
 			echo json_encode([
 				'list_item' => $list_item,
+				'production_approval_item' => $production_approval_item,
 			]);
 		}
 	}

@@ -90,6 +90,9 @@ $('select[name="pr_order_id"]').on('change', function() {
 		if(response){
 			$('.invoice-item table.invoice-items-table.items tbody').html('');
 			$('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
+			$('.invoice-item table.invoice-production-approvals-table.items tbody').html('');
+			$('.invoice-item table.invoice-production-approvals-table.items tbody').append(response.production_approval_item);
+			
 
 			setTimeout(function () {
 				wh_calculate_total();
@@ -122,6 +125,12 @@ $('select[name="pr_order_id"]').on('change', function() {
 				$('select[name="department"]').val(response_vendor.department).change();
 				$('select[name="requester"]').val(response_vendor.requester).change();
 				$('input[name="kind"]').val(response_vendor.kind);
+
+				if(response_vendor.kind === 'Bought out items'){
+					$('#tab_production_approvals').removeClass('hide');
+				}else{
+					$('#tab_production_approvals').addClass('hide');
+				}
 
 			});
 		}else{
