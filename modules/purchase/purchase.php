@@ -181,7 +181,7 @@ function purchase_module_init_menu_items()
 {
 
     $CI = &get_instance();
-    if (has_permission('purchase_items', '', 'view') || has_permission('purchase_vendors', '', 'view') || has_permission('purchase_vendor_items', '', 'view') || has_permission('purchase_request', '', 'view') || has_permission('purchase_quotations', '', 'view') || has_permission('purchase_orders', '', 'view') || has_permission('purchase_contracts', '', 'view') || has_permission('purchase_invoices', '', 'view') || has_permission('purchase_reports', '', 'view') || has_permission('work_order', '', 'view') || has_permission('work_order', '', 'view') || has_permission('purchase_debit_notes', '', 'view') || has_permission('purchase_settings', '', 'edit') || has_permission('purchase_vendors', '', 'view_own') || has_permission('purchase_vendor_items', '', 'view_own') || has_permission('purchase_request', '', 'view_own') || has_permission('purchase_quotations', '', 'view_own') || has_permission('purchase_orders', '', 'view_own') || has_permission('purchase_contracts', '', 'view_own') || has_permission('purchase_invoices', '', 'view_own') || has_permission('purchase_debit_notes', '', 'view_own') || has_permission('purchase_order_return', '', 'view_own') || has_permission('purchase_order_return', '', 'view')) {
+    if (has_permission('purchase_items', '', 'view') || has_permission('purchase_vendors', '', 'view') || has_permission('purchase_vendor_items', '', 'view') || has_permission('purchase_request', '', 'view') || has_permission('purchase_quotations', '', 'view') || has_permission('purchase_orders', '', 'view') || has_permission('purchase_contracts', '', 'view') || has_permission('purchase_invoices', '', 'view') || has_permission('purchase_reports', '', 'view') || has_permission('order_tracker', '', 'view') || has_permission('work_order', '', 'view') || has_permission('work_order', '', 'view') || has_permission('purchase_debit_notes', '', 'view') || has_permission('purchase_settings', '', 'edit') || has_permission('purchase_vendors', '', 'view_own') || has_permission('purchase_vendor_items', '', 'view_own') || has_permission('purchase_request', '', 'view_own') || has_permission('purchase_quotations', '', 'view_own') || has_permission('purchase_orders', '', 'view_own') || has_permission('purchase_contracts', '', 'view_own') || has_permission('purchase_invoices', '', 'view_own') || has_permission('purchase_debit_notes', '', 'view_own') || has_permission('purchase_order_return', '', 'view_own') || has_permission('purchase_order_return', '', 'view')) {
         $CI->app_menu->add_sidebar_menu_item('purchase', [
             'name' => _l('purchase'),
             'icon' => 'fa fa-shopping-cart',
@@ -326,6 +326,17 @@ function purchase_module_init_menu_items()
             'position' => 20,
         ]);
     }
+
+    if (has_permission('order_tracker', '', 'view')) {
+        
+        $CI->app_menu->add_sidebar_children_item('purchase', [
+             'slug' => 'order-tracker',
+             'name' => _l('order_tracker'),
+             'icon' => 'fa fa-ship',
+             'href' => admin_url('purchase/order_tracker'),
+             'position' => 21,
+         ]);
+     }
 }
 
 /**
@@ -399,6 +410,7 @@ function purchase_permissions()
     register_staff_capabilities('purchase_quotations', $capabilities_own, _l('purchase_quotations'));
     register_staff_capabilities('purchase_orders', $capabilities_own, _l('purchase_orders'));
     register_staff_capabilities('work_order', $capabilities_own, _l('work_order'));
+    register_staff_capabilities('order_tracker', $capabilities_own, _l('order_tracker'));
     register_staff_capabilities('purchase_order_return', $capabilities_own, _l('purchase_order_return'));
     register_staff_capabilities('purchase_contracts', $capabilities_own, _l('purchase_contracts'));
     register_staff_capabilities('purchase_invoices', $capabilities_own, _l('purchase_invoices'));
@@ -465,6 +477,10 @@ function purchase_add_footer_components()
     if (!(strpos($viewuri, '/admin/purchase/purchase_order') === false)) {
         echo '<script src="' . base_url('assets/plugins/signature-pad/signature_pad.min.js') . '"></script>';
         echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/purchase_order_manage.js') . '?v=' . PURCHASE_REVISION . '"></script>';
+    }
+    if (!(strpos($viewuri, '/admin/purchase/order_tracker') === false)) {
+       
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/order_tracker_manage.js') . '?v=' . PURCHASE_REVISION . '"></script>';
     }
     if (!(strpos($viewuri, '/admin/purchase/work_order') === false)) {
         echo '<script src="' . base_url('assets/plugins/signature-pad/signature_pad.min.js') . '"></script>';

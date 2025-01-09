@@ -1252,7 +1252,7 @@ class purchase extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']',  $item_name, $item['description'], $item['area'], '', $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total'], '', '', $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index_quote, true, $currency_rate, $to_currency,[],false);
+                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']',  $item_name, $item['description'], $item['area'], '', $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total'], '', '', $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index_quote, true, $currency_rate, $to_currency, [], false);
             }
         }
 
@@ -1388,7 +1388,7 @@ class purchase extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index . ']',  $item_name, '', $item['area'], '', $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total_money'], $item['discount_%'], $item['discount_money'], $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index, true, $currency_rate, $to_currency,[],false);
+                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index . ']',  $item_name, '', $item['area'], '', $item['quantity'], $unit_name, $item['unit_price'], $taxname, $item['item_code'], $item['unit_id'], $item['tax_rate'],  $item['total_money'], $item['discount_%'], $item['discount_money'], $item['total'], $item['into_money'], $item['tax'], $item['tax_value'], $index, true, $currency_rate, $to_currency, [], false);
             }
         }
 
@@ -1675,7 +1675,7 @@ class purchase extends AdminController
                         $item_name = pur_get_item_variatiom($order_detail['item_code']);
                     }
 
-                    $pur_order_row_template .= $this->purchase_model->create_purchase_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['area'], $order_detail['image'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency, $order_detail, false , $order_detail['sub_groups_pur']);
+                    $pur_order_row_template .= $this->purchase_model->create_purchase_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['area'], $order_detail['image'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency, $order_detail, false, $order_detail['sub_groups_pur']);
                 }
             }
             $is_edit = true;
@@ -1851,7 +1851,10 @@ class purchase extends AdminController
     {
         $this->app->get_table_data(module_views_path('purchase', 'purchase_order/table_pur_order'));
     }
-
+    public function table_order_tracker()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'order_tracker/table_order_tracker'));
+    }
     /**
      * { contracts }
      * @return  view
@@ -3073,7 +3076,7 @@ class purchase extends AdminController
     {
         $this->app->get_table_data(module_views_path('purchase', 'purchase_order/table_pur_order'), ['vendor' => $vendor]);
     }
-    
+
 
 
     public function table_vendor_wo_order($vendor)
@@ -3233,7 +3236,7 @@ class purchase extends AdminController
                 if ($ids) {
 
                     $this->export_tblitems_to_json();
-                   
+
                     // handle commodity list add edit file
                     $success = true;
                     $message = _l('added_successfully');
@@ -8159,7 +8162,7 @@ class purchase extends AdminController
         $currency_rate = $this->input->post('currency_rate');
         $to_currency = $this->input->post('to_currency');
         $sub_groups_pur = $this->input->post('sub_groups_pur');
-        echo $this->purchase_model->create_purchase_order_row_template($name, $item_name, $item_description, $area, $image, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key, false, $currency_rate, $to_currency,[],false,$sub_groups_pur);
+        echo $this->purchase_model->create_purchase_order_row_template($name, $item_name, $item_description, $area, $image, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key, false, $currency_rate, $to_currency, [], false, $sub_groups_pur);
     }
     /**
      * Gets the work order row template.
@@ -8183,7 +8186,7 @@ class purchase extends AdminController
         $currency_rate = $this->input->post('currency_rate');
         $to_currency = $this->input->post('to_currency');
         $sub_groups_pur = $this->input->post('sub_groups_pur');
-        echo $this->purchase_model->create_wo_order_row_template($name, $item_name, $item_description, $area, $image, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key, false, $currency_rate, $to_currency,[],false,$sub_groups_pur);
+        echo $this->purchase_model->create_wo_order_row_template($name, $item_name, $item_description, $area, $image, $quantity, $unit_name, $unit_price, $taxname, $item_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key, false, $currency_rate, $to_currency, [], false, $sub_groups_pur);
     }
     /**
      * currency rate table
@@ -9717,7 +9720,7 @@ class purchase extends AdminController
                         $item_name = pur_get_item_variatiom($order_detail['item_code']);
                     }
 
-                    $wo_order_row_template .= $this->purchase_model->create_wo_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['area'], $order_detail['image'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency, $order_detail, false,$order_detail['sub_groups_pur']);
+                    $wo_order_row_template .= $this->purchase_model->create_wo_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['area'], $order_detail['image'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency, $order_detail, false, $order_detail['sub_groups_pur']);
                 }
             }
             $is_edit = true;
@@ -10219,7 +10222,7 @@ class purchase extends AdminController
     }
     public function export_tblitems_to_json()
     {
-        
+
 
         // Load the database library
         $this->load->database();
@@ -10278,5 +10281,35 @@ class purchase extends AdminController
         }
         // Send the filtered items as JSON response
         echo json_encode(array_values($items)); // Reindex array
+    }
+
+    public function order_tracker()
+    {
+        $data['title'] = _l('order_tracker');
+        $this->load->view('order_tracker/manage', $data);
+    }
+    public function update_completion_date()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $completion_date = $this->input->post('completion_date');
+
+        if (!$id || !$table || !$completion_date) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Determine the table to update
+        $tableName = $table === 'wo_order' ? 'tblwo_orders' : 'tblpur_orders';
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['completion_date' => $completion_date]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('completion_date_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
     }
 }
