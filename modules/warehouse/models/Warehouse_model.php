@@ -1153,17 +1153,13 @@ class Warehouse_model extends App_Model
 	public function add_goods_receipt($data, $id = false)
 	{
 
-		$inventory_receipts = $production_approval =[];
-		
+		$inventory_receipts = $production_approval = [];
+
 		if (isset($data['newitems'])) {
 			$inventory_receipts = $data['newitems'];
 			unset($data['newitems']);
 		}
-		if(isset($data['approvalsitems'])){
-			$production_approval = $data['approvalsitems'];
-			unset($data['approvalsitems']);
-		}
-		
+
 		unset($data['item_select']);
 		unset($data['commodity_name']);
 		unset($data['warehouse_id']);
@@ -1186,10 +1182,9 @@ class Warehouse_model extends App_Model
 		unset($data['tax_money']);
 		unset($data['goods_money']);
 		unset($data['serial_number']);
-		unset($data['est_delivery_date']);
+		unset($data['production_status']);
 		unset($data['payment_date']);
-		unset($data['description']);
-
+		unset($data['est_delivery_date']);
 		if (isset($data['warehouse_id_m'])) {
 			$data['warehouse_id'] = $data['warehouse_id_m'];
 			unset($data['warehouse_id_m']);
@@ -1264,22 +1259,16 @@ class Warehouse_model extends App_Model
 		$data['total_goods_money'] = reformat_currency_j($data['total_goods_money']);
 		$data['value_of_inventory'] = reformat_currency_j($data['value_of_inventory']);
 		$data['total_money'] = reformat_currency_j($data['total_money']);
-			
+		// echo '<pre>'; print_r($data); die();
 		$this->db->insert(db_prefix() . 'goods_receipt', $data);
 		$insert_id = $this->db->insert_id();
 		$this->save_invetory_files('goods_receipt', $insert_id);
 		/*insert detail*/
 		if ($insert_id) {
-			
-			foreach($production_approval as $value){
-				unset($value['order']);
-				unset($value['id']);				
-				$value['goods_receipt_id'] = $insert_id;
-				$this->db->insert(db_prefix() . 'goods_receipt_production_approvals', $value);
-			}
+
 			foreach ($inventory_receipts as $inventory_receipt) {
 				$inventory_receipt['goods_receipt_id'] = $insert_id;
-				
+
 				if ($inventory_receipt['date_manufacture'] != '') {
 					$inventory_receipt['date_manufacture'] = to_sql_date($inventory_receipt['date_manufacture']);
 				} else {
@@ -1296,6 +1285,17 @@ class Warehouse_model extends App_Model
 					$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
 				} else {
 					$inventory_receipt['delivery_date'] = null;
+				}
+
+				if ($inventory_receipt['payment_date'] != '') {
+					$inventory_receipt['payment_date'] = to_sql_date($inventory_receipt['payment_date']);
+				} else {
+					$inventory_receipt['payment_date'] = null;
+				}
+				if ($inventory_receipt['est_delivery_date'] != '') {
+					$inventory_receipt['est_delivery_date'] = to_sql_date($inventory_receipt['est_delivery_date']);
+				} else {
+					$inventory_receipt['est_delivery_date'] = null;
 				}
 
 				$tax_money = 0;
@@ -1333,10 +1333,7 @@ class Warehouse_model extends App_Model
 				unset($inventory_receipt['tax_select']);
 
 				$this->db->insert(db_prefix() . 'goods_receipt_detail', $inventory_receipt);
-
-
 			}
-
 		}
 
 		if (isset($insert_id)) {
@@ -1489,7 +1486,7 @@ class Warehouse_model extends App_Model
 				$sub_total = 0;
 
 				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, 0, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'], $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true, '', $value['description']);
-				$production_approval_item .= $this->create_goods_receipt_production_approvals_template('approvalsitems[' . $index . ']',$value['description'],$commodity_name,'','','','',$value['commodity_code']);
+				$production_approval_item .= $this->create_goods_receipt_production_approvals_template('approvalsitems[' . $index . ']', $value['description'], $commodity_name, '', '', '', '', $value['commodity_code']);
 				$total_goods_money_temp = ((float)$value['quantities'] - (float)$value['wh_quantity_received']) * (float)$unit_price;
 				$total_goods_money += $total_goods_money_temp;
 				$arr_results[$index]['quantities'] = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
@@ -3096,7 +3093,7 @@ class Warehouse_model extends App_Model
 		<br><br><br>
 		';
 
-		$html .= '<table class="table">
+		$html .= '<table class="table" style="font-size=10px">
 		<tbody>
 
 		<tr>
@@ -3107,6 +3104,9 @@ class Warehouse_model extends App_Model
 		<th class="thead-dark-ip">' . _l('po_quantity') . '</th>
 		<th class="thead-dark-ip">' . _l('received_quantity') . '</th>
 		<th class="thead-dark-ip">' . _l('lot_number') . '</th>
+		<th class="thead-dark-ip">' . _l('production_status') . '</th>
+		<th class="thead-dark-ip">' . _l('payment_date') . '</th>
+		<th class="thead-dark-ip">' . _l('est_delivery_date') . '</th>
 		<th class="thead-dark-ip">' . _l('delivery_date') . '</th>';
 		// <th class="thead-dark-ip">' . _l('unit_price') . '</th>
 		// <th class="thead-dark-ip">' . _l('total_money') . '</th>
@@ -3131,7 +3131,24 @@ class Warehouse_model extends App_Model
 			$unit_name = get_unit_type($receipt_value['unit_id']) != null ? get_unit_type($receipt_value['unit_id'])->unit_name : '';
 
 			$warehouse_code = get_warehouse_name($receipt_value['warehouse_id']) != null ? get_warehouse_name($receipt_value['warehouse_id'])->warehouse_name : '';
-			$delivery_date = !empty($receipt_value['delivery_date']) ? $receipt_value['delivery_date'] : '';
+			$delivery_date = !empty($receipt_value['delivery_date']) ? $receipt_value['delivery_date'] : null;
+			$payment_date = !empty($receipt_value['payment_date']) ? $receipt_value['payment_date'] : null;
+			$est_delivery_date = !empty($receipt_value['est_delivery_date']) ? $receipt_value['est_delivery_date'] : null;
+			$payment_date = $payment_date ? date('d M, Y', strtotime($payment_date)) : '-';
+			$est_delivery_date = $est_delivery_date ? date('d M, Y', strtotime($est_delivery_date)) : '-';
+			$delivery_date = $delivery_date ? date('d M, Y', strtotime($delivery_date)) : '-';
+			$production_status = '';
+			if ($receipt_value['production_status'] > 0) {
+				if ($receipt_value['production_status'] == 1) {
+					$production_status = '<span class="label label-tag tag-id-1 label-tab3"><span class="tag">' . _l('not_started') . '</span><span class="hide"> </span></span>';
+				} elseif ($receipt_value['production_status'] == 2) {
+					$production_status = '<span class="label label-tag tag-id-1 label-tab2"><span class="tag">' .  _l('on_going') . '</span><span class="hide"> </span></span>';
+				} elseif ($receipt_value['production_status'] == 3) {
+					$production_status = '<span class="label label-tag tag-id-1 label-tab1"><span class="tag">' . _l('approved') . '</span><span class="hide"> </span></span>';
+				} else {
+					$production_status = '';
+				}
+			}
 			$tax_money = (isset($receipt_value['tax_money']) ? $receipt_value['tax_money'] : '');
 			$expiry_date = (isset($receipt_value['expiry_date']) ? $receipt_value['expiry_date'] : '');
 			$lot_number = (isset($receipt_value['lot_number']) ? $receipt_value['lot_number'] : '');
@@ -3142,19 +3159,22 @@ class Warehouse_model extends App_Model
 			}
 
 			$key = $receipt_key + 1;
-
+			$diff = $receipt_value['po_quantities'] - $receipt_value['quantities'];
 			$html .= '<tr>';
 			$html .= '<td class="td_style_r_ep_c"><b>' . $commodity_name . '</b></td>
 			<td class="td_style_r_ep_c">' . $description . '</td>
 			<td class="td_style_r_ep_c">' . $warehouse_code . '</td>
 			<td class="td_style_r_ep_c">' . $unit_name . '</td>
-			<td class="td_style_r_ep_c">' . $po_quantities . '</td>
+			<td class="td_style_r_ep_c">' . $po_quantities . '<br><span style="display: block; font-size: 10px;font-style: italic;">Rem : ' . $diff . '</span></td>
 			<td class="td_style_r_ep_c">' . $quantities . '</td>';
 			// <td class="td_style_r_ep_c">' . app_format_money((float) $unit_price, '') . '</td>
 			// <td class="td_style_r_ep_c">' . app_format_money((float) $goods_money, '') . '</td>
 			// <td class="td_style_r_ep_c">' . app_format_money((float) $tax_money, '') . '</td>
 			$html .= '<td class="td_style_r_ep_c">' . $lot_number . '</td>
-				<td class="td_style_r_ep_c">' . _d($delivery_date) . '</td>
+			<td class="td_style_r_ep_c">' . $production_status . '</td>
+			<td class="td_style_r_ep_c">' . $payment_date . '</td>
+			<td class="td_style_r_ep_c">' . $est_delivery_date . '</td>
+				<td class="td_style_r_ep_c">' . $delivery_date . '</td>
 			
 			</tr>';
 			// <td class="td_style_r_ep_c">' . _d($expiry_date) . '</td>
@@ -7577,7 +7597,7 @@ class Warehouse_model extends App_Model
 	public function update_goods_receipt($data, $id = false)
 	{
 
-		$inventory_receipts =  $production_approval = $update_inventory_receipts= $remove_inventory_receipts= [];
+		$inventory_receipts =  $production_approval = $update_inventory_receipts = $remove_inventory_receipts = [];
 
 		if (isset($data['isedit'])) {
 			unset($data['isedit']);
@@ -7587,7 +7607,7 @@ class Warehouse_model extends App_Model
 			$inventory_receipts = $data['newitems'];
 			unset($data['newitems']);
 		}
-		if(isset($data['approvalsitems'])){
+		if (isset($data['approvalsitems'])) {
 			$production_approval = $data['approvalsitems'];
 			unset($data['approvalsitems']);
 		}
@@ -7624,7 +7644,7 @@ class Warehouse_model extends App_Model
 		unset($data['serial_number']);
 		unset($data['est_delivery_date']);
 		unset($data['payment_date']);
-		unset($data['description']);
+		unset($data['production_status']);
 
 		if (isset($data['warehouse_id_m'])) {
 			$data['warehouse_id'] = $data['warehouse_id_m'];
@@ -7709,14 +7729,13 @@ class Warehouse_model extends App_Model
 		if ($this->db->affected_rows() > 0) {
 			$results++;
 		}
-		foreach($production_approval as $value){
+		foreach ($production_approval as $value) {
 			unset($value['order']);
-							
+
 			$this->db->where('id', $value['id']);
 			if ($this->db->update(db_prefix() . 'goods_receipt_production_approvals', $value)) {
 				$results++;
 			}
-		
 		}
 		/*update save note*/
 		// update receipt note
@@ -7737,6 +7756,17 @@ class Warehouse_model extends App_Model
 				$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
 			} else {
 				$inventory_receipt['delivery_date'] = null;
+			}
+
+			if ($inventory_receipt['payment_date'] != '') {
+				$inventory_receipt['payment_date'] = to_sql_date($inventory_receipt['payment_date']);
+			} else {
+				$inventory_receipt['payment_date'] = null;
+			}
+			if ($inventory_receipt['est_delivery_date'] != '') {
+				$inventory_receipt['est_delivery_date'] = to_sql_date($inventory_receipt['est_delivery_date']);
+			} else {
+				$inventory_receipt['est_delivery_date'] = null;
 			}
 
 			$tax_money = 0;
@@ -7805,6 +7835,16 @@ class Warehouse_model extends App_Model
 				$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
 			} else {
 				$inventory_receipt['delivery_date'] = null;
+			}
+			if ($inventory_receipt['payment_date'] != '') {
+				$inventory_receipt['payment_date'] = to_sql_date($inventory_receipt['payment_date']);
+			} else {
+				$inventory_receipt['payment_date'] = null;
+			}
+			if ($inventory_receipt['est_delivery_date'] != '') {
+				$inventory_receipt['est_delivery_date'] = to_sql_date($inventory_receipt['est_delivery_date']);
+			} else {
+				$inventory_receipt['est_delivery_date'] = null;
 			}
 
 			$tax_money = 0;
@@ -14691,7 +14731,7 @@ class Warehouse_model extends App_Model
 	 * @param  boolean $is_edit          
 	 * @return [type]                    
 	 */
-	public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $po_quantities = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '', $description = '')
+	public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $po_quantities = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '', $description = '', $payment_date = '', $est_delivery_date = '', $status = '')
 	{
 
 		$this->load->model('invoice_items_model');
@@ -14722,6 +14762,9 @@ class Warehouse_model extends App_Model
 		$name_sub_total = 'sub_total';
 		$name_serial_number = 'serial_number';
 		$name_description = 'description';
+		$name_paymant_date = 'payment_date';
+		$name_est_delivery_date = 'est_delivery_date';
+		$name_status = 'production_status';
 		$array_qty_attr = ['min' => '0.0', 'step' => 'any'];
 		$array_rate_attr = ['min' => '0.0', 'step' => 'any'];
 		$str_rate_attr = 'min="0.0" step="any"';
@@ -14767,7 +14810,9 @@ class Warehouse_model extends App_Model
 			$name_sub_total = $name . '[sub_total]';
 			$name_serial_number = $name . '[serial_number]';
 			$name_description = $name . '[description]';
-
+			$name_paymant_date = $name . '[payment_date]';
+			$name_est_delivery_date = $name . '[est_delivery_date]';
+			$name_status = $name . '[production_status]';
 			$array_rate_attr = ['onblur' => 'wh_calculate_total();', 'onchange' => 'wh_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
 			$array_qty_attr = ['onblur' => 'wh_calculate_total();', 'onchange' => 'wh_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantities];
@@ -14804,6 +14849,15 @@ class Warehouse_model extends App_Model
 			$sub_total = (float)$unit_price * (float)$quantities;
 			$amount = app_format_number($amount);
 		}
+		$delivery_status = [
+			'1' => _l('not_started'),
+			'2' => _l('on_going'),
+			'3' => _l('approved'),
+		];
+		$delivery_status_data = [];
+		foreach ($delivery_status as $key => $value) {
+			$delivery_status_data[] = ['id' => $key, 'name' => $value];
+		}
 		$clients_attr = ["onchange" => "get_vehicle('" . $name_commodity_code . "','" . $name_unit_id . "','" . $name_warehouse_id . "');", "data-none-selected-text" => _l('customer_name'), 'data-customer_id' => 'invoice'];
 
 		$row .= '<td class="">' . render_textarea($name_commodity_name, '', $commodity_name, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
@@ -14813,7 +14867,7 @@ class Warehouse_model extends App_Model
 			render_select($name_warehouse_id, $warehouse_data, array('warehouse_id', 'warehouse_name'), '', $warehouse_id, [], ["data-none-selected-text" => _l('warehouse_name')], 'no-margin') .
 			render_input($name_note, '', $note, 'text', ['placeholder' => _l('commodity_notes')], [], 'no-margin', 'input-transparent text-left') .
 			'</td>';
-		$row .= '<td class="po_quantities">' . render_input($name_po_quantities, '', $po_quantities, 'number', ['readonly' => true], [], 'no-margin') . '</td>';
+		$row .= '<td class="po_quantities">' . render_input($name_po_quantities, '', $po_quantities, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation_unit">Rem : </span> '.$unit_name.'</td>';
 		$row .= '<td class="quantities">' .
 			render_input($name_quantities, '', $quantities, 'number', $array_qty_attr, [], 'no-margin') .
 			render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right wh_input_none') .
@@ -14823,6 +14877,18 @@ class Warehouse_model extends App_Model
 		// $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 		$row .= '<td>' . render_input($name_lot_number, '', $lot_number, 'text', ['placeholder' => _l('lot_number')]) . '</td>';
 		// $row .= '<td class="hide vendor_select">'.get_vendor_list($name_vendor_id, $vendor_id).'</td>';
+		$row .= '<td class="">' . render_select(
+			$name_status,                        // Name attribute for the select field
+			$delivery_status_data,                   // Transformed array
+			array('id', 'name'),                     // Keys for the value and display text
+			'',                                      // Label for the field (optional, empty here)
+			$status,                     // Preselected value (if any)
+			[],                                      // Additional classes or attributes
+			["data-none-selected-text" => _l('Select Production Status')], // Placeholder text
+			'no-margin'                              // Additional class
+		) . '</td>';
+		$row .= '<td class="">' . render_date_input($name_paymant_date, '', $payment_date, ['placeholder' => _l('payment_date')]) . '</td>';
+		$row .= '<td class="">' . render_date_input($name_est_delivery_date, '', $est_delivery_date, ['placeholder' => _l('est_delivery_date')]) . '</td>';
 		$row .= '<td class="delivery_date">' . render_date_input($name_delivery_date, '', $delivery_date, ['placeholder' => _l('delivery_date')]) . '</td>';
 		$row .= '<td class="hide">' . render_date_input($name_date_manufacture, '', $date_manufacture, ['placeholder' => _l('date_manufacture')]) . '</td>';
 		// $row .= '<td>' . render_date_input($name_expiry_date, '', $expiry_date, ['placeholder' => _l('expiry_date')]) . '</td>';
@@ -14852,7 +14918,7 @@ class Warehouse_model extends App_Model
 		return $row;
 	}
 
-	public function create_goods_receipt_production_approvals_template($name = '', $description = '', $commodity_name = '', $payment_date = '', $est_delivery_date = '', $item_key = '',$status ='',$commodity_code= '')
+	public function create_goods_receipt_production_approvals_template($name = '', $description = '', $commodity_name = '', $payment_date = '', $est_delivery_date = '', $item_key = '', $status = '', $commodity_code = '')
 	{
 
 
@@ -14875,50 +14941,11 @@ class Warehouse_model extends App_Model
 			$name_est_delivery_date = $name . '[est_delivery_date]';
 		}
 
-		$delivery_status = '';
 
-		if ($status == 1) {
-		    $delivery_status = '<span class="inline-block label label-danger" id="status_span_' . $item_key . '" task-status-table="not_started">Not Started';
-		} else if ($status == 2) {
-		    $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $item_key . '" task-status-table="on_going">On Going';
-		} else if ($status == 3) {
-		    $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $item_key . '" task-status-table="approved">Approved';
-		} else {
-			// Default to "Not Started"
-			$delivery_status = '<span class="inline-block label label-default" id="status_span_' . $item_key . '" task-status-table="not_started">' . _l('not_started');
-		}
-
-		$delivery_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-		$delivery_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $item_key . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-		$delivery_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
-		$delivery_status .= '</a>';
-
-		$delivery_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $item_key . '">';
-
-		$delivery_status .= '<li>
-                            <a href="#" onclick="change_production_status(0); return false;">
-                            Not Started
-                            </a>
-                        </li>';
-		$delivery_status .= '<li>
-                              <a href="#" onclick="change_production_status(1); return false;">
-                                On Going 
-                              </a>
-                           </li>';
-		$delivery_status .= '<li>
-                              <a href="#" onclick="change_production_status(2); return false;">
-                                 Approved
-                              </a>
-                           </li>';
-		$delivery_status .= '</ul>';
-		$delivery_status .= '</div>';
-
-		$delivery_status .= '</span>';
 		$row .= '<td class="">' . render_textarea($name_commodity_name, '', $commodity_name, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
 		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description_placeholder')]) . '</td>';
-		$row .= '<td class="">' . render_date_input($name_paymant_date, '', $payment_date, ['placeholder' => _l('payment_date')]) . '</td>';
-		$row .= '<td class="">' . render_date_input($name_est_delivery_date, '', $est_delivery_date, ['placeholder' => _l('est_delivery_date')]) . '</td>';
-		$row .= '<td class="">' . $delivery_status . '</td>';
+
+
 		$row .= '<td class="hide commodity_code">' . render_input($name_commodity_code, '', $commodity_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
 		$row .= '</tr>';
 		return $row;

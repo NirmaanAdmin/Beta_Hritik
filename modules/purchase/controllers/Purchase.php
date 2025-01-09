@@ -142,6 +142,7 @@ class purchase extends AdminController
             $data['tab'][] = ['name' => 'quotations', 'icon' => '<i class="fa fa-file-powerpoint menu-icon"></i>'];
             // $data['tab'][] = ['name' => 'contracts', 'icon' => '<i class="fa fa-file-text menu-icon"></i>'];
             $data['tab'][] = ['name' => 'purchase_order', 'icon' => '<i class="fa fa-cart-plus menu-icon"></i>'];
+            $data['tab'][] = ['name' => 'work_order', 'icon' => '<i class="fa fa-check menu-icon"></i>'];
             $data['tab'][] = ['name' => 'purchase_invoice', 'icon' => '<i class="fa fa-clipboard menu-icon"></i>'];
             $data['tab'][] = ['name' => 'debit_notes', 'icon' => '<i class="fa fa-credit-card menu-icon"></i>'];
             $data['tab'][] = ['name' => 'purchase_statement', 'icon' => '<i class="fa fa-building menu-icon"></i>'];
@@ -3072,7 +3073,13 @@ class purchase extends AdminController
     {
         $this->app->get_table_data(module_views_path('purchase', 'purchase_order/table_pur_order'), ['vendor' => $vendor]);
     }
+    
 
+
+    public function table_vendor_wo_order($vendor)
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'work_order/table_wo_order'), ['vendor' => $vendor]);
+    }
     /**
      * { delete vendor admin }
      *

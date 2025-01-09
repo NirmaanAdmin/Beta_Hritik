@@ -25,6 +25,26 @@ $aColumns = [
     'transactionid',
     'vendor_note',
 ];
+if(isset($vendor) || isset($project)){
+    $aColumns = [
+        'invoice_number',
+        'vendor_invoice_number',
+        db_prefix() . 'pur_invoices.vendor',
+        db_prefix() . 'items_groups.name',
+        db_prefix() . 'projects.name',
+        db_prefix() . 'pur_invoices.pur_order',
+        'invoice_date',
+        'payment_request_status',
+        'payment_status',
+        'vendor_submitted_amount_without_tax',
+        'vendor_submitted_tax_amount',    
+        'vendor_submitted_amount',
+        'final_certified_amount',
+        'transactionid',
+        'vendor_note',
+    ];
+}
+
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'pur_invoices';
 $join         = [

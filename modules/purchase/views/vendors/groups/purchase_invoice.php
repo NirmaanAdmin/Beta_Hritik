@@ -10,20 +10,21 @@
     <?php } ?> 	
     <br><br><br>
         <?php $table_data = array(
-                        _l('invoice_code'),
-                        _l('invoice_no'),
-                        _l('vendor'),
-                        _l('contract'),
-                        _l('pur_order'),
-                        _l('invoice_date'),
-                        _l('recurring_from'),
-                        _l('invoice_amount'),
-                        _l('tax_value'),
-                        _l('total_included_tax'),
-                        _l('payment_request_status'),
-                        _l('payment_status'),
-                        _l('transaction_id'),
-                        _l('tag'),
+                       _l('invoice_code'),
+                       _l('invoice_number'),
+                       _l('vendor'), 
+                       _l('group_pur'),                       
+                       _l('project'),
+                       _l('pur_order'),
+                       _l('invoice_date'),
+                       _l('payment_request_status'),
+                       _l('billing_status'),
+                       _l('amount_without_tax'),
+                       _l('tax_value'),
+                       _l('total_included_tax'),
+                       _l('certified_amount'),
+                       _l('transaction_id'),
+                       _l('tag'),
                         );
 
                     $custom_fields = get_custom_fields('pur_invoice',array('show_on_table'=>1));

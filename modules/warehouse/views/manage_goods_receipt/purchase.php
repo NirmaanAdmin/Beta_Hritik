@@ -1,6 +1,12 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
-
+<style>
+	.input-group-addon {
+		padding-left: 6px !important;
+		padding-right: 6px !important;
+		font-size: 10px !important;
+	}
+</style>
 <div id="wrapper">
 	<div class="content">
 		<div class="row">
@@ -10,7 +16,7 @@
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-md-12">
-								<h4 class="no-margin font-bold"><i class="fa fa-clone menu-icon menu-icon" aria-hidden="true"></i> <?php echo _l($title); ?></h4>
+								<h4 class="no-margin font-bold"><i class="fa fa-clone menu-icon menu-icon" aria-hidden="true"></i> Item Tracker</h4>
 								<hr>
 							</div>
 						</div>
@@ -258,13 +264,6 @@
 										Items
 									</a>
 								</li>
-								<li role="presentation">
-									<a href="#production_approvals" class="hide" aria-controls="production_approvals" role="tab" id="tab_production_approvals" data-toggle="tab">
-										Production Approvals
-									</a>
-								</li>
-
-
 							</ul>
 						</div>
 
@@ -275,7 +274,7 @@
 										<thead>
 											<tr>
 												<th width="1%"></th>
-												<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+												<th align="left" style="width: 10%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
 												<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
 												<th align="left" style="width: 5%;"><?php echo _l('warehouse_name'); ?></th>
 												<th align="right" style="width: 7%;" class="qty"><?php echo _l('po_quantity'); ?></th>
@@ -284,6 +283,9 @@
 												<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
 												<th align="right" style="width: 10%;"><?php echo _l('lot_number'); ?></th>
 												<!-- <th align="left" style="width: 7%;"><?php echo _l('vendor'); ?></th> -->
+												<th align="left" style="width: 8%;"><?php echo _l('production_status'); ?></th>
+												<th align="left" style="width: 10%;"><?php echo _l('payment_date'); ?></th>
+												<th align="left" style="width: 10%;"><?php echo _l('est_delivery_date'); ?></th>
 												<th align="right" style="width: 10%;"><?php echo _l('delivery_date'); ?></th>
 												<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
 												<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_amount_heading'); ?></th> -->
@@ -299,7 +301,7 @@
 								</div>
 							</div>
 
-							<div role="tabpanel" class="tab-pane" id="production_approvals">
+							<!-- <div role="tabpanel" class="tab-pane" id="production_approvals">
 								<div class="table-responsive s_table ">
 									<table class="table invoice-production-approvals-table items table-main-invoice-edit has-calculations no-mtop">
 										<thead>
@@ -307,9 +309,8 @@
 												<th width="1%"></th>
 												<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
 												<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
-												<th align="left" style="width: 10%;"><?php echo _l('payment_date'); ?></th>
-												<th align="left" style="width: 10%;"><?php echo _l('est_delivery_date'); ?></th>
-												<th align="left" style="width: 8%;"><?php echo _l('status'); ?></th>
+												
+												
 											</tr>
 										</thead>
 										<tbody>
@@ -317,7 +318,7 @@
 										</tbody>
 									</table>
 								</div>
-							</div>
+							</div> -->
 						</div>
 
 

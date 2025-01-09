@@ -12,6 +12,7 @@
       initDataTable('.table-table_contracts', admin_url+'purchase/table_vendor_contracts/'+<?php echo pur_html_entity_decode($client->userid); ?>);
 
       initDataTable('.table-table_pur_order', admin_url+'purchase/table_vendor_pur_order/'+<?php echo pur_html_entity_decode($client->userid); ?>);
+      initDataTable('.table-table_wo_order', admin_url+'purchase/table_vendor_wo_order/'+<?php echo pur_html_entity_decode($client->userid); ?>);
 
       initDataTable('.table-table_pur_invoices', admin_url+'purchase/table_vendor_pur_invoices/'+<?php echo pur_html_entity_decode($client->userid); ?>);
 

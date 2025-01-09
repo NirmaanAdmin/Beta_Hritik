@@ -9,7 +9,7 @@
                         <?php echo form_hidden('purchase_id', $purchase_id); ?>
                         <div class="row">
                             <div class="col-md-12">
-                                <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> <?php echo _l($title); ?></h4>
+                                <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Item Tracker</h4>
                                 <hr />
                             </div>
                         </div>
@@ -17,7 +17,7 @@
                             <div class="_buttons col-md-3">
                                 <?php if (has_permission('warehouse', '', 'create') || is_admin()) { ?>
                                     <a href="<?php echo admin_url('warehouse/manage_goods_receipt'); ?>" class="btn btn-info pull-left mright10 display-block">
-                                        <?php echo _l('stock_received_docket'); ?>
+                                        Item Tracker
                                     </a>
                                 <?php } ?>
                             </div>
