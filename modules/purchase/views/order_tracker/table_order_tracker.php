@@ -124,13 +124,13 @@ foreach ($rResult as $aRow) {
             1 => ['label' => 'success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
             2 => ['label' => 'info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
             3 => ['label' => 'warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
-            4 => ['label' => 'warning', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
-            5 => ['label' => 'warning', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
-            6 => ['label' => 'warning', 'table' => 'event_expense', 'text' => _l('event_expense')],
-            7 => ['label' => 'warning', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
-            8 => ['label' => 'warning', 'table' => 'pending_procurements', 'text' => _l('common_services_in_ghj_scope')],
-            9 => ['label' => 'warning', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ril_scope')],
-            10 => ['label' => 'warning', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+            4 => ['label' => 'primary', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+            5 => ['label' => 'secondary', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+            6 => ['label' => 'purple', 'table' => 'event_expense', 'text' => _l('event_expense')],
+            7 => ['label' => 'teal', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+            8 => ['label' => 'orange', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ghj_scope')],
+            9 => ['label' => 'green', 'table' => 'common_services_in_ril_scope', 'text' => _l('common_services_in_ril_scope')],
+            10 => ['label' => 'default', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
          ];
          // Start generating the HTML
          $rli_filter = '';

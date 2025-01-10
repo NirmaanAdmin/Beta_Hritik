@@ -5,6 +5,31 @@
 
       width: auto !important;
    }
+
+   .label-purple {
+      background-color: rgb(205, 180, 252) !important;
+      color: rgb(109, 0, 159);
+   }
+
+   .label-teal {
+      background-color: #baf8ff;
+      color: #0097A7;
+   }
+
+   .label-green {
+      background-color: #d0fdd2;
+      color: #0f8c14;
+   }
+
+   .label-secondary {
+      background-color: #e1eef9;
+      color: #6c757d;
+   }
+
+   .label-orange {
+      background-color: #f8eedb;
+      color: #FFA500;
+   }
 </style>
 
 <div id="wrapper">

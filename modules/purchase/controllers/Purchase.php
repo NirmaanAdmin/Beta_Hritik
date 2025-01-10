@@ -6430,13 +6430,13 @@ class purchase extends AdminController
             1 => ['label' => 'label-success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
             2 => ['label' => 'label-info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
             3 => ['label' => 'label-warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
-            4 => ['label' => 'label-warning', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
-            5 => ['label' => 'label-warning', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
-            6 => ['label' => 'label-warning', 'table' => 'event_expense', 'text' => _l('event_expense')],
-            7 => ['label' => 'label-warning', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
-            8 => ['label' => 'label-warning', 'table' => 'pending_procurements', 'text' => _l('common_services_in_ghj_scope')],
-            9 => ['label' => 'label-warning', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ril_scope')],
-            10 => ['label' => 'label-warning', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+            4 => ['label' => 'label-primary', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+            5 => ['label' => 'label-secondary', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+            6 => ['label' => 'label-purple', 'table' => 'event_expense', 'text' => _l('event_expense')],
+            7 => ['label' => 'label-teal', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+            8 => ['label' => 'label-orange', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ghj_scope')],
+            9 => ['label' => 'label-green', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ril_scope')],
+            10 => ['label' => 'label-default', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
         ];
         $success = $this->purchase_model->change_rli_filter($status, $id, $table_name);
         $message = $success ? _l('change_rli_filter_successfully') : _l('change_rli_filter_fail');
