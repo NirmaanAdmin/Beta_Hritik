@@ -108,7 +108,7 @@ $tblfestimatehtml .= '</table>';
 $pdf->writeHTML($tblfestimatehtml, true, false, false, false, '');
 
 $tblsummaryhtml = '';
-$tblsummaryhtml .= '<h3 style="text-align:center; ">Index - A</h3>';
+$tblsummaryhtml .= '<h3 style="text-align:center; ">Summary</h3>';
 $tblsummaryhtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="8">';
 $tblsummaryhtml .= '
 <thead>
