@@ -150,7 +150,12 @@ function init_item_js() {
     $("body").on('change', 'select[name="item_select"]', function () {
         var itemid = $(this).selectpicker('val');
         if (itemid != '') {
-            add_item_to_preview(itemid);
+            var tab = $('.tab-pane.active').attr('id');
+            if(tab) {
+                add_estimate_item_to_preview(itemid, tab);
+            } else {
+                add_item_to_preview(itemid);
+            }
         }
     });
 

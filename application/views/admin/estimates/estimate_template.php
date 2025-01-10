@@ -344,7 +344,349 @@
 
     <hr class="hr-panel-separator" />
 
-    <?php $this->load->view('admin/estimates/_add_edit_items'); ?>
+    <div class="panel-body" style="padding-bottom: 0px !important;">
+        <div class="row">
+            <div class="col-md-4">
+                <?php $this->load->view('admin/invoice_items/item_select'); ?>
+            </div>
+            <div class="col-md-8 text-right show_quantity_as_wrapper">
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="horizontal-tabs">
+            <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#final_estimate" aria-controls="final_estimate" role="tab" id="tab_final_estimate" data-toggle="tab">
+                        Final estimate
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#summary" aria-controls="summary" role="tab" id="tab_summary" data-toggle="tab">
+                        Summary
+                    </a>
+                </li>
+
+                <?php
+                $annexures = get_all_annexures(); ?>
+                <li role="presentation" class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Annexures
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu estimate-annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
+                        <?php
+                        foreach ($annexures as $key => $annexure) { ?>
+                            <li>
+                                <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
+                                    <?php echo $annexure['name']." (".$annexure['annexure_name'].")" ?>
+                                </a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="final_estimate">
+                <div class="table-responsive s_table">
+                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                aria-hidden="true" data-toggle="tooltip"
+                                data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
+                                <?php echo _l('estimate_table_item_heading'); ?></th>
+                                <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                <th width="10%" align="right" class="qty"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
+                                <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="main">
+                                <td></td>
+                                <td align="left">
+                                    <?php echo $annexure_estimate['final_estimate']['name']; ?>
+                                </td>
+                                <td align="left">
+                                    <?php echo $annexure_estimate['final_estimate']['description']; ?>
+                                </td>
+                                <td align="right">
+                                    <?php echo $annexure_estimate['final_estimate']['qty']; ?>
+                                </td>
+                                <td align="right">
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
+                                </td>
+                                <td align="right">
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
+                                </td>
+                                <td align="right">
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-8 col-md-offset-4">
+                    <table class="table text-right">
+                        <tbody>
+                            <tr id="subtotal">
+                                <td>
+                                    <span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <tr id="total_tax">
+                                <td>
+                                    <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <?php hooks()->do_action('after_admin_estimate_form_total_field', $estimate ?? null); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="summary">
+                <div class="table-responsive s_table">
+                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                aria-hidden="true" data-toggle="tooltip"
+                                data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
+                                <?php echo _l('estimate_table_item_heading'); ?></th>
+                                <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                <th width="10%" align="right" class="qty"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
+                                <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if(!empty($annexure_estimate['summary'])) {
+                                $summary = $annexure_estimate['summary'];
+                                foreach($summary as $ikey => $svalue) { ?>
+                                    <tr class="main">
+                                        <td></td>
+                                        <td align="left">
+                                            <?php echo $svalue['name']; ?>
+                                        </td>
+                                        <td align="left">
+                                            <?php echo $svalue['description']; ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo $svalue['qty']; ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($svalue['subtotal'], $base_currency); ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($svalue['tax'], $base_currency); ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($svalue['amount'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                <?php } 
+                            } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-8 col-md-offset-4">
+                    <table class="table text-right">
+                        <tbody>
+                            <tr id="subtotal">
+                                <td>
+                                    <span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <tr id="total_tax">
+                                <td>
+                                    <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <?php hooks()->do_action('after_admin_estimate_form_total_field', $estimate ?? null); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <?php
+            $annexures = get_all_annexures(); 
+            $i = 1;
+            foreach ($annexures as $key => $annexure) { ?>
+                <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
+                    <div class="table-responsive s_table">
+                        <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
+                                    <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                    <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                    <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                    <th align="center"><i class="fa fa-cog"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="main">
+                                    <td></td>
+                                    <td>
+                                        <textarea name="description" rows="4" class="form-control" placeholder="<?php echo _l('item_description_placeholder'); ?>"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea name="long_description" rows="4" class="form-control" placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="quantity" min="0" value="1" class="form-control" placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
+                                        <input type="text" placeholder="<?php echo _l('unit'); ?>" data-toggle="tooltip" 612 data-title="e.q kg, lots, packs" name="unit" class="form-control input-transparent text-right">
+                                    </td>
+                                    <td>
+                                        <input type="number" name="rate" class="form-control" placeholder="<?php echo _l('item_rate_placeholder'); ?>">
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $default_tax = unserialize(get_option('default_tax'));
+                                        $select      = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="taxname" multiple data-none-selected-text="' . _l('no_tax') . '">';
+                                        foreach ($taxes as $tax) {
+                                             $selected = '';
+                                             if (is_array($default_tax)) {
+                                                if (in_array($tax['name'] . '|' . $tax['taxrate'], $default_tax)) {
+                                                    $selected = ' selected ';
+                                                }
+                                             }
+                                             $select .= '<option value="' . $tax['name'] . '|' . $tax['taxrate'] . '"' . $selected . 'data-taxrate="' . $tax['taxrate'] . '" data-taxname="' . $tax['name'] . '" data-subtext="' . $tax['name'] . '">' . $tax['taxrate'] . '%</option>';
+                                        }
+                                        $select .= '</select>';
+                                        echo $select;
+                                        ?>
+                                    </td>
+                                    <td></td>
+                                    <td>
+                                        <?php
+                                        $new_item = 'undefined';
+                                        if (isset($estimate)) {
+                                            $new_item = true;
+                                        } ?>
+                                        <button type="button" onclick="add_estimate_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                            class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <?php if (isset($estimate) || isset($add_items)) {
+                                    $items_indicator = 'newitems';
+                                    if (isset($estimate)) {
+                                        $add_items = $estimate->items;
+                                        $items_indicator = 'items';
+                                    }
+
+                                    foreach ($add_items as $item) {
+                                        if($item['annexure'] == $annexure['id']) {
+                                            $manual = false;
+                                            $table_row = '<tr class="sortable item">';
+                                            $table_row .= '<td class="dragger">';
+                                            if ($item['qty'] == '' || $item['qty'] == 0) {
+                                                $item['qty'] = 1;
+                                            }
+                                            if (!isset($is_proposal)) {
+                                                $estimate_item_taxes = get_estimate_item_taxes($item['id']);
+                                            } else {
+                                                $estimate_item_taxes = get_proposal_item_taxes($item['id']);
+                                            }
+                                            if ($item['id'] == 0) {
+                                                $estimate_item_taxes = $item['taxname'];
+                                                $manual = true;
+                                            }
+                                            $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
+                                            $amount = $item['rate'] * $item['qty'];
+                                            $amount = app_format_number($amount);
+                                             // order input
+                                            $table_row .= '<input type="hidden" class="order" name="' . $items_indicator . '[' . $i . '][order]">';
+                                            $table_row .= '<input type="hidden" class="annexure" name="' . $items_indicator . '[' . $i . '][annexure]" value="'.$item['annexure'].'">';
+                                            $table_row .= '</td>';
+                                            $table_row .= '<td class="bold description"><textarea name="' . $items_indicator . '[' . $i . '][description]" class="form-control" rows="5">' . clear_textarea_breaks($item['description']) . '</textarea></td>';
+                                            $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
+                                            $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
+                                            $unit_placeholder = '';
+                                            if (!$item['unit']) {
+                                                $unit_placeholder = _l('unit');
+                                                $item['unit']     = '';
+                                            }
+                                            $table_row .= '<input type="text" placeholder="' . $unit_placeholder . '" name="' . $items_indicator . '[' . $i . '][unit]" class="form-control input-transparent text-right" value="' . $item['unit'] . '">';
+                                            $table_row .= '</td>';
+                                            $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control"></td>';
+                                            $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $estimate_item_taxes, (isset($is_proposal) ? 'proposal' : 'estimate'), $item['id'], true, $manual) . '</td>';
+                                            $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
+                                            $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_estimate_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                            $table_row .= '</tr>';
+                                            echo $table_row;
+                                            $i++;
+                                        }
+                                    }
+                                } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-8 col-md-offset-4">
+                        <table class="table text-right">
+                            <tbody>
+                                <tr id="subtotal">
+                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                    </td>
+                                    <td class="annexure_subtotal">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                    </td>
+                                    <td class="annexure_total">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="removed-items"></div>
+                </div>
+            <?php } ?>
+        </div>
+
+    </div>
 
     <hr class="hr-panel-separator" />
 

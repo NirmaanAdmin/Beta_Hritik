@@ -546,6 +546,7 @@ class Estimates_model extends App_Model
             }
 
             update_sales_total_tax_column($insert_id, 'estimate', db_prefix() . 'estimates');
+            $this->update_basic_estimate_details($insert_id);
             $this->log_estimate_activity($insert_id, 'estimate_activity_created');
 
             hooks()->do_action('after_estimate_added', $insert_id);
@@ -772,6 +773,8 @@ class Estimates_model extends App_Model
         if ($save_and_send === true) {
             $this->send_estimate_to_client($id, '', true, '', true);
         }
+
+        $this->update_basic_estimate_details($id);
 
         if ($affectedRows > 0) {
             hooks()->do_action('after_estimate_updated', $id);
@@ -1388,5 +1391,74 @@ class Estimates_model extends App_Model
     {
         $co_total = $this->db->query('SELECT SUM(total) as co_total FROM ' . db_prefix() . 'co_orders WHERE estimate = '.$id.' AND approve_status = 2')->result_array();
         return !empty($co_total) ? $co_total[0]['co_total'] : 0;
+    }
+
+    public function get_annexure_estimate_details($estimateid, $ignore_management_fess = false)
+    {
+        $this->db->where('id', $estimateid);
+        $estimate = $this->db->get(db_prefix() . 'estimates')->row();
+        $items = get_items_by_type('estimate', $estimateid, $ignore_management_fess);
+
+        $summary = array();
+        $final_estimate = array();
+
+        foreach ($items as $key => $value) {
+            $annexure = $value['annexure'];
+            $items_group = $this->get_items_groups($annexure);
+            $summary[$annexure]['name'] = $items_group->name." (".$items_group->annexure_name.")";
+            $summary[$annexure]['description'] = '';
+            $summary[$annexure]['qty'] = 1;
+            $summary[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
+            $summary[$annexure]['tax'] = get_estimate_annexurewise_tax($estimate->id, $annexure);
+            $summary[$annexure]['amount'] = $summary[$annexure]['subtotal'] + $summary[$annexure]['tax'];
+            $summary[$annexure]['annexure'] = $annexure;
+        }
+        $summary = !empty($summary) ? array_values($summary) : array();
+        if(!empty($summary)) {
+            usort($summary, function($a, $b) {
+                return $a['annexure'] <=> $b['annexure'];
+            });
+            $summary = array_values($summary);
+        }
+
+        foreach ($summary as $key => $value) {
+            $final_estimate['name'] = _l('final_estimate_by_all_annexures');
+            $final_estimate['description'] = '';
+            $final_estimate['qty'] = 1;
+            $final_estimate['subtotal'] += $value['subtotal'];
+            $final_estimate['tax'] += $value['tax'];
+            $final_estimate['amount'] += $value['amount'];
+        }
+    
+        $response = array();
+        $response['summary'] = $summary;
+        $response['final_estimate'] = $final_estimate;
+
+        return $response;
+    }
+
+    public function get_items_groups($id)
+    {
+        $all_annexures = get_all_annexures();
+        $result = array_filter($all_annexures, function ($item) use ($id) {
+            return $item['id'] == $id;
+        });
+        $result = array_values($result);
+        if(!empty($result)) {
+            $result = $result[0];
+        }
+        return (object) $result;
+    }
+
+    public function update_basic_estimate_details($estimate_id)
+    {
+        $annexure_estimate = $this->get_annexure_estimate_details($estimate_id);
+        $update_estimate = array();
+        $update_estimate['subtotal'] = $annexure_estimate['final_estimate']['subtotal'];
+        $update_estimate['total_tax'] = $annexure_estimate['final_estimate']['tax'];
+        $update_estimate['total'] = $annexure_estimate['final_estimate']['amount'];
+        $this->db->where('id', $estimate_id);
+        $this->db->update(db_prefix() . 'estimates', $update_estimate);
+        return true;
     }
 }

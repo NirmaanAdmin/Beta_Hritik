@@ -129,6 +129,7 @@ class Estimates extends AdminController
 
             $data['estimate'] = $estimate;
             $data['edit']     = true;
+            $data['annexure_estimate'] = $this->estimates_model->get_annexure_estimate_details($id);
             $title            = _l('edit', _l('estimate_lowercase'));
         }
 

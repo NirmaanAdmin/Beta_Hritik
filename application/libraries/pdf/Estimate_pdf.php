@@ -19,9 +19,14 @@ class Estimate_pdf extends App_pdf
 
         parent::__construct();
 
+        if (!class_exists('Estimates_model', false)) {
+            $this->ci->load->model('estimates_model');
+        }
+
         $this->tag             = $tag;
         $this->estimate        = $estimate;
         $this->estimate_number = format_estimate_number($this->estimate->id);
+        $this->basic_estimate   = $this->ci->estimates_model->get_annexure_estimate_details($this->estimate->id);
 
         $this->SetTitle($this->estimate_number);
     }
@@ -34,6 +39,7 @@ class Estimate_pdf extends App_pdf
             'status'          => $this->estimate->status,
             'estimate_number' => $this->estimate_number,
             'estimate'        => $this->estimate,
+            'basic_estimate'   => $this->basic_estimate,
         ]);
 
         return $this->build();
