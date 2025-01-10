@@ -14,6 +14,7 @@ $aColumns = [
     db_prefix() . 'items_groups.name',
     db_prefix() . 'projects.name',
     db_prefix() . 'pur_invoices.pur_order',
+    db_prefix() . 'pur_invoices.wo_order',
     'invoice_date',
     'payment_request_status',
     'payment_status',
@@ -124,6 +125,23 @@ if (isset($pur_orders)) {
     if ($where_pur_orders != '') {
         $where_pur_orders .= ')';
         array_push($where, $where_pur_orders);
+    }
+}
+$wo_orders = $this->ci->input->post('wo_orders');
+if (isset($wo_orders)) {
+    $where_wo_orders = '';
+    foreach ($wo_orders as $t) {
+        if ($t != '') {
+            if ($where_wo_orders == '') {
+                $where_wo_orders .= ' AND (' . db_prefix() . 'pur_invoices.wo_order = "' . $t . '"';
+            } else {
+                $where_wo_orders .= ' or ' . db_prefix() . 'pur_invoices.wo_order = "' . $t . '"';
+            }
+        }
+    }
+    if ($where_wo_orders != '') {
+        $where_wo_orders .= ')';
+        array_push($where, $where_wo_orders);
     }
 }
 
@@ -309,7 +327,9 @@ foreach ($rResult as $aRow) {
             $_data = get_payment_request_status_by_inv($aRow['id']);
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.pur_order') {
             $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
-        }  elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
+        } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.wo_order') {
+            $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
+        } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" >' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
         } elseif ($aColumns[$i] == 'expense_convert') {
             if($aRow['expense_convert'] == 0){

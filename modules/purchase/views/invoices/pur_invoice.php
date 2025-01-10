@@ -84,19 +84,30 @@
 										<?php } ?>
 									</select>
 								</div>
+								<div class="col-md-6 form-group  pad_right_0">
+									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
+									<select name="wo_order" id="wo_order" class="selectpicker" onchange="wo_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+										<option value=""></option>
+										<?php foreach ($wo_orders as $ct) { ?>
+											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
+																													echo 'selected';
+																												} ?>><?php echo pur_html_entity_decode($ct['wo_order_number']); ?></option>
+										<?php } ?>
+									</select>
+								</div>
 
-								<div class="col-md-6 pad_right_0">
+								<div class="col-md-6 pad_left_0">
 									<label for="invoice_date"><span class="text-danger">* </span><?php echo _l('invoice_date'); ?></label>
 									<?php $invoice_date = (isset($pur_invoice) ? _d($pur_invoice->invoice_date) : _d(date('Y-m-d')));
 									echo render_date_input('invoice_date', '', $invoice_date, array('required' => 'true')); ?>
 								</div>
 
-								<div class="col-md-6 pad_left_0">
+								<div class="col-md-6 pad_right_0">
 									<label for="invoice_date"><?php echo _l('pur_due_date'); ?></label>
 									<?php $duedate = (isset($pur_invoice) ? _d($pur_invoice->duedate) : _d(date('Y-m-d')));
 									echo render_date_input('duedate', '', $duedate); ?>
 								</div>
-								<div class="col-md-6 pad_right_0">
+								<div class="col-md-6  pad_left_0" style="margin-bottom: 14px;">
 									<label for="project"><span class="text-danger">* </span><?php echo _l('project'); ?></label>
 									<select name="project_id" id="project" class="selectpicker" data-live-search="true" data-width="100%" required="true" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
@@ -170,6 +181,7 @@
 									</div>
 
 								</div> -->
+								
 								<div class="col-md-6 pad_left_0" style="clear: both;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('amount_without_tax'); ?> ( ₹ )</label>
@@ -280,13 +292,13 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6 pad_left_0">
+								<div class="col-md-6 pad_left_0" style="margin-top: 10%;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="vendor_submitted_amount" name="vendor_submitted_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount : '') ?>">
 									</div>
 								</div>
-								<div class="col-md-6 pad_left_0">
+								<div class="col-md-6 pad_left_0" style="margin-top: 10%;">
 									<div class="form-group">
 										<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">

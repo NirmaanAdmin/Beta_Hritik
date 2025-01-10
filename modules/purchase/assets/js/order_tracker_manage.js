@@ -5,22 +5,14 @@ var expenseDropzone;
 "use strict"; 
     table_rec_campaign = $('.table-table_order_tracker');
 
-    var Params = {
-        "from_date": 'input[name="from_date"]',
-        "to_date": 'input[name="to_date"]',
-        "vendor": "[name='vendor_ft[]']",
-        "status": "[name='status[]']",
-        "item_filter": "[name='item_filter[]']",
+    var Params = {        
         "type": "[name='type[]']",
-        "project": "[name='project[]']",
-        "department": "[name='department[]']",
-        "delivery_status": "[name='delivery_status[]']",
-        "purchase_request": "[name='pur_request[]']"
     };
 
-    initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[2, 'desc']);
-	init_pur_order();
+    initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[3, 'desc']);
+	
     $.each(Params, function(i, obj) {
+        console.log(obj);
         $('select' + obj).on('change', function() {  
             table_rec_campaign.DataTable().ajax.reload()
                 .columns.adjust()
@@ -30,3 +22,22 @@ var expenseDropzone;
 
 
 })(jQuery);
+
+function change_rli_filter(status, id, table_name) {
+    "use strict";
+    if (id > 0) {
+        $.post(admin_url + 'purchase/change_rli_filter/' + status + '/' + id + '/' + table_name)
+            .done(function(response) {
+                response = JSON.parse(response);
+                if (response.success == true) {
+                    var $statusSpan = $('#status_span_' + id);
+                    $statusSpan.removeClass('label-danger label-success label-info label-warning');
+                    $statusSpan.addClass(response.class);
+                    $statusSpan.html(response.status_str + ' ' + response.html);
+                    alert_float('success', response.mess);
+                } else {
+                    alert_float('warning', response.mess);
+                }
+            });
+    }
+}

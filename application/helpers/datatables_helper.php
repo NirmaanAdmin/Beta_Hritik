@@ -321,33 +321,51 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
 
     // Combine `tblpur_orders` and `tblwo_orders` into one derived table with vendor `company` and `kind`
     $sTable = "(
-        SELECT 
+        SELECT DISTINCT
             po.id,
             po.pur_order_name AS order_name,
             po.rli_filter,
             pv.company AS vendor,
             po.order_date,
             po.completion_date,
-            po.total,
+            po.budget,
+            po.total AS total,
+            co.total AS co_total,
+            (po.total + IFNULL(co.total, 0)) AS total_rev_contract_value, 
+            anticipate_variation,
+            (IFNULL(po.anticipate_variation, 0) + (po.total + IFNULL(co.total, 0))) AS cost_to_complete,
+            inv.final_certified_amount AS final_certified_amount,
             po.group_pur,
             po.kind,
-            'pur_order' AS source_table
+            po.remarks AS remarks,
+            'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
+        LEFT JOIN tblco_request co ON co.po_order_id = po.id
+        LEFT JOIN tblpur_invoices inv ON inv.pur_order = po.id
         UNION ALL
-        SELECT 
+        SELECT DISTINCT
             wo.id,
             wo.wo_order_name AS order_name,
             wo.rli_filter,
             pv.company AS vendor,
             wo.order_date,
             wo.completion_date,
-            wo.total,
+            wo.budget,
+            wo.total AS total,
+            co.total AS co_total,
+            (wo.total + IFNULL(co.total, 0)) AS total_rev_contract_value,
+            anticipate_variation,
+            (IFNULL(wo.anticipate_variation, 0) + (wo.total + IFNULL(co.total, 0))) AS cost_to_complete,
+            inv.final_certified_amount AS final_certified_amount,
             wo.group_pur,
             wo.kind,
-            'wo_order' AS source_table
+            wo.remarks AS remarks,
+            'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
+        LEFT JOIN tblco_request co ON co.wo_order_id = wo.id
+        LEFT JOIN tblpur_invoices inv ON inv.wo_order = wo.id
     ) AS combined_orders";
 
     $allColumns = [];
@@ -455,7 +473,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     $sOrder
     $sLimit
     ";
-
+    
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),

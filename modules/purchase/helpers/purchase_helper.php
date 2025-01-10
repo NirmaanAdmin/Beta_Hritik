@@ -930,6 +930,18 @@ function get_pur_order_subject($pur_order)
         return '';
     }
 }
+function get_wo_order_subject($wo_order)
+{
+    $CI   = &get_instance();
+    $CI->db->where('id', $wo_order);
+    $po = $CI->db->get(db_prefix() . 'wo_orders')->row();
+
+    if ($po) {
+        return $po->wo_order_number;
+    } else {
+        return '';
+    }
+}
 
 /**
  * { function_description }

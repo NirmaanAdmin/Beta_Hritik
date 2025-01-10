@@ -3026,6 +3026,15 @@ class Purchase_model extends App_Model
 
         return $this->db->get(db_prefix() . 'pur_orders')->result_array();
     }
+    public function get_wo_order_approved()
+    {
+        $this->db->where('approve_status', 2);
+        if (!has_permission('work_orders', '', 'view') && is_staff_logged_in()) {
+            $this->db->where(' (' . db_prefix() . 'wo_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'wo_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'wo_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+        }
+
+        return $this->db->get(db_prefix() . 'wo_orders')->result_array();
+    }
 
     /**
      * Gets the pur order approved.
@@ -7878,6 +7887,13 @@ class Purchase_model extends App_Model
         }
         return false;
     }
+    public function change_rli_filter($status, $id, $table_name)
+    {
+       
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . $table_name, ['rli_filter' => $status]);
+        return true;
+    }
 
     public function change_payment_status($status, $id)
     {
@@ -8062,6 +8078,31 @@ class Purchase_model extends App_Model
 
         return $data_rs;
     }
+    public function get_wo_order_approved_for_inv()
+    {
+        $this->db->where('approve_status', 2);
+        if (!has_permission('work_orders', '', 'view') && is_staff_logged_in()) {
+            $this->db->where(' (' . db_prefix() . 'wo_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'wo_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'wo_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+        }
+        $list_po = $this->db->get(db_prefix() . 'wo_orders')->result_array();
+        $data_rs = [];
+        if (count($list_po) > 0) {
+            foreach ($list_po as $po) {
+                $this->db->where('wo_order', $po['id']);
+                $list_inv = $this->db->get(db_prefix() . 'pur_invoices')->result_array();
+                $total_inv_value = 0;
+                foreach ($list_inv as $inv) {
+                    $total_inv_value += $inv['total'];
+                }
+
+                if ($total_inv_value < $po['total']) {
+                    $data_rs[] = $po;
+                }
+            }
+        }
+
+        return $data_rs;
+    }
 
     /**
      * get pur order approved for inv
@@ -8108,6 +8149,13 @@ class Purchase_model extends App_Model
             $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
         return $this->db->get(db_prefix() . 'pur_orders')->result_array();
+    }
+    public function get_list_wo_orders()
+    {
+        if (!has_permission('work_orders', '', 'view') && is_staff_logged_in()) {
+            $this->db->where(' (' . db_prefix() . 'wo_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'wo_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'wo_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
+        }
+        return $this->db->get(db_prefix() . 'wo_orders')->result_array();
     }
 
     /**

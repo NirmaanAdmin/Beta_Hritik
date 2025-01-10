@@ -4960,6 +4960,7 @@ class purchase extends AdminController
         $data['title'] = _l('invoices');
         $data['contracts'] = $this->purchase_model->get_contract();
         $data['pur_orders'] = $this->purchase_model->get_list_pur_orders();
+        $data['wo_orders'] = $this->purchase_model->get_list_wo_orders();
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['customers'] = $this->clients_model->get();
         $data['projects'] = $this->projects_model->get();
@@ -5003,6 +5004,7 @@ class purchase extends AdminController
 
         if ($id != '') {
             $data['pur_orders'] = $this->purchase_model->get_pur_order_approved();
+            $data['wo_orders'] = $this->purchase_model->get_wo_order_approved();
             $data['pur_invoice'] = $this->purchase_model->get_pur_invoice($id);
             $data['pur_invoice_detail'] = $this->purchase_model->get_pur_invoice_detail($id);
 
@@ -5049,6 +5051,7 @@ class purchase extends AdminController
             }
         } else {
             $data['pur_orders'] = $this->purchase_model->get_pur_order_approved_for_inv();
+            $data['wo_orders'] = $this->purchase_model->get_wo_order_approved_for_inv();
         }
 
         $data['pur_invoice_row_template'] = $pur_invoice_row_template;
@@ -6418,6 +6421,62 @@ class purchase extends AdminController
             'html' => $html,
         ]);
     }
+    public function change_rli_filter($status, $id, $table_name)
+    {
+
+        // Define an array of statuses with their corresponding labels and texts
+        $status_labels = [
+            0 => ['label' => 'label-danger', 'table' => 'provided_by_ril', 'text' => _l('provided_by_ril')],
+            1 => ['label' => 'label-success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
+            2 => ['label' => 'label-info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
+            3 => ['label' => 'label-warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
+            4 => ['label' => 'label-warning', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+            5 => ['label' => 'label-warning', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+            6 => ['label' => 'label-warning', 'table' => 'event_expense', 'text' => _l('event_expense')],
+            7 => ['label' => 'label-warning', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+            8 => ['label' => 'label-warning', 'table' => 'pending_procurements', 'text' => _l('common_services_in_ghj_scope')],
+            9 => ['label' => 'label-warning', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ril_scope')],
+            10 => ['label' => 'label-warning', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+        ];
+        $success = $this->purchase_model->change_rli_filter($status, $id, $table_name);
+        $message = $success ? _l('change_rli_filter_successfully') : _l('change_rli_filter_fail');
+
+        $html = '';
+        $status_str = $status_labels[$status]['text'] ?? '';
+        $class = $status_labels[$status]['label'] ?? '';
+
+        if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+            $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+            $html .= '</a>';
+
+            $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $id . '">';
+
+            // Generate the dropdown menu options dynamically
+            foreach ($status_labels as $key => $label) {
+                if ($key != $status) {
+                    $html .= '<li>
+                    <a href="#" onclick="change_rli_filter(' . $key . ', ' . $id . ', \'' . htmlspecialchars($table_name, ENT_QUOTES) . '\'); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+                }
+            }
+
+            $html .= '</ul>';
+            $html .= '</div>';
+        }
+
+        echo json_encode([
+            'success' => $success,
+            'status_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
+
     /**
      * { change payment status }
      *
@@ -10300,7 +10359,7 @@ class purchase extends AdminController
         }
 
         // Determine the table to update
-        $tableName = $table === 'wo_order' ? 'tblwo_orders' : 'tblpur_orders';
+        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
 
         // Perform the update
         $this->db->where('id', $id);
@@ -10308,6 +10367,74 @@ class purchase extends AdminController
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => _l('completion_date_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_budget()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $budget = $this->input->post('budget');
+
+        if (!$id || !$table || !$budget) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Determine the table to update
+        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['budget' => $budget]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('amount_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_anticipate_variation()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $anticipate_variation = $this->input->post('anticipate_variation');
+
+        if (!$id || !$table || !$anticipate_variation) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['anticipate_variation' => $anticipate_variation]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('anticipate_variation_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_remarks()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $remarks = $this->input->post('remarks');
+
+        if (!$id || !$table) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['remarks' => $remarks]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('remarks_updated')]);
         } else {
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }

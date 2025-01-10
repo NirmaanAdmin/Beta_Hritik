@@ -8,10 +8,11 @@ var expenseDropzone;
         "to_date": 'input[name="to_date"]',
         "contract": "[name='contract[]']",
         "pur_orders": "[name='pur_orders[]']",
+        "wo_orders": "[name='wo_orders[]']",
         "vendors": "[name='vendor_ft[]']"
     };
 
-	initDataTable(table_invoice, admin_url+'purchase/table_pur_invoices',[], [], Params, [6, 'desc']);
+	initDataTable(table_invoice, admin_url+'purchase/table_pur_invoices',[], [], Params, [7, 'desc']);
 	$.each(Params, function(i, obj) {
         $('select' + obj).on('change', function() {  
             table_invoice.DataTable().ajax.reload()

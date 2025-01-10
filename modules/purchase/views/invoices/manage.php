@@ -43,6 +43,13 @@
                               </select>
                              </div>
                              <div class="col-md-2 form-group">
+                               <select name="wo_orders[]" id="wo_orders" class="selectpicker" multiple="true"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('work_order'); ?>">
+                                 <?php foreach($wo_orders as $ct){ ?>
+                                  <option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if($this->input->get('po') != null && $this->input->get('po') == $ct['id']){ echo 'selected'; } ?> ><?php echo pur_html_entity_decode($ct['wo_order_number']); ?></option>
+                                 <?php } ?>
+                              </select>
+                             </div>
+                             <div class="col-md-2 form-group">
                                 <?php echo render_select('vendor_ft[]',$vendors,array('userid','company'),'','',array('data-width'=>'100%','data-none-selected-text'=>_l('vendors'),'multiple'=>true,'data-actions-box'=>true),array(),'no-mbot','',false); ?>
                             </div>
                         </div>
@@ -57,6 +64,7 @@
                         _l('group_pur'),                       
                         _l('project'),
                         _l('pur_order'),
+                        _l('wo_order'),
                         _l('invoice_date'),
                         _l('payment_request_status'),
                         _l('billing_status'),
