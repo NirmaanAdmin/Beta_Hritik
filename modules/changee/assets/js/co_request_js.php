@@ -72,9 +72,16 @@ $("input[name='currency_rate']").on('change', function () {
     });
 });
 
+$("body").on('click', '.enable_item_select', function () {
+  $('select[name="item_select"]').prop('disabled', false);
+  $('select[name="item_select"]').selectpicker('refresh');
+});
+
 })(jQuery); 
 
 var lastAddedItemKey = null;
+$('select[name="item_select"]').prop('disabled', true);
+$('select[name="item_select"]').selectpicker('refresh');
 
 function is_Numeric(num) {
   "use strict";
@@ -457,7 +464,10 @@ function pur_calculate_total(){
     $(this).find('td.tax_value input').val(tax_value);
     $(this).find('td._total input').val(row_total);
 
-    co_value += $(this).find('td.into_money_updated input').val() - $(this).find('td.into_money input').val();
+    var variation = 0;
+    variation = $(this).find('td.into_money_updated input').val() - $(this).find('td.into_money input').val();
+    $(this).find('td.variation input').val(variation);
+    co_value = co_value + variation;
 
   });
 

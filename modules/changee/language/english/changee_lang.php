@@ -719,3 +719,6 @@ $lang['wo_order'] = 'Work Order';
 $lang['remarks'] = 'Remarks';
 $lang['change_request_quotation'] = 'Change Request Quotation';
 $lang['change_order_value'] = 'Change Order Value';
+$lang['add_non_tender_items'] = 'Add non tendor items';
+$lang['this_is_non_tendor_item'] = 'This is non tendor item';
+$lang['variation'] = 'Variation';

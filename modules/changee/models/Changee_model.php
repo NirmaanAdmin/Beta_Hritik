@@ -1172,6 +1172,8 @@ class Changee_model extends App_Model
         unset($data['request_detail']);
         unset($data['unit_id']);
         unset($data['remarks']);
+        unset($data['tender_item']);
+        unset($data['variation']);
       
 
         if (isset($data['send_to_vendors']) && count($data['send_to_vendors']) > 0) {
@@ -1247,6 +1249,8 @@ class Changee_model extends App_Model
                     $dt_data['tax_value'] = $rqd['tax_value'];
                     $dt_data['item_text'] = nl2br($rqd['item_text']);
                     $dt_data['remarks'] = $rqd['remarks'];
+                    $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
+                    $dt_data['variation'] = $rqd['variation'];
                     $tax_money = 0;
                     $tax_rate_value = 0;
                     $tax_rate = null;
@@ -1344,6 +1348,8 @@ class Changee_model extends App_Model
         unset($data['isedit']);
         unset($data['unit_id']);
         unset($data['remarks']);
+        unset($data['tender_item']);
+        unset($data['variation']);
 
         if (isset($data['send_to_vendors']) && count($data['send_to_vendors']) > 0) {
             $data['send_to_vendors'] = implode(',', $data['send_to_vendors']);
@@ -1386,6 +1392,8 @@ class Changee_model extends App_Model
                 $dt_data['tax_value'] = $rqd['tax_value'];
                 $dt_data['item_text'] = nl2br($rqd['item_text']);
                 $dt_data['remarks'] = $rqd['remarks'];
+                $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
+                $dt_data['variation'] = $rqd['variation'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -1443,6 +1451,8 @@ class Changee_model extends App_Model
                 $dt_data['tax_value'] = $rqd['tax_value'];
                 $dt_data['item_text'] = nl2br($rqd['item_text']);
                 $dt_data['remarks'] = nl2br($rqd['remarks']);
+                $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
+                $dt_data['variation'] = $rqd['variation'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -3899,8 +3909,12 @@ class Changee_model extends App_Model
             $units = $this->get_units_by_id($row['unit_id']);
             $diff =  $row['unit_price'] - $row['original_unit_price'];
             $diff_unit = $row['quantity'] - $row['original_quantity'];
+            $non_tender = '';
+            if($row['tender_item'] == 1) {
+                $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
+            }
             $html .= '<tr nobr="true" class="sortable">
-            <td>' . $items->commodity_code . ' - ' . $items->description . '</td>
+            <td>' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
             <td>' . $row['description'] . '</td>
             <td align="right">' . $units->unit_name . '</td>
             <td align="right">' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
@@ -4029,8 +4043,12 @@ class Changee_model extends App_Model
         foreach ($co_request_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
+            $non_tender = '';
+            if($row['tender_item'] == 1) {
+                $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
+            }
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
+            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
             <td style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="right" style="width: 5%">' . $units->unit_name . '</td>
             <td align="right" style="width: 12.5%">' . app_format_money($row['original_unit_price'], '') . '</td>
@@ -10279,7 +10297,7 @@ class Changee_model extends App_Model
      * @param      array   $unit_data  The unit data
      * @param      string  $name       The name
      */
-    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '',$into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '',$remarks = '')
+    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '',$into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '',$remarks = '', $tender_item = 0)
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -10318,10 +10336,11 @@ class Changee_model extends App_Model
             $total = '';
             $into_money = 0;
             $into_money_updated = 0;
+            $variation = 0;
         } else {
             $manual             = false;
             $row .= '<tr class="sortable item">
-                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
+                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"><input type="hidden" class="tender-item" name="' . $name . '[tender_item]" value="' . $tender_item . '"></td>';
             $name_item_code = $name . '[item_code]';
             $name_item_text = $name . '[item_text]';
             $name_item_description = $name . '[item_description]';
@@ -10340,6 +10359,7 @@ class Changee_model extends App_Model
             $name_tax_id_select = $name . '[tax_select][]';
             $name_total = $name . '[total]';
             $name_remarks = $name. '[remarks]';
+            $name_variation = $name . '[variation]';
             $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
@@ -10370,12 +10390,18 @@ class Changee_model extends App_Model
 
             $into_money_updated = (float)$unit_price * (float)$quantity;
             $total = $amount;
+
+            $variation = (float)$into_money_updated - (float)$into_money;
         }
 
 
-        $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]) . '</td>';
+        $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]);
+        if($tender_item == 1) {
+            $row .= '<span>'._l('this_is_non_tendor_item').'</span>';
+        }
+        $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation">Var : </span></td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation">Diff : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10402,6 +10428,7 @@ class Changee_model extends App_Model
         $row .= '<td class="hide item_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
         $row .= '<td class="_total">' . render_input($name_total, '', $total, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="variation">' . render_input($name_variation, '', $variation, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="">' . render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
         if ($name == '') {
             $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
