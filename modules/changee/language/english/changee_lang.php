@@ -718,3 +718,4 @@ $lang['updated_quantity'] = 'CO Qty';
 $lang['wo_order'] = 'Work Order';
 $lang['remarks'] = 'Remarks';
 $lang['change_request_quotation'] = 'Change Request Quotation';
+$lang['change_order_value'] = 'Change Order Value';

@@ -373,6 +373,18 @@
                       </tbody>
                     </table>
 
+                    <table class="table text-right">
+                      <tbody id="tax_area_body">
+                        <tr id="co_value">
+                          <td class="td_style"><span class="bold"><?php echo _l('change_order_value'); ?></span>
+                          </td>
+                          <td width="65%" id="total_td">
+                            <?php echo app_format_money($co_request->co_value, $base_currency->symbol); ?>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
                   </div>
                   <?php echo form_hidden('request_detail'); ?>
 

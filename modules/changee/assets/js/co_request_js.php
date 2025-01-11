@@ -391,6 +391,7 @@ function pur_calculate_total(){
     total = 0,
     total_tax_money = 0,
     quantity = 1,
+    co_value = 0,
     total_discount_calculated = 0,
     rows = $('.table.has-calculations tbody tr.item'),
     subtotal_area = $('#subtotal'),
@@ -456,6 +457,8 @@ function pur_calculate_total(){
     $(this).find('td.tax_value input').val(tax_value);
     $(this).find('td._total input').val(row_total);
 
+    co_value += $(this).find('td.into_money_updated input').val() - $(this).find('td.into_money input').val();
+
   });
 
   // Discount by percent
@@ -519,6 +522,8 @@ function pur_calculate_total(){
   $('.wh-total').html(format_money(total) + hidden_input('total_tax_money', accounting.toFixed(total_tax_money, app.options.decimal_places)) + hidden_input('total_money', accounting.toFixed(total, app.options.decimal_places)));
 
   $('input[name="total_mn"]').val(format_money(total, true));
+
+  $('input[name="co_value"]').val(format_money(co_value, true));
 
   $(document).trigger('changee-request-total-calculated');
 
