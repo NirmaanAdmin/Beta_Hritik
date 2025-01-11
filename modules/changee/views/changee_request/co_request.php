@@ -333,12 +333,12 @@
                                           } ?>" id="currency_rate_div">
                       <div class="col-md-10 text-right">
 
-                        <p class="mtop10"><?php echo _l('currency_rate'); ?><span id="convert_str"><?php echo ' (' . $base_currency->name . ' => ' . $co_request_currency->name . '): ';  ?></span></p>
+                        <p class="mtop10"><?php echo _l('currency_rate'); ?><span id="convert_str"><?php echo ' (' . $base_currency->name . ' => ' . $co_request_currency->symbol . '): ';  ?></span></p>
                       </div>
                       <div class="col-md-2 pull-right">
                         <?php $currency_rate = 1;
                         if (isset($co_request) && $co_request->currency != 0) {
-                          $currency_rate = changee_pur_get_currency_rate($base_currency->name, $co_request_currency->name);
+                          $currency_rate = changee_pur_get_currency_rate($base_currency->name, $co_request_currency->symbol);
                         }
                         echo render_input('currency_rate', '', $currency_rate, 'number', [], [], '', 'text-right');
                         ?>
@@ -353,15 +353,15 @@
                           <th></th>
                           <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
                           <th width="15%" align="right"><?php echo _l('description'); ?></th>
-                          <th width="10%" align="right"><?php echo _l('original_unit_price'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
-                          <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('original_unit_price'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->symbol . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->symbol . ')'; ?></span></th>
                           <th width="10%" align="right" class="qty"><?php echo _l('original_quantity'); ?></th>
                           <th width="10%" align="right" class="qty"><?php echo _l('updated_quantity'); ?></th>
-                          <th width="10%" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
-                          <th width="10%" align="right"><?php echo _l('updated_subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('contract_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->symbol . ')'; ?></span></th>
+                          <th width="10%" align="right"><?php echo _l('updated_subtotal'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->symbol . ')'; ?></span></th>
                           <th width="5%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
-                          <!-- <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th> -->
-                          <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->name . ')'; ?></span></th>
+                          <!-- <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->symbol . ')'; ?></span></th> -->
+                          <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $co_request_currency->symbol . ')'; ?></span></th>
                            <th width="5%" align="right"><?php echo _l('remarks'); ?></th>
                           <th align="right"><i class="fa fa-cog"></i></th>
                         </tr>
@@ -379,7 +379,7 @@
                     <table class="table text-right mbot0">
                       <tbody>
                         <tr id="subtotal">
-                          <td class="td_style"><span class="bold"><?php echo _l('subtotal'); ?></span>
+                          <td class="td_style"><span class="bold"><?php echo _l('contract_value'); ?></span>
                           </td>
                           <td width="65%" id="total_td">
 

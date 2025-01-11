@@ -260,7 +260,7 @@
                             <th width="10%" align="right"><?php echo _l('original_unit_price'); ?></th>
                             <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?></th>
 
-                            <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?></th>
+                            <th width="10%" align="right"><?php echo _l('contract_value_before_tax'); ?></th>
                             <th width="10%" align="right"><?php echo _l('updated_subtotal_before_tax'); ?></th>
                             <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
                             <th width="10%" align="right"><?php echo _l('tax_value'); ?></th>
@@ -342,7 +342,7 @@
                     <table class="table text-right mbot0">
                       <tbody>
                         <tr id="subtotal">
-                          <td class="td_style"><span class="bold"><?php echo _l('subtotal'); ?></span>
+                          <td class="td_style"><span class="bold"><?php echo _l('contract_value'); ?></span>
                           </td>
                           <td width="65%" id="total_td">
 
