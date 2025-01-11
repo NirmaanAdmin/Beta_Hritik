@@ -89,10 +89,11 @@
                                                                                                                                                                                                                                                                               echo 'disabled';
                                                                                                                                                                                                                                                                             }; ?>>
                         <option value=""></option>
+                        
                         <?php foreach ($goods_receipt as $value) { ?>
                           <option value="<?php echo html_entity_decode($value['id']); ?>" <?php if (isset($goods_delivery) && $goods_delivery->goods_receipt_id == $value['id']) {
                                                                                             echo 'selected';
-                                                                                          } ?>><?php echo $value['goods_receipt_code']; ?></option>
+                                                                                          } ?>><?php echo $value['goods_receipt_code'] . ' - ' . $value['pur_order_details']; ?></option>
                         <?php } ?>
                       </select>
                     </div>

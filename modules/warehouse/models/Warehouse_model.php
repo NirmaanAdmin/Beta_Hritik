@@ -19905,8 +19905,12 @@ class Warehouse_model extends App_Model
 
 	public function get_all_approved_goods_receipt()
 	{
-		$this->db->where('approval', '1');
-		return $this->db->get(db_prefix() . 'goods_receipt')->result_array();
+		$this->db->select(db_prefix() . 'goods_receipt.*, CONCAT(tblpur_orders.pur_order_number, "-", tblpur_orders.pur_order_name) AS pur_order_details');
+		$this->db->from(db_prefix() . 'goods_receipt');
+		$this->db->join('tblpur_orders', 'tblpur_orders.id = ' . db_prefix() . 'goods_receipt.pr_order_id', 'left');
+		$this->db->where(db_prefix() . 'goods_receipt.approval', '1');
+
+		return $this->db->get()->result_array();
 	}
 
 	public function copy_manage_receipt($goods_receipt_id)
