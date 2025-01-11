@@ -3,7 +3,7 @@ var report_import_goods, report_po_voucher,
 report_from_choose, report_po, report_pur_inv,
 fnServerParams, 
 statistics_number_of_purchase_orders, 
-statistics_cost_of_purchase_orders;
+statistics_cost_of_purchase_orders, report_item_tracker;
  var report_from = $('input[name="report-from"]');
  var report_to = $('input[name="report-to"]');
   var date_range = $('#date-range');
@@ -16,6 +16,7 @@ statistics_cost_of_purchase_orders;
   statistics_number_of_purchase_orders = $('#number-purchase-orders-report');
   statistics_cost_of_purchase_orders = $('#cost-purchase-orders-report');
   report_from_choose = $('#report-time');
+  report_item_tracker = $('#list_item_tracker_report');
   fnServerParams = {
     "products_services": '[name="products_services"]',
     "report_months": '[name="months-report"]',
@@ -92,6 +93,10 @@ statistics_cost_of_purchase_orders;
      $(this).find('tfoot td.total_value').html(sums.total_value);
    });
 
+   $('.table-item-tracker-report').on('draw.dt', function() {
+     var itReportsTable = $(this).DataTable();
+   });
+
    $('select[name="months-report"]').on('change', function() {
      var val = $(this).val();
      report_to.attr('disabled', true);
@@ -132,6 +137,7 @@ statistics_cost_of_purchase_orders;
    report_import_goods.addClass('hide');
   statistics_cost_of_purchase_orders.addClass('hide');
   statistics_number_of_purchase_orders.addClass('hide');
+   report_item_tracker.addClass('hide');
 
   $('select[name="months-report"]').selectpicker('val', 'this_month');
     // Clear custom date picker
@@ -156,6 +162,8 @@ statistics_cost_of_purchase_orders;
         report_po.removeClass('hide');
       }else if(type == 'purchase_invoice_rp'){
         report_pur_inv.removeClass('hide');
+      }else if(type == 'item_tracker_report'){
+        report_item_tracker.removeClass('hide');
       }
 
       gen_reports();
@@ -196,6 +204,15 @@ function purchase_inv_report() {
    $('.table-purchase-inv-report').DataTable().destroy();
  }
  initDataTable('.table-purchase-inv-report', admin_url + 'purchase/purchase_inv_report', false, false, fnServerParams);
+}
+
+function item_tracker_report() {
+  "use strict";
+
+ if ($.fn.DataTable.isDataTable('.table-item-tracker-report')) {
+   $('.table-item-tracker-report').DataTable().destroy();
+ }
+ initDataTable('.table-item-tracker-report', admin_url + 'purchase/item_tracker_report', false, false, fnServerParams, undefined, true);
 }
 
 
@@ -370,6 +387,8 @@ function gen_reports() {
     po_report();
  }else if(!report_pur_inv.hasClass('hide')){
     purchase_inv_report();
+ }else if(!report_item_tracker.hasClass('hide')){
+    item_tracker_report();
  }
 }
 </script>

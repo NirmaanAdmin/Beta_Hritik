@@ -10439,4 +10439,112 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    /**
+     *  item_tracker_report
+     *  
+     *  @return json
+     */
+    public function item_tracker_report()
+    {
+        if ($this->input->is_ajax_request()) {
+            $select = [
+                'id',
+                'goods_receipt_id',
+                'commodity_name',
+                'description',
+                'quantities',
+                'po_quantities',
+                'payment_date',
+                'est_delivery_date',
+                'delivery_date', 
+                'production_status',
+            ];
+            $where = [];
+
+            $aColumns     = $select;
+            $sIndexColumn = 'id';
+            $sTable       = db_prefix() . 'goods_receipt_detail';
+            $join         = [];
+
+            $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
+
+            $output  = $result['output'];
+            $rResult = $result['rResult'];
+            $tracker = [];
+
+            foreach ($rResult as $aRow) {
+                $row = [];
+
+                $goods_receipt = get_goods_receipt_code($aRow['goods_receipt_id']);
+                $row[] = get_pur_order_name($goods_receipt->pr_order_id);
+
+                $row[] = $aRow['commodity_name'];
+
+                $row[] = $aRow['description'];
+
+                $row[] = app_format_number($aRow['po_quantities']);
+
+                $row[] = app_format_number($aRow['quantities']);
+
+                $remaining_quantities = $aRow['po_quantities'] - $aRow['quantities'];
+                $row[] = app_format_number($remaining_quantities);
+
+                $production_status = '';
+                if ($receipt_value['production_status'] > 0) {
+                  if ($receipt_value['production_status'] == 1) {
+                    $production_status = _l('not_started');
+                  } elseif ($receipt_value['production_status'] == 2) {
+                    $production_status = _l('on_going');
+                  } elseif ($receipt_value['production_status'] == 3) {
+                    $production_status = _l('approved');
+                  } else {
+                    $production_status = '';
+                  }
+                }
+                $row[] = $production_status;
+
+                $row[] = !empty($aRow['payment_date']) ? date('d M, Y', strtotime($aRow['payment_date'])) : '-';
+
+                $row[] = !empty($aRow['est_delivery_date']) ? date('d M, Y', strtotime($aRow['est_delivery_date'])) : '-';
+
+                $row[] = !empty($aRow['delivery_date']) ? date('d M, Y', strtotime($aRow['delivery_date'])) : '-';
+
+                $tracker[] = $row;
+            }
+
+            // Grouped data array
+            $grouped_data = [];
+            foreach ($tracker as $row) {
+                $group = $row[0];
+                if (!isset($grouped_data[$group])) {
+                    $grouped_data[$group][] = [
+                        "group_name" => $group
+                    ];
+                }
+                $grouped_data[$group][] = $row;
+            }
+
+            // Flatten grouped data for DataTables
+            $flattened_data = [];
+            foreach ($grouped_data as $group_rows) {
+                foreach ($group_rows as $row) {
+                    unset($row[0]);
+                    $row = array_values($row);
+                    if (count($row) === 1) {
+                        for ($i = 1; $i <= 8; $i++) {
+                            $row[$i] = "";
+                        }
+                        ksort($row);
+                    }
+                    $flattened_data[] = $row;
+                }
+            }
+
+            $output['aaData'] = $flattened_data;
+
+            echo json_encode($output);
+            die();
+        }
+    }
 }
