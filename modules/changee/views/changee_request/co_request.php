@@ -487,6 +487,42 @@
                           </td>
                         </tr>
 
+                        <tr id="non_tender_total">
+                          <td class="td_style"><span class="bold"><?php echo _l('non_tender_items_in_change_order'); ?></span>
+                          </td>
+                          <td width="65%" id="total_td">
+
+                            <div class="input-group">
+
+                              <input type="text" readonly="true" class="form-control text-right" name="non_tender_total" value="<?php if (isset($co_request)) {
+                                                                                                                          echo app_format_money($co_request->subtotal, '');
+                                                                                                                        } ?>">
+                              <div class="input-group-addon">
+                                <div class="dropdown">
+
+                                  <span class="currency_span" id="non_tender_total_currency">
+                                    <?php
+                                    if (!isset($co_request)) {
+                                      echo changee_pur_html_entity_decode($base_currency->symbol);
+                                    } else {
+                                      if ($co_request->currency != 0) {
+                                        $_currency_symbol = changee_pur_get_currency_name_symbol($co_request->currency, 'symbol');
+                                        echo changee_pur_html_entity_decode($_currency_symbol);
+                                      } else {
+                                        echo changee_pur_html_entity_decode($base_currency->symbol);
+                                      }
+                                    }
+                                    ?>
+                                  </span>
+
+
+                                </div>
+                              </div>
+
+                            </div>
+                          </td>
+                        </tr>
+
                       </tbody>
                     </table>
 

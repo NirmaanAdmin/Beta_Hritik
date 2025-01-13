@@ -399,6 +399,7 @@ function pur_calculate_total(){
     total_tax_money = 0,
     quantity = 1,
     co_value = 0,
+    non_tender_total = 0,
     total_discount_calculated = 0,
     rows = $('.table.has-calculations tbody tr.item'),
     subtotal_area = $('#subtotal'),
@@ -469,6 +470,11 @@ function pur_calculate_total(){
     $(this).find('td.variation input').val(variation);
     co_value = co_value + variation;
 
+    var tender_item = $(this).find('.tender-item').val();
+    if(tender_item == 1) {
+      non_tender_total = non_tender_total + variation;
+    }
+
   });
 
   // Discount by percent
@@ -532,8 +538,10 @@ function pur_calculate_total(){
   $('.wh-total').html(format_money(total) + hidden_input('total_tax_money', accounting.toFixed(total_tax_money, app.options.decimal_places)) + hidden_input('total_money', accounting.toFixed(total, app.options.decimal_places)));
 
   $('input[name="total_mn"]').val(format_money(total, true));
-
+  
   $('input[name="co_value"]').val(format_money(co_value, true));
+
+  $('input[name="non_tender_total"]').val(format_money(non_tender_total, true));
 
   $(document).trigger('changee-request-total-calculated');
 
