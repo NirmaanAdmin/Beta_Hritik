@@ -447,62 +447,84 @@
                        
 
                         <div class="table-responsive">
-                           <table class="table items items-preview estimate-items-preview" data-type="estimate">
-                              <thead>
-                                 <tr>
-                                    <th align="center">#</th>
-                                    <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
-                                    <th align="left" width="100"><?php echo _l('decription'); ?></th>
-                                    <th align="right"><?php echo _l('changee_quantity'); ?></th>
-                                    <th align="right"><?php echo _l('changee_unit_price'); ?></th>
-                                    <th align="right"><?php echo _l('into_money'); ?></th>
-                                    <?php if(get_option('show_changee_tax_column') == 1){ ?>
-                                    <th align="right"><?php echo _l('tax'); ?></th>
-                                    <?php } ?>
-                                    <th align="right"><?php echo _l('sub_total'); ?></th>
-                                    <th align="right"><?php echo _l('discount(%)'); ?></th>
-                                    <th align="right"><?php echo _l('discount(money)'); ?></th>
-                                    <th align="right"><?php echo _l('total'); ?></th>
-                                 </tr>
-                              </thead>
-                              <tbody class="ui-sortable">
-
-                                 <?php if(count($estimate_detail) > 0){
+                            <table class="table items items-preview estimate-items-preview" data-type="estimate">
+                                <thead>
+                                  <tr>
+                                    <th width="15%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
+                                    <th width="15%" align="right" class="qty"><?php echo _l('decription'); ?></th>
+                                    <th width="10%" align="right" class="qty"><?php echo _l('original_quantity'); ?></th>
+                                    <th width="10%" align="right" class="qty"><?php echo _l('updated_quantity'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('original_unit_price'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('contract_value_before_tax'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('updated_subtotal_before_tax'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('tax_value'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('debit_note_total'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('remarks'); ?></th>
+                                  </tr>
+                                </thead>
+                                <tbody class="ui-sortable">
+                                  <?php $_subtotal = 0;
+                                  $_total = 0;
+                                  if (count($estimate_detail) > 0) {
                                     $count = 1;
                                     $t_mn = 0;
-                                    $item_discount = 0;
-                                 foreach($estimate_detail as $es) { ?>
-                                 <tr nobr="true" class="sortable">
-                                    <td class="dragger item_no ui-sortable-handle" align="center"><?php echo changee_pur_html_entity_decode($count); ?></td>
-                                    <td class="description" align="left"><div style="width: 250px"><span><strong><?php 
-                                    $item = changee_get_item_hp($es['item_code']); 
-                                    if(isset($item) && isset($item->commodity_code) && isset($item->description)){
-                                       echo changee_pur_html_entity_decode($item->commodity_code.' - '.$item->description);
-                                    }else{
-                                       echo changee_pur_html_entity_decode($es['item_name']);
+                                    foreach ($estimate_detail as $es) {
+                                      $_subtotal += $es['into_money_updated'];
+                                      $_total += $es['total']; ?>
+                                      <tr nobr="true" class="sortable">
+                                        <td class="description" align="left;"><span><strong><?php
+                                        $item = changee_get_item_hp($es['item_code']);
+                                        if (isset($item) && isset($item->commodity_code) && isset($item->description)) {
+                                          echo changee_pur_html_entity_decode($item->commodity_code . ' - ' . $item->description);
+                                        } else {
+                                          echo changee_pur_html_entity_decode($es['item_text']);
+                                        }
+                                        ?></strong></td>
+                                        <?php
+                                        $diff =  $es['unit_price'] - $es['original_unit_price'];
+                                        $diff_unit = $es['quantity'] - $es['original_quantity'];
+                                        $unit_name = changee_pur_get_unit_name($es['unit_id']);
+                                        ?>
+                                        <td align="right"><?php echo nl2br($es['description']); ?></td>
+                                        <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></br><span>Diff :<?php echo  $diff_unit; ?></span></td>
+                                        <td align="right"><?php echo changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
+                                        <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></br><span>Diff :<?php echo  $diff; ?></span></td>
+                                        <td align="right"><?php echo app_format_money($es['unit_price'], $base_currency->symbol); ?></td>
+                                        <td align="right"><?php echo app_format_money($es['into_money'], $base_currency->symbol); ?></td>
+                                        <td align="right"><?php echo app_format_money($es['into_money_updated'], $base_currency->symbol); ?></td>
+                                        <td align="right"><?php
+                                          if ($es['tax_name'] != '') {
+                                            echo changee_pur_html_entity_decode($es['tax_name']);
+                                          } else {
+                                            $this->load->model('changee/changee_model');
+                                            if ($es['tax'] != '') {
+                                              $tax_arr =  $es['tax'] != '' ? explode('|', $es['tax'] ?? '') : [];
+                                              $tax_str = '';
+                                              if (count($tax_arr) > 0) {
+                                                foreach ($tax_arr as $key => $tax_id) {
+                                                  if (($key + 1) < count($tax_arr)) {
+                                                    $tax_str .= $this->changee_model->get_tax_name($tax_id) . '|';
+                                                  } else {
+                                                    $tax_str .= $this->changee_model->get_tax_name($tax_id);
+                                                  }
+                                                }
+                                              }
+
+                                              echo changee_pur_html_entity_decode($tax_str);
+                                            }
+                                          }
+                                        ?></td>
+                                        <td align="right"><?php echo app_format_money($es['tax_value'], $base_currency->symbol); ?></td>
+                                        <td class="amount" align="right"><?php echo app_format_money($es['total'], $base_currency->symbol); ?></td>
+                                        <td class="remarks" align="right"><?php echo $es['remarks']; ?></td>
+                                      </tr>
+                                    <?php
                                     }
-                                    ?></strong><?php if($es['description'] != ''){ ?><br><span><?php echo changee_pur_html_entity_decode($es['description']); ?></span><?php } ?>
-                                    </div></td>
-                                    <td align="left" ><div style="width: 300px"><?php echo $es['description']; ?></div></td>
-                                    <td align="right"  width="12%"><?php
-                                    $unit_name = changee_pur_get_unit_name($es['unit_id']);
-                                     echo changee_pur_html_entity_decode($es['quantity']) . ' '. $unit_name; ?></td>
-                                    <td align="right"><?php echo app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
-                                    <td align="right"><?php echo app_format_money($es['into_money'],$base_currency->symbol); ?></td>
-                                    <?php if(get_option('show_changee_tax_column') == 1){ ?>
-                                    <td align="right"><?php echo app_format_money(($es['total'] - $es['into_money']),$base_currency->symbol); ?></td>
-                                    <?php } ?>
-                                    <td class="amount" align="right"><?php echo app_format_money($es['total'],$base_currency->symbol); ?></td>
-                                    <td class="amount" width="12%" align="right"><?php echo ($es['discount_%'].'%'); ?></td>
-                                    <td class="amount" align="right"><?php echo app_format_money($es['discount_money'],$base_currency->symbol); ?></td>
-                                    <td class="amount" align="right"><?php echo app_format_money($es['total_money'],$base_currency->symbol); ?></td>
-                                 </tr>
-                              <?php 
-                              $t_mn += $es['total_money'];
-                              $item_discount += $es['discount_money'];
-                              $count++; } } ?>
-                              </tbody>
-                           </table>
+                                  } ?>
+                                </tbody>
+                            </table>
                         </div>
                      </div>
                      <div class="col-md-5 col-md-offset-7">
@@ -547,6 +569,22 @@
                                  </td>
                                  <td class="subtotal bold">
                                     <?php echo app_format_money($estimate->total, $base_currency->symbol); ?>
+                                 </td>
+                              </tr>
+
+                              <tr id="co_value">
+                                 <td><span class="bold"><?php echo _l('change_order_value'); ?></span>
+                                 </td>
+                                 <td class="co_value bold">
+                                    <?php echo app_format_money($estimate->co_value, $base_currency->symbol); ?>
+                                 </td>
+                              </tr>
+
+                              <tr id="non_tender_total">
+                                 <td><span class="bold"><?php echo _l('non_tender_items_in_change_order'); ?></span>
+                                 </td>
+                                 <td class="non_tender_total bold">
+                                    <?php echo app_format_money($estimate->non_tender_total, $base_currency->symbol); ?>
                                  </td>
                               </tr>
                            </tbody>

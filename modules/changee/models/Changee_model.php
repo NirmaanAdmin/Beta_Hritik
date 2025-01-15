@@ -1021,8 +1021,7 @@ class Changee_model extends App_Model
      */
     public function get_co_request_detail_in_po($co_request)
     {
-
-        $co_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'co_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.co_request = ' . $co_request)->result_array();
+        $co_request_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, original_unit_price, unit_price, original_quantity, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_text, tax_value, total as total_money, total as total FROM ' . db_prefix() . 'co_request_detail prq LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id WHERE prq.co_request = ' . $co_request)->result_array();
 
         foreach ($co_request_lst as $key => $detail) {
             $co_request_lst[$key]['into_money'] = (float) $detail['into_money'];
@@ -1094,10 +1093,8 @@ class Changee_model extends App_Model
         $co_order_details = $this->db->get(db_prefix() . 'co_order_detail')->result_array();
 
         foreach ($co_order_details as $key => $detail) {
-            $co_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
             $co_order_details[$key]['into_money'] = (float) $detail['into_money'];
             $co_order_details[$key]['total'] = (float) $detail['total'];
-            $co_order_details[$key]['total_money'] = (float) $detail['total_money'];
             $co_order_details[$key]['unit_price'] = (float) $detail['unit_price'];
             $co_order_details[$key]['tax_value'] = (float) $detail['tax_value'];
         }
@@ -2351,27 +2348,26 @@ class Changee_model extends App_Model
      */
     public function add_pur_order($data)
     {
-
-        unset($data['item_select']);
-        unset($data['item_name']);
+        unset($data['item_text']);
         unset($data['description']);
-        unset($data['total']);
-        unset($data['quantity']);
+        unset($data['original_unit_price']);
         unset($data['unit_price']);
-        unset($data['unit_name']);
-        unset($data['item_code']);
-        unset($data['unit_id']);
-        unset($data['discount']);
+        unset($data['original_quantity']);
+        unset($data['quantity']);
         unset($data['into_money']);
-        unset($data['tax_rate']);
-        unset($data['tax_name']);
-        unset($data['discount_money']);
-        unset($data['total_money']);
-        unset($data['additional_discount']);
+        unset($data['into_money_updated']);
+        unset($data['tax_select']);
         unset($data['tax_value']);
-        if (isset($data['tax_select'])) {
-            unset($data['tax_select']);
-        }
+        unset($data['total']);
+        unset($data['item_select']);
+        unset($data['item_code']);
+        unset($data['unit_name']);
+        unset($data['request_detail']);
+        unset($data['unit_id']);
+        unset($data['remarks']);
+        unset($data['tender_item']);
+        unset($data['variation']);
+        unset($data['additional_discount']);
 
         // $check_appr = $this->get_approve_setting('pur_order');
         // $data['approve_status'] = 1;
@@ -2497,17 +2493,18 @@ class Changee_model extends App_Model
                     $dt_data = [];
                     $dt_data['pur_order'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
+                    $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
+                    $dt_data['into_money_updated'] = $rqd['into_money_updated'];
                     $dt_data['total'] = $rqd['total'];
                     $dt_data['tax_value'] = $rqd['tax_value'];
-                    $dt_data['item_name'] = $rqd['item_name'];
-                    $dt_data['description'] = nl2br($rqd['item_description']);
-                    $dt_data['total_money'] = $rqd['total_money'];
-                    $dt_data['discount_money'] = $rqd['discount_money'];
-                    $dt_data['discount_%'] = $rqd['discount'];
-
+                    $dt_data['item_text'] = nl2br($rqd['item_text']);
+                    $dt_data['remarks'] = $rqd['remarks'];
+                    $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
+                    $dt_data['variation'] = $rqd['variation'];
                     $tax_money = 0;
                     $tax_rate_value = 0;
                     $tax_rate = null;
@@ -2526,6 +2523,7 @@ class Changee_model extends App_Model
                     $dt_data['tax_rate'] = $tax_rate;
                     $dt_data['tax_name'] = $tax_name;
 
+                    $dt_data['original_quantity'] = ($rqd['original_quantity'] != '' && $rqd['original_quantity'] != null) ? $rqd['original_quantity'] : 0;
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                     $this->db->insert(db_prefix() . 'co_order_detail', $dt_data);
@@ -2569,27 +2567,27 @@ class Changee_model extends App_Model
     {
         $affectedRows = 0;
 
-        unset($data['item_select']);
-        unset($data['item_name']);
+        unset($data['item_text']);
         unset($data['description']);
-        unset($data['total']);
-        unset($data['quantity']);
+        unset($data['original_unit_price']);
         unset($data['unit_price']);
-        unset($data['unit_name']);
-        unset($data['item_code']);
-        unset($data['unit_id']);
-        unset($data['discount']);
+        unset($data['original_quantity']);
+        unset($data['quantity']);
         unset($data['into_money']);
-        unset($data['tax_rate']);
-        unset($data['tax_name']);
-        unset($data['discount_money']);
-        unset($data['total_money']);
-        unset($data['additional_discount']);
+        unset($data['into_money_updated']);
+        unset($data['tax_select']);
         unset($data['tax_value']);
+        unset($data['total']);
+        unset($data['item_select']);
+        unset($data['item_code']);
+        unset($data['unit_name']);
+        unset($data['request_detail']);
         unset($data['isedit']);
-        if (isset($data['tax_select'])) {
-            unset($data['tax_select']);
-        }
+        unset($data['unit_id']);
+        unset($data['remarks']);
+        unset($data['tender_item']);
+        unset($data['variation']);
+        unset($data['additional_discount']);
 
         $new_order = [];
         if (isset($data['newitems'])) {
@@ -2692,17 +2690,18 @@ class Changee_model extends App_Model
                 $dt_data = [];
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
+                $dt_data['into_money_updated'] = $rqd['into_money_updated'];
                 $dt_data['total'] = $rqd['total'];
                 $dt_data['tax_value'] = $rqd['tax_value'];
-                $dt_data['item_name'] = $rqd['item_name'];
-                $dt_data['total_money'] = $rqd['total_money'];
-                $dt_data['discount_money'] = $rqd['discount_money'];
-                $dt_data['discount_%'] = $rqd['discount'];
-                $dt_data['description'] = nl2br($rqd['item_description']);
-
+                $dt_data['item_text'] = nl2br($rqd['item_text']);
+                $dt_data['remarks'] = $rqd['remarks'];
+                $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
+                $dt_data['variation'] = $rqd['variation'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -2721,6 +2720,7 @@ class Changee_model extends App_Model
                 $dt_data['tax_rate'] = $tax_rate;
                 $dt_data['tax_name'] = $tax_name;
 
+                $dt_data['original_quantity'] = ($rqd['original_quantity'] != '' && $rqd['original_quantity'] != null) ? $rqd['original_quantity'] : 0;
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                 $this->db->insert(db_prefix() . 'co_order_detail', $dt_data);
@@ -2739,17 +2739,18 @@ class Changee_model extends App_Model
                 $dt_data = [];
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
+                $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
+                $dt_data['into_money_updated'] = $rqd['into_money_updated'];
                 $dt_data['total'] = $rqd['total'];
                 $dt_data['tax_value'] = $rqd['tax_value'];
-                $dt_data['item_name'] = $rqd['item_name'];
-                $dt_data['total_money'] = $rqd['total_money'];
-                $dt_data['discount_money'] = $rqd['discount_money'];
-                $dt_data['discount_%'] = $rqd['discount'];
-                $dt_data['description'] = nl2br($rqd['item_description']);
-
+                $dt_data['item_text'] = nl2br($rqd['item_text']);
+                $dt_data['remarks'] = nl2br($rqd['remarks']);
+                $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
+                $dt_data['variation'] = $rqd['variation'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -2768,6 +2769,7 @@ class Changee_model extends App_Model
                 $dt_data['tax_rate'] = $tax_rate;
                 $dt_data['tax_name'] = $tax_name;
 
+                $dt_data['original_quantity'] = ($rqd['original_quantity'] != '' && $rqd['original_quantity'] != null) ? $rqd['original_quantity'] : 0;
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
                 $this->db->where('id', $rqd['id']);
@@ -4644,7 +4646,6 @@ class Changee_model extends App_Model
      */
     public function get_purorder_pdf_html($pur_order_id)
     {
-
         $pur_order = $this->get_pur_order($pur_order_id);
         $co_order_detail = $this->get_co_order_detail($pur_order_id);
         $company_name = get_option('invoice_company_name');
@@ -4737,26 +4738,24 @@ class Changee_model extends App_Model
       </table>
       ';
       $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
-      $html .= '<div class="col-md-12 ">
-      <p class="bold"> ' . $order_summary_with_break . '</p>';
-      $html .= '<div style="page-break-before:always"></div>';
-      $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
-        $html .=  '<table class="table purorder-item" style="width: 100%">
+      $html .= '<div class="col-md-12">';
+      // $html .= '<div style="page-break-before:always"></div>';
+      // $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
+
+      $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 30%">' . _l('item_description') . '</th>
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
-            <th class="thead-dark" align="right" style="width: 11%">' . _l('unit_price') . '</th>
-            
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('tax') . '</th>
- 
-            
-            <th class="thead-dark" align="right" style="width: 12%">' . _l('total') . '</th>
+            <th class="thead-dark" style="width: 25%">' . _l('decription') . '</th>
+            <th class="thead-dark" align="right" style="width: 5%">' . _l('unit') . '</th>
+            <th class="thead-dark" align="right" style="width: 12.5%">' . _l('original_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 12.5%">' . _l('updated_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('original_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('updated_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('into_money') . '</th>
           </tr>
-          </thead>
-          <tbody>';
+        </thead>
+        <tbody>';
         $sub_total_amn = 0;
         $tax_total = 0;
         $t_mn = 0;
@@ -4764,21 +4763,24 @@ class Changee_model extends App_Model
         foreach ($co_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
-            $unit_name = changee_pur_get_unit_name($row['unit_id']);
+            $non_tender = '';
+            if($row['tender_item'] == 1) {
+                $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
+            }
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="width: 30%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 10%">' . $row['quantity']  .' ' .$unit_name .'</td>
-            <td align="right" style="width: 11%">' . '₹ '. app_format_money($row['unit_price'], '') . '</td>
-            
-            <td align="right" style="width: 10%">'. app_format_money($row['tax_rate'], '') . '</td>
-            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['total'] - $row['into_money'], '') . '</td>
-            <td align="right" style="width: 12%">' . '₹ '. app_format_money($row['total_money'], '') . '</td>
+            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
+            <td style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="right" style="width: 5%">' . $units->unit_name . '</td>
+            <td align="right" style="width: 12.5%">' . app_format_money($row['original_unit_price'], '') . '</td>
+            <td align="right" style="width: 12.5%">' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 10%">' . $row['original_quantity'] . '</td>
+            <td align="right" style="width: 10%">' . $row['quantity'] . '</td>
+            <td align="right" style="width: 10%">' . app_format_money($row['into_money'], '') . '</td>
           </tr>';
 
-            $t_mn += $row['total_money'];
-            $tax_total += $row['total'] - $row['into_money'];
-            $sub_total_amn += $row['total_money'] - $tax_total;
+          $t_mn += $row['total_money'];
+          $tax_total += $row['total'] - $row['into_money_updated'];
+          $sub_total_amn += $row['total_money'] - $tax_total;
         }
         $html .=  '</tbody>
       </table><br><br>';
@@ -4832,7 +4834,7 @@ class Changee_model extends App_Model
         $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
         $html .= '<div class="col-md-12 mtop15">
             <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
-        $html .= '<div style="page-break-before:always"></div>';
+        // $html .= '<div style="page-break-before:always"></div>';
         $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
             </div>';
         $html .= '<br>
@@ -8007,7 +8009,7 @@ class Changee_model extends App_Model
                 $tax_val[$key] = 0;
                 foreach ($details as $row_dt) {
                     if (!(strpos($row_dt['tax'] ?? '', $taxes[$key]) === false)) {
-                        $total = ($row_dt['into_money'] * $t_rate[$key] / 100);
+                        $total = ($row_dt['into_money_updated'] * $t_rate[$key] / 100);
 
                         if ($order->discount_type == 'before_tax') {
                             $t = 0;
@@ -10922,62 +10924,34 @@ class Changee_model extends App_Model
     /**
      * Creates a changee order row template.
      *
-     * @param      string      $name              The name
-     * @param      string      $item_name         The item name
-     * @param      string      $item_description  The item description
-     * @param      int|string  $quantity          The quantity
-     * @param      string      $unit_name         The unit name
-     * @param      int|string  $unit_price        The unit price
-     * @param      string      $taxname           The taxname
-     * @param      string      $item_code         The item code
-     * @param      string      $unit_id           The unit identifier
-     * @param      string      $tax_rate          The tax rate
-     * @param      string      $total_money       The total money
-     * @param      string      $discount          The discount
-     * @param      string      $discount_money    The discount money
-     * @param      string      $total             The total
-     * @param      string      $into_money        Into money
-     * @param      string      $tax_id            The tax identifier
-     * @param      string      $tax_value         The tax value
-     * @param      string      $item_key          The item key
-     * @param      bool        $is_edit           Indicates if edit
-     *
      * @return     string      
      */
-    public function create_changee_order_row_template($name = '', $item_name = '', $item_description = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '',$into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '',$remarks = '', $tender_item = 0)
     {
-
         $this->load->model('invoice_items_model');
         $row = '';
 
         $name_item_code = 'item_code';
-        $name_item_name = 'item_name';
+        $name_item_text = 'item_text';
         $name_item_description = 'description';
         $name_unit_id = 'unit_id';
         $name_unit_name = 'unit_name';
-        $name_quantity = 'quantity';
+        $name_original_unit_price = 'original_unit_price';
         $name_unit_price = 'unit_price';
-        $name_tax_id_select = 'tax_select';
-        $name_tax_id = 'tax_id';
-        $name_total = 'total';
-        $name_tax_rate = 'tax_rate';
-        $name_tax_name = 'tax_name';
-        $name_tax_value = 'tax_value';
-        $array_attr = [];
-        $array_attr_payment = ['data-payment' => 'invoice'];
+        $name_original_quantity = 'original_quantity';
+        $name_quantity = 'quantity';
         $name_into_money = 'into_money';
-        $name_discount = 'discount';
-        $name_discount_money = 'discount_money';
-        $name_total_money = 'total_money';
-
-        $array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
-        $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
+        $name_tax = 'tax';
+        $name_tax_value = 'tax_value';
+        $name_tax_name = 'tax_name';
+        $name_tax_rate = 'tax_rate';
+        $name_tax_id_select = 'tax_select';
+        $name_total = 'total';
+        $name_remarks = 'remarks';
         $array_rate_attr = ['min' => '0.0', 'step' => 'any'];
-        $array_discount_attr = ['min' => '0.0', 'step' => 'any'];
-        $array_discount_money_attr = ['min' => '0.0', 'step' => 'any'];
-        $str_rate_attr = 'min="0.0" step="any"';
-
+        $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
         $array_subtotal_attr = ['readonly' => true];
+
         $text_right_class = 'text-right';
 
         if ($name == '') {
@@ -10988,85 +10962,78 @@ class Changee_model extends App_Model
 
             $manual             = true;
             $invoice_item_taxes = '';
-            $amount = '';
-            $sub_total = 0;
+            $total = '';
+            $into_money = 0;
+            $into_money_updated = 0;
+            $variation = 0;
         } else {
+            $manual             = false;
             $row .= '<tr class="sortable item">
-                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
+                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"><input type="hidden" class="tender-item" name="' . $name . '[tender_item]" value="' . $tender_item . '"></td>';
             $name_item_code = $name . '[item_code]';
-            $name_item_name = $name . '[item_name]';
+            $name_item_text = $name . '[item_text]';
             $name_item_description = $name . '[item_description]';
             $name_unit_id = $name . '[unit_id]';
-            $name_unit_name = '[unit_name]';
-            $name_quantity = $name . '[quantity]';
+            $name_unit_name = $name . '[unit_name]';
+            $name_original_unit_price = $name . '[original_unit_price]';
             $name_unit_price = $name . '[unit_price]';
-            $name_tax_id_select = $name . '[tax_select][]';
-            $name_tax_id = $name . '[tax_id]';
-            $name_total = $name . '[total]';
-            $name_tax_rate = $name . '[tax_rate]';
-            $name_tax_name = $name . '[tax_name]';
+            $name_original_quantity = $name . '[original_quantity]';
+            $name_quantity = $name . '[quantity]';
             $name_into_money = $name . '[into_money]';
-            $name_discount = $name . '[discount]';
-            $name_discount_money = $name . '[discount_money]';
-            $name_total_money = $name . '[total_money]';
+            $name_into_money_updated = $name . '[into_money_updated]';
+            $name_tax = $name . '[tax]';
             $name_tax_value = $name . '[tax_value]';
-
+            $name_tax_name = $name . '[tax_name]';
+            $name_tax_rate = $name . '[tax_rate]';
+            $name_tax_id_select = $name . '[tax_select][]';
+            $name_total = $name . '[total]';
+            $name_remarks = $name. '[remarks]';
+            $name_variation = $name . '[variation]';
+            $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
-
-
-            $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('rate')];
-            $array_discount_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
-
-            $array_discount_money_attr = ['onblur' => 'pur_calculate_total(1);', 'onchange' => 'pur_calculate_total(1);', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
-
-
-            $manual             = false;
 
             $tax_money = 0;
             $tax_rate_value = 0;
 
             if ($is_edit) {
-                $invoice_item_taxes = changee_pur_convert_item_taxes($tax_id, $tax_rate, $taxname);
+                $invoice_item_taxes = changee_pur_convert_item_taxes($tax_id, $tax_rate, $tax_name);
                 $arr_tax_rate = explode('|', $tax_rate ?? '');
                 foreach ($arr_tax_rate as $key => $value) {
                     $tax_rate_value += (float)$value;
                 }
             } else {
-                $invoice_item_taxes = $taxname;
-                $tax_rate_data = $this->changee_pur_get_tax_rate($taxname);
+                $invoice_item_taxes = $tax_name;
+                $tax_rate_data = $this->changee_pur_get_tax_rate($tax_name);
                 $tax_rate_value = $tax_rate_data['tax_rate'];
             }
 
             if ((float)$tax_rate_value != 0) {
                 $tax_money = (float)$unit_price * (float)$quantity * (float)$tax_rate_value / 100;
-                $goods_money = (float)$unit_price * (float)$quantity + (float)$tax_money;
+
                 $amount = (float)$unit_price * (float)$quantity + (float)$tax_money;
             } else {
-                $goods_money = (float)$unit_price * (float)$quantity;
+
                 $amount = (float)$unit_price * (float)$quantity;
             }
 
-            $sub_total = (float)$unit_price * (float)$quantity;
-            $amount = app_format_number($amount);
+            $into_money_updated = (float)$unit_price * (float)$quantity;
+            $total = $amount;
+
+            $variation = (float)$into_money_updated - (float)$into_money;
         }
 
 
-        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => _l('pur_item_name'), 'readonly' => true]) . '</td>';
-
+        $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]);
+        if($tender_item == 1) {
+            $row .= '<span>'._l('this_is_non_tendor_item').'</span>';
+        }
+        $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-
-        $units_list = $this->get_units();
-
-        $row .= '<td class="quantities">' .
-        render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
-        // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
-        render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
-        '</td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation">Diff : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
-
         if ($unit_price != '') {
-            $original_price = ($currency_rate > 0) ? round(($unit_price / $currency_rate), 2) : 0;
+            $original_price = round(($unit_price / $currency_rate), 2);
             $base_currency = get_base_currency();
             if ($to_currency != 0 && $to_currency != $base_currency->id) {
                 $row .= render_input('original_price', '', app_format_money($original_price, $base_currency), 'text', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => _l('original_price'), 'disabled' => true], [], 'no-margin', 'input-transparent text-right pur_input_none');
@@ -11075,31 +11042,23 @@ class Changee_model extends App_Model
             $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
         }
 
-        
+        $row .=  '</td>';
 
+        $row .= '<td class="original_quantities">'.render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation_unit">Diff : </span> '.$unit_name.'</td>';
+        $row .= '<td class="quantities">' .
+            render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
+            render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            '</td>';
+
+        $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="into_money_updated">' . render_input($name_into_money_updated, '', $into_money_updated, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
-
-        $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
-
-        $row .= '<td class="_total" align="right">' . $total . '</td>';
-
-        if ($discount_money > 0) {
-            $discount = '';
-        }
-
-        $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
-        $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
-        $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
-
-        $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
+        $row .= '<td class="hide tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="hide item_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
-
-        $row .= '<td class="hide _total_after_tax">' . render_input($name_total, '', $total, 'number', []) . '</td>';
-
-        //$row .= '<td class="hide discount_money">' . render_input($name_discount_money, '', $discount_money, 'number', []) . '</td>';
-        $row .= '<td class="hide total_after_discount">' . render_input($name_total_money, '', $total_money, 'number', []) . '</td>';
-        $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
-
+        $row .= '<td class="_total">' . render_input($name_total, '', $total, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="variation">' . render_input($name_variation, '', $variation, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="">' . render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
         if ($name == '') {
             $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
         } else {

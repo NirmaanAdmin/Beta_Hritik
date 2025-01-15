@@ -488,7 +488,7 @@
                         </tr>
 
                         <tr id="non_tender_total">
-                          <td class="td_style"><span class="bold"><?php echo _l('non_tender_items_in_change_order'); ?></span>
+                          <td class="td_style"><span class="bold"><?php echo _l('non_tender_items_in_change_request'); ?></span>
                           </td>
                           <td width="65%" id="total_td">
 

@@ -722,4 +722,5 @@ $lang['change_order_value'] = 'Change Order Value';
 $lang['add_non_tender_items'] = 'Add non tender items';
 $lang['this_is_non_tendor_item'] = 'This is non tender item';
 $lang['variation'] = 'Variation';
-$lang['non_tender_items_in_change_order'] = 'Non tender items in CR';
+$lang['non_tender_items_in_change_request'] = 'Non tender items in CR';
+$lang['non_tender_items_in_change_order'] = 'Non tender items in CO';
