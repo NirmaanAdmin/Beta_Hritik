@@ -517,7 +517,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <?php echo render_input('deal_slip_no', 'deal_slip_no') ?>
+                                <?php $deal_slip_no = (isset($invoice) && $invoice->deal_slip_no != '' ? $invoice->deal_slip_no : ''); ?>
+                                    <?php echo render_input('deal_slip_no', 'deal_slip_no',$deal_slip_no) ?>
                                 </div>
                             </div>
 

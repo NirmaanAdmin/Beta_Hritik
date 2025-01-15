@@ -4161,3 +4161,4 @@ $lang['invoice_title'] = 'Invoice title';
 $lang['budget_description'] = 'Budget description';
 $lang['final_estimate_by_all_annexures'] = 'The final estimate by all annexures';
 $lang['budget_head'] = 'Budget head';
+$lang['deal_slip_no'] = 'Deal slip no.';
