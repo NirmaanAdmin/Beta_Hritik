@@ -516,6 +516,9 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <?php echo render_input('deal_slip_no', 'deal_slip_no') ?>
+                                </div>
                             </div>
 
                         </div>
@@ -580,7 +583,7 @@
                                         <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
                                         aria-hidden="true" data-toggle="tooltip"
                                         data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                        <?php echo _l('invoice_table_item_heading'); ?></th>
+                                        <?php echo _l('budget_head'); ?></th>
                                         <th width="25%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
                                         <?php
                                         $custom_fields = get_custom_fields('items');
@@ -746,8 +749,8 @@
                                         <th></th>
                                         <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
                                         aria-hidden="true" data-toggle="tooltip"
-                                        data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                        <?php echo _l('invoice_table_item_heading'); ?></th>
+                                        data-title="<?php echo _l('budget_head'); ?>"></i>
+                                        <?php echo _l('budget_head'); ?></th>
                                         <th width="25%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
                                         <?php
                                         $custom_fields = get_custom_fields('items');
@@ -842,7 +845,7 @@
                                             <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
                                             aria-hidden="true" data-toggle="tooltip"
                                             data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                            <?php echo _l('invoice_table_item_heading'); ?></th>
+                                            <?php echo _l('budget_head'); ?></th>
                                             <th width="20%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
                                             <?php
                                             $custom_fields = get_custom_fields('items');

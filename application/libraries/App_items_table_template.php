@@ -97,15 +97,15 @@ abstract class App_items_table_template
     }
 
     /**
-    * Builds the actual table items rows preview
-    * @return string
-    */
+     * Builds the actual table items rows preview
+     * @return string
+     */
     abstract public function items();
 
     /**
-    * Html headings preview
-    * @return string
-    */
+     * Html headings preview
+     * @return string
+     */
     abstract public function html_headings();
 
     /**
@@ -123,12 +123,16 @@ abstract class App_items_table_template
     {
         foreach ($this->taxes as $tax) {
             $total_tax = array_sum($tax['total']);
-            if (isset($this->transaction->discount_percent) && $this->transaction->discount_percent != 0
-                && isset($this->transaction->discount_type) && $this->transaction->discount_type == 'before_tax') {
+            if (
+                isset($this->transaction->discount_percent) && $this->transaction->discount_percent != 0
+                && isset($this->transaction->discount_type) && $this->transaction->discount_type == 'before_tax'
+            ) {
                 $total_tax_tax_calculated = ($total_tax * $this->transaction->discount_percent) / 100;
                 $total_tax                = ($total_tax - $total_tax_tax_calculated);
-            } elseif (isset($this->transaction->discount_total) && $this->transaction->discount_total != 0
-                && isset($this->transaction->discount_type) && $this->transaction->discount_type == 'before_tax') {
+            } elseif (
+                isset($this->transaction->discount_total) && $this->transaction->discount_total != 0
+                && isset($this->transaction->discount_type) && $this->transaction->discount_type == 'before_tax'
+            ) {
                 $t         = ($this->transaction->discount_total / $this->transaction->subtotal) * 100;
                 $total_tax = ($total_tax - $total_tax * $t / 100);
             }
@@ -452,7 +456,11 @@ abstract class App_items_table_template
         $langFrom = !$alias ? $this->type : $alias;
 
         $this->headings['number'] = _l('the_number_sign', '', false);
-        $this->headings['item']   = _l($langFrom . '_table_item_heading', '', false);
+        if ($langFrom . '_table_item_heading' == 'invoice_table_item_heading') {
+            $this->headings['item']   = _l('budget_head', '', false);
+        } else {
+            $this->headings['item']   = _l($langFrom . '_table_item_heading', '', false);
+        }
 
         $qty_heading = _l($langFrom . '_table_quantity_heading', '', false);
 

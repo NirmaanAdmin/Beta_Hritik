@@ -101,7 +101,7 @@ $tblfinvoicehtml .= '
 <thead>
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:14px;">
      <th width="7%;" align="center">'._l('the_number_sign').'</th>
-     <th width="33%" align="left">'._l('sales_item').'</th>
+     <th width="33%" align="left">'._l('budget_head').'</th>
      <th width="10%" align="right">'._l('invoice_table_quantity_heading').'</th>
      <th width="15%" align="right">'._l('invoice_table_rate_heading').'</th>
      <th width="15%" align="right">'._l('invoice_table_tax_heading').'</th>
@@ -130,7 +130,7 @@ $tblindexahtml .= '
 <thead>
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:14px;">
      <th width="7%;" align="center">'._l('the_number_sign').'</th>
-     <th width="33%" align="left">'._l('sales_item').'</th>
+     <th width="33%" align="left">'._l('budget_head').'</th>
      <th width="10%" align="right">'._l('invoice_table_quantity_heading').'</th>
      <th width="15%" align="right">'._l('invoice_table_rate_heading').'</th>
      <th width="15%" align="right">'._l('invoice_table_tax_heading').'</th>
@@ -184,7 +184,7 @@ if(!empty($indexa)) {
             <thead>
               <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
                  <th width="5%;" align="center">'._l('the_number_sign').'</th>
-                 <th width="13%" align="left">'._l('sales_item').'</th>
+                 <th width="13%" align="left">'._l('budget_head').'</th>
                  <th width="16%" align="left">'._l('invoice_items_list_description').'</th>
                  <th width="10%" align="left">'._l('vendor').'</th>
                  <th width="12%" align="left">'._l('invoice_no').'</th>
