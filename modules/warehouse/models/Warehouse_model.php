@@ -1449,7 +1449,7 @@ class Warehouse_model extends App_Model
 		$list_item = $production_approval_item = '';
 		$list_item = $this->warehouse_model->create_goods_receipt_row_template();
 		$production_approval_item = $this->warehouse_model->create_goods_receipt_production_approvals_template();
-		$sql = 'select item_code as commodity_code, ' . db_prefix() . 'items.description, ' . db_prefix() . 'items.unit_id, unit_price, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax, into_money, (' . db_prefix() . 'pur_order_detail.total-' . db_prefix() . 'pur_order_detail.into_money) as tax_money, total as goods_money, wh_quantity_received, tax_rate, tax_value, ' . db_prefix() . 'pur_order_detail.id as id from ' . db_prefix() . 'pur_order_detail
+		$sql = 'select item_code as commodity_code, ' . db_prefix() . 'items.description, ' . db_prefix() . 'pur_order_detail.unit_id, unit_price, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax, into_money, (' . db_prefix() . 'pur_order_detail.total-' . db_prefix() . 'pur_order_detail.into_money) as tax_money, total as goods_money, wh_quantity_received, tax_rate, tax_value, ' . db_prefix() . 'pur_order_detail.id as id from ' . db_prefix() . 'pur_order_detail
 		left join ' . db_prefix() . 'items on ' . db_prefix() . 'pur_order_detail.item_code =  ' . db_prefix() . 'items.id
 		left join ' . db_prefix() . 'taxes on ' . db_prefix() . 'taxes.id = ' . db_prefix() . 'pur_order_detail.tax where ' . db_prefix() . 'pur_order_detail.pur_order = ' . $pur_order;
 		$results = $this->db->query($sql)->result_array();
