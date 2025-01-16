@@ -90,6 +90,10 @@
                       $value = (isset($client) ? $client->vat : '');
                       echo render_input('vat', 'client_vat_number', $value);
                   } ?>
+                        <?php
+                        $pan = (isset($client) ? $client->pan : '');
+                        echo render_input('pan', 'pan', $pan);
+                        ?>
                         <?php hooks()->do_action('before_customer_profile_phone_field', $client ?? null); ?>
                         <?php $value = (isset($client) ? $client->phonenumber : ''); ?>
                         <?php echo render_input('phonenumber', 'client_phonenumber', $value); ?>

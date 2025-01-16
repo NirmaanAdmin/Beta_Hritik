@@ -365,6 +365,13 @@ if (!function_exists('format_customer_info')) {
             $vat = $data->client->vat;
         }
 
+        $pan = '';
+        if ($for == 'statement' && isset($data->pan)) {
+            $pan = $data->pan;
+        } elseif (in_array($type, ['billing', 'shipping']) && isset($data->client->pan)) {
+            $pan = $data->client->pan;
+        }
+
         if ($companyLink && (!isset($data->deleted_customer_name) ||
             (isset($data->deleted_customer_name) &&
                 empty($data->deleted_customer_name)))) {
@@ -384,6 +391,8 @@ if (!function_exists('format_customer_info')) {
         $format = _info_format_replace('phone', $phone, $format);
         $format = _info_format_replace('vat_number', $vat, $format);
         $format = _info_format_replace('vat_number_with_label', $vat == '' ? '' : _l('client_vat_number') . ': ' . $vat, $format);
+        $format = _info_format_replace('pan_number', $pan, $format);
+        $format = _info_format_replace('pan_number_with_label', $pan == '' ? '' : _l('pan') . ': ' . $pan, $format);
 
         $customFieldsCustomer = [];
 
@@ -500,6 +509,7 @@ if (!function_exists('format_organization_info')) {
     {
         $format = get_option('company_info_format');
         $vat    = get_option('company_vat');
+        $pan    = get_option('company_pan');
 
         $format = _info_format_replace('company_name', '<b style="color:black" class="company-name-formatted">' . get_option('invoice_company_name') . '</b>', $format);
         $format = _info_format_replace('address', get_option('invoice_company_address'), $format);
@@ -511,6 +521,8 @@ if (!function_exists('format_organization_info')) {
         $format = _info_format_replace('phone', get_option('invoice_company_phonenumber'), $format);
         $format = _info_format_replace('vat_number', $vat, $format);
         $format = _info_format_replace('vat_number_with_label', $vat == '' ? '':_l('company_vat_number') . ': ' . $vat, $format);
+        $format = _info_format_replace('pan_number', $pan, $format);
+        $format = _info_format_replace('pan_number_with_label', $pan == '' ? '':_l('pan') . ': ' . $pan, $format);
 
         $custom_company_fields = get_company_custom_fields();
 
