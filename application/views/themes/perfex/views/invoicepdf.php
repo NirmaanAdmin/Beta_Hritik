@@ -33,8 +33,15 @@ $organization_info = '<div style="color:#424242;">';
 
 $organization_info .= format_organization_info();
 
+$hsn_sac_value = '';
+$hsn_sac_code = '';
 if ($invoice->hsn_sac) {
-    $organization_info .= '<br />'._l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
+    $hsn_sac_value = get_hsn_sac_name_by_id($invoice->hsn_sac);
+    $organization_info .= '<br />'._l('hsn_sac') . ': ' . $hsn_sac_value . '<br />';
+    if(!empty($hsn_sac_value)) {
+        $parts = explode(' - ', $hsn_sac_value);
+        $hsn_sac_code = $parts[0];
+    }
 }
 
 $organization_info .= '</div>';
@@ -105,27 +112,31 @@ $pdf->Ln(hooks()->apply_filters('pdf_info_and_table_separator', 6));
 
 $tblfinvoicehtml = '';
 $tblfinvoicehtml .= '<h3 style="text-align:center; ">Final invoice</h3>';
-$tblfinvoicehtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="8">';
+$tblfinvoicehtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="5">';
 $tblfinvoicehtml .= '
 <thead>
-  <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:14px;">
-     <th width="7%;" align="center">' . _l('the_number_sign') . '</th>
-     <th width="33%" align="left">' . _l('budget_head') . '</th>
-     <th width="10%" align="right">' . _l('invoice_table_quantity_heading') . '</th>
-     <th width="15%" align="right">' . _l('invoice_table_rate_heading') . '</th>
-     <th width="15%" align="right">' . _l('invoice_table_tax_heading') . '</th>
-     <th width="20%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+  <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
+     <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
+     <th width="11%" align="left">' . _l('budget_head') . '</th>
+     <th width="23%" align="left">' . _l('description_of_services') . '</th>
+     <th width="10%" align="left">HSN/SAC</th>
+     <th width="5%" align="right">' . _l('invoice_table_quantity_heading') . '</th>
+     <th width="13%" align="right">' . _l('invoice_table_rate_heading') . '</th>
+     <th width="11%" align="right">' . _l('invoice_table_tax_heading') . '</th>
+     <th width="18%" align="right">' . _l('invoice_table_amount_heading') . '</th>
   </tr>
 </thead>';
 $tblfinvoicehtml .= '<tbody>';
 $tblfinvoicehtml .= '
-<tr style="font-size:13px;">
-    <td width="7%;" align="center">1</td>
-    <td width="33%" align="left;"><span style="font-size:13px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
-    <td width="10%" align="right">' . $basic_invoice['final_invoice']['qty'] . '</td>
-    <td width="15%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
-    <td width="15%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
-    <td width="20%" align="right">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
+<tr style="font-size:12px;">
+    <td width="5%;" align="center">1</td>
+    <td width="11%" align="left;"><span style="font-size:12px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
+    <td width="23%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
+    <td width="10%" align="left">' . $hsn_sac_code . '</td>
+    <td width="5%" align="right">' . $basic_invoice['final_invoice']['qty'] . '</td>
+    <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
+    <td width="11%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
+    <td width="18%" align="right">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
 </tr>';
 $tblfinvoicehtml .= '</tbody>';
 $tblfinvoicehtml .= '</table>';
@@ -234,7 +245,7 @@ if (!empty($indexa)) {
               <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
                  <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
                  <th width="13%" align="left">' . _l('budget_head') . '</th>
-                 <th width="16%" align="left">' . _l('invoice_items_list_description') . '</th>
+                 <th width="16%" align="left">' . _l('description_of_services') . '</th>
                  <th width="10%" align="left">' . _l('vendor') . '</th>
                  <th width="12%" align="left">' . _l('invoice_no') . '</th>
                  <th width="6%" align="right">' . _l('invoice_table_quantity_heading') . '</th>

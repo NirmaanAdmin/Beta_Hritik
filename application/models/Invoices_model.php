@@ -724,9 +724,15 @@ class Invoices_model extends App_Model
     {
         $original_invoice = $this->get($id);
         $updated          = false;
-        unset($data['discount_percent'], $data['discount_total'], $data['adjustment'], $data['items']);
+        unset($data['discount_percent'], $data['discount_total'], $data['adjustment']);
         if(isset($data['newitems'])) {
             unset($data['newitems']);
+        }
+
+        $inv_items = array();
+        if(isset($data['items'])) {
+            $inv_items = $data['items'];
+            unset($data['items']);
         }
 
         // Perhaps draft?
@@ -896,6 +902,10 @@ class Invoices_model extends App_Model
                     ])
                 );
             }
+        }
+        
+        if ($this->save_invoice_items($inv_items, $id)) {
+            $updated = true;
         }
 
         if ($this->save_items($items, $id)) {
@@ -1953,7 +1963,7 @@ class Invoices_model extends App_Model
 
         foreach ($indexa as $key => $value) {
             $final_invoice['name'] = _l('final_invoice_by_all_annexures');
-            $final_invoice['description'] = '';
+            $final_invoice['description'] = $invoice->final_inv_desc;
             $final_invoice['qty'] = 1;
             $final_invoice['subtotal'] += $value['subtotal'];
             $final_invoice['tax'] += $value['tax'];
@@ -2021,5 +2031,20 @@ class Invoices_model extends App_Model
             ]);
         }
         return true;
+    }
+
+    protected function save_invoice_items($items, $id)
+    {
+        $updated = false;
+        if(!empty($items)) {
+            foreach ($items as $key => $value) {
+                $this->db->where('id', $value['itemid']);
+                $this->db->update(db_prefix() . 'itemable', [
+                    'long_description' => $value['long_description'],
+                ]);
+            }
+            $updated = true;
+        }
+        return $updated;
     }
 }

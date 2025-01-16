@@ -585,7 +585,7 @@
                                         aria-hidden="true" data-toggle="tooltip"
                                         data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
                                         <?php echo _l('budget_head'); ?></th>
-                                        <th width="25%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
+                                        <th width="25%" align="left"><?php echo _l('description_of_services'); ?></th>
                                         <?php
                                         $custom_fields = get_custom_fields('items');
                                         foreach ($custom_fields as $cf) {
@@ -611,7 +611,8 @@
                                             <?php echo $annexure_invoice['final_invoice']['name']; ?>
                                         </td>
                                         <td align="left">
-                                            <?php echo $annexure_invoice['final_invoice']['description']; ?>
+                                            <?php echo '<textarea name="final_inv_desc" class="form-control" rows="5"> ' . clear_textarea_breaks($annexure_invoice['final_invoice']['description']) . '</textarea>';
+                                            ?>
                                         </td>
                                         <td align="right">
                                             <?php echo $annexure_invoice['final_invoice']['qty']; ?>
@@ -835,7 +836,8 @@
                     </div>
 
                     <?php
-                    $annexures = get_all_annexures(); 
+                    $annexures = get_all_annexures();
+                    $i = 1; 
                     foreach ($annexures as $key => $annexure) { ?>
                         <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>">
                             <div class="table-responsive s_table">
@@ -847,7 +849,7 @@
                                             aria-hidden="true" data-toggle="tooltip"
                                             data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
                                             <?php echo _l('budget_head'); ?></th>
-                                            <th width="20%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
+                                            <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
                                             <?php
                                             $custom_fields = get_custom_fields('items');
                                             foreach ($custom_fields as $cf) {
@@ -873,7 +875,6 @@
                                         <?php 
                                         if (isset($invoice) || isset($add_items)) 
                                         {
-                                            $i               = 1;
                                             $items_indicator = 'newitems';
                                             if (isset($invoice)) {
                                                 $add_items       = $invoice->items;
@@ -918,7 +919,7 @@
                                                     $table_row .= '<input type="hidden" class="order" name="' . $items_indicator . '[' . $i . '][order]">';
                                                     $table_row .= '</td>';
                                                     $table_row .= '<td class="bold description"><textarea name="' . $items_indicator . '[' . $i . '][description]" class="form-control" rows="5" disabled>' . clear_textarea_breaks($item['description']) . '</textarea></td>';
-                                                    $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5" disabled>' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
+                                                    $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
 
                                                     $table_row .= render_custom_fields_items_table_in($item, $items_indicator . '[' . $i . ']');
 
