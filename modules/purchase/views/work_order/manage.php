@@ -164,7 +164,7 @@
             <div class="dropzone-previews"></div>
             <i class="fa fa-question-circle" data-toggle="tooltip" data-title="<?php echo _l('expense_name_help'); ?>"></i>
             <?php echo form_hidden('vendor'); ?>
-            <?php echo render_input('expense_name','expense_name'); ?>
+            <?php echo render_input('expense_name','description_of_services'); ?>
             <?php echo render_textarea('note','expense_add_edit_note','',array('rows'=>4),array()); ?>
             <?php echo render_select('clientid',$customers,array('userid','company'),'customer'); ?>
 

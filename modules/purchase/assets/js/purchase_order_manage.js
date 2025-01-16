@@ -56,6 +56,7 @@ var expenseDropzone;
     }
 
     appValidateForm($('#pur_order-expense-form'), {
+          expense_name: 'required',
           category: 'required',
           date: 'required',
           amount: 'required'

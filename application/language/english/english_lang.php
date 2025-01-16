@@ -4163,3 +4163,5 @@ $lang['final_estimate_by_all_annexures'] = 'The final estimate by all annexures'
 $lang['budget_head'] = 'Budget head';
 $lang['deal_slip_no'] = 'Deal slip no.';
 $lang['pan'] = 'PAN';
+$lang['bank_detail'] = 'Bank detail';
+$lang['description_of_services'] = 'Description of Services';

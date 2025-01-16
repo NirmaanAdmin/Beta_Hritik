@@ -1296,3 +1296,66 @@ function get_estimate_items_by_annexure($id, $annexure, $item_id = '')
     $CI->db->order_by('item_order', 'asc');
     return $CI->db->get()->result_array();
 }
+
+function get_bank_details($clientid)
+{
+    $CI = &get_instance();
+    $CI->db->select();
+    $CI->db->from(db_prefix() . 'clients');
+    $CI->db->where('userid', $clientid);
+    $result = $CI->db->get()->row();
+    if(!empty($result)) {
+        return nl2br_with_space($result->bank_detail, true, true);
+    }
+    return '';
+}
+
+function nl2br_with_space($str, $is_xhtml = true, $space = false) {
+    $breakTag = $is_xhtml ? '<br>' : '<br>';
+    $spaceTag = $space ? '  ' : '';
+    return preg_replace(
+        "/([^\r\n]*)(\r\n|\n\r|\r|\n)/",
+        '$1' . $spaceTag . $breakTag . $spaceTag,
+        $str
+    );
+}
+
+function amount_to_word($number) {
+   $no = floor($number);
+   $point = round($number - $no, 2) * 100;
+   $hundred = null;
+   $digits_1 = strlen($no);
+   $i = 0;
+   $str = array();
+   $words = array('0' => '', '1' => 'One', '2' => 'Two',
+    '3' => 'Three', '4' => 'Four', '5' => 'Five', '6' => 'Six',
+    '7' => 'Seven', '8' => 'Eight', '9' => 'Nine',
+    '10' => 'Ten', '11' => 'Eleven', '12' => 'Twelve',
+    '13' => 'Thirteen', '14' => 'Fourteen',
+    '15' => 'Fifteen', '16' => 'Sixteen', '17' => 'Seventeen',
+    '18' => 'Eighteen', '19' =>'Nineteen', '20' => 'Twenty',
+    '30' => 'Thirty', '40' => 'Forty', '50' => 'Fifty',
+    '60' => 'Sixty', '70' => 'Seventy',
+    '80' => 'Eighty', '90' => 'Ninety');
+   $digits = array('', 'Hundred', 'Thousand', 'Lakh', 'Crore');
+   while ($i < $digits_1) {
+     $divider = ($i == 2) ? 10 : 100;
+     $number = floor($no % $divider);
+     $no = floor($no / $divider);
+     $i += ($divider == 10) ? 1 : 2;
+     if ($number) {
+        $plural = (($counter = count($str)) && $number > 9) ? 's' : null;
+        $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
+        $str [] = ($number < 21) ? $words[$number] .
+            " " . $digits[$counter] . $plural . " " . $hundred
+            :
+            $words[floor($number / 10) * 10]
+            . " " . $words[$number % 10] . " "
+            . $digits[$counter] . $plural . " " . $hundred;
+     } else $str[] = null;
+  }
+  $str = array_reverse($str);
+  $result = implode('', $str);
+  $points = ($point) ? "." . $words[$point / 10] . " " .$words[$point = $point % 10] : '';
+  return $result . $points . " Only";
+}

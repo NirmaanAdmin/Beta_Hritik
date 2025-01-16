@@ -193,6 +193,10 @@
                      $selected                 = (isset($client) ? $client->country : $customer_default_country);
                      echo render_select('country', $countries, [ 'country_id', [ 'short_name']], 'clients_country', $selected, ['data-none-selected-text' => _l('dropdown_non_selected_tex')]);
                      ?>
+
+                        <hr />
+                        <?php $bank_detail = (isset($client) ? $client->bank_detail : ''); ?>
+                        <?php echo render_textarea('bank_detail', 'bank_detail', $bank_detail); ?>
                     </div>
                 </div>
             </div>

@@ -33,6 +33,10 @@ $organization_info = '<div style="color:#424242;">';
 
 $organization_info .= format_organization_info();
 
+if ($invoice->hsn_sac) {
+    $organization_info .= '<br />'._l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
+}
+
 $organization_info .= '</div>';
 
 // Bill to
@@ -67,9 +71,9 @@ if ($invoice->project_id && get_option('show_project_on_invoice') == 1) {
     $invoice_info .= _l('project') . ': ' . get_project_name_by_id($invoice->project_id) . '<br />';
     $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_project_name', $invoice_info, $invoice);
 }
-if ($invoice->hsn_sac) {
-    $invoice_info .= _l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
-}
+// if ($invoice->hsn_sac) {
+//     $invoice_info .= _l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
+// }
 if ($invoice->deal_slip_no) {
     $invoice_info .= _l('deal_slip_no') . ': ' . $invoice->deal_slip_no . '<br />';
 }
@@ -127,6 +131,46 @@ $tblfinvoicehtml .= '</tbody>';
 $tblfinvoicehtml .= '</table>';
 
 $pdf->writeHTML($tblfinvoicehtml, true, false, false, false, '');
+
+$amount_to_word = amount_to_word($basic_invoice['final_invoice']['amount']);
+$tbltotalinvhtml = '';
+$tbltotalinvhtml .= '<table width="100%" cellspacing="0" cellpadding="0">';
+$tbltotalinvhtml .= '
+<thead>
+  <tr height="30" style="font-size:14px;">
+     <th width="100%;" align="left">
+        <strong>'.$amount_to_word.'.</strong>
+     </th>
+  </tr>
+</thead>';
+$tbltotalinvhtml .= '</table>';
+
+$pdf->writeHTML($tbltotalinvhtml, true, false, false, false, '');
+
+$bank_details = get_bank_details($invoice->clientid);
+$tblbanksignhtml = '';
+$tblbanksignhtml .= '<table width="100%" cellspacing="0" cellpadding="0">';
+$tblbanksignhtml .= '
+<tbody>
+  <tr style="font-size:14px;">
+     <td width="50%;" align="left">
+        <strong>' . _l('bank_detail') . '</strong>
+        <br>
+        '.$bank_details.'
+     </td>
+     <td width="50%;" align="right">
+        <strong>For BASILIUS INTERNATIONAL LLP</strong>
+        <br /><br /><br /><br /><br />
+        _________________________
+        <br />
+        Authorised Signatory
+     </td>
+  </tr>
+</thead>';
+$tblbanksignhtml .= '</table>';
+
+$pdf->writeHTML($tblbanksignhtml, true, false, false, false, '');
+$pdf->AddPage();
 
 $tblindexahtml = '';
 $tblindexahtml .= '<h3 style="text-align:center; ">Index - A</h3>';
