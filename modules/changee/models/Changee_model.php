@@ -1132,7 +1132,7 @@ class Changee_model extends App_Model
      */
     public function add_co_request($data)
     {
-       
+
         $data['request_date'] = date('Y-m-d H:i:s');
         $check_appr = $this->check_approval_setting($data['project'], 'co_request', 0);
         $data['status'] = ($check_appr == true) ? 2 : 1;
@@ -1171,7 +1171,7 @@ class Changee_model extends App_Model
         unset($data['remarks']);
         unset($data['tender_item']);
         unset($data['variation']);
-      
+
 
         if (isset($data['send_to_vendors']) && count($data['send_to_vendors']) > 0) {
             $data['send_to_vendors'] = implode(',', $data['send_to_vendors']);
@@ -1201,14 +1201,14 @@ class Changee_model extends App_Model
         }
 
         $data['hash'] = app_generate_hash();
-        
+
         $this->db->insert(db_prefix() . 'co_request', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'co_request', 'changee_request', $insert_id);
         // if ($data['status'] == 2) {
         //     $this->send_mail_to_sender('changee_request', $data['status'], $insert_id);
         // }
-        
+
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "changee";
@@ -1222,7 +1222,7 @@ class Changee_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_changee_files('co_request', $insert_id);
         if ($insert_id) {
 
@@ -1577,7 +1577,7 @@ class Changee_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
             return true;
         }
@@ -1817,7 +1817,7 @@ class Changee_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_changee_files('pur_quotation', $insert_id);
 
         if ($insert_id) {
@@ -2241,7 +2241,7 @@ class Changee_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
             return true;
         }
@@ -2276,27 +2276,27 @@ class Changee_model extends App_Model
                 $cron_email_options['status'] = $status;
                 $cron_email_options['sender'] = 'yes';
                 $cron_email['options'] = json_encode($cron_email_options, true);
-                $this->db->insert(db_prefix().'cron_email', $cron_email);
+                $this->db->insert(db_prefix() . 'cron_email', $cron_email);
 
                 $from_status = '';
-                if($original_po->approve_status == 1) {
+                if ($original_po->approve_status == 1) {
                     $from_status = 'Draft';
-                } else if($original_po->approve_status == 2) {
+                } else if ($original_po->approve_status == 2) {
                     $from_status = 'Approved';
-                } else if($original_po->approve_status == 3) {
+                } else if ($original_po->approve_status == 3) {
                     $from_status = 'Rejected';
                 }
 
                 $to_status = '';
-                if($status == 1) {
+                if ($status == 1) {
                     $to_status = 'Draft';
-                } else if($status == 2) {
+                } else if ($status == 2) {
                     $to_status = 'Approved';
-                } else if($status == 3) {
+                } else if ($status == 3) {
                     $to_status = 'Rejected';
                 }
 
-                $this->log_po_activity($id, "Changee order status updated from ".$from_status." to ".$to_status."");
+                $this->log_po_activity($id, "Changee order status updated from " . $from_status . " to " . $to_status . "");
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
@@ -2477,7 +2477,7 @@ class Changee_model extends App_Model
         $cron_email_options['project'] = $data['project'];
         $cron_email_options['requester'] = $data['requester'];
         $cron_email['options'] = json_encode($cron_email_options, true);
-        $this->db->insert(db_prefix().'cron_email', $cron_email);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_changee_files('pur_order', $insert_id);
         if ($insert_id) {
             // Update next changee order number in settings
@@ -2673,14 +2673,14 @@ class Changee_model extends App_Model
             $affectedRows++;
             $this->db->where('id', $id);
             $po = $this->db->get(db_prefix() . 'co_orders')->row();
-            if($po->approve_status == 3) {
+            if ($po->approve_status == 3) {
                 $status_array = array();
                 $status_array['approve_status'] = 1;
                 $this->db->where('id', $id);
                 $this->db->update(db_prefix() . 'co_orders', $status_array);
                 $from_status = 'Rejected';
                 $to_status = 'Draft';
-                $this->log_po_activity($id, "Changee order status updated from ".$from_status." to ".$to_status."");
+                $this->log_po_activity($id, "Changee order status updated from " . $from_status . " to " . $to_status . "");
             }
         }
 
@@ -3199,7 +3199,7 @@ class Changee_model extends App_Model
             $this->db->where('rel_id', $data['rel_id']);
             $this->db->where('rel_type', $data['rel_type']);
             $rel_id_data = $this->db->get(db_prefix() . 'co_approval_details')->result_array();
-            if(empty($rel_id_data)) {
+            if (empty($rel_id_data)) {
                 $row['action'] = 'approve';
                 $row['staffid'] = $value['id'];
                 $row['date_send'] = $date_send;
@@ -3877,13 +3877,13 @@ class Changee_model extends App_Model
                 <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($co_request_id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($co_request_id) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area($co_request_id) . '</span><br />';
-                if($co_request->po_order_id != 0){
-                    $html .= '<span style="text-align: right;"><b>' . _l('purchase_order') . ':</b> ' . get_pur_order_name_by_id($co_request->po_order_id) . '</span><br />';
-                }
-                if($co_request->wo_order_id != 0){
-                    $html .= '<span style="text-align: right;"><b>' . _l('wo_order') . ':</b> ' . get_wo_order_name_by_id($co_request->wo_order_id) . '</span><br />';
-                }
-            $html .='</td>
+        if ($co_request->po_order_id != 0) {
+            $html .= '<span style="text-align: right;"><b>' . _l('purchase_order') . ':</b> ' . get_pur_order_name_by_id($co_request->po_order_id) . '</span><br />';
+        }
+        if ($co_request->wo_order_id != 0) {
+            $html .= '<span style="text-align: right;"><b>' . _l('wo_order') . ':</b> ' . get_wo_order_name_by_id($co_request->wo_order_id) . '</span><br />';
+        }
+        $html .= '</td>
           </tr>
         </tbody>
       </table>
@@ -3912,7 +3912,7 @@ class Changee_model extends App_Model
             $diff =  $row['unit_price'] - $row['original_unit_price'];
             $diff_unit = $row['quantity'] - $row['original_quantity'];
             $non_tender = '';
-            if($row['tender_item'] == 1) {
+            if ($row['tender_item'] == 1) {
                 $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
             }
             $html .= '<tr nobr="true" class="sortable">
@@ -4046,7 +4046,7 @@ class Changee_model extends App_Model
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
             $non_tender = '';
-            if($row['tender_item'] == 1) {
+            if ($row['tender_item'] == 1) {
                 $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
             }
             $html .= '<tr nobr="true" class="sortable">
@@ -4716,43 +4716,47 @@ class Changee_model extends App_Model
                 ' . $delivery_date . '
                 ' . $delivery_person . '
                 ' . $co_request_name . ' ';
-                if (!empty($pur_order->addedfrom)) {
-                    $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
-                }
-                $group_head_po = $this->get_budget_head_po($pur_order->id);
-                if ($group_head_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
-                }
-                $group_sub_head_po = $this->get_budget_sub_head_po($pur_order->id);
-                if ($group_sub_head_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
-                }
-                $group_req_area_po = $this->get_co_request_area_po($pur_order->id);
-                if ($group_req_area_po != '') {
-                    $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area_po($pur_order->id) . '</span><br />';
-                }
-                $html .= '            
+        if (!empty($pur_order->addedfrom)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->addedfrom) . '</span><br />';
+        }
+        $group_head_po = $this->get_budget_head_po($pur_order->id);
+        if ($group_head_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head_po($pur_order->id) . '</span><br />';
+        }
+        $group_sub_head_po = $this->get_budget_sub_head_po($pur_order->id);
+        if ($group_sub_head_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head_po($pur_order->id) . '</span><br />';
+        }
+        $group_req_area_po = $this->get_co_request_area_po($pur_order->id);
+        if ($group_req_area_po != '') {
+            $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area_po($pur_order->id) . '</span><br />';
+        }
+        $html .= '            
             </td>
           </tr>
         </tbody>
       </table>
       ';
       $order_summary_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->order_summary);
-      $html .= '<div class="col-md-12">';
-      // $html .= '<div style="page-break-before:always"></div>';
-      // $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
+      $html .= '<div class="col-md-12 ">
+    <p class="bold"> ' . $order_summary_with_break . '</p>';
+      $html .= '<div style="page-break-before:always"></div>';
+      $html .= '<h4 style="font-size: 20px;text-align:center;">ANNEXURE - A</h4>';
 
-      $html .=  '<table class="table purorder-item" style="width: 100%">
+        $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
-            <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
-            <th class="thead-dark" style="width: 25%">' . _l('decription') . '</th>
-            <th class="thead-dark" align="right" style="width: 5%">' . _l('unit') . '</th>
-            <th class="thead-dark" align="right" style="width: 12.5%">' . _l('original_unit_price') . '</th>
-            <th class="thead-dark" align="right" style="width: 12.5%">' . _l('updated_unit_price') . '</th>
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('original_quantity') . '</th>
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('updated_quantity') . '</th>
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('into_money') . '</th>
+            <th class="thead-dark" style="width: 10%;font-size: 11px">' . _l('items') . '</th>
+            <th class="thead-dark" style="width: 25%;font-size: 11px">' . _l('decription') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('updated_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('updated_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">CO (before tax)</th>
+            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">Contract Value Incl CO</th>
+            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('tax_value') . '</th>
+            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('debit_note_total') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">Remark</th>
           </tr>
         </thead>
         <tbody>';
@@ -4763,35 +4767,60 @@ class Changee_model extends App_Model
         foreach ($co_order_detail as $row) {
             $items = $this->get_items_by_id($row['item_code']);
             $units = $this->get_units_by_id($row['unit_id']);
+            $diff_unit = $row['quantity'] - $row['original_quantity'];
+            $diff =  $row['unit_price'] - $row['original_unit_price'];
+            if ($row['tax_name'] != '') {
+                $tax_val = changee_pur_html_entity_decode($row['tax_name']);
+            } else {
+                $this->load->model('changee/changee_model');
+                if ($row['tax'] != '') {
+                    $tax_arr =  $row['tax'] != '' ? explode('|', $row['tax'] ?? '') : [];
+                    $tax_str = '';
+                    if (count($tax_arr) > 0) {
+                        foreach ($tax_arr as $key => $tax_id) {
+                            if (($key + 1) < count($tax_arr)) {
+                                $tax_str .= $this->changee_model->get_tax_name($tax_id) . '|';
+                            } else {
+                                $tax_str .= $this->changee_model->get_tax_name($tax_id);
+                            }
+                        }
+                    }
+
+                    $tax_val = changee_pur_html_entity_decode($tax_str);
+                }
+            }
             $non_tender = '';
-            if($row['tender_item'] == 1) {
+            if ($row['tender_item'] == 1) {
                 $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
             }
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
-            <td style="width: 25%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 5%">' . $units->unit_name . '</td>
-            <td align="right" style="width: 12.5%">' . app_format_money($row['original_unit_price'], '') . '</td>
-            <td align="right" style="width: 12.5%">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 10%">' . $row['original_quantity'] . '</td>
-            <td align="right" style="width: 10%">' . $row['quantity'] . '</td>
-            <td align="right" style="width: 10%">' . app_format_money($row['into_money'], '') . '</td>
+            <td style="width: 10%; font-size: 11px">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
+            <td style="width: 25%; font-size: 11px">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="right" style="width: 7%; font-size: 11px">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff_unit . '</span></td>
+            <td align="right" style="width: 7%; font-size: 11px">' . changee_pur_html_entity_decode($row['quantity']) . ' ' . $units->unit_name . '</td>
+            <td align="right" style="width: 7%; font-size: 11px">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
+            <td align="right" style="width: 7%; font-size: 11px">₹' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['into_money'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['into_money_updated'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['tax_value'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['total'], '') . '</td>
+            <td align="right" style="width: 7%; font-size: 11px">' . $row['remarks'] . '</td>
           </tr>';
 
-          $t_mn += $row['total_money'];
-          $tax_total += $row['total'] - $row['into_money_updated'];
-          $sub_total_amn += $row['total_money'] - $tax_total;
+            $t_mn += $row['total_money'];
+            $tax_total += $row['total'] - $row['into_money_updated'];
+            $sub_total_amn += $row['total_money'] - $tax_total;
         }
         $html .=  '</tbody>
       </table><br><br>';
-      
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
             <td width="33%"></td>
             <td>' . _l('subtotal') . ' </td>
             <td class="subtotal">
-            ' .'₹ '. app_format_money($pur_order->subtotal, '') . '
+            ' . '₹ ' . app_format_money($pur_order->subtotal, '') . '
             </td>
             </tr>';
         }
@@ -4800,10 +4829,11 @@ class Changee_model extends App_Model
             <td width="33%"></td>
             <td>' . _l('Tax') . ' </td>
             <td class="taxtotal">
-            ' .'₹ '. app_format_money($tax_total, '') . '
+            ' . '₹ ' . app_format_money($tax_total, '') . '
             </td>
             </tr>';
         }
+
         if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
                   <td width="33%"></td>
@@ -4816,7 +4846,7 @@ class Changee_model extends App_Model
                   <td width="33%"></td>
                      <td>' . _l('discount(money)') . '</td>
                      <td class="subtotal">
-                        ' .'₹ '. app_format_money($pur_order->discount_total, '') . '
+                        ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                      </td>
                   </tr>';
         }
@@ -4824,17 +4854,34 @@ class Changee_model extends App_Model
                  <td width="33%"></td>
                  <td><strong>' . _l('total') . '</strong></td>
                  <td class="subtotal">
-                    ' .'₹ '. app_format_money($pur_order->total, '') . '
+                    ' . '₹ ' . app_format_money($pur_order->total, '') . '
                  </td>
               </tr>';
+        if ($pur_order->co_value) {
+            $html .= '<tr id="subtotal">
+            <td width="33%"></td>
+            <td>' . _l('change_order_value') . ' </td>
+            <td class="subtotal">
+            ' . '₹ ' . app_format_money($pur_order->co_value, '') . '
+            </td>
+            </tr>';
+        }
+        if ($pur_order->non_tender_total) {
+            $html .= '<tr id="subtotal">
+            <td width="33%"></td>
+            <td>' . _l('non_tender_items_in_change_order') . ' </td>
+            <td class="subtotal">
+            ' . '₹ ' . app_format_money($pur_order->non_tender_total, '') . '
+            </td>
+            </tr>';
+        }
 
         $html .= ' </tbody></table>';
-
         $html .= '<div>&nbsp;</div>';
         $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
         $html .= '<div class="col-md-12 mtop15">
             <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
-        // $html .= '<div style="page-break-before:always"></div>';
+        $html .= '<div style="page-break-before:always"></div>';
         $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
             </div>';
         $html .= '<br>
@@ -4850,7 +4897,7 @@ class Changee_model extends App_Model
         </tbody>
       </table>';
         $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/pur_order_pdf.css') . '"  rel="stylesheet" type="text/css" />';
-        
+
         return $html;
     }
 
@@ -5475,7 +5522,7 @@ class Changee_model extends App_Model
             if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id)) {
                 // Check if no attachments left, so we can delete the folder also
                 $other_attachments = list_files(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id);
-                if (count($other_attachments) == 0) { 
+                if (count($other_attachments) == 0) {
                     // okey only index.html so we can delete the folder also
                     delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $attachment->rel_id);
                 }
@@ -10299,7 +10346,7 @@ class Changee_model extends App_Model
      * @param      array   $unit_data  The unit data
      * @param      string  $name       The name
      */
-    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '',$into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '',$remarks = '', $tender_item = 0)
+    public function create_changee_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $remarks = '', $tender_item = 0)
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -10360,7 +10407,7 @@ class Changee_model extends App_Model
             $name_tax_rate = $name . '[tax_rate]';
             $name_tax_id_select = $name . '[tax_select][]';
             $name_total = $name . '[total]';
-            $name_remarks = $name. '[remarks]';
+            $name_remarks = $name . '[remarks]';
             $name_variation = $name . '[variation]';
             $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
@@ -10398,12 +10445,12 @@ class Changee_model extends App_Model
 
 
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]);
-        if($tender_item == 1) {
-            $row .= '<span>'._l('this_is_non_tendor_item').'</span>';
+        if ($tender_item == 1) {
+            $row .= '<span>' . _l('this_is_non_tendor_item') . '</span>';
         }
         $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation">Diff : </span></td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Diff : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10417,7 +10464,7 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
-        $row .= '<td class="original_quantities">'.render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation_unit">Diff : </span> '.$unit_name.'</td>';
+        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Diff : </span> ' . $unit_name . '</td>';
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
@@ -10926,7 +10973,7 @@ class Changee_model extends App_Model
      *
      * @return     string      
      */
-    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '',$into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '',$remarks = '', $tender_item = 0)
+    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $remarks = '', $tender_item = 0)
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -10987,7 +11034,7 @@ class Changee_model extends App_Model
             $name_tax_rate = $name . '[tax_rate]';
             $name_tax_id_select = $name . '[tax_select][]';
             $name_total = $name . '[total]';
-            $name_remarks = $name. '[remarks]';
+            $name_remarks = $name . '[remarks]';
             $name_variation = $name . '[variation]';
             $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
@@ -11025,12 +11072,12 @@ class Changee_model extends App_Model
 
 
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]);
-        if($tender_item == 1) {
-            $row .= '<span>'._l('this_is_non_tendor_item').'</span>';
+        if ($tender_item == 1) {
+            $row .= '<span>' . _l('this_is_non_tendor_item') . '</span>';
         }
         $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation">Diff : </span></td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Diff : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -11044,7 +11091,7 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
-        $row .= '<td class="original_quantities">'.render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin').'<span class="variation_unit">Diff : </span> '.$unit_name.'</td>';
+        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Diff : </span> ' . $unit_name . '</td>';
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
@@ -14208,35 +14255,35 @@ class Changee_model extends App_Model
         $this->db->select('*');
         $this->db->where('related', $related);
         $this->db->where('project_id', $project);
-        $project_members = $this->db->get(db_prefix().'co_approval_setting')->row();
+        $project_members = $this->db->get(db_prefix() . 'co_approval_setting')->row();
 
-        if(!empty($project_members)) {
-            if(!empty($project_members->approver)) {
+        if (!empty($project_members)) {
+            if (!empty($project_members->approver)) {
                 $approver = $project_members->approver;
-                $approver = explode(',',$approver);
+                $approver = explode(',', $approver);
                 $this->db->select('staffid as id, "approve" as action', FALSE);
                 $this->db->where_in('staffid', $approver);
-                $intersect = $this->db->get(db_prefix().'staff')->result_array();
+                $intersect = $this->db->get(db_prefix() . 'staff')->result_array();
             }
         }
 
-        if($response == 1) {
+        if ($response == 1) {
             $intersect = array_values($intersect);
             $this->db->select('staffid as id, "approve" as action', FALSE);
             $this->db->where('admin', 1);
-            $this->db->order_by('staffid','desc');
-            $this->db->limit(1);  
+            $this->db->order_by('staffid', 'desc');
+            $this->db->limit(1);
             $staffs = $this->db->get('tblstaff')->result_array();
             $intersect = array_merge($intersect, $staffs);
             $intersect = array_unique($intersect, SORT_REGULAR);
             $intersect = array_values($intersect);
             return $intersect;
         } else {
-            if(!empty($intersect)) {
+            if (!empty($intersect)) {
                 $intersect = array_filter($intersect, function ($var) {
                     return ($var['id'] == $user_id);
                 });
-                if(!empty($intersect)) {
+                if (!empty($intersect)) {
                     $check_status = true;
                 }
             }
@@ -14246,7 +14293,7 @@ class Changee_model extends App_Model
         $this->db->where('staffid', $user_id);
         $this->db->where('admin', 1);
         $staffs = $this->db->get('tblstaff')->result_array();
-        if(count($staffs) > 0) {
+        if (count($staffs) > 0) {
             $check_status = true;
         }
         return $check_status;
@@ -14258,13 +14305,13 @@ class Changee_model extends App_Model
         $this->db->select('staffid as id, "approve" as action', FALSE);
         $this->db->where('admin', 1);
         $this->db->or_where('staffid', $user_id);
-        $this->db->order_by('staffid','desc');
+        $this->db->order_by('staffid', 'desc');
         $staffs = $this->db->get('tblstaff')->result_array();
         $approver_list = array_merge($approver_list, $staffs);
         $approver_list = array_unique($approver_list, SORT_REGULAR);
         $approver_list = array_values($approver_list);
 
-        if(!empty($approver_list)) {
+        if (!empty($approver_list)) {
             $approver_list = array_column($approver_list, 'id');
             $this->db->select('staffid as id, email, firstname, lastname');
             $this->db->where_in('staffid', $approver_list);
@@ -14272,33 +14319,33 @@ class Changee_model extends App_Model
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
-            
+
             foreach ($approver_list as $key => $value) {
                 $data = array();
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
-                if($rel_name == 'changee_request') {
+                if ($rel_name == 'changee_request') {
                     $data['mail_to'] = $value['email'];
                     $data['co_request_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('changee_request_to_approver','changee',$data);
+                    $template = mail_template('changee_request_to_approver', 'changee', $data);
                     $template->send();
                 }
 
-                if($rel_name == 'changee_order') {
+                if ($rel_name == 'changee_order') {
                     $data['mail_to'] = $value['email'];
                     $data['po_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('changee_order_to_approver','changee',$data);
+                    $template = mail_template('changee_order_to_approver', 'changee', $data);
                     $template->send();
                 }
 
-                if($rel_name == 'quotation') {
+                if ($rel_name == 'quotation') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('changee_quotation_to_approver','changee',$data);
+                    $template = mail_template('changee_quotation_to_approver', 'changee', $data);
                     $template->send();
                 }
             }
@@ -14310,25 +14357,25 @@ class Changee_model extends App_Model
         $requester = 0;
         $vendor_id = 0;
         $vendor_name = '';
-        if($type == 'changee_request') {
+        if ($type == 'changee_request') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'co_request')->row();
             $requester = $row->requester;
         }
 
-        if($type == 'changee_order') {
+        if ($type == 'changee_order') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'co_orders')->row();
             $requester = $row->addedfrom;
             $vendor_id = $row->vendor;
-            if($vendor_id != 0) {
+            if ($vendor_id != 0) {
                 $this->db->where('userid', $vendor_id);
                 $vendor_detail = $this->db->get(db_prefix() . 'pur_vendor')->row();
                 $vendor_name = $vendor_detail->company;
             }
         }
 
-        if($type == 'quotation') {
+        if ($type == 'quotation') {
             $this->db->where('id', $id);
             $row = $this->db->get(db_prefix() . 'co_estimates')->row();
             $requester = $row->addedfrom;
@@ -14340,7 +14387,7 @@ class Changee_model extends App_Model
         $this->db->or_where('staffid', $user_id);
         $staffs = $this->db->get('tblstaff')->result_array();
 
-        if($type == 'changee_order') {
+        if ($type == 'changee_order') {
             $this->db->select('email, firstname, lastname');
             $this->db->where('userid', $vendor_id);
             $this->db->where('is_primary', 1);
@@ -14349,7 +14396,7 @@ class Changee_model extends App_Model
             $staffs = array_values($staffs);
         }
 
-        if(!empty($staffs)) {
+        if (!empty($staffs)) {
 
             $this->db->where('staffid', $user_id);
             $login_staff = $this->db->get('tblstaff')->row();
@@ -14359,28 +14406,28 @@ class Changee_model extends App_Model
                 $data['contact_firstname'] = $login_staff->firstname;
                 $data['contact_lastname'] = $login_staff->lastname;
 
-                if($type == 'changee_request') {
+                if ($type == 'changee_request') {
                     $data['mail_to'] = $value['email'];
                     $data['co_request_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('changee_request_to_sender','changee',$data);
+                    $template = mail_template('changee_request_to_sender', 'changee', $data);
                     $template->send();
                 }
 
-                if($type == 'changee_order') {
+                if ($type == 'changee_order') {
                     $data['mail_to'] = $value['email'];
                     $data['po_id'] = $id;
                     $data['vendor_name'] = $vendor_name;
                     $data = (object) $data;
-                    $template = mail_template('changee_order_to_sender','changee',$data);
+                    $template = mail_template('changee_order_to_sender', 'changee', $data);
                     $template->send();
                 }
 
-                if($type == 'quotation') {
+                if ($type == 'quotation') {
                     $data['mail_to'] = $value['email'];
                     $data['pur_estimate_id'] = $id;
                     $data = (object) $data;
-                    $template = mail_template('changee_quotation_to_sender','changee',$data);
+                    $template = mail_template('changee_quotation_to_sender', 'changee', $data);
                     $template->send();
                 }
             }
@@ -14485,7 +14532,7 @@ class Changee_model extends App_Model
     {
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'cron_email');
-        return true; 
+        return true;
     }
 
     /**
@@ -14540,8 +14587,8 @@ class Changee_model extends App_Model
      */
     public function get_pur_order_detail_in_po($pur_order)
     {
-       
-        $pur_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
+
+        $pur_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, prq.description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
         FROM ' . db_prefix() . 'pur_order_detail prq 
         LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id 
         WHERE prq.pur_order = ' . $pur_order)->result_array();
@@ -14565,7 +14612,7 @@ class Changee_model extends App_Model
      */
     public function get_wo_order_detail_in_po($wo_order)
     {
-       
+
         $wo_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, long_description as description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
         FROM ' . db_prefix() . 'wo_order_detail prq 
         LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id 
@@ -14581,7 +14628,7 @@ class Changee_model extends App_Model
 
         return $wo_order_lst;
     }
-     /**
+    /**
      * Gets the purchase request.
      *
      * @param      string  $id     The identifier
@@ -14610,7 +14657,6 @@ class Changee_model extends App_Model
     public function get_work_order($id = '')
     {
         if ($id == '') {
-           
         } else {
             $this->db->where('id', $id);
             return $this->db->get(db_prefix() . 'wo_orders')->row();

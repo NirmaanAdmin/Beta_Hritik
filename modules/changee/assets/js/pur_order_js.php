@@ -329,7 +329,7 @@ function pur_calculate_total(from_discount_money){
 
       var tender_item = $(this).find('.tender-item').val();
       if(tender_item == 1) {
-        non_tender_total = non_tender_total + variation;
+        non_tender_total = non_tender_total + variation + item_tax;
       }
     });
 
