@@ -512,7 +512,7 @@ if (!function_exists('format_organization_info')) {
         $pan    = get_option('company_pan');
 
         $format = _info_format_replace('company_name', '<b style="color:black" class="company-name-formatted">' . get_option('invoice_company_name') . '</b>', $format);
-        $format = _info_format_replace('address', get_option('invoice_company_address'), $format);
+        $format = _info_format_replace('street', get_option('invoice_company_address'), $format);
         $format = _info_format_replace('city', get_option('invoice_company_city'), $format);
         $format = _info_format_replace('state', get_option('company_state'), $format);
 

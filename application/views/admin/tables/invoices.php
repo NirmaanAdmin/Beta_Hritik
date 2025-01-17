@@ -112,7 +112,7 @@ return App_table::find('invoices')
 
             $row[] = e(app_format_money($total_left_to_pay, $aRow['currency_name']));
 
-            $row[] = e($aRow['year']);
+            // $row[] = e($aRow['year']);
 
             $row[] = e(_d($aRow['date']));
 
