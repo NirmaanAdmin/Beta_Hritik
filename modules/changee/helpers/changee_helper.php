@@ -3297,37 +3297,78 @@ function get_status_modules_co($module_name)
     }
 }
 
-function get_pur_order_name_by_id($po_order){
-    if(!empty($po_order)) {
-        
-        $CI = & get_instance();
+function get_pur_order_name_by_id($po_order)
+{
+    if (!empty($po_order)) {
+
+        $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->from(db_prefix() . 'pur_orders');
         $CI->db->where('id', $po_order);
         $result = $CI->db->get()->row_array();
-        
-        if(!empty($result)) {
-            return $result['pur_order_number'] .'-'. $result['pur_order_name'] ;           
+
+        if (!empty($result)) {
+            return $result['pur_order_number'] . '-' . $result['pur_order_name'];
         }
     }
     return '';
-
 }
-function get_wo_order_name_by_id($wo_order){
-    if(!empty($wo_order)) {
-        
-        $CI = & get_instance();
+function get_wo_order_name_by_id($wo_order)
+{
+    if (!empty($wo_order)) {
+
+        $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->from(db_prefix() . 'wo_orders');
         $CI->db->where('id', $wo_order);
         $result = $CI->db->get()->row_array();
-        
-        if(!empty($result)) {
-            return $result['wo_order_number'] .'-'. $result['wo_order_name'] ;           
+
+        if (!empty($result)) {
+            return $result['wo_order_number'] . '-' . $result['wo_order_name'];
         }
     }
     return '';
+}
+function get_pur_name_by_id($pur_id)
+{
+    if (!empty($pur_id)) {
 
+        $CI = &get_instance();
+        $CI->db->select('*');
+        $CI->db->from(db_prefix() . 'pur_orders');
+        $CI->db->where('id', $pur_id);
+        $result = $CI->db->get()->row_array();
+
+        if (!empty($result)) {
+            return $result['pur_order_number'] . '-' . $result['pur_order_name'];
+        }
+    }
+    return '';
 }
 
+function check_any_order_exitsin_po($id, $type)
+{
+    if (!empty($id)) {
+
+        if ($type == 'pur_order') {
+            $CI = &get_instance();
+            $CI->db->select('*');
+            $CI->db->from(db_prefix() . 'co_orders');
+            $CI->db->where('po_order_id', $id);
+            $result = $CI->db->get()->result_array();
+            
+        }elseif ($type == 'wo_order') {
+            $CI = &get_instance();
+            $CI->db->select('*');
+            $CI->db->from(db_prefix() . 'co_orders');
+            $CI->db->where('wo_order_id', $id);
+            $result = $CI->db->get()->result_array();
+        }
+
+        if (!empty($result)) {
+            return $result;
+        }
+    }
+    return false;
+}
 

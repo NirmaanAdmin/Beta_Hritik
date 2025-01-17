@@ -519,7 +519,7 @@ class changee extends AdminController
         $data['vendors'] = $this->changee_model->get_vendor();
         $data['departments'] = $this->departments_model->get();
         $data['vendor_contacts'] = $this->changee_model->get_contacts();
-        
+
         $this->load->view('changee_request/manage', $data);
     }
 
@@ -536,22 +536,20 @@ class changee extends AdminController
         $this->load->model('projects_model');
         $this->load->model('currencies_model');
         if (get_status_modules_co('purchase')) {
-			$this->load->model('purchase/purchase_model');
-			$data['pr_orders'] = get_po_order();
-			$data['pr_orders_status'] = true;
+            $this->load->model('purchase/purchase_model');
+            $data['pr_orders'] = get_po_order();
+            $data['pr_orders_status'] = true;
 
-			$data['vendors'] = $this->purchase_model->get_vendor();
+            $data['vendors'] = $this->purchase_model->get_vendor();
 
-			$data['projects'] = $this->projects_model->get();
-			$data['staffs'] = $this->staff_model->get();
-			$data['departments'] = $this->departments_model->get();
+            $data['projects'] = $this->projects_model->get();
+            $data['staffs'] = $this->staff_model->get();
+            $data['departments'] = $this->departments_model->get();
+        } else {
+            $data['pr_orders'] = [];
+            $data['pr_orders_status'] = false;
+        }
 
-
-		} else {
-			$data['pr_orders'] = [];
-			$data['pr_orders_status'] = false;
-		}
-        
 
         if ($id == '') {
 
@@ -612,7 +610,7 @@ class changee extends AdminController
                         $item_text = changee_pur_get_item_variatiom($request_detail['item_code']);
                     }
 
-                    $changee_request_row_template .= $this->changee_model->create_changee_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['original_unit_price'], $request_detail['unit_price'], $request_detail['original_quantity'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'],$request_detail['into_money_updated'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency, $request_detail['remarks'], $request_detail['tender_item']);
+                    $changee_request_row_template .= $this->changee_model->create_changee_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['original_unit_price'], $request_detail['unit_price'], $request_detail['original_quantity'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'], $request_detail['into_money_updated'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency, $request_detail['remarks'], $request_detail['tender_item']);
                 }
             }
         }
@@ -1249,7 +1247,7 @@ class changee extends AdminController
                 if (strlen($item_name) == 0) {
                     $item_name = changee_pur_get_item_variatiom($item['item_code']);
                 }
-                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['original_unit_price'], $item['unit_price'], $item['original_quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks'], 0);
+                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['original_unit_price'], $item['unit_price'], $item['original_quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
             }
         }
 
@@ -2637,7 +2635,7 @@ class changee extends AdminController
         }
 
         $co_request = $this->changee_model->get_purorder_pdf_html($id);
-        
+
         try {
             $pdf = $this->changee_model->purorder_pdf($co_request, $id);
         } catch (Exception $e) {
@@ -6264,7 +6262,7 @@ class changee extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency,'', 0);
+                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money, $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency, '', 0);
                 }
             }
         }
@@ -6339,7 +6337,7 @@ class changee extends AdminController
                     $into_money = (float) ($item['rate'] * $item['qty']);
                     $total = $tax_value + $into_money;
 
-                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money,'', $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency,'', 0);
+                    $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_request . ']', $item_code, $item_text, $item['long_description'], '', $unit_price, '', $item['qty'], $unit_name, '', $into_money, '', $index_request, $tax_value, $total, $tax_name, $tax_rate, $tax, false, $currency_rate, $to_currency, '', 0);
                 }
             }
         }
@@ -7312,7 +7310,7 @@ class changee extends AdminController
         $to_currency = $this->input->post('to_currency');
         $remarks = $this->input->post('remarks');
 
-        echo $this->changee_model->create_changee_request_row_template($name, $item_code, $item_text, $item_description, $original_unit_price, $unit_price, $original_quantity, $quantity, $unit_name, $unit_id, $into_money,$into_money_updated, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency,$remarks, 1);
+        echo $this->changee_model->create_changee_request_row_template($name, $item_code, $item_text, $item_description, $original_unit_price, $unit_price, $original_quantity, $quantity, $unit_name, $unit_id, $into_money, $into_money_updated, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency, $remarks, 1);
     }
 
     /**
@@ -7409,7 +7407,7 @@ class changee extends AdminController
         $to_currency = $this->input->post('to_currency');
         $remarks = $this->input->post('remarks');
 
-        echo $this->changee_model->create_changee_order_row_template($name, $item_code, $item_text, $item_description, $original_unit_price, $unit_price, $original_quantity, $quantity, $unit_name, $unit_id, $into_money,$into_money_updated, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency,$remarks, 1);
+        echo $this->changee_model->create_changee_order_row_template($name, $item_code, $item_text, $item_description, $original_unit_price, $unit_price, $original_quantity, $quantity, $unit_name, $unit_id, $into_money, $into_money_updated, $item_key, $tax_value, $total, $tax_name, '', '', false, $currency_rate, $to_currency, $remarks, 1);
     }
 
     /**
@@ -8697,7 +8695,7 @@ class changee extends AdminController
     }
     public function coppy_pur_order_for_co($pur_order)
     {
-        
+
         $this->load->model('currencies_model');
 
         $pur_order_detail = $this->changee_model->get_pur_order_detail_in_po($pur_order);
@@ -8710,7 +8708,7 @@ class changee extends AdminController
         $total = 0;
         $data_rs = [];
         $tax_html = '';
-        $estimate_html = '';    
+        $estimate_html = '';
 
         // $estimate_html .= $this->purchase_model->get_estimate_html_by_pr_vendor($pur_order, $vendor);
 
@@ -8743,9 +8741,7 @@ class changee extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks'], 0);
-                
-               
+                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
             }
         }
 
@@ -8766,7 +8762,7 @@ class changee extends AdminController
     }
     public function coppy_wo_order_for_co($wo_order)
     {
-        
+
         $this->load->model('currencies_model');
 
         $wo_order_detail = $this->changee_model->get_wo_order_detail_in_po($wo_order);
@@ -8779,7 +8775,7 @@ class changee extends AdminController
         $total = 0;
         $data_rs = [];
         $tax_html = '';
-        $estimate_html = '';    
+        $estimate_html = '';
 
         // $estimate_html .= $this->purchase_model->get_estimate_html_by_pr_vendor($pur_order, $vendor);
 
@@ -8812,9 +8808,7 @@ class changee extends AdminController
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
 
-                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks'], 0);
-                
-               
+                $list_item .= $this->changee_model->create_changee_request_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
             }
         }
 
@@ -8847,7 +8841,7 @@ class changee extends AdminController
         $total = 0;
         $data_rs = [];
         $tax_html = '';
-        $estimate_html = '';    
+        $estimate_html = '';
         if (count($pur_order_detail) > 0) {
             foreach ($pur_order_detail as $key => $item) {
                 $subtotal += $item['into_money'];
@@ -8874,12 +8868,131 @@ class changee extends AdminController
                 if (strlen($item_name) == 0) {
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
-                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks'], 0);
+                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
             }
         }
 
         $taxes_data = $this->purchase_model->get_html_tax_pur_request($pur_order);
         $tax_html = $taxes_data['html'];
+        $check_pur_existing_in_co = check_any_order_exitsin_po($pur_order, 'pur_order');
+        if (!empty($check_pur_existing_in_co)) {
+            $true = true;
+        } else {
+            $true = false;
+        }
+
+        $common_items = [];
+        $new_items = [];
+
+        foreach ($check_pur_existing_in_co as $key => $value) {
+            $co_order_details = $this->changee_model->get_co_order_detail($value['id']);
+
+            foreach ($co_order_details as $detail) {
+                // Check if item_code already exists in the common items
+                if (isset($common_items[$detail['item_code']])) {
+                    $common_items[$detail['item_code']][] = $detail;
+                } else {
+                    // If it's a new item_code, add it to new items
+                    $new_items[$detail['item_code']] = $detail;
+                }
+            }
+        }
+
+
+        if (!empty($check_pur_existing_in_co)) {
+            // Initialize the table header
+            $history_tabel = '<table class="table items table-main-invoice-edit has-calculations no-mtop">
+                                <thead>
+                                  <tr>
+                                    <th align="left">' . _l('debit_note_table_item_heading') . '</th>
+                                    <th align="left">' . _l('description') . '</th>
+                                    <th align="left">' . _l('original_unit_price') . '<span class="th_currency">' . '(' . $base_currency->symbol . ')</span></th>
+                                    <th align="left" class="qty">' . _l('original_quantity') . '</th>';
+
+            // Dynamically create column headers for each pur_order
+            $count = 1;  // Start numbering for CO columns (CO 1 Rate, CO 1 Qty, etc.)
+            foreach ($check_pur_existing_in_co as $value) {
+                $history_tabel .= '<th align="left">CO ' . $count . ' Rate <span class="th_currency">' . '(' . $base_currency->symbol . ')</span></th>';
+                $history_tabel .= '<th align="left" class="qty">CO ' . $count . ' Qty</th>';
+                $count++;
+            }
+
+            $history_tabel .= '</tr>
+                                </thead>
+                                <tbody id="history_tbody">';
+
+            // Print common items first
+            if (!empty($common_items)) {
+                foreach ($common_items as $item_code => $items) {
+                    foreach ($items as $key => $value) {
+                        $history_tabel .= '<tr>
+                            <td>' . $value['item_text'] . '</td>
+                            <td>' . $value['description'] . '</td>
+                            <td>₹' . $value['original_unit_price'] . '</td>
+                            <td>₹' . $value['original_quantity'] . '</td>';
+
+                        // Dynamically add the rate and quantity columns for each pur_order
+                        $count = 1;
+                        foreach ($check_pur_existing_in_co as $order_value) {
+                            // Find matching order details
+                            $order_details = $this->changee_model->get_co_order_detail($order_value['id']);
+                            $rate = '-';
+                            $quantity = '-';
+                            foreach ($order_details as $order_item) {
+                                if ($order_item['item_code'] == $value['item_code']) {
+                                    $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
+                                    $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                    break;
+                                }
+                            }
+                            $history_tabel .= '<td>' . $rate . '</td><td>' . $quantity . '</td>';
+                            $count++;
+                        }
+
+                        $history_tabel .= '</tr>';
+                    }
+                }
+            }
+
+            // Print new items next
+            if (!empty($new_items)) {
+                foreach ($new_items as $item_code => $value) {
+                    $non_tender = '';
+                    if ($value['tender_item'] == 1) {
+                        $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
+                    }
+                    $history_tabel .= '<tr>
+                        <td>' . $value['item_text'] . '</td>
+                        <td>' . $value['description'] . $non_tender . '</td>
+                        <td>₹' . $value['original_unit_price'] . '</td>
+                        <td>₹' . $value['original_quantity'] . '</td>';
+
+                    // Dynamically add the rate and quantity columns for each pur_order
+                    $count = 1;
+                    foreach ($check_pur_existing_in_co as $order_value) {
+                        // Find matching order details
+                        $order_details = $this->changee_model->get_co_order_detail($order_value['id']);
+                        $rate = '-';
+                        $quantity = '-';
+                        foreach ($order_details as $order_item) {
+                            if ($order_item['item_code'] == $value['item_code']) {
+                                $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
+                                $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                break;
+                            }
+                        }
+                        $history_tabel .= '<td>' . $rate . '</td><td>' . $quantity . '</td>';
+                        $count++;
+                    }
+
+                    $history_tabel .= '</tr>';
+                }
+            }
+
+            $history_tabel .= '</tbody></table>';
+        }
+
+
 
         echo json_encode([
             'result' => $pur_order_detail,
@@ -8891,6 +9004,8 @@ class changee extends AdminController
             'currency' => $to_currency,
             'currency_rate' => $currency_rate,
             'estimate_html' => $estimate_html,
+            'check_pur_existing_in_co' => $true,
+            'history_tabel_data' => $history_tabel
         ]);
     }
     public function coppy_wo_order_for_po($wo_order)
@@ -8933,13 +9048,129 @@ class changee extends AdminController
                 if (strlen($item_name) == 0) {
                     $item_name = pur_get_item_variatiom($item['item_code']);
                 }
-                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency,$item['remarks'], 0);
+                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $unit_name, $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
             }
         }
 
         $taxes_data = $this->purchase_model->get_html_tax_pur_request($wo_order);
         $tax_html = $taxes_data['html'];
+        $check_pur_existing_in_co = check_any_order_exitsin_po($wo_order, 'wo_order');
+        if (!empty($check_pur_existing_in_co)) {
+            $true = true;
+        } else {
+            $true = false;
+        }
 
+        $common_items = [];
+        $new_items = [];
+
+        foreach ($check_pur_existing_in_co as $key => $value) {
+            $co_order_details = $this->changee_model->get_co_order_detail($value['id']);
+
+            foreach ($co_order_details as $detail) {
+                // Check if item_code already exists in the common items
+                if (isset($common_items[$detail['item_code']])) {
+                    $common_items[$detail['item_code']][] = $detail;
+                } else {
+                    // If it's a new item_code, add it to new items
+                    $new_items[$detail['item_code']] = $detail;
+                }
+            }
+        }
+
+
+        if (!empty($check_pur_existing_in_co)) {
+            // Initialize the table header
+            $history_tabel = '<table class="table items table-main-invoice-edit has-calculations no-mtop">
+                                <thead>
+                                  <tr>
+                                    <th align="left">' . _l('debit_note_table_item_heading') . '</th>
+                                    <th align="left">' . _l('description') . '</th>
+                                    <th align="left">' . _l('original_unit_price') . '<span class="th_currency">' . '(' . $base_currency->symbol . ')</span></th>
+                                    <th align="left" class="qty">' . _l('original_quantity') . '</th>';
+
+            // Dynamically create column headers for each pur_order
+            $count = 1;  // Start numbering for CO columns (CO 1 Rate, CO 1 Qty, etc.)
+            foreach ($check_pur_existing_in_co as $value) {
+                $history_tabel .= '<th align="left">CO ' . $count . ' Rate <span class="th_currency">' . '(' . $base_currency->symbol . ')</span></th>';
+                $history_tabel .= '<th align="left" class="qty">CO ' . $count . ' Qty</th>';
+                $count++;
+            }
+
+            $history_tabel .= '</tr>
+                                </thead>
+                                <tbody id="history_tbody">';
+
+            // Print common items first
+            if (!empty($common_items)) {
+                foreach ($common_items as $item_code => $items) {
+                    foreach ($items as $key => $value) {
+                        $history_tabel .= '<tr>
+                            <td>' . $value['item_text'] . '</td>
+                            <td>' . $value['description'] . '</td>
+                            <td>₹' . $value['original_unit_price'] . '</td>
+                            <td>₹' . $value['original_quantity'] . '</td>';
+
+                        // Dynamically add the rate and quantity columns for each pur_order
+                        $count = 1;
+                        foreach ($check_pur_existing_in_co as $order_value) {
+                            // Find matching order details
+                            $order_details = $this->changee_model->get_co_order_detail($order_value['id']);
+                            $rate = '-';
+                            $quantity = '-';
+                            foreach ($order_details as $order_item) {
+                                if ($order_item['item_code'] == $value['item_code']) {
+                                    $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
+                                    $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                    break;
+                                }
+                            }
+                            $history_tabel .= '<td>' . $rate . '</td><td>' . $quantity . '</td>';
+                            $count++;
+                        }
+
+                        $history_tabel .= '</tr>';
+                    }
+                }
+            }
+
+            // Print new items next
+            if (!empty($new_items)) {
+                foreach ($new_items as $item_code => $value) {
+                    $non_tender = '';
+                    if ($value['tender_item'] == 1) {
+                        $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
+                    }
+                    $history_tabel .= '<tr>
+                        <td>' . $value['item_text'] . '</td>
+                        <td>' . $value['description'] . $non_tender . '</td>
+                        <td>₹' . $value['original_unit_price'] . '</td>
+                        <td>₹' . $value['original_quantity'] . '</td>';
+
+                    // Dynamically add the rate and quantity columns for each pur_order
+                    $count = 1;
+                    foreach ($check_pur_existing_in_co as $order_value) {
+                        // Find matching order details
+                        $order_details = $this->changee_model->get_co_order_detail($order_value['id']);
+                        $rate = '-';
+                        $quantity = '-';
+                        foreach ($order_details as $order_item) {
+                            if ($order_item['item_code'] == $value['item_code']) {
+                                $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
+                                $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                break;
+                            }
+                        }
+                        $history_tabel .= '<td>' . $rate . '</td><td>' . $quantity . '</td>';
+                        $count++;
+                    }
+
+                    $history_tabel .= '</tr>';
+                }
+            }
+
+            $history_tabel .= '</tbody></table>';
+        }
         echo json_encode([
             'result' => $wo_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -8950,6 +9181,8 @@ class changee extends AdminController
             'currency' => $to_currency,
             'currency_rate' => $currency_rate,
             'estimate_html' => $estimate_html,
+            'check_pur_existing_in_co' => $true,
+            'history_tabel_data' => $history_tabel
         ]);
     }
 }

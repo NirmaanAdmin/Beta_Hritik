@@ -603,6 +603,8 @@ function coppy_pur_orders(){
   "use strict";
   var pur_order = $('select[name="po_order_id"]').val();
   if(pur_order != ''){
+   
+    $("#wo_order_id").prop("disabled", true).selectpicker('refresh');
     $.post(admin_url + 'changee/coppy_pur_order_for_po/'+pur_order).done(function(response){
         response = JSON.parse(response);
         if(response){ 
@@ -622,14 +624,31 @@ function coppy_pur_orders(){
           $('body').find('#items-warning').remove();
           $("body").find('.dt-loader').remove();
           $('#item_select').selectpicker('val', '');
+          
+          if(response.check_pur_existing_in_co){
+              $('#tab_history').removeClass('hide');
+              $('#history').removeClass('hide');
+              $('#item').removeClass('active');
+              $('#items').removeClass('active');
+              $('#history_tbody').html('');
+              $('#history_tbody').append(response.history_tabel_data);
+          }else{
+            $('#tab_history').addClass('hide');
+            $('#history').addClass('hide');
+            $('#item').addClass('active');
+            $('#items').addClass('active');
+          }
         }   
     });
+  }else{
+    $("#wo_order_id").prop("disabled", false).selectpicker('refresh');
   }
 }
 function coppy_wo_orders(){
   "use strict";
   var wo_order = $('select[name="wo_order_id"]').val();
   if(wo_order != ''){
+    $("#po_order_id").prop("disabled", true).selectpicker('refresh');
     $.post(admin_url + 'changee/coppy_wo_order_for_po/'+wo_order).done(function(response){
         response = JSON.parse(response);
         if(response){ 
@@ -649,8 +668,24 @@ function coppy_wo_orders(){
           $('body').find('#items-warning').remove();
           $("body").find('.dt-loader').remove();
           $('#item_select').selectpicker('val', '');
+          
+          if(response.check_pur_existing_in_co){
+              $('#tab_history').removeClass('hide');
+              $('#history').removeClass('hide');
+              $('#item').removeClass('active');
+              $('#items').removeClass('active');
+              $('#history_tbody').html('');
+              $('#history_tbody').append(response.history_tabel_data);
+          }else{
+            $('#tab_history').addClass('hide');
+            $('#history').addClass('hide');
+            $('#item').addClass('active');
+            $('#items').addClass('active');
+          }
         }   
     });
+  }else{
+    $("#po_order_id").prop("disabled", false).selectpicker('refresh');
   }
 }
 
