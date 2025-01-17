@@ -183,6 +183,41 @@ $tblbanksignhtml .= '</table>';
 $pdf->writeHTML($tblbanksignhtml, true, false, false, false, '');
 $pdf->AddPage();
 
+$tblbudgetsummaryhtml = '';
+$tblbudgetsummaryhtml .= '<h3 style="text-align:center; ">Budget summary</h3>';
+$tblbudgetsummaryhtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="3">';
+$tblbudgetsummaryhtml .= '
+<thead>
+  <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
+     <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
+     <th width="12%" align="left">' . _l('budget_head') . '</th>
+     <th width="16%" align="right">' . _l('budgeted_amount') . '</th>
+     <th width="17%" align="right">' . _l('total_previous_billing') . '</th>
+     <th width="17%" align="right">' . _l('total_current_billing_amount') . '</th>
+     <th width="16%" align="right">' . _l('total_cumulative_billing') . '</th>
+     <th width="17%" align="right">' . _l('balance_available') . '</th>
+  </tr>
+</thead>';
+$tblbudgetsummaryhtml .= '<tbody>';
+$indexa = $basic_invoice['indexa'];
+foreach ($indexa as $ikey => $ivalue) {
+    $tblbudgetsummaryhtml .= '
+    <tr style="font-size:12px;">
+        <td width="5%;" align="center">' . ($ikey + 1) . '</td>
+        <td width="12%" align="left;"><span style="font-size:12px;"><strong>' . $ivalue['name'] . '</strong></span></td>
+        <td width="16%" align="right">' . app_format_money($ivalue['budgeted_amount'], $invoice->currency_name) . '</td>
+        <td width="17%" align="right">' . app_format_money($ivalue['total_previous_billing'], $invoice->currency_name) . '</td>
+        <td width="17%" align="right">' . app_format_money($ivalue['total_current_billing_amount'], $invoice->currency_name) . '</td>
+        <td width="16%" align="right">' . app_format_money($ivalue['total_cumulative_billing'], $invoice->currency_name) . '</td>
+        <td width="17%" align="right">' . app_format_money($ivalue['balance_available'], $invoice->currency_name) . '</td>
+        
+    </tr>';
+}
+$tblbudgetsummaryhtml .= '</tbody>';
+$tblbudgetsummaryhtml .= '</table>';
+
+$pdf->writeHTML($tblbudgetsummaryhtml, true, false, false, false, '');
+
 $tblindexahtml = '';
 $tblindexahtml .= '<h3 style="text-align:center; ">Index - A</h3>';
 $tblindexahtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="8">';
@@ -257,13 +292,23 @@ if (!empty($indexa)) {
         $tblannexurehtml .= '<tbody>';
         $invoice_items = $invoice->items;
         $inv = 1;
+        $invoice_tax = get_annexurewise_tax($invoice->id);
         foreach ($invoice_items as $item) {
             if ($item['annexure'] == $avalue['annexure']) {
                 if (!is_numeric($item['qty'])) {
                     $item['qty'] = 1;
                 }
                 $amount = $item['rate'] * $item['qty'];
-                $total_tax = get_annexurewise_tax($invoice->id, $avalue['annexure'], $item['id']);
+                $total_tax = 0;
+                $annexure = $item['annexure'];
+                $itemid = $item['id'];
+                if(!empty($invoice_tax)) {
+                    $item_tax_array = array_filter($invoice_tax, function ($item) use ($annexure, $itemid) {
+                        return ($item['annexure'] == $annexure && $item['item_id'] == $itemid);
+                    });
+                    $item_tax_array = !empty($item_tax_array) ? array_values($item_tax_array) : array();
+                    $total_tax = !empty($item_tax_array) ? $item_tax_array[0]['total_tax'] : 0;
+                }
                 $vendor_name = '';
                 $invoice_no = '';
                 if (!empty($item['po_id'])) {

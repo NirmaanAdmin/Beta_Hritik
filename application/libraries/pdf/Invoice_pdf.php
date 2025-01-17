@@ -25,7 +25,7 @@ class Invoice_pdf extends App_pdf
         $this->tag            = $tag;
         $this->invoice        = $invoice;
         $this->invoice_number = format_invoice_number($this->invoice->id);
-        $this->basic_invoice  = $this->ci->invoices_model->get_annexure_invoice_details($this->invoice->id);
+        $this->basic_invoice  = $this->ci->invoices_model->get_annexure_invoice_details($this->invoice->id, false, true);
 
         $this->SetTitle($this->invoice_number);
     }

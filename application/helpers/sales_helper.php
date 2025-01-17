@@ -1113,72 +1113,75 @@ function get_all_annexures()
     return $result;
 }
 
-function get_annexurewise_tax($id, $annexure, $item_id = '')
+function get_annexurewise_tax($id)
 {
     $CI = &get_instance();
+
     $CI->db->select('discount_percent, discount_type, discount_total, subtotal');
     $CI->db->from('tblinvoices');
     $CI->db->where('id', $id);
     $data = $CI->db->get()->row();
 
-    $items = get_items_by_annexure($id, $annexure, $item_id);
+    $items = get_items_by_annexure($id);
+    if (empty($items)) {
+        return [];
+    }
 
-    $total_tax = 0;
-    $taxes = [];
-    $_calculated_taxes = [];
+    $item_ids = array_column($items, 'id');
+    $CI->db->select('itemid, taxname, taxrate');
+    $CI->db->from('tblitem_tax'); // Assuming this table stores item taxes
+    $CI->db->where_in('itemid', $item_ids);
+    $item_taxes = $CI->db->get()->result_array();
+    $taxes_map = [];
+    foreach ($item_taxes as $tax) {
+        $taxes_map[$tax['itemid']][] = $tax;
+    }
 
-    $func_taxes = 'get_invoice_item_taxes';
-
+    $result = [];
     foreach ($items as $item) {
-        $item_taxes = call_user_func($func_taxes, $item['id']);
-        if (count($item_taxes) > 0) {
-            foreach ($item_taxes as $tax) {
-                $calc_tax     = 0;
-                $tax_not_calc = false;
-                if (!in_array($tax['taxname'], $_calculated_taxes)) {
-                    array_push($_calculated_taxes, $tax['taxname']);
-                    $tax_not_calc = true;
-                }
+        $item_total_tax = 0;
+        $item_taxes_details = [];
+        if (isset($taxes_map[$item['id']])) {
+            foreach ($taxes_map[$item['id']] as $tax) {
+                $tax_name = $tax['taxname'];
+                $tax_rate = $tax['taxrate'];
+                $calc_tax = ($item['qty'] * $item['rate']) / 100 * $tax_rate;
 
-                if ($tax_not_calc == true) {
-                    $taxes[$tax['taxname']]          = [];
-                    $taxes[$tax['taxname']]['total'] = [];
-                    array_push($taxes[$tax['taxname']]['total'], (($item['qty'] * $item['rate']) / 100 * $tax['taxrate']));
-                    $taxes[$tax['taxname']]['tax_name'] = $tax['taxname'];
-                    $taxes[$tax['taxname']]['taxrate']  = $tax['taxrate'];
-                } else {
-                    array_push($taxes[$tax['taxname']]['total'], (($item['qty'] * $item['rate']) / 100 * $tax['taxrate']));
-                }
+                $item_taxes_details[] = [
+                    'tax_name' => $tax_name,
+                    'taxrate' => $tax_rate,
+                    'tax_amount' => $calc_tax,
+                ];
+                $item_total_tax += $calc_tax;
             }
         }
-    }
 
-    foreach ($taxes as $tax) {
-        $total = array_sum($tax['total']);
         if ($data->discount_percent != 0 && $data->discount_type == 'before_tax') {
-            $total_tax_calculated = ($total * $data->discount_percent) / 100;
-            $total                = ($total - $total_tax_calculated);
+            $total_discount = ($item_total_tax * $data->discount_percent) / 100;
+            $item_total_tax -= $total_discount;
         } elseif ($data->discount_total != 0 && $data->discount_type == 'before_tax') {
-            $t     = ($data->discount_total / $data->subtotal) * 100;
-            $total = ($total - $total * $t / 100);
+            $discount_ratio = $data->discount_total / $data->subtotal;
+            $item_total_tax -= $item_total_tax * $discount_ratio;
         }
-        $total_tax += $total;
+
+        $result[] = [
+            'item_id' => $item['id'],
+            'annexure' => $item['annexure'],
+            'total_tax' => $item_total_tax,
+        ];
     }
 
-    return $total_tax;
+    return $result;
 }
 
-function get_items_by_annexure($id, $annexure, $item_id = '')
+
+function get_items_by_annexure($id)
 {
     $CI = &get_instance();
     $CI->db->select();
     $CI->db->from(db_prefix() . 'itemable');
     $CI->db->where('rel_id', $id);
     $CI->db->where('rel_type', 'invoice');
-    if(!empty($item_id)) {
-        $CI->db->where('id', $item_id);
-    }
-    $CI->db->where('annexure', $annexure);
     $CI->db->order_by('item_order', 'asc');
     return $CI->db->get()->result_array();
 }

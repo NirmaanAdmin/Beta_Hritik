@@ -1933,7 +1933,7 @@ class Invoices_model extends App_Model
         return $this->db->query('select * from tblhsn_sac_code ')->result_array();
     }
 
-    public function get_annexure_invoice_details($invoiceid, $ignore_management_fess = false)
+    public function get_annexure_invoice_details($invoiceid, $ignore_management_fess = false, $is_pdf = false)
     {
         $this->db->where('id', $invoiceid);
         $invoice = $this->db->get(db_prefix() . 'invoices')->row();
@@ -1941,6 +1941,11 @@ class Invoices_model extends App_Model
 
         $indexa = array();
         $final_invoice = array();
+        $invoice_tax = get_annexurewise_tax($invoice->id);
+        if($is_pdf) {
+            $budgeted_annexure_data = $this->get_budgeted_annexure_amount($invoice->estimate);
+            $previous_billing_data = $this->get_previous_billing_amount($invoice);
+        }
 
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
@@ -1949,9 +1954,57 @@ class Invoices_model extends App_Model
             $indexa[$annexure]['description'] = '';
             $indexa[$annexure]['qty'] = 1;
             $indexa[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
-            $indexa[$annexure]['tax'] = get_annexurewise_tax($invoice->id, $annexure);
+            $item_tax = 0;
+            $itemid = $value['id'];
+            if(!empty($invoice_tax)) {
+                $item_tax_array = array_filter($invoice_tax, function ($item) use ($itemid) {
+                    return $item['item_id'] == $itemid;
+                });
+                $item_tax_array = !empty($item_tax_array) ? array_values($item_tax_array) : array();
+                $item_tax = !empty($item_tax_array) ? $item_tax_array[0]['total_tax'] : 0;
+            }
+            $indexa[$annexure]['tax'] = $indexa[$annexure]['tax'] + $item_tax;
             $indexa[$annexure]['amount'] = $indexa[$annexure]['subtotal'] + $indexa[$annexure]['tax'];
             $indexa[$annexure]['annexure'] = $annexure;
+            if($is_pdf) {
+                $budgeted_amount = 0;
+                $total_previous_billing = 0;
+
+                if(isset($budgeted_annexure_data['summary'])) {
+                    if(!empty($budgeted_annexure_data['summary'])) {
+                        $budgeted_summary = array_filter($budgeted_annexure_data['summary'], function ($item) use ($annexure) {
+                            return $item['annexure'] == $annexure;
+                        });
+                        $budgeted_summary = !empty($budgeted_summary) ? array_values($budgeted_summary) : array();
+                        $budgeted_amount = !empty($budgeted_summary) ? $budgeted_summary[0]['amount'] : 0;
+                    }
+                }
+
+                if(isset($previous_billing_data)) {
+                    if(!empty($previous_billing_data)) {
+                        $previous_billing_array = array_filter($previous_billing_data, function ($item) use ($annexure) {
+                            return $item['annexure'] == $annexure;
+                        });
+                        $previous_billing_array = !empty($previous_billing_array) ? array_values($previous_billing_array) : array();
+                        if(!empty($previous_billing_array)) {
+                            $total_previous_billing = array_reduce($previous_billing_array, function ($carry, $item) {
+                                return $carry + $item['amount'];
+                            }, 0);
+                        }
+                    }
+                }
+
+                $indexa[$annexure]['budgeted_amount'] = $budgeted_amount;
+                $indexa[$annexure]['total_previous_billing'] = $total_previous_billing;
+                $indexa[$annexure]['current_bill_no'] = $invoice->title;
+                $indexa[$annexure]['spc_type'] = $invoice->deal_slip_no;
+                $total_current_billing_amount = $indexa[$annexure]['amount'];
+                $indexa[$annexure]['total_current_billing_amount'] = $total_current_billing_amount;
+                $total_cumulative_billing = $total_previous_billing + $total_current_billing_amount;
+                $indexa[$annexure]['total_cumulative_billing'] = $total_cumulative_billing;
+                $balance_available = $budgeted_amount - $total_cumulative_billing;
+                $indexa[$annexure]['balance_available'] = $balance_available;
+            }
         }
         $indexa = !empty($indexa) ? array_values($indexa) : array();
         if(!empty($indexa)) {
@@ -2046,5 +2099,34 @@ class Invoices_model extends App_Model
             $updated = true;
         }
         return $updated;
+    }
+
+    public function get_budgeted_annexure_amount($estimateid)
+    {
+        $response = array();
+        if(!empty($estimateid)) {
+            $this->load->model('estimates_model');
+            $response = $this->estimates_model->get_annexure_estimate_details($estimateid);
+        }
+        return $response;
+    }
+
+    public function get_previous_billing_amount($invoice)
+    {
+        $this->db->select('id');
+        $this->db->where('id !=', $invoice->id);
+        $this->db->where('date <=', $invoice->date);
+        $result = $this->db->get(db_prefix() . 'invoices')->result_array();
+
+        $all_indexes = [];
+        if (!empty($result)) {
+            foreach ($result as $key => $value) {
+                $single_invoice = $this->get_annexure_invoice_details($value['id']);
+                if (isset($single_invoice['indexa']) && !empty($single_invoice['indexa'])) {
+                    $all_indexes = array_merge($all_indexes, $single_invoice['indexa']);
+                }
+            }
+        }
+        return $all_indexes;
     }
 }
