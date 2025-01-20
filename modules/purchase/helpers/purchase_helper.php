@@ -3702,13 +3702,13 @@ function get_expense_data($expenseid = '')
 {
     if (!empty($expenseid)) {
         $CI = &get_instance();
-        $expense = $CI->db->select('id')
+        $expense = $CI->db->select('id, invoiceid')
             ->where('id', $expenseid)
             ->from(db_prefix() . 'expenses')
             ->get()
             ->row();
         if ($expense) {
-            return $expense->id;
+            return $expense;
         }
     }
     return '';
@@ -3781,4 +3781,20 @@ function pur_get_item_selcted_select($id, $name_item_name)
 
 
     return $selct;
+}
+
+function get_invoice_data($invoiceid = '')
+{
+    if (!empty($invoiceid)) {
+        $CI = &get_instance();
+        $invoice = $CI->db->select('*')
+            ->where('id', $invoiceid)
+            ->from(db_prefix() . 'invoices')
+            ->get()
+            ->row();
+        if ($invoice) {
+            return $invoice;
+        }
+    }
+    return '';
 }

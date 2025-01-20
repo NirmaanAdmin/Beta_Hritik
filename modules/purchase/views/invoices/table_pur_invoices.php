@@ -221,14 +221,14 @@ foreach ($rResult as $aRow) {
             $_data = $numberOutput;
         } else if ($aColumns[$i] == 'vendor_invoice_number') {
             if ($aRow['vendor_invoice_number'] != '') {
-                $_data = $aRow['vendor_invoice_number'];
+                $_data = '<input type="text" class="form-control vin-input" placeholder="Enter invoice number" data-id="' . $aRow['id'] . '" value="' . $aRow['vendor_invoice_number'] . '" size="10">';
             } else {
                 $_data = $aRow['invoice_number'];
             }
         } elseif ($aColumns[$i] == 'vendor_note') {
             $_data = render_tags($aRow['tags']);
         } elseif ($aColumns[$i] == 'invoice_date') {
-            $_data = _d($aRow['invoice_date']);
+            $_data = '<input type="date" class="form-control invoice-date-input" value="' . $aRow['invoice_date'] . '" data-id="' . $aRow['id'] . '">';
         } elseif ($aColumns[$i] == 'vendor_submitted_amount_without_tax') {
             $_data = app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol);
         } elseif ($aColumns[$i] == 'vendor_submitted_tax_amount') {
@@ -345,16 +345,23 @@ foreach ($rResult as $aRow) {
         elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" >' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
         } elseif ($aColumns[$i] == 'expense_convert') {
+            $expense_convert = '';
             if($aRow['expense_convert'] == 0){
-             $_data = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
+             $expense_convert = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
             }else{
                 $expense_convert_check = get_expense_data($aRow['expense_convert']);
                 if(!empty($expense_convert_check)) {
-                    $_data = '';
+                    if(!empty($expense_convert_check->invoiceid)) {
+                        $invoice_data = get_invoice_data($expense_convert_check->invoiceid);
+                        if(!empty($invoice_data)) {
+                            $expense_convert = e(format_invoice_number($invoice_data->id)). " (".$invoice_data->title.")";
+                        }
+                    }
                 } else {
-                    $_data = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
+                    $expense_convert = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
                 }
             }
+            $_data = $expense_convert;
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {
                 $_data = (strpos($_data, ' ') !== false ? _dt($_data) : _d($_data));

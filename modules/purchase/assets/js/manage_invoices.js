@@ -47,6 +47,61 @@ var expenseDropzone;
       }));
     }
 
+    $('.table-table_pur_invoices').on('draw.dt', function() {
+       var reportsTable = $(this).DataTable();
+       var sums = reportsTable.ajax.json().sums;
+       $(this).find('tfoot').addClass('bold');
+       $(this).find('tfoot td').eq(0).html("Total (Per Page)");
+       $(this).find('tfoot td.total_vendor_submitted_amount_without_tax').html(sums.total_vendor_submitted_amount_without_tax);
+       $(this).find('tfoot td.total_vendor_submitted_tax_amount').html(sums.total_vendor_submitted_tax_amount);
+       $(this).find('tfoot td.total_vendor_submitted_amount').html(sums.total_vendor_submitted_amount);
+       $(this).find('tfoot td.total_final_certified_amount').html(sums.total_final_certified_amount);
+     });
+
+     var table_pur_invoices = $('.table-table_pur_invoices').DataTable();
+
+     $('body').on('change', '.vin-input', function(e) {
+       e.preventDefault();
+
+       var rowId = $(this).data('id');
+       var vin = $(this).val();
+
+       // Perform AJAX request to update the vin
+       $.post(admin_url + 'purchase/update_vendor_invoice_number', {
+          id: rowId,
+          vin: vin
+       }).done(function(response) {
+          response = JSON.parse(response);
+          if (response.success) {
+             alert_float('success', response.message);
+             table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+          } else {
+             alert_float('danger', response.message);
+          }
+       });
+     });
+
+     $('body').on('change', '.invoice-date-input', function(e) {
+       e.preventDefault();
+
+       var rowId = $(this).data('id');
+       var invoiceDate = $(this).val();
+
+       // Perform AJAX request to update the invoice date
+       $.post(admin_url + 'purchase/update_invoice_date', {
+          id: rowId,
+          invoice_date: invoiceDate
+       }).done(function(response) {
+          response = JSON.parse(response);
+          if (response.success) {
+             alert_float('success', response.message);
+             table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+          } else {
+             alert_float('danger', response.message);
+          }
+       });
+      });
+
     appValidateForm($('#pur_invoice-expense-form'), {
           expense_name: 'required',
           category: 'required',

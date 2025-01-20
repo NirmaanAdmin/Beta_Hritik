@@ -56,7 +56,7 @@
                       </div>
                     
                     <?php 
-
+                    /*
                     $table_data = array(
                         _l('invoice_code'),
                         _l('invoice_number'),
@@ -80,9 +80,50 @@
                     $custom_fields = get_custom_fields('pur_invoice',array('show_on_table'=>1));
                     foreach($custom_fields as $field){
                      array_push($table_data,$field['name']);
-                    }
-                    
-                    render_datatable($table_data,'table_pur_invoices'); ?>
+                    } ?> */ ?>
+
+                    <div class="">
+                     <table class="dt-table-loading table table-table_pur_invoices">
+                        <thead>
+                           <tr>
+                              <th><?php echo _l('invoice_code'); ?></th>
+                              <th><?php echo _l('invoice_number'); ?></th>
+                              <th><?php echo _l('vendor'); ?></th>
+                              <th><?php echo _l('group_pur'); ?></th>
+                              <th><?php echo _l('order_name'); ?></th>
+                              <th><?php echo _l('invoice_date'); ?></th>
+                              <th><?php echo _l('billing_status'); ?></th>
+                              <th><?php echo _l('convert_expense'); ?></th>
+                              <th><?php echo _l('amount_without_tax'); ?></th>
+                              <th><?php echo _l('tax_value'); ?></th>
+                              <th><?php echo _l('total_included_tax'); ?></th>
+                              <th><?php echo _l('certified_amount'); ?></th>
+                              <th><?php echo _l('transaction_id'); ?></th>
+                              <th><?php echo _l('tag'); ?></th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                           <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td class="total_vendor_submitted_amount_without_tax"></td>
+                              <td class="total_vendor_submitted_tax_amount"></td>
+                              <td class="total_vendor_submitted_amount"></td>
+                              <td class="total_final_certified_amount"></td>
+                              <td></td>
+                              <td></td>
+                           </tr>
+                        </tfoot>
+                     </table>
+                   </div>
             
           </div>
         </div>

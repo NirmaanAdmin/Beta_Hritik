@@ -10548,4 +10548,46 @@ class purchase extends AdminController
             die();
         }
     }
+
+    public function update_vendor_invoice_number()
+    {
+        $id = $this->input->post('id');
+        $vin = $this->input->post('vin');
+
+        if (!$id || !$vin) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['vendor_invoice_number' => $vin]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Invoice number is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_invoice_date()
+    {
+        $id = $this->input->post('id');
+        $invoice_date = $this->input->post('invoice_date');
+
+        if (!$id || !$invoice_date) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['invoice_date' => $invoice_date]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Invoice date is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
 }
