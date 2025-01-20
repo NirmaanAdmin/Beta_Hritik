@@ -5,8 +5,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * warehouse controler
  */
-class warehouse extends AdminController {
-	public function __construct() {
+class warehouse extends AdminController
+{
+	public function __construct()
+	{
 		parent::__construct();
 		$this->load->model('warehouse_model');
 		hooks()->do_action('warehouse_init');
@@ -16,7 +18,8 @@ class warehouse extends AdminController {
 	 * setting
 	 * @return view
 	 */
-	public function setting() {
+	public function setting()
+	{
 		if (!has_permission('warehouse', '', 'edit') && !is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied('warehouse');
 		}
@@ -32,7 +35,7 @@ class warehouse extends AdminController {
 		$data['tab'][] = 'bodys';
 		$data['tab'][] = 'sizes';
 		$data['tab'][] = 'styles';
-		if(ACTIVE_BRAND_MODEL_SERIES == true){
+		if (ACTIVE_BRAND_MODEL_SERIES == true) {
 
 			$data['tab'][] = 'brand';
 			$data['tab'][] = 'model';
@@ -45,74 +48,60 @@ class warehouse extends AdminController {
 		$data['tab'][] = 'approval_setting';
 
 		//reset data
-		if(is_admin()){
+		if (is_admin()) {
 			$data['tab'][] = 'reset_data';
 		}
 		if ($data['group'] == '') {
 			$data['group'] = 'rule_sale_price';
 			$data['warehouses'] = $this->warehouse_model->get_warehouse();
-
 		} elseif ($data['group'] == 'commodity_group') {
 			$data['commodity_group_types'] = $this->warehouse_model->get_commodity_group_type();
-
 		} elseif ($data['group'] == 'units') {
 			$data['unit_types'] = $this->warehouse_model->get_unit_type();
-
 		} elseif ($data['group'] == 'bodys') {
 			$data['body_types'] = $this->warehouse_model->get_body_type();
-
 		} elseif ($data['group'] == 'sizes') {
 			$data['size_types'] = $this->warehouse_model->get_size_type();
-
 		} elseif ($data['group'] == 'styles') {
 			$data['style_types'] = $this->warehouse_model->get_style_type();
-
 		} elseif ($data['group'] == 'inventory') {
 			$data['inventory_min'] = $this->warehouse_model->setting_get_inventory_min();
-
 		} elseif ($data['group'] == 'approval_setting') {
 			$data['staffs'] = $this->staff_model->get();
 			$data['approval_setting'] = $this->warehouse_model->get_approval_setting();
-
 		} elseif ($data['group'] == 'sub_group') {
 
 			$data['sub_groups'] = $this->warehouse_model->get_sub_group();
 			$data['item_group'] = $this->warehouse_model->get_item_group();
-
 		} elseif ($data['group'] == 'colors') {
 
 			$data['colors'] = $this->warehouse_model->get_color();
-		}elseif($data['group'] == 'brand'){
+		} elseif ($data['group'] == 'brand') {
 			$data['brands'] = $this->warehouse_model->get_brand();
-
-		}elseif($data['group'] == 'model'){
+		} elseif ($data['group'] == 'model') {
 			$data['list_brands'] = $this->warehouse_model->get_brand();
 			$data['models'] = $this->warehouse_model->get_model();
-
-		}elseif($data['group'] == 'series'){
+		} elseif ($data['group'] == 'series') {
 			$data['list_models'] = $this->warehouse_model->get_model();
 			$data['series_l'] = $this->warehouse_model->get_series();
-
-		}elseif($data['group'] == 'warehouse_custom_fields'){
+		} elseif ($data['group'] == 'warehouse_custom_fields') {
 			$data['warehouses'] = $this->warehouse_model->get_warehouse();
 			$data['custom_fields_warehouse'] = $this->warehouse_model->get_custom_fields_warehouse();
 
 			$this->db->where('fieldto', 'warehouse_name');
-			$data['wh_custom_fields'] = $this->db->get(db_prefix().'customfields')->result_array();
-
+			$data['wh_custom_fields'] = $this->db->get(db_prefix() . 'customfields')->result_array();
 		}
 
 		if ($data['group'] == 'commodity_type') {
 			$data['commodity_types'] = $this->warehouse_model->get_commodity_type();
-
 		}
 
-		if($data['group'] == 'rule_sale_price'){
+		if ($data['group'] == 'rule_sale_price') {
 			$data['warehouses'] = $this->warehouse_model->get_warehouse();
 		}
 
 		$data['tabs']['view'] = 'includes/' . $data['group'];
-		$data['projects'] = $this->projects_model->get_items(); 
+		$data['projects'] = $this->projects_model->get_items();
 
 		$this->load->view('manage_setting', $data);
 	}
@@ -122,7 +111,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function commodity_type($id = '') {
+	public function commodity_type($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -132,12 +122,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_commodity_type($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('commodity_type'));
-
 				} else {
 					set_alert('warning', _l('Add_commodity_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=commodity_type'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -158,12 +146,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_commodity_type($id) {
+	public function delete_commodity_type($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=commodity_type'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -183,7 +172,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function unit_type($id = '') {
+	public function unit_type($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -193,12 +183,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_unit_type($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('unit_type'));
-
 				} else {
 					set_alert('warning', _l('Add_unit_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=units'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -219,12 +207,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_unit_type($id) {
+	public function delete_unit_type($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=units'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -244,7 +233,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function size_type($id = '') {
+	public function size_type($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -254,12 +244,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_size_type($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('size_type'));
-
 				} else {
 					set_alert('warning', _l('Add_size_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=sizes'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -280,12 +268,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_size_type($id) {
+	public function delete_size_type($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=sizes'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -305,7 +294,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function style_type($id = '') {
+	public function style_type($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -314,12 +304,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_style_type($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('style_type'));
-
 				} else {
 					set_alert('warning', _l('Add_style_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=styles'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -339,12 +327,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_style_type($id) {
+	public function delete_style_type($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=styles'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -365,7 +354,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function body_type($id = '') {
+	public function body_type($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -375,12 +365,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_body_type($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('body_type'));
-
 				} else {
 					set_alert('warning', _l('Add_body_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=bodys'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -401,12 +389,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_body_type($id) {
+	public function delete_body_type($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=bodys'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -427,7 +416,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function commodity_group_type($id = '') {
+	public function commodity_group_type($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -437,12 +427,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_commodity_group_type($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('commodity_group_type'));
-
 				} else {
 					set_alert('warning', _l('Add_commodity_group_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=commodity_group'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -463,12 +451,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_commodity_group_type($id) {
+	public function delete_commodity_group_type($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=commodity_group'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -490,7 +479,8 @@ class warehouse extends AdminController {
 	 * @return redirect
 	 */
 
-	public function warehouse_($id = '') {
+	public function warehouse_($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -500,12 +490,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_warehouse($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('warehouse'));
-
 				} else {
 					set_alert('warning', _l('Add_warehouse_false'));
 				}
 				redirect(admin_url('warehouse/warehouse_mange'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -526,12 +514,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_warehouse($id) {
+	public function delete_warehouse($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=warehouse'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -551,7 +540,8 @@ class warehouse extends AdminController {
 	 *
 	 * @return array
 	 */
-	public function table_commodity_list() {
+	public function table_commodity_list()
+	{
 		$this->app->get_table_data(module_views_path('warehouse', 'table_commodity_list'));
 	}
 
@@ -560,7 +550,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return load view
 	 */
-	public function commodity_list($id = '') {
+	public function commodity_list($id = '')
+	{
 		$this->load->model('departments_model');
 		$this->load->model('staff_model');
 
@@ -580,17 +571,17 @@ class warehouse extends AdminController {
 		$data['colors'] = $this->warehouse_model->get_color_add_commodity();
 		$data['item_tags'] = $this->warehouse_model->get_item_tag_filter();
 		$data['area'] = $this->warehouse_model->get_area();
-        $data['specification'] = $this->warehouse_model->get_specification();
+		$data['specification'] = $this->warehouse_model->get_specification();
 
 		$data['title'] = _l('commodity_list');
 
 		$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
-            $data['items'] = $this->warehouse_model->wh_get_grouped('', true);
-        } else {
-            $data['items']     = [];
-            $data['ajaxItems'] = true;
-        }
+		if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
+			$data['items'] = $this->warehouse_model->wh_get_grouped('', true);
+		} else {
+			$data['items']     = [];
+			$data['ajaxItems'] = true;
+		}
 
 		$data['proposal_id'] = $id;
 		$this->load->view('commodity_list', $data);
@@ -601,7 +592,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function get_commodity_data_ajax($id) {
+	public function get_commodity_data_ajax($id)
+	{
 
 		$data['id'] = $id;
 		$data['commodites'] = $this->warehouse_model->get_commodity($id);
@@ -615,7 +607,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function add_commodity_list($id = '') {
+	public function add_commodity_list($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -625,12 +618,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_commodity($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('commodity_list'));
-
 				} else {
 					set_alert('warning', _l('Add_commodity_list_false'));
 				}
 				redirect(admin_url('warehouse/commodity_list'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -651,12 +642,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_commodity($id) {
+	public function delete_commodity($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/commodity_list'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -676,7 +668,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return array
 	 */
-	public function table_manage_goods_receipt() {
+	public function table_manage_goods_receipt()
+	{
 		$this->app->get_table_data(module_views_path('warehouse', 'manage_goods_receipt/table_manage_goods_receipt'));
 	}
 
@@ -685,7 +678,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function manage_purchase($id = '') {
+	public function manage_purchase($id = '')
+	{
 		$data['title'] = 'Item Tracker';
 		$data['purchase_id'] = $id;
 		$this->load->view('manage_goods_receipt/manage_purchase', $data);
@@ -696,7 +690,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function manage_goods_receipt($id = '') {
+	public function manage_goods_receipt($id = '')
+	{
 		$this->load->model('clients_model');
 		$this->load->model('taxes_model');
 
@@ -710,35 +705,31 @@ class warehouse extends AdminController {
 
 
 				if ($mess) {
-					if($data['save_and_send_request'] == 'true'){
+					if ($data['save_and_send_request'] == 'true') {
 						$this->save_and_send_request_send_mail(['rel_id' => $mess, 'rel_type' => '1', 'addedfrom' => get_staff_user_id()]);
 					}
 
 					set_alert('success', _l('added_successfully'));
-
 				} else {
 					set_alert('warning', _l('Add_stock_received_docket_false'));
 				}
-				redirect(admin_url('warehouse/manage_purchase/'.$mess));
-
-			}else{
+				redirect(admin_url('warehouse/manage_purchase/' . $mess));
+			} else {
 
 				$id = $this->input->post('id');
 				$mess = $this->warehouse_model->update_goods_receipt($data);
 
-				if($data['save_and_send_request'] == 'true'){
+				if ($data['save_and_send_request'] == 'true') {
 					$this->save_and_send_request_send_mail(['rel_id' => $mess, 'rel_type' => '1', 'addedfrom' => get_staff_user_id()]);
 				}
 
 				if ($mess) {
 					set_alert('success', _l('updated_successfully'));
-
 				} else {
 					set_alert('warning', _l('update_stock_received_docket_false'));
 				}
-				redirect(admin_url('warehouse/manage_purchase/'.$id));
+				redirect(admin_url('warehouse/manage_purchase/' . $id));
 			}
-
 		}
 		//get vaule render dropdown select
 		$data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
@@ -764,8 +755,6 @@ class warehouse extends AdminController {
 			$data['projects'] = $this->projects_model->get();
 			$data['staffs'] = $this->staff_model->get();
 			$data['departments'] = $this->departments_model->get();
-
-
 		} else {
 			$data['pr_orders'] = [];
 			$data['pr_orders_status'] = false;
@@ -788,11 +777,11 @@ class warehouse extends AdminController {
 		}
 
 		$warehouse_data = $this->warehouse_model->get_warehouse();
-        //sample
+		//sample
 		$goods_receipt_row_template = $this->warehouse_model->create_goods_receipt_row_template();
 		$goods_receipt_production_approvals_template = $this->warehouse_model->create_goods_receipt_production_approvals_template();
 		//check status module purchase
-		if($id != ''){
+		if ($id != '') {
 			$goods_receipt = $this->warehouse_model->get_goods_receipt($id);
 			if (!$goods_receipt) {
 				blank_page('Stock received Not Found', 'danger');
@@ -813,32 +802,31 @@ class warehouse extends AdminController {
 					$expiry_date = null;
 					$delivery_date = null;
 					$commodity_name = $receipt_detail['commodity_name'];
-					if($receipt_detail['date_manufacture'] != null && $receipt_detail['date_manufacture'] != ''){
+					if ($receipt_detail['date_manufacture'] != null && $receipt_detail['date_manufacture'] != '') {
 						$date_manufacture = _d($receipt_detail['date_manufacture']);
 					}
-					if($receipt_detail['expiry_date'] != null && $receipt_detail['expiry_date'] != ''){
+					if ($receipt_detail['expiry_date'] != null && $receipt_detail['expiry_date'] != '') {
 						$expiry_date = _d($receipt_detail['expiry_date']);
 					}
-					if(strlen($commodity_name) == 0){
+					if (strlen($commodity_name) == 0) {
 						$commodity_name = wh_get_item_variatiom($receipt_detail['commodity_code']);
 					}
-					if($receipt_detail['delivery_date'] != null && $receipt_detail['delivery_date'] != ''){
+					if ($receipt_detail['delivery_date'] != null && $receipt_detail['delivery_date'] != '') {
 						$delivery_date = _d($receipt_detail['delivery_date']);
 					}
 
-					if($receipt_detail['payment_date'] != null && $receipt_detail['payment_date'] != ''){
+					if ($receipt_detail['payment_date'] != null && $receipt_detail['payment_date'] != '') {
 						$payment_date = _d($receipt_detail['payment_date']);
 					}
-					if($receipt_detail['est_delivery_date'] != null && $receipt_detail['est_delivery_date'] != ''){
+					if ($receipt_detail['est_delivery_date'] != null && $receipt_detail['est_delivery_date'] != '') {
 						$est_delivery_date = _d($receipt_detail['est_delivery_date']);
 					}
 
 
-					$goods_receipt_row_template .= $this->warehouse_model->create_goods_receipt_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $receipt_detail['warehouse_id'], $receipt_detail['po_quantities'], $receipt_detail['quantities'], $unit_name, $receipt_detail['unit_price'], $taxname, $receipt_detail['lot_number'], $receipt_detail['vendor_id'], $delivery_date, $date_manufacture, $expiry_date, $receipt_detail['commodity_code'], $receipt_detail['unit_id'] , $receipt_detail['tax_rate'], $receipt_detail['tax_money'], $receipt_detail['goods_money'], $receipt_detail['note'], $receipt_detail['id'], $receipt_detail['sub_total'], $receipt_detail['tax_name'], $receipt_detail['tax'], true, $receipt_detail['serial_number'],$receipt_detail['description'],$payment_date,$est_delivery_date,$receipt_detail['production_status']);
-					
+					$goods_receipt_row_template .= $this->warehouse_model->create_goods_receipt_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $receipt_detail['warehouse_id'], $receipt_detail['po_quantities'], $receipt_detail['quantities'], $unit_name, $receipt_detail['unit_price'], $taxname, $receipt_detail['lot_number'], $receipt_detail['vendor_id'], $delivery_date, $date_manufacture, $expiry_date, $receipt_detail['commodity_code'], $receipt_detail['unit_id'], $receipt_detail['tax_rate'], $receipt_detail['tax_money'], $receipt_detail['goods_money'], $receipt_detail['note'], $receipt_detail['id'], $receipt_detail['sub_total'], $receipt_detail['tax_name'], $receipt_detail['tax'], true, $receipt_detail['serial_number'], $receipt_detail['description'], $payment_date, $est_delivery_date, $receipt_detail['production_status']);
 				}
 			}
-			if(count($data['goods_production_approvals']) > 0){
+			if (count($data['goods_production_approvals']) > 0) {
 				$index_receipt = 0;
 				foreach ($data['goods_production_approvals'] as $pro_approvals_detail) {
 					$commodity_name = $pro_approvals_detail['commodity_name'];
@@ -848,26 +836,24 @@ class warehouse extends AdminController {
 					$key = $pro_approvals_detail['id'];
 					$status = $pro_approvals_detail['status'];
 					$commodity_code = $pro_approvals_detail['commodity_code'];
-					$goods_receipt_production_approvals_template .= $this->warehouse_model->create_goods_receipt_production_approvals_template('newapprovalsitems[' . $index_receipt . ']',$description,$commodity_name,$payment_date,$est_delivery_date,$key,$status,$commodity_code);
+					$goods_receipt_production_approvals_template .= $this->warehouse_model->create_goods_receipt_production_approvals_template('newapprovalsitems[' . $index_receipt . ']', $description, $commodity_name, $payment_date, $est_delivery_date, $key, $status, $commodity_code);
 					$index_receipt++;
 				}
 			}
 
 			$data['goods_receipt_detail'] = json_encode($this->warehouse_model->get_goods_receipt_detail($id));
-
 		}
 
 		$data['goods_receipt_row_template'] = $goods_receipt_row_template;
 		$data['goods_receipt_production_approvals_template'] = $goods_receipt_production_approvals_template;
 		$get_base_currency =  get_base_currency();
-		if($get_base_currency){
+		if ($get_base_currency) {
 			$data['base_currency_id'] = $get_base_currency->id;
-		}else{
+		} else {
 			$data['base_currency_id'] = 0;
 		}
 
-		$this->load->view('manage_goods_receipt/purchase', $data); 
-
+		$this->load->view('manage_goods_receipt/purchase', $data);
 	}
 
 	/**
@@ -875,8 +861,9 @@ class warehouse extends AdminController {
 	 * @param  integer $pur request
 	 * @return json encode
 	 */
-	public function coppy_pur_request($pur_request = '') {
-		if(is_numeric($pur_request)){
+	public function coppy_pur_request($pur_request = '')
+	{
+		if (is_numeric($pur_request)) {
 			$pur_request_detail = $this->warehouse_model->get_pur_request($pur_request);
 
 			echo json_encode([
@@ -890,7 +877,7 @@ class warehouse extends AdminController {
 				'list_item' => $pur_request_detail[6] ? $pur_request_detail[6] : '',
 				'production_approval_item' => $pur_request_detail[7] ? $pur_request_detail[7] : '',
 			]);
-		}else{
+		} else {
 			$list_item = $this->warehouse_model->create_goods_receipt_row_template();
 			$production_approval_item = $this->warehouse_model->create_goods_receipt_production_approvals_template();
 			echo json_encode([
@@ -905,7 +892,8 @@ class warehouse extends AdminController {
 	 * @param  integer $pủ request
 	 * @return json encode
 	 */
-	public function copy_pur_vender($pur_request) {
+	public function copy_pur_vender($pur_request)
+	{
 
 		$pur_vendor = $this->warehouse_model->get_vendor_ajax($pur_request);
 
@@ -927,7 +915,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function view_purchase($id) {
+	public function view_purchase($id)
+	{
 		//approval
 		$send_mail_approve = $this->session->userdata("send_mail_approve");
 		if ((isset($send_mail_approve)) && $send_mail_approve != '') {
@@ -961,7 +950,6 @@ class warehouse extends AdminController {
 
 
 		$this->load->view('manage_goods_receipt/view_purchase', $data);
-
 	}
 
 	/**
@@ -969,7 +957,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function edit_purchase($id) {
+	public function edit_purchase($id)
+	{
 
 		//check exist
 		$goods_receipt = $this->warehouse_model->get_goods_receipt($id);
@@ -1012,35 +1001,33 @@ class warehouse extends AdminController {
 		$data['base_currency'] = $base_currency;
 
 		$this->load->view('manage_goods_receipt/edit_purchase', $data);
-
 	}
 
-	public function add_goods_receipt() {
-
-	}
+	public function add_goods_receipt() {}
 
 	/**
 	 * commodity code change
 	 * @param  integer $val
 	 * @return json encode
 	 */
-	public function commodity_code_change($val='') {
+	public function commodity_code_change($val = '')
+	{
 		$data = $this->input->post();
 
-		if($data['switch_barcode_scanners'] == 'true'){
+		if ($data['switch_barcode_scanners'] == 'true') {
 			$value = $this->warehouse_model->get_commodity_hansometable_by_barcode($data['oldValue']);
-		}else{
+		} else {
 			$value = $this->warehouse_model->get_commodity_hansometable($data['oldValue']);
 		}
 
 		$value->tax1 = $value->tax;
-		if($value->tax2 != '' && $value->tax2 != null){
+		if ($value->tax2 != '' && $value->tax2 != null) {
 			$tax2 = get_tax_rate($value->tax2);
-			if($tax2 && !is_array($tax2)){
+			if ($tax2 && !is_array($tax2)) {
 				$value->taxrate2 = $tax2->taxrate;
 				$value->name_taxrate2 = $tax2->name;
-				$value->tax = $value->tax.'|'.$value->tax2;
-			}else{
+				$value->tax = $value->tax . '|' . $value->tax2;
+			} else {
 				$value->taxrate2 = 0;
 				$value->name_taxrate2 = '';
 				$value->tax = $value->tax;
@@ -1058,7 +1045,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function update_inventory_min($id = '') {
+	public function update_inventory_min($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -1079,7 +1067,8 @@ class warehouse extends AdminController {
 	 *
 	 * @return array
 	 */
-	public function table_warehouse_history() {
+	public function table_warehouse_history()
+	{
 		$this->app->get_table_data(module_views_path('warehouse', 'table_warehouse_history'));
 	}
 
@@ -1088,18 +1077,19 @@ class warehouse extends AdminController {
 	 *
 	 * @return view
 	 */
-	public function warehouse_history() {
+	public function warehouse_history()
+	{
 		$data['title'] = _l('warehouse_history');
 
 		$data['warehouse_filter'] = $this->warehouse_model->get_warehouse();
 		// $data['commodity_filter'] = $this->warehouse_model->get_commodity_active();
 		$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
-            $data['items'] = $this->warehouse_model->wh_get_grouped('', true);
-        } else {
-            $data['items']     = [];
-            $data['ajaxItems'] = true;
-        }
+		if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
+			$data['items'] = $this->warehouse_model->wh_get_grouped('', true);
+		} else {
+			$data['items']     = [];
+			$data['ajaxItems'] = true;
+		}
 		$this->load->view('warehouse/warehouse_history', $data);
 	}
 
@@ -1107,7 +1097,8 @@ class warehouse extends AdminController {
 	 * approval setting
 	 * @return redirect
 	 */
-	public function approval_setting() {
+	public function approval_setting()
+	{
 		if ($this->input->post()) {
 			$data = $this->input->post();
 			if ($data['approval_setting_id'] == '') {
@@ -1136,12 +1127,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_approval_setting($id) {
+	public function delete_approval_setting($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=approval_setting'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -1161,27 +1153,29 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return html
 	 */
-	public function get_html_approval_setting($id = '') {
-		$index=0;
+	public function get_html_approval_setting($id = '')
+	{
+		$index = 0;
 		$html = '';
 		$staffs = $this->staff_model->get();
 		$approver = [
 			0 => ['id' => 'direct_manager', 'name' => _l('direct_manager')],
 			1 => ['id' => 'department_manager', 'name' => _l('department_manager')],
-			2 => ['id' => 'staff', 'name' => _l('staff')]];
-			$action = [
-				1 => ['id' => 'approve', 'name' => _l('approve')],
-				0 => ['id' => 'sign', 'name' => _l('sign')],
-			];
-			if (is_numeric($id)) {
-				$approval_setting = $this->warehouse_model->get_approval_setting($id);
+			2 => ['id' => 'staff', 'name' => _l('staff')]
+		];
+		$action = [
+			1 => ['id' => 'approve', 'name' => _l('approve')],
+			0 => ['id' => 'sign', 'name' => _l('sign')],
+		];
+		if (is_numeric($id)) {
+			$approval_setting = $this->warehouse_model->get_approval_setting($id);
 
-				$setting = json_decode($approval_setting->setting);
+			$setting = json_decode($approval_setting->setting);
 
-				foreach ($setting as $key => $value) {
-					$index++;
-					if ($key == 0) {
-						$html .= '<div id="item_approve">
+			foreach ($setting as $key => $value) {
+				$index++;
+				if ($key == 0) {
+					$html .= '<div id="item_approve">
 						<div class="col-md-11">
 						<div class="col-md-4 hide"> ' .
 						render_select('approver[' . $key . ']', $approver, array('id', 'name'), 'task_single_related', $value->approver) . '
@@ -1199,8 +1193,8 @@ class warehouse extends AdminController {
 						</span>
 						</div>
 						</div>';
-					} else {
-						$html .= '<div id="item_approve">
+				} else {
+					$html .= '<div id="item_approve">
 						<div class="col-md-11">
 						<div class="col-md-4 hide">
 						' .
@@ -1219,10 +1213,10 @@ class warehouse extends AdminController {
 						</span>
 						</div>
 						</div>';
-					}
 				}
-			} else {
-				$html .= '<div id="item_approve">
+			}
+		} else {
+			$html .= '<div id="item_approve">
 				<div class="col-md-11">
 				<div class="col-md-4 hide"> ' .
 				render_select('approver[0]', $approver, array('id', 'name'), 'task_single_related') . '
@@ -1240,35 +1234,34 @@ class warehouse extends AdminController {
 				</span>
 				</div>
 				</div>';
-			}
-
-			echo json_encode([
-				'html' => $html,
-				'index' => $index,
-
-			]);
 		}
+
+		echo json_encode([
+			'html' => $html,
+			'index' => $index,
+
+		]);
+	}
 
 	/**
 	 * send request approve
 	 * @return json
 	 */
-	public function send_request_approve() {
+	public function send_request_approve()
+	{
 
 		$data = $this->input->post();
-		if($data['rel_type'] == '1'){
+		if ($data['rel_type'] == '1') {
 			$message = 'Send request approval fail';
 			$success = $this->warehouse_model->send_request_approve($data);
-
-		}elseif($data['rel_type'] == '2'){
+		} elseif ($data['rel_type'] == '2') {
 			/*check send request with type =2 , inventory delivery voucher*/
 			$check_r = $this->warehouse_model->check_inventory_delivery_voucher($data);
 
-			if($check_r['flag_export_warehouse'] == 1){
+			if ($check_r['flag_export_warehouse'] == 1) {
 				$message = 'Send request approval fail';
 				$success = $this->warehouse_model->send_request_approve($data);
-
-			}else{
+			} else {
 				$message = $check_r['str_error'];
 				$success = false;
 
@@ -1277,21 +1270,18 @@ class warehouse extends AdminController {
 					'message' => $message,
 				]);
 				die;
-
 			}
-		}elseif($data['rel_type'] == '3'){
+		} elseif ($data['rel_type'] == '3') {
 			$message = 'Send request approval fail';
 			$success = $this->warehouse_model->send_request_approve($data);
-
-		}elseif($data['rel_type'] == '4'){
+		} elseif ($data['rel_type'] == '4') {
 			/*check send request with type = 4 , internal delivery note*/
 			$check_r = $this->warehouse_model->check_internal_delivery_note_send_request($data);
 
-			if($check_r['flag_internal_delivery_warehouse'] == 1){
+			if ($check_r['flag_internal_delivery_warehouse'] == 1) {
 				$message = 'Send request approval fail';
 				$success = $this->warehouse_model->send_request_approve($data);
-
-			}else{
+			} else {
 				$message = $check_r['str_error'];
 				$success = false;
 
@@ -1300,17 +1290,15 @@ class warehouse extends AdminController {
 					'message' => $message,
 				]);
 				die;
-
 			}
-
-		}elseif($data['rel_type'] == '5'){
+		} elseif ($data['rel_type'] == '5') {
 			// packing list
 			//check before send request approval
 			$check_packing_list_send_request = $this->warehouse_model->check_packing_list_send_request($data);
 
-			if($check_packing_list_send_request['flag_update_status']){
+			if ($check_packing_list_send_request['flag_update_status']) {
 				$success = $this->warehouse_model->send_request_approve($data);
-			}else{
+			} else {
 				$message = $check_packing_list_send_request['str_error'];
 				$success = false;
 				echo json_encode([
@@ -1319,7 +1307,7 @@ class warehouse extends AdminController {
 				]);
 				die;
 			}
-		}elseif($data['rel_type'] == '6'){
+		} elseif ($data['rel_type'] == '6') {
 			// order return
 
 			$success = $this->warehouse_model->send_request_approve($data);
@@ -1330,10 +1318,9 @@ class warehouse extends AdminController {
 			$data_new = [];
 			$data_new['send_mail_approve'] = $data;
 			$this->session->set_userdata($data_new);
-		}elseif($success === false){
+		} elseif ($success === false) {
 			$message = _l('no_matching_process_found');
 			$success = false;
-
 		} else {
 			$message = _l('could_not_find_approver_with', _l($success));
 			$success = false;
@@ -1350,7 +1337,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return json
 	 */
-	public function approve_request() {
+	public function approve_request()
+	{
 		$data = $this->input->post();
 
 		$data['staff_approve'] = get_staff_user_id();
@@ -1386,36 +1374,36 @@ class warehouse extends AdminController {
 					}
 					if ($signature != '') {
 						switch ($data['rel_type']) {
-						// case 'stock_import 1':
+								// case 'stock_import 1':
 							case 1:
-							$path = WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
-							break;
-						// case 'stock_export 2':
+								$path = WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
+								break;
+								// case 'stock_export 2':
 							case 2:
-							$path = WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
-							break;
+								$path = WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
+								break;
 
 							case 3:
-							$path = WAREHOUSE_LOST_ADJUSTMENT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
-							break;
+								$path = WAREHOUSE_LOST_ADJUSTMENT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
+								break;
 
 							case 4:
-							$path = WAREHOUSE_INTERNAL_DELIVERY_MODULE_UPLOAD_FOLDER . $data['rel_id'];
-							break;
+								$path = WAREHOUSE_INTERNAL_DELIVERY_MODULE_UPLOAD_FOLDER . $data['rel_id'];
+								break;
 
 							case 5:
-							$path = WAREHOUSE_PACKING_LIST_MODULE_UPLOAD_FOLDER . $data['rel_id'];
-							break;
+								$path = WAREHOUSE_PACKING_LIST_MODULE_UPLOAD_FOLDER . $data['rel_id'];
+								break;
 
 							case 6:
-							$path = WAREHOUSE_ORDER_RETURN_MODULE_UPLOAD_FOLDER . $data['rel_id'];
-							break;
-							
+								$path = WAREHOUSE_ORDER_RETURN_MODULE_UPLOAD_FOLDER . $data['rel_id'];
+								break;
+
 
 
 							default:
-							$path = WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER;
-							break;
+								$path = WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER;
+								break;
 						}
 						warehouse_process_digital_signature_image($signature, $path, 'signature_' . $check_approve_status['id']);
 						$message = _l('sign_successfully');
@@ -1431,8 +1419,8 @@ class warehouse extends AdminController {
 
 					if ($check_approve_status === true) {
 						$this->warehouse_model->update_approve_request($data['rel_id'], $data['rel_type'], 1);
-						$open_warehouse_modal = true; 
-						if((int)$data['rel_type'] == 6){
+						$open_warehouse_modal = true;
+						if ((int)$data['rel_type'] == 6) {
 							$get_order_return = $this->warehouse_model->get_order_return($data['rel_id']);
 							$receipt_delivery_type = $get_order_return->receipt_delivery_type;
 						}
@@ -1468,7 +1456,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return pdf file view
 	 */
-	public function stock_import_pdf($id) {
+	public function stock_import_pdf($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/manage_goods_receipt/manage_purchase'));
 		}
@@ -1476,7 +1465,6 @@ class warehouse extends AdminController {
 		$stock_import = $this->warehouse_model->get_stock_import_pdf_html($id);
 		try {
 			$pdf = $this->warehouse_model->stock_import_pdf($stock_import);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -1493,7 +1481,7 @@ class warehouse extends AdminController {
 			$type = 'I';
 		}
 
-		$pdf->Output('goods_receipt_'.strtotime(date('Y-m-d H:i:s')).'.pdf', $type);
+		$pdf->Output('goods_receipt_' . strtotime(date('Y-m-d H:i:s')) . '.pdf', $type);
 	}
 
 	/**
@@ -1501,7 +1489,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return json
 	 */
-	public function send_mail() {
+	public function send_mail()
+	{
 		if ($this->input->is_ajax_request()) {
 			// $data = $this->input->post();
 			$data = $this->input->get();
@@ -1521,7 +1510,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function manage_delivery($id = '') {
+	public function manage_delivery($id = '')
+	{
 		$data['delivery_id'] = $id;
 		$data['title'] = _l('stock_delivery_manage');
 		$this->load->view('manage_goods_delivery/manage_delivery', $data);
@@ -1531,7 +1521,8 @@ class warehouse extends AdminController {
 	 * goods delivery
 	 * @return view
 	 */
-	public function goods_delivery($id ='', $edit_approval = false) {
+	public function goods_delivery($id = '', $edit_approval = false)
+	{
 
 		$this->load->model('clients_model');
 		$this->load->model('taxes_model');
@@ -1545,36 +1536,33 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_goods_delivery($data);
 				if ($mess) {
 
-					if($data['save_and_send_request'] == 'true'){
+					if ($data['save_and_send_request'] == 'true') {
 						$this->save_and_send_request_send_mail(['rel_id' => $mess, 'rel_type' => '2', 'addedfrom' => get_staff_user_id()]);
 					}
 
 					set_alert('success', _l('added_successfully'));
-
 				} else {
 					set_alert('warning', _l('Add_stock_delivery_docket_false'));
 				}
-				redirect(admin_url('warehouse/manage_delivery/'.$mess));
-
-			}else{
+				redirect(admin_url('warehouse/manage_delivery/' . $mess));
+			} else {
 				$id = $this->input->post('id');
 				$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
-				if($goods_delivery->approval == 0){
+				if ($goods_delivery->approval == 0) {
 					$mess = $this->warehouse_model->update_goods_delivery($data);
-				}else{
+				} else {
 					$mess = $this->warehouse_model->update_goods_delivery_approval($data);
 				}
 
-				if($data['save_and_send_request'] == 'true'){
+				if ($data['save_and_send_request'] == 'true') {
 					$this->save_and_send_request_send_mail(['rel_id' => $id, 'rel_type' => '2', 'addedfrom' => get_staff_user_id()]);
 				}
 
 				if ($mess) {
 					set_alert('success', _l('updated_successfully'));
 				}
-				redirect(admin_url('warehouse/manage_delivery/'.$id));
+				redirect(admin_url('warehouse/manage_delivery/' . $id));
 			}
-
 		}
 		//get vaule render dropdown select
 		$data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
@@ -1597,21 +1585,21 @@ class warehouse extends AdminController {
 		}
 
 		$warehouse_data = $this->warehouse_model->get_warehouse();
-		
-        //sample
-        $goods_delivery_row_template = '';
-        if(is_numeric($id)){
-        	$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
-        	if($goods_delivery->approval == 0){
-        		$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
-        	}
-        }else{
-			
-        	$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
-        }
-	
+
+		//sample
+		$goods_delivery_row_template = '';
+		if (is_numeric($id)) {
+			$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
+			if ($goods_delivery->approval == 0) {
+				$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
+			}
+		} else {
+
+			$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
+		}
+
 		if (get_status_modules_wh('purchase')) {
-			if ($this->db->field_exists('delivery_status' ,db_prefix() . 'pur_orders')) { 
+			if ($this->db->field_exists('delivery_status', db_prefix() . 'pur_orders')) {
 				$this->load->model('purchase/purchase_model');
 				$this->load->model('departments_model');
 				$this->load->model('staff_model');
@@ -1625,28 +1613,27 @@ class warehouse extends AdminController {
 				$data['projects'] = $this->projects_model->get();
 				$data['staffs'] = $this->staff_model->get();
 				$data['departments'] = $this->departments_model->get();
-			}else{
+			} else {
 				$data['pr_orders'] = [];
 				$data['pr_orders_status'] = false;
 			}
-
 		} else {
 			$data['pr_orders'] = [];
 			$data['pr_orders_status'] = false;
 		}
-		
+
 		$data['customer_code'] = $this->clients_model->get();
-		if($edit_approval){
-			$invoices_data = $this->db->query('select *, iv.id as id from '.db_prefix().'invoices as iv left join '.db_prefix().'projects as pj on pj.id = iv.project_id left join '.db_prefix().'clients as cl on cl.userid = iv.clientid  order by iv.id desc')->result_array();
+		if ($edit_approval) {
+			$invoices_data = $this->db->query('select *, iv.id as id from ' . db_prefix() . 'invoices as iv left join ' . db_prefix() . 'projects as pj on pj.id = iv.project_id left join ' . db_prefix() . 'clients as cl on cl.userid = iv.clientid  order by iv.id desc')->result_array();
 			$data['invoices'] = $invoices_data;
-		}else{
+		} else {
 			$data['invoices'] = $this->warehouse_model->get_invoices();
 		}
 		$data['goods_code'] = $this->warehouse_model->create_goods_delivery_code();
 		$data['staff'] = $this->warehouse_model->get_staff();
 		$data['current_day'] = date('Y-m-d');
 
-		if($id != ''){
+		if ($id != '') {
 			$is_purchase_order = false;
 			$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
 			if (!$goods_delivery) {
@@ -1655,14 +1642,14 @@ class warehouse extends AdminController {
 			$data['goods_delivery_detail'] = $this->warehouse_model->get_goods_delivery_detail($id);
 			$data['goods_delivery'] = $goods_delivery;
 
-			if(isset($goods_delivery->pr_order_id ) && (float)$goods_delivery->pr_order_id > 0){
+			if (isset($goods_delivery->pr_order_id) && (float)$goods_delivery->pr_order_id > 0) {
 				$is_purchase_order = true;
 			}
 
 			if (count($data['goods_delivery_detail']) > 0) {
 				$index_receipt = 0;
 				foreach ($data['goods_delivery_detail'] as $delivery_detail) {
-					if($delivery_detail['commodity_code'] != null && is_numeric($delivery_detail['commodity_code'])){
+					if ($delivery_detail['commodity_code'] != null && is_numeric($delivery_detail['commodity_code'])) {
 						$index_receipt++;
 						$unit_name = wh_get_unit_name($delivery_detail['unit_id']);
 						$taxname = '';
@@ -1671,17 +1658,16 @@ class warehouse extends AdminController {
 						$commodity_name = $delivery_detail['commodity_name'];
 						$without_checking_warehouse = 0;
 
-						if(strlen($commodity_name) == 0){
+						if (strlen($commodity_name) == 0) {
 							$commodity_name = wh_get_item_variatiom($delivery_detail['commodity_code']);
 						}
 
 						$get_commodity = $this->warehouse_model->get_commodity($delivery_detail['commodity_code']);
-						if($get_commodity){
+						if ($get_commodity) {
 							$without_checking_warehouse = $get_commodity->without_checking_warehouse;
 						}
 
-						$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $delivery_detail['warehouse_id'], $delivery_detail['available_quantity'], $delivery_detail['quantities'], $unit_name, $delivery_detail['unit_price'], $taxname, $delivery_detail['commodity_code'], $delivery_detail['unit_id'],$delivery_detail['vendor_id'] , $delivery_detail['tax_rate'], $delivery_detail['total_money'], $delivery_detail['discount'], $delivery_detail['discount_money'], $delivery_detail['total_after_discount'],$delivery_detail['guarantee_period'], $expiry_date, $lot_number, $delivery_detail['note'], $delivery_detail['sub_total'],$delivery_detail['tax_name'],$delivery_detail['tax_id'], $delivery_detail['id'], true, $is_purchase_order, $delivery_detail['serial_number'], $without_checking_warehouse);
-
+						$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $delivery_detail['warehouse_id'], $delivery_detail['available_quantity'], $delivery_detail['quantities'], $unit_name, $delivery_detail['unit_price'], $taxname, $delivery_detail['commodity_code'], $delivery_detail['unit_id'], $delivery_detail['vendor_id'], $delivery_detail['tax_rate'], $delivery_detail['total_money'], $delivery_detail['discount'], $delivery_detail['discount_money'], $delivery_detail['total_after_discount'], $delivery_detail['guarantee_period'], $expiry_date, $lot_number, $delivery_detail['note'], $delivery_detail['sub_total'], $delivery_detail['tax_name'], $delivery_detail['tax_id'], $delivery_detail['id'], true, $is_purchase_order, $delivery_detail['serial_number'], $without_checking_warehouse);
 					}
 				}
 			}
@@ -1691,15 +1677,14 @@ class warehouse extends AdminController {
 		$data['edit_approval'] = $edit_approval;
 		$data['goods_delivery_row_template'] = $goods_delivery_row_template;
 		$get_base_currency =  get_base_currency();
-		if($get_base_currency){
+		if ($get_base_currency) {
 			$data['base_currency_id'] = $get_base_currency->id;
-		}else{
+		} else {
 			$data['base_currency_id'] = 0;
 		}
 		$data['goods_receipt'] = $this->warehouse_model->get_all_approved_goods_receipt();
 
 		$this->load->view('manage_goods_delivery/delivery', $data);
-
 	}
 
 	/**
@@ -1707,30 +1692,31 @@ class warehouse extends AdminController {
 	 * @param  integer $val
 	 * @return json
 	 */
-	public function commodity_goods_delivery_change($val='') {
+	public function commodity_goods_delivery_change($val = '')
+	{
 
-			$data = $this->input->post();
-			if($data['switch_barcode_scanners'] == 'true'){
-				$value = $this->warehouse_model->get_commodity_delivery_hansometable_by_barcode($data['oldValue']);
-			}else{
-				$value = $this->warehouse_model->commodity_goods_delivery_change($data['oldValue']);
-			}
+		$data = $this->input->post();
+		if ($data['switch_barcode_scanners'] == 'true') {
+			$value = $this->warehouse_model->get_commodity_delivery_hansometable_by_barcode($data['oldValue']);
+		} else {
+			$value = $this->warehouse_model->commodity_goods_delivery_change($data['oldValue']);
+		}
 
 
-			echo json_encode([
-				'value' => $value['commodity_value'],
-				'warehouse_inventory' => $value['warehouse_inventory'],
-				'guarantee_new' => $value['guarantee_new'],
-			]);
-			die;
-		
+		echo json_encode([
+			'value' => $value['commodity_value'],
+			'warehouse_inventory' => $value['warehouse_inventory'],
+			'guarantee_new' => $value['guarantee_new'],
+		]);
+		die;
 	}
 
 	/**
 	 * table manage delivery
 	 * @return array
 	 */
-	public function table_manage_delivery() {
+	public function table_manage_delivery()
+	{
 		$this->app->get_table_data(module_views_path('warehouse', 'manage_goods_delivery/table_manage_delivery'));
 	}
 
@@ -1739,7 +1725,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function edit_delivery($id) {
+	public function edit_delivery($id)
+	{
 		//check exist
 		$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
 		if (!$goods_delivery) {
@@ -1778,7 +1765,6 @@ class warehouse extends AdminController {
 		$data['base_currency'] = $base_currency;
 
 		$this->load->view('manage_goods_delivery/edit_delivery', $data);
-
 	}
 
 	/**
@@ -1786,7 +1772,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return pdf file view
 	 */
-	public function stock_export_pdf($id) {
+	public function stock_export_pdf($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/manage_goods_delivery/manage_delivery'));
 		}
@@ -1795,7 +1782,6 @@ class warehouse extends AdminController {
 
 		try {
 			$pdf = $this->warehouse_model->stock_export_pdf($stock_export);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -1812,14 +1798,15 @@ class warehouse extends AdminController {
 			$type = 'I';
 		}
 
-		$pdf->Output('goods_delivery_'.strtotime(date('Y-m-d H:i:s')).'.pdf', $type);
+		$pdf->Output('goods_delivery_' . strtotime(date('Y-m-d H:i:s')) . '.pdf', $type);
 	}
 
 	/**
 	 * manage report
 	 * @return view
 	 */
-	public function manage_report() {
+	public function manage_report()
+	{
 		$data['group'] = $this->input->get('group');
 
 		$data['title'] = _l('als_report');
@@ -1830,42 +1817,42 @@ class warehouse extends AdminController {
 
 		switch ($data['group']) {
 			case 'stock_summary_report':
-			$data['title'] = _l('stock_summary_report');
+				$data['title'] = _l('stock_summary_report');
 
-			break;
+				break;
 			case 'inventory_valuation_report':
-			$data['title'] = _l('inventory_valuation_report');
+				$data['title'] = _l('inventory_valuation_report');
 
-			break;
+				break;
 			case 'inventory_inside':
-			$data['title'] = _l('inventory_inside');
+				$data['title'] = _l('inventory_inside');
 
-			break;
+				break;
 
 			case 'warranty_period_report':
-			$data['title'] = _l('wh_warranty_period_report');
+				$data['title'] = _l('wh_warranty_period_report');
 
-			break;
+				break;
 
 
 			default:
-			$data['title'] = _l('stock_summary_report');
-			$data['group'] = 'stock_summary_report';
-			break;
+				$data['title'] = _l('stock_summary_report');
+				$data['group'] = 'stock_summary_report';
+				break;
 		}
 		$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
-            $data['items'] = $this->warehouse_model->wh_get_grouped('', true);
-        } else {
-            $data['items']     = [];
-            $data['ajaxItems'] = true;
-        }
+		if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
+			$data['items'] = $this->warehouse_model->wh_get_grouped('', true);
+		} else {
+			$data['items']     = [];
+			$data['ajaxItems'] = true;
+		}
 		$data['warehouse_filter'] = $this->warehouse_model->get_warehouse();
 
 		$data['tabs']['view'] = 'report/' . $data['group'];
 		// $data['period_to_date'] = _d(date('Y-m-d', strtotime( date('Y-m-d') . "+30 day")));
 		$data['period_to_date'] = '';
-		$data['period_status_id'] = [1,2];
+		$data['period_status_id'] = [1, 2];
 		$data['clients'] = $this->clients_model->get();
 
 		$this->load->view('report/manage_report', $data);
@@ -1875,7 +1862,8 @@ class warehouse extends AdminController {
 	 * get data stock summary report
 	 * @return json
 	 */
-	public function get_data_stock_summary_report() {
+	public function get_data_stock_summary_report()
+	{
 		if ($this->input->post()) {
 			$data = $this->input->post();
 
@@ -1892,7 +1880,8 @@ class warehouse extends AdminController {
 	 * stock summary report pdf
 	 * @return pdf view file
 	 */
-	public function stock_summary_report_pdf() {
+	public function stock_summary_report_pdf()
+	{
 		$data = $this->input->post();
 		if (!$data) {
 			redirect(admin_url('warehouse/report/manage_report'));
@@ -1902,7 +1891,6 @@ class warehouse extends AdminController {
 
 		try {
 			$pdf = $this->warehouse_model->stock_summary_report_pdf($stock_summary_report);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -1910,7 +1898,7 @@ class warehouse extends AdminController {
 
 		$type = 'D';
 		ob_end_clean();
-		
+
 		if ($this->input->get('output_type')) {
 			$type = $this->input->get('output_type');
 		}
@@ -1927,7 +1915,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function view_delivery($id) {
+	public function view_delivery($id)
+	{
 		//approval
 		$send_mail_approve = $this->session->userdata("send_mail_approve");
 		if ((isset($send_mail_approve)) && $send_mail_approve != '') {
@@ -1949,7 +1938,7 @@ class warehouse extends AdminController {
 		$data['goods_delivery_detail'] = $this->warehouse_model->get_goods_delivery_detail($id);
 
 		$data['goods_delivery'] = $this->warehouse_model->get_goods_delivery($id);
-		$data['activity_log'] = $this->warehouse_model->wh_get_activity_log($id,'delivery');
+		$data['activity_log'] = $this->warehouse_model->wh_get_activity_log($id, 'delivery');
 		$data['packing_lists'] = $this->warehouse_model->get_packing_list_by_deivery_note($id);
 
 		$data['title'] = _l('stock_export_info');
@@ -1959,27 +1948,27 @@ class warehouse extends AdminController {
 		$this->load->model('currencies_model');
 		$base_currency = $this->currencies_model->get_base_currency();
 		$data['base_currency'] = $base_currency;
-		
+
 
 		$this->load->view('manage_goods_delivery/view_delivery', $data);
-
 	}
 
 	/**
 	 * check quantity inventory
 	 * @return json
 	 */
-	public function check_quantity_inventory() {
+	public function check_quantity_inventory()
+	{
 		$data = $this->input->post();
 		if ($data != 'null') {
 
 			//switch_barcode_scanners
-			if($data['switch_barcode_scanners'] == 'true'){
+			if ($data['switch_barcode_scanners'] == 'true') {
 				$data['commodity_id'] = $this->warehouse_model->get_commodity_id_from_barcode($data['commodity_id']);
 			}
 
 			/*check without checking warehouse*/
-			if($this->warehouse_model->check_item_without_checking_warehouse($data['commodity_id']) == true){
+			if ($this->warehouse_model->check_item_without_checking_warehouse($data['commodity_id']) == true) {
 				//checking
 
 				$value = $this->warehouse_model->get_quantity_inventory($data['warehouse_id'], $data['commodity_id']);
@@ -1994,16 +1983,13 @@ class warehouse extends AdminController {
 						$message = true;
 						$quantity = (float)get_object_vars($value)['inventory_number'];
 					}
-
 				} else {
 					$message = _l('Product_does_not_exist_in_stock');
 				}
-
-			}else{
+			} else {
 				//without checking
 				$message = true;
 				$quantity = 0;
-
 			}
 
 			echo json_encode([
@@ -2018,10 +2004,11 @@ class warehouse extends AdminController {
 	 *  quantity inventory
 	 * @return json
 	 */
-	public function quantity_inventory() {
+	public function quantity_inventory()
+	{
 		$data = $this->input->post();
 		if ($data != 'null') {
-			if(strlen($data['expiry_date']) > 0){
+			if (strlen($data['expiry_date']) > 0) {
 				$data['expiry_date'] = to_sql_date($data['expiry_date']);
 			}
 			$value = $this->warehouse_model->get_adjustment_stock_quantity($data['warehouse_id'], $data['commodity_id'], $data['lot_number'], $data['expiry_date']);
@@ -2032,7 +2019,6 @@ class warehouse extends AdminController {
 
 				$message = _l('in_stock');
 				$quantity = get_object_vars($value)['inventory_number'];
-
 			} else {
 				$message = _l('Product_does_not_exist_in_stock');
 			}
@@ -2050,40 +2036,41 @@ class warehouse extends AdminController {
 	 * check quantity inventory onsubmit
 	 * @return json
 	 */
-	public function check_quantity_inventory_onsubmit() {
+	public function check_quantity_inventory_onsubmit()
+	{
 		$data = $this->input->post();
 		$flag = 0;
 		$message = true;
 
-		$str_error='';
+		$str_error = '';
 
-		$arr_available_quantity=[];
+		$arr_available_quantity = [];
 
-		
+
 		if ($data['hot_delivery'] != 'null') {
 			foreach ($data['hot_delivery'] as $delivery_value) {
-				
+
 				//switch_barcode_scanners
-				if($data['switch_barcode_scanners'] == 'true'){
+				if ($data['switch_barcode_scanners'] == 'true') {
 					$delivery_value[0] = $this->warehouse_model->get_commodity_id_from_barcode($delivery_value[0]);
 				}
 
-				if ( $delivery_value[0] != '' ) {
-					if($delivery_value[1] != '' || $data['warehouse_id'] != ''){
+				if ($delivery_value[0] != '') {
+					if ($delivery_value[1] != '' || $data['warehouse_id'] != '') {
 						//check without checking warehouse
-						
-						if($data['warehouse_id'] != ''){
+
+						if ($data['warehouse_id'] != '') {
 							$delivery_value[1] = $data['warehouse_id'];
 						}
 
-						$commodity_name='';
+						$commodity_name = '';
 						$item_value = $this->warehouse_model->get_commodity($delivery_value[0]);
 
-						if($item_value){
-							$commodity_name .= $item_value->commodity_code.'_'.$item_value->description;
+						if ($item_value) {
+							$commodity_name .= $item_value->commodity_code . '_' . $item_value->description;
 						}
 
-						if($this->warehouse_model->check_item_without_checking_warehouse($delivery_value[0]) == true){
+						if ($this->warehouse_model->check_item_without_checking_warehouse($delivery_value[0]) == true) {
 
 							$value = $this->warehouse_model->get_quantity_inventory($delivery_value[1], $delivery_value[0]);
 
@@ -2092,25 +2079,22 @@ class warehouse extends AdminController {
 								// if ((float) get_object_vars($value)['inventory_number'] < (float) $delivery_value[2]) {
 								if ((float) get_object_vars($value)['inventory_number'] < (float) $delivery_value[4]) {
 									$flag = 1;
-									$str_error .= $commodity_name._l('not_enough_inventory').', '._l('available_quantity').': '.(float) get_object_vars($value)['inventory_number'].'<br/>';
+									$str_error .= $commodity_name . _l('not_enough_inventory') . ', ' . _l('available_quantity') . ': ' . (float) get_object_vars($value)['inventory_number'] . '<br/>';
 								}
 							} else {
 								$flag = 1;
-								$str_error .=$commodity_name. _l('Product_does_not_exist_in_stock').'<br/>';
+								$str_error .= $commodity_name . _l('Product_does_not_exist_in_stock') . '<br/>';
 							}
 						}
-
-					}else{
+					} else {
 						$flag = 1;
-						$str_error .= _l('please_choose_from_stock_name').'<br/>';
+						$str_error .= _l('please_choose_from_stock_name') . '<br/>';
 					}
 				}
-
 			}
-			
+
 			if ($flag == 1) {
 				$message = false;
-
 			} else {
 				$message = true;
 			}
@@ -2130,7 +2114,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function manage_stock_take($id = '') {
+	public function manage_stock_take($id = '')
+	{
 		$data['stock_take_id'] = $id;
 		$data['title'] = _l('stock_take');
 		$this->load->view('manage_stock_take/manage', $data);
@@ -2140,7 +2125,8 @@ class warehouse extends AdminController {
 	 * table manage stock table
 	 * @return array
 	 */
-	public function table_manage_stock_take() {
+	public function table_manage_stock_take()
+	{
 		$this->app->get_table_data(module_views_path('warehouse', 'manage_stock_take/table_manage_stock_take'));
 	}
 
@@ -2149,7 +2135,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function stock_take() {
+	public function stock_take()
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -2159,12 +2146,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_goods_receipt($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . _l('stock_take'));
-
 				} else {
 					set_alert('warning', _l('Add_stock_take_false'));
 				}
 				redirect(admin_url('warehouse/manage_stock_take'));
-
 			}
 		}
 		//get vaule render dropdown select
@@ -2189,7 +2174,6 @@ class warehouse extends AdminController {
 		$data['staff'] = $this->warehouse_model->get_staff();
 
 		$this->load->view('manage_stock_take/stock_take', $data);
-
 	}
 
 	/**
@@ -2197,25 +2181,26 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return json
 	 */
-	public function commodity_list_add_edit($id = '') {
+	public function commodity_list_add_edit($id = '')
+	{
 		$data = $this->input->post();
 
 		if ($data) {
 
 			if (!isset($data['id'])) {
 				$data['long_descriptions'] = $this->input->post('long_descriptions', false);
-				
+
 				$data['tags'] = '';
-				foreach ( $data['formdata'] as $key => $value) {
-					if($value['name'] == 'tags'){
+				foreach ($data['formdata'] as $key => $value) {
+					if ($value['name'] == 'tags') {
 						$data['tags'] .= $value['value'];
 					}
 
-					if($value['name'] == 'tax2'){
+					if ($value['name'] == 'tax2') {
 						$data['tax2'] = $value['value'];
 					}
 
-					if($value['name'] == 'parent_id'){
+					if ($value['name'] == 'parent_id') {
 						$data['parent_id'] = $value['value'];
 					}
 				}
@@ -2234,26 +2219,24 @@ class warehouse extends AdminController {
 						'add_variant' => $result['add_variant'],
 					]);
 					die;
-
 				}
 				echo json_encode([
 					'url' => admin_url('warehouse/commodity_list'),
 				]);
 				die;
-
 			} else {
 
 				$data['tags'] = '';
-				foreach ( $data['formdata'] as $key => $value) {
-					if($value['name'] == 'tags'){
+				foreach ($data['formdata'] as $key => $value) {
+					if ($value['name'] == 'tags') {
 						$data['tags'] .= $value['value'];
 					}
 
-					if($value['name'] == 'tax2'){
+					if ($value['name'] == 'tax2') {
 						$data['tax2'] = $value['value'];
 					}
 
-					if($value['name'] == 'parent_id'){
+					if ($value['name'] == 'parent_id') {
 						$data['parent_id'] = $value['value'];
 					}
 				}
@@ -2277,10 +2260,8 @@ class warehouse extends AdminController {
 					'commodityid' => $id,
 				]);
 				die;
-
 			}
 		}
-
 	}
 
 	/**
@@ -2288,7 +2269,8 @@ class warehouse extends AdminController {
 	 * @param  integer $commodity_id
 	 * @return json
 	 */
-	public function get_commodity_file_url($commodity_id) {
+	public function get_commodity_file_url($commodity_id)
+	{
 		$arr_commodity_file = $this->warehouse_model->get_warehourse_attachments($commodity_id);
 		/*get images old*/
 		$images_old_value = '';
@@ -2302,15 +2284,15 @@ class warehouse extends AdminController {
 				if (file_exists(WAREHOUSE_ITEM_UPLOAD . $value["rel_id"] . '/' . $value["file_name"])) {
 					$images_old_value .= '<img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/warehouse/uploads/item_img/' . $value["rel_id"] . '/' . $value["file_name"]) . '">';
 
-					$rel_type = 'warehouse' ;
-				} elseif(file_exists('modules/purchase/uploads/item_img/'. $value["rel_id"] . '/' . $value["file_name"])) {
+					$rel_type = 'warehouse';
+				} elseif (file_exists('modules/purchase/uploads/item_img/' . $value["rel_id"] . '/' . $value["file_name"])) {
 					$images_old_value .= '<img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/purchase/uploads/item_img/' . $value["rel_id"] . '/' . $value["file_name"]) . '">';
 
-					$rel_type = 'purchase' ;
-				}elseif(file_exists('modules/manufacturing/uploads/products/'. $value["rel_id"] . '/' . $value["file_name"])) {
+					$rel_type = 'purchase';
+				} elseif (file_exists('modules/manufacturing/uploads/products/' . $value["rel_id"] . '/' . $value["file_name"])) {
 					$images_old_value .= '<img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/manufacturing/uploads/products/' . $value["rel_id"] . '/' . $value["file_name"]) . '">';
 
-					$rel_type = 'manufacturing' ;
+					$rel_type = 'manufacturing';
 				}
 
 				if ($rel_type != '') {
@@ -2323,7 +2305,7 @@ class warehouse extends AdminController {
 
 
 					$images_old_value .= '<div class="remove_file">';
-					$images_old_value .= '<a href="#" class="text-danger" onclick="delete_product_attachment(this,' . $value["id"] . ','.'\''.$rel_type.'\'); return false;"><i class="fa fa fa-times"></i></a>';
+					$images_old_value .= '<a href="#" class="text-danger" onclick="delete_product_attachment(this,' . $value["id"] . ',' . '\'' . $rel_type . '\'); return false;"><i class="fa fa fa-times"></i></a>';
 					$images_old_value .= '</div>';
 
 					$images_old_value .= '</div>';
@@ -2335,7 +2317,6 @@ class warehouse extends AdminController {
 			'arr_images' => $images_old_value,
 		]);
 		die();
-
 	}
 
 	/**
@@ -2343,7 +2324,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function sub_group($id = '') {
+	public function sub_group($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -2353,12 +2335,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_sub_group($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully') . ' ' . _l('sub_group'));
-
 				} else {
 					set_alert('warning', _l('Add_sub_group_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=sub_group'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -2379,12 +2359,13 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return redirect
 	 */
-	public function delete_sub_group($id) {
+	public function delete_sub_group($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=sub_group'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -2405,14 +2386,15 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return json
 	 */
-	public function add_commodity_attachment($id, $add_variant='') {
+	public function add_commodity_attachment($id, $add_variant = '')
+	{
 
 		handle_commodity_attachments($id);
 		echo json_encode([
 
 			'url' => admin_url('warehouse/commodity_list'),
-    		'add_variant' => $add_variant,
-    		'id' => $id,
+			'add_variant' => $add_variant,
+			'id' => $id,
 		]);
 	}
 
@@ -2421,7 +2403,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id
 	 * @return view
 	 */
-	public function import_xlsx_commodity() {
+	public function import_xlsx_commodity()
+	{
 		if (!is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied('warehouse');
 		}
@@ -2432,12 +2415,10 @@ class warehouse extends AdminController {
 		if ($data_staff) {
 			if ($data_staff->default_language != '') {
 				$data['active_language'] = $data_staff->default_language;
-
 			} else {
 
 				$data['active_language'] = get_option('active_language');
 			}
-
 		} else {
 			$data['active_language'] = get_option('active_language');
 		}
@@ -2450,29 +2431,30 @@ class warehouse extends AdminController {
 	 * import file xlsx commodity
 	 * @return json
 	 */
-	public function import_file_xlsx_commodity() {
+	public function import_file_xlsx_commodity()
+	{
 		if (!is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied(_l('warehouse'));
 		}
 
-		if(!class_exists('XLSXReader_fin')){
-            require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXReader/XLSXReader.php');
-        }
-        require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+		if (!class_exists('XLSXReader_fin')) {
+			require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+		}
+		require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
 
 		$total_row_false = 0;
 		$total_rows_data = 0;
 		$dataerror = 0;
 		$total_row_success = 0;
 		$total_rows_data_error = 0;
-		$filename='';
+		$filename = '';
 
 		if ($this->input->post()) {
 
 			/*delete file old before export file*/
-			$path_before = COMMODITY_ERROR.'FILE_ERROR_COMMODITY'.get_staff_user_id().'.xlsx';
-			if(file_exists($path_before)){
-				unlink(COMMODITY_ERROR.'FILE_ERROR_COMMODITY'.get_staff_user_id().'.xlsx');
+			$path_before = COMMODITY_ERROR . 'FILE_ERROR_COMMODITY' . get_staff_user_id() . '.xlsx';
+			if (file_exists($path_before)) {
+				unlink(COMMODITY_ERROR . 'FILE_ERROR_COMMODITY' . get_staff_user_id() . '.xlsx');
 			}
 
 			if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
@@ -2501,49 +2483,49 @@ class warehouse extends AdminController {
 
 						//Writer file
 						$writer_header = array(
-							"(*)" ._l('commodity_code')          =>'string',
-							"(*)" ._l('commodity_name')          =>'string',
-							_l('commodity_barcode')          =>'string',
-							_l('sku_code')          =>'string',
-							_l('sku_name')          =>'string',
-							_l('Tags')          =>'string',
-							_l('description')          =>'string',
-							_l('commodity_type')          =>'string',
-							_l('unit_id')          =>'string',
-							"(*)" ._l('commodity_group')          =>'string',
-							_l('sub_group')          =>'string',
-							_l('_profit_rate'). "(%)"          =>'string',
-							_l('purchase_price')          =>'string',
-							"(*)" ._l('rate')          =>'string',
-							_l('tax')          =>'string',
-							_l('origin')          =>'string',
-							_l('style_id')          =>'string',
-							_l('model_id')          =>'string',
-							_l('size_id')          =>'string',
-							_l('_color')          =>'string',
-							_l('guarantee_month')          =>'string',
-							_l('minimum_inventory')          =>'string',
-							_l('error')                     =>'string',
+							"(*)" . _l('commodity_code')          => 'string',
+							"(*)" . _l('commodity_name')          => 'string',
+							_l('commodity_barcode')          => 'string',
+							_l('sku_code')          => 'string',
+							_l('sku_name')          => 'string',
+							_l('Tags')          => 'string',
+							_l('description')          => 'string',
+							_l('commodity_type')          => 'string',
+							_l('unit_id')          => 'string',
+							"(*)" . _l('commodity_group')          => 'string',
+							_l('sub_group')          => 'string',
+							_l('_profit_rate') . "(%)"          => 'string',
+							_l('purchase_price')          => 'string',
+							"(*)" . _l('rate')          => 'string',
+							_l('tax')          => 'string',
+							_l('origin')          => 'string',
+							_l('style_id')          => 'string',
+							_l('model_id')          => 'string',
+							_l('size_id')          => 'string',
+							_l('_color')          => 'string',
+							_l('guarantee_month')          => 'string',
+							_l('minimum_inventory')          => 'string',
+							_l('error')                     => 'string',
 						);
 
-                        $widths_arr = array();
-                        for($i = 1; $i <= count($writer_header); $i++ ){
-                            $widths_arr[] = 40;
-                        }
+						$widths_arr = array();
+						for ($i = 1; $i <= count($writer_header); $i++) {
+							$widths_arr[] = 40;
+						}
 
-                        $writer = new XLSXWriter();
+						$writer = new XLSXWriter();
 
-                        $col_style1 =[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-                        $style1 = ['widths'=> $widths_arr, 'fill' => '#ff9800',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ];
+						$col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+						$style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
 
-                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths'=> $widths_arr, 'fill' => '#f44336',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ], $col_style1, $style1);
+						$writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
 
 						//init file error end
 
-                        //Reader file
-                        $xlsx = new XLSXReader_fin($newFilePath);
-                        $sheetNames = $xlsx->getSheetNames();
-                        $data = $xlsx->getSheetData($sheetNames[1]);
+						//Reader file
+						$xlsx = new XLSXReader_fin($newFilePath);
+						$sheetNames = $xlsx->getSheetNames();
+						$data = $xlsx->getSheetData($sheetNames[1]);
 
 						// start row write 2
 						$numRow = 2;
@@ -2552,480 +2534,454 @@ class warehouse extends AdminController {
 						$total_rows_actualy = 0;
 
 						$flag_insert_id = 0;
-						
+
 						//get data for compare
 
 						for ($row = 1; $row < count($data); $row++) {
 
-								$rd = array();
-								$flag = 0;
-								$flag2 = 0;
-								$flag_mail = 0;
-								$string_error = '';
-								$flag_contract_form = 0;
+							$rd = array();
+							$flag = 0;
+							$flag2 = 0;
+							$flag_mail = 0;
+							$string_error = '';
+							$flag_contract_form = 0;
 
-								$flag_id_commodity_type;
-								$flag_id_unit_id = 0;
-								$flag_id_commodity_group;
-								$flag_id_sub_group;
-								$flag_id_warehouse_id;
-								$flag_id_tax;
-								$flag_id_style_id;
-								$flag_id_model_id;
-								$flag_id_size_id;
-
-
-
-								$value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null; //A
-								$value_cell_description = isset($data[$row][1]) ? $data[$row][1] : null; //B
-								$value_cell_commodity_barcode = isset($data[$row][2]) ? $data[$row][2] : ''; //A
-								$value_cell_sku_code = isset($data[$row][3]) ? $data[$row][3] : ''; //A
-								$value_cell_sku_name = isset($data[$row][4]) ? $data[$row][4] : ''; //A
-								$value_cell_tag = isset($data[$row][5]) ? $data[$row][5] : ''; //A
-								$value_cell_long_description = isset($data[$row][6]) ? $data[$row][6] : ''; //A
-								$value_cell_commodity_type = isset($data[$row][7]) ? $data[$row][7] : '';
-								$value_cell_unit_id = isset($data[$row][8]) ? $data[$row][8] : '';
-								$value_cell_commodity_group = isset($data[$row][9]) ? $data[$row][9] : null;
-								$value_cell_sub_group = isset($data[$row][10]) ? $data[$row][10] : '';
-								$value_cell_profit_rate = isset($data[$row][11]) ? $data[$row][11] : '';
-								$value_cell_purchase_price = isset($data[$row][12]) ? $data[$row][12] : '';
-								$value_cell_rate = isset($data[$row][13]) ? $data[$row][13] : '';
-								$value_cell_tax = isset($data[$row][14]) ? $data[$row][14] : '';
-								$value_cell_origin = isset($data[$row][15]) ? $data[$row][15] : '';
-								$value_cell_style_id = isset($data[$row][16]) ? $data[$row][16] : '';
-								$value_cell_model_id = isset($data[$row][17]) ? $data[$row][17] : '';
-								$value_cell_size_id = isset($data[$row][18]) ? $data[$row][18] : '';
-								$value_cell_color_id = isset($data[$row][19]) ? $data[$row][19] : '';
-								$value_cell_warranty = isset($data[$row][20]) ? $data[$row][20] : null;
-								$value_cell_minimum_inventory = isset($data[$row][21]) ? $data[$row][21] : '';
+							$flag_id_commodity_type;
+							$flag_id_unit_id = 0;
+							$flag_id_commodity_group;
+							$flag_id_sub_group;
+							$flag_id_warehouse_id;
+							$flag_id_tax;
+							$flag_id_style_id;
+							$flag_id_model_id;
+							$flag_id_size_id;
 
 
-								$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
 
-								$reg_day = '#^(((1)[0-2]))(\/)\d{4}-(3)[0-1])(\/)(((0)[0-9])-[0-2][0-9]$#'; /*yyyy-mm-dd*/
+							$value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null; //A
+							$value_cell_description = isset($data[$row][1]) ? $data[$row][1] : null; //B
+							$value_cell_commodity_barcode = isset($data[$row][2]) ? $data[$row][2] : ''; //A
+							$value_cell_sku_code = isset($data[$row][3]) ? $data[$row][3] : ''; //A
+							$value_cell_sku_name = isset($data[$row][4]) ? $data[$row][4] : ''; //A
+							$value_cell_tag = isset($data[$row][5]) ? $data[$row][5] : ''; //A
+							$value_cell_long_description = isset($data[$row][6]) ? $data[$row][6] : ''; //A
+							$value_cell_commodity_type = isset($data[$row][7]) ? $data[$row][7] : '';
+							$value_cell_unit_id = isset($data[$row][8]) ? $data[$row][8] : '';
+							$value_cell_commodity_group = isset($data[$row][9]) ? $data[$row][9] : null;
+							$value_cell_sub_group = isset($data[$row][10]) ? $data[$row][10] : '';
+							$value_cell_profit_rate = isset($data[$row][11]) ? $data[$row][11] : '';
+							$value_cell_purchase_price = isset($data[$row][12]) ? $data[$row][12] : '';
+							$value_cell_rate = isset($data[$row][13]) ? $data[$row][13] : '';
+							$value_cell_tax = isset($data[$row][14]) ? $data[$row][14] : '';
+							$value_cell_origin = isset($data[$row][15]) ? $data[$row][15] : '';
+							$value_cell_style_id = isset($data[$row][16]) ? $data[$row][16] : '';
+							$value_cell_model_id = isset($data[$row][17]) ? $data[$row][17] : '';
+							$value_cell_size_id = isset($data[$row][18]) ? $data[$row][18] : '';
+							$value_cell_color_id = isset($data[$row][19]) ? $data[$row][19] : '';
+							$value_cell_warranty = isset($data[$row][20]) ? $data[$row][20] : null;
+							$value_cell_minimum_inventory = isset($data[$row][21]) ? $data[$row][21] : '';
 
-								/*check null*/
-								if (is_null($value_cell_commodity_code) == true) {
-									$string_error .= _l('commodity_code') . _l('not_yet_entered');
-									$flag = 1;
-								}
 
-								// if (is_null($value_cell_commodity_group) == true) {
-								// 	$string_error .= _l('commodity_group') . _l('not_yet_entered');
-								// 	$flag = 1;
-								// }
+							$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
+
+							$reg_day = '#^(((1)[0-2]))(\/)\d{4}-(3)[0-1])(\/)(((0)[0-9])-[0-2][0-9]$#'; /*yyyy-mm-dd*/
+
+							/*check null*/
+							if (is_null($value_cell_commodity_code) == true) {
+								$string_error .= _l('commodity_code') . _l('not_yet_entered');
+								$flag = 1;
+							}
+
+							// if (is_null($value_cell_commodity_group) == true) {
+							// 	$string_error .= _l('commodity_group') . _l('not_yet_entered');
+							// 	$flag = 1;
+							// }
 
 
-								if (is_null($value_cell_description) == true) {
-									$string_error .= _l('commodity_name') . _l('not_yet_entered');
-									$flag = 1;
-								}
+							if (is_null($value_cell_description) == true) {
+								$string_error .= _l('commodity_name') . _l('not_yet_entered');
+								$flag = 1;
+							}
 
-								//check commodity_type exist  (input: id or name contract)
-								if (is_null($value_cell_commodity_type) != true && $value_cell_commodity_type != '0' && $value_cell_commodity_type != '') {
-									/*case input  id*/
-									if (is_numeric($value_cell_commodity_type)) {
+							//check commodity_type exist  (input: id or name contract)
+							if (is_null($value_cell_commodity_type) != true && $value_cell_commodity_type != '0' && $value_cell_commodity_type != '') {
+								/*case input  id*/
+								if (is_numeric($value_cell_commodity_type)) {
 
-										$this->db->where('commodity_type_id', $value_cell_commodity_type);
-										$commodity_type_value = $this->db->count_all_results(db_prefix() . 'ware_commodity_type');
+									$this->db->where('commodity_type_id', $value_cell_commodity_type);
+									$commodity_type_value = $this->db->count_all_results(db_prefix() . 'ware_commodity_type');
 
-										if ($commodity_type_value == 0) {
-											$string_error .= _l('commodity_type') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id commodity_type*/
-											$flag_id_commodity_type = $value_cell_commodity_type;
-										}
-
-									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'ware_commodity_type.commondity_code', $value_cell_commodity_type);
-
-										$commodity_type_value = $this->db->get(db_prefix() . 'ware_commodity_type')->result_array();
-										if (count($commodity_type_value) == 0) {
-											$string_error .= _l('commodity_type') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id commodity_type*/
-
-											$flag_id_commodity_type = $commodity_type_value[0]['commodity_type_id'];
-										}
-									}
-
-								}
-
-								if(empty($value_cell_unit_id)) {
-	                                $value_cell_unit_id = 1;
-	                            }
-
-								//check unit_code exist  (input: id or name contract)
-								if (is_null($value_cell_unit_id) != true && ( $value_cell_unit_id != '0')  && $value_cell_unit_id != '') {
-									/*case input id*/
-									if (is_numeric($value_cell_unit_id)) {
-
-										$this->db->where('unit_type_id', $value_cell_unit_id);
-										$unit_id_value = $this->db->count_all_results(db_prefix() . 'ware_unit_type');
-
-										if ($unit_id_value == 0) {
-											$string_error .= _l('unit_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id unit_id*/
-											$flag_id_unit_id = $value_cell_unit_id;
-										}
-
-									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'ware_unit_type.unit_name', $value_cell_unit_id);
-
-										$unit_id_value = $this->db->get(db_prefix() . 'ware_unit_type')->result_array();
-										if (count($unit_id_value) == 0) {
-											$string_error .= _l('unit_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get unit_id*/
-											$flag_id_unit_id = $unit_id_value[0]['unit_type_id'];
-										}
-									}
-
-								}
-
-								//check commodity_group exist  (input: id or name contract)
-								if (is_null($value_cell_commodity_group) != true && ($value_cell_commodity_group != '0') && $value_cell_commodity_group != '') {
-									/*case input id*/
-									if (is_numeric($value_cell_commodity_group)) {
-
-										$this->db->where('id', $value_cell_commodity_group);
-										$commodity_group_value = $this->db->count_all_results(db_prefix() . 'items_groups');
-
-										if ($commodity_group_value == 0) {
-											$string_error .= _l('commodity_group') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id commodity_group*/
-											$flag_id_commodity_group = $value_cell_commodity_group;
-										}
-
-									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'items_groups.name', $value_cell_commodity_group);
-
-										$commodity_group_value = $this->db->get(db_prefix() . 'items_groups')->result_array();
-										if (count($commodity_group_value) == 0) {
-											$string_error .= _l('commodity_group') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id commodity_group*/
-
-											$flag_id_commodity_group = $commodity_group_value[0]['id'];
-										}
-									}
-
-								}
-
-								//check commodity_group exist  (input: id or name contract)
-								if (is_null($value_cell_warranty) != true) {
-									/*case input id*/
-									if (!is_numeric($value_cell_warranty)) {
-										/*case input name*/
-										$string_error .= _l('guarantee_month') . _l('_check_invalid');
+									if ($commodity_type_value == 0) {
+										$string_error .= _l('commodity_type') . _l('does_not_exist');
 										$flag2 = 1;
-										
-									}
-
-								}
-
-
-								//check taxes exist  (input: id or name contract)
-								if (is_null($value_cell_tax) != true && ($value_cell_tax!= '0')  && $value_cell_tax != '') {
-									/*case input id*/
-									if (is_numeric($value_cell_tax)) {
-
-										$this->db->where('id', $value_cell_tax);
-										$cell_tax_value = $this->db->count_all_results(db_prefix() . 'taxes');
-
-										if ($cell_tax_value == 0) {
-											$string_error .= _l('tax') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id cell_tax*/
-											$flag_id_tax = $value_cell_tax;
-										}
-
 									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'taxes.name', $value_cell_tax);
-
-										$cell_tax_value = $this->db->get(db_prefix() . 'taxes')->result_array();
-										if (count($cell_tax_value) == 0) {
-											$string_error .= _l('tax') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id warehouse_id*/
-
-											$flag_id_tax = $cell_tax_value[0]['id'];
-										}
+										/*get id commodity_type*/
+										$flag_id_commodity_type = $value_cell_commodity_type;
 									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'ware_commodity_type.commondity_code', $value_cell_commodity_type);
 
-								}
-
-								//check commodity_group exist  (input: id or name contract)
-								if (is_null($value_cell_sub_group) != true && $value_cell_sub_group != '') {
-									/*case input id*/
-									if (is_numeric($value_cell_sub_group)) {
-
-										$this->db->where('id', $value_cell_sub_group);
-										$sub_group_value = $this->db->count_all_results(db_prefix() . 'wh_sub_group');
-
-										if ($sub_group_value == 0) {
-											$string_error .= _l('sub_group') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id sub_group*/
-											$flag_id_sub_group = $value_cell_sub_group;
-										}
-
+									$commodity_type_value = $this->db->get(db_prefix() . 'ware_commodity_type')->result_array();
+									if (count($commodity_type_value) == 0) {
+										$string_error .= _l('commodity_type') . _l('does_not_exist');
+										$flag2 = 1;
 									} else {
-										/*case input  name*/
-										$this->db->like(db_prefix() . 'wh_sub_group.sub_group_name', $value_cell_sub_group);
+										/*get id commodity_type*/
 
-										$sub_group_value = $this->db->get(db_prefix() . 'wh_sub_group')->result_array();
-										if (count($sub_group_value) == 0) {
-											$string_error .= _l('sub_group') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id sub_group*/
-
-											$flag_id_sub_group = $sub_group_value[0]['id'];
-										}
+										$flag_id_commodity_type = $commodity_type_value[0]['commodity_type_id'];
 									}
-
 								}
+							}
 
-								//check commodity_group exist  (input: id or name contract)
-								if (is_null($value_cell_style_id) != true && ($value_cell_style_id != '0')  && $value_cell_style_id != '' ) {
-									/*case input id*/
-									if (is_numeric($value_cell_style_id)) {
+							if (empty($value_cell_unit_id)) {
+								$value_cell_unit_id = 1;
+							}
 
-										$this->db->where('style_type_id', $value_cell_style_id);
-										$style_id_value = $this->db->count_all_results(db_prefix() . 'ware_style_type');
+							//check unit_code exist  (input: id or name contract)
+							if (is_null($value_cell_unit_id) != true && ($value_cell_unit_id != '0')  && $value_cell_unit_id != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_unit_id)) {
 
-										if ($style_id_value == 0) {
-											$string_error .= _l('style_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id style_id*/
-											$flag_id_style_id = $value_cell_style_id;
-										}
+									$this->db->where('unit_type_id', $value_cell_unit_id);
+									$unit_id_value = $this->db->count_all_results(db_prefix() . 'ware_unit_type');
 
+									if ($unit_id_value == 0) {
+										$string_error .= _l('unit_id') . _l('does_not_exist');
+										$flag2 = 1;
 									} else {
-										/*case input  name*/
-										$this->db->like(db_prefix() . 'ware_style_type.style_code', $value_cell_style_id);
-
-										$style_id_value = $this->db->get(db_prefix() . 'ware_style_type')->result_array();
-										if (count($style_id_value) == 0) {
-											$string_error .= _l('style_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id style_id*/
-
-											$flag_id_style_id = $style_id_value[0]['style_type_id'];
-										}
+										/*get id unit_id*/
+										$flag_id_unit_id = $value_cell_unit_id;
 									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'ware_unit_type.unit_name', $value_cell_unit_id);
 
-								}
-
-								//check body_code exist  (input: id or name contract)
-								if (is_null($value_cell_model_id) != true && ($value_cell_model_id != '0') && $value_cell_model_id != '' ) {
-									/*case input id*/
-									if (is_numeric($value_cell_model_id)) {
-
-										$this->db->where('body_type_id', $value_cell_model_id);
-										$model_id_value = $this->db->count_all_results(db_prefix() . 'ware_body_type');
-
-										if ($model_id_value == 0) {
-											$string_error .= _l('model_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id model_id*/
-											$flag_id_model_id = $value_cell_model_id;
-										}
-
+									$unit_id_value = $this->db->get(db_prefix() . 'ware_unit_type')->result_array();
+									if (count($unit_id_value) == 0) {
+										$string_error .= _l('unit_id') . _l('does_not_exist');
+										$flag2 = 1;
 									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'ware_body_type.body_code', $value_cell_model_id);
-
-										$model_id_value = $this->db->get(db_prefix() . 'ware_body_type')->result_array();
-										if (count($model_id_value) == 0) {
-											$string_error .= _l('model_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id model_id*/
-
-											$flag_id_model_id = $model_id_value[0]['body_type_id'];
-										}
+										/*get unit_id*/
+										$flag_id_unit_id = $unit_id_value[0]['unit_type_id'];
 									}
-
 								}
+							}
 
-								//check size_code exist  (input: id or name contract)
-								if (is_null($value_cell_size_id) != true && ($value_cell_size_id != '0') && $value_cell_size_id != '') {
-									/*case input id*/
-									if (is_numeric($value_cell_size_id)) {
+							//check commodity_group exist  (input: id or name contract)
+							if (is_null($value_cell_commodity_group) != true && ($value_cell_commodity_group != '0') && $value_cell_commodity_group != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_commodity_group)) {
 
-										$this->db->where('size_type_id', $value_cell_size_id);
-										$size_id_value = $this->db->count_all_results(db_prefix() . 'ware_size_type');
+									$this->db->where('id', $value_cell_commodity_group);
+									$commodity_group_value = $this->db->count_all_results(db_prefix() . 'items_groups');
 
-										if ($size_id_value == 0) {
-											$string_error .= _l('size_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id size_id*/
-											$flag_id_size_id = $value_cell_size_id;
-										}
-
+									if ($commodity_group_value == 0) {
+										$string_error .= _l('commodity_group') . _l('does_not_exist');
+										$flag2 = 1;
 									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'ware_size_type.size_code', $value_cell_size_id);
-
-										$size_id_value = $this->db->get(db_prefix() . 'ware_size_type')->result_array();
-										if (count($size_id_value) == 0) {
-											$string_error .= _l('size_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id size_id*/
-
-											$flag_id_size_id = $size_id_value[0]['size_type_id'];
-										}
+										/*get id commodity_group*/
+										$flag_id_commodity_group = $value_cell_commodity_group;
 									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'items_groups.name', $value_cell_commodity_group);
 
-								}
+									$commodity_group_value = $this->db->get(db_prefix() . 'items_groups')->result_array();
+									if (count($commodity_group_value) == 0) {
+										$string_error .= _l('commodity_group') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id commodity_group*/
 
-								//check value_cell_rate input
-								if (is_null($value_cell_rate) != true && $value_cell_rate != '') {
-									if (!is_numeric($value_cell_rate)) {
-										$string_error .= _l('cell_rate') . _l('_check_invalid');
-										$flag = 1;
-
+										$flag_id_commodity_group = $commodity_group_value[0]['id'];
 									}
-
 								}
+							}
 
-								//check value_cell_rate input
-								if (is_null($value_cell_purchase_price) != true && $value_cell_purchase_price != '') {
-									if (!is_numeric($value_cell_purchase_price)) {
-										$string_error .= _l('purchase_price') . _l('_check_invalid');
-										$flag = 1;
+							//check commodity_group exist  (input: id or name contract)
+							if (is_null($value_cell_warranty) != true) {
+								/*case input id*/
+								if (!is_numeric($value_cell_warranty)) {
+									/*case input name*/
+									$string_error .= _l('guarantee_month') . _l('_check_invalid');
+									$flag2 = 1;
+								}
+							}
 
+
+							//check taxes exist  (input: id or name contract)
+							if (is_null($value_cell_tax) != true && ($value_cell_tax != '0')  && $value_cell_tax != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_tax)) {
+
+									$this->db->where('id', $value_cell_tax);
+									$cell_tax_value = $this->db->count_all_results(db_prefix() . 'taxes');
+
+									if ($cell_tax_value == 0) {
+										$string_error .= _l('tax') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id cell_tax*/
+										$flag_id_tax = $value_cell_tax;
 									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'taxes.name', $value_cell_tax);
 
-								}
+									$cell_tax_value = $this->db->get(db_prefix() . 'taxes')->result_array();
+									if (count($cell_tax_value) == 0) {
+										$string_error .= _l('tax') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id warehouse_id*/
 
-								//check commodity min input
-								if (is_null($value_cell_minimum_inventory) != true && $value_cell_minimum_inventory != '') {
-									if (!is_numeric($value_cell_minimum_inventory)) {
-										$string_error .= _l('inventory_min') . _l('_check_invalid');
-										$flag = 1;
-
+										$flag_id_tax = $cell_tax_value[0]['id'];
 									}
-
 								}
+							}
 
-								
+							//check commodity_group exist  (input: id or name contract)
+							if (is_null($value_cell_sub_group) != true && $value_cell_sub_group != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_sub_group)) {
 
-								
+									$this->db->where('id', $value_cell_sub_group);
+									$sub_group_value = $this->db->count_all_results(db_prefix() . 'wh_sub_group');
 
-								if (($flag == 0) && ($flag2 == 0)) {
+									if ($sub_group_value == 0) {
+										$string_error .= _l('sub_group') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id sub_group*/
+										$flag_id_sub_group = $value_cell_sub_group;
+									}
+								} else {
+									/*case input  name*/
+									$this->db->like(db_prefix() . 'wh_sub_group.sub_group_name', $value_cell_sub_group);
 
+									$sub_group_value = $this->db->get(db_prefix() . 'wh_sub_group')->result_array();
+									if (count($sub_group_value) == 0) {
+										$string_error .= _l('sub_group') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id sub_group*/
 
-									/*staff id is HR_code, input is HR_CODE, insert => staffid*/
-									$rd['commodity_code'] = isset($data[$row][0]) ? $data[$row][0] : '';
-									$rd['commodity_barcode'] = isset($data[$row][2]) ? $data[$row][2] : '';
-									$rd['sku_code'] = isset($data[$row][3]) ? $data[$row][3] : '';
-									$rd['sku_name'] = isset($data[$row][4]) ? $data[$row][4] : '';
-									$rd['description'] = isset($data[$row][1]) ? $data[$row][1] : '';
-									$rd['tags'] = isset($data[$row][5]) ? $data[$row][5] : '';
-									$rd['long_description'] = isset($data[$row][6]) ? $data[$row][6] : '';
-
-									$rd['commodity_type'] = isset($flag_id_commodity_type) ? $flag_id_commodity_type : '';
-									$rd['unit_id'] = isset($flag_id_unit_id) ? $flag_id_unit_id : '';
-									$rd['group_id'] = isset($flag_id_commodity_group) ? $flag_id_commodity_group : '';
-									$rd['sub_group'] = isset($flag_id_sub_group) ? $flag_id_sub_group : '';
-									$rd['guarantee'] = isset($data[$row][20]) ? $data[$row][20] : '';
-									$rd['tax'] = isset($flag_id_tax) ? $flag_id_tax : '';
-
-									$rd['origin'] = isset($data[$row][15]) ? $data[$row][15] : '';
-
-									$rd['style_id'] = isset($flag_id_style_id) ? $flag_id_style_id : '';
-									$rd['model_id'] = isset($flag_id_model_id) ? $flag_id_model_id : '';
-									$rd['size_id'] = isset($flag_id_size_id) ? $flag_id_size_id : '';
-									$rd['color_id'] = 0;
-									$rd['warehouse_id'] = 0;
-
-									$rd['profif_ratio'] = isset($data[$row][11]) ? $data[$row][11] : null;
-
-									$rd['rate'] = isset($data[$row][13]) ? $data[$row][13] : null;
-									$rd['purchase_price'] = isset($data[$row][12]) ? $data[$row][12] : null;
-									$rd['minimum_inventory'] = isset($value_cell_minimum_inventory) ? $value_cell_minimum_inventory : 0;
-									$rd['without_checking_warehouse'] =  0;
-
+										$flag_id_sub_group = $sub_group_value[0]['id'];
+									}
 								}
+							}
 
-								$flag_insert = false;
+							//check commodity_group exist  (input: id or name contract)
+							if (is_null($value_cell_style_id) != true && ($value_cell_style_id != '0')  && $value_cell_style_id != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_style_id)) {
 
-								if (get_staff_user_id() != '' && $flag == 0 && $flag2 == 0) {
-									$rows[] = $rd;
-									$result_value = $this->warehouse_model->import_xlsx_commodity($rd, $flag_insert_id);
-									if ($result_value['status']) {
-										$total_rows_actualy++;
-										$flag_insert = true;
+									$this->db->where('style_type_id', $value_cell_style_id);
+									$style_id_value = $this->db->count_all_results(db_prefix() . 'ware_style_type');
 
-										if(isset($result_value['insert_id'])){
-											$flag_insert_id = $result_value['insert_id'];
-										}else{
-											$flag_insert_id = 0;
-										}
-									}else{
+									if ($style_id_value == 0) {
+										$string_error .= _l('style_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id style_id*/
+										$flag_id_style_id = $value_cell_style_id;
+									}
+								} else {
+									/*case input  name*/
+									$this->db->like(db_prefix() . 'ware_style_type.style_code', $value_cell_style_id);
+
+									$style_id_value = $this->db->get(db_prefix() . 'ware_style_type')->result_array();
+									if (count($style_id_value) == 0) {
+										$string_error .= _l('style_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id style_id*/
+
+										$flag_id_style_id = $style_id_value[0]['style_type_id'];
+									}
+								}
+							}
+
+							//check body_code exist  (input: id or name contract)
+							if (is_null($value_cell_model_id) != true && ($value_cell_model_id != '0') && $value_cell_model_id != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_model_id)) {
+
+									$this->db->where('body_type_id', $value_cell_model_id);
+									$model_id_value = $this->db->count_all_results(db_prefix() . 'ware_body_type');
+
+									if ($model_id_value == 0) {
+										$string_error .= _l('model_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id model_id*/
+										$flag_id_model_id = $value_cell_model_id;
+									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'ware_body_type.body_code', $value_cell_model_id);
+
+									$model_id_value = $this->db->get(db_prefix() . 'ware_body_type')->result_array();
+									if (count($model_id_value) == 0) {
+										$string_error .= _l('model_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id model_id*/
+
+										$flag_id_model_id = $model_id_value[0]['body_type_id'];
+									}
+								}
+							}
+
+							//check size_code exist  (input: id or name contract)
+							if (is_null($value_cell_size_id) != true && ($value_cell_size_id != '0') && $value_cell_size_id != '') {
+								/*case input id*/
+								if (is_numeric($value_cell_size_id)) {
+
+									$this->db->where('size_type_id', $value_cell_size_id);
+									$size_id_value = $this->db->count_all_results(db_prefix() . 'ware_size_type');
+
+									if ($size_id_value == 0) {
+										$string_error .= _l('size_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id size_id*/
+										$flag_id_size_id = $value_cell_size_id;
+									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'ware_size_type.size_code', $value_cell_size_id);
+
+									$size_id_value = $this->db->get(db_prefix() . 'ware_size_type')->result_array();
+									if (count($size_id_value) == 0) {
+										$string_error .= _l('size_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id size_id*/
+
+										$flag_id_size_id = $size_id_value[0]['size_type_id'];
+									}
+								}
+							}
+
+							//check value_cell_rate input
+							if (is_null($value_cell_rate) != true && $value_cell_rate != '') {
+								if (!is_numeric($value_cell_rate)) {
+									$string_error .= _l('cell_rate') . _l('_check_invalid');
+									$flag = 1;
+								}
+							}
+
+							//check value_cell_rate input
+							if (is_null($value_cell_purchase_price) != true && $value_cell_purchase_price != '') {
+								if (!is_numeric($value_cell_purchase_price)) {
+									$string_error .= _l('purchase_price') . _l('_check_invalid');
+									$flag = 1;
+								}
+							}
+
+							//check commodity min input
+							if (is_null($value_cell_minimum_inventory) != true && $value_cell_minimum_inventory != '') {
+								if (!is_numeric($value_cell_minimum_inventory)) {
+									$string_error .= _l('inventory_min') . _l('_check_invalid');
+									$flag = 1;
+								}
+							}
+
+
+
+
+
+							if (($flag == 0) && ($flag2 == 0)) {
+
+
+								/*staff id is HR_code, input is HR_CODE, insert => staffid*/
+								$rd['commodity_code'] = isset($data[$row][0]) ? $data[$row][0] : '';
+								$rd['commodity_barcode'] = isset($data[$row][2]) ? $data[$row][2] : '';
+								$rd['sku_code'] = isset($data[$row][3]) ? $data[$row][3] : '';
+								$rd['sku_name'] = isset($data[$row][4]) ? $data[$row][4] : '';
+								$rd['description'] = isset($data[$row][1]) ? $data[$row][1] : '';
+								$rd['tags'] = isset($data[$row][5]) ? $data[$row][5] : '';
+								$rd['long_description'] = isset($data[$row][6]) ? $data[$row][6] : '';
+
+								$rd['commodity_type'] = isset($flag_id_commodity_type) ? $flag_id_commodity_type : '';
+								$rd['unit_id'] = isset($flag_id_unit_id) ? $flag_id_unit_id : '';
+								$rd['group_id'] = isset($flag_id_commodity_group) ? $flag_id_commodity_group : '';
+								$rd['sub_group'] = isset($flag_id_sub_group) ? $flag_id_sub_group : '';
+								$rd['guarantee'] = isset($data[$row][20]) ? $data[$row][20] : '';
+								$rd['tax'] = isset($flag_id_tax) ? $flag_id_tax : '';
+
+								$rd['origin'] = isset($data[$row][15]) ? $data[$row][15] : '';
+
+								$rd['style_id'] = isset($flag_id_style_id) ? $flag_id_style_id : '';
+								$rd['model_id'] = isset($flag_id_model_id) ? $flag_id_model_id : '';
+								$rd['size_id'] = isset($flag_id_size_id) ? $flag_id_size_id : '';
+								$rd['color_id'] = 0;
+								$rd['warehouse_id'] = 0;
+
+								$rd['profif_ratio'] = isset($data[$row][11]) ? $data[$row][11] : null;
+
+								$rd['rate'] = isset($data[$row][13]) ? $data[$row][13] : null;
+								$rd['purchase_price'] = isset($data[$row][12]) ? $data[$row][12] : null;
+								$rd['minimum_inventory'] = isset($value_cell_minimum_inventory) ? $value_cell_minimum_inventory : 0;
+								$rd['without_checking_warehouse'] =  0;
+							}
+
+							$flag_insert = false;
+
+							if (get_staff_user_id() != '' && $flag == 0 && $flag2 == 0) {
+								$rows[] = $rd;
+								$result_value = $this->warehouse_model->import_xlsx_commodity($rd, $flag_insert_id);
+								if ($result_value['status']) {
+									$total_rows_actualy++;
+									$flag_insert = true;
+
+									if (isset($result_value['insert_id'])) {
+										$flag_insert_id = $result_value['insert_id'];
+									} else {
 										$flag_insert_id = 0;
-										$string_error .= $result_value['message'];
 									}
+								} else {
+									$flag_insert_id = 0;
+									$string_error .= $result_value['message'];
 								}
+							}
 
-								if (($flag == 1) || ($flag2 == 1) || ($flag_insert == false)) {
-									//write error file
-									$writer->writeSheetRow('Sheet1', [
-										$value_cell_commodity_code,
-										$value_cell_description,
-										$value_cell_commodity_barcode,
-										$value_cell_sku_code,
-										$value_cell_sku_name,
-										$value_cell_tag,
-										$value_cell_long_description,
-										$value_cell_commodity_type,
-										$value_cell_unit_id,
-										$value_cell_commodity_group,
-										$value_cell_sub_group,
-										$value_cell_profit_rate,
-										$value_cell_purchase_price,
-										$value_cell_rate,
-										$value_cell_tax,
-										$value_cell_origin,
-										$value_cell_style_id,
-										$value_cell_model_id,
-										$value_cell_size_id,
-										$value_cell_color_id,
-										$value_cell_warranty,
-										$value_cell_minimum_inventory,
-										$string_error,
-									]);
+							if (($flag == 1) || ($flag2 == 1) || ($flag_insert == false)) {
+								//write error file
+								$writer->writeSheetRow('Sheet1', [
+									$value_cell_commodity_code,
+									$value_cell_description,
+									$value_cell_commodity_barcode,
+									$value_cell_sku_code,
+									$value_cell_sku_name,
+									$value_cell_tag,
+									$value_cell_long_description,
+									$value_cell_commodity_type,
+									$value_cell_unit_id,
+									$value_cell_commodity_group,
+									$value_cell_sub_group,
+									$value_cell_profit_rate,
+									$value_cell_purchase_price,
+									$value_cell_rate,
+									$value_cell_tax,
+									$value_cell_origin,
+									$value_cell_style_id,
+									$value_cell_model_id,
+									$value_cell_size_id,
+									$value_cell_color_id,
+									$value_cell_warranty,
+									$value_cell_minimum_inventory,
+									$string_error,
+								]);
 
-									$numRow++;
-									$total_rows_data_error++;
-								}
+								$numRow++;
+								$total_rows_data_error++;
+							}
 
-								$total_rows++;
-								$total_rows_data++;
-
+							$total_rows++;
+							$total_rows_data++;
 						}
 
 						if ($total_rows_actualy != $total_rows) {
@@ -3039,29 +2995,24 @@ class warehouse extends AdminController {
 						$total_row_false = $total_rows - (int)$total_rows_actualy;
 						$message = 'Not enought rows for importing';
 
-						if(($total_rows_data_error > 0) || ($total_row_false != 0)){
+						if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
 
-							$filename = 'FILE_ERROR_COMMODITY' .get_staff_user_id().strtotime(date('Y-m-d H:i:s')). '.xlsx';
-                            $writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_ITEM_ERROR.$filename, $filename));
+							$filename = 'FILE_ERROR_COMMODITY' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+							$writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_ITEM_ERROR . $filename, $filename));
 
-							$filename = WAREHOUSE_IMPORT_ITEM_ERROR.$filename;
-
-
+							$filename = WAREHOUSE_IMPORT_ITEM_ERROR . $filename;
 						}
-						
+
 						$import_result = true;
 						@delete_dir($tmpDir);
-
 					}
-					
 				} else {
 					set_alert('warning', _l('import_upload_failed'));
 				}
 			}
-
 		}
 		echo json_encode([
-			'message' =>'Not enought rows for importing',
+			'message' => 'Not enought rows for importing',
 			'total_row_success' => $total_row_success,
 			'total_row_false' => $total_rows_data_error,
 			'total_rows' => $total_rows_data,
@@ -3070,7 +3021,6 @@ class warehouse extends AdminController {
 			'total_rows_data_error' => $total_rows_data_error,
 			'filename' => $filename,
 		]);
-
 	}
 
 	/**
@@ -3078,7 +3028,8 @@ class warehouse extends AdminController {
 	 * @param  integer $attachment_id
 	 * @return json
 	 */
-	public function delete_commodity_file($attachment_id) {
+	public function delete_commodity_file($attachment_id)
+	{
 		if (!has_permission('warehouse', '', 'delete') && !is_admin()) {
 			access_denied('warehouse');
 		}
@@ -3094,7 +3045,8 @@ class warehouse extends AdminController {
 	 * @param  string $id [description]
 	 * @return [type]     [description]
 	 */
-	public function colors_setting($id = '') {
+	public function colors_setting($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -3104,12 +3056,10 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_color($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully'));
-
 				} else {
 					set_alert('warning', _l('Add_commodity_type_false'));
 				}
 				redirect(admin_url('warehouse/setting?group=colors'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
@@ -3130,12 +3080,13 @@ class warehouse extends AdminController {
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
-	public function delete_color($id) {
+	public function delete_color($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=colors'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -3147,13 +3098,13 @@ class warehouse extends AdminController {
 			set_alert('warning', _l('problem_deleting'));
 			redirect(admin_url('warehouse/setting?group=colors'));
 		}
-
 	}
 
 	/**
 	 * { loss adjustment }
 	 */
-	public function loss_adjustment() {
+	public function loss_adjustment()
+	{
 		$data['title'] = _l('loss_adjustment');
 		$this->load->view('loss_adjustment/manage', $data);
 	}
@@ -3161,7 +3112,8 @@ class warehouse extends AdminController {
 	/**
 	 * { loss adjustment table }
 	 */
-	public function loss_adjustment_table() {
+	public function loss_adjustment_table()
+	{
 		if ($this->input->is_ajax_request()) {
 			if ($this->input->post()) {
 
@@ -3242,10 +3194,9 @@ class warehouse extends AdminController {
 						$status = '<div class="btn btn-warning" >' . _l('draft') . '</div>';
 					} elseif ((int) $aRow['status'] == 1) {
 						$status = '<div class="btn btn-success" >' . _l('Adjusted') . '</div>';
-					} elseif((int) $aRow['status'] == -1){
+					} elseif ((int) $aRow['status'] == -1) {
 
 						$status = '<div class="btn btn-danger" >' . _l('reject') . '</div>';
-
 					}
 
 					$row[] = $status;
@@ -3262,7 +3213,7 @@ class warehouse extends AdminController {
 						$option .= '</a>';
 					}
 
-					if (is_admin() || has_permission('warehouse', '', 'edit')) { 
+					if (is_admin() || has_permission('warehouse', '', 'edit')) {
 
 						if ((int) $aRow['status'] == 0) {
 							$option .= '<a href="' . admin_url('warehouse/add_loss_adjustment/' . $aRow['id']) . '" class="btn btn-default btn-icon" >';
@@ -3271,7 +3222,7 @@ class warehouse extends AdminController {
 						}
 					}
 
-					if (is_admin() || has_permission('warehouse', '', 'delete')) { 
+					if (is_admin() || has_permission('warehouse', '', 'delete')) {
 						if ((int) $aRow['status'] == 0 || is_admin()) {
 							$option .= '<a href="' . admin_url('warehouse/delete_loss_adjustment/' . $aRow['id']) . '" class="btn btn-danger btn-icon _delete">';
 							$option .= '<i class="fa fa-remove"></i>';
@@ -3296,7 +3247,8 @@ class warehouse extends AdminController {
 	 * @param string $id
 	 * @return view 
 	 */
-	public function add_loss_adjustment($id = '') {
+	public function add_loss_adjustment($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -3338,12 +3290,12 @@ class warehouse extends AdminController {
 			$data['ajaxItems'] = true;
 		}
 		$warehouse_data = $this->warehouse_model->get_warehouse();
-        //sample
+		//sample
 		$loss_adjustment_row_template = $this->warehouse_model->create_loss_adjustment_row_template();
 
 		if ($id != '') {
 			$data['loss_adjustment'] = $this->warehouse_model->get_loss_adjustment($id);
-			$loss_adjustments = $this->warehouse_model->get_loss_adjustment_detailt_by_masterid($id); 
+			$loss_adjustments = $this->warehouse_model->get_loss_adjustment_detailt_by_masterid($id);
 
 			if (count($loss_adjustments) > 0) {
 				$index_internal_delivery = 0;
@@ -3352,15 +3304,15 @@ class warehouse extends AdminController {
 					$unit_name = wh_get_unit_name($loss_adjustment['unit']);
 					$commodity_name = $loss_adjustment['commodity_name'];
 					$expiry_date = null;
-					
-					if(strlen($commodity_name) == 0){
+
+					if (strlen($commodity_name) == 0) {
 						$commodity_name = wh_get_item_variatiom($loss_adjustment['items']);
 					}
-					if($loss_adjustment['expiry_date'] != null && $loss_adjustment['expiry_date'] != ''){
+					if ($loss_adjustment['expiry_date'] != null && $loss_adjustment['expiry_date'] != '') {
 						$expiry_date = _d($loss_adjustment['expiry_date']);
 					}
-					
-					$loss_adjustment_row_template .= $this->warehouse_model->create_loss_adjustment_row_template('items[' . $index_internal_delivery . ']', $commodity_name, $loss_adjustment['current_number'],$loss_adjustment['updates_number'], $unit_name, $expiry_date, $loss_adjustment['lot_number'],  $loss_adjustment['items'], $loss_adjustment['unit'] , $loss_adjustment['id'], true, $loss_adjustment['serial_number']);
+
+					$loss_adjustment_row_template .= $this->warehouse_model->create_loss_adjustment_row_template('items[' . $index_internal_delivery . ']', $commodity_name, $loss_adjustment['current_number'], $loss_adjustment['updates_number'], $unit_name, $expiry_date, $loss_adjustment['lot_number'],  $loss_adjustment['items'], $loss_adjustment['unit'], $loss_adjustment['id'], true, $loss_adjustment['serial_number']);
 				}
 			}
 
@@ -3370,7 +3322,7 @@ class warehouse extends AdminController {
 		$data['current_day'] = date('Y-m-d');
 		$data['loss_adjustment_row_template'] = $loss_adjustment_row_template;
 		$data['projects'] = $this->projects_model->get();
-		
+
 		$this->load->view('loss_adjustment/add_loss_adjustment', $data);
 	}
 
@@ -3379,7 +3331,8 @@ class warehouse extends AdminController {
 	 * @param  [integer] $id 
 	 * @return json     
 	 */
-	public function adjust($id) {
+	public function adjust($id)
+	{
 		$success = $this->warehouse_model->change_adjust($id);
 		echo json_encode([
 			'success' => $success,
@@ -3392,9 +3345,10 @@ class warehouse extends AdminController {
 	 *
 	 * @param      <type>  $id     The identifier
 	 */
-	public function delete_loss_adjustment($id) {
+	public function delete_loss_adjustment($id)
+	{
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -3413,7 +3367,8 @@ class warehouse extends AdminController {
 	 *
 	 * @return json
 	 */
-	public function get_data_inventory_valuation_report() {
+	public function get_data_inventory_valuation_report()
+	{
 		if ($this->input->post()) {
 			$data = $this->input->post();
 
@@ -3430,7 +3385,8 @@ class warehouse extends AdminController {
 	 * table out of stock
 	 * @return [type]
 	 */
-	public function table_out_of_stock() {
+	public function table_out_of_stock()
+	{
 
 		$this->app->get_table_data(module_views_path('warehouse', 'table_out_of_stock'));
 	}
@@ -3439,7 +3395,8 @@ class warehouse extends AdminController {
 	 * table expired
 	 * @return [type]
 	 */
-	public function table_expired() {
+	public function table_expired()
+	{
 
 		$this->app->get_table_data(module_views_path('warehouse', 'table_expired'));
 	}
@@ -3449,7 +3406,8 @@ class warehouse extends AdminController {
 	 * @param  [integer] $commodity_id
 	 * @return [type]
 	 */
-	public function view_commodity_detail($commodity_id) {
+	public function view_commodity_detail($commodity_id)
+	{
 		$commodity_item = get_commodity_name($commodity_id);
 
 		if (!$commodity_item) {
@@ -3469,12 +3427,12 @@ class warehouse extends AdminController {
 		$data['colors'] = $this->warehouse_model->get_color_add_commodity();
 		// $data['commodity_filter'] = $this->warehouse_model->get_commodity_active();
 		$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
-            $data['items'] = $this->warehouse_model->wh_get_grouped('', true);
-        } else {
-            $data['items']     = [];
-            $data['ajaxItems'] = true;
-        }
+		if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
+			$data['items'] = $this->warehouse_model->wh_get_grouped('', true);
+		} else {
+			$data['items']     = [];
+			$data['ajaxItems'] = true;
+		}
 		$data['title'] = _l("item_detail");
 
 
@@ -3482,14 +3440,14 @@ class warehouse extends AdminController {
 		$data['commodity_file'] = $this->warehouse_model->get_warehourse_attachments($commodity_id);
 
 		$this->load->view('view_commodity_detail', $data);
-
 	}
 
 	/**
 	 * table view commodity detail
 	 * @return [type]
 	 */
-	public function table_view_commodity_detail() {
+	public function table_view_commodity_detail()
+	{
 
 		$this->app->get_table_data(module_views_path('warehouse', 'table_view_commodity_detail'));
 	}
@@ -3499,9 +3457,10 @@ class warehouse extends AdminController {
 	 * @param  [integer] $id
 	 * @return redirect
 	 */
-	public function delete_goods_receipt($id) {
+	public function delete_goods_receipt($id)
+	{
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -3519,9 +3478,10 @@ class warehouse extends AdminController {
 	 * @param  [integer] $id
 	 * @return [redirect]
 	 */
-	public function delete_goods_delivery($id) {
+	public function delete_goods_delivery($id)
+	{
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -3537,7 +3497,8 @@ class warehouse extends AdminController {
 	/**
 	 * Gets the commodity barcode.
 	 */
-	public function get_commodity_barcode() {
+	public function get_commodity_barcode()
+	{
 		$commodity_barcode = $this->warehouse_model->generate_commodity_barcode();
 
 		echo json_encode([
@@ -3550,95 +3511,98 @@ class warehouse extends AdminController {
 	 * table inventory stock
 	 * @return [type]
 	 */
-	public function table_inventory_stock() {
+	public function table_inventory_stock()
+	{
 
 		$this->app->get_table_data(module_views_path('warehouse', 'table_inventory_stock'));
 	}
 
-	 /**
-     * { tax change event }
-     *
-     * @param      <type>  $tax    The tax
-     * @return   json
-     */
-	 public function tax_change($tax){
-	 	$total_tax = $this->warehouse_model->get_taxe_value($tax);
-	 	$tax_rate = 0;
-	 	if($total_tax){
-	 		$tax_rate = get_object_vars($total_tax)['taxrate'] + 0;
-	 	}
+	/**
+	 * { tax change event }
+	 *
+	 * @param      <type>  $tax    The tax
+	 * @return   json
+	 */
+	public function tax_change($tax)
+	{
+		$total_tax = $this->warehouse_model->get_taxe_value($tax);
+		$tax_rate = 0;
+		if ($total_tax) {
+			$tax_rate = get_object_vars($total_tax)['taxrate'] + 0;
+		}
 
-	 	echo json_encode([
-	 		'tax_rate' => $tax_rate,
-	 	]);
-	 }
-
-
-	 /**
-	  * tax change v2
-	  * @param  [type] $tax 
-	  * @return [type]
-	  * this funtion used when $tax like 4|3      
-	  */
-	 public function tax_change_v2(){
-	 	$tax_rate = 0;
-
-	 	$tax = $this->input->post('tax_id');
-	 	$tax = str_replace('|', ',', $tax);
-
-	 	$total_tax = $this->warehouse_model->get_taxe_value_by_ids($tax);
-	 	foreach ($total_tax as $tax_value) {
-	 	    $tax_rate += (float)$tax_value['taxrate'];
-	 	}
-
-	 	echo json_encode([
-	 		'tax_rate' => $tax_rate,
-	 	]);
-	 }
+		echo json_encode([
+			'tax_rate' => $tax_rate,
+		]);
+	}
 
 
+	/**
+	 * tax change v2
+	 * @param  [type] $tax 
+	 * @return [type]
+	 * this funtion used when $tax like 4|3      
+	 */
+	public function tax_change_v2()
+	{
+		$tax_rate = 0;
+
+		$tax = $this->input->post('tax_id');
+		$tax = str_replace('|', ',', $tax);
+
+		$total_tax = $this->warehouse_model->get_taxe_value_by_ids($tax);
+		foreach ($total_tax as $tax_value) {
+			$tax_rate += (float)$tax_value['taxrate'];
+		}
+
+		echo json_encode([
+			'tax_rate' => $tax_rate,
+		]);
+	}
 
 
-    /**
-     * get invoices fill data
-     * @return json 
-     */
-    public function get_invoices_fill_data()
-    {
-    	$this->load->model('clients_model');
-    	$address='';
 
-    	$data = $this->input->post();
-    	$customer_value = $this->clients_model->get($data['customer_id']);
 
-    	if(isset($customer_value) && !is_array($customer_value)){
-    		$address .= $customer_value->shipping_street.', '.$customer_value->shipping_city.', '.$customer_value->shipping_state.', '.get_country_name($customer_value->shipping_country);
-    	}
+	/**
+	 * get invoices fill data
+	 * @return json 
+	 */
+	public function get_invoices_fill_data()
+	{
+		$this->load->model('clients_model');
+		$address = '';
 
-    	$invoices = $this->warehouse_model->get_invoices_by_customer($data['customer_id']);
+		$data = $this->input->post();
+		$customer_value = $this->clients_model->get($data['customer_id']);
 
-    	echo json_encode([
-    		'invoices' => $invoices,
-    		'address' => $address,
+		if (isset($customer_value) && !is_array($customer_value)) {
+			$address .= $customer_value->shipping_street . ', ' . $customer_value->shipping_city . ', ' . $customer_value->shipping_state . ', ' . get_country_name($customer_value->shipping_country);
+		}
 
-    	]);
+		$invoices = $this->warehouse_model->get_invoices_by_customer($data['customer_id']);
 
-    }
+		echo json_encode([
+			'invoices' => $invoices,
+			'address' => $address,
 
-    /**
+		]);
+	}
+
+	/**
 	 * manage delivery filter
 	 * @param  integer $id
 	 * @return view
 	 */
-    public function manage_delivery_filter($id = '') {
+	public function manage_delivery_filter($id = '')
+	{
 
 
-    	$data['invoice_id'] = $id;
-    	$data['delivery_id'] = '';
+		$data['invoice_id'] = $id;
+		$data['delivery_id'] = '';
 
-    	$data['title'] = _l('stock_delivery_manage');
-    	$this->load->view('manage_goods_delivery/manage_delivery', $data);
-    }
+		$data['title'] = _l('stock_delivery_manage');
+		$this->load->view('manage_goods_delivery/manage_delivery', $data);
+	}
 
 
 	/**
@@ -3662,243 +3626,231 @@ class warehouse extends AdminController {
 			/*check permission*/
 			switch ($rel_type) {
 				case 'commodity_list':
-				if (!has_permission('warehouse', '', 'delete') && !is_admin()) {
-					access_denied('commodity_list');
-				}
-				break;
+					if (!has_permission('warehouse', '', 'delete') && !is_admin()) {
+						access_denied('commodity_list');
+					}
+					break;
 
 				case 'change_item_selling_price':
-				if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
-					access_denied('commodity_list');
-				}
-				break;
+					if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
+						access_denied('commodity_list');
+					}
+					break;
 
 				case 'change_item_purchase_price':
-				if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
-					access_denied('commodity_list');
-				}
-				break;
+					if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
+						access_denied('commodity_list');
+					}
+					break;
 
-				
+
 
 
 				default:
-				break;
+					break;
 			}
 
 			/*delete data*/
-			if ( $this->input->post('mass_delete') && $this->input->post('mass_delete') == 'true' ) {
+			if ($this->input->post('mass_delete') && $this->input->post('mass_delete') == 'true') {
 				if (is_array($ids)) {
 					foreach ($ids as $id) {
 
 						switch ($rel_type) {
 							case 'commodity_list':
-							if ($this->warehouse_model->delete_commodity($id)) {
-								$total_deleted++;
-								break;
-							}else{
-								break;
-							}
+								if ($this->warehouse_model->delete_commodity($id)) {
+									$total_deleted++;
+									break;
+								} else {
+									break;
+								}
 
 							default:
 
-							break;
+								break;
 						}
-
-
 					}
 				}
 
 				/*return result*/
 				switch ($rel_type) {
 					case 'commodity_list':
-					set_alert('success', _l('total_commodity_list'). ": " .$total_deleted);
-					break;
+						set_alert('success', _l('total_commodity_list') . ": " . $total_deleted);
+						break;
 
 					default:
-					break;
-
+						break;
 				}
-
-
 			}
 
 			// Clone items
-            if ($this->input->post('clone_items') && $this->input->post('clone_items') == 'true') {
-                if (is_array($ids)) {
-                    foreach ($ids as $id) {
+			if ($this->input->post('clone_items') && $this->input->post('clone_items') == 'true') {
+				if (is_array($ids)) {
+					foreach ($ids as $id) {
 
-                            switch ($rel_type) {
-                                case 'commodity_list':
-                                    if ($this->warehouse_model->clone_item($id)) {
-                                        $total_cloned++;
-                                        break;
-                                    }else{
-                                        break;
-                                    }
-                                
-                                default:
-                                   
-                                    break;
-                            }
-                        }
-                    }
-                /*return result*/
-                switch ($rel_type) {
-                    case 'commodity_list':
-                        set_alert('success', _l('total_commodity_list'). ": " .$total_cloned);
-                        break;
+						switch ($rel_type) {
+							case 'commodity_list':
+								if ($this->warehouse_model->clone_item($id)) {
+									$total_cloned++;
+									break;
+								} else {
+									break;
+								}
 
-                    default:
-                        break;
+							default:
 
-                }
-            }
+								break;
+						}
+					}
+				}
+				/*return result*/
+				switch ($rel_type) {
+					case 'commodity_list':
+						set_alert('success', _l('total_commodity_list') . ": " . $total_cloned);
+						break;
+
+					default:
+						break;
+				}
+			}
 
 			// update selling price, purchase price
-			if ( ($this->input->post('change_item_selling_price') ) || ($this->input->post('change_item_purchase_price') )  )  {
+			if (($this->input->post('change_item_selling_price')) || ($this->input->post('change_item_purchase_price'))) {
 
 				if (is_array($ids)) {
 					foreach ($ids as $id) {
 
 						switch ($rel_type) {
 							case 'change_item_selling_price':
-							if ($this->warehouse_model->commodity_udpate_profit_rate($id, $this->input->post('selling_price'), 'selling_percent' )) {
-								$total_updated++;
-								break;
-							}else{
-								break;
-							}
+								if ($this->warehouse_model->commodity_udpate_profit_rate($id, $this->input->post('selling_price'), 'selling_percent')) {
+									$total_updated++;
+									break;
+								} else {
+									break;
+								}
 
 							case 'change_item_purchase_price':
-							if ($this->warehouse_model->commodity_udpate_profit_rate($id, $this->input->post('purchase_price'), 'purchase_percent' )) {
-								$total_updated++;
-								break;
-							}else{
-								break;
-							}
-							
+								if ($this->warehouse_model->commodity_udpate_profit_rate($id, $this->input->post('purchase_price'), 'purchase_percent')) {
+									$total_updated++;
+									break;
+								} else {
+									break;
+								}
+
 
 							default:
 
-							break;
+								break;
 						}
-
-
 					}
 				}
 
 				/*return result*/
 				switch ($rel_type) {
 					case 'change_item_selling_price':
-					set_alert('success', _l('total_commodity_list'). ": " .$total_updated);
-					break;
+						set_alert('success', _l('total_commodity_list') . ": " . $total_updated);
+						break;
 
 					case 'change_item_purchase_price':
-					set_alert('success', _l('total_commodity_list'). ": " .$total_updated);
-					break;
-					
+						set_alert('success', _l('total_commodity_list') . ": " . $total_updated);
+						break;
+
 
 					default:
-					break;
-
+						break;
 				}
-
 			}
-
-
 		}
-
-
 	}
 
 
-    /**
-     * get subgroup fill data
-     * @return html 
-     */
-    public function get_subgroup_fill_data()
-    {
-    	$data = $this->input->post();
-
-    	$subgroup = $this->warehouse_model->list_subgroup_by_group($data['group_id']);
-
-    	echo json_encode([
-    		'subgroup' => $subgroup
-    	]);
-
-    }
-
-    /**
-     * warehouse selling price profif ratio
-     * @return boolean 
-     */
-    public function warehouse_selling_price_profif_ratio(){
-    	$data = $this->input->post();
-
-    	if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
-    		$success = false;
-    		$message = _l('Not permission edit');
-
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
-
-    	if($data != 'null'){
-    		$value = $this->warehouse_model->update_warehouse_selling_price_profif_ratio($data);
-    		if($value){
-    			$success = true;
-    			$message = _l('updated_successfully');
-    		}else{
-    			$success = false;
-    			$message = _l('updated_false');
-    		}
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
-    }
-
-    /**
-     * warehouse the fractional part
-     * @return boolean 
-     */
-    public function warehouse_the_fractional_part(){
-    	$data = $this->input->post();
-    	if($data != 'null'){
-    		$value = $this->warehouse_model->update_warehouse_the_fractional_part($data);
-    		if($value){
-    			$success = true;
-    			$message = _l('updated_successfully');
-    		}else{
-    			$success = false;
-    			$message = _l('updated_false');
-    		}
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
-    }
-    
 	/**
-     * warehouse integer part
-     * @return boolean 
-     */
-	public function warehouse_integer_part(){
+	 * get subgroup fill data
+	 * @return html 
+	 */
+	public function get_subgroup_fill_data()
+	{
 		$data = $this->input->post();
-		if($data != 'null'){
-			$value = $this->warehouse_model->update_warehouse_integer_part($data);
-			if($value){
+
+		$subgroup = $this->warehouse_model->list_subgroup_by_group($data['group_id']);
+
+		echo json_encode([
+			'subgroup' => $subgroup
+		]);
+	}
+
+	/**
+	 * warehouse selling price profif ratio
+	 * @return boolean 
+	 */
+	public function warehouse_selling_price_profif_ratio()
+	{
+		$data = $this->input->post();
+
+		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
+			$success = false;
+			$message = _l('Not permission edit');
+
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_warehouse_selling_price_profif_ratio($data);
+			if ($value) {
 				$success = true;
 				$message = _l('updated_successfully');
-			}else{
+			} else {
+				$success = false;
+				$message = _l('updated_false');
+			}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+	}
+
+	/**
+	 * warehouse the fractional part
+	 * @return boolean 
+	 */
+	public function warehouse_the_fractional_part()
+	{
+		$data = $this->input->post();
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_warehouse_the_fractional_part($data);
+			if ($value) {
+				$success = true;
+				$message = _l('updated_successfully');
+			} else {
+				$success = false;
+				$message = _l('updated_false');
+			}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+	}
+
+	/**
+	 * warehouse integer part
+	 * @return boolean 
+	 */
+	public function warehouse_integer_part()
+	{
+		$data = $this->input->post();
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_warehouse_integer_part($data);
+			if ($value) {
+				$success = true;
+				$message = _l('updated_successfully');
+			} else {
 				$success = false;
 				$message = _l('updated_false');
 			}
@@ -3914,7 +3866,8 @@ class warehouse extends AdminController {
 	 * warehouse profit rate by purchase price sale
 	 * @return boolean 
 	 */
-	public function warehouse_profit_rate_by_purchase_price_sale(){
+	public function warehouse_profit_rate_by_purchase_price_sale()
+	{
 		$data = $this->input->post();
 
 		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
@@ -3928,12 +3881,12 @@ class warehouse extends AdminController {
 			die;
 		}
 
-		if($data != 'null'){
+		if ($data != 'null') {
 			$value = $this->warehouse_model->update_profit_rate_by_purchase_price_sale($data);
-			if($value){
+			if ($value) {
 				$success = true;
 				$message = _l('updated_successfully');
-			}else{
+			} else {
 				$success = false;
 				$message = _l('updated_false');
 			}
@@ -3945,203 +3898,204 @@ class warehouse extends AdminController {
 		}
 	}
 
-    /**
-     * setting rules for rounding prices
-     * @return boolean 
-     */
-    public function setting_rules_for_rounding_prices(){
-    	$data = $this->input->post();
+	/**
+	 * setting rules for rounding prices
+	 * @return boolean 
+	 */
+	public function setting_rules_for_rounding_prices()
+	{
+		$data = $this->input->post();
 
-    	if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
-    		$success = false;
-    		$message = _l('Not permission edit');
+		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
+			$success = false;
+			$message = _l('Not permission edit');
 
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
 
-    	if($data != 'null'){
-    		$value = $this->warehouse_model->update_rules_for_rounding_prices($data);
-    		if($value){
-    			$success = true;
-    			$message = _l('updated_successfully');
-    		}else{
-    			$success = false;
-    			$message = _l('updated_false');
-    		}
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
-    }
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_rules_for_rounding_prices($data);
+			if ($value) {
+				$success = true;
+				$message = _l('updated_successfully');
+			} else {
+				$success = false;
+				$message = _l('updated_false');
+			}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+	}
 
-    /**
-     * caculator sale price
-     * @return float 
-     */
-    public function caculator_sale_price()
-    {
-    	$data = $this->input->post();
-    	$sale_price = 0;
+	/**
+	 * caculator sale price
+	 * @return float 
+	 */
+	public function caculator_sale_price()
+	{
+		$data = $this->input->post();
+		$sale_price = 0;
 
-    	/*type : 0 purchase price, 1: sale price*/
-    	$profit_type = get_warehouse_option('profit_rate_by_purchase_price_sale');
-    	$the_fractional_part = get_warehouse_option('warehouse_the_fractional_part');
-    	$integer_part = get_warehouse_option('warehouse_integer_part');
+		/*type : 0 purchase price, 1: sale price*/
+		$profit_type = get_warehouse_option('profit_rate_by_purchase_price_sale');
+		$the_fractional_part = get_warehouse_option('warehouse_the_fractional_part');
+		$integer_part = get_warehouse_option('warehouse_integer_part');
 
-    	$profit_rate = $data['profit_rate'];
-    	$purchase_price = $data['purchase_price'];
+		$profit_rate = $data['profit_rate'];
+		$purchase_price = $data['purchase_price'];
 
-    	switch ($profit_type) {
-    		case '0':
-    			# Calculate the selling price based on the purchase price rate of profit
-    			# sale price = purchase price * ( 1 + profit rate)
-    		if( ($profit_rate =='') || ($profit_rate == '0')|| ($profit_rate == 'null') ){
+		switch ($profit_type) {
+			case '0':
+				# Calculate the selling price based on the purchase price rate of profit
+				# sale price = purchase price * ( 1 + profit rate)
+				if (($profit_rate == '') || ($profit_rate == '0') || ($profit_rate == 'null')) {
 
-    			$sale_price = (float)$purchase_price;
-    		}else{
-    			$sale_price = (float)$purchase_price*(1+((float)$profit_rate/100));
+					$sale_price = (float)$purchase_price;
+				} else {
+					$sale_price = (float)$purchase_price * (1 + ((float)$profit_rate / 100));
+				}
+				break;
 
-    		}
-    		break;
+			case '1':
+				# Calculate the selling price based on the selling price rate of profit
+				# sale price = purchase price / ( 1 - profit rate)
+				if (($profit_rate == '') || ($profit_rate == '0') || ($profit_rate == 'null')) {
 
-    		case '1':
-    			# Calculate the selling price based on the selling price rate of profit
-    			# sale price = purchase price / ( 1 - profit rate)
-    		if( ($profit_rate =='') || ($profit_rate == '0')|| ($profit_rate == 'null') ){
+					$sale_price = (float)$purchase_price;
+				} else {
+					$sale_price = (float)$purchase_price / (1 - ((float)$profit_rate / 100));
+				}
+				break;
+		}
 
-    			$sale_price = (float)$purchase_price;
-    		}else{
-    			$sale_price = (float)$purchase_price/(1-((float)$profit_rate/100));
+		//round sale_price
+		$sale_price = round($sale_price, (int)$the_fractional_part);
 
-    		}
-    		break;
-    		
-    	}
+		if ($integer_part != '0') {
+			$integer_part = 0 - (int)($integer_part);
+			$sale_price = round($sale_price, $integer_part);
+		}
 
-    	//round sale_price
-    	$sale_price = round($sale_price, (int)$the_fractional_part);
+		echo json_encode([
+			'sale_price' => $sale_price,
+		]);
+		die;
+	}
 
-    	if($integer_part != '0'){
-    		$integer_part = 0 - (int)($integer_part);
-    		$sale_price = round($sale_price, $integer_part);
-    	}
-
-    	echo json_encode([
-    		'sale_price' => $sale_price,
-    	]);
-    	die;
-
-    }
-
-    /**
+	/**
 	 * table inventory inside
 	 *
 	 * @return array
 	 */
-    public function table_inventory_inside() {
+	public function table_inventory_inside()
+	{
 
-    	$this->app->get_table_data(module_views_path('warehouse', 'table_inventory_inside'));
-    }
-    
-     /**
-     * { purchase order setting }
-     * @return  json
-     */
-     public function auto_create_goods_received_delivery_setting(){
-     	$data = $this->input->post();
+		$this->app->get_table_data(module_views_path('warehouse', 'table_inventory_inside'));
+	}
 
-     	if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
-     		$success = false;
-     		$message = _l('Not permission edit');
+	/**
+	 * { purchase order setting }
+	 * @return  json
+	 */
+	public function auto_create_goods_received_delivery_setting()
+	{
+		$data = $this->input->post();
 
-     		echo json_encode([
-     			'message' => $message,
-     			'success' => $success,
-     		]);
-     		die;
-     	}
+		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
+			$success = false;
+			$message = _l('Not permission edit');
 
-     	if($data != 'null'){
-     		$value = $this->warehouse_model->update_auto_create_received_delivery_setting($data);
-     		if($value){
-     			$success = true;
-     			$message = _l('updated_successfully');
-     		}else{
-     			$success = false;
-     			$message = _l('updated_false');
-     		}
-     		echo json_encode([
-     			'message' => $message,
-     			'success' => $success,
-     		]);
-     		die;
-     	}
-     }
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
 
-
-    /**
-     * update goods receipt warehouse
-     * @return json 
-     */
-    public function update_goods_receipt_warehouse(){
-    	$data = $this->input->post();
-
-    	if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
-    		$success = false;
-    		$message = _l('Not permission edit');
-
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
-
-    	if($data != 'null'){
-    		$value = $this->warehouse_model->update_goods_receipt_warehouse($data);
-    		if($value){
-    			$success = true;
-    			$message = _l('updated_successfully');
-    		}else{
-    			$success = false;
-    			$message = _l('updated_false');
-    		}
-    		echo json_encode([
-    			'message' => $message,
-    			'success' => $success,
-    		]);
-    		die;
-    	}
-    }
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_auto_create_received_delivery_setting($data);
+			if ($value) {
+				$success = true;
+				$message = _l('updated_successfully');
+			} else {
+				$success = false;
+				$message = _l('updated_false');
+			}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+	}
 
 
-    /**
-     * coppy invoices
-     * @param  integer $invoice_id 
-     * @return json              
-     */
-    public function copy_invoices($invoice_id = '') {
+	/**
+	 * update goods receipt warehouse
+	 * @return json 
+	 */
+	public function update_goods_receipt_warehouse()
+	{
+		$data = $this->input->post();
 
-    	$invoices_detail = $this->warehouse_model->copy_invoice($invoice_id);
-    	if($invoice_id != ''){
-    		$invoice_no = format_invoice_number($invoice_id);
-    	}else{
-    		$invoice_no = '';
-    	}
-    	echo json_encode([
+		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
+			$success = false;
+			$message = _l('Not permission edit');
 
-    		'result' => $invoices_detail['goods_delivery_detail'],
-    		'goods_delivery' => $invoices_detail['goods_delivery'],
-    		'status' => $invoices_detail['status'],
-    		'invoice_no' => $invoice_no,
-    	]);
-    }
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_goods_receipt_warehouse($data);
+			if ($value) {
+				$success = true;
+				$message = _l('updated_successfully');
+			} else {
+				$success = false;
+				$message = _l('updated_false');
+			}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+	}
+
+
+	/**
+	 * coppy invoices
+	 * @param  integer $invoice_id 
+	 * @return json              
+	 */
+	public function copy_invoices($invoice_id = '')
+	{
+
+		$invoices_detail = $this->warehouse_model->copy_invoice($invoice_id);
+		if ($invoice_id != '') {
+			$invoice_no = format_invoice_number($invoice_id);
+		} else {
+			$invoice_no = '';
+		}
+		echo json_encode([
+
+			'result' => $invoices_detail['goods_delivery_detail'],
+			'goods_delivery' => $invoices_detail['goods_delivery'],
+			'status' => $invoices_detail['status'],
+			'invoice_no' => $invoice_no,
+		]);
+	}
 
 	/**
 	 * caculator purchase price
@@ -4163,26 +4117,23 @@ class warehouse extends AdminController {
 
 		switch ($profit_type) {
 			case '0':
-    			# Calculate the selling price based on the purchase price rate of profit
-    			# sale price = purchase price * ( 1 + profit rate)
+				# Calculate the selling price based on the purchase price rate of profit
+				# sale price = purchase price * ( 1 + profit rate)
 
-			if( ($purchase_price =='') || ($purchase_price == '0')|| ($purchase_price == 'null') ){
-				$profit_rate = 0;
-
-			}else{
-				$profit_rate = (((float)$sale_price/(float)$purchase_price)-1)*100;
-
-			}
-			break;
+				if (($purchase_price == '') || ($purchase_price == '0') || ($purchase_price == 'null')) {
+					$profit_rate = 0;
+				} else {
+					$profit_rate = (((float)$sale_price / (float)$purchase_price) - 1) * 100;
+				}
+				break;
 
 			case '1':
-    			# Calculate the selling price based on the selling price rate of profit
-    			# sale price = purchase price / ( 1 - profit rate)
+				# Calculate the selling price based on the selling price rate of profit
+				# sale price = purchase price / ( 1 - profit rate)
 
-			$profit_rate = (1-((float)$purchase_price/(float)$sale_price))*100;
+				$profit_rate = (1 - ((float)$purchase_price / (float)$sale_price)) * 100;
 
-			break;
-
+				break;
 		}
 
 
@@ -4190,320 +4141,312 @@ class warehouse extends AdminController {
 			'profit_rate' => $profit_rate,
 		]);
 		die;
-
 	}
 
-   	/**
+	/**
 	 * warehouse delete bulk action
 	 * @return
 	 */
-   	public function warehouse_export_item_checked()
-   	{
-   		if (!is_staff_member()) {
-   			ajax_access_denied();
-   		}
-   		if(!class_exists('XLSXReader_fin')){
-            require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXReader/XLSXReader.php');
-        }
-        require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+	public function warehouse_export_item_checked()
+	{
+		if (!is_staff_member()) {
+			ajax_access_denied();
+		}
+		if (!class_exists('XLSXReader_fin')) {
+			require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+		}
+		require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
 
-   		if ($this->input->post()) {
+		if ($this->input->post()) {
 
-   			/*delete export file before export file*/
-   			$path_before = COMMODITY_EXPORT.'export_excel_'.get_staff_user_id().'.xlsx';
-   			if(file_exists($path_before)){
-   				unlink(COMMODITY_EXPORT.'export_excel_'.get_staff_user_id().'.xlsx');
-   			}
+			/*delete export file before export file*/
+			$path_before = COMMODITY_EXPORT . 'export_excel_' . get_staff_user_id() . '.xlsx';
+			if (file_exists($path_before)) {
+				unlink(COMMODITY_EXPORT . 'export_excel_' . get_staff_user_id() . '.xlsx');
+			}
 
-   			$ids                   = $this->input->post('ids');
+			$ids                   = $this->input->post('ids');
 
-   			//Writer file
-   			$writer_header = array(
-   				"(*)" ._l('commodity_code')          =>'string',
-   				"(*)" ._l('commodity_name')          =>'string',
-   				_l('commodity_barcode')          =>'string',
-   				_l('sku_code')          =>'string',
-   				_l('sku_name')          =>'string',
-   				_l('Tags')          =>'string',
-   				_l('description')          =>'string',
-   				_l('commodity_type')          =>'string',
-   				_l('unit_id')          =>'string',
-   				"(*)" ._l('commodity_group')          =>'string',
-   				_l('sub_group')          =>'string',
-   				_l('_profit_rate'). "(%)"          =>'string',
-   				_l('purchase_price')          =>'string',
-   				"(*)" ._l('rate')          =>'string',
-   				_l('tax')          =>'string',
-   				_l('origin')          =>'string',
-   				_l('style_id')          =>'string',
-   				_l('model_id')          =>'string',
-   				_l('size_id')          =>'string',
-   				_l('_color')          =>'string',
-   				_l('guarantee_month')          =>'string',
-   				_l('minimum_inventory')          =>'string',
-   			);
+			//Writer file
+			$writer_header = array(
+				"(*)" . _l('commodity_code')          => 'string',
+				"(*)" . _l('commodity_name')          => 'string',
+				_l('commodity_barcode')          => 'string',
+				_l('sku_code')          => 'string',
+				_l('sku_name')          => 'string',
+				_l('Tags')          => 'string',
+				_l('description')          => 'string',
+				_l('commodity_type')          => 'string',
+				_l('unit_id')          => 'string',
+				"(*)" . _l('commodity_group')          => 'string',
+				_l('sub_group')          => 'string',
+				_l('_profit_rate') . "(%)"          => 'string',
+				_l('purchase_price')          => 'string',
+				"(*)" . _l('rate')          => 'string',
+				_l('tax')          => 'string',
+				_l('origin')          => 'string',
+				_l('style_id')          => 'string',
+				_l('model_id')          => 'string',
+				_l('size_id')          => 'string',
+				_l('_color')          => 'string',
+				_l('guarantee_month')          => 'string',
+				_l('minimum_inventory')          => 'string',
+			);
 
-   			$widths_arr = array();
-   			for($i = 1; $i <= count($writer_header); $i++ ){
-   				$widths_arr[] = 40;
-   			}
+			$widths_arr = array();
+			for ($i = 1; $i <= count($writer_header); $i++) {
+				$widths_arr[] = 40;
+			}
 
-   			$writer = new XLSXWriter();
+			$writer = new XLSXWriter();
 
-   			$col_style1 =[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-   			$style1 = ['widths'=> $widths_arr, 'fill' => '#ff9800',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ];
+			$col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+			$style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
 
-   			$writer->writeSheetHeader_v2('Inventory Items Import Excel', $writer_header,  $col_options = ['widths'=> $widths_arr, 'fill' => '#f44336',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ], $col_style1, $style1);
-
-
-	        // Add some data
-   			$x= 2;
-   			if(isset($ids)){
-   				if(count($ids) > 0){
-   					foreach ($ids as $value) {
-   						$inventory_min=0;
-
-   						$item = $this->db->query('select * from tblitems where active = 1 AND id ='.$value)->row();
-   						/*get inventory min*/
-   						$this->db->where('commodity_id', $value);
-   						$inventory_value = $this->db->get(db_prefix() . 'inventory_commodity_min')->row();
-   						if($inventory_value){
-   							$inventory_min =  $inventory_value->inventory_number_min;
-   						}
+			$writer->writeSheetHeader_v2('Inventory Items Import Excel', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
 
 
-   						if($item){
-   							$writer->writeSheetRow('Inventory Items Import Excel', [
-   								$item->commodity_code,
-   								$item->description,
-   								$item->commodity_barcode,
-   								$item->sku_code,
-   								$item->sku_name,
-   								$this->warehouse_model->get_tags_name($item->id),
-   								$item->long_description,
-   								$item->commodity_type,
-   								$item->unit_id,
-   								$item->group_id,
-   								$item->sub_group,
-   								$item->profif_ratio,
-   								$item->purchase_price,
-   								$item->rate,
-   								$item->tax,
-   								$item->origin,
-   								$item->style_id,
-   								$item->model_id,
-   								$item->size_id,
-   								$item->color,
-   								$item->guarantee,
-   								$inventory_min,
-   							]);
-   						}
-   					}
+			// Add some data
+			$x = 2;
+			if (isset($ids)) {
+				if (count($ids) > 0) {
+					foreach ($ids as $value) {
+						$inventory_min = 0;
 
-   				}
-
-   			}
-
-	        // Rename worksheet
-
-	        // Redirect output to a client’s web browser (Excel2007)
-   			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-   			header('Content-Disposition: attachment;filename="inventory_items_sheet.xlsx"');
-   			header('Cache-Control: max-age=0');
-
-	        // If you're serving to IE 9, then the following may be needed
-   			header('Cache-Control: max-age=1');
-
-	        // If you're serving to IE over SSL, then the following may be needed
-	        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-	        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-	        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-	        header('Pragma: public'); // HTTP/1.0
-
-	        $filename = 'export_excel_'.get_staff_user_id().strtotime(date('Y-m-d H:i:s')).'.xlsx';
-	        $writer->writeToFile(str_replace($filename, WAREHOUSE_EXPORT_ITEM.$filename, $filename));
-
-	        echo json_encode(['success' => true,
-	        	'filename' => WAREHOUSE_EXPORT_ITEM.$filename,
-	        ]);
-
-	        exit;
+						$item = $this->db->query('select * from tblitems where active = 1 AND id =' . $value)->row();
+						/*get inventory min*/
+						$this->db->where('commodity_id', $value);
+						$inventory_value = $this->db->get(db_prefix() . 'inventory_commodity_min')->row();
+						if ($inventory_value) {
+							$inventory_min =  $inventory_value->inventory_number_min;
+						}
 
 
-	    }
+						if ($item) {
+							$writer->writeSheetRow('Inventory Items Import Excel', [
+								$item->commodity_code,
+								$item->description,
+								$item->commodity_barcode,
+								$item->sku_code,
+								$item->sku_name,
+								$this->warehouse_model->get_tags_name($item->id),
+								$item->long_description,
+								$item->commodity_type,
+								$item->unit_id,
+								$item->group_id,
+								$item->sub_group,
+								$item->profif_ratio,
+								$item->purchase_price,
+								$item->rate,
+								$item->tax,
+								$item->origin,
+								$item->style_id,
+								$item->model_id,
+								$item->size_id,
+								$item->color,
+								$item->guarantee,
+								$inventory_min,
+							]);
+						}
+					}
+				}
+			}
 
+			// Rename worksheet
 
+			// Redirect output to a client’s web browser (Excel2007)
+			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			header('Content-Disposition: attachment;filename="inventory_items_sheet.xlsx"');
+			header('Cache-Control: max-age=0');
+
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+			header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header('Pragma: public'); // HTTP/1.0
+
+			$filename = 'export_excel_' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+			$writer->writeToFile(str_replace($filename, WAREHOUSE_EXPORT_ITEM . $filename, $filename));
+
+			echo json_encode([
+				'success' => true,
+				'filename' => WAREHOUSE_EXPORT_ITEM . $filename,
+			]);
+
+			exit;
+		}
 	}
 
-    /**
-     * get list job position training
-     * @param  integer $id 
-     * @return json     
-     */
-    public function get_item_longdescriptions($id){
-    	$variation_html = $this->warehouse_model->get_variation_html($id);
-    	$list = $this->warehouse_model->get_item_longdescriptions($id);
-    	// $item_html = $this->warehouse_model->get_list_parent_item(['id' => $id]);
+	/**
+	 * get list job position training
+	 * @param  integer $id 
+	 * @return json     
+	 */
+	public function get_item_longdescriptions($id)
+	{
+		$variation_html = $this->warehouse_model->get_variation_html($id);
+		$list = $this->warehouse_model->get_item_longdescriptions($id);
+		// $item_html = $this->warehouse_model->get_list_parent_item(['id' => $id]);
 
-    	$custom_fields_html = render_custom_fields('items', $id, [], ['items_pr' => true]);
-    	$item_tags = $this->warehouse_model->get_list_item_tags($id);
+		$custom_fields_html = render_custom_fields('items', $id, [], ['items_pr' => true]);
+		$item_tags = $this->warehouse_model->get_list_item_tags($id);
 
-    	if((get_tags_in($id,'item_tags') != null)){
-    		$item_value = implode(',', get_tags_in($id,'item_tags')) ;
-    	}else{
+		if ((get_tags_in($id, 'item_tags') != null)) {
+			$item_value = implode(',', get_tags_in($id, 'item_tags'));
+		} else {
 
-    		$item_value = '';
-    	}
+			$item_value = '';
+		}
 
-    	if(isset($list)){
-    		$long_descriptions = $list->long_descriptions;
-    		$description = $list->long_description;
-    	}else{
-    		$long_descriptions = '';
-    		$description = '';
+		if (isset($list)) {
+			$long_descriptions = $list->long_descriptions;
+			$description = $list->long_description;
+		} else {
+			$long_descriptions = '';
+			$description = '';
+		}
 
-    	}
+		//check have child item
+		$flag_is_parent = false;
+		$this->db->where('parent_id', $id);
+		$array_child_value = $this->db->get(db_prefix() . 'items')->result_array();
 
-    	//check have child item
-    	$flag_is_parent = false;    	
-    	$this->db->where('parent_id', $id);
-    	$array_child_value = $this->db->get(db_prefix().'items')->result_array();
+		if (count($array_child_value) > 0) {
+			$flag_is_parent = true;
+		}
 
-    	if(count($array_child_value) > 0){
-    		$flag_is_parent = true;
-    	}
+		$this->db->where('id', $id);
+		$item_value = $this->db->get(db_prefix() . 'items')->row();
 
-    	$this->db->where('id', $id);
-    	$item_value = $this->db->get(db_prefix().'items')->row();
+		if ($item_value) {
+			$parent_id = $item_value->parent_id;
+		} else {
+			$parent_id = '';
+		}
 
-    	if($item_value){
-    		$parent_id = $item_value->parent_id;
-    	}else{
-    		$parent_id = '';
-    	}
+		$data['ajaxItems'] = false;
+		if (total_rows(db_prefix() . 'items', 'parent_id is null or parent_id = ""') <= wh_ajax_on_total_items()) {
+			if (is_numeric($parent_id) && $parent_id != 0) {
+				$data['items'] = $this->warehouse_model->get_parent_item_grouped($parent_id);
+			} else {
+				$data['items'] = $this->warehouse_model->get_parent_item_grouped();
+			}
+		} else {
+			if (is_numeric($parent_id) && $parent_id != 0) {
+				$data['items']     = $this->warehouse_model->get_parent_item_grouped($parent_id);
+			} else {
+				$data['items']     = [];
+				$data['ajaxItems'] = true;
+			}
+		}
 
-    	$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items', 'parent_id is null or parent_id = ""') <= wh_ajax_on_total_items()) {
-        	if(is_numeric($parent_id) && $parent_id != 0 ){
-        		$data['items'] = $this->warehouse_model->get_parent_item_grouped($parent_id);
-        	}else{
-        		$data['items'] = $this->warehouse_model->get_parent_item_grouped();
-        	}
-        } else {
-        	if(is_numeric($parent_id) && $parent_id != 0 ){
-        		$data['items']     = $this->warehouse_model->get_parent_item_grouped($parent_id);
-        	}else{
-        		$data['items']     = [];
-        		$data['ajaxItems'] = true;
-        	}
-        }
+		$parent_data = $this->load->view('item_include/item_select', ['ajaxItems' => $data['ajaxItems'], 'items' => $data['items'], 'select_name' => 'parent_id', 'id_name' => 'parent_id', 'data_none_selected_text' => '', 'label_name' => 'parent_item', 'item_id' => $parent_id], true);
 
-    	$parent_data = $this->load->view('item_include/item_select', ['ajaxItems' => $data['ajaxItems'], 'items' => $data['items'] , 'select_name' => 'parent_id', 'id_name' => 'parent_id', 'data_none_selected_text' => '', 'label_name' => 'parent_item', 'item_id' => $parent_id ], true);
+		echo json_encode([
+			'long_descriptions' => $long_descriptions,
+			'description' => $description,
+			'custom_fields_html' => $custom_fields_html,
+			'item_tags' => $item_tags['htmltag'],
+			'item_value' => $item_value,
+			'variation_html' => $variation_html['html'],
+			'variation_index' => $variation_html['index'],
+			// 'item_html' => $item_html['item_options'],
+			// 'flag_is_parent' => $item_html['flag_is_parent'],
+			'item_html' => $parent_data,
+			'flag_is_parent' => $flag_is_parent,
 
-    	echo json_encode([ 
-    		'long_descriptions' => $long_descriptions,
-    		'description' => $description,
-    		'custom_fields_html' => $custom_fields_html,
-    		'item_tags' => $item_tags['htmltag'],
-    		'item_value' => $item_value,
-    		'variation_html' => $variation_html['html'],
-    		'variation_index' => $variation_html['index'],
-    		// 'item_html' => $item_html['item_options'],
-    		// 'flag_is_parent' => $item_html['flag_is_parent'],
-    		'item_html' => $parent_data,
-    		'flag_is_parent' => $flag_is_parent,
-
-    	]);
-    }
+		]);
+	}
 
 
-    /**
-     * revert goods receipt
-     * @param  integer $id 
-     * @return redirect        
-     */
-    public function revert_goods_receipt($id)
-    {	
-    	$response = $this->warehouse_model->revert_goods_receipt($id);
+	/**
+	 * revert goods receipt
+	 * @param  integer $id 
+	 * @return redirect        
+	 */
+	public function revert_goods_receipt($id)
+	{
+		$response = $this->warehouse_model->revert_goods_receipt($id);
 
-    	if ($response == true) {
-    		set_alert('success', _l('deleted'));
-    	} else {
-    		set_alert('warning', _l('problem_deleting'));
-    	}
-    	redirect(admin_url('warehouse/manage_purchase'));
+		if ($response == true) {
+			set_alert('success', _l('deleted'));
+		} else {
+			set_alert('warning', _l('problem_deleting'));
+		}
+		redirect(admin_url('warehouse/manage_purchase'));
+	}
 
-    }
+	/**
+	 * revert goods delivery
+	 * @param  integer $id 
+	 * @return redirect    
+	 */
+	public function revert_goods_delivery($id)
+	{
+		$response = $this->warehouse_model->revert_goods_delivery($id);
 
-    /**
-     * revert goods delivery
-     * @param  integer $id 
-     * @return redirect    
-     */
-    public function revert_goods_delivery($id)
-    {	
-    	$response = $this->warehouse_model->revert_goods_delivery($id);
+		if ($response == true) {
+			set_alert('success', _l('deleted'));
+		} else {
+			set_alert('warning', _l('problem_deleting'));
+		}
+		redirect(admin_url('warehouse/manage_delivery'));
+	}
 
-    	if ($response == true) {
-    		set_alert('success', _l('deleted'));
-    	} else {
-    		set_alert('warning', _l('problem_deleting'));
-    	}
-    	redirect(admin_url('warehouse/manage_delivery'));
-
-    }
-
-    /**
+	/**
 	 * import xlsx opening stock
 	 * @param  integer $id
 	 * @return view
 	 */
-    public function import_opening_stock() {
-    	if (!is_admin() && !has_permission('warehouse', '', 'create')) {
-    		access_denied('warehouse');
-    	}
-    	$this->load->model('staff_model');
-    	$data_staff = $this->staff_model->get(get_staff_user_id());
+	public function import_opening_stock()
+	{
+		if (!is_admin() && !has_permission('warehouse', '', 'create')) {
+			access_denied('warehouse');
+		}
+		$this->load->model('staff_model');
+		$data_staff = $this->staff_model->get(get_staff_user_id());
 
-    	/*get language active*/
-    	if ($data_staff) {
-    		if ($data_staff->default_language != '') {
-    			$data['active_language'] = $data_staff->default_language;
+		/*get language active*/
+		if ($data_staff) {
+			if ($data_staff->default_language != '') {
+				$data['active_language'] = $data_staff->default_language;
+			} else {
 
-    		} else {
+				$data['active_language'] = get_option('active_language');
+			}
+		} else {
+			$data['active_language'] = get_option('active_language');
+		}
+		$data['title'] = _l('import_opening_stock');
 
-    			$data['active_language'] = get_option('active_language');
-    		}
-
-    	} else {
-    		$data['active_language'] = get_option('active_language');
-    	}
-    	$data['title'] = _l('import_opening_stock');
-
-    	$this->load->view('warehouse/import_excel_opening_stock', $data);
-    }
+		$this->load->view('warehouse/import_excel_opening_stock', $data);
+	}
 
 
 	/**
 	 * import file xlsx opening stock
 	 * @return json 
 	 */
-	public function import_file_xlsx_opening_stock() {
+	public function import_file_xlsx_opening_stock()
+	{
 		if (!is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied(_l('warehouse'));
 		}
 
-		if(!class_exists('XLSXReader_fin')){
-			require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXReader/XLSXReader.php');
+		if (!class_exists('XLSXReader_fin')) {
+			require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
 		}
-		require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+		require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
 
 		$total_row_false = 0;
 		$total_rows_data = 0;
 		$dataerror = 0;
 		$total_row_success = 0;
 		$total_rows_data_error = 0;
-		$filename='';
+		$filename = '';
 
 		if ($this->input->post()) {
 
@@ -4533,213 +4476,204 @@ class warehouse extends AdminController {
 
 						//Writer file
 						$writer_header = array(
-							"(*)" ._l('commodity_code')          =>'string',
-							"(*)" ._l('warehouse_code')          =>'string',
-							_l('lot_number')          =>'string',
-							_l('expiry_date').'(yyyy-mm-dd)'          =>'string',
-							"(*)" ._l('inventory_number')          =>'string',
-							_l('error')                     =>'string',
+							"(*)" . _l('commodity_code')          => 'string',
+							"(*)" . _l('warehouse_code')          => 'string',
+							_l('lot_number')          => 'string',
+							_l('expiry_date') . '(yyyy-mm-dd)'          => 'string',
+							"(*)" . _l('inventory_number')          => 'string',
+							_l('error')                     => 'string',
 						);
 
-                        $widths_arr = array();
-                        for($i = 1; $i <= count($writer_header); $i++ ){
-                            $widths_arr[] = 40;
-                        }
+						$widths_arr = array();
+						for ($i = 1; $i <= count($writer_header); $i++) {
+							$widths_arr[] = 40;
+						}
 
-                        $writer = new XLSXWriter();
+						$writer = new XLSXWriter();
 
-                        $col_style1 =[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-                        $style1 = ['widths'=> $widths_arr, 'fill' => '#ff9800',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ];
+						$col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+						$style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
 
-                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths'=> $widths_arr, 'fill' => '#f44336',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ], $col_style1, $style1);
+						$writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
 
 						//init file error end
 
-                        //Reader file
-                        $xlsx = new XLSXReader_fin($newFilePath);
-                        $sheetNames = $xlsx->getSheetNames();
-                        $data = $xlsx->getSheetData($sheetNames[1]);
+						//Reader file
+						$xlsx = new XLSXReader_fin($newFilePath);
+						$sheetNames = $xlsx->getSheetNames();
+						$data = $xlsx->getSheetData($sheetNames[1]);
 
 						// start row write 2
 						$numRow = 2;
 						$total_rows = 0;
 
 						$total_rows_actualy = 0;
-						
+
 						//get data for compare
 
 						for ($row = 1; $row < count($data); $row++) {
-								$rd = array();
-								$flag = 0;
-								$flag2 = 0;
-								$flag_mail = 0;
-								$string_error = '';
-								$flag_contract_form = 0;
+							$rd = array();
+							$flag = 0;
+							$flag2 = 0;
+							$flag_mail = 0;
+							$string_error = '';
+							$flag_contract_form = 0;
 
-								$flag_id_commodity_code;
-								$flag_id_warehouse_code;
+							$flag_id_commodity_code;
+							$flag_id_warehouse_code;
 
-								$value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null ;
-								$value_cell_warehouse_code = isset($data[$row][1]) ? $data[$row][1] : null ;
-								$value_cell_lot_number = isset($data[$row][2]) ? $data[$row][2] : '' ;
-								$value_cell_expiry_date = isset($data[$row][3]) ? $data[$row][3] : '' ;
-								$value_cell_inventory_number = isset($data[$row][4]) ? $data[$row][4] : null ;
+							$value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
+							$value_cell_warehouse_code = isset($data[$row][1]) ? $data[$row][1] : null;
+							$value_cell_lot_number = isset($data[$row][2]) ? $data[$row][2] : '';
+							$value_cell_expiry_date = isset($data[$row][3]) ? $data[$row][3] : '';
+							$value_cell_inventory_number = isset($data[$row][4]) ? $data[$row][4] : null;
 
-								$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
+							$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
 
-								$reg_day = '#^(((1)[0-2]))(\/)\d{4}-(3)[0-1])(\/)(((0)[0-9])-[0-2][0-9]$#'; /*yyyy-mm-dd*/
+							$reg_day = '#^(((1)[0-2]))(\/)\d{4}-(3)[0-1])(\/)(((0)[0-9])-[0-2][0-9]$#'; /*yyyy-mm-dd*/
 
-								/*check null*/
-								if (is_null($value_cell_commodity_code) == true) {
-									$string_error .= _l('commodity_code') . _l('not_yet_entered');
-									$flag = 1;
+							/*check null*/
+							if (is_null($value_cell_commodity_code) == true) {
+								$string_error .= _l('commodity_code') . _l('not_yet_entered');
+								$flag = 1;
+							}
+
+							if (is_null($value_cell_warehouse_code) == true) {
+								$string_error .= _l('warehouse_code') . _l('not_yet_entered');
+								$flag = 1;
+							}
+
+							if (is_null($value_cell_inventory_number) == true) {
+								$string_error .= _l('inventory_number') . _l('not_yet_entered');
+								$flag = 1;
+							}
+
+
+							//check commodity_code exist  (input: code or name item)
+							if (is_null($value_cell_commodity_code) != true && $value_cell_commodity_code != '0') {
+								/*case input  id*/
+								$this->db->where('commodity_code', trim($value_cell_commodity_code, " "));
+								$this->db->or_where('description', trim($value_cell_commodity_code, " "));
+								$item_value =  $this->db->get(db_prefix() . 'items')->row();
+
+								if ($item_value) {
+									/*get id commodity_type*/
+									$flag_id_commodity_code = $item_value->id;
+								} else {
+									$string_error .= _l('commodity_code') . _l('does_not_exist');
+									$flag2 = 1;
+								}
+							}
+
+							//check warehouse exist  (input: id or name warehouse)
+							if (is_null($value_cell_warehouse_code) != true && ($value_cell_warehouse_code != '0')) {
+								/*case input id*/
+
+								$this->db->where('warehouse_code', trim($value_cell_warehouse_code, " "));
+								$this->db->or_where('warehouse_name', trim($value_cell_warehouse_code, " "));
+								$warehouse_value = $this->db->get(db_prefix() . 'warehouse')->row();
+
+								if ($warehouse_value) {
+									/*get id unit_id*/
+									$flag_id_warehouse_code = $warehouse_value->warehouse_id;
+								} else {
+									$string_error .= _l('_warehouse') . _l('does_not_exist');
+									$flag2 = 1;
+								}
+							}
+
+							if (is_null($value_cell_expiry_date) != true && $value_cell_expiry_date != '') {
+
+								if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", trim($value_cell_expiry_date, " "))) {
+									$test = true;
+								} else {
+									$flag2 = 1;
+									$string_error .= _l('expiry_date') . _l('invalid');
+								}
+							}
+
+
+							// check inventory number
+							if (!is_numeric(trim($value_cell_inventory_number, " "))) {
+
+								$string_error .= _l('inventory_number') . _l('_not_a_number');
+								$flag2 = 1;
+							}
+
+
+
+
+							if (($flag == 1) || ($flag2 == 1)) {
+								//write error file
+								$writer->writeSheetRow('Sheet1', [
+									$value_cell_commodity_code,
+									$value_cell_warehouse_code,
+									$value_cell_lot_number,
+									$value_cell_expiry_date,
+									$value_cell_inventory_number,
+									$string_error,
+								]);
+
+								$numRow++;
+								$total_rows_data_error++;
+							}
+
+							if (($flag == 0) && ($flag2 == 0)) {
+
+								/*staff id is HR_code, input is HR_CODE, insert => staffid*/
+								$rd['commodity_code'] = $flag_id_commodity_code;
+								$rd['warehouse_id'] = $flag_id_warehouse_code;
+								$rd['lot_number'] 	  = isset($data[$row][2]) ? $data[$row][2] : '';
+
+								$rd['expiry_date'] = (trim($value_cell_expiry_date, " "));
+								if (isset($rd['expiry_date']) && $rd['expiry_date'] != '') {
+									$rd['expiry_date'] = $rd['expiry_date'];
+								} else {
+									$rd['expiry_date'] = null;
 								}
 
-								if (is_null($value_cell_warehouse_code) == true) {
-									$string_error .= _l('warehouse_code') . _l('not_yet_entered');
-									$flag = 1;
-								}
+								$rd['quantities'] = isset($data[$row][4]) ? $data[$row][4] : '';
+								$rd['date_manufacture'] = null;
+								$rd['serial_number'] = '';
+							}
 
-								if (is_null($value_cell_inventory_number) == true) {
-									$string_error .= _l('inventory_number') . _l('not_yet_entered');
-									$flag = 1;
-								}
-								
+							if (get_staff_user_id() != '' && $flag == 0 && $flag2 == 0) {
+								$rows[] = $rd;
+								$result_value = $this->warehouse_model->add_inventory_manage($rd, 1);
+								if ($result_value) {
+									//add transaction log
+									$transaction_data = [];
+									$purchase_price = $this->warehouse_model->get_purchase_price_from_commodity_code($rd['commodity_code']);
 
-								//check commodity_code exist  (input: code or name item)
-								if (is_null($value_cell_commodity_code) != true && $value_cell_commodity_code != '0' ) {
-									/*case input  id*/
-									$this->db->where('commodity_code', trim($value_cell_commodity_code, " "));
-									$this->db->or_where('description', trim($value_cell_commodity_code, " "));
-									$item_value =  $this->db->get(db_prefix().'items')->row();
-
-									if ($item_value) {
-										/*get id commodity_type*/
-										$flag_id_commodity_code = $item_value->id;
-									} else {
-										$string_error .= _l('commodity_code') . _l('does_not_exist');
-										$flag2 = 1;
+									$transaction_data['goods_receipt_id'] = 0;
+									$transaction_data['purchase_price'] = $purchase_price;
+									$transaction_data['expiry_date'] = $rd['expiry_date'];
+									$transaction_data['lot_number'] = $rd['lot_number'];
+									/*get old quantity by item, warehouse*/
+									$inventory_value = $this->warehouse_model->get_quantity_inventory($rd['warehouse_id'], $rd['commodity_code']);
+									$old_quantity =  null;
+									if ($inventory_value) {
+										$old_quantity = $inventory_value->inventory_number;
 									}
 
+									$transaction_data['goods_id'] = 0;
+									$transaction_data['old_quantity'] = (float)$old_quantity - (float)$rd['quantities'];
+									$transaction_data['commodity_id'] = $rd['commodity_code'];
+									$transaction_data['quantity'] = (float)$rd['quantities'];
+									$transaction_data['date_add'] = date('Y-m-d H:i:s');
+									$transaction_data['warehouse_id'] = $rd['warehouse_id'];
+									$transaction_data['note'] = _l('import_opening_stock');
+									$transaction_data['status'] = 1;
 
+									$this->db->insert(db_prefix() . 'goods_transaction_detail', $transaction_data);
+
+
+									$total_rows_actualy++;
 								}
+							}
 
-								//check warehouse exist  (input: id or name warehouse)
-								if (is_null($value_cell_warehouse_code) != true && ( $value_cell_warehouse_code != '0')) {
-									/*case input id*/
-
-									$this->db->where('warehouse_code', trim($value_cell_warehouse_code, " "));
-									$this->db->or_where('warehouse_name', trim($value_cell_warehouse_code, " "));
-									$warehouse_value = $this->db->get(db_prefix().'warehouse')->row();
-
-									if ($warehouse_value) {
-										/*get id unit_id*/
-										$flag_id_warehouse_code = $warehouse_value->warehouse_id;
-
-									} else {
-										$string_error .= _l('_warehouse') . _l('does_not_exist');
-										$flag2 = 1;
-									}
-
-								}
-
-								if (is_null($value_cell_expiry_date) != true && $value_cell_expiry_date != '') {
-
-									if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", trim($value_cell_expiry_date, " "))) {
-										$test = true;
-
-									} else {
-										$flag2 = 1;
-										$string_error .= _l('expiry_date') . _l('invalid');
-
-									}
-								}
-
-
-								// check inventory number
-								if (!is_numeric(trim($value_cell_inventory_number, " "))) {
-
-									$string_error .=_l('inventory_number'). _l('_not_a_number');
-									$flag2 = 1; 	
-
-								} 
-
-
-								
-
-								if (($flag == 1) || ($flag2 == 1)) {
-									//write error file
-									$writer->writeSheetRow('Sheet1', [
-										$value_cell_commodity_code,
-										$value_cell_warehouse_code,
-										$value_cell_lot_number,
-										$value_cell_expiry_date,
-										$value_cell_inventory_number,
-										$string_error,
-									]);
-
-									$numRow++;
-									$total_rows_data_error++;
-								}
-
-								if (($flag == 0) && ($flag2 == 0)) {
-
-									/*staff id is HR_code, input is HR_CODE, insert => staffid*/
-									$rd['commodity_code'] = $flag_id_commodity_code;
-									$rd['warehouse_id'] = $flag_id_warehouse_code;
-									$rd['lot_number'] 	  = isset($data[$row][2]) ? $data[$row][2] : '' ;
-
-									$rd['expiry_date'] = (trim($value_cell_expiry_date, " "));
-									if(isset($rd['expiry_date']) && $rd['expiry_date'] !=''){
-										$rd['expiry_date'] = $rd['expiry_date'];
-									}else{
-										$rd['expiry_date'] = null;
-									}
-
-									$rd['quantities'] = isset($data[$row][4]) ? $data[$row][4] : '' ;
-									$rd['date_manufacture'] = null;
-									$rd['serial_number'] = '';
-
-								}
-
-								if (get_staff_user_id() != '' && $flag == 0 && $flag2 == 0) {
-									$rows[] = $rd;
-									$result_value = $this->warehouse_model->add_inventory_manage($rd, 1);
-									if ($result_value) {
-										//add transaction log
-										$transaction_data=[];
-										$purchase_price = $this->warehouse_model->get_purchase_price_from_commodity_code($rd['commodity_code']);
-
-										$transaction_data['goods_receipt_id'] = 0;
-										$transaction_data['purchase_price'] = $purchase_price;
-										$transaction_data['expiry_date'] = $rd['expiry_date'];
-										$transaction_data['lot_number'] = $rd['lot_number'];
-										/*get old quantity by item, warehouse*/
-										$inventory_value = $this->warehouse_model->get_quantity_inventory($rd['warehouse_id'], $rd['commodity_code']);
-										$old_quantity =  null;
-										if($inventory_value){
-											$old_quantity = $inventory_value->inventory_number;
-										}
-
-										$transaction_data['goods_id'] = 0;
-										$transaction_data['old_quantity'] = (float)$old_quantity - (float)$rd['quantities'];
-										$transaction_data['commodity_id'] = $rd['commodity_code'];
-										$transaction_data['quantity'] = (float)$rd['quantities'];
-										$transaction_data['date_add'] = date('Y-m-d H:i:s');
-										$transaction_data['warehouse_id'] = $rd['warehouse_id'];
-										$transaction_data['note'] = _l('import_opening_stock');
-										$transaction_data['status'] = 1;
-
-										$this->db->insert(db_prefix() . 'goods_transaction_detail', $transaction_data);
-
-
-										$total_rows_actualy++;
-									}
-								}
-
-								$total_rows++;
-								$total_rows_data++;
-
+							$total_rows++;
+							$total_rows_data++;
 						}
 
 						if ($total_rows_actualy != $total_rows) {
@@ -4753,29 +4687,24 @@ class warehouse extends AdminController {
 						$total_row_false = $total_rows - (int) count($rows);
 						$message = 'Not enought rows for importing';
 
-						if(($total_rows_data_error > 0) || ($total_row_false != 0)){
+						if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
 
-							$filename = 'FILE_ERROR_IMPORT_OPENING_STOCK' .get_staff_user_id().strtotime(date('Y-m-d H:i:s')). '.xlsx';
-							$writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_OPENING_STOCK.$filename, $filename));
+							$filename = 'FILE_ERROR_IMPORT_OPENING_STOCK' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+							$writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_OPENING_STOCK . $filename, $filename));
 
-							$filename = WAREHOUSE_IMPORT_OPENING_STOCK.$filename;
-
-
+							$filename = WAREHOUSE_IMPORT_OPENING_STOCK . $filename;
 						}
-						
+
 						$import_result = true;
 						@delete_dir($tmpDir);
-
 					}
-					
 				} else {
 					set_alert('warning', _l('import_opening_stock_failed'));
 				}
 			}
-
 		}
 		echo json_encode([
-			'message' =>'Not enought rows for importing',
+			'message' => 'Not enought rows for importing',
 			'total_row_success' => $total_row_success,
 			'total_row_false' => $total_rows_data_error,
 			'total_rows' => $total_rows_data,
@@ -4784,7 +4713,6 @@ class warehouse extends AdminController {
 			'total_rows_data_error' => $total_rows_data_error,
 			'filename' => $filename,
 		]);
-
 	}
 
 	/**
@@ -4792,9 +4720,10 @@ class warehouse extends AdminController {
 	 * @param  [type] $str 
 	 * @return [type]      
 	 */
-	public	function unserializeForm($str) {
+	public	function unserializeForm($str)
+	{
 		$strArray = explode("&", $str);
-		foreach($strArray as $item) {
+		foreach ($strArray as $item) {
 			$array = explode("=", $item);
 			$returndata[] = $array;
 		}
@@ -4806,70 +4735,71 @@ class warehouse extends AdminController {
 	 * @param  integer $tag_id 
 	 * @return [type]         
 	 */
-	public function delete_item_tags($tag_id){
+	public function delete_item_tags($tag_id)
+	{
 
 		$result = $this->warehouse_model->delete_tag_item($tag_id);
-		if($result == 'true'){
+		if ($result == 'true') {
 			$message = _l('deleted');
 			$status = 'true';
-		}else{
+		} else {
 			$message = _l('problem_deleting');
 			$status = 'fasle';
 		}
 
-		echo json_encode([ 
+		echo json_encode([
 			'message' => $message,
 			'status' => $status,
 		]);
 	}
 
-    /**
-     * check warehouse onsubmit
-     *  
-     */
-    public function check_warehouse_onsubmit() {
-    	$data = $this->input->post();
-    	$flag = 0;
-    	$message = true;
+	/**
+	 * check warehouse onsubmit
+	 *  
+	 */
+	public function check_warehouse_onsubmit()
+	{
+		$data = $this->input->post();
+		$flag = 0;
+		$message = true;
 
-    	if ($data['hot_delivery'] != 'null') {
-    		foreach ($data['hot_delivery'] as $delivery_value) {
-    			if ( $delivery_value[0] != '' ) {
+		if ($data['hot_delivery'] != 'null') {
+			foreach ($data['hot_delivery'] as $delivery_value) {
+				if ($delivery_value[0] != '') {
 
-    				/*case select warehouse handsome table*/
-    				if($data['warehouse_id'] == ''){
-    					if ( $delivery_value[1] == '' ) {
-    						$flag = 1;
-    					}
-    				}
-    			}
+					/*case select warehouse handsome table*/
+					if ($data['warehouse_id'] == '') {
+						if ($delivery_value[1] == '') {
+							$flag = 1;
+						}
+					}
+				}
+			}
+			if ($flag == 1) {
+				$message = false;
+			} else {
+				$message = true;
+			}
+			echo json_encode([
+				'message' => $message,
 
-    		}
-    		if ($flag == 1) {
-    			$message = false;
-
-    		} else {
-    			$message = true;
-    		}
-    		echo json_encode([
-    			'message' => $message,
-
-    		]);
-    		die;
-    	}
-    }
+			]);
+			die;
+		}
+	}
 
 	/**
 	 * view lost adjustment
 	 * @param  integer $id 
 	 * @return view
 	 */
-	public function view_lost_adjustment($id) {
+	public function view_lost_adjustment($id)
+	{
 
 		$data['loss_adjustment'] = $this->warehouse_model->get_loss_adjustment($id);
 
-		if(!$data['loss_adjustment']){
-    		blank_page('Not Found', 'danger');
+		if (!$data['loss_adjustment']) {
+			blank_page('Not Found', 'danger');
 		}
 		//approval
 		$send_mail_approve = $this->session->userdata("send_mail_approve");
@@ -4886,7 +4816,7 @@ class warehouse extends AdminController {
 
 		//get vaule render dropdown select
 
-		$data['loss_adjustment_detail']= $this->warehouse_model->get_loss_adjustment_detailt_by_masterid($id);
+		$data['loss_adjustment_detail'] = $this->warehouse_model->get_loss_adjustment_detailt_by_masterid($id);
 
 		$data['title'] = _l('loss_adjustment');
 
@@ -4895,7 +4825,6 @@ class warehouse extends AdminController {
 		$data['check_appr'] = $check_appr;
 
 		$this->load->view('loss_adjustment/view_lost_adjustment', $data);
-
 	}
 
 
@@ -4903,17 +4832,17 @@ class warehouse extends AdminController {
 	 * check lost adjustment before save
 	 * @return json 
 	 */
-	public function check_lost_adjustment_before_save() {
+	public function check_lost_adjustment_before_save()
+	{
 		$data = $this->input->post();
 
 		$result = $this->warehouse_model->check_lost_adjustment_before_save($data);
-		if($result['flag_check'] == 1){
+		if ($result['flag_check'] == 1) {
 			$success = false;
 			$message = $result['str_error'];
-		}else{
+		} else {
 			$success = true;
 			$message = $result['str_error'];
-
 		}
 
 		echo json_encode([
@@ -4942,10 +4871,7 @@ class warehouse extends AdminController {
 			}
 
 			redirect(admin_url('warehouse/setting?group=inventory_setting'));
-
 		}
-
-
 	}
 
 
@@ -4976,7 +4902,8 @@ class warehouse extends AdminController {
 	 * add update internal delivery
 	 * @param string $id 
 	 */
-	public function add_update_internal_delivery($id ='') {
+	public function add_update_internal_delivery($id = '')
+	{
 
 		if ($this->input->post()) {
 
@@ -4986,28 +4913,23 @@ class warehouse extends AdminController {
 				$mess = $this->warehouse_model->add_internal_delivery($data);
 				if ($mess) {
 					set_alert('success', _l('added_successfully'));
-					redirect(admin_url('warehouse/manage_internal_delivery/'.$mess));
-
+					redirect(admin_url('warehouse/manage_internal_delivery/' . $mess));
 				} else {
 					set_alert('warning', _l('add_internal_delivery_note_false'));
 				}
-
-
-			}else{
+			} else {
 				$id = $data['id'];
 				unset($data['id']);
 
-				$mess = $this->warehouse_model->update_internal_delivery($data,$id);
-				
+				$mess = $this->warehouse_model->update_internal_delivery($data, $id);
+
 				if ($mess) {
 					set_alert('success', _l('updated_successfully'));
-
 				} else {
 					set_alert('warning', _l('update_internal_delivery_note_false'));
 				}
-				redirect(admin_url('warehouse/manage_internal_delivery/'.$id));
+				redirect(admin_url('warehouse/manage_internal_delivery/' . $id));
 			}
-
 		}
 
 		//get vaule render dropdown select
@@ -5032,10 +4954,10 @@ class warehouse extends AdminController {
 			$data['ajaxItems'] = true;
 		}
 		$warehouse_data = $this->warehouse_model->get_warehouse();
-        //sample
+		//sample
 		$internal_delivery_row_template = $this->warehouse_model->create_internal_delivery_row_template();
 
-		if($id != ''){
+		if ($id != '') {
 			$internal_delivery = $this->warehouse_model->get_internal_delivery($id);
 			if (!$internal_delivery) {
 				blank_page('Internal delivery note Not Found', 'danger');
@@ -5048,12 +4970,12 @@ class warehouse extends AdminController {
 					$index_internal_delivery++;
 					$unit_name = wh_get_unit_name($internal_delivery_detail['unit_id']);
 					$commodity_name = $internal_delivery_detail['commodity_name'];
-					
-					if(strlen($commodity_name) == 0){
+
+					if (strlen($commodity_name) == 0) {
 						$commodity_name = wh_get_item_variatiom($internal_delivery_detail['commodity_code']);
 					}
 
-					$internal_delivery_row_template .= $this->warehouse_model->create_internal_delivery_row_template($warehouse_data, 'items[' . $index_internal_delivery . ']', $commodity_name, $internal_delivery_detail['from_stock_name'],$internal_delivery_detail['to_stock_name'], $internal_delivery_detail['available_quantity'], $internal_delivery_detail['quantities'], $unit_name, $internal_delivery_detail['unit_price'], $internal_delivery_detail['commodity_code'], $internal_delivery_detail['unit_id'] , $internal_delivery_detail['into_money'],  $internal_delivery_detail['note'], $internal_delivery_detail['id'], true, $internal_delivery_detail['serial_number']);
+					$internal_delivery_row_template .= $this->warehouse_model->create_internal_delivery_row_template($warehouse_data, 'items[' . $index_internal_delivery . ']', $commodity_name, $internal_delivery_detail['from_stock_name'], $internal_delivery_detail['to_stock_name'], $internal_delivery_detail['available_quantity'], $internal_delivery_detail['quantities'], $unit_name, $internal_delivery_detail['unit_price'], $internal_delivery_detail['commodity_code'], $internal_delivery_detail['unit_id'], $internal_delivery_detail['into_money'],  $internal_delivery_detail['note'], $internal_delivery_detail['id'], true, $internal_delivery_detail['serial_number']);
 				}
 			}
 
@@ -5061,15 +4983,14 @@ class warehouse extends AdminController {
 		}
 		$data['internal_delivery_row_template'] = $internal_delivery_row_template;
 		$get_base_currency =  get_base_currency();
-		if($get_base_currency){
+		if ($get_base_currency) {
 			$data['base_currency_id'] = $get_base_currency->id;
-		}else{
+		} else {
 			$data['base_currency_id'] = 0;
 		}
 		$data['projects'] = $this->projects_model->get();
 
 		$this->load->view('manage_internal_delivery/add_internal_delivery', $data);
-
 	}
 
 
@@ -5077,7 +4998,8 @@ class warehouse extends AdminController {
 	 * get quantity inventory
 	 * @return [type] 
 	 */
-	public function get_quantity_inventory() {
+	public function get_quantity_inventory()
+	{
 		$data = $this->input->post();
 		if ($data != 'null') {
 
@@ -5088,12 +5010,11 @@ class warehouse extends AdminController {
 
 				$message = true;
 				$quantity = get_object_vars($value)['inventory_number'];
-
 			} else {
 				$message = _l('Product_does_not_exist_in_stock');
 			}
 
-			
+
 			echo json_encode([
 				'message' => $message,
 				'value' => $quantity,
@@ -5102,7 +5023,8 @@ class warehouse extends AdminController {
 		}
 	}
 
-	public function get_quantity_inventory_t() {
+	public function get_quantity_inventory_t()
+	{
 		$data = $this->input->post();
 		if ($data != 'null') {
 
@@ -5114,17 +5036,15 @@ class warehouse extends AdminController {
 				if ((float) get_object_vars($value)['inventory_number'] < (float) $data['quantity_export']) {
 					$message = _l('not_enough_inventory');
 					$quantity = get_object_vars($value)['inventory_number'];
-
 				} else {
 					$message = true;
 					$quantity = get_object_vars($value)['inventory_number'];
 				}
-
 			} else {
 				$message = _l('Product_does_not_exist_in_stock');
 			}
 
-			
+
 			echo json_encode([
 				'message' => $message,
 				'value' => $quantity,
@@ -5139,8 +5059,9 @@ class warehouse extends AdminController {
 	 * @param  interger $id 
 	 * @return redirect    
 	 */
-	public function delete_internal_delivery($id) {
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+	public function delete_internal_delivery($id)
+	{
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -5159,7 +5080,8 @@ class warehouse extends AdminController {
 	 * @param  integer $id 
 	 * @return view     
 	 */
-	public function view_internal_delivery($id) {
+	public function view_internal_delivery($id)
+	{
 		//approval
 		$send_mail_approve = $this->session->userdata("send_mail_approve");
 		if ((isset($send_mail_approve)) && $send_mail_approve != '') {
@@ -5189,7 +5111,6 @@ class warehouse extends AdminController {
 		$data['base_currency'] = $base_currency;
 
 		$this->load->view('manage_internal_delivery/view_internal_delivery', $data);
-
 	}
 
 
@@ -5198,7 +5119,8 @@ class warehouse extends AdminController {
 	 * 
 	 * @return view     
 	 */
-	public function check_internal_delivery_onsubmit() {
+	public function check_internal_delivery_onsubmit()
+	{
 		$data = $this->input->post();
 		$flag = 0;
 		$message = true;
@@ -5207,14 +5129,14 @@ class warehouse extends AdminController {
 		if ($data['intenal_delivery'] != 'null') {
 			foreach ($data['intenal_delivery'] as $intenal_delivery_value) {
 
-				if ( $intenal_delivery_value[0] != '' ) {
-					if($intenal_delivery_value[1] != ''){
+				if ($intenal_delivery_value[0] != '') {
+					if ($intenal_delivery_value[1] != '') {
 						//check without checking warehouse
-						$commodity_name='';
+						$commodity_name = '';
 						$item_value = $this->warehouse_model->get_commodity($intenal_delivery_value['0']);
 
-						if($item_value){
-							$commodity_name .= $item_value->commodity_code.'_'.$item_value->description;
+						if ($item_value) {
+							$commodity_name .= $item_value->commodity_code . '_' . $item_value->description;
 						}
 
 						$value = $this->warehouse_model->get_quantity_inventory($intenal_delivery_value['1'], $intenal_delivery_value['0']);
@@ -5225,37 +5147,31 @@ class warehouse extends AdminController {
 
 							if ((float) get_object_vars($value)['inventory_number'] < (float) $intenal_delivery_value['5']) {
 								$flag = 1;
-								$str_error .= $commodity_name._l('not_enough_inventory').'<br/>';
-
+								$str_error .= $commodity_name . _l('not_enough_inventory') . '<br/>';
 							}
-
 						} else {
 							$flag = 1;
-							$str_error .=$commodity_name. _l('Product_does_not_exist_in_stock').'<br/>';
+							$str_error .= $commodity_name . _l('Product_does_not_exist_in_stock') . '<br/>';
 						}
-
-					}else{
+					} else {
 						$flag = 1;
-						$str_error .= _l('please_choose_from_stock_name').'<br/>';
+						$str_error .= _l('please_choose_from_stock_name') . '<br/>';
 					}
 
-					if($intenal_delivery_value[2] == ''){
+					if ($intenal_delivery_value[2] == '') {
 						$flag = 1;
-						$str_error .= _l('please_choose_to_stock_name').'<br/>';
+						$str_error .= _l('please_choose_to_stock_name') . '<br/>';
 					}
 
-					if($intenal_delivery_value[5] == '' || $intenal_delivery_value[5] == '0'){
+					if ($intenal_delivery_value[5] == '' || $intenal_delivery_value[5] == '0') {
 						$flag = 1;
-						$str_error .= _l('please_choose_quantity_export').'<br/>';
+						$str_error .= _l('please_choose_quantity_export') . '<br/>';
 					}
-
 				}
-
 			}
-			
+
 			if ($flag == 1) {
 				$message = false;
-
 			} else {
 				$message = true;
 			}
@@ -5273,38 +5189,33 @@ class warehouse extends AdminController {
 	 * check approval sign
 	 * @return json 
 	 */
-	public function check_approval_sign() 
+	public function check_approval_sign()
 	{
 		$data = $this->input->post();
 
 		$success = true;
 		$message = '';
 
-		if($data['rel_type'] == '2'){
+		if ($data['rel_type'] == '2') {
 			/*check send request with type =2 , inventory delivery voucher*/
 			$check_r = $this->warehouse_model->check_inventory_delivery_voucher($data);
 
-			if($check_r['flag_export_warehouse'] == 1){
+			if ($check_r['flag_export_warehouse'] == 1) {
 				$message = 'approval success';
-
-			}else{
+			} else {
 				$message = $check_r['str_error'];
 				$success = false;
-
 			}
-		}elseif($data['rel_type'] == '4'){
+		} elseif ($data['rel_type'] == '4') {
 			/*check send request with type = 4 , internal delivery note*/
 			$check_r = $this->warehouse_model->check_internal_delivery_note_send_request($data);
 
-			if($check_r['flag_internal_delivery_warehouse'] == 1){
+			if ($check_r['flag_internal_delivery_warehouse'] == 1) {
 				$message = 'approval success';
-
-			}else{
+			} else {
 				$message = $check_r['str_error'];
 				$success = false;
-
 			}
-
 		}
 
 
@@ -5321,13 +5232,14 @@ class warehouse extends AdminController {
 	 * @param  string $id 
 	 * @return [type]     
 	 */
-	public function warehouse_mange($id = '') {
+	public function warehouse_mange($id = '')
+	{
 
 		$data['title'] = _l('warehouse_manage');
 		$data['warehouse_types'] = $this->warehouse_model->get_warehouse();
 
 		$this->db->where('fieldto', 'warehouse_name');
-		$data['wh_custom_fields_display'] = $this->db->get(db_prefix().'customfields')->result_array();
+		$data['wh_custom_fields_display'] = $this->db->get(db_prefix() . 'customfields')->result_array();
 
 
 		$data['proposal_id'] = $id;
@@ -5340,7 +5252,8 @@ class warehouse extends AdminController {
 	 *
 	 * @return array
 	 */
-	public function table_warehouse_name() {
+	public function table_warehouse_name()
+	{
 		$this->app->get_table_data(module_views_path('warehouse', 'manage_warehouse/table_warehouse_name'));
 	}
 
@@ -5350,7 +5263,8 @@ class warehouse extends AdminController {
 	 * @param  string $id 
 	 * @return [type]     
 	 */
-	public function add_warehouse($id = '') {
+	public function add_warehouse($id = '')
+	{
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
@@ -5359,19 +5273,17 @@ class warehouse extends AdminController {
 
 				$mess = $this->warehouse_model->add_one_warehouse($data);
 				if ($mess) {
-					set_alert('success', _l('added_successfully') .' '. _l('warehouse'));
-
+					set_alert('success', _l('added_successfully') . ' ' . _l('warehouse'));
 				} else {
 					set_alert('warning', _l('Add_warehouse_false'));
 				}
 				redirect(admin_url('warehouse/warehouse_mange'));
-
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
 				$success = $this->warehouse_model->update_one_warehouse($data, $id);
 				if ($success) {
-					set_alert('success', _l('updated_successfully') .' '. _l('warehouse'));
+					set_alert('success', _l('updated_successfully') . ' ' . _l('warehouse'));
 				} else {
 					set_alert('warning', _l('updated_warehouse_false'));
 				}
@@ -5382,83 +5294,84 @@ class warehouse extends AdminController {
 	}
 
 
-    /**
-     * get item by id ajax
-     * @param  integer $id 
-     * @return [type]     
-     */
-    public function get_warehouse_by_id($id)
-    {
-    	if ($this->input->is_ajax_request()) {
+	/**
+	 * get item by id ajax
+	 * @param  integer $id 
+	 * @return [type]     
+	 */
+	public function get_warehouse_by_id($id)
+	{
+		if ($this->input->is_ajax_request()) {
 
-    		$warehouse_value                     = $this->warehouse_model->get_warehouse($id);
+			$warehouse_value                     = $this->warehouse_model->get_warehouse($id);
 
-    		$warehouse_value->warehouse_code   	= $warehouse_value->warehouse_code;
-    		$warehouse_value->warehouse_name   	= $warehouse_value->warehouse_name;
-    		$warehouse_value->warehouse_address   = nl2br($warehouse_value->warehouse_address);
-    		$warehouse_value->note   = nl2br($warehouse_value->note);
+			$warehouse_value->warehouse_code   	= $warehouse_value->warehouse_code;
+			$warehouse_value->warehouse_name   	= $warehouse_value->warehouse_name;
+			$warehouse_value->warehouse_address   = nl2br($warehouse_value->warehouse_address);
+			$warehouse_value->note   = nl2br($warehouse_value->note);
 
-    		$warehouse_value->custom_fields      = [];
+			$warehouse_value->custom_fields      = [];
 
-    		$warehouse_value->custom_fields_html = wh_render_custom_fields('warehouse_name', $id, []);
+			$warehouse_value->custom_fields_html = wh_render_custom_fields('warehouse_name', $id, []);
 
-    		$cf = get_custom_fields('warehouse_name');
+			$cf = get_custom_fields('warehouse_name');
 
-    		foreach ($cf as $custom_field) {
-    			$val = get_custom_field_value($id, $custom_field['id'], 'warehouse_name');
-    			if ($custom_field['type'] == 'textarea') {
-    				$val = clear_textarea_breaks($val);
-    			}
-    			$custom_field['value'] = $val;
-    			$warehouse_value->custom_fields[] = $custom_field;
-    		}
+			foreach ($cf as $custom_field) {
+				$val = get_custom_field_value($id, $custom_field['id'], 'warehouse_name');
+				if ($custom_field['type'] == 'textarea') {
+					$val = clear_textarea_breaks($val);
+				}
+				$custom_field['value'] = $val;
+				$warehouse_value->custom_fields[] = $custom_field;
+			}
 
-    		echo json_encode($warehouse_value);
-    	}
-    }
+			echo json_encode($warehouse_value);
+		}
+	}
 
-    /**
-     * get warehouse custom fields html
-     * @param  [type] $id 
-     * @return [type]     
-     */
-    public function get_warehouse_custom_fields_html($id)
-    {
-    	if ($this->input->is_ajax_request()) {
+	/**
+	 * get warehouse custom fields html
+	 * @param  [type] $id 
+	 * @return [type]     
+	 */
+	public function get_warehouse_custom_fields_html($id)
+	{
+		if ($this->input->is_ajax_request()) {
 
-    		$warehouse_value =[];
-    		$warehouse_value['custom_fields_html'] = wh_render_custom_fields('warehouse_name', $id, []);
+			$warehouse_value = [];
+			$warehouse_value['custom_fields_html'] = wh_render_custom_fields('warehouse_name', $id, []);
 
-    		echo json_encode($warehouse_value);
-    	}
-    }
+			echo json_encode($warehouse_value);
+		}
+	}
 
 
-    /**
-     * view warehouse detail
-     * @param  integer $warehouse_id 
-     * @return view               
-     */
-    public function view_warehouse_detail($warehouse_id) {
-    	$warehouse_item = get_warehouse_name($warehouse_id);
+	/**
+	 * view warehouse detail
+	 * @param  integer $warehouse_id 
+	 * @return view               
+	 */
+	public function view_warehouse_detail($warehouse_id)
+	{
+		$warehouse_item = get_warehouse_name($warehouse_id);
 
-    	if (!$warehouse_item) {
-    		blank_page('Warehouse Not Found', 'danger');
-    	}
+		if (!$warehouse_item) {
+			blank_page('Warehouse Not Found', 'danger');
+		}
 
-    	$data['warehouse_item'] = $warehouse_item;
-    	$data['warehouse_inventory'] = $this->warehouse_model->get_inventory_by_warehouse($warehouse_id);
+		$data['warehouse_item'] = $warehouse_item;
+		$data['warehouse_inventory'] = $this->warehouse_model->get_inventory_by_warehouse($warehouse_id);
 
-    	$this->load->view('manage_warehouse/warehouse_view_detail', $data);
-
-    }
+		$this->load->view('manage_warehouse/warehouse_view_detail', $data);
+	}
 
 	/**
 	 * goods delivery copy pur order
 	 * @param  integer $pur request
 	 * @return json encode
 	 */
-	public function goods_delivery_copy_pur_order($pur_order = '') {
+	public function goods_delivery_copy_pur_order($pur_order = '')
+	{
 
 		$pur_request_detail = $this->warehouse_model->goods_delivery_get_pur_order($pur_order);
 
@@ -5468,104 +5381,105 @@ class warehouse extends AdminController {
 		]);
 	}
 
-	 /**
-     * Uploads a proposal attachment.
-     *
-     * @param      string  $id  The purchase order
-     * @return redirect
-     */
-	 public function wh_proposal_attachment($id){
+	/**
+	 * Uploads a proposal attachment.
+	 *
+	 * @param      string  $id  The purchase order
+	 * @return redirect
+	 */
+	public function wh_proposal_attachment($id)
+	{
 
-	 	wh_handle_propsal_file($id);
+		wh_handle_propsal_file($id);
 
-	 	redirect(admin_url('proposals/list_proposals/'.$id));
-	 }
+		redirect(admin_url('proposals/list_proposals/' . $id));
+	}
 
-    /**
-     * { preview obgy partograph file }
-     *
-     * @param      <type>  $id      The identifier
-     * @param      <type>  $rel_id  The relative identifier
-     * @return  view
-     */
-    public function file_proposal($id, $rel_id)
-    {
-    	$data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
-    	$data['current_user_is_admin']             = is_admin();
-    	$data['file'] = $this->warehouse_model->get_file($id, $rel_id);
-    	if (!$data['file']) {
-    		header('HTTP/1.0 404 Not Found');
-    		die;
-    	}
+	/**
+	 * { preview obgy partograph file }
+	 *
+	 * @param      <type>  $id      The identifier
+	 * @param      <type>  $rel_id  The relative identifier
+	 * @return  view
+	 */
+	public function file_proposal($id, $rel_id)
+	{
+		$data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+		$data['current_user_is_admin']             = is_admin();
+		$data['file'] = $this->warehouse_model->get_file($id, $rel_id);
+		if (!$data['file']) {
+			header('HTTP/1.0 404 Not Found');
+			die;
+		}
 
-    	$this->load->view('proposal/_file', $data);
-    }
+		$this->load->view('proposal/_file', $data);
+	}
 
-    /**
-     * { delete proposal attachment }
-     *
-     * @param      <type>  $id     The identifier
-     */
-    public function delete_proposal_attachment($id)
-    {
-    	$this->load->model('misc_model');
-    	$file = $this->misc_model->get_file($id);
-    	if ($file->staffid == get_staff_user_id() || is_admin()) {
-    		echo html_entity_decode($this->warehouse_model->delete_wh_proposal_attachment($id));
-    	} else {
-    		header('HTTP/1.0 400 Bad error');
-    		echo _l('access_denied');
-    		die;
-    	}
-    }
+	/**
+	 * { delete proposal attachment }
+	 *
+	 * @param      <type>  $id     The identifier
+	 */
+	public function delete_proposal_attachment($id)
+	{
+		$this->load->model('misc_model');
+		$file = $this->misc_model->get_file($id);
+		if ($file->staffid == get_staff_user_id() || is_admin()) {
+			echo html_entity_decode($this->warehouse_model->delete_wh_proposal_attachment($id));
+		} else {
+			header('HTTP/1.0 400 Bad error');
+			echo _l('access_denied');
+			die;
+		}
+	}
 
-    /**
+	/**
 	 * brands setting
 	 * @param  string $id 
 	 * @return [type]     
 	 */
-    public function brands_setting($id = '') {
-    	if ($this->input->post()) {
-    		$message = '';
-    		$data = $this->input->post();
+	public function brands_setting($id = '')
+	{
+		if ($this->input->post()) {
+			$message = '';
+			$data = $this->input->post();
 
-    		if (!$this->input->post('id')) {
+			if (!$this->input->post('id')) {
 
-    			$mess = $this->warehouse_model->add_brand($data);
-    			if ($mess) {
-    				set_alert('success', _l('added_successfully'));
+				$mess = $this->warehouse_model->add_brand($data);
+				if ($mess) {
+					set_alert('success', _l('added_successfully'));
+				} else {
+					set_alert('warning', _l('Add_brand_name_false'));
+				}
+				redirect(admin_url('warehouse/setting?group=brand'));
+			} else {
+				$id = $data['id'];
+				unset($data['id']);
+				$success = $this->warehouse_model->update_brand($data, $id);
+				if ($success) {
+					set_alert('success', _l('updated_successfully'));
+				} else {
+					set_alert('warning', _l('updated_brand_name_false'));
+				}
 
-    			} else {
-    				set_alert('warning', _l('Add_brand_name_false'));
-    			}
-    			redirect(admin_url('warehouse/setting?group=brand'));
-
-    		} else {
-    			$id = $data['id'];
-    			unset($data['id']);
-    			$success = $this->warehouse_model->update_brand($data, $id);
-    			if ($success) {
-    				set_alert('success', _l('updated_successfully'));
-    			} else {
-    				set_alert('warning', _l('updated_brand_name_false'));
-    			}
-
-    			redirect(admin_url('warehouse/setting?group=brand'));
-    		}
-    	}
-    }
+				redirect(admin_url('warehouse/setting?group=brand'));
+			}
+		}
+	}
 
 	/**
 	 * [delete_color
 	 * @param  [type] $id 
 	 * @return [type]     
 	 */
-	public function delete_brand($id) {
+	public function delete_brand($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=brand'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -5577,56 +5491,55 @@ class warehouse extends AdminController {
 			set_alert('warning', _l('problem_deleting'));
 			redirect(admin_url('warehouse/setting?group=brand'));
 		}
-
 	}
 
-	    /**
+	/**
 	 * brands setting
 	 * @param  string $id 
 	 * @return [type]     
 	 */
-	    public function models_setting($id = '') {
-	    	if ($this->input->post()) {
-	    		$message = '';
-	    		$data = $this->input->post();
+	public function models_setting($id = '')
+	{
+		if ($this->input->post()) {
+			$message = '';
+			$data = $this->input->post();
 
-	    		if (!$this->input->post('id')) {
+			if (!$this->input->post('id')) {
 
-	    			$mess = $this->warehouse_model->add_model($data);
-	    			if ($mess) {
-	    				set_alert('success', _l('added_successfully'));
+				$mess = $this->warehouse_model->add_model($data);
+				if ($mess) {
+					set_alert('success', _l('added_successfully'));
+				} else {
+					set_alert('warning', _l('Add_model_name_false'));
+				}
+				redirect(admin_url('warehouse/setting?group=model'));
+			} else {
+				$id = $data['id'];
+				unset($data['id']);
+				$success = $this->warehouse_model->update_model($data, $id);
+				if ($success) {
+					set_alert('success', _l('updated_successfully'));
+				} else {
+					set_alert('warning', _l('updated_model_name_false'));
+				}
 
-	    			} else {
-	    				set_alert('warning', _l('Add_model_name_false'));
-	    			}
-	    			redirect(admin_url('warehouse/setting?group=model'));
-
-	    		} else {
-	    			$id = $data['id'];
-	    			unset($data['id']);
-	    			$success = $this->warehouse_model->update_model($data, $id);
-	    			if ($success) {
-	    				set_alert('success', _l('updated_successfully'));
-	    			} else {
-	    				set_alert('warning', _l('updated_model_name_false'));
-	    			}
-
-	    			redirect(admin_url('warehouse/setting?group=model'));
-	    		}
-	    	}
-	    }
+				redirect(admin_url('warehouse/setting?group=model'));
+			}
+		}
+	}
 
 	/**
 	 * [delete_color
 	 * @param  [type] $id 
 	 * @return [type]     
 	 */
-	public function delete_model($id) {
+	public function delete_model($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=model'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -5638,56 +5551,55 @@ class warehouse extends AdminController {
 			set_alert('warning', _l('problem_deleting'));
 			redirect(admin_url('warehouse/setting?group=model'));
 		}
-
 	}
 
-	    /**
+	/**
 	 * brands setting
 	 * @param  string $id 
 	 * @return [type]     
 	 */
-	    public function series_setting($id = '') {
-	    	if ($this->input->post()) {
-	    		$message = '';
-	    		$data = $this->input->post();
+	public function series_setting($id = '')
+	{
+		if ($this->input->post()) {
+			$message = '';
+			$data = $this->input->post();
 
-	    		if (!$this->input->post('id')) {
+			if (!$this->input->post('id')) {
 
-	    			$mess = $this->warehouse_model->add_series($data);
-	    			if ($mess) {
-	    				set_alert('success', _l('added_successfully'));
+				$mess = $this->warehouse_model->add_series($data);
+				if ($mess) {
+					set_alert('success', _l('added_successfully'));
+				} else {
+					set_alert('warning', _l('Add_series_name_false'));
+				}
+				redirect(admin_url('warehouse/setting?group=series'));
+			} else {
+				$id = $data['id'];
+				unset($data['id']);
+				$success = $this->warehouse_model->update_series($data, $id);
+				if ($success) {
+					set_alert('success', _l('updated_successfully'));
+				} else {
+					set_alert('warning', _l('updated_series_name_false'));
+				}
 
-	    			} else {
-	    				set_alert('warning', _l('Add_series_name_false'));
-	    			}
-	    			redirect(admin_url('warehouse/setting?group=series'));
-
-	    		} else {
-	    			$id = $data['id'];
-	    			unset($data['id']);
-	    			$success = $this->warehouse_model->update_series($data, $id);
-	    			if ($success) {
-	    				set_alert('success', _l('updated_successfully'));
-	    			} else {
-	    				set_alert('warning', _l('updated_series_name_false'));
-	    			}
-
-	    			redirect(admin_url('warehouse/setting?group=series'));
-	    		}
-	    	}
-	    }
+				redirect(admin_url('warehouse/setting?group=series'));
+			}
+		}
+	}
 
 	/**
 	 * [delete_color
 	 * @param  [type] $id 
 	 * @return [type]     
 	 */
-	public function delete_series($id) {
+	public function delete_series($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=series'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -5699,7 +5611,6 @@ class warehouse extends AdminController {
 			set_alert('warning', _l('problem_deleting'));
 			redirect(admin_url('warehouse/setting?group=series'));
 		}
-
 	}
 
 
@@ -5709,7 +5620,7 @@ class warehouse extends AdminController {
 	 * @return json               
 	 */
 	public function get_item_proposal_value()
-	{	
+	{
 		$data = $this->input->post();
 
 		$item = $this->warehouse_model->get_item_proposal_value($data);
@@ -5722,338 +5633,332 @@ class warehouse extends AdminController {
 		]);
 	}
 
-    /**
-     * Convert lead to client
-     * @since  version 1.0.1
-     * @return mixed
-     */
-    public function wh_convert_to_customer()
-    {
-    	if (!is_staff_member()) {
-    		access_denied('Lead Convert to Customer');
-    	}
-    	$this->load->model('leads_model');
+	/**
+	 * Convert lead to client
+	 * @since  version 1.0.1
+	 * @return mixed
+	 */
+	public function wh_convert_to_customer()
+	{
+		if (!is_staff_member()) {
+			access_denied('Lead Convert to Customer');
+		}
+		$this->load->model('leads_model');
 
-    	if ($this->input->post()) {
-    		$default_country  = get_option('customer_default_country');
-    		$data             = $this->input->post();
-            //update proposal status
-    		if (isset($data['proposal_id'])) {
-    			$proposal_id = $data['proposal_id'];
-    			unset($data['proposal_id']);
+		if ($this->input->post()) {
+			$default_country  = get_option('customer_default_country');
+			$data             = $this->input->post();
+			//update proposal status
+			if (isset($data['proposal_id'])) {
+				$proposal_id = $data['proposal_id'];
+				unset($data['proposal_id']);
 
-    			$this->db->where('id', $proposal_id);
-    			$this->db->update(db_prefix().'proposals',[
-    				'processing'=>'1',
-    			]);
+				$this->db->where('id', $proposal_id);
+				$this->db->update(db_prefix() . 'proposals', [
+					'processing' => '1',
+				]);
+			}
 
-    		}
+			$data['password'] = $this->input->post('password', false);
 
-    		$data['password'] = $this->input->post('password', false);
+			$original_lead_email = $data['original_lead_email'];
+			unset($data['original_lead_email']);
 
-    		$original_lead_email = $data['original_lead_email'];
-    		unset($data['original_lead_email']);
+			if (isset($data['transfer_notes'])) {
+				$notes = $this->misc_model->get_notes($data['leadid'], 'lead');
+				unset($data['transfer_notes']);
+			}
 
-    		if (isset($data['transfer_notes'])) {
-    			$notes = $this->misc_model->get_notes($data['leadid'], 'lead');
-    			unset($data['transfer_notes']);
-    		}
+			if (isset($data['transfer_consent'])) {
+				$this->load->model('gdpr_model');
+				$consents = $this->gdpr_model->get_consents(['lead_id' => $data['leadid']]);
+				unset($data['transfer_consent']);
+			}
 
-    		if (isset($data['transfer_consent'])) {
-    			$this->load->model('gdpr_model');
-    			$consents = $this->gdpr_model->get_consents(['lead_id' => $data['leadid']]);
-    			unset($data['transfer_consent']);
-    		}
+			if (isset($data['merge_db_fields'])) {
+				$merge_db_fields = $data['merge_db_fields'];
+				unset($data['merge_db_fields']);
+			}
 
-    		if (isset($data['merge_db_fields'])) {
-    			$merge_db_fields = $data['merge_db_fields'];
-    			unset($data['merge_db_fields']);
-    		}
+			if (isset($data['merge_db_contact_fields'])) {
+				$merge_db_contact_fields = $data['merge_db_contact_fields'];
+				unset($data['merge_db_contact_fields']);
+			}
 
-    		if (isset($data['merge_db_contact_fields'])) {
-    			$merge_db_contact_fields = $data['merge_db_contact_fields'];
-    			unset($data['merge_db_contact_fields']);
-    		}
+			if (isset($data['include_leads_custom_fields'])) {
+				$include_leads_custom_fields = $data['include_leads_custom_fields'];
+				unset($data['include_leads_custom_fields']);
+			}
 
-    		if (isset($data['include_leads_custom_fields'])) {
-    			$include_leads_custom_fields = $data['include_leads_custom_fields'];
-    			unset($data['include_leads_custom_fields']);
-    		}
+			if ($data['country'] == '' && $default_country != '') {
+				$data['country'] = $default_country;
+			}
 
-    		if ($data['country'] == '' && $default_country != '') {
-    			$data['country'] = $default_country;
-    		}
+			$data['billing_street']  = $data['address'];
+			$data['billing_city']    = $data['city'];
+			$data['billing_state']   = $data['state'];
+			$data['billing_zip']     = $data['zip'];
+			$data['billing_country'] = $data['country'];
 
-    		$data['billing_street']  = $data['address'];
-    		$data['billing_city']    = $data['city'];
-    		$data['billing_state']   = $data['state'];
-    		$data['billing_zip']     = $data['zip'];
-    		$data['billing_country'] = $data['country'];
+			$data['is_primary'] = 1;
+			$id                 = $this->clients_model->add($data, true);
+			if ($id) {
+				$primary_contact_id = get_primary_contact_user_id($id);
 
-    		$data['is_primary'] = 1;
-    		$id                 = $this->clients_model->add($data, true);
-    		if ($id) {
-    			$primary_contact_id = get_primary_contact_user_id($id);
+				if (isset($notes)) {
+					foreach ($notes as $note) {
+						$this->db->insert(db_prefix() . 'notes', [
+							'rel_id'         => $id,
+							'rel_type'       => 'customer',
+							'dateadded'      => $note['dateadded'],
+							'addedfrom'      => $note['addedfrom'],
+							'description'    => $note['description'],
+							'date_contacted' => $note['date_contacted'],
+						]);
+					}
+				}
+				if (isset($consents)) {
+					foreach ($consents as $consent) {
+						unset($consent['id']);
+						unset($consent['purpose_name']);
+						$consent['lead_id']    = 0;
+						$consent['contact_id'] = $primary_contact_id;
+						$this->gdpr_model->add_consent($consent);
+					}
+				}
+				if (!has_permission('customers', '', 'view') && get_option('auto_assign_customer_admin_after_lead_convert') == 1) {
+					$this->db->insert(db_prefix() . 'customer_admins', [
+						'date_assigned' => date('Y-m-d H:i:s'),
+						'customer_id'   => $id,
+						'staff_id'      => get_staff_user_id(),
+					]);
+				}
+				$this->leads_model->log_lead_activity($data['leadid'], 'not_lead_activity_converted', false, serialize([
+					get_staff_full_name(),
+				]));
+				$default_status = $this->leads_model->get_status('', [
+					'isdefault' => 1,
+				]);
+				$this->db->where('id', $data['leadid']);
+				$this->db->update(db_prefix() . 'leads', [
+					'date_converted' => date('Y-m-d H:i:s'),
+					'status'         => $default_status[0]['id'],
+					'junk'           => 0,
+					'lost'           => 0,
+				]);
+				// Check if lead email is different then client email
+				$contact = $this->clients_model->get_contact(get_primary_contact_user_id($id));
+				if ($contact->email != $original_lead_email) {
+					if ($original_lead_email != '') {
+						$this->leads_model->log_lead_activity($data['leadid'], 'not_lead_activity_converted_email', false, serialize([
+							$original_lead_email,
+							$contact->email,
+						]));
+					}
+				}
+				if (isset($include_leads_custom_fields)) {
+					foreach ($include_leads_custom_fields as $fieldid => $value) {
+						// checked don't merge
+						if ($value == 5) {
+							continue;
+						}
+						// get the value of this leads custom fiel
+						$this->db->where('relid', $data['leadid']);
+						$this->db->where('fieldto', 'leads');
+						$this->db->where('fieldid', $fieldid);
+						$lead_custom_field_value = $this->db->get(db_prefix() . 'customfieldsvalues')->row()->value;
+						// Is custom field for contact ot customer
+						if ($value == 1 || $value == 4) {
+							if ($value == 4) {
+								$field_to = 'contacts';
+							} else {
+								$field_to = 'customers';
+							}
+							$this->db->where('id', $fieldid);
+							$field = $this->db->get(db_prefix() . 'customfields')->row();
+							// check if this field exists for custom fields
+							$this->db->where('fieldto', $field_to);
+							$this->db->where('name', $field->name);
+							$exists               = $this->db->get(db_prefix() . 'customfields')->row();
+							$copy_custom_field_id = null;
+							if ($exists) {
+								$copy_custom_field_id = $exists->id;
+							} else {
+								// there is no name with the same custom field for leads at the custom side create the custom field now
+								$this->db->insert(db_prefix() . 'customfields', [
+									'fieldto'        => $field_to,
+									'name'           => $field->name,
+									'required'       => $field->required,
+									'type'           => $field->type,
+									'options'        => $field->options,
+									'display_inline' => $field->display_inline,
+									'field_order'    => $field->field_order,
+									'slug'           => slug_it($field_to . '_' . $field->name, [
+										'separator' => '_',
+									]),
+									'active'        => $field->active,
+									'only_admin'    => $field->only_admin,
+									'show_on_table' => $field->show_on_table,
+									'bs_column'     => $field->bs_column,
+								]);
+								$new_customer_field_id = $this->db->insert_id();
+								if ($new_customer_field_id) {
+									$copy_custom_field_id = $new_customer_field_id;
+								}
+							}
+							if ($copy_custom_field_id != null) {
+								$insert_to_custom_field_id = $id;
+								if ($value == 4) {
+									$insert_to_custom_field_id = get_primary_contact_user_id($id);
+								}
+								$this->db->insert(db_prefix() . 'customfieldsvalues', [
+									'relid'   => $insert_to_custom_field_id,
+									'fieldid' => $copy_custom_field_id,
+									'fieldto' => $field_to,
+									'value'   => $lead_custom_field_value,
+								]);
+							}
+						} elseif ($value == 2) {
+							if (isset($merge_db_fields)) {
+								$db_field = $merge_db_fields[$fieldid];
+								// in case user don't select anything from the db fields
+								if ($db_field == '') {
+									continue;
+								}
+								if ($db_field == 'country' || $db_field == 'shipping_country' || $db_field == 'billing_country') {
+									$this->db->where('iso2', $lead_custom_field_value);
+									$this->db->or_where('short_name', $lead_custom_field_value);
+									$this->db->or_like('long_name', $lead_custom_field_value);
+									$country = $this->db->get(db_prefix() . 'countries')->row();
+									if ($country) {
+										$lead_custom_field_value = $country->country_id;
+									} else {
+										$lead_custom_field_value = 0;
+									}
+								}
+								$this->db->where('userid', $id);
+								$this->db->update(db_prefix() . 'clients', [
+									$db_field => $lead_custom_field_value,
+								]);
+							}
+						} elseif ($value == 3) {
+							if (isset($merge_db_contact_fields)) {
+								$db_field = $merge_db_contact_fields[$fieldid];
+								if ($db_field == '') {
+									continue;
+								}
+								$this->db->where('id', $primary_contact_id);
+								$this->db->update(db_prefix() . 'contacts', [
+									$db_field => $lead_custom_field_value,
+								]);
+							}
+						}
+					}
+				}
+				// set the lead to status client in case is not status client
+				$this->db->where('isdefault', 1);
+				$status_client_id = $this->db->get(db_prefix() . 'leads_status')->row()->id;
+				$this->db->where('id', $data['leadid']);
+				$this->db->update(db_prefix() . 'leads', [
+					'status' => $status_client_id,
+				]);
 
-    			if (isset($notes)) {
-    				foreach ($notes as $note) {
-    					$this->db->insert(db_prefix() . 'notes', [
-    						'rel_id'         => $id,
-    						'rel_type'       => 'customer',
-    						'dateadded'      => $note['dateadded'],
-    						'addedfrom'      => $note['addedfrom'],
-    						'description'    => $note['description'],
-    						'date_contacted' => $note['date_contacted'],
-    					]);
-    				}
-    			}
-    			if (isset($consents)) {
-    				foreach ($consents as $consent) {
-    					unset($consent['id']);
-    					unset($consent['purpose_name']);
-    					$consent['lead_id']    = 0;
-    					$consent['contact_id'] = $primary_contact_id;
-    					$this->gdpr_model->add_consent($consent);
-    				}
-    			}
-    			if (!has_permission('customers', '', 'view') && get_option('auto_assign_customer_admin_after_lead_convert') == 1) {
-    				$this->db->insert(db_prefix() . 'customer_admins', [
-    					'date_assigned' => date('Y-m-d H:i:s'),
-    					'customer_id'   => $id,
-    					'staff_id'      => get_staff_user_id(),
-    				]);
-    			}
-    			$this->leads_model->log_lead_activity($data['leadid'], 'not_lead_activity_converted', false, serialize([
-    				get_staff_full_name(),
-    			]));
-    			$default_status = $this->leads_model->get_status('', [
-    				'isdefault' => 1,
-    			]);
-    			$this->db->where('id', $data['leadid']);
-    			$this->db->update(db_prefix() . 'leads', [
-    				'date_converted' => date('Y-m-d H:i:s'),
-    				'status'         => $default_status[0]['id'],
-    				'junk'           => 0,
-    				'lost'           => 0,
-    			]);
-                // Check if lead email is different then client email
-    			$contact = $this->clients_model->get_contact(get_primary_contact_user_id($id));
-    			if ($contact->email != $original_lead_email) {
-    				if ($original_lead_email != '') {
-    					$this->leads_model->log_lead_activity($data['leadid'], 'not_lead_activity_converted_email', false, serialize([
-    						$original_lead_email,
-    						$contact->email,
-    					]));
-    				}
-    			}
-    			if (isset($include_leads_custom_fields)) {
-    				foreach ($include_leads_custom_fields as $fieldid => $value) {
-                        // checked don't merge
-    					if ($value == 5) {
-    						continue;
-    					}
-                        // get the value of this leads custom fiel
-    					$this->db->where('relid', $data['leadid']);
-    					$this->db->where('fieldto', 'leads');
-    					$this->db->where('fieldid', $fieldid);
-    					$lead_custom_field_value = $this->db->get(db_prefix() . 'customfieldsvalues')->row()->value;
-                        // Is custom field for contact ot customer
-    					if ($value == 1 || $value == 4) {
-    						if ($value == 4) {
-    							$field_to = 'contacts';
-    						} else {
-    							$field_to = 'customers';
-    						}
-    						$this->db->where('id', $fieldid);
-    						$field = $this->db->get(db_prefix() . 'customfields')->row();
-                            // check if this field exists for custom fields
-    						$this->db->where('fieldto', $field_to);
-    						$this->db->where('name', $field->name);
-    						$exists               = $this->db->get(db_prefix() . 'customfields')->row();
-    						$copy_custom_field_id = null;
-    						if ($exists) {
-    							$copy_custom_field_id = $exists->id;
-    						} else {
-                                // there is no name with the same custom field for leads at the custom side create the custom field now
-    							$this->db->insert(db_prefix() . 'customfields', [
-    								'fieldto'        => $field_to,
-    								'name'           => $field->name,
-    								'required'       => $field->required,
-    								'type'           => $field->type,
-    								'options'        => $field->options,
-    								'display_inline' => $field->display_inline,
-    								'field_order'    => $field->field_order,
-    								'slug'           => slug_it($field_to . '_' . $field->name, [
-    									'separator' => '_',
-    								]),
-    								'active'        => $field->active,
-    								'only_admin'    => $field->only_admin,
-    								'show_on_table' => $field->show_on_table,
-    								'bs_column'     => $field->bs_column,
-    							]);
-    							$new_customer_field_id = $this->db->insert_id();
-    							if ($new_customer_field_id) {
-    								$copy_custom_field_id = $new_customer_field_id;
-    							}
-    						}
-    						if ($copy_custom_field_id != null) {
-    							$insert_to_custom_field_id = $id;
-    							if ($value == 4) {
-    								$insert_to_custom_field_id = get_primary_contact_user_id($id);
-    							}
-    							$this->db->insert(db_prefix() . 'customfieldsvalues', [
-    								'relid'   => $insert_to_custom_field_id,
-    								'fieldid' => $copy_custom_field_id,
-    								'fieldto' => $field_to,
-    								'value'   => $lead_custom_field_value,
-    							]);
-    						}
-    					} elseif ($value == 2) {
-    						if (isset($merge_db_fields)) {
-    							$db_field = $merge_db_fields[$fieldid];
-                                // in case user don't select anything from the db fields
-    							if ($db_field == '') {
-    								continue;
-    							}
-    							if ($db_field == 'country' || $db_field == 'shipping_country' || $db_field == 'billing_country') {
-    								$this->db->where('iso2', $lead_custom_field_value);
-    								$this->db->or_where('short_name', $lead_custom_field_value);
-    								$this->db->or_like('long_name', $lead_custom_field_value);
-    								$country = $this->db->get(db_prefix() . 'countries')->row();
-    								if ($country) {
-    									$lead_custom_field_value = $country->country_id;
-    								} else {
-    									$lead_custom_field_value = 0;
-    								}
-    							}
-    							$this->db->where('userid', $id);
-    							$this->db->update(db_prefix() . 'clients', [
-    								$db_field => $lead_custom_field_value,
-    							]);
-    						}
-    					} elseif ($value == 3) {
-    						if (isset($merge_db_contact_fields)) {
-    							$db_field = $merge_db_contact_fields[$fieldid];
-    							if ($db_field == '') {
-    								continue;
-    							}
-    							$this->db->where('id', $primary_contact_id);
-    							$this->db->update(db_prefix() . 'contacts', [
-    								$db_field => $lead_custom_field_value,
-    							]);
-    						}
-    					}
-    				}
-    			}
-                // set the lead to status client in case is not status client
-    			$this->db->where('isdefault', 1);
-    			$status_client_id = $this->db->get(db_prefix() . 'leads_status')->row()->id;
-    			$this->db->where('id', $data['leadid']);
-    			$this->db->update(db_prefix() . 'leads', [
-    				'status' => $status_client_id,
-    			]);
+				set_alert('success', _l('lead_to_client_base_converted_success'));
 
-    			set_alert('success', _l('lead_to_client_base_converted_success'));
+				if (is_gdpr() && get_option('gdpr_after_lead_converted_delete') == '1') {
+					$this->leads_model->delete($data['leadid']);
 
-    			if (is_gdpr() && get_option('gdpr_after_lead_converted_delete') == '1') {
-    				$this->leads_model->delete($data['leadid']);
+					$this->db->where('userid', $id);
+					$this->db->update(db_prefix() . 'clients', ['leadid' => null]);
+				}
 
-    				$this->db->where('userid', $id);
-    				$this->db->update(db_prefix() . 'clients', ['leadid' => null]);
-    			}
-
-    			log_activity('Created Lead Client Profile [LeadID: ' . $data['leadid'] . ', ClientID: ' . $id . ']');
-    			hooks()->do_action('lead_converted_to_customer', ['lead_id' => $data['leadid'], 'customer_id' => $id]);
-    			redirect(admin_url('proposals/list_proposals'));
-    		}
-    	}
-    }
-
-
-    /**
-     * proposal convert processing
-     * @return view 
-     */
-    public function proposal_convert_processing()
-    {
-    	$data = $this->input->post();
-
-    	$status = false;
-        //get proposal
-    	$this->db->where('id', $data['proposal_id']);
-    	$proposal_value = $this->db->get(db_prefix().'proposals')->row();
-    	if($proposal_value){
-    		if($proposal_value->processing == ''){
-    			$this->db->where('id', $data['proposal_id']);
-    			$this->db->update(db_prefix().'proposals',[
-    				'processing'=>'1',
-    			]);
-
-    			$status = true;
-    			$message  = _l('convert_proposal_success');
-    		}else{
-    			$message  = _l('proposal_has_been_converted');
-
-    		}
+				log_activity('Created Lead Client Profile [LeadID: ' . $data['leadid'] . ', ClientID: ' . $id . ']');
+				hooks()->do_action('lead_converted_to_customer', ['lead_id' => $data['leadid'], 'customer_id' => $id]);
+				redirect(admin_url('proposals/list_proposals'));
+			}
+		}
+	}
 
 
-    	}else{
-    		$message  = _l('convert_proposal_false');
+	/**
+	 * proposal convert processing
+	 * @return view 
+	 */
+	public function proposal_convert_processing()
+	{
+		$data = $this->input->post();
 
-    	}
+		$status = false;
+		//get proposal
+		$this->db->where('id', $data['proposal_id']);
+		$proposal_value = $this->db->get(db_prefix() . 'proposals')->row();
+		if ($proposal_value) {
+			if ($proposal_value->processing == '') {
+				$this->db->where('id', $data['proposal_id']);
+				$this->db->update(db_prefix() . 'proposals', [
+					'processing' => '1',
+				]);
 
-    	echo json_encode([
+				$status = true;
+				$message  = _l('convert_proposal_success');
+			} else {
+				$message  = _l('proposal_has_been_converted');
+			}
+		} else {
+			$message  = _l('convert_proposal_false');
+		}
 
-    		'status' => $status,
-    		'message' => $message,
+		echo json_encode([
 
-    	]);
+			'status' => $status,
+			'message' => $message,
 
-    }
+		]);
+	}
 
 
-    public function custom_fields_setting($id = '') {
-    	if ($this->input->post()) {
-    		$message = '';
-    		$data = $this->input->post();
+	public function custom_fields_setting($id = '')
+	{
+		if ($this->input->post()) {
+			$message = '';
+			$data = $this->input->post();
 
-    		if (!$this->input->post('id')) {
+			if (!$this->input->post('id')) {
 
-    			$mess = $this->warehouse_model->add_custom_fields_warehouse($data);
-    			if ($mess) {
-    				set_alert('success', _l('added_successfully'));
+				$mess = $this->warehouse_model->add_custom_fields_warehouse($data);
+				if ($mess) {
+					set_alert('success', _l('added_successfully'));
+				} else {
+					set_alert('warning', _l('Add_commodity_type_false'));
+				}
+				redirect(admin_url('warehouse/setting?group=warehouse_custom_fields'));
+			} else {
+				$id = $data['id'];
+				unset($data['id']);
+				$success = $this->warehouse_model->update_custom_fields_warehouse($data, $id);
+				if ($success) {
+					set_alert('success', _l('updated_successfully'));
+				} else {
+					set_alert('warning', _l('updated_commodity_type_false'));
+				}
 
-    			} else {
-    				set_alert('warning', _l('Add_commodity_type_false'));
-    			}
-    			redirect(admin_url('warehouse/setting?group=warehouse_custom_fields'));
-
-    		} else {
-    			$id = $data['id'];
-    			unset($data['id']);
-    			$success = $this->warehouse_model->update_custom_fields_warehouse($data, $id);
-    			if ($success) {
-    				set_alert('success', _l('updated_successfully'));
-    			} else {
-    				set_alert('warning', _l('updated_commodity_type_false'));
-    			}
-
-    			redirect(admin_url('warehouse/setting?group=warehouse_custom_fields'));
-    		}
-    	}
-    }
+				redirect(admin_url('warehouse/setting?group=warehouse_custom_fields'));
+			}
+		}
+	}
 
 	/**
 	 * [delete_color description]
 	 * @param  [type] $id  
 	 * @return [type]      
 	 */
-	public function delete_custom_fields_warehouse($id) {
+	public function delete_custom_fields_warehouse($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/setting?group=warehouse_custom_fields'));
 		}
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -6065,7 +5970,6 @@ class warehouse extends AdminController {
 			set_alert('warning', _l('problem_deleting'));
 			redirect(admin_url('warehouse/setting?group=warehouse_custom_fields'));
 		}
-
 	}
 
 
@@ -6074,14 +5978,15 @@ class warehouse extends AdminController {
 	 * @param  [type] $id
 	 * @return [type]    
 	 */
-	public function check_warehouse_custom_fields() {
+	public function check_warehouse_custom_fields()
+	{
 		$data = $this->input->post();
 
 		$success = $this->warehouse_model->check_warehouse_custom_fields($data);
-		if($success){
+		if ($success) {
 
 			$message = _l('custom_fields');
-		}else{
+		} else {
 			$message = _l('custom_fields_have_been_created');
 		}
 		echo json_encode([
@@ -6096,9 +6001,10 @@ class warehouse extends AdminController {
 	 * @param  [type] $id 
 	 * @return [type]     
 	 */
-	public function get_delivery_ajax() {
+	public function get_delivery_ajax()
+	{
 
-		if(!has_permission('warehouse', '', 'create')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'create')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -6110,7 +6016,6 @@ class warehouse extends AdminController {
 			'primary_email' => $data_result['primary_email'],
 		]);
 		die;
-
 	}
 
 	/**
@@ -6118,12 +6023,12 @@ class warehouse extends AdminController {
 	 * @return [type] 
 	 */
 	public function get_primary_contact()
-	{	
-		$primary_email ='';
+	{
+		$primary_email = '';
 
 		$userid = $this->input->post('userid');
 		$contact_value = $this->clients_model->get_contact($userid);
-		if($contact_value){
+		if ($contact_value) {
 			$primary_email 	= $contact_value->email;
 		}
 
@@ -6131,64 +6036,63 @@ class warehouse extends AdminController {
 			'primary_email' => $primary_email,
 		]);
 		die;
-
 	}
 
 	/**
 	 * send_goods_delivery
 	 * @return [type] 
 	 */
-	public function send_goods_delivery(){
-		if($this->input->post()){
+	public function send_goods_delivery()
+	{
+		if ($this->input->post()) {
 			$data = $this->input->post();
 
-			if(isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != ''){
+			if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
 
-				if(file_exists(WAREHOUSE_MODULE_UPLOAD_FOLDER .'/send_delivery_note/'. $data['goods_delivery'])){
-					$delete_old = delete_dir(WAREHOUSE_MODULE_UPLOAD_FOLDER .'/send_delivery_note/'. $data['goods_delivery']);
-				}else{
+				if (file_exists(WAREHOUSE_MODULE_UPLOAD_FOLDER . '/send_delivery_note/' . $data['goods_delivery'])) {
+					$delete_old = delete_dir(WAREHOUSE_MODULE_UPLOAD_FOLDER . '/send_delivery_note/' . $data['goods_delivery']);
+				} else {
 					$delete_old = true;
 				}
 
-				if($delete_old == true){
+				if ($delete_old == true) {
 					handle_send_delivery_note($data['goods_delivery']);
-				}   
+				}
 			}
 
 			$send = $this->warehouse_model->send_delivery_note($data);
-			if($send){
-				set_alert('success',_l('send_delivery_note_by_email_successfully'));
-
-			}else{
-				set_alert('warning',_l('send_delivery_note_by_email_fail'));
+			if ($send) {
+				set_alert('success', _l('send_delivery_note_by_email_successfully'));
+			} else {
+				set_alert('warning', _l('send_delivery_note_by_email_fail'));
 			}
-			redirect(admin_url('warehouse/manage_delivery/'.$data['goods_delivery']));
-
+			redirect(admin_url('warehouse/manage_delivery/' . $data['goods_delivery']));
 		}
 	}
 
 
-    /**
-     * check sku duplicate
-     * @return [type] 
-     */
-    public function check_sku_duplicate()
-    {
-    	$data = $this->input->post();
-    	$result = $this->warehouse_model->check_sku_duplicate($data);
+	/**
+	 * check sku duplicate
+	 * @return [type] 
+	 */
+	public function check_sku_duplicate()
+	{
+		$data = $this->input->post();
+		$result = $this->warehouse_model->check_sku_duplicate($data);
 
-    	echo json_encode([
-    		'message' => $result
-    	]);
-    	die;	
-    }
+		echo json_encode([
+			'message' => $result
+		]);
+		die;
+	}
 
-    /**
-     * stock internal delivery pdf
-     * @param  [type] $id 
-     * @return [type]     
-     */
-    public function stock_internal_delivery_pdf($id) {
+	/**
+	 * stock internal delivery pdf
+	 * @param  [type] $id 
+	 * @return [type]     
+	 */
+	public function stock_internal_delivery_pdf($id)
+	{
 		if (!$id) {
 			redirect(admin_url('warehouse/manage_goods_delivery/manage_delivery'));
 		}
@@ -6197,7 +6101,6 @@ class warehouse extends AdminController {
 
 		try {
 			$pdf = $this->warehouse_model->stock_internal_delivery_pdf($stock_export);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -6214,7 +6117,7 @@ class warehouse extends AdminController {
 			$type = 'I';
 		}
 
-		$pdf->Output('goods_delivery_'.strtotime(date('Y-m-d H:i:s')).'.pdf', $type);
+		$pdf->Output('goods_delivery_' . strtotime(date('Y-m-d H:i:s')) . '.pdf', $type);
 	}
 
 
@@ -6227,10 +6130,9 @@ class warehouse extends AdminController {
 		$data = $this->input->post();
 
 		$stock_export = $this->warehouse_model->get_print_barcode_pdf_html($data);
-		
+
 		try {
 			$pdf = $this->warehouse_model->print_barcode_pdf($stock_export);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -6248,15 +6150,15 @@ class warehouse extends AdminController {
 		}
 
 
-		$pdf->Output('print_barcode_'.strtotime(date('Y-m-d H:i:s')).'.pdf', $type);
-
+		$pdf->Output('print_barcode_' . strtotime(date('Y-m-d H:i:s')) . '.pdf', $type);
 	}
 
 	/**
 	 * save and send request send mail
 	 * @return [type] 
 	 */
-	public function save_and_send_request_send_mail($data ='') {
+	public function save_and_send_request_send_mail($data = '')
+	{
 		if ((isset($data)) && $data != '') {
 			$this->warehouse_model->send_mail($data);
 
@@ -6266,7 +6168,7 @@ class warehouse extends AdminController {
 			]);
 		}
 	}
-	
+
 	/**
 	 * reset data
 	 * @return [type] 
@@ -6274,97 +6176,96 @@ class warehouse extends AdminController {
 	public function reset_data()
 	{
 
-		if ( !is_admin()) {
+		if (!is_admin()) {
 			access_denied('warehouse');
 		}
-			//delete inventory_manage
-			$this->db->truncate(db_prefix().'inventory_manage');
-			//delete goods_receipt
-			$this->db->truncate(db_prefix().'goods_receipt');
-			//delete goods_receipt_detail
-			$this->db->truncate(db_prefix().'goods_receipt_detail');
-			//delete goods_delivery
-			$this->db->truncate(db_prefix().'goods_delivery');
-			//delete goods_delivery_detail
-			$this->db->truncate(db_prefix().'goods_delivery_detail');
-			//delete goods_delivery_invoices_pr_orders
-			$this->db->truncate(db_prefix().'goods_delivery_invoices_pr_orders');
-			//delete goods_transaction_detail
-			$this->db->truncate(db_prefix().'goods_transaction_detail');
-			//delete internal_delivery_note
-			$this->db->truncate(db_prefix().'internal_delivery_note');
-			//delete internal_delivery_note_detail
-			$this->db->truncate(db_prefix().'internal_delivery_note_detail');
-			//delete wh_loss_adjustment
-			$this->db->truncate(db_prefix().'wh_loss_adjustment');
-			//delete wh_loss_adjustment_detail
-			$this->db->truncate(db_prefix().'wh_loss_adjustment_detail');
-			//delete wh_approval_details
-			$this->db->truncate(db_prefix().'wh_approval_details');
-			//delete wh_activity_log
-			$this->db->truncate(db_prefix().'wh_activity_log');
+		//delete inventory_manage
+		$this->db->truncate(db_prefix() . 'inventory_manage');
+		//delete goods_receipt
+		$this->db->truncate(db_prefix() . 'goods_receipt');
+		//delete goods_receipt_detail
+		$this->db->truncate(db_prefix() . 'goods_receipt_detail');
+		//delete goods_delivery
+		$this->db->truncate(db_prefix() . 'goods_delivery');
+		//delete goods_delivery_detail
+		$this->db->truncate(db_prefix() . 'goods_delivery_detail');
+		//delete goods_delivery_invoices_pr_orders
+		$this->db->truncate(db_prefix() . 'goods_delivery_invoices_pr_orders');
+		//delete goods_transaction_detail
+		$this->db->truncate(db_prefix() . 'goods_transaction_detail');
+		//delete internal_delivery_note
+		$this->db->truncate(db_prefix() . 'internal_delivery_note');
+		//delete internal_delivery_note_detail
+		$this->db->truncate(db_prefix() . 'internal_delivery_note_detail');
+		//delete wh_loss_adjustment
+		$this->db->truncate(db_prefix() . 'wh_loss_adjustment');
+		//delete wh_loss_adjustment_detail
+		$this->db->truncate(db_prefix() . 'wh_loss_adjustment_detail');
+		//delete wh_approval_details
+		$this->db->truncate(db_prefix() . 'wh_approval_details');
+		//delete wh_activity_log
+		$this->db->truncate(db_prefix() . 'wh_activity_log');
 
-			//delete sub folder STOCK_EXPORT
-			foreach(glob(WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER . '*') as $file) { 
-				$file_arr = explode("/",$file);
-				$filename = array_pop($file_arr);
+		//delete sub folder STOCK_EXPORT
+		foreach (glob(WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER . '*') as $file) {
+			$file_arr = explode("/", $file);
+			$filename = array_pop($file_arr);
 
-			    if(is_dir($file)) {
-			    	delete_dir(WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER.$filename);
-			    }
+			if (is_dir($file)) {
+				delete_dir(WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER . $filename);
 			}
+		}
 
-			//delete sub folder STOCK_IMPORT
-			foreach(glob(WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . '*') as $file) { 
-				$file_arr = explode("/",$file);
-				$filename = array_pop($file_arr);
+		//delete sub folder STOCK_IMPORT
+		foreach (glob(WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . '*') as $file) {
+			$file_arr = explode("/", $file);
+			$filename = array_pop($file_arr);
 
-			    if(is_dir($file)) {
-			    	delete_dir(WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER.$filename);
-			    }
+			if (is_dir($file)) {
+				delete_dir(WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . $filename);
 			}
+		}
 
-			//delete sub folder LOSS
-			foreach(glob(WAREHOUSE_LOST_ADJUSTMENT_MODULE_UPLOAD_FOLDER . '*') as $file) { 
-				$file_arr = explode("/",$file);
-				$filename = array_pop($file_arr);
+		//delete sub folder LOSS
+		foreach (glob(WAREHOUSE_LOST_ADJUSTMENT_MODULE_UPLOAD_FOLDER . '*') as $file) {
+			$file_arr = explode("/", $file);
+			$filename = array_pop($file_arr);
 
-			    if(is_dir($file)) {
-			    	delete_dir(WAREHOUSE_LOST_ADJUSTMENT_MODULE_UPLOAD_FOLDER.$filename);
-			    }
+			if (is_dir($file)) {
+				delete_dir(WAREHOUSE_LOST_ADJUSTMENT_MODULE_UPLOAD_FOLDER . $filename);
 			}
-			
-			//delete sub folder INTERNAL
-			foreach(glob(WAREHOUSE_INTERNAL_DELIVERY_MODULE_UPLOAD_FOLDER . '*') as $file) { 
-				$file_arr = explode("/",$file);
-				$filename = array_pop($file_arr);
+		}
 
-			    if(is_dir($file)) {
-			    	delete_dir(WAREHOUSE_INTERNAL_DELIVERY_MODULE_UPLOAD_FOLDER.$filename);
-			    }
+		//delete sub folder INTERNAL
+		foreach (glob(WAREHOUSE_INTERNAL_DELIVERY_MODULE_UPLOAD_FOLDER . '*') as $file) {
+			$file_arr = explode("/", $file);
+			$filename = array_pop($file_arr);
+
+			if (is_dir($file)) {
+				delete_dir(WAREHOUSE_INTERNAL_DELIVERY_MODULE_UPLOAD_FOLDER . $filename);
 			}
-			
-			//delete sub folder send delivery note
-			foreach(glob('modules/warehouse/uploads/send_delivery_note/' . '*') as $file) { 
-				$file_arr = explode("/",$file);
-				$filename = array_pop($file_arr);
+		}
 
-			    if(is_dir($file)) {
-			    	delete_dir('modules/warehouse/uploads/send_delivery_note/'.$filename);
-			    }
+		//delete sub folder send delivery note
+		foreach (glob('modules/warehouse/uploads/send_delivery_note/' . '*') as $file) {
+			$file_arr = explode("/", $file);
+			$filename = array_pop($file_arr);
+
+			if (is_dir($file)) {
+				delete_dir('modules/warehouse/uploads/send_delivery_note/' . $filename);
 			}
-			 
-			
+		}
 
-			//delete create task rel_type: "stock_import", "stock_export".
-			$this->db->where('rel_type', 'stock_import');
-			$this->db->or_where('rel_type', 'stock_export');
-			$this->db->delete(db_prefix() . 'tasks');
 
-			set_alert('success',_l('reset_data_successful'));
-			
-			redirect(admin_url('warehouse/setting?group=reset_data'));
 
+		//delete create task rel_type: "stock_import", "stock_export".
+		$this->db->where('rel_type', 'stock_import');
+		$this->db->or_where('rel_type', 'stock_export');
+		$this->db->delete(db_prefix() . 'tasks');
+
+		set_alert('success', _l('reset_data_successful'));
+
+		redirect(admin_url('warehouse/setting?group=reset_data'));
 	}
 
 	/**
@@ -6372,62 +6273,63 @@ class warehouse extends AdminController {
 	 * @param  [type] $id 
 	 * @return [type]     
 	 */
-	public function get_variation_html_add(){
-    	$variation_html = $this->warehouse_model->get_variation_html('');
-    	// $item_html = $this->warehouse_model->get_list_parent_item(['id' => '']);
+	public function get_variation_html_add()
+	{
+		$variation_html = $this->warehouse_model->get_variation_html('');
+		// $item_html = $this->warehouse_model->get_list_parent_item(['id' => '']);
 
-    	$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items', 'parent_id is null or parent_id = ""') <= wh_ajax_on_total_items()) {
-            $data['items'] = $this->warehouse_model->get_parent_item_grouped();
-        } else {
-            $data['items']     = [];
-            $data['ajaxItems'] = true;
-        }
+		$data['ajaxItems'] = false;
+		if (total_rows(db_prefix() . 'items', 'parent_id is null or parent_id = ""') <= wh_ajax_on_total_items()) {
+			$data['items'] = $this->warehouse_model->get_parent_item_grouped();
+		} else {
+			$data['items']     = [];
+			$data['ajaxItems'] = true;
+		}
 
-    	$parent_data = $this->load->view('item_include/item_select', ['ajaxItems' => $data['ajaxItems'], 'items' => $data['items'] , 'select_name' => 'parent_id', 'id_name' => 'parent_id', 'data_none_selected_text' => '', 'label_name' => 'parent_item'], true);
+		$parent_data = $this->load->view('item_include/item_select', ['ajaxItems' => $data['ajaxItems'], 'items' => $data['items'], 'select_name' => 'parent_id', 'id_name' => 'parent_id', 'data_none_selected_text' => '', 'label_name' => 'parent_item'], true);
 
-    	echo json_encode([ 
-    		'variation_html' => $variation_html['html'],
-    		'variation_index' => $variation_html['index'],
-    		// 'item_html' => $item_html['item_options'],
-    		'item_html' => $parent_data,
+		echo json_encode([
+			'variation_html' => $variation_html['html'],
+			'variation_index' => $variation_html['index'],
+			// 'item_html' => $item_html['item_options'],
+			'item_html' => $parent_data,
 
-    	]);
-    }
+		]);
+	}
 
-    /**
-     * get variation from parent item
-     * @return [type] 
-     */
-    public function get_variation_from_parent_item()
-    {
-    	$data = $this->input->post();
-    	$variation_html = $this->warehouse_model->get_variation_from_parent_item($data);
+	/**
+	 * get variation from parent item
+	 * @return [type] 
+	 */
+	public function get_variation_from_parent_item()
+	{
+		$data = $this->input->post();
+		$variation_html = $this->warehouse_model->get_variation_from_parent_item($data);
 
-    	$parent_value = '';
-    	$custom_fields_html = '';
-    	
-    	if($data['item_id'] == '' && $data['parent_id'] != ''){
-    		$parent_value = $this->warehouse_model->get_commodity($data['parent_id']);
-    	}
+		$parent_value = '';
+		$custom_fields_html = '';
 
-    	echo json_encode([ 
-    		'variation_html' => $variation_html['html'],
-    		'variation_index' => $variation_html['index'],
-    		'check_is_parent' => $variation_html['check_is_parent'],
-    		'parent_value' => $parent_value,
+		if ($data['item_id'] == '' && $data['parent_id'] != '') {
+			$parent_value = $this->warehouse_model->get_commodity($data['parent_id']);
+		}
 
-    	]);
-    }
+		echo json_encode([
+			'variation_html' => $variation_html['html'],
+			'variation_index' => $variation_html['index'],
+			'check_is_parent' => $variation_html['check_is_parent'],
+			'parent_value' => $parent_value,
+
+		]);
+	}
 
 
-    /**
-     * update unchecked inventory numbers
-     * @return [type] 
-     */
-    public function update_unchecked_inventory_numbers()
-    {
-    	if ( !is_admin()) {
+	/**
+	 * update unchecked inventory numbers
+	 * @return [type] 
+	 */
+	public function update_unchecked_inventory_numbers()
+	{
+		if (!is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -6435,82 +6337,82 @@ class warehouse extends AdminController {
 			'without_checking_warehouse' => 0
 		);
 		$this->db->where('id != ', 0);
-		$this->db->update(db_prefix().'items', $data); 
+		$this->db->update(db_prefix() . 'items', $data);
 
-		set_alert('success',_l('updated_successfully'));
+		set_alert('success', _l('updated_successfully'));
 		redirect(admin_url('warehouse/setting?group=rule_sale_price'));
+	}
 
-    }
+	/**
+	 * maximum minimum inventory filter
+	 * @param  [type] $data 
+	 * @return [type]       
+	 */
+	public function maximum_minimum_inventory_filter()
+	{
+		$data = $this->input->post();
 
-    /**
-     * maximum minimum inventory filter
-     * @param  [type] $data 
-     * @return [type]       
-     */
-    public function maximum_minimum_inventory_filter()
-    {
-    	$data = $this->input->post();
+		if (strlen($data['inventory_filter']) > 0) {
 
-if(strlen($data['inventory_filter']) > 0){
-
-    		$sql = "SELECT *, im.id as inventory_min_id FROM ".db_prefix()."inventory_commodity_min as im
-    		left join ".db_prefix()."items as i on im.commodity_id = i.id 
-    		where  i.commodity_code like  '%".$data['inventory_filter']."%'  OR  i.description like  '%".$data['inventory_filter']."%'  OR i.sku_code like  '%".$data['inventory_filter']."%'  
+			$sql = "SELECT *, im.id as inventory_min_id FROM " . db_prefix() . "inventory_commodity_min as im
+    		left join " . db_prefix() . "items as i on im.commodity_id = i.id 
+    		where  i.commodity_code like  '%" . $data['inventory_filter'] . "%'  OR  i.description like  '%" . $data['inventory_filter'] . "%'  OR i.sku_code like  '%" . $data['inventory_filter'] . "%'  
     		";
-    	}else{
-    		$sql = "SELECT *, im.id as inventory_min_id FROM ".db_prefix()."inventory_commodity_min as im
-    		left join ".db_prefix()."items as i on im.commodity_id = i.id  
+		} else {
+			$sql = "SELECT *, im.id as inventory_min_id FROM " . db_prefix() . "inventory_commodity_min as im
+    		left join " . db_prefix() . "items as i on im.commodity_id = i.id  
     		";
-    	}
+		}
 
-    	$items = $this->db->query($sql)->result_array();
+		$items = $this->db->query($sql)->result_array();
 
-    	$data_filter=[];
-    	foreach ($items as $key => $value) {
-    		array_push($data_filter, [
-    			'id' => $value['inventory_min_id'],
-    			'commodity_id' => $value['commodity_id'],
-    			'commodity_code' => $value['commodity_code'],
-    			'commodity_name' => $value['description'],
-    			'inventory_number_min' => $value['inventory_number_min'],
-    			'inventory_number_max' => $value['inventory_number_max'],
-    			'sku_code' => $value['sku_code'],
-    		]);
-    	}
+		$data_filter = [];
+		foreach ($items as $key => $value) {
+			array_push($data_filter, [
+				'id' => $value['inventory_min_id'],
+				'commodity_id' => $value['commodity_id'],
+				'commodity_code' => $value['commodity_code'],
+				'commodity_name' => $value['description'],
+				'inventory_number_min' => $value['inventory_number_min'],
+				'inventory_number_max' => $value['inventory_number_max'],
+				'sku_code' => $value['sku_code'],
+			]);
+		}
 
-    	echo json_encode([ 
-    		'data_object' => $data_filter,
-    	]);
-    }
+		echo json_encode([
+			'data_object' => $data_filter,
+		]);
+	}
 
-    /**
-     * { warehouse setting }
-     * @return  json
-     */
-    public function show_item_cf_on_pdf(){
-        $data = $this->input->post();
-        if($data != 'null'){
-            $value = $this->warehouse_model->update_pc_options_setting($data);
-            if($value){
-                $success = true;
-                $message = _l('updated_successfully');
-            }else{
-                $success = false;
-                $message = _l('updated_false');
-            }
-            echo json_encode([
-                'message' => $message,
-                'success' => $success,
-            ]);
-            die;
-        }
-    }
+	/**
+	 * { warehouse setting }
+	 * @return  json
+	 */
+	public function show_item_cf_on_pdf()
+	{
+		$data = $this->input->post();
+		if ($data != 'null') {
+			$value = $this->warehouse_model->update_pc_options_setting($data);
+			if ($value) {
+				$success = true;
+				$message = _l('updated_successfully');
+			} else {
+				$success = false;
+				$message = _l('updated_false');
+			}
+			echo json_encode([
+				'message' => $message,
+				'success' => $success,
+			]);
+			die;
+		}
+	}
 
-    /*ADD opening stock*/
-    /**
-     * add opening stock modal
-     */
-    public function add_opening_stock_modal()
+	/*ADD opening stock*/
+	/**
+	 * add opening stock modal
+	 */
+	public function add_opening_stock_modal()
 	{
 		if (!$this->input->is_ajax_request()) {
 			show_404();
@@ -6518,24 +6420,24 @@ if(strlen($data['inventory_filter']) > 0){
 		$id = $this->input->post('id');
 		$parent_id = $this->input->post('parent_id');
 
-		$data=[];
-		
+		$data = [];
 
 
-		$item_name='';
+
+		$item_name = '';
 		$item = $this->warehouse_model->get_commodity($id);
-		if($item){
+		if ($item) {
 			$item_name = $item->description;
 		}
 
-		$data['title'] = _l('add_opening_stock').' ( '.$item_name.' )';
+		$data['title'] = _l('add_opening_stock') . ' ( ' . $item_name . ' )';
 		$data['item_name'] =  $item_name;
 		$data['opening_stock_data'] = $this->warehouse_model->get_inventory_quantity_by_warehouse_variant($id);
 		$data['min_row'] =  count($data['opening_stock_data']);
 		$data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
 		$data['units_warehouse_name'] = $this->warehouse_model->get_warehouse_code_name();
 		$data['parent_id'] = $parent_id;
-		
+
 		$this->load->view('item_add_opening_stock', $data);
 	}
 
@@ -6546,7 +6448,7 @@ if(strlen($data['inventory_filter']) > 0){
 	{
 		if ($this->input->post()) {
 			$data = $this->input->post();
-			if(isset($data['parent_id'])){
+			if (isset($data['parent_id'])) {
 				$parent_id = $data['parent_id'];
 				unset($data['parent_id']);
 			}
@@ -6556,89 +6458,88 @@ if(strlen($data['inventory_filter']) > 0){
 				set_alert('success', _l('updated_successfully'));
 			}
 
-			if(isset($parent_id) && is_numeric($parent_id) && $parent_id != 0){
+			if (isset($parent_id) && is_numeric($parent_id) && $parent_id != 0) {
 
-				redirect(admin_url('warehouse/view_commodity_detail/'.$parent_id));
-			}else{
+				redirect(admin_url('warehouse/view_commodity_detail/' . $parent_id));
+			} else {
 
 				redirect(admin_url('warehouse/commodity_list'));
 			}
 		}
-
 	}
 
 	/**
 	 * add activity
 	 */
 	public function wh_add_activity()
-    {
-        $goods_delivery_id = $this->input->post('goods_delivery_id');
-        if (!has_permission('warehouse', '', 'edit') && !is_admin() && !has_permission('warehouse', '', 'create')) {
+	{
+		$goods_delivery_id = $this->input->post('goods_delivery_id');
+		if (!has_permission('warehouse', '', 'edit') && !is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied('warehouse');
 		}
 
-        if ($this->input->post()) {
-            $description = $this->input->post('activity');
-            $rel_type = $this->input->post('rel_type');
-            $aId     = $this->warehouse_model->log_wh_activity($goods_delivery_id, $rel_type, $description);
-            
-            if($aId){
-            	$status = true;
-            	$message = _l('added_successfully');
-            }else{
-            	$status = false;
-            	$message = _l('added_failed');
-            }
+		if ($this->input->post()) {
+			$description = $this->input->post('activity');
+			$rel_type = $this->input->post('rel_type');
+			$aId     = $this->warehouse_model->log_wh_activity($goods_delivery_id, $rel_type, $description);
 
-            echo json_encode([
-            	'status' => $status,
-            	'message' => $message,
-            ]);
-        }
-    }
+			if ($aId) {
+				$status = true;
+				$message = _l('added_successfully');
+			} else {
+				$status = false;
+				$message = _l('added_failed');
+			}
 
-    /**
-     * delete activitylog
-     * @param  [type] $id 
-     * @return [type]     
-     */
-    public function delete_activitylog($id)
-    {
-    	if (!$this->input->is_ajax_request()) {
+			echo json_encode([
+				'status' => $status,
+				'message' => $message,
+			]);
+		}
+	}
+
+	/**
+	 * delete activitylog
+	 * @param  [type] $id 
+	 * @return [type]     
+	 */
+	public function delete_activitylog($id)
+	{
+		if (!$this->input->is_ajax_request()) {
 			show_404();
 		}
-        
-        $delete = $this->warehouse_model->delete_activitylog($id);
-        if($delete){
-        	$status = true;
-        }else{
-        	$status = false;
-        }
 
-        echo json_encode([
-            'success' => $status,
-        ]);
-    }
+		$delete = $this->warehouse_model->delete_activitylog($id);
+		if ($delete) {
+			$status = true;
+		} else {
+			$status = false;
+		}
 
-    /**
+		echo json_encode([
+			'success' => $status,
+		]);
+	}
+
+	/**
 	 * copy product image
 	 * @param  [type] $id       
 	 * @param  [type] $rel_type 
 	 * @return [type]           
 	 */
 	public function copy_product_image($id)
-    {
+	{
 
-    	$this->warehouse_model->copy_product_image($id);
-    	
-    	$url = admin_url('warehouse/commodity_list');
+		$this->warehouse_model->copy_product_image($id);
 
-    	echo json_encode([
-    		'url' => $url,
-    	]);
-    }
+		$url = admin_url('warehouse/commodity_list');
 
-    /**
+		echo json_encode([
+			'url' => $url,
+		]);
+	}
+
+	/**
 	 * delete product attachment
 	 * @param  [type] $attachment_id 
 	 * @param  [type] $rel_type      
@@ -6646,7 +6547,7 @@ if(strlen($data['inventory_filter']) > 0){
 	 */
 	public function delete_product_attachment($attachment_id, $rel_type)
 	{
-	    if (!has_permission('warehouse', '', 'delete') && !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete') && !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -6665,7 +6566,6 @@ if(strlen($data['inventory_filter']) > 0){
 			case 'shipment_image':
 				$folder_name = module_dir_path('warehouse', 'uploads/shipments/');
 				break;
-			
 		}
 
 		echo json_encode([
@@ -6687,7 +6587,6 @@ if(strlen($data['inventory_filter']) > 0){
 			'purchase_price' => $purchase_price,
 		]);
 		die;
-
 	}
 
 	/**
@@ -6733,27 +6632,27 @@ if(strlen($data['inventory_filter']) > 0){
 			$item                     = $this->warehouse_model->get_item_v2($id);
 			$item->long_description   = nl2br($item->long_description);
 			$guarantee_new = '';
-			if(($item->guarantee != '') && (($item->guarantee != null))){
-				$guarantee_new = date('Y-m-d', strtotime(date('Y-m-d'). ' + '.$item->guarantee.' months'));
+			if (($item->guarantee != '') && (($item->guarantee != null))) {
+				$guarantee_new = date('Y-m-d', strtotime(date('Y-m-d') . ' + ' . $item->guarantee . ' months'));
 			}
 			$item->guarantee_new = $guarantee_new;
 			$html = '<option value=""></option>';
-			if((int)$get_warehouse ==  1){
-				
-				$get_available_quantity = $this->warehouse_model->get_quantity_inventory($warehouse_id,$id);
-				if($get_available_quantity){
+			if ((int)$get_warehouse ==  1) {
+
+				$get_available_quantity = $this->warehouse_model->get_quantity_inventory($warehouse_id, $id);
+				if ($get_available_quantity) {
 					$item->available_quantity = (float)$get_available_quantity->inventory_number;
-				}else{
+				} else {
 					$item->available_quantity = 0;
 				}
-			}elseif($get_warehouse){
+			} elseif ($get_warehouse) {
 				$arr_warehouse_id = [];
 				$warehouses = $this->warehouse_model->get_commodity_warehouse($id);
 				if (count($warehouses) > 0) {
 					foreach ($warehouses as $warehouse) {
-						if(!in_array($warehouse['warehouse_id'], $arr_warehouse_id)){
+						if (!in_array($warehouse['warehouse_id'], $arr_warehouse_id)) {
 							$arr_warehouse_id[] = $warehouse['warehouse_id'];
-							if((float)$warehouse['inventory_number'] > 0){
+							if ((float)$warehouse['inventory_number'] > 0) {
 								$html .= '<option value="' . $warehouse['warehouse_id'] . '">' . $warehouse['warehouse_name'] . '</option>';
 							}
 						}
@@ -6766,12 +6665,12 @@ if(strlen($data['inventory_filter']) > 0){
 		}
 	}
 
-    /**
-     * get receipt note row template
-     * @return [type] 
-     */
-    public function get_good_receipt_row_template()
-    {
+	/**
+	 * get receipt note row template
+	 * @return [type] 
+	 */
+	public function get_good_receipt_row_template()
+	{
 		$name = $this->input->post('name');
 		$commodity_name = $this->input->post('commodity_name');
 		$warehouse_id = $this->input->post('warehouse_id');
@@ -6794,8 +6693,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$item_key = $this->input->post('item_key');
 		$description = $this->input->post('description');
 
-		echo $this->warehouse_model->create_goods_receipt_row_template([], $name, $commodity_name, $warehouse_id, $po_quantities, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $commodity_code, $unit_id, $tax_rate, $tax_money, $goods_money, $note, $item_key,'','','','','',$description);
-
+		echo $this->warehouse_model->create_goods_receipt_row_template([], $name, $commodity_name, $warehouse_id, $po_quantities, $quantities, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $commodity_code, $unit_id, $tax_rate, $tax_money, $goods_money, $note, $item_key, '', '', '', '', '', $description);
 	}
 
 	/**
@@ -6825,27 +6723,26 @@ if(strlen($data['inventory_filter']) > 0){
 		$list_temporaty_serial_numbers = $this->warehouse_model->get_list_temporaty_serial_numbers($commodity_code, $from_stock_name, $quantities);
 
 		foreach ($list_temporaty_serial_numbers as $value) {
-			$temporaty_commodity_name = $commodity_name.' SN: '.$value['serial_number'];
+			$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
 			$quantities = 1;
-			$name = 'newitems['.$item_index.']';
+			$name = 'newitems[' . $item_index . ']';
 
 			$internal_delivery_row_template .= $this->warehouse_model->create_internal_delivery_row_template([], $name, $temporaty_commodity_name, $from_stock_name, $to_stock_name, $temporaty_available_quantity, $quantities, $unit_name, $unit_price, $commodity_code, $unit_id, $into_money, $note, $item_key, false,  $value['serial_number']);
 
 			$temporaty_quantity--;
 			$temporaty_available_quantity--;
-			$item_index ++;
+			$item_index++;
 		}
 
-		if($temporaty_quantity > 0){
+		if ($temporaty_quantity > 0) {
 			$quantities = $temporaty_quantity;
 			$available_quantity = $temporaty_available_quantity;
-			$name = 'newitems['.$item_index.']';
+			$name = 'newitems[' . $item_index . ']';
 
-			$internal_delivery_row_template .= $this->warehouse_model->create_internal_delivery_row_template([], $name, $commodity_name, $from_stock_name, $to_stock_name, $available_quantity, $quantities, $unit_name, $unit_price, $commodity_code, $unit_id, $into_money, $note, $item_key );
+			$internal_delivery_row_template .= $this->warehouse_model->create_internal_delivery_row_template([], $name, $commodity_name, $from_stock_name, $to_stock_name, $available_quantity, $quantities, $unit_name, $unit_price, $commodity_code, $unit_id, $into_money, $note, $item_key);
 		}
 
 		echo $internal_delivery_row_template;
-
 	}
 
 	/**
@@ -6865,8 +6762,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$unit_id = $this->input->post('unit_id');
 		$item_key = $this->input->post('item_key');
 
-		echo $this->warehouse_model->create_loss_adjustment_row_template( $name, $commodity_name, $available_quantity, $quantities, $unit_name, $expiry_date, $lot_number, $commodity_code, $unit_id, $item_key);
-
+		echo $this->warehouse_model->create_loss_adjustment_row_template($name, $commodity_name, $available_quantity, $quantities, $unit_name, $expiry_date, $lot_number, $commodity_code, $unit_id, $item_key);
 	}
 
 	/**
@@ -6875,7 +6771,7 @@ if(strlen($data['inventory_filter']) > 0){
 	 */
 	public function get_good_delivery_row_template()
 	{
-		
+
 		$name = $this->input->post('name');
 		$commodity_name = $this->input->post('commodity_name');
 		$warehouse_id = $this->input->post('warehouse_id');
@@ -6903,41 +6799,41 @@ if(strlen($data['inventory_filter']) > 0){
 		$temporaty_available_quantity = $available_quantity;
 		$list_temporaty_serial_numbers = [];
 
-		if($without_checking_warehouse == 0 || $without_checking_warehouse == '0'){
+		if ($without_checking_warehouse == 0 || $without_checking_warehouse == '0') {
 
-			if(is_array($formdata) && count($formdata) > 1){
+			if (is_array($formdata) && count($formdata) > 1) {
 
-				foreach ( $formdata as $key => $form_value) {
-					if($form_value['name'] != 'csrf_token_name'){
+				foreach ($formdata as $key => $form_value) {
+					if ($form_value['name'] != 'csrf_token_name') {
 						$list_temporaty_serial_numbers[] = [
 							'serial_number' => $form_value['value'],
 						];
 					}
 				}
-			}else{
+			} else {
 
 				$list_temporaty_serial_numbers = $this->warehouse_model->get_list_temporaty_serial_numbers($commodity_code, $warehouse_id, $quantities);
 			}
 		}
 
 		foreach ($list_temporaty_serial_numbers as $value) {
-			$temporaty_commodity_name = $commodity_name.' SN: '.$value['serial_number'];
+			$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
 			$quantities = 1;
-			$name = 'newitems['.$item_index.']';
+			$name = 'newitems[' . $item_index . ']';
 
-			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id,$vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $expiry_date, $lot_number, $note, '', '', '', $item_key, false, false, $value['serial_number'], $without_checking_warehouse );
+			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $expiry_date, $lot_number, $note, '', '', '', $item_key, false, false, $value['serial_number'], $without_checking_warehouse);
 			$temporaty_quantity--;
 			$temporaty_available_quantity--;
-			$item_index ++;
+			$item_index++;
 		}
 
-		if($temporaty_quantity > 0){
+		if ($temporaty_quantity > 0) {
 			$quantities = $temporaty_quantity;
 			$available_quantity = $temporaty_available_quantity;
-			$name = 'newitems['.$item_index.']';
+			$name = 'newitems[' . $item_index . ']';
 
 			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $expiry_date, $lot_number, $note, '', '', '', $item_key, false, false, '', $without_checking_warehouse);
-			$item_index ++;
+			$item_index++;
 		}
 
 		echo $goods_delivery_row_template;
@@ -6953,12 +6849,12 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['delivery_id'] = $id;
 		$data['title'] = _l('wh_packing_list_management');
 
-		$data['from_date'] = _d(date('Y-m-d', strtotime( date('Y-m-d') . "-15 day")));
+		$data['from_date'] = _d(date('Y-m-d', strtotime(date('Y-m-d') . "-15 day")));
 		$data['to_date'] = _d(date('Y-m-d'));
 		$data['get_goods_delivery'] = $this->warehouse_model->get_goods_delivery(false);
 		$data['staffs'] = $this->warehouse_model->get_staff();
 		//display packing list not yet approval
-		$data['status_id'] = [1,5,-1];
+		$data['status_id'] = [1, 5, -1];
 
 		$this->load->view('packing_lists/manage_packing_list', $data);
 	}
@@ -6967,7 +6863,8 @@ if(strlen($data['inventory_filter']) > 0){
 	 * packing list TODO
 	 * @return view
 	 */
-	public function packing_list($id ='', $edit_approval = false) { 
+	public function packing_list($id = '', $edit_approval = false)
+	{
 
 		$this->load->model('clients_model');
 		$this->load->model('taxes_model');
@@ -6978,20 +6875,19 @@ if(strlen($data['inventory_filter']) > 0){
 			if (!$this->input->post('id')) {
 				$mess = $this->warehouse_model->add_packing_list($data);
 				if ($mess) {
-					if($data['save_and_send_request'] == 'true'){
+					if ($data['save_and_send_request'] == 'true') {
 						$this->save_and_send_request_send_mail(['rel_id' => $mess, 'rel_type' => '5', 'addedfrom' => get_staff_user_id()]);
 					}
 					set_alert('success', _l('added_successfully'));
 				} else {
 					set_alert('warning', _l('wh_add_packing_list_failed'));
 				}
-				redirect(admin_url('warehouse/manage_packing_list/'.$mess));
-
-			}else{
+				redirect(admin_url('warehouse/manage_packing_list/' . $mess));
+			} else {
 				$id = $this->input->post('id');
 				$mess = $this->warehouse_model->update_packing_list($data);
 
-				if($data['save_and_send_request'] == 'true'){
+				if ($data['save_and_send_request'] == 'true') {
 					$this->save_and_send_request_send_mail(['rel_id' => $id, 'rel_type' => '5', 'addedfrom' => get_staff_user_id()]);
 				}
 
@@ -7000,9 +6896,8 @@ if(strlen($data['inventory_filter']) > 0){
 				} else {
 					set_alert('warning', _l('wh_update_packing_list_failed'));
 				}
-				redirect(admin_url('warehouse/manage_packing_list/'.$id));
+				redirect(admin_url('warehouse/manage_packing_list/' . $id));
 			}
-
 		}
 		//get vaule render dropdown select
 		$data['packing_list_name_ex'] = 'PACKING_LIST' . date('YmdHi');
@@ -7016,23 +6911,23 @@ if(strlen($data['inventory_filter']) > 0){
 			$data['ajaxItems'] = true;
 		}
 
-        //sample
+		//sample
 		$packing_list_row_template = $this->warehouse_model->create_packing_list_row_template();
 
 		$data['goods_deliveries'] = $this->warehouse_model->packing_list_get_goods_delivery();
 		$data['clients'] = $this->clients_model->get();
 
-		if($edit_approval){
-			$invoices_data = $this->db->query('select *, iv.id as id from '.db_prefix().'invoices as iv left join '.db_prefix().'projects as pj on pj.id = iv.project_id left join '.db_prefix().'clients as cl on cl.userid = iv.clientid  order by iv.id desc')->result_array();
+		if ($edit_approval) {
+			$invoices_data = $this->db->query('select *, iv.id as id from ' . db_prefix() . 'invoices as iv left join ' . db_prefix() . 'projects as pj on pj.id = iv.project_id left join ' . db_prefix() . 'clients as cl on cl.userid = iv.clientid  order by iv.id desc')->result_array();
 			$data['invoices'] = $invoices_data;
-		}else{
+		} else {
 			$data['invoices'] = $this->warehouse_model->get_invoices();
 		}
 		$data['goods_code'] = $this->warehouse_model->create_packing_list_code();
 		$data['staffs'] = $this->warehouse_model->get_staff();
 		$data['current_day'] = date('Y-m-d');
 
-		if($id != ''){
+		if ($id != '') {
 			$data['title'] = _l('wh_edit_packing_list');
 
 			$packing_list = $this->warehouse_model->get_packing_list($id);
@@ -7051,13 +6946,12 @@ if(strlen($data['inventory_filter']) > 0){
 					$expiry_date = null;
 					$lot_number = null;
 					$commodity_name = $packing_list_detail['commodity_name'];
-					
-					if(strlen($commodity_name) == 0){
+
+					if (strlen($commodity_name) == 0) {
 						$commodity_name = wh_get_item_variatiom($packing_list_detail['commodity_code']);
 					}
 
-					$packing_list_row_template .= $this->warehouse_model->create_packing_list_row_template($packing_list_detail['delivery_detail_id'], 'items[' . $index_receipt . ']', $commodity_name, $packing_list_detail['quantity'], $unit_name, $packing_list_detail['unit_price'], $taxname, $packing_list_detail['commodity_code'], $packing_list_detail['unit_id'] , $packing_list_detail['tax_rate'], $packing_list_detail['total_amount'], $packing_list_detail['discount'], $packing_list_detail['discount_total'], $packing_list_detail['total_after_discount'], $packing_list_detail['sub_total'],$packing_list_detail['tax_name'],$packing_list_detail['tax_id'], $packing_list_detail['id'], true, $packing_list_detail['quantity'], $packing_list_detail['serial_number']);
-					
+					$packing_list_row_template .= $this->warehouse_model->create_packing_list_row_template($packing_list_detail['delivery_detail_id'], 'items[' . $index_receipt . ']', $commodity_name, $packing_list_detail['quantity'], $unit_name, $packing_list_detail['unit_price'], $taxname, $packing_list_detail['commodity_code'], $packing_list_detail['unit_id'], $packing_list_detail['tax_rate'], $packing_list_detail['total_amount'], $packing_list_detail['discount'], $packing_list_detail['discount_total'], $packing_list_detail['total_after_discount'], $packing_list_detail['sub_total'], $packing_list_detail['tax_name'], $packing_list_detail['tax_id'], $packing_list_detail['id'], true, $packing_list_detail['quantity'], $packing_list_detail['serial_number']);
 				}
 			}
 		}
@@ -7066,14 +6960,13 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['edit_approval'] = $edit_approval;
 		$data['packing_list_row_template'] = $packing_list_row_template;
 		$get_base_currency =  get_base_currency();
-		if($get_base_currency){
+		if ($get_base_currency) {
 			$data['base_currency_id'] = $get_base_currency->id;
-		}else{
+		} else {
 			$data['base_currency_id'] = 0;
 		}
 
 		$this->load->view('packing_lists/add_edit_packing_list', $data);
-
 	}
 
 	/**
@@ -7103,7 +6996,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$discount = $this->input->post('discount');
 		$item_key = $this->input->post('item_key');
 
-		echo $this->warehouse_model->create_packing_list_row_template('', $name, $commodity_name, $quantity, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key );
+		echo $this->warehouse_model->create_packing_list_row_template('', $name, $commodity_name, $quantity, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', $item_key);
 	}
 
 	/**
@@ -7132,30 +7025,31 @@ if(strlen($data['inventory_filter']) > 0){
 	 * @return [type]                  
 	 */
 	public function wh_client_change_data($customer_id, $current_invoice = '')
-    {
-        if ($this->input->is_ajax_request()) {
-            $this->load->model('invoices_model');
+	{
+		if ($this->input->is_ajax_request()) {
+			$this->load->model('invoices_model');
 
-            $data                     = [];
-            $data['billing_shipping'] = $this->clients_model->get_customer_billing_and_shipping_details($customer_id);
+			$data                     = [];
+			$data['billing_shipping'] = $this->clients_model->get_customer_billing_and_shipping_details($customer_id);
 
-            if ($current_invoice != '') {
-                $this->db->select('status');
-                $this->db->where('id', $current_invoice);
-                $current_invoice_status = $this->db->get(db_prefix() . 'invoices')->row()->status;
-            }
-            echo json_encode($data);
-        }
-    }
+			if ($current_invoice != '') {
+				$this->db->select('status');
+				$this->db->where('id', $current_invoice);
+				$current_invoice_status = $this->db->get(db_prefix() . 'invoices')->row()->status;
+			}
+			echo json_encode($data);
+		}
+	}
 
-    /**
-     * delete packing list
-     * @param  [type] $id 
-     * @return [type]     
-     */
-    public function delete_packing_list($id) {
+	/**
+	 * delete packing list
+	 * @param  [type] $id 
+	 * @return [type]     
+	 */
+	public function delete_packing_list($id)
+	{
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -7196,7 +7090,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['packing_list_detail'] = $this->warehouse_model->get_packing_list_detail($id);
 		$data['packing_list'] = $this->warehouse_model->get_packing_list($id);
 		$data['packing_list']->client = $this->clients_model->get($data['packing_list']->clientid);
-		$data['activity_log'] = $this->warehouse_model->wh_get_activity_log($id,'packing_list');
+		$data['activity_log'] = $this->warehouse_model->wh_get_activity_log($id, 'packing_list');
 
 		$data['title'] = _l('wh_packing_list');
 		$check_appr = $this->warehouse_model->get_approve_setting('5');
@@ -7207,7 +7101,6 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['base_currency'] = $base_currency;
 
 		$this->load->view('packing_lists/view_packing_list', $data);
-
 	}
 
 	/**
@@ -7217,16 +7110,16 @@ if(strlen($data['inventory_filter']) > 0){
 	public function packing_list_check_before_approval()
 	{
 		$data = $this->input->post();
-			// packing list
-			//check before send request approval
+		// packing list
+		//check before send request approval
 		$check_packing_list_send_request = $this->warehouse_model->check_packing_list_send_request($data);
-		if($check_packing_list_send_request['flag_update_status']){
+		if ($check_packing_list_send_request['flag_update_status']) {
 			echo json_encode([
 				'success' => true,
 				'message' => '',
 			]);
 			die;
-		}else{
+		} else {
 			$message = $check_packing_list_send_request['str_error'];
 			$success = false;
 			echo json_encode([
@@ -7258,12 +7151,11 @@ if(strlen($data['inventory_filter']) > 0){
 		$packing_list->tax_data = $this->warehouse_model->get_html_tax_packing_list($id);
 
 
-		if($packing_list){
-			$packing_list_number .= $packing_list->packing_list_number.' - '.$packing_list->packing_list_name;
+		if ($packing_list) {
+			$packing_list_number .= $packing_list->packing_list_number . ' - ' . $packing_list->packing_list_name;
 		}
 		try {
 			$pdf = $this->warehouse_model->packing_list_pdf($packing_list);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -7280,7 +7172,7 @@ if(strlen($data['inventory_filter']) > 0){
 			$type = 'I';
 		}
 
-		$pdf->Output(mb_strtoupper(slug_it($packing_list_number)).'.pdf', $type);
+		$pdf->Output(mb_strtoupper(slug_it($packing_list_number)) . '.pdf', $type);
 	}
 
 	/**
@@ -7329,38 +7221,38 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['shipment']          = $shipment;
 		$data['order_id']          = $id;
 
-		if($data['cart']->number_invoice != ''){
+		if ($data['cart']->number_invoice != '') {
 			$data['invoice'] = $this->omni_sales_model->get_invoice($data['cart']->number_invoice);
 		}
-		 
+
 		//get activity log
 		$data['arr_activity_logs'] = $this->warehouse_model->wh_get_shipment_activity_log($shipment->id);
 		$wh_shipment_status = wh_shipment_status();
-		$shipment_staus_order='';
+		$shipment_staus_order = '';
 		foreach ($wh_shipment_status as $shipment_status) {
-			if($shipment_status['name'] ==  $data['shipment']->shipment_status){
+			if ($shipment_status['name'] ==  $data['shipment']->shipment_status) {
 				$shipment_staus_order = $shipment_status['order'];
 			}
 		}
 
 		foreach ($wh_shipment_status as $shipment_status) {
-			if((int)$shipment_status['order'] <= (int)$shipment_staus_order){
+			if ((int)$shipment_status['order'] <= (int)$shipment_staus_order) {
 				$data[$shipment_status['name']] = ' completed';
-			}else{
+			} else {
 				$data[$shipment_status['name']] = '';
 			}
 		}
 		$data['shipment_staus_order'] = $shipment_staus_order;
 
 		//get delivery note
-		if(is_numeric($data['cart']->stock_export_number)){
+		if (is_numeric($data['cart']->stock_export_number)) {
 			$this->db->where('id', $data['cart']->stock_export_number);
 			$data['goods_delivery'] = $this->db->get(db_prefix() . 'goods_delivery')->result_array();
 			$data['packing_lists'] = $this->warehouse_model->get_packing_list_by_deivery_note($data['cart']->stock_export_number);
 
 			//update goods delivery id
 			$this->db->where('cart_id', $data['cart']->id);
-			$this->db->update(db_prefix().'wh_omni_shipments', ['goods_delivery_id' => $data['cart']->stock_export_number]);
+			$this->db->update(db_prefix() . 'wh_omni_shipments', ['goods_delivery_id' => $data['cart']->stock_export_number]);
 		}
 
 		$this->load->view('shipments/shipment_detail', $data);
@@ -7375,17 +7267,17 @@ if(strlen($data['inventory_filter']) > 0){
 		if ($this->input->is_ajax_request()) {
 			$request_data = $this->input->get();
 
-			$data=[];
+			$data = [];
 			$data['shipment_id'] = $request_data['shipment_id'];
 			$data['id'] = $request_data['id'];
 			$data['cart_id'] = $request_data['cart_id'];
 			$allow_attachment = false;
 
 			$get_shipment_by_order = $this->warehouse_model->get_shipment_by_order($request_data['cart_id']);
-			if($get_shipment_by_order && $get_shipment_by_order->shipment_status == 'product_dispatched'){
+			if ($get_shipment_by_order && $get_shipment_by_order->shipment_status == 'product_dispatched') {
 				$allow_attachment = true;
 			}
-			if($request_data['id'] != ''){
+			if ($request_data['id'] != '') {
 
 				$data['activity_log'] = $this->warehouse_model->wh_get_activity_log_by_id($request_data['id']);
 
@@ -7400,7 +7292,7 @@ if(strlen($data['inventory_filter']) > 0){
 
 						$images_old_value .= '<div class="dz-image">';
 						if (file_exists(WAREHOUSE_SHIPMENT_UPLOAD . $value["rel_id"] . '/' . $value["file_name"])) {
-							$images_old_value .= '<a  class="images_w_table" target="blank_page" href="'.site_url('modules/warehouse/uploads/shipments/' . $value["rel_id"] . '/' . $value["file_name"]).'"><img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/warehouse/uploads/shipments/' . $value["rel_id"] . '/' . $value["file_name"]) . '"></a>';
+							$images_old_value .= '<a  class="images_w_table" target="blank_page" href="' . site_url('modules/warehouse/uploads/shipments/' . $value["rel_id"] . '/' . $value["file_name"]) . '"><img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/warehouse/uploads/shipments/' . $value["rel_id"] . '/' . $value["file_name"]) . '"></a>';
 						}
 
 						if ($rel_type != '') {
@@ -7411,9 +7303,9 @@ if(strlen($data['inventory_filter']) > 0){
 							$images_old_value .= '</a>';
 							$images_old_value .= '</div>';
 
-							if(get_staff_user_id() == $value['staffid'] || is_admin()){
+							if (get_staff_user_id() == $value['staffid'] || is_admin()) {
 								$images_old_value .= '<div class="remove_file">';
-								$images_old_value .= '<a href="#" class="text-danger" onclick="delete_product_attachment(this,' . $value["id"] . ','.'\''.$rel_type.'\'); return false;"><i class="fa fa fa-times"></i></a>';
+								$images_old_value .= '<a href="#" class="text-danger" onclick="delete_product_attachment(this,' . $value["id"] . ',' . '\'' . $rel_type . '\'); return false;"><i class="fa fa fa-times"></i></a>';
 								$images_old_value .= '</div>';
 							}
 
@@ -7439,21 +7331,21 @@ if(strlen($data['inventory_filter']) > 0){
 	 */
 	public function shipment_add_edit_activity_log()
 	{
-		if($this->input->post()){
+		if ($this->input->post()) {
 			$data = $this->input->post();
 			if (!has_permission('warehouse', '', 'edit') && !is_admin() && !has_permission('warehouse', '', 'create')) {
 				access_denied('warehouse');
 			}
 
 			$cart_id = '';
-			if($data['id'] == ''){
+			if ($data['id'] == '') {
 				unset($data['id']);
 				$cart_id = $data['cart_id'];
 				unset($data['cart_id']);
 				$date = to_sql_date($data['date'], true);
 				$result =  $this->warehouse_model->log_wh_activity($data['rel_id'], 'shipment', $data['description'], $date);
 
-				if($result){
+				if ($result) {
 					echo json_encode([
 						'url'       => admin_url('warehouse/shipment_detail/' . $cart_id),
 						'shipment_log_id' => $result,
@@ -7463,11 +7355,10 @@ if(strlen($data['inventory_filter']) > 0){
 				}
 
 				echo json_encode([
-					'url' => admin_url('warehouse/shipment_detail/'.$cart_id),
+					'url' => admin_url('warehouse/shipment_detail/' . $cart_id),
 				]);
 				die;
-			}
-			else{
+			} else {
 				$cart_id = $data['cart_id'];
 				unset($data['cart_id']);
 				$data['date'] = to_sql_date($data['date'], true);
@@ -7480,10 +7371,10 @@ if(strlen($data['inventory_filter']) > 0){
 				]);
 				die;
 
-				if($result){
+				if ($result) {
 					set_alert('success', _l('updated_successfully'));
 				}
-				redirect(admin_url('warehouse/shipment_detail/'.$cart_id));
+				redirect(admin_url('warehouse/shipment_detail/' . $cart_id));
 			}
 		}
 	}
@@ -7496,37 +7387,37 @@ if(strlen($data['inventory_filter']) > 0){
 	 * @return [type]              
 	 */
 	public function update_shipment_status($status, $shipment_id, $cart_id)
-	{	
+	{
 		$this->db->where('id', $shipment_id);
-		$this->db->update(db_prefix().'wh_omni_shipments', ['shipment_status' => $status]);
+		$this->db->update(db_prefix() . 'wh_omni_shipments', ['shipment_status' => $status]);
 
 		//update delivery note
 		$this->load->model('omni_sales/omni_sales_model');
 		$cart = $this->omni_sales_model->get_cart($cart_id);
-		if($cart){
-			if(is_numeric($cart->stock_export_number)){
+		if ($cart) {
+			if (is_numeric($cart->stock_export_number)) {
 				$arr_packing_list_id = [];
 				$new_status = 'delivery_in_progress';
 				//get packing list
 				$packing_lists = $this->warehouse_model->get_packing_list_by_deivery_note($cart->stock_export_number);
-				if(count($packing_lists) > 0){
+				if (count($packing_lists) > 0) {
 					foreach ($packing_lists as $value) {
-					    $arr_packing_list_id[] = $value['id'];
+						$arr_packing_list_id[] = $value['id'];
 					}
 				}
 
-				if($status == 'product_dispatched'){
+				if ($status == 'product_dispatched') {
 					$new_status = 'delivery_in_progress';
-				}elseif($status == 'product_delivered'){
+				} elseif ($status == 'product_delivered') {
 					$new_status = 'delivered';
 				}
 
 				$this->db->where('id', $cart->stock_export_number);
-				$this->db->update(db_prefix().'goods_delivery', ['delivery_status' => $new_status]);
+				$this->db->update(db_prefix() . 'goods_delivery', ['delivery_status' => $new_status]);
 
-				if(count($arr_packing_list_id) > 0){
-					$this->db->where('id IN ('.implode(',', $arr_packing_list_id).')');
-					$this->db->update(db_prefix().'wh_packing_lists', ['delivery_status' => $new_status]);
+				if (count($arr_packing_list_id) > 0) {
+					$this->db->where('id IN (' . implode(',', $arr_packing_list_id) . ')');
+					$this->db->update(db_prefix() . 'wh_packing_lists', ['delivery_status' => $new_status]);
 				}
 			}
 		}
@@ -7536,7 +7427,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$this->warehouse_model->log_wh_activity($shipment_id, 'shipment', $shipment_log);
 
 		set_alert('success', _l('updated_successfully'));
-		redirect(admin_url('warehouse/shipment_detail/'.$cart_id));
+		redirect(admin_url('warehouse/shipment_detail/' . $cart_id));
 	}
 
 	/**
@@ -7551,15 +7442,15 @@ if(strlen($data['inventory_filter']) > 0){
 			if ((isset($data)) && $data != '') {
 				$myContent = $this->input->get('myContent', false);
 				$status = update_option('wh_return_policies_information', $myContent, 1);
-				if($status){
+				if ($status) {
 					$message = _l('updated_successfully');
-				}else{
+				} else {
 					$message = _l('updated_failed');
 				}
 
 				echo json_encode([
 					'message' => $message,
-					'status' =>$status,
+					'status' => $status,
 				]);
 			}
 		}
@@ -7575,7 +7466,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['delivery_id'] = $id;
 		$data['title'] = _l('management_receiving_exporting_goods_returning_goods');
 
-		$data['from_date'] = _d(date('Y-m-d', strtotime( date('Y-m-d') . "-15 day")));
+		$data['from_date'] = _d(date('Y-m-d', strtotime(date('Y-m-d') . "-15 day")));
 		$data['to_date'] = _d(date('Y-m-d'));
 		$data['get_goods_delivery'] = $this->warehouse_model->get_goods_delivery(false);
 		$data['staffs'] = $this->warehouse_model->get_staff();
@@ -7595,7 +7486,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['delivery_id'] = $id;
 		$data['title'] = _l('wh_order_return_management');
 
-		$data['from_date'] = _d(date('Y-m-d', strtotime( date('Y-m-d') . "-15 day")));
+		$data['from_date'] = _d(date('Y-m-d', strtotime(date('Y-m-d') . "-15 day")));
 		$data['to_date'] = _d(date('Y-m-d'));
 		$data['get_goods_delivery'] = $this->warehouse_model->get_goods_delivery(false);
 		$data['staffs'] = $this->warehouse_model->get_staff();
@@ -7615,7 +7506,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['delivery_id'] = $id;
 		$data['title'] = _l('wh_order_return_management');
 
-		$data['from_date'] = _d(date('Y-m-d', strtotime( date('Y-m-d') . "-15 day")));
+		$data['from_date'] = _d(date('Y-m-d', strtotime(date('Y-m-d') . "-15 day")));
 		$data['to_date'] = _d(date('Y-m-d'));
 		$data['get_goods_delivery'] = $this->warehouse_model->get_goods_delivery(false);
 		$data['staffs'] = $this->warehouse_model->get_staff();
@@ -7631,7 +7522,8 @@ if(strlen($data['inventory_filter']) > 0){
 	 * @param  string $order_retrun_type : have 3 type "manual"; "sales_return_order"; "purchasing_return_order"
 	 * @return [type]                    
 	 */
-	public function order_return($receipt_delivery_type = 'manual', $id ='') {
+	public function order_return($receipt_delivery_type = 'manual', $id = '')
+	{
 		$order_return_type = 'manual';
 
 		$this->load->model('clients_model');
@@ -7641,16 +7533,16 @@ if(strlen($data['inventory_filter']) > 0){
 			$data = $this->input->post();
 
 			if (!$this->input->post('id')) {
-				if($order_return_type == 'manual'){
+				if ($order_return_type == 'manual') {
 					$mess = $this->warehouse_model->add_order_return($data, $data['rel_type']);
-				}elseif($order_return_type == 'sales_return_order'){
+				} elseif ($order_return_type == 'sales_return_order') {
 					$mess = $this->warehouse_model->add_order_return($data, $data['rel_type']);
-				}elseif($order_return_type == 'purchasing_return_order'){
+				} elseif ($order_return_type == 'purchasing_return_order') {
 					$mess = $this->warehouse_model->add_order_return($data, $data['rel_type']);
 				}
 
 				if ($mess) {
-					if($data['save_and_send_request'] == 'true'){
+					if ($data['save_and_send_request'] == 'true') {
 						$this->save_and_send_request_send_mail(['rel_id' => $mess, 'rel_type' => '6', 'addedfrom' => get_staff_user_id()]);
 					}
 					set_alert('success', _l('added_successfully'));
@@ -7658,20 +7550,19 @@ if(strlen($data['inventory_filter']) > 0){
 					set_alert('warning', _l('wh_add_order_return_failed'));
 				}
 
-				redirect(admin_url('warehouse/manage_order_return/'.$mess));
-
-			}else{
+				redirect(admin_url('warehouse/manage_order_return/' . $mess));
+			} else {
 				$id = $this->input->post('id');
 
-				if($order_return_type == 'manual'){
+				if ($order_return_type == 'manual') {
 					$mess = $this->warehouse_model->update_order_return($data, $data['rel_type'], $id);
-				}elseif($order_return_type == 'sales_return_order'){
+				} elseif ($order_return_type == 'sales_return_order') {
 					$mess = $this->warehouse_model->update_order_return($data, $data['rel_type'], $id);
-				}elseif($order_return_type == 'purchasing_return_order'){
+				} elseif ($order_return_type == 'purchasing_return_order') {
 					$mess = $this->warehouse_model->update_order_return($data, $data['rel_type'], $id);
 				}
 
-				if($data['save_and_send_request'] == 'true'){
+				if ($data['save_and_send_request'] == 'true') {
 					$this->save_and_send_request_send_mail(['rel_id' => $id, 'rel_type' => '6', 'addedfrom' => get_staff_user_id()]);
 				}
 
@@ -7680,21 +7571,20 @@ if(strlen($data['inventory_filter']) > 0){
 				} else {
 					set_alert('warning', _l('wh_update_order_return_failed'));
 				}
-				redirect(admin_url('warehouse/manage_order_return/'.$id));
+				redirect(admin_url('warehouse/manage_order_return/' . $id));
 			}
-
 		}
 		//get value render dropdown select
-		if($receipt_delivery_type == 'inventory_receipt'){
+		if ($receipt_delivery_type == 'inventory_receipt') {
 
 			$data['order_return_name_ex'] = 'RECEIPT_RETURN' . date('YmdHi');
 			$data['goods_code'] = $this->warehouse_model->create_order_return_code();
-		}else{
+		} else {
 			$data['order_return_name_ex'] = 'DELIVERY_RETURN' . date('YmdHi');
 			$data['goods_code'] = $this->warehouse_model->create_delivery_order_return_code();
-			if(get_status_modules_wh('purchase')){
+			if (get_status_modules_wh('purchase')) {
 				$data['vendor_data'] = $this->warehouse_model->get_vendor();
-			}else{
+			} else {
 				$data['vendor_data'] = [];
 			}
 		}
@@ -7708,7 +7598,7 @@ if(strlen($data['inventory_filter']) > 0){
 			$data['ajaxItems'] = true;
 		}
 
-        //sample
+		//sample
 		$order_return_row_template = $this->warehouse_model->create_order_return_row_template($receipt_delivery_type);
 		$data['goods_deliveries'] = $this->warehouse_model->packing_list_get_goods_delivery();
 		$data['clients'] = $this->clients_model->get();
@@ -7716,26 +7606,25 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['staffs'] = $this->warehouse_model->get_staff();
 		$data['current_day'] = date('Y-m-d');
 
-		if($id != ''){
+		if ($id != '') {
 			$order_return = $this->warehouse_model->get_order_return($id);
 
 			// if($receipt_delivery_type == 'inventory_receipt'){
-			if($order_return->receipt_delivery_type == 'inventory_receipt_voucher_returned_goods'){
+			if ($order_return->receipt_delivery_type == 'inventory_receipt_voucher_returned_goods') {
 				$receipt_delivery_type = 'inventory_receipt_voucher_returned_goods';
 				$data['title'] = _l('wh_edit_inventory_receipt_voucher_returned_goods');
 
 				//get related data
 
-				$data['order_return_get_inventory_delivery'] = $this->warehouse_model->order_return_get_inventory_delivery(); 
-				$data['order_return_get_sale_order'] = $this->warehouse_model->order_return_get_sale_order(); 
-
-			}else{
+				$data['order_return_get_inventory_delivery'] = $this->warehouse_model->order_return_get_inventory_delivery();
+				$data['order_return_get_sale_order'] = $this->warehouse_model->order_return_get_sale_order();
+			} else {
 				$receipt_delivery_type = 'inventory_delivery_voucher_returned_purchasing_goods';
 				$data['title'] = _l('wh_edit_inventory_delivery_voucher_returned_purchasing_goods');
 
 				//get related data
-				$data['order_return_get_inventory_receipt'] = $this->warehouse_model->order_return_get_inventory_receipt(); 
-				$data['order_return_get_purchasing_order'] = $this->warehouse_model->order_return_get_purchasing_order(); 
+				$data['order_return_get_inventory_receipt'] = $this->warehouse_model->order_return_get_inventory_receipt();
+				$data['order_return_get_purchasing_order'] = $this->warehouse_model->order_return_get_purchasing_order();
 			}
 
 
@@ -7754,32 +7643,30 @@ if(strlen($data['inventory_filter']) > 0){
 					$expiry_date = null;
 					$lot_number = null;
 					$commodity_name = $order_return_detail['commodity_name'];
-					
-					if(strlen($commodity_name) == 0){
+
+					if (strlen($commodity_name) == 0) {
 						$commodity_name = wh_get_item_variatiom($order_return_detail['commodity_code']);
 					}
 
-					$order_return_row_template .= $this->warehouse_model->create_order_return_row_template($order_return->rel_type, $order_return_detail['rel_type_detail_id'], 'items[' . $index_receipt . ']', $commodity_name, $order_return_detail['quantity'], $unit_name, $order_return_detail['unit_price'], $taxname, $order_return_detail['commodity_code'], $order_return_detail['unit_id'] , $order_return_detail['tax_rate'], $order_return_detail['total_amount'], $order_return_detail['discount'], $order_return_detail['discount_total'], $order_return_detail['total_after_discount'], $order_return_detail['reason_return'], $order_return_detail['sub_total'],$order_return_detail['tax_name'],$order_return_detail['tax_id'], $order_return_detail['id'], true);
-					
+					$order_return_row_template .= $this->warehouse_model->create_order_return_row_template($order_return->rel_type, $order_return_detail['rel_type_detail_id'], 'items[' . $index_receipt . ']', $commodity_name, $order_return_detail['quantity'], $unit_name, $order_return_detail['unit_price'], $taxname, $order_return_detail['commodity_code'], $order_return_detail['unit_id'], $order_return_detail['tax_rate'], $order_return_detail['total_amount'], $order_return_detail['discount'], $order_return_detail['discount_total'], $order_return_detail['total_after_discount'], $order_return_detail['reason_return'], $order_return_detail['sub_total'], $order_return_detail['tax_name'], $order_return_detail['tax_id'], $order_return_detail['id'], true);
 				}
 			}
-		}else{
-			if($receipt_delivery_type == 'inventory_receipt'){
+		} else {
+			if ($receipt_delivery_type == 'inventory_receipt') {
 				$receipt_delivery_type = 'inventory_receipt_voucher_returned_goods';
 				$data['title'] = _l('wh_add_inventory_receipt_voucher_returned_goods');
 
 				//get related data
 
-				$data['order_return_get_inventory_delivery'] = $this->warehouse_model->order_return_get_inventory_delivery(); 
-				$data['order_return_get_sale_order'] = $this->warehouse_model->order_return_get_sale_order(); 
-				
-			}else{
+				$data['order_return_get_inventory_delivery'] = $this->warehouse_model->order_return_get_inventory_delivery();
+				$data['order_return_get_sale_order'] = $this->warehouse_model->order_return_get_sale_order();
+			} else {
 				$receipt_delivery_type = 'inventory_delivery_voucher_returned_purchasing_goods';
 				$data['title'] = _l('wh_add_inventory_delivery_voucher_returned_purchasing_goods');
 
 				//get related data
-				$data['order_return_get_inventory_receipt'] = $this->warehouse_model->order_return_get_inventory_receipt(); 
-				$data['order_return_get_purchasing_order'] = $this->warehouse_model->order_return_get_purchasing_order(); 
+				$data['order_return_get_inventory_receipt'] = $this->warehouse_model->order_return_get_inventory_receipt();
+				$data['order_return_get_purchasing_order'] = $this->warehouse_model->order_return_get_purchasing_order();
 			}
 		}
 
@@ -7788,14 +7675,13 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['order_return_type'] = $order_return_type;
 		$data['receipt_delivery_type'] = $receipt_delivery_type;
 		$get_base_currency =  get_base_currency();
-		if($get_base_currency){
+		if ($get_base_currency) {
 			$data['base_currency_id'] = $get_base_currency->id;
-		}else{
+		} else {
 			$data['base_currency_id'] = 0;
 		}
 
 		$this->load->view('order_returns/add_edit_order_return', $data);
-
 	}
 
 	/**
@@ -7825,8 +7711,7 @@ if(strlen($data['inventory_filter']) > 0){
 		$discount = $this->input->post('discount');
 		$item_key = $this->input->post('item_key');
 
-		echo $this->warehouse_model->create_order_return_row_template('manual', '', $name, $commodity_name, $quantity, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $tax_rate, '', $discount, '', '','', '', '', '', $item_key );
-
+		echo $this->warehouse_model->create_order_return_row_template('manual', '', $name, $commodity_name, $quantity, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $tax_rate, '', $discount, '', '', '', '', '', '', $item_key);
 	}
 
 	/**
@@ -7841,25 +7726,25 @@ if(strlen($data['inventory_filter']) > 0){
 
 			$phonenumber = '';
 			$email = '';
-			if($rel_type == 'inventory_delivery_voucher_returned_purchasing_goods'){
-				if(get_status_modules_wh('purchase')){
+			if ($rel_type == 'inventory_delivery_voucher_returned_purchasing_goods') {
+				if (get_status_modules_wh('purchase')) {
 					$this->load->model('purchase/purchase_model');
 					$vendor = $this->purchase_model->get_vendor($customer_id);
-					if($vendor){
+					if ($vendor) {
 						$phonenumber = $vendor->phonenumber;
 						$contacts = $this->purchase_model->get_contacts($customer_id);
-						if(count($contacts) > 0){
+						if (count($contacts) > 0) {
 							$email = $contacts[0]['email'];
 						}
 					}
 				}
-			}else{
+			} else {
 
 				$client = $this->clients_model->get($customer_id);
-				if($client){
+				if ($client) {
 					$phonenumber = $client->phonenumber;
 					$contacts = $this->clients_model->get_contacts($customer_id);
-					if(count($contacts) > 0){
+					if (count($contacts) > 0) {
 						$email = $contacts[0]['email'];
 					}
 				}
@@ -7883,7 +7768,7 @@ if(strlen($data['inventory_filter']) > 0){
 		if ($this->input->is_ajax_request()) {
 			$data = $this->input->post();
 			$results = $this->warehouse_model->order_return_get_related_data_detail($data);
-			
+
 			echo json_encode($results);
 		}
 	}
@@ -7893,9 +7778,10 @@ if(strlen($data['inventory_filter']) > 0){
 	 * @param  [type] $id 
 	 * @return [type]     
 	 */
-	public function delete_order_return($id) {
+	public function delete_order_return($id)
+	{
 
-		if(!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
+		if (!has_permission('warehouse', '', 'delete')  &&  !is_admin()) {
 			access_denied('warehouse');
 		}
 
@@ -7935,7 +7821,7 @@ if(strlen($data['inventory_filter']) > 0){
 
 		$data['order_return_detail'] = $this->warehouse_model->get_order_return_detail($id);
 		$data['order_return'] = $this->warehouse_model->get_order_return($id);
-		$data['activity_log'] = $this->warehouse_model->wh_get_activity_log($id,'order_return');
+		$data['activity_log'] = $this->warehouse_model->wh_get_activity_log($id, 'order_return');
 
 		$data['title'] = _l('wh_order_return');
 		$check_appr = $this->warehouse_model->get_approve_setting('6');
@@ -7946,7 +7832,6 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['base_currency'] = $base_currency;
 
 		$this->load->view('order_returns/view_order_return', $data);
-
 	}
 
 	/**
@@ -7956,16 +7841,15 @@ if(strlen($data['inventory_filter']) > 0){
 	public function order_return_check_before_approval()
 	{
 		$data = $this->input->post();
-			// packing list
-			//check before send request approval
-		if( $data['order_rel_type'] == 'manual' || $data['order_rel_type'] == 'i_purchasing_return_order' ){
+		// packing list
+		//check before send request approval
+		if ($data['order_rel_type'] == 'manual' || $data['order_rel_type'] == 'i_purchasing_return_order') {
 			echo json_encode([
 				'success' => true,
 				'message' => '',
 			]);
 			die;
 		}
-
 	}
 
 	/**
@@ -7990,12 +7874,11 @@ if(strlen($data['inventory_filter']) > 0){
 		$order_return->clientid = $order_return->company_id;
 
 
-		if($order_return){
-			$order_return_number .= $order_return->order_return_number.' - '.$order_return->order_return_name;
+		if ($order_return) {
+			$order_return_number .= $order_return->order_return_number . ' - ' . $order_return->order_return_name;
 		}
 		try {
 			$pdf = $this->warehouse_model->order_return_pdf($order_return);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -8012,7 +7895,7 @@ if(strlen($data['inventory_filter']) > 0){
 			$type = 'I';
 		}
 
-		$pdf->Output(mb_strtoupper(slug_it($order_return_number)).'.pdf', $type);
+		$pdf->Output(mb_strtoupper(slug_it($order_return_number)) . '.pdf', $type);
 	}
 
 	/**
@@ -8027,10 +7910,10 @@ if(strlen($data['inventory_filter']) > 0){
 			$status = false;
 			$message = '';
 			$value = $this->warehouse_model->get_commodity_hansometable_by_barcode($barcode);
-			if(isset($value)){
+			if (isset($value)) {
 				$id = $value->id;
 				$status = true;
-				$message = $value->commodity_barcode.': '.$value->commodity_code.' - '.$value->description;
+				$message = $value->commodity_barcode . ': ' . $value->commodity_code . ' - ' . $value->description;
 			}
 			echo json_encode([
 				"id" => $id,
@@ -8056,7 +7939,7 @@ if(strlen($data['inventory_filter']) > 0){
 		}
 
 		//check warehouse receive return order, if not set => create new warehouse, set default receive return order
-		if(!get_option('warehouse_receive_return_order')){
+		if (!get_option('warehouse_receive_return_order')) {
 			$warehouse = [];
 			$warehouse = [
 				'warehouse_code' => 'WH_RECEIVE',
@@ -8074,23 +7957,21 @@ if(strlen($data['inventory_filter']) > 0){
 			$this->warehouse_model->update_goods_receipt_warehouse(['input_name' => 'warehouse_receive_return_order', 'input_name_status' => $warehouse_id]);
 		}
 
-		if($order_return->rel_type == 'manual'){
+		if ($order_return->rel_type == 'manual') {
 			$receipt_id = $this->warehouse_model->order_return_create_stock_import($order_return_id);
-			redirect(admin_url('warehouse/manage_purchase/'.$receipt_id));
-
-		}elseif($order_return->rel_type == 'sales_return_order'){
+			redirect(admin_url('warehouse/manage_purchase/' . $receipt_id));
+		} elseif ($order_return->rel_type == 'sales_return_order') {
 			$receipt_id = $this->warehouse_model->sales_return_order_create_stock_import($order_return_id);
-			redirect(admin_url('warehouse/manage_purchase/'.$receipt_id));
-
-		}elseif($order_return->rel_type == 'purchasing_return_order'){
+			redirect(admin_url('warehouse/manage_purchase/' . $receipt_id));
+		} elseif ($order_return->rel_type == 'purchasing_return_order') {
 			$data = $this->input->post();
 			$warehouse_id = $data['warehouse_id'];
-			
+
 			$delivery_id = $this->warehouse_model->purchasing_return_order_create_stock_export($order_return_id, $warehouse_id);
-			redirect(admin_url('warehouse/manage_delivery/'.$delivery_id));
+			redirect(admin_url('warehouse/manage_delivery/' . $delivery_id));
 		}
 	}
-	
+
 	/**
 	 * order return get related data
 	 * @return [type] 
@@ -8148,12 +8029,12 @@ if(strlen($data['inventory_filter']) > 0){
 		}
 
 		$data = $this->input->post();
-		if(!isset($data['newitems'])){
-			redirect(admin_url('warehouse/manage_order_return#'.$order_return_id));
+		if (!isset($data['newitems'])) {
+			redirect(admin_url('warehouse/manage_order_return#' . $order_return_id));
 		}
 
 		$delivery_id = $this->warehouse_model->purchasing_return_order_create_stock_export($order_return_id, $data);
-		redirect(admin_url('warehouse/manage_delivery/'.$delivery_id));
+		redirect(admin_url('warehouse/manage_delivery/' . $delivery_id));
 	}
 
 	/**
@@ -8169,20 +8050,19 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['title'] = _l('wh_enter_the_serial_number');
 		$slug = $this->input->post('slug');
 
-		if($slug == 'add'){
+		if ($slug == 'add') {
 			$quantity = $this->input->post('quantity');
 			$prefix_name = $this->input->post('prefix_name');
-
-		}else{
+		} else {
 			$serial_data = [];
 			$serial_input_value = $this->input->post('serial_input_value');
 			$serial_input_value = explode(',', $serial_input_value);
 
-			if(count($serial_input_value) > 0){
+			if (count($serial_input_value) > 0) {
 				foreach ($serial_input_value as $value) {
-					if($value != 'null'){
+					if ($value != 'null') {
 						$serial_data[] = ['serial_number' => $value];
-					}else{
+					} else {
 						$serial_data[] = ['serial_number' => ''];
 					}
 				}
@@ -8213,20 +8093,19 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['title'] = _l('Enter_the_serial_number_of_the_damaged_or_lost_product_otherwise_the_system_will_automatically_get_a_random_serial_number');
 		$slug = $this->input->post('slug');
 
-		if($slug == 'add'){
+		if ($slug == 'add') {
 			$quantity = $this->input->post('quantity');
 			$prefix_name = $this->input->post('prefix_name');
-
-		}else{
+		} else {
 			$serial_data = [];
 			$serial_input_value = $this->input->post('serial_input_value');
 			$serial_input_value = explode(',', $serial_input_value);
 
-			if(count($serial_input_value) > 0){
+			if (count($serial_input_value) > 0) {
 				foreach ($serial_input_value as $value) {
-				    if($value != 'null'){
+					if ($value != 'null') {
 						$serial_data[] = ['serial_number' => $value];
-					}else{
+					} else {
 						$serial_data[] = ['serial_number' => ''];
 					}
 				}
@@ -8258,20 +8137,19 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['title'] = _l('wh_enter_the_serial_number');
 		$slug = $this->input->post('slug');
 
-		if($slug == 'add'){
+		if ($slug == 'add') {
 			$quantity = $this->input->post('quantity');
 			$prefix_name = $this->input->post('prefix_name');
-
-		}else{
+		} else {
 			$serial_data = [];
 			$serial_input_value = $this->input->post('serial_input_value');
 			$serial_input_value = explode(',', $serial_input_value);
 
-			if(count($serial_input_value) > 0){
+			if (count($serial_input_value) > 0) {
 				foreach ($serial_input_value as $value) {
-				    if($value != 'null'){
+					if ($value != 'null') {
 						$serial_data[] = ['serial_number' => $value];
-					}else{
+					} else {
 						$serial_data[] = ['serial_number' => ''];
 					}
 				}
@@ -8316,12 +8194,12 @@ if(strlen($data['inventory_filter']) > 0){
 		$data['title'] = _l('wh_serial_numbers');
 
 		$data['ajaxItems'] = false;
-        if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
-            $data['items'] = $this->warehouse_model->wh_get_grouped('', true);
-        } else {
-            $data['items']     = [];
-            $data['ajaxItems'] = true;
-        }
+		if (total_rows(db_prefix() . 'items') <= wh_ajax_on_total_items()) {
+			$data['items'] = $this->warehouse_model->wh_get_grouped('', true);
+		} else {
+			$data['items']     = [];
+			$data['ajaxItems'] = true;
+		}
 
 		$this->load->view('serial_numbers/manage_commodity', $data);
 	}
@@ -8344,48 +8222,48 @@ if(strlen($data['inventory_filter']) > 0){
 		if (!is_staff_member()) {
 			ajax_access_denied();
 		}
-		if(!class_exists('XLSXReader_fin')){
-			require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXReader/XLSXReader.php');
+		if (!class_exists('XLSXReader_fin')) {
+			require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
 		}
-		require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+		require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
 
 		if ($this->input->post()) {
 
 			/*delete export file before export file*/
-			$path_before = COMMODITY_EXPORT.'item_serial_numbers'.get_staff_user_id().'.xlsx';
-			if(file_exists($path_before)){
-				unlink(COMMODITY_EXPORT.'item_serial_numbers'.get_staff_user_id().'.xlsx');
+			$path_before = COMMODITY_EXPORT . 'item_serial_numbers' . get_staff_user_id() . '.xlsx';
+			if (file_exists($path_before)) {
+				unlink(COMMODITY_EXPORT . 'item_serial_numbers' . get_staff_user_id() . '.xlsx');
 			}
 
 			$ids                   = $this->input->post('ids');
 
-   			//Writer file
+			//Writer file
 			$writer_header = array(
-				"(*)" ._l('id')          =>'string',
-				"(*)" ._l('commodity_id')          =>'string',
-				"(*)" ._l('warehouse_id')          =>'string',
-				"(*)" ._l('inventory_manage_id')          =>'string',
-				"(*)" ._l('commodity_name')          =>'string',
-				"(*)" ._l('wh_serial_number')          =>'string',
+				"(*)" . _l('id')          => 'string',
+				"(*)" . _l('commodity_id')          => 'string',
+				"(*)" . _l('warehouse_id')          => 'string',
+				"(*)" . _l('inventory_manage_id')          => 'string',
+				"(*)" . _l('commodity_name')          => 'string',
+				"(*)" . _l('wh_serial_number')          => 'string',
 			);
 
 			$widths_arr = array();
-			for($i = 1; $i <= count($writer_header); $i++ ){
+			for ($i = 1; $i <= count($writer_header); $i++) {
 				$widths_arr[] = 40;
 			}
 
 			$writer = new XLSXWriter();
 
-			$col_style1 =[0,1,2,3,4];
-			$style1 = ['widths'=> $widths_arr, 'fill' => '#ff9800',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ];
+			$col_style1 = [0, 1, 2, 3, 4];
+			$style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
 
-			$writer->writeSheetHeader_v2('Item Serial Numbers', $writer_header,  $col_options = ['widths'=> $widths_arr, 'fill' => '#03a9f46b',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ], $col_style1, $style1);
+			$writer->writeSheetHeader_v2('Item Serial Numbers', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#03a9f46b',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
 
 
-	        // Add some data
-			$x= 2;
-			if(isset($ids)){
-				if(count($ids) > 0){
+			// Add some data
+			$x = 2;
+			if (isset($ids)) {
+				if (count($ids) > 0) {
 					//get item serial number by parent id
 					$arr_serial_numbers = [];
 					$arr_items = [];
@@ -8393,27 +8271,26 @@ if(strlen($data['inventory_filter']) > 0){
 					$list_serial_numbers = get_list_serial_number_by_ids($ids);
 					$list_items = get_list_items_by_parent_ids($ids);
 					foreach ($list_items as $value) {
-					    $arr_items[$value['id']] = $value['description'];
+						$arr_items[$value['id']] = $value['description'];
 					}
 
 					foreach ($list_serial_numbers as $value) {
-					    $arr_serial_numbers[$value['inventory_manage_id']][$value['commodity_id']][$value['warehouse_id']][] = [
-					    	'serial_number' => $value['serial_number'],
-					    	'id' => $value['id'],
-					    ];
+						$arr_serial_numbers[$value['inventory_manage_id']][$value['commodity_id']][$value['warehouse_id']][] = [
+							'serial_number' => $value['serial_number'],
+							'id' => $value['id'],
+						];
 					}
 
 					foreach ($list_inventory as $value) {
-						for ($i=0; $i < (int)$value['inventory_number'] ; $i++) { 
-							if(isset($arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']]) && count($arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']]) > 0){
+						for ($i = 0; $i < (int)$value['inventory_number']; $i++) {
+							if (isset($arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']]) && count($arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']]) > 0) {
 
 								$first_key = array_key_first($arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']]);
 								$first_value = $arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']][$first_key];
 								$serial_number = $first_value['serial_number'];
 								$id = $first_value['id'];
 								unset($arr_serial_numbers[$value['id']][$value['commodity_id']][$value['warehouse_id']][$first_key]);
-
-							}else{
+							} else {
 								$serial_number = '';
 								$id = 0;
 							}
@@ -8429,56 +8306,57 @@ if(strlen($data['inventory_filter']) > 0){
 						}
 					}
 				}
-
 			}
 
-	        // Rename worksheet
+			// Rename worksheet
 
-	        // Redirect output to a client’s web browser (Excel2007)
+			// Redirect output to a client’s web browser (Excel2007)
 			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 			header('Content-Disposition: attachment;filename="inventory_items_sheet.xlsx"');
 			header('Cache-Control: max-age=0');
 
-	        // If you're serving to IE 9, then the following may be needed
+			// If you're serving to IE 9, then the following may be needed
 			header('Cache-Control: max-age=1');
 
-	        // If you're serving to IE over SSL, then the following may be needed
-	        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-	        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-	        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-	        header('Pragma: public'); // HTTP/1.0
+			// If you're serving to IE over SSL, then the following may be needed
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+			header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header('Pragma: public'); // HTTP/1.0
 
-	        $filename = 'item_serial_numbers'.get_staff_user_id().strtotime(date('Y-m-d H:i:s')).'.xlsx';
-	        $writer->writeToFile(str_replace($filename, WAREHOUSE_EXPORT_ITEM.$filename, $filename));
+			$filename = 'item_serial_numbers' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+			$writer->writeToFile(str_replace($filename, WAREHOUSE_EXPORT_ITEM . $filename, $filename));
 
-	        echo json_encode(['success' => true,
-	        	'filename' => WAREHOUSE_EXPORT_ITEM.$filename,
-	        ]);
+			echo json_encode([
+				'success' => true,
+				'filename' => WAREHOUSE_EXPORT_ITEM . $filename,
+			]);
 
-	        exit;
-	    }
+			exit;
+		}
 	}
 
 	/**
 	 * import_serial_number
 	 * @return [type] 
 	 */
-	public function import_serial_number_excel() {
+	public function import_serial_number_excel()
+	{
 		if (!is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied(_l('warehouse'));
 		}
 
-		if(!class_exists('XLSXReader_fin')){
-			require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXReader/XLSXReader.php');
+		if (!class_exists('XLSXReader_fin')) {
+			require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
 		}
-		require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+		require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
 
 		$total_row_false = 0;
 		$total_rows_data = 0;
 		$dataerror = 0;
 		$total_row_success = 0;
 		$total_rows_data_error = 0;
-		$filename='';
+		$filename = '';
 
 		if ($this->input->post()) {
 
@@ -8509,30 +8387,30 @@ if(strlen($data['inventory_filter']) > 0){
 
 						//Writer file
 						$writer_header = array(
-							"(*)" ._l('id')          =>'string',
-							"(*)" ._l('commodity_id')          =>'string',
-							"(*)" ._l('warehouse_id')          =>'string',
-							"(*)" ._l('inventory_manage_id')          =>'string',
-							"(*)" ._l('commodity_name')          =>'string',
-							"(*)" ._l('wh_serial_number')          =>'string',
-							_l('error')                     =>'string',
+							"(*)" . _l('id')          => 'string',
+							"(*)" . _l('commodity_id')          => 'string',
+							"(*)" . _l('warehouse_id')          => 'string',
+							"(*)" . _l('inventory_manage_id')          => 'string',
+							"(*)" . _l('commodity_name')          => 'string',
+							"(*)" . _l('wh_serial_number')          => 'string',
+							_l('error')                     => 'string',
 						);
 
 						$widths_arr = array();
-						for($i = 1; $i <= count($writer_header); $i++ ){
+						for ($i = 1; $i <= count($writer_header); $i++) {
 							$widths_arr[] = 40;
 						}
 
 						$writer = new XLSXWriter();
 
-						$col_style1 =[0,1,2,3,4,5,6];
-						$style1 = ['widths'=> $widths_arr, 'fill' => '#ff9800',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ];
+						$col_style1 = [0, 1, 2, 3, 4, 5, 6];
+						$style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
 
-						$writer->writeSheetHeader_v2('Item Serial Numbers', $writer_header,  $col_options = ['widths'=> $widths_arr, 'fill' => '#03a9f46b',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ], $col_style1, $style1);
+						$writer->writeSheetHeader_v2('Item Serial Numbers', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#03a9f46b',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
 
 						//init file error end
 
-                        //Reader file
+						//Reader file
 						$xlsx = new XLSXReader_fin($newFilePath);
 						$sheetNames = $xlsx->getSheetNames();
 						$data = $xlsx->getSheetData($sheetNames[1]);
@@ -8557,12 +8435,12 @@ if(strlen($data['inventory_filter']) > 0){
 							$flag_id_commodity_code;
 							$flag_id_warehouse_code;
 
-							$value_cell_id = isset($data[$row][0]) ? $data[$row][0] : null ;
-							$value_cell_commodity_id = isset($data[$row][1]) ? $data[$row][1] : null ;
-							$value_cell_warehouse_id = isset($data[$row][2]) ? $data[$row][2] : '' ;
-							$value_cell_inventory_manage_id = isset($data[$row][3]) ? $data[$row][3] : '' ;
-							$value_cell_commodity_name = isset($data[$row][4]) ? $data[$row][4] : null ;
-							$value_cell_serial_number = isset($data[$row][5]) ? $data[$row][5] : null ;
+							$value_cell_id = isset($data[$row][0]) ? $data[$row][0] : null;
+							$value_cell_commodity_id = isset($data[$row][1]) ? $data[$row][1] : null;
+							$value_cell_warehouse_id = isset($data[$row][2]) ? $data[$row][2] : '';
+							$value_cell_inventory_manage_id = isset($data[$row][3]) ? $data[$row][3] : '';
+							$value_cell_commodity_name = isset($data[$row][4]) ? $data[$row][4] : null;
+							$value_cell_serial_number = isset($data[$row][5]) ? $data[$row][5] : null;
 
 							$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
 
@@ -8585,11 +8463,11 @@ if(strlen($data['inventory_filter']) > 0){
 							}
 
 
-								//check commodity_code exist  (input: code or name item)
-							if (is_null($value_cell_commodity_id) != true && $value_cell_commodity_id != '0' ) {
+							//check commodity_code exist  (input: code or name item)
+							if (is_null($value_cell_commodity_id) != true && $value_cell_commodity_id != '0') {
 								/*case input  id*/
 								$this->db->where('id', trim($value_cell_commodity_id, " "));
-								$item_value =  $this->db->get(db_prefix().'items')->row();
+								$item_value =  $this->db->get(db_prefix() . 'items')->row();
 
 								if ($item_value) {
 									/*get id commodity_type*/
@@ -8600,27 +8478,25 @@ if(strlen($data['inventory_filter']) > 0){
 								}
 							}
 
-								//check warehouse exist  (input: id or name warehouse)
-							if (is_null($value_cell_warehouse_id) != true && ( $value_cell_warehouse_id != '0')) {
+							//check warehouse exist  (input: id or name warehouse)
+							if (is_null($value_cell_warehouse_id) != true && ($value_cell_warehouse_id != '0')) {
 								/*case input id*/
 
 								$this->db->where('warehouse_id', trim($value_cell_warehouse_id, " "));
-								$warehouse_value = $this->db->get(db_prefix().'warehouse')->row();
+								$warehouse_value = $this->db->get(db_prefix() . 'warehouse')->row();
 
 								if ($warehouse_value) {
 									/*get id unit_id*/
 									$flag_id_warehouse_code = $warehouse_value->warehouse_id;
-
 								} else {
 									$string_error .= _l('_warehouse') . _l('does_not_exist');
 									$flag2 = 1;
 								}
-
 							}
 
 
 							if (($flag == 1) || ($flag2 == 1)) {
-									//write error file
+								//write error file
 								$writer->writeSheetRow('Item Serial Numbers', [
 									$value_cell_id,
 									$value_cell_commodity_id,
@@ -8637,8 +8513,8 @@ if(strlen($data['inventory_filter']) > 0){
 
 							if (($flag == 0) && ($flag2 == 0)) {
 
-								if((int)$value_cell_id == 0){
-									if(!in_array($value_cell_serial_number, $get_serial_number_available) && !in_array($value_cell_serial_number, $arr_temp_serial_number) ){
+								if ((int)$value_cell_id == 0) {
+									if (!in_array($value_cell_serial_number, $get_serial_number_available) && !in_array($value_cell_serial_number, $arr_temp_serial_number)) {
 										$arr_temp_serial_number[] = $value_cell_serial_number;
 
 										$row_inserts[] = [
@@ -8648,9 +8524,8 @@ if(strlen($data['inventory_filter']) > 0){
 											'serial_number' => $value_cell_serial_number,
 										];
 									}
-
-								}else{
-									if(!in_array($value_cell_serial_number, $get_serial_number_available) && !in_array($value_cell_serial_number, $arr_temp_serial_number) ){
+								} else {
+									if (!in_array($value_cell_serial_number, $get_serial_number_available) && !in_array($value_cell_serial_number, $arr_temp_serial_number)) {
 										$arr_temp_serial_number[] = $value_cell_serial_number;
 
 										$row_updates[] = [
@@ -8662,24 +8537,22 @@ if(strlen($data['inventory_filter']) > 0){
 										];
 									}
 								}
-								
 							}
 
 							$total_rows++;
 							$total_rows_data++;
-
 						}
 
-						if(count($row_inserts) != 0){
-							$affected_rows = $this->db->insert_batch(db_prefix().'wh_inventory_serial_numbers', $row_inserts);
-							if($affected_rows > 0){
+						if (count($row_inserts) != 0) {
+							$affected_rows = $this->db->insert_batch(db_prefix() . 'wh_inventory_serial_numbers', $row_inserts);
+							if ($affected_rows > 0) {
 								$total_rows_actualy += $affected_rows;
 							}
 						}
 
-						if(count($row_updates) != 0){
-							$affected_rows = $this->db->update_batch(db_prefix().'wh_inventory_serial_numbers', $row_updates, 'id');
-							if($affected_rows > 0){
+						if (count($row_updates) != 0) {
+							$affected_rows = $this->db->update_batch(db_prefix() . 'wh_inventory_serial_numbers', $row_updates, 'id');
+							if ($affected_rows > 0) {
 								$total_rows_actualy += $affected_rows;
 							}
 						}
@@ -8687,7 +8560,7 @@ if(strlen($data['inventory_filter']) > 0){
 						/*remove serial number null*/
 						$this->db->where('serial_number', 'null');
 						$this->db->where('is_used', 'no');
-						$this->db->delete(db_prefix().'wh_inventory_serial_numbers');
+						$this->db->delete(db_prefix() . 'wh_inventory_serial_numbers');
 
 						if ($total_rows_actualy != $total_rows) {
 							$total_rows = $total_rows_actualy;
@@ -8700,27 +8573,24 @@ if(strlen($data['inventory_filter']) > 0){
 						$total_row_false = $total_rows - (int)$rows;
 						$message = 'Not enought Serial number for importing';
 
-						if(($total_rows_data_error > 0) || ($total_row_false != 0)){
+						if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
 
-							$filename = 'FILE_ERROR_IMPORT_SERIAL_NUMBERS' .get_staff_user_id().strtotime(date('Y-m-d H:i:s')). '.xlsx';
-							$writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_OPENING_STOCK.$filename, $filename));
+							$filename = 'FILE_ERROR_IMPORT_SERIAL_NUMBERS' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+							$writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_OPENING_STOCK . $filename, $filename));
 
-							$filename = WAREHOUSE_IMPORT_OPENING_STOCK.$filename;
+							$filename = WAREHOUSE_IMPORT_OPENING_STOCK . $filename;
 						}
-						
+
 						$import_result = true;
 						@delete_dir($tmpDir);
-
 					}
-					
 				} else {
 					set_alert('warning', _l('import_serial_number_failed'));
 				}
 			}
-
 		}
 		echo json_encode([
-			'message' =>'Not enought Serial number for importing',
+			'message' => 'Not enought Serial number for importing',
 			'total_row_success' => $total_row_success,
 			'total_row_false' => $total_rows_data_error,
 			'total_rows' => $total_rows_data,
@@ -8729,7 +8599,6 @@ if(strlen($data['inventory_filter']) > 0){
 			'total_rows_data_error' => $total_rows_data_error,
 			'filename' => $filename,
 		]);
-
 	}
 
 	/**
@@ -8759,7 +8628,6 @@ if(strlen($data['inventory_filter']) > 0){
 
 		try {
 			$pdf = $this->warehouse_model->warranty_period_pdf($warranty_period);
-
 		} catch (Exception $e) {
 			echo html_entity_decode($e->getMessage());
 			die;
@@ -8776,7 +8644,7 @@ if(strlen($data['inventory_filter']) > 0){
 			$type = 'I';
 		}
 
-		$pdf->Output(mb_strtoupper(slug_it('warranty_period_report').'_'.date('YmdHi')).'.pdf', $type);
+		$pdf->Output(mb_strtoupper(slug_it('warranty_period_report') . '_' . date('YmdHi')) . '.pdf', $type);
 	}
 
 	/**
@@ -8798,11 +8666,11 @@ if(strlen($data['inventory_filter']) > 0){
 			$list_temporaty_serial_numbers = $this->warehouse_model->get_list_temporaty_serial_numbers($data['commodity_id'], $data['warehouse_id'], $data['quantity']);
 
 			foreach ($list_temporaty_serial_numbers as $list_temporaty_serial_number) {
-			    $arr_list_temporaty_serial_number[$list_temporaty_serial_number['serial_number']] = $list_temporaty_serial_number['serial_number'];
+				$arr_list_temporaty_serial_number[$list_temporaty_serial_number['serial_number']] = $list_temporaty_serial_number['serial_number'];
 			}
 
 			foreach ($list_serial_numbers as $list_serial_number) {
-				if(!isset($arr_list_temporaty_serial_number[$list_serial_number['serial_number']])){
+				if (!isset($arr_list_temporaty_serial_number[$list_serial_number['serial_number']])) {
 					$arr_serial_numbers[$list_serial_number['serial_number']] = [
 						'name' => $list_serial_number['serial_number'],
 					];
@@ -8811,15 +8679,15 @@ if(strlen($data['inventory_filter']) > 0){
 
 			foreach ($list_temporaty_serial_numbers as $index => $serial_number) {
 
-				$arr_serial_numbers = array_merge(array($serial_number['serial_number'] => array('name' => $serial_number['serial_number']) ), $arr_serial_numbers);
+				$arr_serial_numbers = array_merge(array($serial_number['serial_number'] => array('name' => $serial_number['serial_number'])), $arr_serial_numbers);
 
 				$table_serial_number .= '<tr class="sortable serial_number_item"><div class="row">';
 				$table_serial_number .= '<div class="col-md-6"><td class="">' . $commodity_name . '</td></div>';
-				$table_serial_number .= '<div class="col-md-6"><td class="serial_number">' . render_select('serial_number['.$index.']', $arr_serial_numbers,array('name','name'),'',$serial_number['serial_number'],[], ["data-none-selected-text" => _l('wh_serial_number')], 'no-margin', '', false) . '</td></div>';
+				$table_serial_number .= '<div class="col-md-6"><td class="serial_number">' . render_select('serial_number[' . $index . ']', $arr_serial_numbers, array('name', 'name'), '', $serial_number['serial_number'], [], ["data-none-selected-text" => _l('wh_serial_number')], 'no-margin', '', false) . '</td></div>';
 				$table_serial_number .= '</div></tr>';
 
 
-				if(isset($arr_serial_numbers[$serial_number['serial_number']])){
+				if (isset($arr_serial_numbers[$serial_number['serial_number']])) {
 					unset($arr_serial_numbers[$serial_number['serial_number']]);
 				}
 			}
@@ -8874,9 +8742,9 @@ if(strlen($data['inventory_filter']) > 0){
 			$data = $this->input->post();
 			$commodity_name = $data['commodity_name'];
 			$_serial_number = $data['serial_number'];
-			if(isset($data['serial_number_array'])){
+			if (isset($data['serial_number_array'])) {
 				$serial_number_array  = $data['serial_number_array'];
-			}else{
+			} else {
 				$serial_number_array  = [];
 			}
 
@@ -8891,15 +8759,15 @@ if(strlen($data['inventory_filter']) > 0){
 				];
 			}
 
-			$arr_serial_numbers = array_merge(array($_serial_number => array('name' => $_serial_number) ), $arr_serial_numbers);
+			$arr_serial_numbers = array_merge(array($_serial_number => array('name' => $_serial_number)), $arr_serial_numbers);
 
 			$table_serial_number .= '<div class="row"><div class="col-md-6"><tr class="sortable serial_number_item">';
 			$table_serial_number .= '<td class="">' . $commodity_name . '</td></div>';
-			$table_serial_number .= '<div class="col-md-6"><td class="serial_number">' . render_select('change_serial_number', $arr_serial_numbers,array('name','name'),'',$_serial_number,[], ["data-none-selected-text" => _l('wh_serial_number')], 'no-margin dropdown', '', false) . '</td></div>';
+			$table_serial_number .= '<div class="col-md-6"><td class="serial_number">' . render_select('change_serial_number', $arr_serial_numbers, array('name', 'name'), '', $_serial_number, [], ["data-none-selected-text" => _l('wh_serial_number')], 'no-margin dropdown', '', false) . '</td></div>';
 			$table_serial_number .= '</tr>';
 
 
-			if(isset($arr_serial_numbers[$_serial_number])){
+			if (isset($arr_serial_numbers[$_serial_number])) {
 				unset($arr_serial_numbers[$_serial_number]);
 			}
 
@@ -8914,7 +8782,8 @@ if(strlen($data['inventory_filter']) > 0){
 	 * warehouse fee for return order
 	 * @return [type] 
 	 */
-	public function warehouse_fee_for_return_order(){
+	public function warehouse_fee_for_return_order()
+	{
 		$data = $this->input->post();
 
 		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
@@ -8928,12 +8797,12 @@ if(strlen($data['inventory_filter']) > 0){
 			die;
 		}
 
-		if($data != 'null'){
+		if ($data != 'null') {
 			$value = $this->warehouse_model->update_fee_for_return_order($data);
-			if($value){
+			if ($value) {
 				$success = true;
 				$message = _l('updated_successfully');
-			}else{
+			} else {
 				$success = false;
 				$message = _l('updated_false');
 			}
@@ -8949,7 +8818,8 @@ if(strlen($data['inventory_filter']) > 0){
 	 * warehouse wh on total items
 	 * @return [type] 
 	 */
-	public function warehouse_wh_on_total_items(){
+	public function warehouse_wh_on_total_items()
+	{
 		$data = $this->input->post();
 
 		if (!has_permission('warehouse', '', 'edit') && !is_admin()) {
@@ -8963,12 +8833,12 @@ if(strlen($data['inventory_filter']) > 0){
 			die;
 		}
 
-		if($data != 'null'){
+		if ($data != 'null') {
 			$value = $this->warehouse_model->update_wh_on_total_items($data);
-			if($value){
+			if ($value) {
 				$success = true;
 				$message = _l('updated_successfully');
-			}else{
+			} else {
 				$success = false;
 				$message = _l('updated_false');
 			}
@@ -8996,29 +8866,30 @@ if(strlen($data['inventory_filter']) > 0){
 	 * import file xlsx commodity variation
 	 * @return [type] 
 	 */
-	public function import_file_xlsx_commodity_variation() {
+	public function import_file_xlsx_commodity_variation()
+	{
 		if (!is_admin() && !has_permission('warehouse', '', 'create')) {
 			access_denied(_l('warehouse'));
 		}
 
-		if(!class_exists('XLSXReader_fin')){
-            require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXReader/XLSXReader.php');
-        }
-        require_once(module_dir_path(WAREHOUSE_MODULE_NAME).'/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+		if (!class_exists('XLSXReader_fin')) {
+			require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+		}
+		require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
 
 		$total_row_false = 0;
 		$total_rows_data = 0;
 		$dataerror = 0;
 		$total_row_success = 0;
 		$total_rows_data_error = 0;
-		$filename='';
+		$filename = '';
 
 		if ($this->input->post()) {
 
 			/*delete file old before export file*/
-			$path_before = COMMODITY_ERROR.'FILE_ERROR_COMMODITY'.get_staff_user_id().'.xlsx';
-			if(file_exists($path_before)){
-				unlink(COMMODITY_ERROR.'FILE_ERROR_COMMODITY'.get_staff_user_id().'.xlsx');
+			$path_before = COMMODITY_ERROR . 'FILE_ERROR_COMMODITY' . get_staff_user_id() . '.xlsx';
+			if (file_exists($path_before)) {
+				unlink(COMMODITY_ERROR . 'FILE_ERROR_COMMODITY' . get_staff_user_id() . '.xlsx');
 			}
 
 			if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
@@ -9047,29 +8918,29 @@ if(strlen($data['inventory_filter']) > 0){
 
 						//Writer file
 						$writer_header = array(
-							"(*)" ._l('parent_id')          =>'string',
-							"(*)" ._l('attributes')          =>'string',
-							_l('error')                     =>'string',
+							"(*)" . _l('parent_id')          => 'string',
+							"(*)" . _l('attributes')          => 'string',
+							_l('error')                     => 'string',
 						);
 
-                        $widths_arr = array();
-                        for($i = 1; $i <= count($writer_header); $i++ ){
-                            $widths_arr[] = 40;
-                        }
+						$widths_arr = array();
+						for ($i = 1; $i <= count($writer_header); $i++) {
+							$widths_arr[] = 40;
+						}
 
-                        $writer = new XLSXWriter();
+						$writer = new XLSXWriter();
 
-                        $col_style1 =[0,1,2];
-                        $style1 = ['widths'=> $widths_arr, 'fill' => '#ff9800',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ];
+						$col_style1 = [0, 1, 2];
+						$style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
 
-                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths'=> $widths_arr, 'fill' => '#f44336',  'font-style'=>'bold', 'color' => '#0a0a0a', 'border'=>'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13 ], $col_style1, $style1);
+						$writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
 
 						//init file error end
 
-                        //Reader file
-                        $xlsx = new XLSXReader_fin($newFilePath);
-                        $sheetNames = $xlsx->getSheetNames();
-                        $data = $xlsx->getSheetData($sheetNames[1]);
+						//Reader file
+						$xlsx = new XLSXReader_fin($newFilePath);
+						$sheetNames = $xlsx->getSheetNames();
+						$data = $xlsx->getSheetData($sheetNames[1]);
 
 						// start row write 2
 						$numRow = 2;
@@ -9079,123 +8950,120 @@ if(strlen($data['inventory_filter']) > 0){
 						$flag_insert_id = 0;
 						$arr_parent_id = [];
 						$arr_variation_product = [];
-						
+
 						//get data for compare
 
 						for ($row = 1; $row < count($data); $row++) {
 
-								$rd = array();
-								$flag = 0;
-								$flag2 = 0;
-								$flag_mail = 0;
-								$string_error = '';
+							$rd = array();
+							$flag = 0;
+							$flag2 = 0;
+							$flag_mail = 0;
+							$string_error = '';
 
-								$flag_id_parent_id;
+							$flag_id_parent_id;
 
 
-								$value_cell_parent_id = isset($data[$row][0]) ? $data[$row][0] : null; //A
-								$value_cell_attributes = isset($data[$row][1]) ? $data[$row][1] : null; //B
+							$value_cell_parent_id = isset($data[$row][0]) ? $data[$row][0] : null; //A
+							$value_cell_attributes = isset($data[$row][1]) ? $data[$row][1] : null; //B
 
-								$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
-								$reg_day = '#^(((1)[0-2]))(\/)\d{4}-(3)[0-1])(\/)(((0)[0-9])-[0-2][0-9]$#'; /*yyyy-mm-dd*/
+							$pattern = '#^[a-z][a-z0-9\._]{2,31}@[a-z0-9\-]{3,}(\.[a-z]{2,4}){1,2}$#';
+							$reg_day = '#^(((1)[0-2]))(\/)\d{4}-(3)[0-1])(\/)(((0)[0-9])-[0-2][0-9]$#'; /*yyyy-mm-dd*/
 
-								/*check null*/
-								if (is_null($value_cell_parent_id) == true) {
-									$string_error .= _l('parent_id') . _l('not_yet_entered');
-									$flag = 1;
-								}
+							/*check null*/
+							if (is_null($value_cell_parent_id) == true) {
+								$string_error .= _l('parent_id') . _l('not_yet_entered');
+								$flag = 1;
+							}
 
-								if (is_null($value_cell_attributes) == true) {
-									$string_error .= _l('attributes') . _l('not_yet_entered');
-									$flag = 1;
-								}
+							if (is_null($value_cell_attributes) == true) {
+								$string_error .= _l('attributes') . _l('not_yet_entered');
+								$flag = 1;
+							}
 
-								//check commodity_type exist  (input: id or name contract)
-								if (is_null($value_cell_parent_id) != true && $value_cell_parent_id != '0' && $value_cell_parent_id != '') {
-									/*case input  id*/
-									if (is_numeric($value_cell_parent_id)) {
+							//check commodity_type exist  (input: id or name contract)
+							if (is_null($value_cell_parent_id) != true && $value_cell_parent_id != '0' && $value_cell_parent_id != '') {
+								/*case input  id*/
+								if (is_numeric($value_cell_parent_id)) {
 
-										$this->db->where('id', $value_cell_parent_id);
-										$item_value = $this->db->count_all_results(db_prefix() . 'items');
+									$this->db->where('id', $value_cell_parent_id);
+									$item_value = $this->db->count_all_results(db_prefix() . 'items');
 
-										if ($item_value == 0) {
-											$string_error .= _l('parent_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id parent_id*/
-											$flag_id_parent_id = $value_cell_parent_id;
-										}
-
+									if ($item_value == 0) {
+										$string_error .= _l('parent_id') . _l('does_not_exist');
+										$flag2 = 1;
 									} else {
-										/*case input name*/
-										$this->db->like(db_prefix() . 'items.commodity_code', $value_cell_parent_id);
-
-										$item_value = $this->db->get(db_prefix() . 'items')->result_array();
-										if (count($item_value) == 0) {
-											$string_error .= _l('parent_id') . _l('does_not_exist');
-											$flag2 = 1;
-										} else {
-											/*get id parent_id*/
-
-											$flag_id_parent_id = $item_value[0]['id'];
-										}
+										/*get id parent_id*/
+										$flag_id_parent_id = $value_cell_parent_id;
 									}
+								} else {
+									/*case input name*/
+									$this->db->like(db_prefix() . 'items.commodity_code', $value_cell_parent_id);
 
+									$item_value = $this->db->get(db_prefix() . 'items')->result_array();
+									if (count($item_value) == 0) {
+										$string_error .= _l('parent_id') . _l('does_not_exist');
+										$flag2 = 1;
+									} else {
+										/*get id parent_id*/
+
+										$flag_id_parent_id = $item_value[0]['id'];
+									}
 								}
+							}
 
-								if (($flag == 0) && ($flag2 == 0)) {
+							if (($flag == 0) && ($flag2 == 0)) {
 
 
-									/*staff id is HR_code, input is HR_CODE, insert => staffid*/
-									$rd['parent_id'] = isset($flag_id_parent_id) ? $flag_id_parent_id : '';
-									$rd['attributes'] = isset($data[$row][1]) ? $data[$row][1] : '';
+								/*staff id is HR_code, input is HR_CODE, insert => staffid*/
+								$rd['parent_id'] = isset($flag_id_parent_id) ? $flag_id_parent_id : '';
+								$rd['attributes'] = isset($data[$row][1]) ? $data[$row][1] : '';
 
-									$arr_parent_id[] = $flag_id_parent_id;
-									$arr_variation_product[] = [
-										'parent_id' => isset($flag_id_parent_id) ? $flag_id_parent_id : '',
-										'attributes' => isset($data[$row][1]) ? $data[$row][1] : '',
-									] ;
-								}
+								$arr_parent_id[] = $flag_id_parent_id;
+								$arr_variation_product[] = [
+									'parent_id' => isset($flag_id_parent_id) ? $flag_id_parent_id : '',
+									'attributes' => isset($data[$row][1]) ? $data[$row][1] : '',
+								];
+							}
 
-								// $flag_insert = false;
+							// $flag_insert = false;
 
-								// if (get_staff_user_id() != '' && $flag == 0 && $flag2 == 0) {
-								// 	$rows[] = $rd;
-								// 	$result_value = $this->warehouse_model->import_xlsx_commodity($rd, $flag_insert_id);
-								// 	if ($result_value['status']) {
-								// 		$total_rows_actualy++;
-								// 		$flag_insert = true;
+							// if (get_staff_user_id() != '' && $flag == 0 && $flag2 == 0) {
+							// 	$rows[] = $rd;
+							// 	$result_value = $this->warehouse_model->import_xlsx_commodity($rd, $flag_insert_id);
+							// 	if ($result_value['status']) {
+							// 		$total_rows_actualy++;
+							// 		$flag_insert = true;
 
-								// 		if(isset($result_value['insert_id'])){
-								// 			$flag_insert_id = $result_value['insert_id'];
-								// 		}else{
-								// 			$flag_insert_id = 0;
-								// 		}
-								// 	}else{
-								// 		$flag_insert_id = 0;
-								// 		$string_error .= $result_value['message'];
-								// 	}
-								// }
+							// 		if(isset($result_value['insert_id'])){
+							// 			$flag_insert_id = $result_value['insert_id'];
+							// 		}else{
+							// 			$flag_insert_id = 0;
+							// 		}
+							// 	}else{
+							// 		$flag_insert_id = 0;
+							// 		$string_error .= $result_value['message'];
+							// 	}
+							// }
 
-								if (($flag == 1) || ($flag2 == 1)) {
-									//write error file
-									$writer->writeSheetRow('Sheet1', [
-										$value_cell_parent_id,
-										$value_cell_attributes,
-										$string_error,
-									]);
+							if (($flag == 1) || ($flag2 == 1)) {
+								//write error file
+								$writer->writeSheetRow('Sheet1', [
+									$value_cell_parent_id,
+									$value_cell_attributes,
+									$string_error,
+								]);
 
-									$numRow++;
-									$total_rows_data_error++;
-								}
+								$numRow++;
+								$total_rows_data_error++;
+							}
 
-								$total_rows++;
-								$total_rows_data++;
-
+							$total_rows++;
+							$total_rows_data++;
 						}
 
-						if(count($arr_variation_product) > 0){
-							$total_rows_actualy = count($arr_variation_product); 
+						if (count($arr_variation_product) > 0) {
+							$total_rows_actualy = count($arr_variation_product);
 							$this->warehouse_model->import_commodity_variations($arr_variation_product, $arr_parent_id);
 						}
 
@@ -9210,29 +9078,24 @@ if(strlen($data['inventory_filter']) > 0){
 						$total_row_false = $total_rows - (int)$total_rows_actualy;
 						$message = 'Not enought rows for importing';
 
-						if(($total_rows_data_error > 0) || ($total_row_false != 0)){
+						if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
 
-							$filename = 'FILE_ERROR_COMMODITY_VARIATIONS' .get_staff_user_id().strtotime(date('Y-m-d H:i:s')). '.xlsx';
-                            $writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_ITEM_ERROR.$filename, $filename));
+							$filename = 'FILE_ERROR_COMMODITY_VARIATIONS' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+							$writer->writeToFile(str_replace($filename, WAREHOUSE_IMPORT_ITEM_ERROR . $filename, $filename));
 
-							$filename = WAREHOUSE_IMPORT_ITEM_ERROR.$filename;
-
-
+							$filename = WAREHOUSE_IMPORT_ITEM_ERROR . $filename;
 						}
-						
+
 						$import_result = true;
 						@delete_dir($tmpDir);
-
 					}
-					
 				} else {
 					set_alert('warning', _l('import_upload_failed'));
 				}
 			}
-
 		}
 		echo json_encode([
-			'message' =>'Not enought rows for importing',
+			'message' => 'Not enought rows for importing',
 			'total_row_success' => $total_row_success,
 			'total_row_false' => $total_rows_data_error,
 			'total_rows' => $total_rows_data,
@@ -9241,37 +9104,36 @@ if(strlen($data['inventory_filter']) > 0){
 			'total_rows_data_error' => $total_rows_data_error,
 			'filename' => $filename,
 		]);
-
 	}
 
-	public function find_project_members() 
-    {
-        $response = array();
-        if ($this->input->post()) {
-            $data = $this->input->post();
-            if(!empty($data['project_id'])) {
-                $response = $this->staff_model->find_project_members($data['project_id']);
-            }
-        }
-        echo json_encode($response);
-    }
+	public function find_project_members()
+	{
+		$response = array();
+		if ($this->input->post()) {
+			$data = $this->input->post();
+			if (!empty($data['project_id'])) {
+				$response = $this->staff_model->find_project_members($data['project_id']);
+			}
+		}
+		echo json_encode($response);
+	}
 
-    public function find_approval_setting()
-    {
-        $response['success'] = false;
-        if ($this->input->post()) {
-            $response = $this->warehouse_model->find_approval_setting($this->input->post());
-        }
-        echo json_encode($response);
-    }
+	public function find_approval_setting()
+	{
+		$response['success'] = false;
+		if ($this->input->post()) {
+			$response = $this->warehouse_model->find_approval_setting($this->input->post());
+		}
+		echo json_encode($response);
+	}
 
-    /**
-     * coppy manage receipt
-     * @param  integer $invoice_id 
-     * @return json              
-     */
-    public function copy_manage_receipt($goods_receipt_id = '') 
-    {
+	/**
+	 * coppy manage receipt
+	 * @param  integer $invoice_id 
+	 * @return json              
+	 */
+	public function copy_manage_receipt($goods_receipt_id = '')
+	{
 		$manage_receipt_detail = $this->warehouse_model->copy_manage_receipt($goods_receipt_id);
 
 		echo json_encode([
@@ -9279,6 +9141,54 @@ if(strlen($data['inventory_filter']) > 0){
 			'additional_discount' => 0,
 			'goods_receipt' => $manage_receipt_detail['goods_receipt'] ? $manage_receipt_detail['goods_receipt'] : '',
 		]);
-    }
+	}
 
+	public function change_production_status($status, $id)
+	{
+
+		// Define an array of statuses with their corresponding labels and texts
+		$production_labels = [
+			1 => ['label' => 'danger', 'table' => 'not_started', 'text' => _l('not_started')],
+			2 => ['label' => 'success', 'table' => 'approved', 'text' => _l('approved')],
+			3 => ['label' => 'info', 'table' => 'on_going', 'text' => _l('on_going')],
+
+		];
+		$success = $this->warehouse_model->change_production_status($status, $id);
+		$message = $success ? _l('change_production_status_successfully') : _l('change_production_status_fail');
+
+		$html = '';
+		$status_str = $production_labels[$status]['text'] ?? '';
+		$class = $production_labels[$status]['label'] ?? '';
+
+
+		$html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+		$html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+		$html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+		$html .= '</a>';
+
+		$html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $id . '">';
+
+		// Generate the dropdown menu options dynamically
+		foreach ($production_labels as $key => $label) {
+			if ($key != $status) {
+				$html .= '<li>
+                    <a href="#" onclick="change_production_status(' . $key . ', ' . $id . '); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+			}
+		}
+
+		$html .= '</ul>';
+		$html .= '</div>';
+
+
+		echo json_encode([
+			'success' => $success,
+			'status_str' => $status_str,
+			'class' => $class,
+			'mess' => $message,
+			'html' => $html,
+		]);
+	}
 }

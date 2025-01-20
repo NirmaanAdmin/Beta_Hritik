@@ -20101,4 +20101,12 @@ class Warehouse_model extends App_Model
 		}
 		return $arr_inventory_number;
 	}
+
+	function change_production_status($status, $id){
+
+		$this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'goods_receipt_detail', ['production_status' => $status]);
+        return true;
+
+	}
 }

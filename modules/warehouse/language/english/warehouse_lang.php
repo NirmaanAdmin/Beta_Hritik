@@ -728,4 +728,5 @@ $lang['category'] = 'Category';
 $lang['est_delivery_date'] = 'Est Delivery Date';
 $lang['production_status'] = 'Production Status';
 $lang['on_going'] = 'On Going';
-
+$lang['change_production_status_successfully'] = 'Change production status successfully';
+$lang['change_production_status_fail'] = 'Change production status fail';
