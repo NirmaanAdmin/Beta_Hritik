@@ -9191,4 +9191,63 @@ class warehouse extends AdminController
 			'html' => $html,
 		]);
 	}
+
+	public function update_payment_date()
+	{
+		$id = $this->input->post('id');
+		$payment_date = $this->input->post('payment_date');
+
+		if (!$id  || !$payment_date) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		$success = $this->db->update('tblgoods_receipt_detail', ['payment_date' => $payment_date]);
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('payment_date_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+	public function update_est_delivery_date()
+	{
+		$id = $this->input->post('id');
+		$est_delivery_date_date = $this->input->post('est_delivery_date');
+
+		if (!$id  || !$est_delivery_date_date) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		$success = $this->db->update('tblgoods_receipt_detail', ['est_delivery_date' => $est_delivery_date_date]);
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('est_delivery_date_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+
+	public function update_delivery_date()
+	{
+		$id = $this->input->post('id');
+		$delivery_date = $this->input->post('delivery_date');
+
+		if (!$id  || !$delivery_date) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		$success = $this->db->update('tblgoods_receipt_detail', ['delivery_date' => $delivery_date]);
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('delivery_date_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
 }

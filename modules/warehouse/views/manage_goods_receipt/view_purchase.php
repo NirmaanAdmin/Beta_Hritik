@@ -264,13 +264,32 @@
                           <!-- <td><?php echo $vendor_name ?></td> -->
                           <td class="text-right"><?php echo $production_status ?></td>
                           <td class="text-right">
-                            <?php echo $payment_date ? date('d M, Y', strtotime($payment_date)) : '-'; ?>
+                            <?php
+                            echo '<input type="date" class="form-control payment-date-input"
+                              value="' . $payment_date . '"
+                              data-id="' . $receipt_value['id'] . '"
+                              ">';
+                            ?>
                           </td>
                           <td class="text-right">
-                            <?php echo $est_delivery_date ? date('d M, Y', strtotime($est_delivery_date)) : '-'; ?>
+                            <?php
+                            echo '<input type="date" class="form-control est-delivery-date-input"
+                            value="' . $est_delivery_date . '"
+                            data-id="' . $receipt_value['id'] . '"
+                            ">';
+
+                            ?>
+
                           </td>
                           <td class="text-right">
-                            <?php echo $delivery_date ? date('d M, Y', strtotime($delivery_date)) : '-'; ?>
+                            <?php
+
+                            echo '<input type="date" class="form-control delivery-date-input"
+                            value="' . $delivery_date . '"
+                            data-id="' . $receipt_value['id'] . '"
+                            ">';
+
+                            ?>
                           </td>
                           <!-- <td class="text-right"><?php echo _d($expiry_date) ?></td> -->
                         </tr>
@@ -488,6 +507,75 @@
 
 </html>
 <script>
+  var table_order_tracker = $('.table-items-preview').DataTable();
+
+  // Inline editing for "Payment Date"
+  $('body').on('change', '.payment-date-input', function(e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var paymentDate = $(this).val();
+
+    // Perform AJAX request to update the completion date
+    $.post(admin_url + 'warehouse/update_payment_date', {
+      id: rowId,
+      payment_date: paymentDate
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+  // Inline editing for "EST delivery Date"
+  $('body').on('change', '.est-delivery-date-input', function(e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var estDeliveryDate = $(this).val();
+
+    // Perform AJAX request to update the completion date
+    $.post(admin_url + 'warehouse/update_est_delivery_date', {
+      id: rowId,
+      est_delivery_date: estDeliveryDate
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+
+  // Inline editing for "Delivery Date"
+  $('body').on('change', '.delivery-date-input', function(e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var DeliveryDate = $(this).val();
+
+    // Perform AJAX request to update the completion date
+    $.post(admin_url + 'warehouse/update_delivery_date', {
+      id: rowId,
+      delivery_date: DeliveryDate
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
   function change_production_status(status, id) {
     "use strict";
     if (id > 0) {
@@ -498,7 +586,7 @@
 
             if (response.success) {
               var $statusSpan = $('#status_span_' + id);
-             
+
               // Remove all status-related classes
               $statusSpan.removeClass('label-danger label-success label-info label-warning label-primary label-purple label-teal label-orange label-green label-defaul label-secondaryt');
 

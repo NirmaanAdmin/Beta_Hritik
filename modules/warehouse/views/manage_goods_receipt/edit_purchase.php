@@ -272,12 +272,12 @@
 										<div class="row">
 											<div class="col-md-1">
 											</div>
-											<div class="col-md-4">
+											<!-- <div class="col-md-4">
 												<p><span class="bold"><?php echo _l('deliver_name') ?></p>
 												<p><span class="span-font-style"><?php echo _l('sign_full_name') ?></p>
-											</div>
+											</div> -->
 											<div class="col-md-4">
-												<p><span class="bold"><?php echo _l('stocker') ?></p>
+												<p><span class="bold">Stock Keeper</p>
 												<p><span class="span-font-style"><?php echo _l('sign_full_name') ?></p>
 
 											</div>
