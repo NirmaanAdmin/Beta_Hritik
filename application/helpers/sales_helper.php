@@ -1101,7 +1101,7 @@ function get_all_annexures()
         ],
         [
             'id' => 17,
-            'name' => 'Management Fees',
+            'name' => 'Contingency + Management Fees',
             'commodity_group_code' => 'MF',
             'annexure_key' => 'annexure17',
             'annexure_name' => 'Annexure - 17',

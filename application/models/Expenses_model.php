@@ -653,7 +653,7 @@ class Expenses_model extends App_Model
         $management_fees['description'] = 'Management Fees';
         $management_fees['long_description'] = '';
         $management_fees['unit'] = 'nos';
-        $management_fees['qty'] = 0.07;
+        $management_fees['qty'] = 0.1235;
         $management_fees['rate'] = $new_invoice_data['subtotal'];
         $management_fees['order'] = 1;
         $management_fees['annexure'] = 17;
