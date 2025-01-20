@@ -800,3 +800,4 @@ $lang['remaining']  = 'Remaining';
 $lang['production_status'] = 'Production Status';
 $lang['on_going'] = 'On Going';
 $lang['est_delivery_date'] = 'Est Delivery Date';
+$lang['order_name'] = 'Order name';

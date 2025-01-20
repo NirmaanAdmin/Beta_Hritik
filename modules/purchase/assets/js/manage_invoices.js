@@ -12,7 +12,7 @@ var expenseDropzone;
         "vendors": "[name='vendor_ft[]']"
     };
 
-	initDataTable(table_invoice, admin_url+'purchase/table_pur_invoices',[], [], Params, [7, 'desc']);
+	initDataTable(table_invoice, admin_url+'purchase/table_pur_invoices',[], [], Params, [5, 'desc']);
 	$.each(Params, function(i, obj) {
         $('select' + obj).on('change', function() {  
             table_invoice.DataTable().ajax.reload()
@@ -112,7 +112,6 @@ function convert_expense(pur_invoice,total){
 
     $.post(admin_url + 'purchase/get_project_info/'+pur_invoice+'/'+module_type).done(function(response){
       response = JSON.parse(response);
-      console.log(response);
       $('select[name="project_id"]').val(response.project_id).change();
       $('select[name="clientid"]').val(response.customer).change();
       $('select[name="currency"]').val(response.currency).change();
@@ -123,6 +122,7 @@ function convert_expense(pur_invoice,total){
       } else {
         $('#category').val('').change();
       }
+      $('input[id="expense_name"]').val(response.description_services);
     });
 
     $('#pur_invoice_expense').modal('show');

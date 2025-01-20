@@ -8464,7 +8464,8 @@ class purchase extends AdminController
             'customer' => $customer,
             'currency' => $currency,
             'vendor' => $po->vendor,
-            'category' => $po->group_pur
+            'category' => $po->group_pur,
+            'description_services' => $po->description_services
         ]);
     }
     /**

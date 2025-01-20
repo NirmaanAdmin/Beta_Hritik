@@ -12,11 +12,11 @@ $aColumns = [
     'vendor_invoice_number',
     db_prefix() . 'pur_invoices.vendor',
     db_prefix() . 'items_groups.name',
-    db_prefix() . 'projects.name',
+    // db_prefix() . 'projects.name',
     db_prefix() . 'pur_invoices.pur_order',
-    db_prefix() . 'pur_invoices.wo_order',
+    // db_prefix() . 'pur_invoices.wo_order',
     'invoice_date',
-    'payment_request_status',
+    // 'payment_request_status',
     'payment_status',
     'expense_convert',
     'vendor_submitted_amount_without_tax',
@@ -32,10 +32,10 @@ if(isset($vendor) || isset($project)){
         'vendor_invoice_number',
         db_prefix() . 'pur_invoices.vendor',
         db_prefix() . 'items_groups.name',
-        db_prefix() . 'projects.name',
+        // db_prefix() . 'projects.name',
         db_prefix() . 'pur_invoices.pur_order',
         'invoice_date',
-        'payment_request_status',
+        // 'payment_request_status',
         'payment_status',
         'vendor_submitted_amount_without_tax',
         'vendor_submitted_tax_amount',    
@@ -170,10 +170,18 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     'invoice_number',
     'currency',
     'expense_convert',
+    db_prefix() . 'pur_invoices.wo_order',
 ]);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
+
+$footer_data = [
+    'total_vendor_submitted_amount_without_tax' => 0,
+    'total_vendor_submitted_tax_amount' => 0,
+    'total_vendor_submitted_amount' => 0,
+    'total_final_certified_amount' => 0,
+];
 
 $this->ci->load->model('purchase/purchase_model');
 
@@ -326,10 +334,15 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'payment_request_status') {
             $_data = get_payment_request_status_by_inv($aRow['id']);
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.pur_order') {
-            $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
-        } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.wo_order') {
-            $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
-        } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
+            $order_name = '';
+            $order_name .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
+            $order_name .= '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
+            $_data = $order_name;
+        } 
+        // elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.wo_order') {
+        //     $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
+        // } 
+        elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" >' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
         } elseif ($aColumns[$i] == 'expense_convert') {
             if($aRow['expense_convert'] == 0){
@@ -337,7 +350,7 @@ foreach ($rResult as $aRow) {
             }else{
                 $expense_convert_check = get_expense_data($aRow['expense_convert']);
                 if(!empty($expense_convert_check)) {
-                    $_data = '<a href="'.admin_url('expenses/list_expenses/'.$aRow['expense_convert']).'" class="btn btn-success btn-icon">'._l('view_expense').'</a>';
+                    $_data = '';
                 } else {
                     $_data = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
                 }
@@ -350,5 +363,16 @@ foreach ($rResult as $aRow) {
 
         $row[] = $_data;
     }
+
+    $footer_data['total_vendor_submitted_amount_without_tax'] += $aRow['vendor_submitted_amount_without_tax'];
+    $footer_data['total_vendor_submitted_tax_amount'] += $aRow['vendor_submitted_tax_amount'];
+    $footer_data['total_vendor_submitted_amount'] += $aRow['vendor_submitted_amount'];
+    $footer_data['total_final_certified_amount'] += $aRow['final_certified_amount'];
     $output['aaData'][] = $row;
 }
+
+foreach ($footer_data as $key => $total) {
+    $footer_data[$key] = app_format_money($total, $base_currency->symbol);
+}
+
+$output['sums'] = $footer_data;

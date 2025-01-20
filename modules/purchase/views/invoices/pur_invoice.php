@@ -292,13 +292,13 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6 pad_left_0" style="margin-top: 10%;">
+								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="vendor_submitted_amount" name="vendor_submitted_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount : '') ?>">
 									</div>
 								</div>
-								<div class="col-md-6 pad_left_0" style="margin-top: 10%;">
+								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
 									<div class="form-group">
 										<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
@@ -329,6 +329,11 @@
 									}
 									echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), '<span class="text-danger">* </span>Budget Head', $selected ,['required' => 'true']);
 									?>
+								</div>
+
+								<div class="col-md-12 pad_left_0">
+									<?php $description_services = (isset($pur_invoice) ? $pur_invoice->description_services : '');
+									echo render_textarea('description_services', 'description_of_services', $description_services, ['rows' => 2]); ?>
 								</div>
 
 							</div>
