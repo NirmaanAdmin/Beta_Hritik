@@ -1966,9 +1966,33 @@ class Invoices_model extends App_Model
             $indexa[$annexure]['tax'] = $indexa[$annexure]['tax'] + $item_tax;
             $indexa[$annexure]['amount'] = $indexa[$annexure]['subtotal'] + $indexa[$annexure]['tax'];
             $indexa[$annexure]['annexure'] = $annexure;
-            if($is_pdf) {
+        }
+        $indexa = !empty($indexa) ? array_values($indexa) : array();
+        if(!empty($indexa)) {
+            usort($indexa, function($a, $b) {
+                return $a['annexure'] <=> $b['annexure'];
+            });
+            $indexa = array_values($indexa);
+        }
+
+        foreach ($indexa as $key => $value) {
+            $final_invoice['name'] = _l('final_invoice_by_all_annexures');
+            $final_invoice['description'] = $invoice->final_inv_desc;
+            $final_invoice['qty'] = 1;
+            $final_invoice['subtotal'] += $value['subtotal'];
+            $final_invoice['tax'] += $value['tax'];
+            $final_invoice['amount'] += $value['amount'];
+        }
+
+        $budgetsummary = array();
+        if($is_pdf) {
+            $all_annexures = get_all_annexures();
+            foreach ($all_annexures as $akey => $avalue) {
+                $annexure = $avalue['id'];
+                $budgetsummary[$annexure]['name'] = $avalue['name']." (".$avalue['annexure_name'].")";
                 $budgeted_amount = 0;
                 $total_previous_billing = 0;
+                $total_current_billing_amount = 0;
 
                 if(isset($budgeted_annexure_data['summary'])) {
                     if(!empty($budgeted_annexure_data['summary'])) {
@@ -1994,38 +2018,38 @@ class Invoices_model extends App_Model
                     }
                 }
 
-                $indexa[$annexure]['budgeted_amount'] = $budgeted_amount;
-                $indexa[$annexure]['total_previous_billing'] = $total_previous_billing;
-                $indexa[$annexure]['current_bill_no'] = $invoice->title;
-                $indexa[$annexure]['spc_type'] = $invoice->deal_slip_no;
-                $total_current_billing_amount = $indexa[$annexure]['amount'];
-                $indexa[$annexure]['total_current_billing_amount'] = $total_current_billing_amount;
-                $total_cumulative_billing = $total_previous_billing + $total_current_billing_amount;
-                $indexa[$annexure]['total_cumulative_billing'] = $total_cumulative_billing;
-                $balance_available = $budgeted_amount - $total_cumulative_billing;
-                $indexa[$annexure]['balance_available'] = $balance_available;
-            }
-        }
-        $indexa = !empty($indexa) ? array_values($indexa) : array();
-        if(!empty($indexa)) {
-            usort($indexa, function($a, $b) {
-                return $a['annexure'] <=> $b['annexure'];
-            });
-            $indexa = array_values($indexa);
-        }
+                if(!empty($indexa)) {
+                    $total_current_billing_array = array_filter($indexa, function ($item) use ($annexure) {
+                        return $item['annexure'] == $annexure;
+                    });
+                    $total_current_billing_array = !empty($total_current_billing_array) ? array_values($total_current_billing_array) : array();
+                    $total_current_billing_amount = !empty($total_current_billing_array) ? $total_current_billing_array[0]['amount'] : 0;
+                }
 
-        foreach ($indexa as $key => $value) {
-            $final_invoice['name'] = _l('final_invoice_by_all_annexures');
-            $final_invoice['description'] = $invoice->final_inv_desc;
-            $final_invoice['qty'] = 1;
-            $final_invoice['subtotal'] += $value['subtotal'];
-            $final_invoice['tax'] += $value['tax'];
-            $final_invoice['amount'] += $value['amount'];
+                $budgetsummary[$annexure]['budgeted_amount'] = $budgeted_amount;
+                $budgetsummary[$annexure]['total_previous_billing'] = $total_previous_billing;
+                $budgetsummary[$annexure]['current_bill_no'] = $invoice->title;
+                $budgetsummary[$annexure]['spc_type'] = $invoice->deal_slip_no;
+                $budgetsummary[$annexure]['total_current_billing_amount'] = $total_current_billing_amount;
+                $total_cumulative_billing = $total_previous_billing + $total_current_billing_amount;
+                $budgetsummary[$annexure]['total_cumulative_billing'] = $total_cumulative_billing;
+                $balance_available = $budgeted_amount - $total_cumulative_billing;
+                $budgetsummary[$annexure]['balance_available'] = $balance_available;
+            }
+
+            $budgetsummary = !empty($budgetsummary) ? array_values($budgetsummary) : array();
+            if(!empty($budgetsummary)) {
+                usort($budgetsummary, function($a, $b) {
+                    return $a['annexure'] <=> $b['annexure'];
+                });
+                $budgetsummary = array_values($budgetsummary);
+            }
         }
     
         $response = array();
         $response['indexa'] = $indexa;
         $response['final_invoice'] = $final_invoice;
+        $response['budgetsummary'] = $budgetsummary;
 
         return $response;
     }

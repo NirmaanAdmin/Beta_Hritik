@@ -199,8 +199,8 @@ $tblbudgetsummaryhtml .= '
   </tr>
 </thead>';
 $tblbudgetsummaryhtml .= '<tbody>';
-$indexa = $basic_invoice['indexa'];
-foreach ($indexa as $ikey => $ivalue) {
+$budgetsummary = $basic_invoice['budgetsummary'];
+foreach ($budgetsummary as $ikey => $ivalue) {
     $tblbudgetsummaryhtml .= '
     <tr style="font-size:12px;">
         <td width="5%;" align="center">' . ($ikey + 1) . '</td>
