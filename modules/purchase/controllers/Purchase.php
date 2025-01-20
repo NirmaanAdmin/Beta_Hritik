@@ -10450,16 +10450,16 @@ class purchase extends AdminController
     {
         if ($this->input->is_ajax_request()) {
             $select = [
-                'id',
-                'goods_receipt_id',
-                'commodity_name',
-                'description',
-                'quantities',
-                'po_quantities',
-                'payment_date',
-                'est_delivery_date',
-                'delivery_date', 
-                'production_status',
+                db_prefix() . 'goods_receipt_detail.id as id',
+                db_prefix() . 'goods_receipt_detail.goods_receipt_id as goods_receipt_id',
+                db_prefix() . 'goods_receipt_detail.commodity_name as commodity_name',
+                db_prefix() . 'goods_receipt_detail.description as description',
+                db_prefix() . 'goods_receipt_detail.quantities as quantities',
+                db_prefix() . 'goods_receipt_detail.po_quantities as po_quantities',
+                db_prefix() . 'goods_receipt_detail.payment_date as payment_date',
+                db_prefix() . 'goods_receipt_detail.est_delivery_date as est_delivery_date',
+                db_prefix() . 'goods_receipt_detail.delivery_date as delivery_date', 
+                db_prefix() . 'goods_receipt_detail.production_status as production_status',
             ];
             $where = [];
 
@@ -10467,6 +10467,9 @@ class purchase extends AdminController
             $sIndexColumn = 'id';
             $sTable       = db_prefix() . 'goods_receipt_detail';
             $join         = [];
+            $join         = [
+                'INNER JOIN ' . db_prefix() . 'goods_receipt ON ' . db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id',
+            ];
 
             $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
 
