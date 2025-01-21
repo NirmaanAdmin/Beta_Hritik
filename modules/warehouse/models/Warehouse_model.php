@@ -1265,7 +1265,8 @@ class Warehouse_model extends App_Model
 		$this->save_invetory_files('goods_receipt', $insert_id);
 		/*insert detail*/
 		if ($insert_id) {
-
+			$this->db->where('id', $data['pr_order_id']);
+			$this->db->update(db_prefix() . 'pur_orders', ['goods_id' => 1]);
 			foreach ($inventory_receipts as $inventory_receipt) {
 				$inventory_receipt['goods_receipt_id'] = $insert_id;
 

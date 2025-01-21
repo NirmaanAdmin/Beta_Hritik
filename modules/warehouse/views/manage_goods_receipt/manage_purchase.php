@@ -1,5 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
+<style>
+
+.onoffswitch-label:before {
+  
+    height: 20px !important;
+}
+
+</style>
 <div id="wrapper">
     <div class="content">
         <div class="row">
@@ -9,9 +17,22 @@
                         <?php echo form_hidden('purchase_id', $purchase_id); ?>
                         <div class="row">
                             <div class="col-md-12">
-                                <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Item Tracker</h4>
-                                <hr />
+                                <div class="col-md-10">
+                                    <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Item Tracker</h4>
+                                    <hr />
+                                </div>
+                                <div class="col-md-2 display-flex">
+                                    <label>PO Not received</label>
+                                    <div class="onoffswitch" style="margin-left: 10px;">
+                                        <input type="checkbox" name="toggle-filter" class="onoffswitch-checkbox toggle-filter" id="c_' . $aRow['staffid'] . '" value="0">
+                                        <label class="onoffswitch-label" for="c_' . $aRow['staffid'] . '"></label>
+                                    </div>
+
+                                    <hr />
+                                </div>
+                                
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="_buttons col-md-3">
@@ -22,14 +43,14 @@
                                 <?php } ?>
                             </div>
                             <div class="col-md-1 pull-right">
-                                <a href="#" class="btn btn-default pull-right btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_view_proposal('.purchase_sm','#purchase_sm_view'); return false;" data-toggle="tooltip" title="<?php echo _l('invoices_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
+                                <a href="#" class="btn btn-default pull-right btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_view_proposal(' .purchase_sm','#purchase_sm_view'); return false;" data-toggle="tooltip" title="<?php echo _l('invoices_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
                             </div>
 
                         </div>
                         <br />
                         <div class="row">
                             <div class="col-md-3 pull-right">
-                                <select name="kind" id="kind" class="selectpicker"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
+                                <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
                                     <option value=""></option>
                                     <option value="Client Supply"><?php echo _l('client_supply'); ?></option>
                                     <option value="Bought out items"><?php echo _l('bought_out_items'); ?></option>
@@ -42,7 +63,9 @@
 
                                 echo render_date_input('date_add', '', '', $input_attr_e); ?>
                             </div>
+                            <div class="col-md-3 pull-right">
 
+                            </div>
                         </div>
                         <br />
                         <?php render_datatable(array(
