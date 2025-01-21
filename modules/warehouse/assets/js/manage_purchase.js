@@ -74,10 +74,15 @@ function toggle_small_view_proposal(table, main_data) {
     var _visible = false;
     if (tablewrap.hasClass('col-md-5')) {
         tablewrap.removeClass('col-md-5').addClass('col-md-12');
+        $('#heading').addClass('col-md-10').removeClass('col-md-8');
+        $('#filter_div').addClass('col-md-2').removeClass('col-md-4');
+
         _visible = true;
         $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-right').addClass('fa fa-angle-double-left');
     } else {
         tablewrap.addClass('col-md-5').removeClass('col-md-12');
+        $('#heading').removeClass('col-md-10').addClass('col-md-8');
+        $('#filter_div').removeClass('col-md-2').addClass('col-md-4');
         $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-left').addClass('fa fa-angle-double-right');
     }
     var _table = $(table).DataTable();
