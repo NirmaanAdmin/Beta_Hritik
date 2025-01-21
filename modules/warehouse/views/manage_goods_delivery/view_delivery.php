@@ -179,6 +179,7 @@
                                      <th align="right" colspan="1"><?php echo _l('subtotal_after_tax') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('discount').'(%)' ?></th> -->
                                      <th align="right" colspan="1"><?php echo _l('wh_vendor') ?></th>
+                                     <th align="right" colspan="1"><?php echo _l('issued_date') ?></th>
                                      <!-- <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th> -->
                                      <th align="right" colspan="1"><?php echo _l('lot_number').'/'._l('quantity') ?></th>
                                      <!-- <th align="right" colspan="1"><?php echo _l('total_money') ?></th> -->
@@ -282,6 +283,7 @@
                                   <td class="text-right"><?php echo app_format_money((float)$total_money,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$discount,'') ?></td> -->
                                   <td class="text-right"><?php echo $vendor_name; ?></td>
+                                  <td class="text-right" style="display: ruby-text;"><?php echo _d($delivery_value['issued_date']); ?></td>
                                   <!-- <td class="text-right"><?php echo app_format_money((float)$discount_money,'') ?></td> -->
                                   <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
                                   <!-- <td class="text-right"><?php echo app_format_money((float)$total_after_discount,'') ?></td> -->

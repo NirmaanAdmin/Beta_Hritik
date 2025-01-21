@@ -1667,7 +1667,7 @@ class warehouse extends AdminController
 							$without_checking_warehouse = $get_commodity->without_checking_warehouse;
 						}
 
-						$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $delivery_detail['warehouse_id'], $delivery_detail['available_quantity'], $delivery_detail['quantities'], $unit_name, $delivery_detail['unit_price'], $taxname, $delivery_detail['commodity_code'], $delivery_detail['unit_id'], $delivery_detail['vendor_id'], $delivery_detail['tax_rate'], $delivery_detail['total_money'], $delivery_detail['discount'], $delivery_detail['discount_money'], $delivery_detail['total_after_discount'], $delivery_detail['guarantee_period'], $expiry_date, $lot_number, $delivery_detail['note'], $delivery_detail['sub_total'], $delivery_detail['tax_name'], $delivery_detail['tax_id'], $delivery_detail['id'], true, $is_purchase_order, $delivery_detail['serial_number'], $without_checking_warehouse);
+						$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $delivery_detail['warehouse_id'], $delivery_detail['available_quantity'], $delivery_detail['quantities'], $unit_name, $delivery_detail['unit_price'], $taxname, $delivery_detail['commodity_code'], $delivery_detail['unit_id'], $delivery_detail['vendor_id'], $delivery_detail['tax_rate'], $delivery_detail['total_money'], $delivery_detail['discount'], $delivery_detail['discount_money'], $delivery_detail['total_after_discount'], $delivery_detail['guarantee_period'], $delivery_detail['issued_date'], $lot_number, $delivery_detail['note'], $delivery_detail['sub_total'], $delivery_detail['tax_name'], $delivery_detail['tax_id'], $delivery_detail['id'], true, $is_purchase_order, $delivery_detail['serial_number'], $without_checking_warehouse);
 					}
 				}
 			}
@@ -6781,7 +6781,7 @@ class warehouse extends AdminController
 		$unit_price = $this->input->post('unit_price');
 		$taxname = $this->input->post('taxname');
 		$lot_number = $this->input->post('lot_number');
-		$expiry_date = $this->input->post('expiry_date');
+		$issued_date = $this->input->post('issued_date');
 		$commodity_code = $this->input->post('commodity_code');
 		$unit_id = $this->input->post('unit_id');
 		$tax_rate = $this->input->post('tax_rate');
@@ -6821,7 +6821,7 @@ class warehouse extends AdminController
 			$quantities = 1;
 			$name = 'newitems[' . $item_index . ']';
 
-			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $expiry_date, $lot_number, $note, '', '', '', $item_key, false, false, $value['serial_number'], $without_checking_warehouse);
+			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $issued_date, $lot_number, $note, '', '', '', $item_key, false, false, $value['serial_number'], $without_checking_warehouse);
 			$temporaty_quantity--;
 			$temporaty_available_quantity--;
 			$item_index++;
@@ -6832,7 +6832,7 @@ class warehouse extends AdminController
 			$available_quantity = $temporaty_available_quantity;
 			$name = 'newitems[' . $item_index . ']';
 
-			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $expiry_date, $lot_number, $note, '', '', '', $item_key, false, false, '', $without_checking_warehouse);
+			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $issued_date, $lot_number, $note, '', '', '', $item_key, false, false, '', $without_checking_warehouse);
 			$item_index++;
 		}
 

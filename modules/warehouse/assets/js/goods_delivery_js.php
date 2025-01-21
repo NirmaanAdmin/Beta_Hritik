@@ -194,7 +194,7 @@ function after_wh_add_item_to_table(data, itemid, formdata) {
   lastAddedItemKey = item_key;
  
   $("body").append('<div class="dt-loader"></div>');
-  wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id, data.available_quantity, data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number, data.expiry_date, data.commodity_code, data.unit_id, data.tax_rate, data.discount,data.vendor_id, data.note, data.guarantee_period, itemid, item_key, formdata, data.without_checking_warehouse).done(function(output){
+  wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id, data.available_quantity, data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number, data.issued_date, data.commodity_code, data.unit_id, data.tax_rate, data.discount,data.vendor_id, data.note, data.guarantee_period, itemid, item_key, formdata, data.without_checking_warehouse).done(function(output){
     table_row += output;
 
     lastAddedItemKey = parseInt(lastAddedItemKey) + parseInt(data.quantities);
@@ -228,7 +228,7 @@ function wh_get_item_preview_values() {
   response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
   response.taxname = $('.main select.taxes').selectpicker('val');
   response.lot_number = '';
-  response.expiry_date = '';
+  response.issued_date = $('.invoice-item .main input[name="issued_date"]').val();
   response.commodity_code = $('.invoice-item .main input[name="commodity_code"]').val();
   response.unit_id = $('.invoice-item .main input[name="unit_id"]').val();
   response.tax_rate = $('.invoice-item .main input[name="tax_rate"]').val();
@@ -250,7 +250,7 @@ function wh_clear_item_preview_values(parent) {
   previewArea.find('select').val('').selectpicker('refresh');
 }
 
-function wh_get_item_row_template(name, commodity_name, warehouse_id, available_quantity, quantities, unit_name, unit_price, taxname, lot_number, expiry_date, commodity_code, unit_id, tax_rate, discount,vendor_id, note, guarantee_period, item_key, item_index, formdata, without_checking_warehouse)  {
+function wh_get_item_row_template(name, commodity_name, warehouse_id, available_quantity, quantities, unit_name, unit_price, taxname, lot_number, issued_date, commodity_code, unit_id, tax_rate, discount,vendor_id, note, guarantee_period, item_key, item_index, formdata, without_checking_warehouse)  {
   "use strict";
 
   jQuery.ajaxSetup({
@@ -267,7 +267,7 @@ function wh_get_item_row_template(name, commodity_name, warehouse_id, available_
     unit_price : unit_price,
     taxname : taxname,
     lot_number : lot_number,
-    expiry_date : expiry_date,
+    issued_date : issued_date,
     commodity_code : commodity_code,
     unit_id : unit_id,
     vendor_id : vendor_id,
