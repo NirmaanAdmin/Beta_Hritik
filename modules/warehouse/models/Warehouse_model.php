@@ -1297,6 +1297,13 @@ class Warehouse_model extends App_Model
 				} else {
 					$inventory_receipt['est_delivery_date'] = null;
 				}
+				if ($inventory_receipt['production_status'] != '') {
+					$inventory_receipt['production_status'] = $inventory_receipt['production_status'];
+				} else {
+					$inventory_receipt['production_status'] = 1;
+				}
+
+
 
 				$tax_money = 0;
 				$tax_rate_value = 0;
