@@ -1,33 +1,42 @@
 
-    "use strict";
+"use strict";
 
-     var GoodsreceiptParams = {
-        "day_vouchers": "input[name='date_add']",
-        "kind": "select[name='kind']",
-     };
+var GoodsreceiptParams = {
+    "day_vouchers": "input[name='date_add']",
+    "kind": "select[name='kind']",
+    "toggle-filter": "input[name='toggle-filter']"
+};
 
 var table_manage_goods_receipt = $('.table-table_manage_goods_receipt');
 
- initDataTable(table_manage_goods_receipt, admin_url+'warehouse/table_manage_goods_receipt', [], [], GoodsreceiptParams, [0, 'desc']);
+initDataTable(table_manage_goods_receipt, admin_url + 'warehouse/table_manage_goods_receipt', [], [], GoodsreceiptParams, [0, 'desc']);
+
 
 $('.purchase_sm').DataTable().columns([0]).visible(false, false);
 
- $('#date_add').on('change', function() {
+$('#date_add').on('change', function () {
     table_manage_goods_receipt.DataTable().ajax.reload();
 });
 
-$('#kind').on('change', function() {
+$('#kind').on('change', function () {
     table_manage_goods_receipt.DataTable().ajax.reload();
 });
-  init_goods_receipt();
-  function init_goods_receipt(id) {
+$('.toggle-filter').on('change', function () {
+    var isChecked = $(this).is(':checked') ? 1 : 0;
+    $(this).val(isChecked); // Update the value of the checkbox (0 or 1)
+
+    // Trigger DataTable reload to apply the new filter
+    table_manage_goods_receipt.DataTable().ajax.reload();
+});
+init_goods_receipt();
+function init_goods_receipt(id) {
     "use strict";
     load_small_table_item_proposal(id, '#purchase_sm_view', 'purchase_id', 'warehouse/view_purchase', '.purchase_sm');
-  }
-  var hidden_columns = [3,4,5];
-  
-  
-  function load_small_table_item_proposal(pr_id, selector, input_name, url, table) {
+}
+var hidden_columns = [3, 4, 5];
+
+
+function load_small_table_item_proposal(pr_id, selector, input_name, url, table) {
     "use strict";
 
     var _tmpID = $('input[name="' + input_name + '"]').val();
@@ -42,7 +51,7 @@ $('#kind').on('change', function() {
             pr_id = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
         }
     }
-    if (typeof(pr_id) == 'undefined' || pr_id === '') { return; }
+    if (typeof (pr_id) == 'undefined' || pr_id === '') { return; }
     if (!$("body").hasClass('small-table')) { toggle_small_view_proposal(table, selector); }
     $('input[name="' + input_name + '"]').val(pr_id);
     do_hash_helper(pr_id);
