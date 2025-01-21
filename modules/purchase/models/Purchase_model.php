@@ -16776,4 +16776,14 @@ class Purchase_model extends App_Model
         $this->db->where('wo_order_id', $id);
         return $this->db->get('tblco_request')->result_array();
     }
+
+    public function change_budget_head($budgetid, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'pur_invoices', ['group_pur' => $budgetid]);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -171,6 +171,7 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     'currency',
     'expense_convert',
     db_prefix() . 'pur_invoices.wo_order',
+    db_prefix() . 'items_groups.name',
 ]);
 
 $output  = $result['output'];
@@ -219,6 +220,26 @@ foreach ($rResult as $aRow) {
             $numberOutput .= '</div>';
 
             $_data = $numberOutput;
+        } else if($aColumns[$i] == db_prefix() . 'items_groups.name') {
+            $budget_head = '';
+            $budget_head .= '<span class="inline-block label label-info" id="budget_span_' . $aRow['id'] . '">' . $aRow['name'];
+            $budget_head .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $budget_head .= '<a href="#" class="dropdown-toggle text-dark" id="tableChangeBudget-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $budget_head .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+            $budget_head .= '</a>';
+            $budget_head .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableChangeBudget-' . $aRow['id'] . '">';
+            $group_name_item = get_group_name_item();
+            foreach ($group_name_item as $gkey => $gvalue) {
+                $budget_head .= '<li>
+                    <a href="#" onclick="change_budget_head( ' . $gvalue['id'] . ',' . $aRow['id'] . '); return false;">
+                    ' . $gvalue['name'] . '
+                    </a>
+                </li>';
+            }
+            $budget_head .= '</ul>';
+            $budget_head .= '</div>';
+            $budget_head .= '</span>';
+            $_data = $budget_head;
         } else if ($aColumns[$i] == 'vendor_invoice_number') {
             if ($aRow['vendor_invoice_number'] != '') {
                 $_data = '<input type="text" class="form-control vin-input" placeholder="Enter invoice number" data-id="' . $aRow['id'] . '" value="' . $aRow['vendor_invoice_number'] . '" size="10">';

@@ -161,6 +161,23 @@ function change_payment_status(status, id){
     }
   }
 
+function change_budget_head(budgetid, id){
+    "use strict";
+    if(id > 0) {
+      $.post(admin_url + 'purchase/change_budget_head/'+budgetid+'/'+id).done(function(response){
+        response = JSON.parse(response);
+        if(response.success == true) {
+          $('#budget_span_'+id).removeClass('label-info');
+          $('#budget_span_'+id).addClass(response.class);
+          $('#budget_span_'+id).html(response.status_str+' '+response.html);
+          alert_float('success', response.mess);
+        }else{
+          alert_float('warning', response.mess);
+        }
+      });
+    }
+}
+
 function convert_expense(pur_invoice,total){
     "use strict";
     var module_type = 1;

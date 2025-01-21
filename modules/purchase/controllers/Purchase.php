@@ -10593,4 +10593,47 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    public function change_budget_head($budgetid, $invoice_id)
+    {
+        $success = $this->purchase_model->change_budget_head($budgetid, $invoice_id);
+        $message = '';
+        $html = '';
+        $status_str = '';
+        $class = '';
+        if ($success == true) {
+            $message = _l('change_budget_head_successfully');
+        } else {
+            $message = "Failed";
+        }
+        
+        $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+        $html .= '<a href="#" class="dropdown-toggle text-dark" id="tableChangeBudget-' . $invoice_id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+        $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+        $html .= '</a>';
+        $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableChangeBudget-' . $invoice_id . '">';
+
+        $group_name_item = get_group_name_item();
+        foreach ($group_name_item as $gkey => $gvalue) {
+            $html .= '<li>
+                <a href="#" onclick="change_budget_head( ' . $gvalue['id'] . ',' . $invoice_id . '); return false;">
+                ' . $gvalue['name'] . '
+                </a>
+            </li>';
+        }
+        $selected_budget = get_group_name_item($budgetid);
+        $status_str = $selected_budget->name;
+        $class = 'label-info';  
+
+        $html .= '</ul>';
+        $html .= '</div>';
+
+        echo json_encode([
+            'success' => $success,
+            'status_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
 }
