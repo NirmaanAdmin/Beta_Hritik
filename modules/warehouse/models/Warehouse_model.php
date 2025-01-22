@@ -3611,6 +3611,7 @@ class Warehouse_model extends App_Model
 				$goods_delivery['tax_rate'] = $tax_rate;
 				$goods_delivery['sub_total'] = $sub_total;
 				$goods_delivery['tax_name'] = $tax_name;
+				$goods_delivery['vendor_id'] = !empty($goods_delivery['vendor_id']) ? implode(',', $goods_delivery['vendor_id']) : NULL;
 				unset($goods_delivery['order']);
 				unset($goods_delivery['id']);
 				unset($goods_delivery['tax_select']);
@@ -7504,6 +7505,7 @@ class Warehouse_model extends App_Model
 			$goods_delivery['tax_rate'] = $tax_rate;
 			$goods_delivery['sub_total'] = $sub_total;
 			$goods_delivery['tax_name'] = $tax_name;
+			$goods_delivery['vendor_id'] = !empty($goods_delivery['vendor_id']) ? implode(',', $goods_delivery['vendor_id']) : NULL;
 
 			unset($goods_delivery['order']);
 			unset($goods_delivery['tax_select']);
@@ -7562,6 +7564,7 @@ class Warehouse_model extends App_Model
 			$goods_delivery['tax_rate'] = $tax_rate;
 			$goods_delivery['sub_total'] = $sub_total;
 			$goods_delivery['tax_name'] = $tax_name;
+			$goods_delivery['vendor_id'] = !empty($goods_delivery['vendor_id']) ? implode(',', $goods_delivery['vendor_id']) : NULL;
 
 			unset($goods_delivery['order']);
 			unset($goods_delivery['id']);
@@ -8379,7 +8382,7 @@ class Warehouse_model extends App_Model
 		$this->db->where('rel_id', $id);
 		$this->db->where('rel_type', $related);
 		$this->db->order_by('dateadded', 'desc');
-		$attachments = $this->db->get(db_prefix() . 'purchase_files')->result_array();
+		$attachments = $this->db->get(db_prefix() . 'invetory_files')->result_array();
 		return $attachments;
 	}
 	public function add_goods_receipt_from_purchase_order($data_insert)
@@ -10833,6 +10836,7 @@ class Warehouse_model extends App_Model
 
 		$this->db->insert(db_prefix() . 'internal_delivery_note', $data);
 		$insert_id = $this->db->insert_id();
+		$this->save_invetory_files('internal_delivery', $insert_id);
 
 		/*update save note*/
 
@@ -15631,7 +15635,7 @@ class Warehouse_model extends App_Model
 			$name_commodity_name = $name . '[commodity_name]';
 			$name_warehouse_id = $name . '[warehouse_id]';
 			$name_unit_id = $name . '[unit_id]';
-			$name_vendor = $name . '[vendor_id]';
+			$name_vendor = $name . '[vendor_id][]';
 			$name_unit_name = '[unit_name]';
 			$name_available_quantity = $name . '[available_quantity]';
 			$name_quantities = $name . '[quantities]';
@@ -20123,4 +20127,25 @@ class Warehouse_model extends App_Model
         return true;
 
 	}
+
+	public function delete_inventory_attachment($id)
+    {
+        $deleted = false;
+        $this->db->where('id', $id);
+        $attachment = $this->db->get(db_prefix() . 'invetory_files')->row();
+        if ($attachment) {
+            if (unlink(get_upload_path_by_type('inventory') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name)) {
+                $this->db->where('id', $attachment->id);
+                $this->db->delete(db_prefix() . 'invetory_files');
+                $deleted = true;
+            }
+            // Check if no attachments left, so we can delete the folder also
+            $other_attachments = list_files(get_upload_path_by_type('inventory') . $attachment->rel_type . '/' . $attachment->rel_id);
+            if (count($other_attachments) == 0) {
+                delete_dir(get_upload_path_by_type('inventory') . $attachment->rel_type . '/' . $attachment->rel_id);
+            }
+        }
+
+        return $deleted;
+    }
 }

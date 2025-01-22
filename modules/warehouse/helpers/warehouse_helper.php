@@ -2068,19 +2068,15 @@ function handle_shipment_add_attachment($id)
     }
 
 }
-function get_vendor_list($name_vendor, $vendor_id){
-    
-    $CI = & get_instance();
+function get_vendor_list($name_vendor, $vendor){
+    $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     $get_vendor = $CI->purchase_model->get_vendor();
-    
-    $selected = '';
-    foreach ($get_vendor as $value) {
-        if ($vendor_id == $value['userid']) {
-          $selected = $value['userid'];
-        }
+    $selected = !empty($vendor) ? $vendor : array();
+    if (!is_array($selected)) {
+        $selected = explode(",", $selected);
     }
-    return render_select($name_vendor, $get_vendor, array('userid', 'company'), '', $selected);
+    return render_select($name_vendor, $get_vendor, array('userid', 'company'), '', $selected, array('multiple' => true), array(), '', '', false);
 }
 
 function get_vendor_name($id)

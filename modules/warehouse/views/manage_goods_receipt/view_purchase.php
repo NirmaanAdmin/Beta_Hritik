@@ -28,10 +28,17 @@
               </a>
             </li>
 
+            <li role="presentation" class="tab-separator">
+               <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
+                  <?php echo _l('attachment'); ?>
+               </a>
+            </li>
+
             <li role="presentation" data-toggle="tooltip" data-title="<?php echo _l('toggle_full_view'); ?>" class="tab-separator toggle_view">
               <a href="#" onclick="small_table_full_view(); return false;">
                 <i class="fa fa-expand"></i></a>
             </li>
+
           </ul>
         </div>
       </div>
@@ -469,6 +476,32 @@
 
         <div role="tabpanel" class="tab-pane" id="tab_tasks">
           <?php init_relation_tasks_table(array('data-new-rel-id' => $goods_receipt->id, 'data-new-rel-type' => 'stock_import')); ?>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="attachment">
+         <div class="col-md-12">
+            <?php
+            if (isset($attachments) && count($attachments) > 0) {
+               foreach ($attachments as $value) {
+                  echo '<div class="col-md-6" style="padding-bottom: 10px">';
+                  $path = get_upload_path_by_type('inventory') . 'goods_receipt/' . $value['rel_id'] . '/' . $value['file_name'];
+                  $is_image = is_image($path);
+                  if ($is_image) {
+                     echo '<div class="preview_image">';
+                  } ?>
+                  <a href="<?php echo site_url('download/file/inventory/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-inventory-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                     <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                     <?php if ($is_image) { ?>
+                        <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                     <?php } ?>
+                  </a>
+                  <?php if ($is_image) {
+                     echo '</div>';
+                  } ?>
+            <?php echo '</div>';
+               }
+            } ?>
+         </div>
         </div>
 
       </div>

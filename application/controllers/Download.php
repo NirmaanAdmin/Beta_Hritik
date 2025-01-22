@@ -133,6 +133,18 @@ class Download extends App_Controller
                 }
                 $path = get_upload_path_by_type('purchase') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
             }
+        } elseif ($folder_indicator == 'inventory') {
+            if (is_staff_logged_in()) {
+                if (!$attachmentid) {
+                    show_404();
+                }
+                $this->db->where('id', $attachmentid);
+                $attachment = $this->db->get(db_prefix() . 'invetory_files')->row();
+                if (!$attachment) {
+                    show_404();
+                }
+                $path = get_upload_path_by_type('inventory') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
+            }
         } elseif ($folder_indicator == 'contract') {
             if (!$attachmentid) {
                 show_404();

@@ -791,6 +791,7 @@ class warehouse extends AdminController
 			$data['goods_receipt'] = $goods_receipt;
 			$data['tax_data'] = $this->warehouse_model->get_html_tax_receip($id);
 			$data['total_item'] = count($data['goods_receipt_detail']);
+			$data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_receipt', $id);
 
 			if (count($data['goods_receipt_detail']) > 0) {
 				$index_receipt = 0;
@@ -947,6 +948,7 @@ class warehouse extends AdminController
 		$this->load->model('currencies_model');
 		$base_currency = $this->currencies_model->get_base_currency();
 		$data['base_currency'] = $base_currency;
+		$data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_receipt', $id);
 
 
 		$this->load->view('manage_goods_receipt/view_purchase', $data);
@@ -1645,6 +1647,7 @@ class warehouse extends AdminController
 			if (isset($goods_delivery->pr_order_id) && (float)$goods_delivery->pr_order_id > 0) {
 				$is_purchase_order = true;
 			}
+			$data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_delivery', $id);
 
 			if (count($data['goods_delivery_detail']) > 0) {
 				$index_receipt = 0;
@@ -1948,6 +1951,7 @@ class warehouse extends AdminController
 		$this->load->model('currencies_model');
 		$base_currency = $this->currencies_model->get_base_currency();
 		$data['base_currency'] = $base_currency;
+		$data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_delivery', $id);
 
 
 		$this->load->view('manage_goods_delivery/view_delivery', $data);
@@ -4962,6 +4966,7 @@ class warehouse extends AdminController
 			if (!$internal_delivery) {
 				blank_page('Internal delivery note Not Found', 'danger');
 			}
+			$data['attachments'] = $this->warehouse_model->get_inventory_attachments('internal_delivery', $id);
 
 			$internal_delivery_details = $this->warehouse_model->get_internal_delivery_detail($id);
 			if (count($internal_delivery_details) > 0) {
@@ -5109,6 +5114,7 @@ class warehouse extends AdminController
 		$this->load->model('currencies_model');
 		$base_currency = $this->currencies_model->get_base_currency();
 		$data['base_currency'] = $base_currency;
+		$data['attachments'] = $this->warehouse_model->get_inventory_attachments('internal_delivery', $id);
 
 		$this->load->view('manage_internal_delivery/view_internal_delivery', $data);
 	}
@@ -9250,4 +9256,10 @@ class warehouse extends AdminController
 			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
 		}
 	}
+
+	public function delete_attachment($id)
+    {
+        $this->warehouse_model->delete_inventory_attachment($id);
+        redirect($_SERVER['HTTP_REFERER']);
+    }
 }
