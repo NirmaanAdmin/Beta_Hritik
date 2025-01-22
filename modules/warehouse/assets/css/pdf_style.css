@@ -307,3 +307,13 @@ span.print-barcode-td-height{
   clear: both;
   margin: 10px 0px
 }
+
+.td_style_r_ep_l{
+	text-align: left; 
+	font-size: 13px;
+}
+
+.td_style_r_ep_r{
+	text-align: right; 
+	font-size: 13px;
+}

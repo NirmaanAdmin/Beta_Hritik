@@ -312,22 +312,14 @@
                 <thead>
                   <tr>
                     <th width="1%"></th>
-                    <th width="20%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
-                    <th width="15%" align="left"><?php echo _l('warehouse_name'); ?></th>
+                    <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+                    <th width="15%" align="left"><?php echo _l('item_description'); ?></th>
+                    <th width="14%" align="left"><?php echo _l('warehouse_name'); ?></th>
                     <th width="10%" align="right" class="available_quantity"><?php echo _l('available_quantity'); ?></th>
                     <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
-                    <!-- <th width="10%" align="right"><?php echo _l('rate'); ?></th>
-                    <th width="12%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
                     <th width="10%" align="right"><?php echo _l('lot_number'); ?></th>
                     <th width="12%" align="right"><?php echo _l('wh_vendor'); ?></th>
                     <th width="12%" align="right"><?php echo _l('issued_date'); ?></th>
-                    <!-- <th width="10%" align="right"><?php echo _l('subtotal'); ?></th> -->
-                    <?php /* <th width="7%" align="right"><?php echo _l('discount'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('discount(money)'); ?></th>
-                    */ ?>
-                    <!-- <th width="10%" align="right"><?php echo _l('total_money'); ?></th> -->
-
-                    <!-- <th align="center"></th> -->
                     <th align="center" width='1%'><i class="fa fa-cog"></i></th>
                   </tr>
                 </thead>
