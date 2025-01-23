@@ -4077,30 +4077,6 @@ class warehouse extends AdminController
 		}
 	}
 
-
-	/**
-	 * coppy invoices
-	 * @param  integer $invoice_id 
-	 * @return json              
-	 */
-	public function copy_invoices($invoice_id = '')
-	{
-
-		$invoices_detail = $this->warehouse_model->copy_invoice($invoice_id);
-		if ($invoice_id != '') {
-			$invoice_no = format_invoice_number($invoice_id);
-		} else {
-			$invoice_no = '';
-		}
-		echo json_encode([
-
-			'result' => $invoices_detail['goods_delivery_detail'],
-			'goods_delivery' => $invoices_detail['goods_delivery'],
-			'status' => $invoices_detail['status'],
-			'invoice_no' => $invoice_no,
-		]);
-	}
-
 	/**
 	 * caculator purchase price
 	 * @return json 
@@ -5369,22 +5345,6 @@ class warehouse extends AdminController
 		$data['warehouse_inventory'] = $this->warehouse_model->get_inventory_by_warehouse($warehouse_id);
 
 		$this->load->view('manage_warehouse/warehouse_view_detail', $data);
-	}
-
-	/**
-	 * goods delivery copy pur order
-	 * @param  integer $pur request
-	 * @return json encode
-	 */
-	public function goods_delivery_copy_pur_order($pur_order = '')
-	{
-
-		$pur_request_detail = $this->warehouse_model->goods_delivery_get_pur_order($pur_order);
-
-		echo json_encode([
-			'result' => $pur_request_detail['result'] ? $pur_request_detail['result'] : '',
-			'additional_discount' => $pur_request_detail['additional_discount'] ? $pur_request_detail['additional_discount'] : '',
-		]);
 	}
 
 	/**

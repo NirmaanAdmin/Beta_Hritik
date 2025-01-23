@@ -542,40 +542,6 @@ function submit_form(save_and_send_request) {
   return true;
 }
 
-function invoice_change(){
-  "use strict";
-
-  var invoice_id = $('select[name="invoice_id"]').val();
-
-  $.post(admin_url + 'warehouse/copy_invoices/'+invoice_id).done(function(response){
-    response = JSON.parse(response);
-
-    $('input[name="additional_discount"]').val((response.goods_delivery.additional_discount));
-    $('.invoice-item table.invoice-items-table.items tbody').html('');
-    $('.invoice-item table.invoice-items-table.items tbody').append(response.result);
-
-    setTimeout(function () {
-      wh_calculate_total();
-    }, 15);
-
-    init_selectpicker();
-    init_datepicker();
-    wh_reorder_items('.invoice-item');
-    wh_clear_item_preview_values('.invoice-item');
-    $('body').find('#items-warning').remove();
-    $("body").find('.dt-loader').remove();
-    $('#item_select').selectpicker('val', '');
-
-    $('select[name="staff_id"]').val((response.goods_delivery.addedfrom)).change();
-    $('textarea[name="description"]').val((response.goods_delivery.description)).change();
-    $('input[name="address"]').val((response.goods_delivery.address));
-    $('select[name="customer_code"]').val((response.goods_delivery.customer_code)).change();
-    $('input[name="invoice_no"]').val(response.invoice_no);
-    $('.selectpicker').selectpicker('refresh');
-  });
-
-}
-
 function stock_import_change(){
   "use strict";
   var goods_receipt_id = $('select[name="goods_receipt_id"]').val();
@@ -615,55 +581,6 @@ function stock_import_change(){
 
   });
 }
-
-  function pr_order_change(){
-     "use strict";
-
-    var pr_order_id = $('select[name="pr_order_id"]').val();
-
-      alert_float('warning', '<?php echo _l('stock_received_docket_from_purchase_request'); ?>')
-
-      $.post(admin_url + 'warehouse/goods_delivery_copy_pur_order/'+pr_order_id).done(function(response){
-        response = JSON.parse(response);
-
-        $('input[name="additional_discount"]').val((response.additional_discount));
-        $('.invoice-item table.invoice-items-table.items tbody').html('');
-        $('.invoice-item table.invoice-items-table.items tbody').append(response.result);
-
-        setTimeout(function () {
-          wh_calculate_total();
-        }, 15);
-
-        init_selectpicker();
-        init_datepicker();
-        wh_reorder_items('.invoice-item');
-        wh_clear_item_preview_values('.invoice-item');
-        $('body').find('#items-warning').remove();
-        $("body").find('.dt-loader').remove();
-        $('#item_select').selectpicker('val', '');
-
-      });
-
-      if(pr_order_id != ''){
-        $.post(admin_url + 'warehouse/copy_pur_vender/'+pr_order_id).done(function(response){
-         var response_vendor = JSON.parse(response);
-
-         $('select[name="buyer_id"]').val(response_vendor.buyer).change();
-         $('select[name="project"]').val(response_vendor.project).change();
-         $('select[name="type"]').val(response_vendor.type).change();
-         $('select[name="department"]').val(response_vendor.department).change();
-         $('select[name="requester"]').val(response_vendor.requester).change();
-
-       });
-      }else{
-        $('select[name="buyer_id"]').val('').change();
-        $('select[name="project"]').val('').change();
-        $('select[name="type"]').val('').change();
-        $('select[name="department"]').val('').change();
-        $('select[name="requester"]').val('').change();
-      }
-
-  }
 
   /*scanner barcode*/
   $(document).ready(function() {
