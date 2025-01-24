@@ -2076,7 +2076,7 @@ function get_vendor_list($name_vendor, $vendor){
     if (!is_array($selected)) {
         $selected = explode(",", $selected);
     }
-    return render_select($name_vendor, $get_vendor, array('userid', 'company'), '', $selected, array('multiple' => true), array(), '', '', false);
+    return render_select($name_vendor, $get_vendor, array('userid', 'company'), '', $selected, array('multiple' => true), array(), '', 'vendor_list', false);
 }
 
 function get_vendor_name($id)

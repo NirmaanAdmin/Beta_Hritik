@@ -273,8 +273,42 @@
                              if(strlen($commodity_name) == 0){
                               $commodity_name = wh_get_item_variatiom($delivery_value['commodity_code']);
                             }
-                         
-                            $vendor_name = get_vendor_name($delivery_value['vendor_id']);
+                            
+                            $vendor_all_name = '';
+                            if(!empty($delivery_value['vendor_id'])) {
+                              $vendor_name = explode(",", $delivery_value['vendor_id']);
+                              foreach ($vendor_name as $key => $value) {
+                                $vendor_all_name .= get_vendor_name($value).", ";
+                              }
+                              $vendor_all_name = rtrim($vendor_all_name, ', ');
+                            }
+
+                            $all_quantities = '';
+                            if(!empty($delivery_value['quantities_json'])) {
+                              $quantities_json = json_decode($delivery_value['quantities_json'], true);
+                              foreach ($quantities_json as $key => $value) {
+                                $all_quantities .= get_vendor_name($key).": "._d($value).", ";
+                              }
+                              $all_quantities = rtrim($all_quantities, ', ');
+                            }
+
+                            $issue_all_dates = '';
+                            if(!empty($delivery_value['issued_date'])) {
+                              $issued_date = json_decode($delivery_value['issued_date'], true);
+                              foreach ($issued_date as $key => $value) {
+                                $issue_all_dates .= get_vendor_name($key).": "._d($value).", ";
+                              }
+                              $issue_all_dates = rtrim($issue_all_dates, ', ');
+                            }
+
+                            $all_lot_number = '';
+                            if(!empty($delivery_value['lot_number'])) {
+                              $lot_number = json_decode($delivery_value['lot_number'], true);
+                              foreach ($lot_number as $key => $value) {
+                                $all_lot_number .= get_vendor_name($key).": "._d($value).", ";
+                              }
+                              $all_lot_number = rtrim($all_lot_number, ', ');
+                            }
                             
                             ?>
           
@@ -285,15 +319,15 @@
                                   <td ><?php echo html_entity_decode($warehouse_name) ?></td>
                                   <td ><?php echo html_entity_decode($available_quantity) ?></td>
                                   <td ><?php echo html_entity_decode($unit_name) ?></td>
-                                  <td class="text-right"><?php echo html_entity_decode($quantities) ?></td>
+                                  <td class="text-right"><?php echo $all_quantities ?></td>
                                   <!-- <td class="text-right"><?php echo app_format_money((float)$unit_price,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$item_subtotal,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$total_money,'') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$discount,'') ?></td> -->
-                                  <td class="text-right"><?php echo $vendor_name; ?></td>
-                                  <td class="text-right"><?php echo _d($delivery_value['issued_date']); ?></td>
+                                  <td class="text-right"><?php echo $vendor_all_name; ?></td>
+                                  <td class="text-right"><?php echo $issue_all_dates; ?></td>
                                   <!-- <td class="text-right"><?php echo app_format_money((float)$discount_money,'') ?></td> -->
-                                  <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
+                                  <td class="text-right"><?php echo html_entity_decode($all_lot_number) ?></td>
                                   <!-- <td class="text-right"><?php echo app_format_money((float)$total_after_discount,'') ?></td> -->
                                   <td class="text-right"><?php echo html_entity_decode($guarantee_period) ?></td>
                                 </tr>

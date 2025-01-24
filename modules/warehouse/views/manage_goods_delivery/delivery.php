@@ -298,8 +298,8 @@
                     <th width="10%" align="right" class="available_quantity"><?php echo _l('available_quantity'); ?></th>
                     <th width="10%" align="right" class="qty"><?php echo _l('quantity'); ?></th>
                     <th width="10%" align="right"><?php echo _l('lot_number'); ?></th>
-                    <th width="12%" align="right"><?php echo _l('wh_vendor'); ?></th>
                     <th width="12%" align="right"><?php echo _l('issued_date'); ?></th>
+                    <th width="12%" align="right"><?php echo _l('wh_vendor'); ?></th>
                     <th align="center" width='1%'><i class="fa fa-cog"></i></th>
                   </tr>
                 </thead>

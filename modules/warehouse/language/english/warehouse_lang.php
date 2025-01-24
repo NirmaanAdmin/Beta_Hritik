@@ -734,3 +734,4 @@ $lang['payment_date_updated'] = 'Payment date updated';
 $lang['est_delivery_date_updated'] = 'Est delivery date updated';
 $lang['delivery_date_updated'] = 'Delivery date updated';
 $lang['issued_date']  = 'Issued date';
+$lang['cannot_increase_the_quantity_beyond_the_available_stock'] = 'You cannot increase the quantity beyond the available stock.';

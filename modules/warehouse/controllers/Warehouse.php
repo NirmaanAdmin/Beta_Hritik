@@ -1657,7 +1657,7 @@ class warehouse extends AdminController
 						$unit_name = wh_get_unit_name($delivery_detail['unit_id']);
 						$taxname = '';
 						$expiry_date = null;
-						$lot_number = null;
+						$lot_number = $delivery_detail['lot_number'];
 						$commodity_name = $delivery_detail['commodity_name'];
 						$without_checking_warehouse = 0;
 
@@ -1670,7 +1670,7 @@ class warehouse extends AdminController
 							$without_checking_warehouse = $get_commodity->without_checking_warehouse;
 						}
 
-						$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $delivery_detail['warehouse_id'], $delivery_detail['available_quantity'], $delivery_detail['quantities'], $unit_name, $delivery_detail['unit_price'], $taxname, $delivery_detail['commodity_code'], $delivery_detail['unit_id'], $delivery_detail['vendor_id'], $delivery_detail['tax_rate'], $delivery_detail['total_money'], $delivery_detail['discount'], $delivery_detail['discount_money'], $delivery_detail['total_after_discount'], $delivery_detail['guarantee_period'], $delivery_detail['issued_date'], $lot_number, $delivery_detail['note'], $delivery_detail['sub_total'], $delivery_detail['tax_name'], $delivery_detail['tax_id'], $delivery_detail['id'], true, $is_purchase_order, $delivery_detail['serial_number'], $without_checking_warehouse, $delivery_detail['description']);
+						$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template($warehouse_data, 'items[' . $index_receipt . ']', $commodity_name, $delivery_detail['warehouse_id'], $delivery_detail['available_quantity'], $delivery_detail['quantities'], $unit_name, $delivery_detail['unit_price'], $taxname, $delivery_detail['commodity_code'], $delivery_detail['unit_id'], $delivery_detail['vendor_id'], $delivery_detail['tax_rate'], $delivery_detail['total_money'], $delivery_detail['discount'], $delivery_detail['discount_money'], $delivery_detail['total_after_discount'], $delivery_detail['guarantee_period'], $delivery_detail['issued_date'], $lot_number, $delivery_detail['note'], $delivery_detail['sub_total'], $delivery_detail['tax_name'], $delivery_detail['tax_id'], $delivery_detail['id'], true, $is_purchase_order, $delivery_detail['serial_number'], $without_checking_warehouse, $delivery_detail['description'], $delivery_detail['quantities_json']);
 					}
 				}
 			}
@@ -6732,81 +6732,6 @@ class warehouse extends AdminController
 	}
 
 	/**
-	 * get good delivery row template
-	 * @return [type] 
-	 */
-	public function get_good_delivery_row_template()
-	{
-
-		$name = $this->input->post('name');
-		$commodity_name = $this->input->post('commodity_name');
-		$warehouse_id = $this->input->post('warehouse_id');
-		$available_quantity = $this->input->post('available_quantity');
-		$quantities = $this->input->post('quantities');
-		$unit_name = $this->input->post('unit_name');
-		$unit_price = $this->input->post('unit_price');
-		$taxname = $this->input->post('taxname');
-		$lot_number = $this->input->post('lot_number');
-		$issued_date = $this->input->post('issued_date');
-		$commodity_code = $this->input->post('commodity_code');
-		$unit_id = $this->input->post('unit_id');
-		$tax_rate = $this->input->post('tax_rate');
-		$discount = $this->input->post('discount');
-		$vendor = $this->input->post('vendor_id');
-		$note = $this->input->post('note');
-		$guarantee_period = $this->input->post('guarantee_period');
-		$item_key = $this->input->post('item_key');
-		$item_index = $this->input->post('item_index');
-		$formdata = $this->input->post('formdata');
-		$without_checking_warehouse = $this->input->post('without_checking_warehouse');
-		$description = $this->input->post('description');
-
-		$goods_delivery_row_template = '';
-		$temporaty_quantity = $quantities;
-		$temporaty_available_quantity = $available_quantity;
-		$list_temporaty_serial_numbers = [];
-
-		if ($without_checking_warehouse == 0 || $without_checking_warehouse == '0') {
-
-			if (is_array($formdata) && count($formdata) > 1) {
-
-				foreach ($formdata as $key => $form_value) {
-					if ($form_value['name'] != 'csrf_token_name') {
-						$list_temporaty_serial_numbers[] = [
-							'serial_number' => $form_value['value'],
-						];
-					}
-				}
-			} else {
-
-				$list_temporaty_serial_numbers = $this->warehouse_model->get_list_temporaty_serial_numbers($commodity_code, $warehouse_id, $quantities);
-			}
-		}
-
-		foreach ($list_temporaty_serial_numbers as $value) {
-			$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
-			$quantities = 1;
-			$name = 'newitems[' . $item_index . ']';
-
-			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $issued_date, $lot_number, $note, '', '', '', $item_key, false, false, $value['serial_number'], $without_checking_warehouse, $description);
-			$temporaty_quantity--;
-			$temporaty_available_quantity--;
-			$item_index++;
-		}
-
-		if ($temporaty_quantity > 0) {
-			$quantities = $temporaty_quantity;
-			$available_quantity = $temporaty_available_quantity;
-			$name = 'newitems[' . $item_index . ']';
-
-			$goods_delivery_row_template .= $this->warehouse_model->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, $quantities, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, $vendor, $tax_rate, '', $discount, '', '', $guarantee_period, $issued_date, $lot_number, $note, '', '', '', $item_key, false, false, '', $without_checking_warehouse, $description);
-			$item_index++;
-		}
-
-		echo $goods_delivery_row_template;
-	}
-
-	/**
 	 * manage packing list
 	 * @param  string $id 
 	 * @return [type]     
@@ -9223,4 +9148,11 @@ class warehouse extends AdminController
         $this->warehouse_model->delete_inventory_attachment($id);
         redirect($_SERVER['HTTP_REFERER']);
     }
+
+    public function get_vendor_issued_data()
+	{
+		$data = $this->input->post();
+		$this->warehouse_model->get_vendor_issued_data($data);
+		die();
+	}
 }

@@ -91,6 +91,66 @@ $("body").on('change', 'input[name="shipping_fee"]', function () {
     wh_calculate_total();
 });
 
+$(".sortable.item").each(function () {
+  var row = $(this);
+  var selectedValues = row.find("select.vendor_list").val() || [];
+  row.data("previousValues", selectedValues);
+});
+
+$("body").on("change", "select.vendor_list", function () {
+  var currentElement = $(this);
+  var row = currentElement.closest(".sortable.item");
+  var previousValues = row.data("previousValues") || []; 
+  var currentValues = currentElement.val() || [];
+  var deselectedValues = previousValues.filter(value => !currentValues.includes(value));
+  var selectedValues = currentValues.filter(value => !previousValues.includes(value));
+  var vendor = '';
+  if (deselectedValues.length > 0) {
+    vendor = deselectedValues[0];
+  }
+  if (selectedValues.length > 0) {
+    vendor = selectedValues[0];
+  }
+    
+  row.data("previousValues", currentValues);
+
+  if (currentValues.length > 3) {
+    currentElement.find("option:selected").last().prop("selected", false);
+    if (currentElement.hasClass("selectpicker")) {
+      currentElement.selectpicker("refresh");
+    }
+    alert("You can select up to 3 vendors only.");
+  } else {
+      var data = {
+        delivery_id: $('input[name="id"]').val(),
+        vendor: vendor,
+        item_key: row.find("input.ids").attr("data-id"),
+        options: currentValues,
+      };
+
+      $.post(admin_url + "warehouse/get_vendor_issued_data", data)
+      .done(function (response) {
+          try {
+              response = JSON.parse(response);
+              if(row.find('.vendor-' + vendor).length == 0) {
+                row.find("td.quantities").append(response.quantities_html);
+                row.find("td.lot_number").append(response.lot_number_html);
+                row.find("td.issued_date").append(response.issued_date_html);
+              } else {
+                row.find('.vendor-' + vendor).remove();
+              }
+              init_datepicker();
+          } catch (e) {
+              console.error("Error parsing response: ", e);
+          }
+      })
+      .fail(function (xhr, status, error) {
+        console.error("AJAX request failed: ", error);
+      });
+  }
+});
+
+
 })(jQuery);
 
 function check_quantity_inventory(commodity_id, quantity, warehouse_id, switch_barcode_scanners = false) {
@@ -167,80 +227,6 @@ function wh_add_item_to_preview(id) {
   });
 }
 
-function after_wh_add_item_to_table(data, itemid, formdata) {
-  "use strict";
-
-  data = typeof (data) == 'undefined' || data == 'undefined' ? wh_get_item_preview_values() : data;
- 
-  if ((data.warehouse_id == "" ||  data.available_quantity == "" || data.quantities == "" || data.commodity_code == "" ) && (data.without_checking_warehouse == 0 || data.without_checking_warehouse == '0' ) ) {
-    if(data.warehouse_id == ""){
-      alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
-    }
-    if(parseFloat(data.available_quantity) < parseFloat(data.quantities)){
-      //check_available_quantity
-      alert_float('warning', '<?php echo _l('Inventory quantity is not enough') ?>');
-    }
-
-    return;
-  }
-  if(parseFloat(data.available_quantity) < parseFloat(data.quantities) && (data.without_checking_warehouse == 0 || data.without_checking_warehouse == '0' ) ){
-      //check_available_quantity
-      alert_float('warning', '<?php echo _l('Inventory quantity is not enough') ?>');
-      return;
-    }
-
-  var table_row = '';
-  var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
-  lastAddedItemKey = item_key;
- 
-  $("body").append('<div class="dt-loader"></div>');
-  wh_get_item_row_template('newitems[' + item_key + ']',data.commodity_name,data.warehouse_id, data.available_quantity, data.quantities, data.unit_name,data.unit_price, data.taxname, data.lot_number, data.issued_date, data.commodity_code, data.unit_id, data.tax_rate, data.discount,data.vendor_id, data.note, data.guarantee_period, itemid, item_key, formdata, data.without_checking_warehouse).done(function(output){
-    table_row += output;
-
-    lastAddedItemKey = parseInt(lastAddedItemKey) + parseInt(data.quantities);
-    $('.invoice-item table.invoice-items-table.items tbody').append(table_row);
-
-    setTimeout(function () {
-      wh_calculate_total();
-    }, 15);
-    init_selectpicker();
-    init_datepicker();
-    wh_reorder_items('.invoice-item');
-    wh_clear_item_preview_values('.invoice-item');
-    $('body').find('#items-warning').remove();
-    $("body").find('.dt-loader').remove();
-        $('#item_select').selectpicker('val', '');
-
-    return true;
-  });
-  return false;
-}
-
-function wh_get_item_preview_values() {
-  "use strict";
-
-  var response = {};
-  response.commodity_name = $('.invoice-item .main textarea[name="commodity_name"]').val();
-  response.warehouse_id = $('.invoice-item .main select[name="warehouse_id"]').val();
-  response.available_quantity = $('.invoice-item .main input[name="available_quantity"]').val();
-  response.quantities = $('.invoice-item .main input[name="quantities"]').val();
-  response.unit_name = $('.invoice-item .main input[name="unit_name"]').val();
-  response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
-  response.taxname = $('.main select.taxes').selectpicker('val');
-  response.lot_number = '';
-  response.issued_date = $('.invoice-item .main input[name="issued_date"]').val();
-  response.commodity_code = $('.invoice-item .main input[name="commodity_code"]').val();
-  response.unit_id = $('.invoice-item .main input[name="unit_id"]').val();
-  response.tax_rate = $('.invoice-item .main input[name="tax_rate"]').val();
-  response.discount = $('.invoice-item .main input[name="discount"]').val();
-  response.vendor_id = $('.invoice-item .main select[name="vendor_id"]').val();
-  response.note = $('.invoice-item .main input[name="note"]').val();
-  response.guarantee_period = $('.invoice-item .main input[name="guarantee_period"]').val();
-  response.without_checking_warehouse = $('.invoice-item .main input[name="without_checking_warehouse"]').val();
-
-  return response;
-}
-
 function wh_clear_item_preview_values(parent) {
   "use strict";
 
@@ -248,42 +234,6 @@ function wh_clear_item_preview_values(parent) {
   previewArea.find('input').val('');
   previewArea.find('textarea').val('');
   previewArea.find('select').val('').selectpicker('refresh');
-}
-
-function wh_get_item_row_template(name, commodity_name, warehouse_id, available_quantity, quantities, unit_name, unit_price, taxname, lot_number, issued_date, commodity_code, unit_id, tax_rate, discount,vendor_id, note, guarantee_period, item_key, item_index, formdata, without_checking_warehouse)  {
-  "use strict";
-
-  jQuery.ajaxSetup({
-    async: false
-  });
-
-  var d = $.post(admin_url + 'warehouse/get_good_delivery_row_template', {
-    name: name,
-    commodity_name : commodity_name,
-    warehouse_id : warehouse_id,
-    available_quantity : available_quantity,
-    quantities : quantities,
-    unit_name : unit_name,
-    unit_price : unit_price,
-    taxname : taxname,
-    lot_number : lot_number,
-    issued_date : issued_date,
-    commodity_code : commodity_code,
-    unit_id : unit_id,
-    vendor_id : vendor_id,
-    tax_rate : tax_rate,
-    discount : discount,
-    note : note,
-    guarantee_period : guarantee_period,
-    item_key : item_key,
-    item_index : item_index,
-    formdata : formdata,
-    without_checking_warehouse : without_checking_warehouse,
-  });
-  jQuery.ajaxSetup({
-    async: true
-  });
-  return d;
 }
 
 function wh_delete_item(row, itemid,parent) {
@@ -492,9 +442,10 @@ function submit_form(save_and_send_request) {
 
   var $itemsTable = $('.invoice-items-table');
   var $previewItem = $itemsTable.find('.main');
-  var check_warehouse_status = true,
-      check_quantity_status = true,
-      check_available_quantity_status = true;
+  var check_warehouse_status = true;
+  var check_quantity_status = true;
+  var check_row_wise_quantity_status = true;
+  var check_available_quantity_status = true;
 
   if ( $itemsTable.length && $itemsTable.find('.item').length === 0) {
     alert_float('warning', '<?php echo _l('wh_enter_at_least_one_product'); ?>', 3000);
@@ -504,12 +455,25 @@ function submit_form(save_and_send_request) {
   $('input[name="save_and_send_request"]').val(save_and_send_request);
 
   var rows = $('.table.has-calculations tbody tr.item');
-  $.each(rows, function () {
 
+  $.each(rows, function () {
     var warehouse_id = $(this).find('td.warehouse_select select').val();
     var available_quantity_value = $(this).find('td.available_quantity input').val();
-    var quantity_value = $(this).find('td.quantities input').val();
+    var quantity_value = 0;
+    var quantity_length = $(this).find('td.quantities .form-group').length;
     var without_checking_warehouse = $(this).find('td.without_checking_warehouse input').val();
+    $(this).closest('.sortable.item').css('background-color', 'white');
+
+    if(quantity_length == 0){
+      quantity_value = 0;
+    } else {
+      var total_quantity = 0;
+      $(this).find('td.quantities .form-group').each(function(index, thisElement) {
+        var inputValue = parseFloat($(thisElement).find('input').val()) || 0; 
+        total_quantity += inputValue;
+      });
+      quantity_value = total_quantity;
+    }
 
     if((warehouse_id == '' || warehouse_id == undefined) && (without_checking_warehouse == 0 || without_checking_warehouse == '0')){
       check_warehouse_status = false;
@@ -520,9 +484,17 @@ function submit_form(save_and_send_request) {
     if(parseFloat(available_quantity_value) < parseFloat(quantity_value) && (without_checking_warehouse == 0 || without_checking_warehouse == '0')){
       check_available_quantity_status = false;
     }
+    if(parseFloat(quantity_value) == 0) {
+      check_row_wise_quantity_status = false;
+      $(this).closest('.sortable.item').css('background-color', 'lightpink');
+    }
+    if(parseFloat(available_quantity_value) < parseFloat(quantity_value)) {
+      check_row_wise_quantity_status = false;
+      $(this).closest('.sortable.item').css('background-color', 'lightpink');
+    }
   })
 
-  if(check_warehouse_status == true && check_quantity_status == true && check_available_quantity_status == true){
+  if(check_warehouse_status == true && check_quantity_status == true && check_available_quantity_status == true && check_row_wise_quantity_status == true){
     // Add disabled to submit buttons
     $(this).find('.add_goods_receipt_send').prop('disabled', true);
     $(this).find('.add_goods_receipt').prop('disabled', true);
@@ -530,6 +502,8 @@ function submit_form(save_and_send_request) {
   }else{
     if(check_warehouse_status == false){
       alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
+    }else if(check_row_wise_quantity_status == false){
+      alert_float('warning', '<?php echo _l('cannot_increase_the_quantity_beyond_the_available_stock') ?>');
     }else if(check_quantity_status == false){
       alert_float('warning', '<?php echo _l('please_choose_quantity_export') ?>');
     }else{
@@ -612,63 +586,6 @@ function stock_import_change(){
       pressed = true;
     });
   });
-
-  function wh_add_item_to_table(data, itemid) {
-    "use strict";
-    data = typeof (data) == 'undefined' || data == 'undefined' ? wh_get_item_preview_values() : data;
-    
-    if ((data.warehouse_id == "" ||  data.available_quantity == "" || data.quantities == "" || data.commodity_code == "" ) && (data.without_checking_warehouse == 0 || data.without_checking_warehouse == '0' ) ) {
-      if(data.warehouse_id == ""){
-        alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
-      }
-      if(parseFloat(data.available_quantity) < parseFloat(data.quantities)){
-      //check_available_quantity
-      alert_float('warning', '<?php echo _l('Inventory quantity is not enough') ?>');
-    }
-
-    return;
-  }
-
-  if(parseFloat(data.available_quantity) < parseFloat(data.quantities) && (data.without_checking_warehouse == 0 || data.without_checking_warehouse == '0' ) ){
-      //check_available_quantity
-      alert_float('warning', '<?php echo _l('Inventory quantity is not enough') ?>');
-      return;
-    }
-    var data_post = {};
-        data_post.commodity_id = data.commodity_code;
-        data_post.quantity = data.quantities;
-        data_post.warehouse_id = data.warehouse_id;
-        data_post.commodity_name = data.commodity_name;
-
-    <?php if(get_option('wh_products_by_serial')){ ?>
-
-    //get serial number
-    $.post(admin_url + 'warehouse/get_serial_number', data_post).done(function(response){
-      response = JSON.parse(response);
-      if(response.status == true || response.status == 'true'){
-        fill_multiple_serial_number_modal(response.table_serial_number);
-      }else{
-        after_wh_add_item_to_table('undefined', 'undefined', '');
-      }
-
-    });
-    <?php }else{ ?>
-        after_wh_add_item_to_table('undefined', 'undefined', '');
-      
-  <?php } ?>
-
-  }
-  
-  function fill_multiple_serial_number_modal(table_serial_number) {
-    "use strict";
-
-      $("#modal_wrapper").load("<?php echo admin_url('warehouse/warehouse/load_serial_number_modal'); ?>", {
-        table_serial_number: table_serial_number,
-      }, function() {
-        $("body").find('#serialNumberModal').modal({ show: true, backdrop: 'static' });
-      });
-
-  }
 
   function wh_change_serial_number(name_commodity_code, name_warehouse_id, name_serial_number, name_commodity_name) {
     "use strict";
