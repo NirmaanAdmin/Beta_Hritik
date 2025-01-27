@@ -802,3 +802,4 @@ $lang['on_going'] = 'On Going';
 $lang['est_delivery_date'] = 'Est Delivery Date';
 $lang['order_name'] = 'Order name';
 $lang['change_budget_head_successfully'] = 'Change budget head successfully';
+$lang['remaining_quantity'] = 'Remaining quantity';

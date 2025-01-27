@@ -18,27 +18,9 @@
           <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
             <li role="presentation" class="active">
               <a href="#tab_estimate" aria-controls="tab_estimate" role="tab" data-toggle="tab">
-                <?php echo _l('stock_import'); ?>
+                Item Tracking
               </a>
             </li>
-
-            <li role="presentation">
-              <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo html_entity_decode($goods_receipt->id); ?>,'stock_import'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
-                <?php echo _l('tasks'); ?>
-              </a>
-            </li>
-
-            <li role="presentation" class="tab-separator">
-               <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
-                  <?php echo _l('attachment'); ?>
-               </a>
-            </li>
-
-            <li role="presentation" data-toggle="tooltip" data-title="<?php echo _l('toggle_full_view'); ?>" class="tab-separator toggle_view">
-              <a href="#" onclick="small_table_full_view(); return false;">
-                <i class="fa fa-expand"></i></a>
-            </li>
-
           </ul>
         </div>
       </div>
@@ -46,23 +28,7 @@
       <div class="clearfix"></div>
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane ptop10 active" id="tab_estimate">
-          <div class="row">
-            <div class="col-md-4">
-
-            </div>
-            <div class="col-md-8">
-              <div class="pull-right _buttons">
-                <?php if (has_permission('warehouse', '', 'edit')) { ?>
-                  <a href="<?php echo admin_url('warehouse/edit_purchase/' . $goods_receipt->id); ?>" class="btn btn-default btn-with-tooltip" data-toggle="tooltip" title="<?php echo _l('view'); ?>" data-placement="bottom"><i class="fa fa-eye"></i></a>
-                <?php } ?>
-
-              </div>
-
-            </div>
-          </div>
-
           <div id="estimate-preview">
-
             <div class="col-md-12 panel-padding">
               <table class="table border table-striped table-margintop">
                 <tbody>
@@ -155,6 +121,7 @@
                         <th colspan="1"><?php echo _l('unit_name') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('po_quantity') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('received_quantity') ?></th>
+                        <th colspan="2" class="text-center"><?php echo _l('remaining_quantity') ?></th>
                         <!-- <th align="right" colspan="1"><?php echo _l('unit_price') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('total_money') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('tax_money') ?></th> -->
@@ -173,8 +140,9 @@
                       foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
 
                         $receipt_key++;
-                        $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : '');
-                        $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : '');
+                        $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : 0);
+                        $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : 0);
+                        $remaining_quantities = $po_quantities - $quantities;
                         $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                         $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                         $goods_money = (isset($receipt_value) ? $receipt_value['goods_money'] : '');
@@ -264,6 +232,7 @@
                           <td class="text-right"><?php echo html_entity_decode($po_quantities) ?></td>
                           <td></td>
                           <td class="text-right"><?php echo html_entity_decode($quantities) ?></td>
+                          <td class="text-right"><?php echo html_entity_decode($remaining_quantities) ?></td>
                           <!-- <td class="text-right"><?php echo app_format_money((float)$unit_price, '') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$goods_money, '') ?></td>
                                   <td class="text-right"><?php echo app_format_money((float)$tax_money, '') ?></td> -->
@@ -472,36 +441,6 @@
 
             </div>
           </div>
-        </div>
-
-        <div role="tabpanel" class="tab-pane" id="tab_tasks">
-          <?php init_relation_tasks_table(array('data-new-rel-id' => $goods_receipt->id, 'data-new-rel-type' => 'stock_import')); ?>
-        </div>
-
-        <div role="tabpanel" class="tab-pane" id="attachment">
-         <div class="col-md-12">
-            <?php
-            if (isset($attachments) && count($attachments) > 0) {
-               foreach ($attachments as $value) {
-                  echo '<div class="col-md-6" style="padding-bottom: 10px">';
-                  $path = get_upload_path_by_type('inventory') . 'goods_receipt/' . $value['rel_id'] . '/' . $value['file_name'];
-                  $is_image = is_image($path);
-                  if ($is_image) {
-                     echo '<div class="preview_image">';
-                  } ?>
-                  <a href="<?php echo site_url('download/file/inventory/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-inventory-<?php echo $value['rel_id']; ?>" <?php } ?>>
-                     <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
-                     <?php if ($is_image) { ?>
-                        <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
-                     <?php } ?>
-                  </a>
-                  <?php if ($is_image) {
-                     echo '</div>';
-                  } ?>
-            <?php echo '</div>';
-               }
-            } ?>
-         </div>
         </div>
 
       </div>

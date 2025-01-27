@@ -3798,3 +3798,35 @@ function get_invoice_data($invoiceid = '')
     }
     return '';
 }
+
+function get_sum_goods_receipt_quantities($id)
+{
+    if (!empty($id)) {
+        $CI = &get_instance();
+        $goods_receipt = $CI->db->select_sum('quantities')
+            ->where('goods_receipt_id', $id)
+            ->from(db_prefix() . 'goods_receipt_detail')
+            ->get()
+            ->row();
+        if ($goods_receipt) {
+            return $goods_receipt->quantities;
+        }
+    }
+    return 0;
+}
+
+function get_sum_goods_receipt_po_quantities($id)
+{
+    if (!empty($id)) {
+        $CI = &get_instance();
+        $goods_receipt = $CI->db->select_sum('po_quantities')
+            ->where('goods_receipt_id', $id)
+            ->from(db_prefix() . 'goods_receipt_detail')
+            ->get()
+            ->row();
+        if ($goods_receipt) {
+            return $goods_receipt->po_quantities;
+        }
+    }
+    return 0;
+}
