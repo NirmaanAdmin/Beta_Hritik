@@ -16,7 +16,7 @@
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-md-12">
-								<h4 class="no-margin font-bold"><i class="fa fa-clone menu-icon menu-icon" aria-hidden="true"></i> Item Tracker</h4>
+								<h4 class="no-margin font-bold"><i class="fa fa-clone menu-icon menu-icon" aria-hidden="true"></i> Stock Received</h4>
 								<hr>
 							</div>
 						</div>

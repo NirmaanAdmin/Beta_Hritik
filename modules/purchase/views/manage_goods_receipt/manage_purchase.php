@@ -18,7 +18,7 @@
                         <div class="row">
                             <div class="col-md-12" style="padding: 0px;">
                                 <div class="col-md-10" id="heading">
-                                    <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Stock Received</h4>
+                                    <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Purchase Tracker</h4>
                                     <hr />
                                 </div>
                                 <div class="col-md-2 display-flex" id="filter_div">
@@ -35,13 +35,6 @@
 
                         </div>
                         <div class="row">
-                            <div class="_buttons col-md-3">
-                                <?php if (has_permission('warehouse', '', 'create') || is_admin()) { ?>
-                                    <a href="<?php echo admin_url('warehouse/manage_goods_receipt'); ?>" class="btn btn-info pull-left mright10 display-block">
-                                        Stock Received
-                                    </a>
-                                <?php } ?>
-                            </div>
                             <div class="col-md-1 pull-right">
                                 <a href="#" class="btn btn-default pull-right btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_view_proposal(' .purchase_sm','#purchase_sm_view'); return false;" data-toggle="tooltip" title="<?php echo _l('invoices_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
                             </div>

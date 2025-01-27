@@ -337,6 +337,17 @@ function purchase_module_init_menu_items()
              'position' => 21,
          ]);
      }
+
+    if (has_permission('purchase_tracker', '', 'view')) {
+        
+        $CI->app_menu->add_sidebar_children_item('purchase', [
+             'slug' => 'purchase-tracker',
+             'name' => 'Purchase Tracker',
+             'icon' => 'fa fa-ship',
+             'href' => admin_url('purchase/manage_purchase'),
+             'position' => 21,
+         ]);
+     }
 }
 
 /**
@@ -366,6 +377,9 @@ function purchase_load_js($dashboard_js)
         if (!(strpos($viewuri, '/admin') === false)) {
             $dashboard_js .=  $CI->load->view('purchase/purchase_dashboard_js');
         }
+    }
+    if (!(strpos($viewuri, '/admin/purchase/manage_purchase') === false)) { 
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/manage_purchase.js').'?v=' . REVISION.'"></script>';
     }
     return $dashboard_js;
 }

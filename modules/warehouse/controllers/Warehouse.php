@@ -680,7 +680,7 @@ class warehouse extends AdminController
 	 */
 	public function manage_purchase($id = '')
 	{
-		$data['title'] = 'Item Tracker';
+		$data['title'] = 'Stock Received';
 		$data['purchase_id'] = $id;
 		$this->load->view('manage_goods_receipt/manage_purchase', $data);
 	}
@@ -736,7 +736,7 @@ class warehouse extends AdminController
 		$data['units_code_name'] = $this->warehouse_model->get_units_code_name();
 		$data['units_warehouse_name'] = $this->warehouse_model->get_warehouse_code_name();
 
-		$data['title'] = 'Item Tracker';
+		$data['title'] = 'Stock Received';
 
 		$data['commodity_codes'] = $this->warehouse_model->get_commodity();
 

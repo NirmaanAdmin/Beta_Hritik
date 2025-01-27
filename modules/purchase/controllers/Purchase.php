@@ -10636,4 +10636,69 @@ class purchase extends AdminController
             'html' => $html,
         ]);
     }
+
+    /**
+     * manage purchase
+     * @param  integer $id
+     * @return view
+     */
+    public function manage_purchase($id = '')
+    {
+        $data['title'] = 'Purchase Tracker';
+        $data['purchase_id'] = $id;
+        $this->load->view('manage_goods_receipt/manage_purchase', $data);
+    }
+
+    /**
+     * table manage goods receipt
+     * @param  integer $id
+     * @return array
+     */
+    public function table_manage_goods_receipt()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'manage_goods_receipt/table_manage_goods_receipt'));
+    }
+
+    /**
+     * view purchase
+     * @param  integer $id
+     * @return view
+     */
+    public function view_purchase($id)
+    {
+        //approval
+        $this->load->model('warehouse/warehouse_model');
+        $send_mail_approve = $this->session->userdata("send_mail_approve");
+        if ((isset($send_mail_approve)) && $send_mail_approve != '') {
+            $data['send_mail_approve'] = $send_mail_approve;
+            $this->session->unset_userdata("send_mail_approve");
+        }
+
+        $data['get_staff_sign'] = $this->warehouse_model->get_staff_sign($id, 1);
+
+        $data['check_approve_status'] = $this->warehouse_model->check_approval_details($id, 1);
+        $data['list_approve_status'] = $this->warehouse_model->get_list_approval_details($id, 1);
+        $data['payslip_log'] = $this->warehouse_model->get_activity_log($id, 1);
+
+        //get vaule render dropdown select
+        $data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
+        $data['units_code_name'] = $this->warehouse_model->get_units_code_name();
+        $data['units_warehouse_name'] = $this->warehouse_model->get_warehouse_code_name();
+
+        $data['goods_receipt_detail'] = $this->warehouse_model->get_goods_receipt_detail($id);
+
+        $data['goods_receipt'] = $this->warehouse_model->get_goods_receipt($id);
+
+        $data['tax_data'] = $this->warehouse_model->get_html_tax_receip($id);
+
+        $data['title'] = _l('stock_received_info');
+        $check_appr = $this->warehouse_model->get_approve_setting('1');
+        $data['check_appr'] = $check_appr;
+        $this->load->model('currencies_model');
+        $base_currency = $this->currencies_model->get_base_currency();
+        $data['base_currency'] = $base_currency;
+        $data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_receipt', $id);
+
+        $this->load->view('manage_goods_receipt/view_purchase', $data);
+    }
 }
