@@ -188,7 +188,7 @@
                                      <th align="right" colspan="1"><?php echo _l('wh_vendor') ?></th>
                                      <th align="right" colspan="1"><?php echo _l('issued_date') ?></th>
                                      <!-- <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th> -->
-                                     <th align="right" colspan="1"><?php echo _l('lot_number').'/'._l('quantity') ?></th>
+                                     <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
                                      <!-- <th align="right" colspan="1"><?php echo _l('total_money') ?></th> -->
                                      <th align="right" colspan="1"><?php echo _l('guarantee_period') ?></th>
             
@@ -305,7 +305,7 @@
                             if(!empty($delivery_value['lot_number'])) {
                               $lot_number = json_decode($delivery_value['lot_number'], true);
                               foreach ($lot_number as $key => $value) {
-                                $all_lot_number .= get_vendor_name($key).": "._d($value).", ";
+                                $all_lot_number .= _d($value).", ";
                               }
                               $all_lot_number = rtrim($all_lot_number, ', ');
                             }

@@ -125,8 +125,8 @@
                           <td>
                             <div class="btn-group">
                               <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><?php if (is_mobile()) {
-                                                                                                                                                                                      echo ' PDF';
-                                                                                                                                                                                    } ?> <span class="caret"></span></a>
+                                                                                                                                                                                    echo ' PDF';
+                                                                                                                                                                                  } ?> <span class="caret"></span></a>
                               <ul class="dropdown-menu dropdown-menu-right">
                                 <li class="hidden-xs"><a href="<?php echo admin_url('warehouse/stock_export_pdf/' . $goods_delivery->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
                                 <li class="hidden-xs"><a href="<?php echo admin_url('warehouse/stock_export_pdf/' . $goods_delivery->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
@@ -158,11 +158,11 @@
                             <th colspan="1"><?php echo _l('unit_name') ?></th>
                             <th colspan="1" class="text-center"><?php echo _l('quantity') ?></th>
                             <!-- <th align="right" colspan="1"><?php echo _l('rate') ?></th>
-                 <th align="right" colspan="1"><?php echo _l('subtotal') ?></th>
-                 <th align="right" colspan="1"><?php echo _l('subtotal_after_tax') ?></th>
-                 <th align="right" colspan="1"><?php echo _l('discount(%)') . '(%)' ?></th>
-                 <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th> -->
-                            <th align="right" colspan="1"><?php echo _l('lot_number') . '/' . _l('quantity') ?></th>
+                            <th align="right" colspan="1"><?php echo _l('subtotal') ?></th>
+                            <th align="right" colspan="1"><?php echo _l('subtotal_after_tax') ?></th>
+                            <th align="right" colspan="1"><?php echo _l('discount(%)') . '(%)' ?></th>
+                            <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th> -->
+                            <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
                             <!-- <th align="right" colspan="1"><?php echo _l('total_money') ?></th> -->
                             <th align="right" colspan="1"><?php echo _l('guarantee_period') ?></th>
 
@@ -233,13 +233,13 @@
 
                             $lot_number = '';
                             if (($receipt_value->lot_number != null) && ($receipt_value->lot_number != '')) {
-                              $array_lot_number = explode(',', $receipt_value->lot_number);
-                              foreach ($array_lot_number as $key => $lot_value) {
+                              // Decode the JSON string into an associative array
+                              $data = json_decode($receipt_value->lot_number, true);
 
-                                if ($key % 2 == 0) {
-                                  $lot_number .= $lot_value;
-                                } else {
-                                  $lot_number .= ' : ' . $lot_value . ' ';
+                              // Extract and print the value
+                              if (!empty($data)) {
+                                foreach ($data as $key => $value) {
+                                  $lot_number =  $value; // Output: bhjbjhb4555
                                 }
                               }
                             }
