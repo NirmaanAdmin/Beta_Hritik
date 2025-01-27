@@ -162,7 +162,7 @@
                  <th align="right" colspan="1"><?php echo _l('subtotal_after_tax') ?></th>
                  <th align="right" colspan="1"><?php echo _l('discount(%)') . '(%)' ?></th>
                  <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th> -->
-                            <th align="right" colspan="1"><?php echo _l('lot_number') . '/' . _l('quantity') ?></th>
+                            <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
                             <!-- <th align="right" colspan="1"><?php echo _l('total_money') ?></th> -->
                             <th align="right" colspan="1"><?php echo _l('guarantee_period') ?></th>
 
@@ -261,7 +261,7 @@
                  <td class="text-right"><?php echo app_format_money((float)$total_money, '') ?></td>
                  <td class="text-right"><?php echo app_format_money((float)$discount, '') ?></td>
                  <td class="text-right"><?php echo app_format_money((float)$discount_money, '') ?></td> -->
-                              <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
+                              <td class="text-right"><?php echo html_entity_decode($receipt_value->lot_number) ?></td>
                               <!-- <td class="text-right"><?php echo app_format_money((float)$total_after_discount, '') ?></td> -->
                               <td class="text-right"><?php echo html_entity_decode($guarantee_period) ?></td>
 
