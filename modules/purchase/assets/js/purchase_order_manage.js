@@ -99,8 +99,17 @@ function toggle_small_pur_order_view(table, main_data) {
         "use strict";
         $("body").toggleClass('small-table');
         var tablewrap = $('#small-table');
+        var show_hide_columns = $('#show_hide_columns');
+      
         if (tablewrap.length === 0) { return; }
         var _visible = false;
+        if(show_hide_columns.hasClass('show_hide_columns')){
+            show_hide_columns.removeClass('show_hide_columns');
+            show_hide_columns.addClass('show_hide_columns1');
+        }else{
+            show_hide_columns.addClass('show_hide_columns');
+            show_hide_columns.removeClass('show_hide_columns1');
+        }
         if (tablewrap.hasClass('col-md-5')) {
             tablewrap.removeClass('col-md-5').addClass('col-md-12');
             _visible = true;
@@ -109,6 +118,7 @@ function toggle_small_pur_order_view(table, main_data) {
             tablewrap.addClass('col-md-5').removeClass('col-md-12');
             $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-left').addClass('fa fa-angle-double-right');
         }
+
         var _table = $(table).DataTable();
         // Show hide hidden columns
         _table.columns(hidden_columns).visible(_visible, false);

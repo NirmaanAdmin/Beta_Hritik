@@ -471,17 +471,40 @@ if ($estimate->currency != 0) {
 
                   </div>
                   <div class="row">
-                     <div class="col-md-12">
-                     <button id="export-csv" class="btn btn-primary pull-right">Export to CSV</button>
+                     <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
+
+                        <span style="margin-right: 10px;">
+                           <button class="btn btn-primary" id="settings-toggle">Columns</button>
+                           <div id="settings-dropdown" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:130px;">
+
+                              <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> Items</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> Description</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> Sub Head</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> Area</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> Image</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="6" checked=""> Quantity</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="7" checked=""> Unit Price</label><br>
+                              <label><input type="checkbox" class="column-toggle" data-column="8" checked=""> Into Money</label>
+                              <label><input type="checkbox" class="column-toggle" data-column="9" checked=""> Tax</label>
+                              <label><input type="checkbox" class="column-toggle" data-column="10" checked=""> Sub total</label>
+                              <label><input type="checkbox" class="column-toggle" data-column="11" checked=""> Discount</label>
+                              <label><input type="checkbox" class="column-toggle" data-column="12" checked=""> Discount(money)</label>
+                              <label><input type="checkbox" class="column-toggle" data-column="13" checked=""> Total</label>
+                           </div>
+                        </span>
+                        <span  style="padding: 0px;">
+                           <button id="export-csv" class="btn btn-primary pull-right">Export to CSV</button>
+                        </span>
                      </div>
-                  
+
+
                      <div class="col-md-12">
 
                         <!-- <?php if ($estimate->approve_status != 2) { ?>
                            <a href="javascript:void(0)" onclick="refresh_order_value(<?php echo pur_html_entity_decode($estimate->id); ?>); return false;" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="<?php echo _l('refresh_value_note'); ?>"><i class="fa fa-refresh"></i> <?php echo ' ' . _l('refresh_order_value'); ?></a>
                         <?php } ?> -->
 
-                        
+
 
                         <div class="table-responsive">
                            <table class="table items items-preview estimate-items-preview" data-type="estimate">
@@ -523,7 +546,7 @@ if ($estimate->currency != 0) {
                                                                                           echo pur_html_entity_decode($es['item_name']);
                                                                                        }
                                                                                        ?></strong>
-                                                                                       <!-- <?php if ($es['description'] != '') { ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?> -->
+                                                   <!-- <?php if ($es['description'] != '') { ?><br><span><?php echo pur_html_entity_decode($es['description']); ?></span><?php } ?> -->
                                              </div>
                                           </td>
                                           <td align="left">
@@ -696,7 +719,7 @@ if ($estimate->currency != 0) {
                   <div class="col-md-12">
                      <div class="changes-feed">
                         <div class="feed-item" data-sale-activity-id="<?php echo e($change['id']); ?>">
-                          
+
                            <div class="clearfix"></div>
                            <table class="table dt-table">
                               <thead>
@@ -706,12 +729,12 @@ if ($estimate->currency != 0) {
                               </thead>
                               <tbody>
                                  <?php foreach ($changes as $change) { ?>
-                                    
+
                                     <tr>
                                        <td><?php echo '<a href="' . admin_url('changee/view_co_request/' . $change['id']) . '"><p>' . $change['pur_rq_code'] . '-' . $change['pur_rq_name'] . '</p></a>' ?></td>
                                        <td><?php echo date('d M Y', strtotime($change['request_date'])) ?></td>
                                        <td><?php echo app_format_money($change['total'], $base_currency->symbol); ?></td>
-                                       
+
                                     </tr>
                                  <?php } ?>
                               </tbody>
@@ -994,38 +1017,62 @@ if ($estimate->currency != 0) {
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php require 'modules/purchase/assets/js/pur_order_preview_js.php'; ?>
+
 <script>
-  document.getElementById('export-csv').addEventListener('click', function () {
-    // Select the table
-    const table = document.querySelector('.items-preview');
-    const rows = Array.from(table.querySelectorAll('tr'));
+   // Toggle settings dropdown visibility
+   document.getElementById('settings-toggle').addEventListener('click', function() {
+      const dropdown = document.getElementById('settings-dropdown');
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+   });
 
-    // Initialize CSV content
-    let csvContent = '';
+   // Add event listener to toggle column visibility
+   document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+      checkbox.addEventListener('change', function() {
+         const columnIndex = this.getAttribute('data-column');
+         const table = document.querySelector('.items-preview');
 
-    // Loop through each row
-    rows.forEach(row => {
-        const cells = Array.from(row.querySelectorAll('th, td'));
-        const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
-        csvContent += rowContent + '\n';
-    });
+         // Iterate through all rows and toggle column visibility
+         table.querySelectorAll('tr').forEach(function(row) {
+            const cells = row.querySelectorAll('th, td');
+            if (cells[columnIndex]) {
+               cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
+            }
+         });
+      });
+   });
+</script>
+<script>
+   document.getElementById('export-csv').addEventListener('click', function() {
+      // Select the table
+      const table = document.querySelector('.items-preview');
+      const rows = Array.from(table.querySelectorAll('tr'));
 
-    // Add UTF-8 BOM
-    const bom = '\uFEFF';
+      // Initialize CSV content
+      let csvContent = '';
 
-    // Create a Blob and downloadable link
-    const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+      // Loop through each row
+      rows.forEach(row => {
+         const cells = Array.from(row.querySelectorAll('th, td'));
+         const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
+         csvContent += rowContent + '\n';
+      });
 
-    // Create a temporary link and trigger download
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'items_export.csv');
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
+      // Add UTF-8 BOM
+      const bom = '\uFEFF';
 
+      // Create a Blob and downloadable link
+      const blob = new Blob([bom + csvContent], {
+         type: 'text/csv;charset=utf-8;'
+      });
+      const url = URL.createObjectURL(blob);
 
+      // Create a temporary link and trigger download
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'items_export.csv');
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+   });
 </script>
