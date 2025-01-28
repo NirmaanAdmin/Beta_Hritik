@@ -10667,6 +10667,7 @@ class purchase extends AdminController
     public function view_purchase($id)
     {
         //approval
+        $data['purchase_tracker'] = true;
         $this->load->model('warehouse/warehouse_model');
         $send_mail_approve = $this->session->userdata("send_mail_approve");
         if ((isset($send_mail_approve)) && $send_mail_approve != '') {
@@ -10697,7 +10698,54 @@ class purchase extends AdminController
         $this->load->model('currencies_model');
         $base_currency = $this->currencies_model->get_base_currency();
         $data['base_currency'] = $base_currency;
-        $data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_receipt', $id);
+
+        $this->load->view('manage_goods_receipt/view_purchase', $data);
+    }
+
+    /**
+     * view po tracker
+     * @param  integer $id
+     * @return view
+     */
+    public function view_po_tracker($id)
+    {
+        //approval
+        $this->load->model('warehouse/warehouse_model');
+        $data['get_staff_sign'] = array();
+        $data['check_approve_status'] = false;
+        $data['list_approve_status'] = array();
+        $data['payslip_log'] = array();
+        $data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
+        $data['units_code_name'] = $this->warehouse_model->get_units_code_name();
+        $data['units_warehouse_name'] = $this->warehouse_model->get_warehouse_code_name();
+        $data['tax_data'] = $this->warehouse_model->get_html_tax_receip($id);
+        $data['title'] = _l('stock_received_info');
+        $check_appr = $this->warehouse_model->get_approve_setting('1');
+        $data['check_appr'] = $check_appr;
+        $this->load->model('currencies_model');
+        $base_currency = $this->currencies_model->get_base_currency();
+        $data['base_currency'] = $base_currency;
+        $pur_order = $this->purchase_model->get_pur_order($id);
+        $pur_order_details = $this->purchase_model->get_pur_order_detail($id);
+        $goods_receipt = array();
+        $goods_receipt['id'] = 0;
+        $goods_receipt['approval'] = '';
+        $goods_receipt['supplier_code'] = $pur_order->vendor;
+        $goods_receipt['deliver_name'] = '';
+        $goods_receipt['buyer_id'] = $pur_order->buyer;
+        $goods_receipt['goods_receipt_code'] = '';
+        $goods_receipt['description'] = '';
+        $goods_receipt['kind'] = $pur_order->kind;
+        $goods_receipt['pr_order_id'] = $pur_order->id;
+        $data['goods_receipt'] = (object) $goods_receipt;
+        if(!empty($pur_order_details)) {
+            foreach ($pur_order_details as $key => $detail) {
+                $pur_order_details[$key]['commodity_code'] = $detail['item_code'];
+                $pur_order_details[$key]['po_quantities'] = (float) $detail['quantity'];
+                $pur_order_details[$key]['quantities'] = 0;
+            }
+        }
+        $data['goods_receipt_detail'] = $pur_order_details;
 
         $this->load->view('manage_goods_receipt/view_purchase', $data);
     }

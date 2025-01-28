@@ -58,10 +58,9 @@ foreach ($rResult as $aRow) {
         } elseif($aColumns[$i] == 'goods_receipt_code') {
             $name = '';
             if(!empty($aRow['goods_receipt_code'])) {
-                $name .= '<a href="' . admin_url('warehouse/view_purchase/' . $aRow['id']) . '" onclick="init_goods_receipt(' . $aRow['id'] . '); return false;">' . $aRow['goods_receipt_code'] . '</a>';
-                $name .= '<div class="row-options">';
-                $name .= '<a href="' . admin_url('warehouse/edit_purchase/' . $aRow['id']) . '" >' . _l('view') . '</a>';
-                $name .= '</div>';
+                $name .= '<a href="' . admin_url('purchase/view_purchase/' . $aRow['id']) . '" onclick="init_goods_receipt(' . $aRow['id'] . '); return false;">' . $aRow['goods_receipt_code'] . '</a>';
+            } else {
+                $name .= '<a href="' . admin_url('purchase/view_po_tracker/' . $aRow['id']) . '" onclick="init_po_tracker(' . $aRow['id'] . '); return false;">' . _l('view') . '</a>';
             }
             $_data = $name;
         } elseif ($aColumns[$i] == 'pr_order_id') {

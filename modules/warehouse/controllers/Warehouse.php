@@ -9035,7 +9035,7 @@ class warehouse extends AdminController
 		]);
 	}
 
-	public function change_production_status($status, $id)
+	public function change_production_status($status, $id, $purchase_tracker = true)
 	{
 
 		// Define an array of statuses with their corresponding labels and texts
@@ -9045,7 +9045,7 @@ class warehouse extends AdminController
 			3 => ['label' => 'info', 'table' => 'on_going', 'text' => _l('on_going')],
 
 		];
-		$success = $this->warehouse_model->change_production_status($status, $id);
+		$success = $this->warehouse_model->change_production_status($status, $id, $purchase_tracker);
 		$message = $success ? _l('change_production_status_successfully') : _l('change_production_status_fail');
 
 		$html = '';
@@ -9088,6 +9088,7 @@ class warehouse extends AdminController
 	{
 		$id = $this->input->post('id');
 		$payment_date = $this->input->post('payment_date');
+		$purchase_tracker = $this->input->post('purchase_tracker');
 
 		if (!$id  || !$payment_date) {
 			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
@@ -9095,7 +9096,11 @@ class warehouse extends AdminController
 		}
 		// Perform the update
 		$this->db->where('id', $id);
-		$success = $this->db->update('tblgoods_receipt_detail', ['payment_date' => $payment_date]);
+		if($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['payment_date' => $payment_date]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['payment_date' => $payment_date]);
+		}
 
 		if ($success) {
 			echo json_encode(['success' => true, 'message' => _l('payment_date_updated')]);
@@ -9107,6 +9112,7 @@ class warehouse extends AdminController
 	{
 		$id = $this->input->post('id');
 		$est_delivery_date_date = $this->input->post('est_delivery_date');
+		$purchase_tracker = $this->input->post('purchase_tracker');
 
 		if (!$id  || !$est_delivery_date_date) {
 			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
@@ -9114,7 +9120,11 @@ class warehouse extends AdminController
 		}
 		// Perform the update
 		$this->db->where('id', $id);
-		$success = $this->db->update('tblgoods_receipt_detail', ['est_delivery_date' => $est_delivery_date_date]);
+		if($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['est_delivery_date' => $est_delivery_date_date]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['est_delivery_date' => $est_delivery_date_date]);
+		}
 
 		if ($success) {
 			echo json_encode(['success' => true, 'message' => _l('est_delivery_date_updated')]);
@@ -9127,6 +9137,7 @@ class warehouse extends AdminController
 	{
 		$id = $this->input->post('id');
 		$delivery_date = $this->input->post('delivery_date');
+		$purchase_tracker = $this->input->post('purchase_tracker');
 
 		if (!$id  || !$delivery_date) {
 			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
@@ -9134,7 +9145,11 @@ class warehouse extends AdminController
 		}
 		// Perform the update
 		$this->db->where('id', $id);
-		$success = $this->db->update('tblgoods_receipt_detail', ['delivery_date' => $delivery_date]);
+		if($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['delivery_date' => $delivery_date]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['delivery_date' => $delivery_date]);
+		}
 
 		if ($success) {
 			echo json_encode(['success' => true, 'message' => _l('delivery_date_updated')]);

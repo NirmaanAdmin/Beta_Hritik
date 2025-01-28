@@ -1152,7 +1152,7 @@ class Warehouse_model extends App_Model
 	 */
 	public function add_goods_receipt($data, $id = false)
 	{
-
+		
 		$inventory_receipts = $production_approval = [];
 
 		if (isset($data['newitems'])) {
@@ -1457,7 +1457,7 @@ class Warehouse_model extends App_Model
 		$list_item = $production_approval_item = '';
 		$list_item = $this->warehouse_model->create_goods_receipt_row_template();
 		$production_approval_item = $this->warehouse_model->create_goods_receipt_production_approvals_template();
-		$sql = 'select item_code as commodity_code, ' . db_prefix() . 'items.description, ' . db_prefix() . 'pur_order_detail.unit_id, unit_price, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax, into_money, (' . db_prefix() . 'pur_order_detail.total-' . db_prefix() . 'pur_order_detail.into_money) as tax_money, total as goods_money, wh_quantity_received, tax_rate, tax_value, ' . db_prefix() . 'pur_order_detail.id as id from ' . db_prefix() . 'pur_order_detail
+		$sql = 'select item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'pur_order_detail.unit_id, unit_price, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax, into_money, (' . db_prefix() . 'pur_order_detail.total-' . db_prefix() . 'pur_order_detail.into_money) as tax_money, total as goods_money, wh_quantity_received, tax_rate, tax_value, ' . db_prefix() . 'pur_order_detail.id as id, delivery_date, payment_date, est_delivery_date, production_status from ' . db_prefix() . 'pur_order_detail
 		left join ' . db_prefix() . 'items on ' . db_prefix() . 'pur_order_detail.item_code =  ' . db_prefix() . 'items.id
 		left join ' . db_prefix() . 'taxes on ' . db_prefix() . 'taxes.id = ' . db_prefix() . 'pur_order_detail.tax where ' . db_prefix() . 'pur_order_detail.pur_order = ' . $pur_order;
 		$results = $this->db->query($sql)->result_array();
@@ -1487,13 +1487,16 @@ class Warehouse_model extends App_Model
 				$expiry_date = null;
 				$lot_number = null;
 				$vendor_id = null;
-				$delivery_date = null;
+				$delivery_date = $value['delivery_date'];
+				$payment_date = $value['payment_date'];
+				$est_delivery_date = $value['est_delivery_date'];
+				$production_status = $value['production_status'];
 				$note = null;
 				$commodity_name = wh_get_item_variatiom($value['commodity_code']);
 				$quantities = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
 				$sub_total = 0;
 
-				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, 0, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'], $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true, '', $value['description']);
+				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, 0, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'], $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true, '', $value['description'], $payment_date, $est_delivery_date, $production_status);
 				$production_approval_item .= $this->create_goods_receipt_production_approvals_template('approvalsitems[' . $index . ']', $value['description'], $commodity_name, '', '', '', '', $value['commodity_code']);
 				$total_goods_money_temp = ((float)$value['quantities'] - (float)$value['wh_quantity_received']) * (float)$unit_price;
 				$total_goods_money += $total_goods_money_temp;
@@ -19789,11 +19792,15 @@ class Warehouse_model extends App_Model
 		return $arr_inventory_number;
 	}
 
-	function change_production_status($status, $id)
+	function change_production_status($status, $id, $purchase_tracker)
 	{
 
 		$this->db->where('id', $id);
-		$this->db->update(db_prefix() . 'goods_receipt_detail', ['production_status' => $status]);
+		if($purchase_tracker == "false") {
+			$this->db->update(db_prefix() . 'pur_order_detail', ['production_status' => $status]);
+		} else {
+			$this->db->update(db_prefix() . 'goods_receipt_detail', ['production_status' => $status]);
+		}
 		return true;
 	}
 

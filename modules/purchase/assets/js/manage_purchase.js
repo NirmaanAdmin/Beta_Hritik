@@ -35,6 +35,11 @@ function init_goods_receipt(id) {
 }
 var hidden_columns = [3, 4, 5];
 
+init_po_tracker();
+function init_po_tracker(id) {
+    "use strict";
+    load_small_table_item_proposal(id, '#purchase_sm_view', 'purchase_id', 'purchase/view_po_tracker', '.purchase_sm');
+}
 
 function load_small_table_item_proposal(pr_id, selector, input_name, url, table) {
     "use strict";

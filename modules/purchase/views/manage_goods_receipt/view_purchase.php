@@ -1,6 +1,11 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php echo form_hidden('_attachment_sale_id', $goods_receipt->id); ?>
 <?php echo form_hidden('_attachment_sale_type', 'estimate'); ?>
+<style type="text/css">
+.purchase-head th, .purchase-body td {
+  white-space: nowrap; 
+}
+</style>
 <div class="col-md-12 no-padding">
   <div class="panel_s">
     <div class="panel-body">
@@ -83,25 +88,28 @@
                   }
                   ?>
 
-                  <td class="bold"><?php echo _l('print'); ?></td>
-                  <td>
-                    <div class="btn-group">
-                      <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><?php if (is_mobile()) {
-                                                                                                                                                                            echo ' PDF';
-                                                                                                                                                                          } ?> <span class="caret"></span></a>
-                      <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="hidden-xs"><a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
-                        <li class="hidden-xs"><a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
-                        <li><a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id); ?>"><?php echo _l('download'); ?></a></li>
-                        <li>
-                          <a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id . '?print=true'); ?>" target="_blank">
-                            <?php echo _l('print'); ?>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
+                  <?php 
+                  if(isset($purchase_tracker)) { ?>
+                    <td class="bold"><?php echo _l('print'); ?></td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><?php if (is_mobile()) {
+                                                                                                                                                                              echo ' PDF';
+                                                                                                                                                                            } ?> <span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                          <li class="hidden-xs"><a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
+                          <li class="hidden-xs"><a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                          <li><a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id); ?>"><?php echo _l('download'); ?></a></li>
+                          <li>
+                            <a href="<?php echo admin_url('warehouse/stock_import_pdf/' . $goods_receipt->id . '?print=true'); ?>" target="_blank">
+                              <?php echo _l('print'); ?>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
 
-                  </td>
+                    </td>
+                  <?php } ?>
                   </tr>
 
 
@@ -112,24 +120,24 @@
               <div class="col-md-12">
                 <div class="table-responsive">
                   <table class="table items items-preview estimate-items-preview" data-type="estimate">
-                    <thead>
+                    <thead class="purchase-head">
                       <tr>
                         <th align="center">#</th>
-                        <th colspan="1"><?php echo _l('commodity_code') ?></th>
-                        <th colspan="1"><?php echo _l('description') ?></th>
-                        <th colspan="1"><?php echo _l('warehouse_name') ?></th>
-                        <th colspan="1"><?php echo _l('unit_name') ?></th>
-                        <th colspan="1" class="text-center"><?php echo _l('po_quantity') ?></th>
-                        <th colspan="1" class="text-center"><?php echo _l('received_quantity') ?></th>
-                        <th colspan="1" class="text-center"><?php echo _l('remaining_quantity') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('production_status') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('payment_date') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('est_delivery_date') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('delivery_date') ?></th>
+                        <th><?php echo _l('commodity_code') ?></th>
+                        <th><?php echo _l('description') ?></th>
+                        <th><?php echo _l('warehouse_name') ?></th>
+                        <th><?php echo _l('unit_name') ?></th>
+                        <th><?php echo _l('po_quantity') ?></th>
+                        <th><?php echo _l('received_quantity') ?></th>
+                        <th><?php echo _l('remaining_quantity') ?></th>
+                        <th><?php echo _l('lot_number') ?></th>
+                        <th><?php echo _l('production_status') ?></th>
+                        <th><?php echo _l('payment_date') ?></th>
+                        <th><?php echo _l('est_delivery_date') ?></th>
+                        <th><?php echo _l('delivery_date') ?></th>
                       </tr>
                     </thead>
-                    <tbody class="ui-sortable">
+                    <tbody class="ui-sortable purchase-body">
 
                       <?php
                       foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
@@ -186,9 +194,7 @@
                           $production_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
                           $production_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
                           $production_status .= '</a>';
-
                           $production_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $aRow['id'] . '">';
-
                           foreach ($production_labels as $key => $status) {
                             if ($key != $receipt_value['production_status']) {
                               $production_status .= '<li>
@@ -198,22 +204,10 @@
                                    </li>';
                             }
                           }
-
-
                           $production_status .= '</ul>';
                           $production_status .= '</div>';
-
-
+                          
                           $production_status .= '</span>';
-                          // if ($receipt_value['production_status'] == 1) {
-                          //   $production_status = '<span class="label label-tag tag-id-1 label-tab3"><span class="tag">' . _l('not_started') . '</span><span class="hide">, </span></span>&nbsp';
-                          // } elseif ($receipt_value['production_status'] == 2) {
-                          //   $production_status = '<span class="label label-tag tag-id-1 label-tab2"><span class="tag">' .  _l('on_going') . '</span><span class="hide">, </span></span>&nbsp';
-                          // } elseif ($receipt_value['production_status'] == 3) {
-                          //   $production_status = '<span class="label label-tag tag-id-1 label-tab1"><span class="tag">' . _l('approved') . '</span><span class="hide">, </span></span>&nbsp';
-                          // } else {
-                          //   $production_status = '';
-                          // }
                         }
                       ?>
 
@@ -223,37 +217,33 @@
                           <td><?php echo html_entity_decode($description) ?></td>
                           <td><?php echo html_entity_decode($warehouse_code) ?></td>
                           <td><?php echo html_entity_decode($unit_name) ?></td>
-                          <td class="text-right"><?php echo html_entity_decode($po_quantities) ?></td>
-                          <td class="text-right"><?php echo html_entity_decode($quantities) ?></td>
-                          <td class="text-right"><?php echo html_entity_decode($remaining_quantities) ?></td>
-                          <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
-                          <td class="text-right"><?php echo $production_status ?></td>
-                          <td class="text-right">
+                          <td><?php echo html_entity_decode($po_quantities) ?></td>
+                          <td><?php echo html_entity_decode($quantities) ?></td>
+                          <td><?php echo html_entity_decode($remaining_quantities) ?></td>
+                          <td><?php echo html_entity_decode($lot_number) ?></td>
+                          <td><?php echo $production_status ?></td>
+                          <td>
                             <?php
-                            echo '<input type="date" class="form-control payment-date-input"
+                              echo '<input type="date" class="form-control payment-date-input"
                               value="' . $payment_date . '"
                               data-id="' . $receipt_value['id'] . '"
                               ">';
                             ?>
                           </td>
-                          <td class="text-right">
+                          <td>
                             <?php
-                            echo '<input type="date" class="form-control est-delivery-date-input"
-                            value="' . $est_delivery_date . '"
-                            data-id="' . $receipt_value['id'] . '"
-                            ">';
-
+                              echo '<input type="date" class="form-control est-delivery-date-input"
+                              value="' . $est_delivery_date . '"
+                              data-id="' . $receipt_value['id'] . '"
+                              ">';
                             ?>
-
                           </td>
-                          <td class="text-right">
+                          <td>
                             <?php
-
-                            echo '<input type="date" class="form-control delivery-date-input"
-                            value="' . $delivery_date . '"
-                            data-id="' . $receipt_value['id'] . '"
-                            ">';
-
+                              echo '<input type="date" class="form-control delivery-date-input"
+                              value="' . $delivery_date . '"
+                              data-id="' . $receipt_value['id'] . '"
+                              ">';
                             ?>
                           </td>
                         </tr>
@@ -262,46 +252,6 @@
                   </table>
                 </div>
               </div>
-
-              <!-- <div class="col-md-6 col-md-offset-6">
-                      <table class="table text-right table-margintop">
-                        <tbody>
-                          <tr class="project-overview" id="subtotal">
-                            <td class="td_style"><span class="bold"><?php echo _l('total_goods_money'); ?></span>
-                            </td>
-                            <?php $total_goods_money = (isset($goods_receipt) ? $goods_receipt->total_goods_money : ''); ?>
-                            <td><?php echo app_format_money((float)$total_goods_money, $base_currency); ?></td>
-                          </tr>
-
-                          <tr class="project-overview">
-                            <td class="td_style"><span class="bold"><?php echo _l('value_of_inventory'); ?></span>
-                            </td>
-                            <?php $value_of_inventory = (isset($goods_receipt) ? $goods_receipt->value_of_inventory : ''); ?>
-                            <td><?php echo app_format_money((float)$value_of_inventory, $base_currency); ?></td>
-                          </tr>
-                          
-                          <?php if (isset($goods_receipt) && $tax_data['html_currency'] != '') {
-                            echo html_entity_decode($tax_data['html_currency']);
-                          } ?>
-                          
-                          <tr class="project-overview">
-                            <td class="td_style"><span class="bold"><?php echo _l('total_tax_money'); ?></span>
-                            </td>
-                            <?php $total_tax_money = (isset($goods_receipt) ? $goods_receipt->total_tax_money : ''); ?>
-                            <td><?php echo app_format_money((float)$total_tax_money, $base_currency); ?></td>
-                          </tr>
-
-                          <tr class="project-overview">
-                            <td class="td_style"><span class="bold"><?php echo _l('total_money'); ?></span>
-                            </td>
-                            <?php $total_money = (isset($goods_receipt) ? $goods_receipt->total_money : ''); ?>
-                            <td><?php echo app_format_money((float)$total_money, $base_currency); ?></td>
-
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div> -->
-
 
               <div class="col-md-12">
                 <div class="project-overview-right">
@@ -382,49 +332,6 @@
                   <?php } ?>
                 </div>
 
-                <div class="pull-right">
-
-                  <?php
-                  if ($goods_receipt->approval != 1 && ($check_approve_status == false)) { ?>
-                    <?php if ($check_appr && $check_appr != false) { ?>
-
-                      <a data-toggle="tooltip" data-loading-text="<?php echo _l('wait_text'); ?>" class="btn btn-success lead-top-btn lead-view" data-placement="top" href="#" onclick="send_request_approve(<?php echo html_entity_decode($goods_receipt->id); ?>); return false;"><?php echo _l('send_request_approve'); ?></a>
-                    <?php } ?>
-
-                  <?php }
-                  if (isset($check_approve_status['staffid'])) {
-                  ?>
-                    <?php
-                    if (in_array(get_staff_user_id(), $check_approve_status['staffid']) && !in_array(get_staff_user_id(), $get_staff_sign)) { ?>
-                      <div class="btn-group">
-                        <a href="#" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo _l('approve'); ?><span class="caret"></span></a>
-                        <ul class="dropdown-menu dropdown-menu-right menu-width-height">
-                          <li>
-                            <div class="col-md-12">
-                              <?php echo render_textarea('reason', 'reason'); ?>
-                            </div>
-                          </li>
-                          <li>
-                            <div class="row text-right col-md-12">
-                              <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="approve_request(<?php echo html_entity_decode($goods_receipt->id); ?>); return false;" class="btn btn-success button-margin"><?php echo _l('approve'); ?></a>
-                              <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="deny_request(<?php echo html_entity_decode($goods_receipt->id); ?>); return false;" class="btn btn-warning"><?php echo _l('deny'); ?></a>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    <?php }
-                    ?>
-
-                    <?php
-                    if (in_array(get_staff_user_id(), $check_approve_status['staffid']) && in_array(get_staff_user_id(), $get_staff_sign)) { ?>
-                      <button onclick="accept_action();" class="btn btn-success pull-right action-button"><?php echo _l('e_signature_sign'); ?></button>
-                    <?php }
-                    ?>
-                  <?php
-                  }
-                  ?>
-                </div>
-
               </div>
 
             </div>
@@ -475,11 +382,13 @@
 
     var rowId = $(this).data('id');
     var paymentDate = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
 
     // Perform AJAX request to update the completion date
     $.post(admin_url + 'warehouse/update_payment_date', {
       id: rowId,
-      payment_date: paymentDate
+      payment_date: paymentDate,
+      purchase_tracker: purchase_tracker
     }).done(function(response) {
       response = JSON.parse(response);
       if (response.success) {
@@ -497,11 +406,13 @@
 
     var rowId = $(this).data('id');
     var estDeliveryDate = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
 
     // Perform AJAX request to update the completion date
     $.post(admin_url + 'warehouse/update_est_delivery_date', {
       id: rowId,
-      est_delivery_date: estDeliveryDate
+      est_delivery_date: estDeliveryDate,
+      purchase_tracker: purchase_tracker
     }).done(function(response) {
       response = JSON.parse(response);
       if (response.success) {
@@ -520,11 +431,13 @@
 
     var rowId = $(this).data('id');
     var DeliveryDate = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
 
     // Perform AJAX request to update the completion date
     $.post(admin_url + 'warehouse/update_delivery_date', {
       id: rowId,
-      delivery_date: DeliveryDate
+      delivery_date: DeliveryDate,
+      purchase_tracker: purchase_tracker
     }).done(function(response) {
       response = JSON.parse(response);
       if (response.success) {
@@ -538,8 +451,9 @@
 
   function change_production_status(status, id) {
     "use strict";
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
     if (id > 0) {
-      $.post(admin_url + 'warehouse/change_production_status/' + status + '/' + id)
+      $.post(admin_url + 'warehouse/change_production_status/' + status + '/' + id + '/' + purchase_tracker)
         .done(function(response) {
           try {
             response = JSON.parse(response);
