@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <style>
     .group-name-cell {
-        text-align: center;
+        text-align: center !important;
         font-size: 20px;
         font-weight: bold; /* Optional, for better visibility */
     }
