@@ -1,8 +1,17 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
 <style>
-   .show_hide_columns {position: absolute;z-index: 99999;left: 12.5% }
-   .show_hide_columns1 {position: absolute;z-index: 99999;left: 30.5% }
+   .show_hide_columns {
+      position: absolute;
+      z-index: 99999;
+      left: 204px
+   }
+
+   .show_hide_columns1 {
+      position: absolute;
+      z-index: 99999;
+      left: 204px
+   }
 </style>
 <div id="wrapper">
    <div class="content">
@@ -128,26 +137,35 @@
                            </div>
                            <hr>
                            <!-- Column Checkboxes -->
+                           <?php
+                           $columns = [
+                              'purchase_order',
+                              'vendor',
+                              'po_description',
+                              'order_date',
+                              'group_pur',
+                              'sub_groups_pur',
+                              'cat',
+                              'project',
+                              'department',
+                              'approval_status',
+                              'convert_expense',
+                              'po_value',
+                              'tax_value',
+                              'po_value_included_tax',
+                              'tags',
+                              'delivery_date',
+                              'delivery_status',
+                              'payment_status'
+                           ];
+                           ?>
                            <div>
-                              <input type="checkbox" class="toggle-column" value="0" checked> <?php echo _l('purchase_order'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="1" checked> <?php echo _l('vendor'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="2" checked> <?php echo _l('po_description'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="3" checked> <?php echo _l('order_date'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="4" checked> <?php echo _l('group_pur'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="5" checked> <?php echo _l('sub_groups_pur'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="6" checked> <?php echo _l('cat'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="7" checked> <?php echo _l('project'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="8" checked> <?php echo _l('department'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="9" checked> <?php echo _l('approval_status'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="10" checked> <?php echo _l('convert_expense'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="11" checked> <?php echo _l('po_value'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="12" checked> <?php echo _l('tax_value'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="13" checked> <?php echo _l('po_value_included_tax'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="14" checked> <?php echo _l('tags'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="15" checked> <?php echo _l('delivery_date'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="16" checked> <?php echo _l('delivery_status'); ?><br>
-                              <input type="checkbox" class="toggle-column" value="17" checked> <?php echo _l('payment_status'); ?><br>
+                              <?php foreach ($columns as $key => $label): ?>
+                                 <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
+                                 <?php echo _l($label); ?><br>
+                              <?php endforeach; ?>
                            </div>
+
                         </div>
                      </div>
 
