@@ -1,4 +1,12 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style>
+    .group-name-cell {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold; /* Optional, for better visibility */
+    }
+</style>
+
 <div id="list_item_tracker_report" class="hide">
    <div class="row">
       <div class="col-md-4">
