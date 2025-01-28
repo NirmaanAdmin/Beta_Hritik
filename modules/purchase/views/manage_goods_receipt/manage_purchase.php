@@ -1,12 +1,16 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
 <style>
+    .onoffswitch-label:before {
 
-.onoffswitch-label:before {
-  
-    height: 20px !important;
-}
+        height: 20px !important;
+    }
 
+    .show_hide_columns {
+        position: absolute;
+        z-index: 99999;
+        left: 204px
+    }
 </style>
 <div id="wrapper">
     <div class="content">
@@ -30,7 +34,7 @@
 
                                     <hr />
                                 </div> */ ?>
-                                
+
                             </div>
 
                         </div>
@@ -61,6 +65,40 @@
                             </div>
                         </div>
                         <br />
+                        <div class="btn-group show_hide_columns" id="show_hide_columns">
+                            <!-- Settings Icon -->
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
+                                <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
+                            </button>
+                            <!-- Dropdown Menu with Checkboxes -->
+                            <div class="dropdown-menu" style="padding: 10px; min-width: 250px;">
+                                <!-- Select All / Deselect All -->
+                                <div>
+                                    <input type="checkbox" id="select-all-columns"> <strong><?php echo _l('select_all'); ?></strong>
+                                </div>
+                                <hr>
+                                <!-- Column Checkboxes -->
+                                <?php
+                                $columns = [
+                                    _l('id'),
+                                    _l('stock_received_docket_code'),
+                                    _l('reference_purchase_order'),
+                                    _l('supplier_name'),
+                                    _l('Buyer'),
+                                    _l('category'),
+                                    _l('day_vouchers'),
+                                    _l('status_label'),
+                                ];
+                                ?>
+                                <div>
+                                    <?php foreach ($columns as $key => $label): ?>
+                                        <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
+                                        <?php echo $label; ?><br>
+                                    <?php endforeach; ?>
+                                </div>
+
+                            </div>
+                        </div>
                         <?php render_datatable(array(
                             _l('id'),
                             _l('stock_received_docket_code'),
@@ -137,6 +175,38 @@
     var hidden_columns = [3, 4, 5];
 </script>
 <?php init_tail(); ?>
+<script>
+    $(document).ready(function() {
+        var table = $('.table-table_manage_goods_receipt').DataTable();
+
+        // Handle "Select All" checkbox
+        $('#select-all-columns').on('change', function() {
+            var isChecked = $(this).is(':checked');
+            $('.toggle-column').prop('checked', isChecked).trigger('change');
+        });
+
+        // Handle individual column visibility toggling
+        $('.toggle-column').on('change', function() {
+            var column = table.column($(this).val());
+            column.visible($(this).is(':checked'));
+
+            // Sync "Select All" checkbox state
+            var allChecked = $('.toggle-column').length === $('.toggle-column:checked').length;
+            $('#select-all-columns').prop('checked', allChecked);
+        });
+
+        // Sync checkboxes with column visibility on page load
+        table.columns().every(function(index) {
+            var column = this;
+            $('.toggle-column[value="' + index + '"]').prop('checked', column.visible());
+        });
+
+        // Prevent dropdown from closing when clicking inside
+        $('.dropdown-menu').on('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+</script>
 </body>
 
 </html>
