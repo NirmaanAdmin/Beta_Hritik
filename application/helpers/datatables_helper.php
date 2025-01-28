@@ -662,7 +662,7 @@ function data_tables_purchase_tracker_init($aColumns, $join = [], $where = [], $
     }
 
     $sTable = "(
-        SELECT id, goods_receipt_code, supplier_name, buyer_id, kind, pr_order_id, date_add, approval, id as pdf_id, 1 as type FROM tblgoods_receipt 
+        SELECT id, goods_receipt_code, supplier_code as supplier_name, buyer_id, kind, pr_order_id, date_add, approval, id as pdf_id, 1 as type FROM tblgoods_receipt 
         UNION ALL
         SELECT id, '' AS goods_receipt_code, vendor as supplier_name, id AS buyer_id, kind, id AS pr_order_id, datecreated AS date_add, approve_status as approval, id as pdf_id, 2 as pur_orders FROM tblpur_orders WHERE goods_id = 0
     ) AS combined_orders";

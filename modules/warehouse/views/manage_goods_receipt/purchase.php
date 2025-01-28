@@ -283,10 +283,10 @@
 												<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_tax_heading'); ?></th> -->
 												<th align="right" style="width: 10%;"><?php echo _l('lot_number'); ?></th>
 												<!-- <th align="left" style="width: 7%;"><?php echo _l('vendor'); ?></th> -->
-												<th align="left" style="width: 8%;"><?php echo _l('production_status'); ?></th>
+												<?php /* <th align="left" style="width: 8%;"><?php echo _l('production_status'); ?></th>
 												<th align="left" style="width: 10%;"><?php echo _l('payment_date'); ?></th>
 												<th align="left" style="width: 10%;"><?php echo _l('est_delivery_date'); ?></th>
-												<th align="right" style="width: 10%;"><?php echo _l('delivery_date'); ?></th>
+												<th align="right" style="width: 10%;"><?php echo _l('delivery_date'); ?></th> */ ?>
 												<!-- <th align="right"><?php echo _l('expiry_date'); ?></th> -->
 												<!-- <th align="right" style="width: 7%;"><?php echo _l('invoice_table_amount_heading'); ?></th> -->
 

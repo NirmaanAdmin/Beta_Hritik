@@ -63,6 +63,7 @@
                         <br />
                         <?php render_datatable(array(
                             _l('id'),
+                            _l('stock_received_docket_code'),
                             _l('reference_purchase_order'),
                             _l('supplier_name'),
                             _l('Buyer'),

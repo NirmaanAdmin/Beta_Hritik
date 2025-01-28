@@ -3111,11 +3111,11 @@ class Warehouse_model extends App_Model
 		<th class="thead-dark-ip">' . _l('unit_name') . '</th>
 		<th class="thead-dark-ip">' . _l('po_quantity') . '</th>
 		<th class="thead-dark-ip">' . _l('received_quantity') . '</th>
-		<th class="thead-dark-ip">' . _l('lot_number') . '</th>
-		<th class="thead-dark-ip">' . _l('production_status') . '</th>
-		<th class="thead-dark-ip">' . _l('payment_date') . '</th>
-		<th class="thead-dark-ip">' . _l('est_delivery_date') . '</th>
-		<th class="thead-dark-ip">' . _l('delivery_date') . '</th>';
+		<th class="thead-dark-ip">' . _l('lot_number') . '</th>';
+		// <th class="thead-dark-ip">' . _l('production_status') . '</th>
+		// <th class="thead-dark-ip">' . _l('payment_date') . '</th>
+		// <th class="thead-dark-ip">' . _l('est_delivery_date') . '</th>
+		// <th class="thead-dark-ip">' . _l('delivery_date') . '</th>';
 		// <th class="thead-dark-ip">' . _l('unit_price') . '</th>
 		// <th class="thead-dark-ip">' . _l('total_money') . '</th>
 		// <th class="thead-dark-ip">' . _l('tax_money') . '</th>
@@ -3179,10 +3179,6 @@ class Warehouse_model extends App_Model
 			// <td class="td_style_r_ep_c">' . app_format_money((float) $goods_money, '') . '</td>
 			// <td class="td_style_r_ep_c">' . app_format_money((float) $tax_money, '') . '</td>
 			$html .= '<td class="td_style_r_ep_c">' . $lot_number . '</td>
-			<td class="td_style_r_ep_c">' . $production_status . '</td>
-			<td class="td_style_r_ep_c">' . $payment_date . '</td>
-			<td class="td_style_r_ep_c">' . $est_delivery_date . '</td>
-				<td class="td_style_r_ep_c">' . $delivery_date . '</td>
 			
 			</tr>';
 			// <td class="td_style_r_ep_c">' . _d($expiry_date) . '</td>
@@ -14524,7 +14520,7 @@ class Warehouse_model extends App_Model
 		// $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 		$row .= '<td>' . render_input($name_lot_number, '', $lot_number, 'text', ['placeholder' => _l('lot_number')]) . '</td>';
 		// $row .= '<td class="hide vendor_select">'.get_vendor_list($name_vendor_id, $vendor_id).'</td>';
-		$row .= '<td class="">' . render_select(
+		$row .= '<td class="hide">' . render_select(
 			$name_status,                        // Name attribute for the select field
 			$delivery_status_data,                   // Transformed array
 			array('id', 'name'),                     // Keys for the value and display text
@@ -14534,9 +14530,9 @@ class Warehouse_model extends App_Model
 			["data-none-selected-text" => _l('Select Production Status')], // Placeholder text
 			'no-margin'                              // Additional class
 		) . '</td>';
-		$row .= '<td class="">' . render_date_input($name_paymant_date, '', $payment_date, ['placeholder' => _l('payment_date')]) . '</td>';
-		$row .= '<td class="">' . render_date_input($name_est_delivery_date, '', $est_delivery_date, ['placeholder' => _l('est_delivery_date')]) . '</td>';
-		$row .= '<td class="delivery_date">' . render_date_input($name_delivery_date, '', $delivery_date, ['placeholder' => _l('delivery_date')]) . '</td>';
+		$row .= '<td class="hide">' . render_date_input($name_paymant_date, '', $payment_date, ['placeholder' => _l('payment_date')]) . '</td>';
+		$row .= '<td class="hide">' . render_date_input($name_est_delivery_date, '', $est_delivery_date, ['placeholder' => _l('est_delivery_date')]) . '</td>';
+		$row .= '<td class="hide delivery_date">' . render_date_input($name_delivery_date, '', $delivery_date, ['placeholder' => _l('delivery_date')]) . '</td>';
 		$row .= '<td class="hide">' . render_date_input($name_date_manufacture, '', $date_manufacture, ['placeholder' => _l('date_manufacture')]) . '</td>';
 		// $row .= '<td>' . render_date_input($name_expiry_date, '', $expiry_date, ['placeholder' => _l('expiry_date')]) . '</td>';
 		// $row .= '<td class="amount" align="right">' . $amount . '</td>';

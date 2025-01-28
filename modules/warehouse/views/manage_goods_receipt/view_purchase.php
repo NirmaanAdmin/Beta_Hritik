@@ -155,16 +155,7 @@
                         <th colspan="1"><?php echo _l('unit_name') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('po_quantity') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('received_quantity') ?></th>
-                        <!-- <th align="right" colspan="1"><?php echo _l('unit_price') ?></th>
-                                     <th align="right" colspan="1"><?php echo _l('total_money') ?></th>
-                                     <th align="right" colspan="1"><?php echo _l('tax_money') ?></th> -->
                         <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
-                        <!-- <th colspan="1"><?php echo _l('vendor') ?></th> -->
-                        <th align="right" colspan="1"><?php echo _l('production_status') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('payment_date') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('est_delivery_date') ?></th>
-                        <th align="right" colspan="1"><?php echo _l('delivery_date') ?></th>
-                        <!-- <th align="right" colspan="1"><?php echo _l('expiry_date') ?></th> -->
                       </tr>
                     </thead>
                     <tbody class="ui-sortable">
@@ -204,54 +195,6 @@
                         }
 
                         $vendor_name = !empty($receipt_value['vendor_id']) ? wh_get_vendor_company_name($receipt_value['vendor_id']) : '';
-                        $delivery_date = !empty($receipt_value['delivery_date']) ? $receipt_value['delivery_date'] : null;
-                        $payment_date = !empty($receipt_value['payment_date']) ? $receipt_value['payment_date'] : null;
-                        $est_delivery_date = !empty($receipt_value['est_delivery_date']) ? $receipt_value['est_delivery_date'] : null;
-                        $production_status = '';
-                        $production_labels = [
-                          1 => ['label' => 'danger', 'table' => 'not_started', 'text' => _l('not_started')],
-                          2 => ['label' => 'success', 'table' => 'approved', 'text' => _l('approved')],
-                          3 => ['label' => 'info', 'table' => 'on_going', 'text' => _l('on_going')],
-
-                        ];
-                        if ($receipt_value['production_status'] > 0) {
-
-                          $status = $production_labels[$receipt_value['production_status']];
-                          $production_status = '<span class="inline-block label label-' . $status['label'] . '" id="status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
-
-                          $production_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-                          $production_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                          $production_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
-                          $production_status .= '</a>';
-
-                          $production_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $aRow['id'] . '">';
-
-                          foreach ($production_labels as $key => $status) {
-                            if ($key != $receipt_value['production_status']) {
-                              $production_status .= '<li>
-                                       <a href="#" onclick="change_production_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
-                                           ' . $status['text'] . '
-                                       </a>
-                                   </li>';
-                            }
-                          }
-
-
-                          $production_status .= '</ul>';
-                          $production_status .= '</div>';
-
-
-                          $production_status .= '</span>';
-                          // if ($receipt_value['production_status'] == 1) {
-                          //   $production_status = '<span class="label label-tag tag-id-1 label-tab3"><span class="tag">' . _l('not_started') . '</span><span class="hide">, </span></span>&nbsp';
-                          // } elseif ($receipt_value['production_status'] == 2) {
-                          //   $production_status = '<span class="label label-tag tag-id-1 label-tab2"><span class="tag">' .  _l('on_going') . '</span><span class="hide">, </span></span>&nbsp';
-                          // } elseif ($receipt_value['production_status'] == 3) {
-                          //   $production_status = '<span class="label label-tag tag-id-1 label-tab1"><span class="tag">' . _l('approved') . '</span><span class="hide">, </span></span>&nbsp';
-                          // } else {
-                          //   $production_status = '';
-                          // }
-                        }
                       ?>
 
                         <tr data-toggle="tooltip" data-original-title="<?php echo html_entity_decode($name_serial_number_tooltip); ?>">
@@ -264,41 +207,7 @@
                           <td class="text-right"><?php echo html_entity_decode($po_quantities) ?></td>
                           <td></td>
                           <td class="text-right"><?php echo html_entity_decode($quantities) ?></td>
-                          <!-- <td class="text-right"><?php echo app_format_money((float)$unit_price, '') ?></td>
-                                  <td class="text-right"><?php echo app_format_money((float)$goods_money, '') ?></td>
-                                  <td class="text-right"><?php echo app_format_money((float)$tax_money, '') ?></td> -->
                           <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
-                          <!-- <td><?php echo $vendor_name ?></td> -->
-                          <td class="text-right"><?php echo $production_status ?></td>
-                          <td class="text-right">
-                            <?php
-                            echo '<input type="date" class="form-control payment-date-input"
-                              value="' . $payment_date . '"
-                              data-id="' . $receipt_value['id'] . '"
-                              ">';
-                            ?>
-                          </td>
-                          <td class="text-right">
-                            <?php
-                            echo '<input type="date" class="form-control est-delivery-date-input"
-                            value="' . $est_delivery_date . '"
-                            data-id="' . $receipt_value['id'] . '"
-                            ">';
-
-                            ?>
-
-                          </td>
-                          <td class="text-right">
-                            <?php
-
-                            echo '<input type="date" class="form-control delivery-date-input"
-                            value="' . $delivery_date . '"
-                            data-id="' . $receipt_value['id'] . '"
-                            ">';
-
-                            ?>
-                          </td>
-                          <!-- <td class="text-right"><?php echo _d($expiry_date) ?></td> -->
                         </tr>
                       <?php  } ?>
                     </tbody>
