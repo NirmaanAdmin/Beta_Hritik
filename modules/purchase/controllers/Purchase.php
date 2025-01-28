@@ -10523,7 +10523,7 @@ class purchase extends AdminController
                 $group = $row[0];
                 if (!isset($grouped_data[$group])) {
                     $grouped_data[$group][] = [
-                        "group_name" => '<span class="group-name-cell" style="text-align: center !important;">' . $group . '</span>'
+                        "group_name" => '<span class="group-name-cell" style="text-align: center !important; display: block">' . $group . '</span>'
                     ];
                 }
                 $grouped_data[$group][] = $row;
