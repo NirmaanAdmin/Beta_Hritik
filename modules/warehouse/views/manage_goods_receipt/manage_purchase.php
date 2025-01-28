@@ -17,11 +17,11 @@
                         <?php echo form_hidden('purchase_id', $purchase_id); ?>
                         <div class="row">
                             <div class="col-md-12" style="padding: 0px;">
-                                <div class="col-md-10" id="heading">
+                                <div class="col-md-12" id="heading">
                                     <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Stock Received</h4>
                                     <hr />
                                 </div>
-                                <div class="col-md-2 display-flex" id="filter_div">
+                                <?php /* <div class="col-md-2 display-flex" id="filter_div">
                                     <label>PO Not received</label>
                                     <div class="onoffswitch" style="margin-left: 10px;">
                                         <input type="checkbox" name="toggle-filter" class="onoffswitch-checkbox toggle-filter" id="c_' . $aRow['staffid'] . '" value="0">
@@ -29,7 +29,7 @@
                                     </div>
 
                                     <hr />
-                                </div>
+                                </div> */ ?>
                                 
                             </div>
 
