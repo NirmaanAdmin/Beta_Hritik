@@ -2,9 +2,14 @@
 <?php echo form_hidden('_attachment_sale_id', $goods_receipt->id); ?>
 <?php echo form_hidden('_attachment_sale_type', 'estimate'); ?>
 <style type="text/css">
-.purchase-head th, .purchase-body td {
-  white-space: nowrap; 
-}
+  /* .purchase-head th,
+  .purchase-body td {
+    white-space: nowrap;
+  } */
+  /* .items-preview {
+    table-layout: fixed; 
+    width: 100%; 
+  } */
 </style>
 <div class="col-md-12 no-padding">
   <div class="panel_s">
@@ -28,6 +33,10 @@
             </li>
           </ul>
         </div>
+      </div>
+      <div class="pull-right" style="margin-right: 10px;font-size: 18px;margin-top: 4px;">
+        <a href="#" onclick="small_table_full_view(); return false;">
+          <i class="fa fa-expand" style="color: #000000 !important;"></i></a>
       </div>
 
       <div class="clearfix"></div>
@@ -88,8 +97,8 @@
                   }
                   ?>
 
-                  <?php 
-                  if(isset($purchase_tracker)) { ?>
+                  <?php
+                  if (isset($purchase_tracker)) { ?>
                     <td class="bold"><?php echo _l('print'); ?></td>
                     <td>
                       <div class="btn-group">
@@ -117,6 +126,27 @@
               </table>
             </div>
             <div class="row">
+              <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
+
+                <span style="margin-right: 10px;">
+                  <button class="btn btn-primary" id="settings-toggle">Columns</button>
+                  <div id="settings-dropdown" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:165px;right: 24px;">
+
+                    <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('commodity_code') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('description') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('warehouse_name') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('unit_name') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> <?php echo _l('po_quantity') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="6" checked=""> <?php echo _l('received_quantity') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="7" checked=""> <?php echo _l('remaining_quantity') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="8" checked=""> <?php echo _l('lot_number') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="9" checked=""> <?php echo _l('production_status') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="10" checked=""> <?php echo _l('payment_date') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="11" checked=""> <?php echo _l('est_delivery_date') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="12" checked=""><?php echo _l('delivery_date') ?></label>
+                  </div>
+                </span>
+              </div>
               <div class="col-md-12">
                 <div class="table-responsive">
                   <table class="table items items-preview estimate-items-preview" data-type="estimate">
@@ -206,7 +236,7 @@
                           }
                           $production_status .= '</ul>';
                           $production_status .= '</div>';
-                          
+
                           $production_status .= '</span>';
                         }
                       ?>
@@ -224,7 +254,7 @@
                           <td><?php echo $production_status ?></td>
                           <td>
                             <?php
-                              echo '<input type="date" class="form-control payment-date-input"
+                            echo '<input type="date" class="form-control payment-date-input"
                               value="' . $payment_date . '"
                               data-id="' . $receipt_value['id'] . '"
                               ">';
@@ -232,7 +262,7 @@
                           </td>
                           <td>
                             <?php
-                              echo '<input type="date" class="form-control est-delivery-date-input"
+                            echo '<input type="date" class="form-control est-delivery-date-input"
                               value="' . $est_delivery_date . '"
                               data-id="' . $receipt_value['id'] . '"
                               ">';
@@ -240,7 +270,7 @@
                           </td>
                           <td>
                             <?php
-                              echo '<input type="date" class="form-control delivery-date-input"
+                            echo '<input type="date" class="form-control delivery-date-input"
                               value="' . $delivery_date . '"
                               data-id="' . $receipt_value['id'] . '"
                               ">';
@@ -489,4 +519,27 @@
         });
     }
   }
+</script>
+<script>
+  // Toggle settings dropdown visibility
+  document.getElementById('settings-toggle').addEventListener('click', function() {
+    const dropdown = document.getElementById('settings-dropdown');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Add event listener to toggle column visibility
+  document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      const columnIndex = this.getAttribute('data-column');
+      const table = document.querySelector('.items-preview');
+
+      // Iterate through all rows and toggle column visibility
+      table.querySelectorAll('tr').forEach(function(row) {
+        const cells = row.querySelectorAll('th, td');
+        if (cells[columnIndex]) {
+          cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
+        }
+      });
+    });
+  });
 </script>

@@ -58,9 +58,12 @@ foreach ($rResult as $aRow) {
         } elseif($aColumns[$i] == 'goods_receipt_code') {
             $name = '';
             if(!empty($aRow['goods_receipt_code'])) {
-                $name .= '<a href="' . admin_url('purchase/view_purchase/' . $aRow['id']) . '" onclick="init_goods_receipt(' . $aRow['id'] . '); return false;">' . $aRow['goods_receipt_code'] . '</a>';
+                $name .= '<a href="' . admin_url('purchase/view_purchase/' . $aRow['id']) . '" 
+                onclick="init_goods_receipt(' . $aRow['id'] . '); small_table_full_view(); return false;">' . 
+                $aRow['goods_receipt_code'] . '</a>';
+     
             } else {
-                $name .= '<a href="' . admin_url('purchase/view_po_tracker/' . $aRow['id']) . '" onclick="init_po_tracker(' . $aRow['id'] . '); return false;">' . _l('view') . '</a>';
+                $name .= '<a href="' . admin_url('purchase/view_po_tracker/' . $aRow['id']) . '" onclick="init_po_tracker(' . $aRow['id'] . '); small_table_full_view(); return false;">' . _l('view') . '</a>';
             }
             $_data = $name;
         } elseif ($aColumns[$i] == 'pr_order_id') {
