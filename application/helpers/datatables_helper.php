@@ -268,7 +268,7 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
     $sOrder
     $sLimit
     ";
-
+    
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),
@@ -306,6 +306,7 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
         ],
     ];
 }
+
 function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join = [], $where = [], $additionalSelect = [], $sGroupBy = '', $searchAs = [], $having = '', $module = '')
 {
     $CI = &get_instance();

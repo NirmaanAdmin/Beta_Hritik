@@ -10458,7 +10458,7 @@ class purchase extends AdminController
                 db_prefix() . 'goods_receipt_detail.po_quantities as po_quantities',
                 db_prefix() . 'goods_receipt_detail.payment_date as payment_date',
                 db_prefix() . 'goods_receipt_detail.est_delivery_date as est_delivery_date',
-                db_prefix() . 'goods_receipt_detail.delivery_date as delivery_date', 
+                db_prefix() . 'goods_receipt_detail.delivery_date as delivery_date',
                 db_prefix() . 'goods_receipt_detail.production_status as production_status',
             ];
             $where = [];
@@ -10473,38 +10473,89 @@ class purchase extends AdminController
 
             $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
 
+            $select1 = [
+                db_prefix() . 'pur_order_detail.id as id',
+                db_prefix() . 'pur_order_detail.pur_order as pur_order',
+                db_prefix() . 'pur_order_detail.item_name as commodity_name',
+                db_prefix() . 'pur_order_detail.description as description',
+                db_prefix() . 'pur_order_detail.quantity as quantities',
+                db_prefix() . 'pur_order_detail.po_quantities as po_quantities',
+                db_prefix() . 'pur_order_detail.payment_date as payment_date',
+                db_prefix() . 'pur_order_detail.est_delivery_date as est_delivery_date',
+                db_prefix() . 'pur_order_detail.delivery_date as delivery_date',
+                db_prefix() . 'pur_order_detail.production_status as production_status',
+            ];
+            $where1 = [];
+
+            $aColumns1     = $select1;
+            $sIndexColumn1 = 'id';
+            $sTable1       = db_prefix() . 'pur_order_detail';
+            $join1         = [];
+            $join1         = [
+                'INNER JOIN ' . db_prefix() . 'pur_orders ON ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order where ' . db_prefix() . 'pur_orders.goods_id = 0',
+            ];
+
+
+            $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
+
             $output  = $result['output'];
-            $rResult = $result['rResult'];
+
+            $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+            $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
+            
+            $rResult = array_merge($rResult0, $rResult1);
+            
+
             $tracker = [];
 
             foreach ($rResult as $aRow) {
                 $row = [];
 
                 $goods_receipt = get_goods_receipt_code($aRow['goods_receipt_id']);
-                $row[] = get_pur_order_name($goods_receipt->pr_order_id);
+                if($goods_receipt->pr_order_id > 0){
+                    $row[] = get_pur_order_name($goods_receipt->pr_order_id);
+                }else{
+                    $row[] = get_pur_order_name($aRow['pur_order']);
+                }
+                
 
                 $row[] = $aRow['commodity_name'];
 
                 $row[] = $aRow['description'];
 
-                $row[] = app_format_number($aRow['po_quantities']);
+                if($goods_receipt->pr_order_id > 0){
+                    $row[] = isset($aRow['po_quantities']) && $aRow['po_quantities'] !== null ? app_format_number($aRow['po_quantities']): '-';
+                }else{
+                    $row[] = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']): '-';
+                }
+                
+                if($goods_receipt->pr_order_id > 0){
+                    $row[] = app_format_number($aRow['quantities']);
+                }else{
+                    $row[] = isset($aRow['po_quantities']) && $aRow['po_quantities'] !== null ? app_format_number($aRow['po_quantities']): '-';
+                }
+                
+                if($goods_receipt->pr_order_id > 0){
+                    $remaining_quantities = $aRow['po_quantities'] - $aRow['quantities'];
+                }else{
+                    $remaining_quantities = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']): '-';
+                }
+                
 
-                $row[] = app_format_number($aRow['quantities']);
-
-                $remaining_quantities = $aRow['po_quantities'] - $aRow['quantities'];
+                
                 $row[] = app_format_number($remaining_quantities);
 
                 $production_status = '';
                 if ($receipt_value['production_status'] > 0) {
-                  if ($receipt_value['production_status'] == 1) {
-                    $production_status = _l('not_started');
-                  } elseif ($receipt_value['production_status'] == 2) {
-                    $production_status = _l('on_going');
-                  } elseif ($receipt_value['production_status'] == 3) {
-                    $production_status = _l('approved');
-                  } else {
-                    $production_status = '';
-                  }
+                    if ($receipt_value['production_status'] == 1) {
+                        $production_status = _l('not_started');
+                    } elseif ($receipt_value['production_status'] == 2) {
+                        $production_status = _l('on_going');
+                    } elseif ($receipt_value['production_status'] == 3) {
+                        $production_status = _l('approved');
+                    } else {
+                        $production_status = '';
+                    }
                 }
                 $row[] = $production_status;
 
@@ -10516,7 +10567,9 @@ class purchase extends AdminController
 
                 $tracker[] = $row;
             }
-
+            // echo '<pre>';
+            // print_r($tracker);
+            // die;
             // Grouped data array
             $grouped_data = [];
             foreach ($tracker as $row) {
@@ -10606,7 +10659,7 @@ class purchase extends AdminController
         } else {
             $message = "Failed";
         }
-        
+
         $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
         $html .= '<a href="#" class="dropdown-toggle text-dark" id="tableChangeBudget-' . $invoice_id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
         $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
@@ -10623,7 +10676,7 @@ class purchase extends AdminController
         }
         $selected_budget = get_group_name_item($budgetid);
         $status_str = $selected_budget->name;
-        $class = 'label-info';  
+        $class = 'label-info';
 
         $html .= '</ul>';
         $html .= '</div>';
@@ -10738,7 +10791,7 @@ class purchase extends AdminController
         $goods_receipt['kind'] = $pur_order->kind;
         $goods_receipt['pr_order_id'] = $pur_order->id;
         $data['goods_receipt'] = (object) $goods_receipt;
-        if(!empty($pur_order_details)) {
+        if (!empty($pur_order_details)) {
             foreach ($pur_order_details as $key => $detail) {
                 $pur_order_details[$key]['commodity_code'] = $detail['item_code'];
                 $pur_order_details[$key]['po_quantities'] = (float) $detail['quantity'];
