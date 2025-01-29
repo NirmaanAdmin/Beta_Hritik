@@ -1152,7 +1152,7 @@ class Warehouse_model extends App_Model
 	 */
 	public function add_goods_receipt($data, $id = false)
 	{
-		
+
 		$inventory_receipts = $production_approval = [];
 
 		if (isset($data['newitems'])) {
@@ -3864,7 +3864,7 @@ class Warehouse_model extends App_Model
 		$company_name = get_option('invoice_company_name');
 		$address = get_option('invoice_company_address');
 		$tax_data = $this->get_html_tax_delivery($goods_delivery_id);
-
+		$get_dept = $this->get_department($goods_delivery->department);
 
 		$day = date('d', strtotime($goods_delivery->date_add));
 		$month = date('m', strtotime($goods_delivery->date_add));
@@ -3905,8 +3905,11 @@ class Warehouse_model extends App_Model
 
 		//organization_info
 		$organization_info = '<div  class="bill_to_color">';
-		$organization_info .= format_organization_info();
+		$organization_info .= '<b>' . _l('project') . ': ' . get_project_name_by_id($goods_delivery->project) . '</b><br />';
+		$organization_info .= format_organization_info_name();
+		
 		$organization_info .= '</div>';
+
 
 		$bill_to = '';
 		$ship_to = '';
@@ -3924,8 +3927,9 @@ class Warehouse_model extends App_Model
 			$ship_to .= '</div>';
 		}
 
+		$invoice_date = '<br /><b>' . _l('department') . ' : ' . $get_dept->name . '</b><br />';
 		//invoice_data_date
-		$invoice_date = '<br /><b>' . _l('invoice_data_date') . ' ' . _d($goods_delivery->date_add) . '</b><br />';
+		$invoice_date .= '<br /><b>Issued Date: ' . _d($goods_delivery->date_add) . '</b><br />';
 
 		if (is_numeric($goods_delivery->invoice_id) && $goods_delivery->invoice_id != 0) {
 			$invoice_date .= '<b>' . _l('invoice_no') . ': ' . format_invoice_number($goods_delivery->invoice_id) . '</b>';
@@ -3939,21 +3943,7 @@ class Warehouse_model extends App_Model
 		</tr>
 		</tbody>
 		</table>
-		<br><br>
-		<br><br>
 		';
-
-		$html .= '<table class="table">
-		<tbody>
-		<tr>
-		<td rowspan="2" width="50%" class="text-left"></td>
-		<td rowspan="2" width="50%" class="text_right">' . $ship_to . '</td>
-		</tr>
-		</tbody>
-		</table>
-		<br>
-		';
-
 		$html .= '<table class="table">
 		<tbody>
 		<tr>
@@ -3962,11 +3952,23 @@ class Warehouse_model extends App_Model
 		</tr>
 		</tbody>
 		</table>
-		<br><br><br>
-		<br><br><br>
+		
 		';
 
 
+		// $html .= '<table class="table">
+		// 	<tbody>
+		// 	<tr>
+		// 	<td rowspan="2" width="50%" class="text-left"></td>
+		// 	<td rowspan="2" width="50%" class="text_right">' . $ship_to . '</td>
+		// 	</tr>
+		// 	</tbody>
+		// 	</table>
+		// 	<br>
+		// 	';
+
+
+		
 
 		$html .= '<table class="table" style="font-size: 14px">
 		<tbody>
@@ -4085,7 +4087,7 @@ class Warehouse_model extends App_Model
 			if (!empty($delivery_value['quantities_json'])) {
 				$quantities_json = json_decode($delivery_value['quantities_json'], true);
 				foreach ($quantities_json as $key => $value) {
-					$all_quantities .= get_vendor_name($key) . ": " . _d($value) . ", ";
+					$all_quantities .= get_vendor_name($key) . ": <b>" . _d($value) . "</b>, ";
 				}
 				$all_quantities = rtrim($all_quantities, ', ');
 			}
@@ -4112,7 +4114,7 @@ class Warehouse_model extends App_Model
 			if ($warehouse_lotnumber_bottom_infor_option == 1) {
 				$html .= '<td class="td_style_r_ep_l"><b>' . $warehouse_name . '</b></td>';
 			}
-			$html .= '<td class="small_rows"><b>' . $all_quantities . '</b></td>';
+			$html .= '<td class="small_rows">' . $all_quantities . '</td>';
 			if (get_warehouse_option('goods_delivery_pdf_display_outstanding') == 1) {
 				$html .= '<td class="td_style_r_ep_l"><b>0.0</b></td>';
 			}
@@ -4124,8 +4126,8 @@ class Warehouse_model extends App_Model
 
 		$html .= '</tbody>';
 		$html .= '</table>
-		<br>
-		<br>';
+		<br><br><br>
+		<br><br>';
 
 		$after_discount = isset($goods_delivery) ?  $goods_delivery->after_discount : 0;
 		$shipping_fee = isset($goods_delivery) ?  $goods_delivery->shipping_fee : 0;
@@ -4215,15 +4217,15 @@ class Warehouse_model extends App_Model
 			$html .= '<table class="table">
 			<tbody>
 			<tr>
-			<td class="fw_width35"><h4>' . _l('deliver_name') . '</h4></td>
-			<td class="fw_width30"><h4>' . _l('stocker') . '</h4></td>
-			<td class="fw_width30"><h4>' . _l('chief_accountant') . '</h4></td>
+			<td class="fw_width50" style="width: 90%;"><h4>Issuer</h4></td>
+		
+			<td class="fw_width50" style="width: 50%;"><h4>Receiver</h4></td>
 
 			</tr>
 			<tr>
-			<td class="fw_width35 fstyle">' . _l('sign_full_name') . '</td>
-			<td class="fw_width30 fstyle ">' . _l('sign_full_name') . '</td>
-			<td class="fw_width30 fstyle">' . _l('sign_full_name') . '</td>
+			<td class="fw_width50 fstyle" style="width: 85%;">' . _l('sign_full_name') . '</td>
+			
+			<td class="fw_width50 fstyle" style="width: 50%;">' . _l('sign_full_name') . '</td>
 			</tr
 
 			</tbody>
@@ -19796,7 +19798,7 @@ class Warehouse_model extends App_Model
 	{
 
 		$this->db->where('id', $id);
-		if($purchase_tracker == "false") {
+		if ($purchase_tracker == "false") {
 			$this->db->update(db_prefix() . 'pur_order_detail', ['production_status' => $status]);
 		} else {
 			$this->db->update(db_prefix() . 'goods_receipt_detail', ['production_status' => $status]);
@@ -20055,5 +20057,11 @@ class Warehouse_model extends App_Model
 		$arr_pur_resquest['additional_discount'] = $additional_discount;
 
 		return $arr_pur_resquest;
+	}
+
+	public function get_department($dept_id)
+	{
+		$this->db->where('departmentid', $dept_id);
+		return $this->db->get(db_prefix() . 'departments')->row();
 	}
 }
