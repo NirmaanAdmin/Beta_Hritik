@@ -1817,6 +1817,7 @@ class warehouse extends AdminController
 		$data['tab'][] = 'inventory_inside';
 		$data['tab'][] = 'inventory_valuation_report';
 		$data['tab'][] = 'warranty_period_report';
+		$data['tab'][] = 'vendor_allocation_report';
 
 		switch ($data['group']) {
 			case 'stock_summary_report':
@@ -1834,6 +1835,11 @@ class warehouse extends AdminController
 
 			case 'warranty_period_report':
 				$data['title'] = _l('wh_warranty_period_report');
+
+				break;
+
+			case 'vendor_allocation_report':
+				$data['title'] = _l('vendor_allocation_report');
 
 				break;
 
@@ -9185,5 +9191,21 @@ class warehouse extends AdminController
 			'result' => $pur_request_detail['result'] ? $pur_request_detail['result'] : '',
 			'additional_discount' => $pur_request_detail['additional_discount'] ? $pur_request_detail['additional_discount'] : '',
 		]);
+	}
+
+	/**
+	 * get data vendor allocation report
+	 * @return json
+	 */
+	public function get_data_vendor_allocation_report()
+	{
+		if ($this->input->post()) {
+			$data = $this->input->post();
+			$stock_summary_report = $this->warehouse_model->get_vendor_allocation_report_view($data);
+		}
+		echo json_encode([
+			'value' => $stock_summary_report,
+		]);
+		die();
 	}
 }

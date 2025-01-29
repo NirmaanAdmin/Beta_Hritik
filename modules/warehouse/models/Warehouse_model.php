@@ -20064,4 +20064,93 @@ class Warehouse_model extends App_Model
 		$this->db->where('departmentid', $dept_id);
 		return $this->db->get(db_prefix() . 'departments')->row();
 	}
+
+	public function get_vendor_allocation_report_view($data)
+	{
+		$from_date = $data['from_date'];
+		$to_date = $data['to_date'];
+
+		if (!$this->check_format_date($from_date)) {
+			$from_date = to_sql_date($from_date);
+		}
+		if (!$this->check_format_date($to_date)) {
+			$to_date = to_sql_date($to_date);
+		}
+
+		$this->db->select('gdd.quantities_json, gdd.lot_number, gdd.issued_date, po.pur_order_name, po.pur_order_number, gdd.commodity_name, gdd.description, gdd.warehouse_id');
+		$this->db->from(db_prefix() . 'goods_delivery_detail gdd');
+		$this->db->join(db_prefix() . 'goods_delivery gd', 'gdd.goods_delivery_id = gd.id', 'inner');
+		$this->db->join(db_prefix() . 'pur_orders po', 'gd.pr_order_id = po.id', 'inner');
+		$query = $this->db->get();
+		$goods_delivery_detail = $query->result_array();
+
+		$vendor_data = array();
+		if(!empty($goods_delivery_detail)) {
+			foreach ($goods_delivery_detail as $key => $value) {
+
+				// For quantities
+				if(!empty($value['quantities_json'])) {
+					$quantities_json = json_decode($value['quantities_json'], true);
+					if(!empty($quantities_json)) {
+						foreach ($quantities_json as $qkey => $qvalue) {
+							$item_line = array();
+							$item_line['vendor_id'] = $qkey;
+							$item_line['vendor_name'] = get_vendor_company_name($qkey);
+							$item_line['pur_order_name'] = $value['pur_order_name'];
+							$item_line['pur_order_number'] = $value['pur_order_number'];
+							$item_line['item_name'] = $value['commodity_name'];
+							$item_line['item_description'] = $value['description'];
+							$item_line['project_name'] = get_project_name_by_id($value['warehouse_id']);
+							$item_line['stock_issued'] = $qvalue;
+							$vendor_data[] = $item_line;
+						}
+					}
+				}
+
+				// For lot number
+				if(!empty($value['lot_number'])) {
+					$lot_number = json_decode($value['lot_number'], true);
+					if(!empty($lot_number)) {
+						foreach ($lot_number as $lkey => $lvalue) {
+							$item_line = array();
+							$item_line['vendor_id'] = $lkey;
+							$item_line['vendor_name'] = get_vendor_company_name($lkey);
+							$item_line['pur_order_name'] = $value['pur_order_name'];
+							$item_line['pur_order_number'] = $value['pur_order_number'];
+							$item_line['item_name'] = $value['commodity_name'];
+							$item_line['item_description'] = $value['description'];
+							$item_line['project_name'] = get_project_name_by_id($value['warehouse_id']);
+							$item_line['lot_number'] = $lvalue;
+							$vendor_data[] = $item_line;
+						}
+					}
+				}
+
+				// For issued date
+				if(!empty($value['issued_date'])) {
+					$issued_date = json_decode($value['issued_date'], true);
+					if(!empty($issued_date)) {
+						foreach ($issued_date as $ikey => $ivalue) {
+							$item_line = array();
+							$item_line['vendor_id'] = $ikey;
+							$item_line['vendor_name'] = get_vendor_company_name($ikey);
+							$item_line['pur_order_name'] = $value['pur_order_name'];
+							$item_line['pur_order_number'] = $value['pur_order_number'];
+							$item_line['item_name'] = $value['commodity_name'];
+							$item_line['item_description'] = $value['description'];
+							$item_line['project_name'] = get_project_name_by_id($value['warehouse_id']);
+							$item_line['issued_date'] = $ivalue;
+							$vendor_data[] = $item_line;
+						}
+					}
+				}
+			}
+		}
+
+		$html = '';
+		$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>';
+
+		$html .= '<link href="' . FCPATH . 'modules/warehouse/assets/css/pdf_style.css' . '"  rel="stylesheet" type="text/css" />';
+		return $html;
+	}
 }

@@ -351,6 +351,7 @@ function warehouse_load_js(){
     if (!(strpos($viewuri, '/admin/warehouse/manage_report') === false)) { 
          echo '<script src="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/js/stock_summary_report.js').'?v=' . REVISION.'"></script>';
         echo '<script src="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/js/inventory_valuation_report.js').'?v=' . REVISION.'"></script>';
+        echo '<script src="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/js/vendor_allocation_report.js').'?v=' . REVISION.'"></script>';
     }
 
     if (!(strpos($viewuri, '/admin/warehouse/manage_stock_take') === false)) { 
