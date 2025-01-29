@@ -155,6 +155,7 @@
                         <th colspan="1"><?php echo _l('unit_name') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('po_quantity') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('received_quantity') ?></th>
+                        <th colspan="2" class="text-center"><?php echo _l('remaining_quantity') ?></th>
                         <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
                       </tr>
                     </thead>
@@ -164,8 +165,9 @@
                       foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
 
                         $receipt_key++;
-                        $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : '');
-                        $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : '');
+                        $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : 0);
+                        $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : 0);
+                        $remaining_quantities = $po_quantities - $quantities;
                         $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                         $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                         $goods_money = (isset($receipt_value) ? $receipt_value['goods_money'] : '');
@@ -207,6 +209,8 @@
                           <td class="text-right"><?php echo html_entity_decode($po_quantities) ?></td>
                           <td></td>
                           <td class="text-right"><?php echo html_entity_decode($quantities) ?></td>
+                          <td></td>
+                          <td class="text-right"><?php echo html_entity_decode($remaining_quantities) ?></td>
                           <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
                         </tr>
                       <?php  } ?>

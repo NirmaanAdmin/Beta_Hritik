@@ -78,9 +78,21 @@
 			submit_form(true);
 		});
 
-
 		$('select[name="pr_order_id"]').on('change', function() {
 			"use strict";
+
+
+		$('select[name="warehouse_id_m"]').on('change', function() {
+			"use strict";
+			var warehouse_id = $(this).val();
+			if(warehouse_id) {
+				$('.warehouse_select select').each(function(index) {
+				    if (index !== 0) {  // Skip the first row
+				        $(this).val(warehouse_id).trigger('change');
+				    }
+				});
+			}
+		});
 
 			var pr_order_id = $('select[name="pr_order_id"]').val();
 			$.get(admin_url + 'warehouse/coppy_pur_request/' + pr_order_id).done(function(response) {
@@ -92,6 +104,14 @@
 					// $('.invoice-item table.invoice-production-approvals-table.items tbody').html('');
 					// $('.invoice-item table.invoice-production-approvals-table.items tbody').append(response.production_approval_item);
 
+					var warehouse_id = $('#warehouse_id_m').val();
+					if(warehouse_id) {
+						$('.warehouse_select select').each(function(index) {
+						    if (index !== 0) {  // Skip the first row
+						        $(this).val(warehouse_id).trigger('change');
+						    }
+						});
+					}
 
 					setTimeout(function() {
 						wh_calculate_total();
