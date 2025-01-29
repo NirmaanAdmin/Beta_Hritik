@@ -19602,177 +19602,177 @@ class Warehouse_model extends App_Model
 		return $this->db->get()->result_array();
 	}
 
-	public function copy_manage_receipt($goods_receipt_id)
-	{
-		$arr_pur_resquest = [];
+	// public function copy_manage_receipt($goods_receipt_id)
+	// {
+	// 	$arr_pur_resquest = [];
 
-		$subtotal = 0;
-		$total_discount = 0;
-		$total_payment = 0;
-		$total_tax_money = 0;
-		$pur_total_money = 0;
-		$goods_delivery_row_template = '';
-		$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
+	// 	$subtotal = 0;
+	// 	$total_discount = 0;
+	// 	$total_payment = 0;
+	// 	$total_tax_money = 0;
+	// 	$pur_total_money = 0;
+	// 	$goods_delivery_row_template = '';
+	// 	$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
 
-		$this->db->select(db_prefix() . 'goods_receipt_detail.commodity_code, ' . db_prefix() . 'goods_receipt_detail.description, ' . db_prefix() . 'items.unit_id , unit_price as rate, quantities, ' . db_prefix() . 'goods_receipt_detail.tax as tax_id, ' . db_prefix() . 'goods_receipt_detail.goods_money as total_money, ' . db_prefix() . 'goods_receipt_detail.goods_money as total, ' . db_prefix() . 'goods_receipt_detail.discount, ' . db_prefix() . 'goods_receipt_detail.discount_money, ' . db_prefix() . 'goods_receipt_detail.goods_money as total_after_discount, ' . db_prefix() . 'items.guarantee, ' . db_prefix() . 'goods_receipt_detail.tax_rate, ' . db_prefix() . 'goods_receipt_detail.warehouse_id, ' . db_prefix() . 'goods_receipt_detail.lot_number');
-		$this->db->join(db_prefix() . 'items', '' . db_prefix() . 'goods_receipt_detail.commodity_code = ' . db_prefix() . 'items.id', 'left');
-		$this->db->where(db_prefix() . 'goods_receipt_detail.goods_receipt_id = ' . $goods_receipt_id);
-		$arr_results = $this->db->get(db_prefix() . 'goods_receipt_detail')->result_array();
+	// 	$this->db->select(db_prefix() . 'goods_receipt_detail.commodity_code, ' . db_prefix() . 'goods_receipt_detail.description, ' . db_prefix() . 'items.unit_id , unit_price as rate, quantities, ' . db_prefix() . 'goods_receipt_detail.tax as tax_id, ' . db_prefix() . 'goods_receipt_detail.goods_money as total_money, ' . db_prefix() . 'goods_receipt_detail.goods_money as total, ' . db_prefix() . 'goods_receipt_detail.discount, ' . db_prefix() . 'goods_receipt_detail.discount_money, ' . db_prefix() . 'goods_receipt_detail.goods_money as total_after_discount, ' . db_prefix() . 'items.guarantee, ' . db_prefix() . 'goods_receipt_detail.tax_rate, ' . db_prefix() . 'goods_receipt_detail.warehouse_id, ' . db_prefix() . 'goods_receipt_detail.lot_number');
+	// 	$this->db->join(db_prefix() . 'items', '' . db_prefix() . 'goods_receipt_detail.commodity_code = ' . db_prefix() . 'items.id', 'left');
+	// 	$this->db->where(db_prefix() . 'goods_receipt_detail.goods_receipt_id = ' . $goods_receipt_id);
+	// 	$arr_results = $this->db->get(db_prefix() . 'goods_receipt_detail')->result_array();
 
-		$this->db->where('id', $goods_receipt_id);
-		$get_goods_receipt = $this->db->get(db_prefix() . 'goods_receipt')->result_array();
-
-
-		$index = 0;
-		$status = false;
-		$item_index = 0;
-
-		if (count($arr_results) > 0) {
-			$status = false;
-
-			foreach ($arr_results as $key => $value) {
-				$tax_rate = null;
-				$tax_name = null;
-				$tax_id = null;
-				$tax_rate_value = 0;
-				$pur_total_money += (float)$value['total_after_discount'];
-
-				/*caculatoe guarantee*/
-				$guarantee_period = '';
-				if ($value) {
-					if (($value['guarantee'] != '') && (($value['guarantee'] != null)))
-						$guarantee_period = date('Y-m-d', strtotime(date('Y-m-d') . ' + ' . $value['guarantee'] . ' months'));
-				}
-
-				$total_goods_money = (float)$value['quantities'] * (float)$value['rate'];
-
-				if ($value['tax_id'] != null && $value['tax_id'] != '') {
-					$tax_id = $value['tax_id'];
-					$arr_tax = explode('|', $value['tax_id']);
-					$arr_tax_rate = explode('|', $value['tax_rate']);
-
-					foreach ($arr_tax as $key => $tax_id) {
-						$get_tax_name = $this->get_tax_name($tax_id);
-
-						if (isset($arr_tax_rate[$key])) {
-							$get_tax_rate = $arr_tax_rate[$key];
-						} else {
-							$tax = $this->get_taxe_value($tax_id);
-							$get_tax_rate = (float)$tax->taxrate;
-						}
-
-						$tax_rate_value += (float)$get_tax_rate;
-
-						if (strlen($tax_rate) > 0) {
-							$tax_rate .= '|' . $get_tax_rate;
-						} else {
-							$tax_rate .= $get_tax_rate;
-						}
-
-						if (strlen($tax_name) > 0) {
-							$tax_name .= '|' . $get_tax_name;
-						} else {
-							$tax_name .= $get_tax_name;
-						}
-					}
-				}
+	// 	$this->db->where('id', $goods_receipt_id);
+	// 	$get_goods_receipt = $this->db->get(db_prefix() . 'goods_receipt')->result_array();
 
 
-				$index++;
-				$unit_name = wh_get_unit_name($value['unit_id']);
-				$unit_id = $value['unit_id'];
-				$taxname = '';
-				$issued_date = null;
-				$lot_number = $value['lot_number'];
-				$note = null;
-				$commodity_name = wh_get_item_variatiom($value['commodity_code']);
-				$description = $value['description'];
-				$total_money = 0;
-				$total_after_discount = 0;
-				$quantities = (float)$value['quantities'];
-				$unit_price = (float)$value['rate'];
-				$commodity_code = $value['commodity_code'];
-				$discount_money = $value['discount_money'];
+	// 	$index = 0;
+	// 	$status = false;
+	// 	$item_index = 0;
 
-				if ((float)$tax_rate_value != 0) {
-					$tax_money = (float)$unit_price * (float)$quantities * (float)$tax_rate_value / 100;
-					$total_money = (float)$unit_price * (float)$quantities + (float)$tax_money;
-					$amount = (float)$unit_price * (float)$quantities + (float)$tax_money;
-					$discount_money = (float)$amount * (float)$value['discount'] / 100;
+	// 	if (count($arr_results) > 0) {
+	// 		$status = false;
 
-					$total_after_discount = (float)$unit_price * (float)$quantities + (float)$tax_money - (float)$discount_money;
-				} else {
-					$total_money = (float)$unit_price * (float)$quantities;
-					$amount = (float)$unit_price * (float)$quantities;
-					$discount_money = (float)$amount * (float)$value['discount'] / 100;
+	// 		foreach ($arr_results as $key => $value) {
+	// 			$tax_rate = null;
+	// 			$tax_name = null;
+	// 			$tax_id = null;
+	// 			$tax_rate_value = 0;
+	// 			$pur_total_money += (float)$value['total_after_discount'];
 
-					$total_after_discount = (float)$unit_price * (float)$quantities - (float)$discount_money;
-				}
+	// 			/*caculatoe guarantee*/
+	// 			$guarantee_period = '';
+	// 			if ($value) {
+	// 				if (($value['guarantee'] != '') && (($value['guarantee'] != null)))
+	// 					$guarantee_period = date('Y-m-d', strtotime(date('Y-m-d') . ' + ' . $value['guarantee'] . ' months'));
+	// 			}
 
-				$sub_total = (float)$unit_price * (float)$quantities;
+	// 			$total_goods_money = (float)$value['quantities'] * (float)$value['rate'];
 
-				if ((float)$quantities > 0) {
-					$temporaty_quantity = $quantities;
-					$inventory_warehouse_by_commodity = $this->get_inventory_warehouse_by_commodity_stock_issued($commodity_code, $value['warehouse_id']);
+	// 			if ($value['tax_id'] != null && $value['tax_id'] != '') {
+	// 				$tax_id = $value['tax_id'];
+	// 				$arr_tax = explode('|', $value['tax_id']);
+	// 				$arr_tax_rate = explode('|', $value['tax_rate']);
 
-					foreach ($inventory_warehouse_by_commodity as $key => $inventory_warehouse) {
-						if ($temporaty_quantity > 0) {
-							$available_quantity = (float)$inventory_warehouse['inventory_number'];
-							$warehouse_id = $inventory_warehouse['warehouse_id'];
+	// 				foreach ($arr_tax as $key => $tax_id) {
+	// 					$get_tax_name = $this->get_tax_name($tax_id);
 
-							$temporaty_available_quantity = $available_quantity;
-							$list_temporaty_serial_numbers = $this->get_list_temporaty_serial_numbers($commodity_code, $inventory_warehouse['warehouse_id'], $quantities);
-							foreach ($list_temporaty_serial_numbers as $value) {
+	// 					if (isset($arr_tax_rate[$key])) {
+	// 						$get_tax_rate = $arr_tax_rate[$key];
+	// 					} else {
+	// 						$tax = $this->get_taxe_value($tax_id);
+	// 						$get_tax_rate = (float)$tax->taxrate;
+	// 					}
 
-								if ($temporaty_available_quantity > 0) {
-									$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
-									$quantities = 1;
-									$name = 'newitems[' . $item_index . ']';
+	// 					$tax_rate_value += (float)$get_tax_rate;
 
-									$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
-									$temporaty_quantity--;
-									$temporaty_available_quantity--;
-									$item_index++;
-									$inventory_warehouse_by_commodity[$key]['inventory_number'] = $temporaty_available_quantity;
-								}
-							}
-						}
-					}
+	// 					if (strlen($tax_rate) > 0) {
+	// 						$tax_rate .= '|' . $get_tax_rate;
+	// 					} else {
+	// 						$tax_rate .= $get_tax_rate;
+	// 					}
 
-					if ($temporaty_quantity > 0) {
-						$quantities = $temporaty_quantity;
-						$available_quantity = 0;
-						$name = 'newitems[' . $item_index . ']';
-
-						foreach ($inventory_warehouse_by_commodity as $key => $inventory_warehouse) {
-							if ((float)$inventory_warehouse['inventory_number'] > 0 && $temporaty_quantity > 0) {
-
-								$available_quantity = (float)$inventory_warehouse['inventory_number'];
-								$warehouse_id = $inventory_warehouse['warehouse_id'];
-
-								if ($temporaty_quantity >= $inventory_warehouse['inventory_number']) {
-									$temporaty_quantity = (float) $temporaty_quantity - (float) $inventory_warehouse['inventory_number'];
-									$quantities = (float)$inventory_warehouse['inventory_number'];
-								} else {
-									$quantities = (float)$temporaty_quantity;
-									$temporaty_quantity = 0;
-								}
-
-								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
-								$item_index++;
-							}
-						}
-					}
-				}
-			}
-		}
+	// 					if (strlen($tax_name) > 0) {
+	// 						$tax_name .= '|' . $get_tax_name;
+	// 					} else {
+	// 						$tax_name .= $get_tax_name;
+	// 					}
+	// 				}
+	// 			}
 
 
-		$arr_pur_resquest['result'] = $goods_delivery_row_template;
-		$arr_pur_resquest['goods_receipt'] = isset($get_goods_receipt[0]) ? $get_goods_receipt[0] : '';
+	// 			$index++;
+	// 			$unit_name = wh_get_unit_name($value['unit_id']);
+	// 			$unit_id = $value['unit_id'];
+	// 			$taxname = '';
+	// 			$issued_date = null;
+	// 			$lot_number = $value['lot_number'];
+	// 			$note = null;
+	// 			$commodity_name = wh_get_item_variatiom($value['commodity_code']);
+	// 			$description = $value['description'];
+	// 			$total_money = 0;
+	// 			$total_after_discount = 0;
+	// 			$quantities = (float)$value['quantities'];
+	// 			$unit_price = (float)$value['rate'];
+	// 			$commodity_code = $value['commodity_code'];
+	// 			$discount_money = $value['discount_money'];
 
-		return $arr_pur_resquest;
-	}
+	// 			if ((float)$tax_rate_value != 0) {
+	// 				$tax_money = (float)$unit_price * (float)$quantities * (float)$tax_rate_value / 100;
+	// 				$total_money = (float)$unit_price * (float)$quantities + (float)$tax_money;
+	// 				$amount = (float)$unit_price * (float)$quantities + (float)$tax_money;
+	// 				$discount_money = (float)$amount * (float)$value['discount'] / 100;
+
+	// 				$total_after_discount = (float)$unit_price * (float)$quantities + (float)$tax_money - (float)$discount_money;
+	// 			} else {
+	// 				$total_money = (float)$unit_price * (float)$quantities;
+	// 				$amount = (float)$unit_price * (float)$quantities;
+	// 				$discount_money = (float)$amount * (float)$value['discount'] / 100;
+
+	// 				$total_after_discount = (float)$unit_price * (float)$quantities - (float)$discount_money;
+	// 			}
+
+	// 			$sub_total = (float)$unit_price * (float)$quantities;
+
+	// 			if ((float)$quantities > 0) {
+	// 				$temporaty_quantity = $quantities;
+	// 				$inventory_warehouse_by_commodity = $this->get_inventory_warehouse_by_commodity_stock_issued($commodity_code, $value['warehouse_id']);
+
+	// 				foreach ($inventory_warehouse_by_commodity as $key => $inventory_warehouse) {
+	// 					if ($temporaty_quantity > 0) {
+	// 						$available_quantity = (float)$inventory_warehouse['inventory_number'];
+	// 						$warehouse_id = $inventory_warehouse['warehouse_id'];
+
+	// 						$temporaty_available_quantity = $available_quantity;
+	// 						$list_temporaty_serial_numbers = $this->get_list_temporaty_serial_numbers($commodity_code, $inventory_warehouse['warehouse_id'], $quantities);
+	// 						foreach ($list_temporaty_serial_numbers as $value) {
+
+	// 							if ($temporaty_available_quantity > 0) {
+	// 								$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
+	// 								$quantities = 1;
+	// 								$name = 'newitems[' . $item_index . ']';
+
+	// 								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
+	// 								$temporaty_quantity--;
+	// 								$temporaty_available_quantity--;
+	// 								$item_index++;
+	// 								$inventory_warehouse_by_commodity[$key]['inventory_number'] = $temporaty_available_quantity;
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+
+	// 				if ($temporaty_quantity > 0) {
+	// 					$quantities = $temporaty_quantity;
+	// 					$available_quantity = 0;
+	// 					$name = 'newitems[' . $item_index . ']';
+
+	// 					foreach ($inventory_warehouse_by_commodity as $key => $inventory_warehouse) {
+	// 						if ((float)$inventory_warehouse['inventory_number'] > 0 && $temporaty_quantity > 0) {
+
+	// 							$available_quantity = (float)$inventory_warehouse['inventory_number'];
+	// 							$warehouse_id = $inventory_warehouse['warehouse_id'];
+
+	// 							if ($temporaty_quantity >= $inventory_warehouse['inventory_number']) {
+	// 								$temporaty_quantity = (float) $temporaty_quantity - (float) $inventory_warehouse['inventory_number'];
+	// 								$quantities = (float)$inventory_warehouse['inventory_number'];
+	// 							} else {
+	// 								$quantities = (float)$temporaty_quantity;
+	// 								$temporaty_quantity = 0;
+	// 							}
+
+	// 							$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
+	// 							$item_index++;
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+
+
+	// 	$arr_pur_resquest['result'] = $goods_delivery_row_template;
+	// 	$arr_pur_resquest['goods_receipt'] = isset($get_goods_receipt[0]) ? $get_goods_receipt[0] : '';
+
+	// 	return $arr_pur_resquest;
+	// }
 
 	public function get_inventory_warehouse_by_commodity_stock_issued($commodity_id = false, $warehouse_id)
 	{
@@ -19890,5 +19890,170 @@ class Warehouse_model extends App_Model
 		$issued_date_html .= $vendor_name;
 		$issued_date_html .= '</div>';
 		return $issued_date_html;
+	}
+
+	/**
+	 * get purchase request
+	 * @param  integer $pur_order
+	 * @return array
+	 */
+	public function goods_delivery_get_pur_order($pur_order)
+	{
+		$arr_pur_resquest = [];
+		$subtotal = 0;
+		$total_discount = 0;
+		$total_payment = 0;
+		$total_tax_money = 0;
+		$additional_discount = 0;
+		$pur_total_money = 0;
+		$goods_delivery_row_template = '';
+		$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
+
+		$this->db->select('item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'items.unit_id , unit_price as rate, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax_id, ' . db_prefix() . 'pur_order_detail.total as total_money, ' . db_prefix() . 'pur_order_detail.total, ' . db_prefix() . 'pur_order_detail.discount_% as discount, ' . db_prefix() . 'pur_order_detail.discount_money, ' . db_prefix() . 'pur_order_detail.total_money as total_after_discount, ' . db_prefix() . 'items.guarantee, ' . db_prefix() . 'pur_order_detail.tax_rate');
+		$this->db->join(db_prefix() . 'items', '' . db_prefix() . 'pur_order_detail.item_code = ' . db_prefix() . 'items.id', 'left');
+		$this->db->where(db_prefix() . 'pur_order_detail.pur_order = ' . $pur_order);
+		$arr_results = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+		$this->db->where('id', $pur_order);
+		$get_pur_order = $this->db->get(db_prefix() . 'pur_orders')->row();
+		$index = 0;
+		$status = false;
+		$item_index = 0;
+
+		if (count($arr_results) > 0) {
+			$status = false;
+			foreach ($arr_results as $key => $value) {
+				$tax_rate = null;
+				$tax_name = null;
+				$tax_id = null;
+				$tax_rate_value = 0;
+				$pur_total_money += (float)$value['total_after_discount'];
+				/*caculatoe guarantee*/
+				$guarantee_period = '';
+				if ($value) {
+					if (($value['guarantee'] != '') && (($value['guarantee'] != null)))
+						$guarantee_period = date('Y-m-d', strtotime(date('Y-m-d') . ' + ' . $value['guarantee'] . ' months'));
+				}
+				/*caculator subtotal*/
+				/*total discount*/
+				/*total payment*/
+				$total_goods_money = (float)$value['quantities'] * (float)$value['rate'];
+				//get tax value
+				if ($value['tax_id'] != null && $value['tax_id'] != '') {
+					$tax_id = $value['tax_id'];
+					$arr_tax = explode('|', $value['tax_id']);
+					$arr_tax_rate = explode('|', $value['tax_rate']);
+					foreach ($arr_tax as $key => $tax_id) {
+						$get_tax_name = $this->get_tax_name($tax_id);
+						if (isset($arr_tax_rate[$key])) {
+							$get_tax_rate = $arr_tax_rate[$key];
+						} else {
+							$tax = $this->get_taxe_value($tax_id);
+							$get_tax_rate = (float)$tax->taxrate;
+						}
+						$tax_rate_value += (float)$get_tax_rate;
+						if (strlen($tax_rate) > 0) {
+							$tax_rate .= '|' . $get_tax_rate;
+						} else {
+							$tax_rate .= $get_tax_rate;
+						}
+						if (strlen($tax_name) > 0) {
+							$tax_name .= '|' . $get_tax_name;
+						} else {
+							$tax_name .= $get_tax_name;
+						}
+					}
+				}
+
+				$index++;
+				$unit_name = wh_get_unit_name($value['unit_id']);
+				$unit_id = $value['unit_id'];
+				$vendor_id =  '';
+				$taxname = '';
+				$issued_date = null;
+				$lot_number = null;
+				$note = null;
+				$commodity_name = wh_get_item_variatiom($value['commodity_code']);
+				$description = $value['description'];
+				$total_money = 0;
+				$total_after_discount = 0;
+				$quantities = (float)$value['quantities'];
+				$unit_price = (float)$value['rate'];
+				$commodity_code = $value['commodity_code'];
+				$discount_money = $value['discount_money'];
+
+				if ((float)$tax_rate_value != 0) {
+					$tax_money = (float)$unit_price * (float)$quantities * (float)$tax_rate_value / 100;
+					$total_money = (float)$unit_price * (float)$quantities + (float)$tax_money;
+					$amount = (float)$unit_price * (float)$quantities + (float)$tax_money;
+					$discount_money = (float)$amount * (float)$value['discount'] / 100;
+					$total_after_discount = (float)$unit_price * (float)$quantities + (float)$tax_money - (float)$discount_money;
+				} else {
+					$total_money = (float)$unit_price * (float)$quantities;
+					$amount = (float)$unit_price * (float)$quantities;
+					$discount_money = (float)$amount * (float)$value['discount'] / 100;
+					$total_after_discount = (float)$unit_price * (float)$quantities - (float)$discount_money;
+				}
+
+				$sub_total = (float)$unit_price * (float)$quantities;
+
+				if ((float)$quantities > 0) {
+					$temporaty_quantity = $quantities;
+					$inventory_warehouse_by_commodity = $this->get_inventory_warehouse_by_commodity($commodity_code);
+
+					foreach ($inventory_warehouse_by_commodity as $key => $inventory_warehouse) {
+						if ($temporaty_quantity > 0) {
+							$available_quantity = (float)$inventory_warehouse['inventory_number'];
+							$warehouse_id = $inventory_warehouse['warehouse_id'];
+							$temporaty_available_quantity = $available_quantity;
+							$list_temporaty_serial_numbers = $this->get_list_temporaty_serial_numbers($commodity_code, $inventory_warehouse['warehouse_id'], $quantities);
+							foreach ($list_temporaty_serial_numbers as $value) {
+								if ($temporaty_available_quantity > 0) {
+									$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
+									$quantities = 1;
+									$name = 'newitems[' . $item_index . ']';
+									$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
+									$temporaty_quantity--;
+									$temporaty_available_quantity--;
+									$item_index++;
+									$inventory_warehouse_by_commodity[$key]['inventory_number'] = $temporaty_available_quantity;
+								}
+							}
+						}
+					}
+
+					if ($temporaty_quantity > 0) {
+						$quantities = $temporaty_quantity;
+						$available_quantity = 0;
+						$name = 'newitems[' . $item_index . ']';
+						foreach ($inventory_warehouse_by_commodity as $key => $inventory_warehouse) {
+							if ((float)$inventory_warehouse['inventory_number'] > 0 && $temporaty_quantity > 0) {
+								$available_quantity = (float)$inventory_warehouse['inventory_number'];
+								$warehouse_id = $inventory_warehouse['warehouse_id'];
+								if ($temporaty_quantity >= $inventory_warehouse['inventory_number']) {
+									$temporaty_quantity = (float) $temporaty_quantity - (float) $inventory_warehouse['inventory_number'];
+									$quantities = (float)$inventory_warehouse['inventory_number'];
+								} else {
+									$quantities = (float)$temporaty_quantity;
+									$temporaty_quantity = 0;
+								}
+								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
+								$item_index++;
+							}
+						}
+					}
+				}
+			}
+
+			if ($get_pur_order) {
+				if ((float)$get_pur_order->discount_percent > 0) {
+					$additional_discount = (float)$get_pur_order->discount_percent * (float)$pur_total_money / 100;
+				}
+			}
+		}
+
+		$arr_pur_resquest['result'] = $goods_delivery_row_template;
+		$arr_pur_resquest['additional_discount'] = $additional_discount;
+
+		return $arr_pur_resquest;
 	}
 }

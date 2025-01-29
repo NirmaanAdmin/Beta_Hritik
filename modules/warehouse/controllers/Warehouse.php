@@ -9024,16 +9024,16 @@ class warehouse extends AdminController
 	 * @param  integer $invoice_id 
 	 * @return json              
 	 */
-	public function copy_manage_receipt($goods_receipt_id = '')
-	{
-		$manage_receipt_detail = $this->warehouse_model->copy_manage_receipt($goods_receipt_id);
+	// public function copy_manage_receipt($goods_receipt_id = '')
+	// {
+	// 	$manage_receipt_detail = $this->warehouse_model->copy_manage_receipt($goods_receipt_id);
 
-		echo json_encode([
-			'result' => $manage_receipt_detail['result'] ? $manage_receipt_detail['result'] : '',
-			'additional_discount' => 0,
-			'goods_receipt' => $manage_receipt_detail['goods_receipt'] ? $manage_receipt_detail['goods_receipt'] : '',
-		]);
-	}
+	// 	echo json_encode([
+	// 		'result' => $manage_receipt_detail['result'] ? $manage_receipt_detail['result'] : '',
+	// 		'additional_discount' => 0,
+	// 		'goods_receipt' => $manage_receipt_detail['goods_receipt'] ? $manage_receipt_detail['goods_receipt'] : '',
+	// 	]);
+	// }
 
 	public function change_production_status($status, $id, $purchase_tracker = true)
 	{
@@ -9169,5 +9169,21 @@ class warehouse extends AdminController
 		$data = $this->input->post();
 		$this->warehouse_model->get_vendor_issued_data($data);
 		die();
+	}
+
+	/**
+	 * goods delivery copy pur order
+	 * @param  integer $pur request
+	 * @return json encode
+	 */
+	public function goods_delivery_copy_pur_order($pur_order = '')
+	{
+
+		$pur_request_detail = $this->warehouse_model->goods_delivery_get_pur_order($pur_order);
+
+		echo json_encode([
+			'result' => $pur_request_detail['result'] ? $pur_request_detail['result'] : '',
+			'additional_discount' => $pur_request_detail['additional_discount'] ? $pur_request_detail['additional_discount'] : '',
+		]);
 	}
 }
