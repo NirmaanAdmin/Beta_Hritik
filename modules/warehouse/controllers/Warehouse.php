@@ -9197,7 +9197,7 @@ class warehouse extends AdminController
 	 * get data vendor allocation report
 	 * @return json
 	 */
-	public function get_data_vendor_allocation_report()
+	public function get_vendor_allocation_report_view()
 	{
 		if ($this->input->post()) {
 			$data = $this->input->post();

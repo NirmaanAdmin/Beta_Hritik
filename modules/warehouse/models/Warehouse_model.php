@@ -7424,6 +7424,7 @@ class Warehouse_model extends App_Model
 		unset($data['item_select']);
 		unset($data['commodity_name']);
 		unset($data['warehouse_id']);
+		unset($data['pr_order_id']);
 		unset($data['available_quantity']);
 		unset($data['quantities']);
 		unset($data['unit_price']);
@@ -20067,6 +20068,126 @@ class Warehouse_model extends App_Model
 
 	public function get_vendor_allocation_report_view($data)
 	{
+		$result = $this->get_vendor_allocation_report_data($data);
+
+		if(!empty($result)) {
+			$html = '';
+			$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
+			<br>
+			<div class="col-md-12">
+			<table class="table table-bordered">
+			<tbody>';
+
+			foreach ($result as $mkey => $mvalue) {
+				$html .= '
+					<tr>
+						<td colspan="7" class="vendor-name-title">
+							'.get_vendor_company_name($mkey).'
+						</td>
+					</tr>
+					<tr>
+						<td class="vendor-report-title">
+							' . _l('po_name') . '
+						</td>
+						<td class="vendor-report-title">
+							' . _l('item_name') . '
+						</td>
+						<td class="vendor-report-title">
+							' . _l('item_description') . '
+						</td>
+						<td class="vendor-report-title" style="width: 9%">
+							' . _l('stock_export_new') . '
+						</td>
+						<td class="vendor-report-title" style="width: 9%">
+							' . _l('issued_date') . '
+						</td>
+						<td class="vendor-report-title" style="width: 9%">
+							' . _l('lot_number') . '
+						</td>
+						<td class="vendor-report-title" style="width: 9%">
+							' . _l('project_name') . '
+						</td>
+					</tr>';
+				foreach ($mvalue as $skey => $svalue) {
+					$html .= '
+						<tr>
+							<td>
+								'.$svalue['pur_order_number'].'
+							</td>
+							<td>
+								'.$svalue['item_name'].'
+							</td>
+							<td>
+								'.$svalue['item_description'].'
+							</td>
+							<td align="center">
+								'.$svalue['stock_issued'].'
+							</td>
+							<td align="center">
+								'.$svalue['issued_date'].'
+							</td>
+							<td align="center">
+								'.$svalue['lot_number'].'
+							</td>
+							<td align="center">
+								'.$svalue['project_name'].'
+							</td>
+						</tr>';
+				}
+			}
+			
+			$html .= '</tbody>
+			</table>
+			</div>';
+
+		} else {
+			$html = '';
+			$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
+			<br>
+			<div class="col-md-12">
+			<table class="table table-bordered">
+			<tbody>';
+
+			$html .= '<tr>
+				<td class="vendor-report-title">
+					' . _l('po_name') . '
+				</td>
+				<td class="vendor-report-title">
+					' . _l('item_name') . '
+				</td>
+				<td class="vendor-report-title">
+					' . _l('item_description') . '
+				</td>
+				<td class="vendor-report-title" style="width: 9%">
+					' . _l('stock_export_new') . '
+				</td>
+				<td class="vendor-report-title" style="width: 9%">
+					' . _l('issued_date') . '
+				</td>
+				<td class="vendor-report-title" style="width: 9%">
+					' . _l('lot_number') . '
+				</td>
+				<td class="vendor-report-title" style="width: 9%">
+					' . _l('project_name') . '
+				</td>
+			</tr>';
+			$html .= '<tr>
+				<td colspan="7">
+					No entries found
+				</td>
+			</tr>';
+
+			$html .= '</tbody>
+			</table>
+			</div>';
+		}
+
+		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/pdf_style.css') . '"  rel="stylesheet" type="text/css" />';
+		return $html;
+	}
+
+	public function get_vendor_allocation_report_data($data)
+	{
 		$from_date = $data['from_date'];
 		$to_date = $data['to_date'];
 
@@ -20077,14 +20198,16 @@ class Warehouse_model extends App_Model
 			$to_date = to_sql_date($to_date);
 		}
 
-		$this->db->select('gdd.quantities_json, gdd.lot_number, gdd.issued_date, po.pur_order_name, po.pur_order_number, gdd.commodity_name, gdd.description, gdd.warehouse_id');
+		$this->db->select('gdd.id as item_id, gdd.quantities_json, gdd.lot_number, gdd.issued_date, po.pur_order_name, po.pur_order_number, gdd.commodity_name, gdd.description, gdd.warehouse_id');
 		$this->db->from(db_prefix() . 'goods_delivery_detail gdd');
 		$this->db->join(db_prefix() . 'goods_delivery gd', 'gdd.goods_delivery_id = gd.id', 'inner');
 		$this->db->join(db_prefix() . 'pur_orders po', 'gd.pr_order_id = po.id', 'inner');
+		$this->db->where('gd.date_add >=', $from_date);
+		$this->db->where('gd.date_add <=', $to_date);
 		$query = $this->db->get();
 		$goods_delivery_detail = $query->result_array();
 
-		$vendor_data = array();
+		$originalArray = array();
 		if(!empty($goods_delivery_detail)) {
 			foreach ($goods_delivery_detail as $key => $value) {
 
@@ -20094,6 +20217,7 @@ class Warehouse_model extends App_Model
 					if(!empty($quantities_json)) {
 						foreach ($quantities_json as $qkey => $qvalue) {
 							$item_line = array();
+							$item_line['item_id'] = $value['item_id'];
 							$item_line['vendor_id'] = $qkey;
 							$item_line['vendor_name'] = get_vendor_company_name($qkey);
 							$item_line['pur_order_name'] = $value['pur_order_name'];
@@ -20102,7 +20226,7 @@ class Warehouse_model extends App_Model
 							$item_line['item_description'] = $value['description'];
 							$item_line['project_name'] = get_project_name_by_id($value['warehouse_id']);
 							$item_line['stock_issued'] = $qvalue;
-							$vendor_data[] = $item_line;
+							$originalArray[] = $item_line;
 						}
 					}
 				}
@@ -20113,6 +20237,7 @@ class Warehouse_model extends App_Model
 					if(!empty($lot_number)) {
 						foreach ($lot_number as $lkey => $lvalue) {
 							$item_line = array();
+							$item_line['item_id'] = $value['item_id'];
 							$item_line['vendor_id'] = $lkey;
 							$item_line['vendor_name'] = get_vendor_company_name($lkey);
 							$item_line['pur_order_name'] = $value['pur_order_name'];
@@ -20121,7 +20246,7 @@ class Warehouse_model extends App_Model
 							$item_line['item_description'] = $value['description'];
 							$item_line['project_name'] = get_project_name_by_id($value['warehouse_id']);
 							$item_line['lot_number'] = $lvalue;
-							$vendor_data[] = $item_line;
+							$originalArray[] = $item_line;
 						}
 					}
 				}
@@ -20132,6 +20257,7 @@ class Warehouse_model extends App_Model
 					if(!empty($issued_date)) {
 						foreach ($issued_date as $ikey => $ivalue) {
 							$item_line = array();
+							$item_line['item_id'] = $value['item_id'];
 							$item_line['vendor_id'] = $ikey;
 							$item_line['vendor_name'] = get_vendor_company_name($ikey);
 							$item_line['pur_order_name'] = $value['pur_order_name'];
@@ -20140,17 +20266,36 @@ class Warehouse_model extends App_Model
 							$item_line['item_description'] = $value['description'];
 							$item_line['project_name'] = get_project_name_by_id($value['warehouse_id']);
 							$item_line['issued_date'] = $ivalue;
-							$vendor_data[] = $item_line;
+							$originalArray[] = $item_line;
 						}
 					}
 				}
 			}
 		}
+		
+		$transformedArray = array();
+		if(!empty($originalArray)) {
+			foreach ($originalArray as $entry) {
+			    $vendorId = $entry['vendor_id'];
+			    $itemId = $entry['item_id'];
+			    if (!isset($transformedArray[$vendorId])) {
+			        $transformedArray[$vendorId] = [];
+			    }
+			    if (!isset($transformedArray[$vendorId][$itemId])) {
+			        $transformedArray[$vendorId][$itemId] = $entry;
+			    }
+			    if (!empty($entry['issued_date'])) {
+			        $transformedArray[$vendorId][$itemId]['issued_date'] = $entry['issued_date'];
+			    }
+			    if (!empty($entry['stock_issued'])) {
+			        $transformedArray[$vendorId][$itemId]['stock_issued'] = $entry['stock_issued'];
+			    }
+			    if (!empty($entry['lot_number'])) {
+			        $transformedArray[$vendorId][$itemId]['lot_number'] = $entry['lot_number'];
+			    }
+			}
+		}
 
-		$html = '';
-		$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>';
-
-		$html .= '<link href="' . FCPATH . 'modules/warehouse/assets/css/pdf_style.css' . '"  rel="stylesheet" type="text/css" />';
-		return $html;
+		return $transformedArray;
 	}
 }

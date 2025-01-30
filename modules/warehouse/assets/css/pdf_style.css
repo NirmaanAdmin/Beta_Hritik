@@ -322,3 +322,15 @@ span.print-barcode-td-height{
 	text-align: left; 
 	font-size: 11.5px;
 }
+
+.vendor-name-title {
+	text-align: center; 
+	font-weight: 700;
+	font-size: 16px;
+}
+
+.vendor-report-title {
+	text-align: center; 
+	font-weight: 650;
+	font-size: 15px;
+}

@@ -736,3 +736,7 @@ $lang['delivery_date_updated'] = 'Delivery date updated';
 $lang['issued_date']  = 'Issued date';
 $lang['cannot_increase_the_quantity_beyond_the_available_stock'] = 'You cannot increase the quantity beyond the available stock.';
 $lang['vendor_allocation_report']  = 'Vendor Allocation Report';
+$lang['po_name']  = 'PO Name';
+$lang['item_name']  = 'Item Name';
+$lang['item_description']  = 'Item Description';
+$lang['project_name']  = 'Project Name';
