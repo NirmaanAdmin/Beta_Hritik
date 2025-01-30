@@ -20086,7 +20086,7 @@ class Warehouse_model extends App_Model
 						</td>
 					</tr>
 					<tr>
-						<td class="vendor-report-title">
+						<td class="vendor-report-title" style="width: 13%">
 							' . _l('po_name') . '
 						</td>
 						<td class="vendor-report-title">
