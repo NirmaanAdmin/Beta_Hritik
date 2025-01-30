@@ -1,5 +1,5 @@
 <div class="col-md-12">
-  <?php echo form_open_multipart(admin_url('warehouse/vendor_allocation_report_pdf'), array('id'=>'print_report')); ?>
+  <?php echo form_open_multipart(admin_url('warehouse/vendor_allocation_report_pdf'), array('id'=>'print_allocation_report')); ?>
   <div class="row">
     <div class="col-md-2">
       <?php echo render_date_input('from_date','from_date',date('Y-m-d',strtotime('-30 day',strtotime(date('Y-m-d'))))); ?>
@@ -7,11 +7,10 @@
     <div class="col-md-2">
       <?php echo render_date_input('to_date','to_date',date('Y-m-d')); ?>
     </div>
-    <?php /*
     <div class="col-md-1 button-pdf-margin-top">
       <div class="form-group">
         <div class="btn-group">
-         <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf-o"></i><?php if(is_mobile()){echo ' PDF';} ?> <span class="caret"></span></a>
+         <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf-o"></i>Export <span class="caret"></span></a>
          <ul class="dropdown-menu dropdown-menu-right">
             <li class="hidden-xs"><a href="?output_type=I" target="_blank" onclick="vendor_allocation_submit(this); return false;"><?php echo _l('download_pdf'); ?></a>
             </li>
@@ -19,7 +18,6 @@
          </div>
        </div>
     </div>
-    */ ?>
     <div class="col-md-1" >
       <a href="#" onclick="get_data_vendor_allocation_report(); return false;" class="btn btn-info button-pdf-margin-top" ><?php echo _l('_filter'); ?></a>
     </div>

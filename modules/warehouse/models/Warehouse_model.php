@@ -20066,120 +20066,229 @@ class Warehouse_model extends App_Model
 		return $this->db->get(db_prefix() . 'departments')->row();
 	}
 
-	public function get_vendor_allocation_report_view($data)
+	public function get_vendor_allocation_report_view($data, $is_pdf = false)
 	{
 		$result = $this->get_vendor_allocation_report_data($data);
 
-		if(!empty($result)) {
-			$html = '';
-			$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
-			<br>
-			<div class="col-md-12">
-			<table class="table table-bordered">
-			<tbody>';
+		if($is_pdf == false) {
+			if(!empty($result)) {
+				$html = '';
+				$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
+				<br>
+				<div class="col-md-12">
+				<table class="table table-bordered">
+				<tbody>';
 
-			foreach ($result as $mkey => $mvalue) {
-				$html .= '
-					<tr>
-						<td colspan="7" class="vendor-name-title">
-							'.get_vendor_company_name($mkey).'
-						</td>
-					</tr>
-					<tr>
-						<td class="vendor-report-title" style="width: 13%">
-							' . _l('po_name') . '
-						</td>
-						<td class="vendor-report-title">
-							' . _l('item_name') . '
-						</td>
-						<td class="vendor-report-title">
-							' . _l('item_description') . '
-						</td>
-						<td class="vendor-report-title" style="width: 9%">
-							' . _l('stock_export_new') . '
-						</td>
-						<td class="vendor-report-title" style="width: 9%">
-							' . _l('issued_date') . '
-						</td>
-						<td class="vendor-report-title" style="width: 9%">
-							' . _l('lot_number') . '
-						</td>
-						<td class="vendor-report-title" style="width: 9%">
-							' . _l('project_name') . '
-						</td>
-					</tr>';
-				foreach ($mvalue as $skey => $svalue) {
+				foreach ($result as $mkey => $mvalue) {
 					$html .= '
 						<tr>
-							<td>
-								'.$svalue['pur_order_number'].'
+							<td colspan="7" class="vendor-name-title">
+								'.get_vendor_company_name($mkey).'
 							</td>
-							<td>
-								'.$svalue['item_name'].'
+						</tr>
+						<tr>
+							<td class="vendor-report-title" style="width: 13%">
+								' . _l('po_name') . '
 							</td>
-							<td>
-								'.$svalue['item_description'].'
+							<td class="vendor-report-title">
+								' . _l('item_name') . '
 							</td>
-							<td align="center">
-								'.$svalue['stock_issued'].'
+							<td class="vendor-report-title">
+								' . _l('item_description') . '
 							</td>
-							<td align="center">
-								'.$svalue['issued_date'].'
+							<td class="vendor-report-title" style="width: 9%">
+								' . _l('stock_export_new') . '
 							</td>
-							<td align="center">
-								'.$svalue['lot_number'].'
+							<td class="vendor-report-title" style="width: 9%">
+								' . _l('issued_date') . '
 							</td>
-							<td align="center">
-								'.$svalue['project_name'].'
+							<td class="vendor-report-title" style="width: 9%">
+								' . _l('lot_number') . '
+							</td>
+							<td class="vendor-report-title" style="width: 9%">
+								' . _l('project_name') . '
 							</td>
 						</tr>';
+					foreach ($mvalue as $skey => $svalue) {
+						$html .= '
+							<tr>
+								<td>
+									'.$svalue['pur_order_number'].'
+								</td>
+								<td>
+									'.$svalue['item_name'].'
+								</td>
+								<td>
+									'.$svalue['item_description'].'
+								</td>
+								<td align="center">
+									'.$svalue['stock_issued'].'
+								</td>
+								<td align="center">
+									'.$svalue['issued_date'].'
+								</td>
+								<td align="center">
+									'.$svalue['lot_number'].'
+								</td>
+								<td align="center">
+									'.$svalue['project_name'].'
+								</td>
+							</tr>';
+					}
 				}
+				
+				$html .= '</tbody>
+				</table>
+				</div>';
+
+			} else {
+				$html = '';
+				$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
+				<br>
+				<div class="col-md-12">
+				<table class="table table-bordered">
+				<tbody>';
+
+				$html .= '<tr>
+					<td class="vendor-report-title">
+						' . _l('po_name') . '
+					</td>
+					<td class="vendor-report-title">
+						' . _l('item_name') . '
+					</td>
+					<td class="vendor-report-title">
+						' . _l('item_description') . '
+					</td>
+					<td class="vendor-report-title" style="width: 9%">
+						' . _l('stock_export_new') . '
+					</td>
+					<td class="vendor-report-title" style="width: 9%">
+						' . _l('issued_date') . '
+					</td>
+					<td class="vendor-report-title" style="width: 9%">
+						' . _l('lot_number') . '
+					</td>
+					<td class="vendor-report-title" style="width: 9%">
+						' . _l('project_name') . '
+					</td>
+				</tr>';
+				$html .= '<tr>
+					<td colspan="7">
+						No entries found
+					</td>
+				</tr>';
+
+				$html .= '</tbody>
+				</table>
+				</div>';
 			}
-			
-			$html .= '</tbody>
-			</table>
-			</div>';
-
 		} else {
-			$html = '';
-			$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
-			<br>
-			<div class="col-md-12">
-			<table class="table table-bordered">
-			<tbody>';
+			if(!empty($result)) {
+				$html = '';
+				$html .= ' <p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h2></p>
+				<br>
+				<table class="table" style="width: 100%" border="1">
+				<tbody>';
 
-			$html .= '<tr>
-				<td class="vendor-report-title">
-					' . _l('po_name') . '
-				</td>
-				<td class="vendor-report-title">
-					' . _l('item_name') . '
-				</td>
-				<td class="vendor-report-title">
-					' . _l('item_description') . '
-				</td>
-				<td class="vendor-report-title" style="width: 9%">
-					' . _l('stock_export_new') . '
-				</td>
-				<td class="vendor-report-title" style="width: 9%">
-					' . _l('issued_date') . '
-				</td>
-				<td class="vendor-report-title" style="width: 9%">
-					' . _l('lot_number') . '
-				</td>
-				<td class="vendor-report-title" style="width: 9%">
-					' . _l('project_name') . '
-				</td>
-			</tr>';
-			$html .= '<tr>
-				<td colspan="7">
-					No entries found
-				</td>
-			</tr>';
+				foreach ($result as $mkey => $mvalue) {
+					$html .= '
+						<tr>
+							<td colspan="7" class="vendor-name-title-pdf">
+								<h3>'.get_vendor_company_name($mkey).'</h3>
+							</td>
+						</tr>
+						<tr>
+							<td class="vendor-report-title-pdf" style="width: 14%">
+								' . _l('po_name') . '
+							</td>
+							<td class="vendor-report-title-pdf" style="width: 16%">
+								' . _l('item_name') . '
+							</td>
+							<td class="vendor-report-title-pdf" style="width: 22%">
+								' . _l('item_description') . '
+							</td>
+							<td class="vendor-report-title-pdf" style="width: 12%">
+								' . _l('stock_export_new') . '
+							</td>
+							<td class="vendor-report-title-pdf" style="width: 12%">
+								' . _l('issued_date') . '
+							</td>
+							<td class="vendor-report-title-pdf" style="width: 12%">
+								' . _l('lot_number') . '
+							</td>
+							<td class="vendor-report-title-pdf" style="width: 12%">
+								' . _l('project_name') . '
+							</td>
+						</tr>';
+					foreach ($mvalue as $skey => $svalue) {
+						$html .= '
+							<tr>
+								<td>
+									'.$svalue['pur_order_number'].'
+								</td>
+								<td>
+									'.$svalue['item_name'].'
+								</td>
+								<td>
+									'.$svalue['item_description'].'
+								</td>
+								<td align="center">
+									'.$svalue['stock_issued'].'
+								</td>
+								<td align="center">
+									'.$svalue['issued_date'].'
+								</td>
+								<td align="center">
+									'.$svalue['lot_number'].'
+								</td>
+								<td align="center">
+									'.$svalue['project_name'].'
+								</td>
+							</tr>';
+					}
+				}
+				$html .= '</tbody>
+				</table>';
+			} else {
+				$html = '';
+				$html .= ' <p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h2></p>
+				<br>
+				<table class="table" style="width: 100%" border="1">
+				<tbody>';
 
-			$html .= '</tbody>
-			</table>
-			</div>';
+				$html .= '<tr>
+					<td class="vendor-report-title-pdf" style="width: 14%">
+						' . _l('po_name') . '
+					</td>
+					<td class="vendor-report-title-pdf" style="width: 16%">
+						' . _l('item_name') . '
+					</td>
+					<td class="vendor-report-title-pdf" style="width: 22%">
+						' . _l('item_description') . '
+					</td>
+					<td class="vendor-report-title-pdf" style="width: 12%">
+						' . _l('stock_export_new') . '
+					</td>
+					<td class="vendor-report-title-pdf" style="width: 12%">
+						' . _l('issued_date') . '
+					</td>
+					<td class="vendor-report-title-pdf" style="width: 12%">
+						' . _l('lot_number') . '
+					</td>
+					<td class="vendor-report-title-pdf" style="width: 12%">
+						' . _l('project_name') . '
+					</td>
+				</tr>';
+
+				$html .= '<tr>
+					<td colspan="7">
+						No entries found
+					</td>
+				</tr>';
+
+				$html .= '</tbody>
+				</table>';
+			}
 		}
 
 		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/pdf_style.css') . '"  rel="stylesheet" type="text/css" />';
@@ -20297,5 +20406,15 @@ class Warehouse_model extends App_Model
 		}
 
 		return $transformedArray;
+	}
+
+	/**
+	 * vendor allocation report pdf
+	 * @param  string $vendor_allocation
+	 * @return pdf view
+	 */
+	function vendor_allocation_report_pdf($vendor_allocation)
+	{
+		return app_pdf('vendor_allocation_report', module_dir_path(WAREHOUSE_MODULE_NAME, 'libraries/pdf/Vendor_allocation_report_pdf.php'), $vendor_allocation);
 	}
 }

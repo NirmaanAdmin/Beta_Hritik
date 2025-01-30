@@ -9208,4 +9208,38 @@ class warehouse extends AdminController
 		]);
 		die();
 	}
+
+	/**
+	 * vendor allocation report pdf
+	 * @return pdf view file
+	 */
+	public function vendor_allocation_report_pdf()
+	{
+		$data = $this->input->post();
+		if (!$data) {
+			redirect(admin_url('warehouse/report/manage_report'));
+		}
+
+		$vendor_allocation_report = $this->warehouse_model->get_vendor_allocation_report_view($data, true);
+
+		try {
+			$pdf = $this->warehouse_model->vendor_allocation_report_pdf($vendor_allocation_report);
+		} catch (Exception $e) {
+			echo html_entity_decode($e->getMessage());
+			die;
+		}
+
+		$type = 'D';
+		ob_end_clean();
+
+		if ($this->input->get('output_type')) {
+			$type = $this->input->get('output_type');
+		}
+
+		if ($this->input->get('print')) {
+			$type = 'I';
+		}
+
+		$pdf->Output('vendor_allocation_report.pdf', $type);
+	}
 }

@@ -21,5 +21,5 @@ function get_data_vendor_allocation_report() {
 
 function vendor_allocation_submit(invoker) {
   "use strict";
-  $('#print_report').submit(); 
+  $('#print_allocation_report').submit(); 
 }
