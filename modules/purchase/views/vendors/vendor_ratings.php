@@ -70,23 +70,23 @@
                 <?= form_hidden('vendor_id', $vendor_id); ?>
                 <div class="form-group">
                     <label for="quality_rating">Quality (1-5)</label>
-                    <input type="number" name="quality_rating" class="form-control" min="1" max="5" required>
+                    <input type="number" name="quality_rating" class="form-control" min="1" max="5" >
                 </div>
                 <div class="form-group">
                     <label for="delivery_rating">Delivery (1-5)</label>
-                    <input type="number" name="delivery_rating" class="form-control" min="1" max="5" required>
+                    <input type="number" name="delivery_rating" class="form-control" min="1" max="5" >
                 </div>
                 <div class="form-group">
                     <label for="pricing_rating">Pricing (1-5)</label>
-                    <input type="number" name="pricing_rating" class="form-control" min="1" max="5" required>
+                    <input type="number" name="pricing_rating" class="form-control" min="1" max="5" >
                 </div>
                 <div class="form-group">
                     <label for="service_rating">Customer Service (1-5)</label>
-                    <input type="number" name="service_rating" class="form-control" min="1" max="5" required>
+                    <input type="number" name="service_rating" class="form-control" min="1" max="5" >
                 </div>
                 <div class="form-group">
                     <label for="compliance_rating">Compliance (1-5)</label>
-                    <input type="number" name="compliance_rating" class="form-control" min="1" max="5" required>
+                    <input type="number" name="compliance_rating" class="form-control" min="1" max="5" >
                 </div>
                 <div class="form-group">
                     <label for="comments">Comments</label>
