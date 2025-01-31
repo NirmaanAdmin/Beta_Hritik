@@ -20184,7 +20184,32 @@ class Warehouse_model extends App_Model
 			}
 		} else {
 			if(!empty($result)) {
+				$logo = '';
+				$company_logo = get_option('company_logo_dark');
+		        if (!empty($company_logo)) {
+		            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+		        }
+		        $from_date = $data['from_date'];
+		        $to_date = $data['to_date'];
+		        $from_date_html =  date('F', strtotime($from_date)) . ', ' . date('d', strtotime($from_date)) . ' ' . date('Y', strtotime($from_date));
+				$to_date_html = date('F', strtotime($to_date)) . ', ' . date('d', strtotime($to_date)) . ' ' . date('Y', strtotime($to_date));
+
 				$html = '';
+				$html .= '<table class="table">
+					<tbody>
+          				<tr>
+            				<td>
+				                ' . $logo . '
+				                ' . format_organization_info() . '
+				            </td>
+				        </tr>
+        			</tbody>
+      			</table>
+      			<br>';
+
+      			$html .= '<p class="align_cen">' . _l('from_date') . ' :  <span class="fstyle">'.$from_date_html.'</p>
+				<p class="align_cen">' . _l('to_date') . ' :  <span class="fstyle">'.$to_date_html.'</p>';
+
 				$html .= ' <p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h2></p>
 				<br>
 				<table class="table" style="width: 100%" border="1">
@@ -20250,7 +20275,32 @@ class Warehouse_model extends App_Model
 				$html .= '</tbody>
 				</table>';
 			} else {
+				$logo = '';
+				$company_logo = get_option('company_logo_dark');
+		        if (!empty($company_logo)) {
+		            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+		        }
+		        $from_date = $data['from_date'];
+		        $to_date = $data['to_date'];
+		        $from_date_html =  date('F', strtotime($from_date)) . ', ' . date('d', strtotime($from_date)) . ' ' . date('Y', strtotime($from_date));
+				$to_date_html = date('F', strtotime($to_date)) . ', ' . date('d', strtotime($to_date)) . ' ' . date('Y', strtotime($to_date));
+
 				$html = '';
+				$html .= '<table class="table">
+					<tbody>
+          				<tr>
+            				<td>
+				                ' . $logo . '
+				                ' . format_organization_info() . '
+				            </td>
+				        </tr>
+        			</tbody>
+      			</table>
+      			<br>';
+
+      			$html .= '<p class="align_cen">' . _l('from_date') . ' :  <span class="fstyle">'.$from_date_html.'</p>
+				<p class="align_cen">' . _l('to_date') . ' :  <span class="fstyle">'.$to_date_html.'</p>';
+
 				$html .= ' <p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h2></p>
 				<br>
 				<table class="table" style="width: 100%" border="1">
