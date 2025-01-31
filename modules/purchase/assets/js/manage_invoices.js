@@ -9,7 +9,8 @@ var expenseDropzone;
         "contract": "[name='contract[]']",
         "pur_orders": "[name='pur_orders[]']",
         "wo_orders": "[name='wo_orders[]']",
-        "vendors": "[name='vendor_ft[]']"
+        "vendors": "[name='vendor_ft[]']",
+        "billing_invoices": "[name='billing_invoices']"
     };
 
 	initDataTable(table_invoice, admin_url+'purchase/table_pur_invoices',[], [], Params, [5, 'desc']);
@@ -52,6 +53,7 @@ var expenseDropzone;
        var sums = reportsTable.ajax.json().sums;
        $(this).find('tfoot').addClass('bold');
        $(this).find('tfoot td').eq(0).html("Total (Per Page)");
+       $(this).find('tfoot td.total_invoice_amount').html(sums.total_invoice_amount);
        $(this).find('tfoot td.total_vendor_submitted_amount_without_tax').html(sums.total_vendor_submitted_amount_without_tax);
        $(this).find('tfoot td.total_vendor_submitted_tax_amount').html(sums.total_vendor_submitted_tax_amount);
        $(this).find('tfoot td.total_vendor_submitted_amount').html(sums.total_vendor_submitted_amount);

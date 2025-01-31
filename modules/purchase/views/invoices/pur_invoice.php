@@ -17,12 +17,12 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h4 class="no-margin font-bold"><i class="fa <?php if (isset($pur_invoice)) {
-																					echo 'fa-pencil-square';
-																				} else {
-																					echo 'fa-plus';
-																				} ?>" aria-hidden="true"></i> <?php echo _l($title); ?> <?php if (isset($pur_invoice)) {
-																																			echo ' ' . pur_html_entity_decode($pur_invoice->invoice_number);
-																																		} ?></h4>
+									echo 'fa-pencil-square';
+								} else {
+									echo 'fa-plus';
+								} ?>" aria-hidden="true"></i> <?php echo _l($title); ?> <?php if (isset($pur_invoice)) {
+									echo ' ' . pur_html_entity_decode($pur_invoice->invoice_number);
+								} ?></h4>
 								<hr />
 							</div>
 						</div>
@@ -55,43 +55,50 @@
 										<option value=""></option>
 										<?php foreach ($vendors as $ven) { ?>
 											<option value="<?php echo pur_html_entity_decode($ven['userid']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->vendor == $ven['userid']) {
-																														echo 'selected';
-																													} ?>><?php echo pur_html_entity_decode($ven['vendor_code'] . ' ' . $ven['company']); ?></option>
+												echo 'selected';
+											} ?>><?php echo pur_html_entity_decode($ven['vendor_code'] . ' ' . $ven['company']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
 
 								<div class="col-md-6 form-group pad_right_0">
+									<?php /*
 									<label for="contract"><?php echo _l('contract'); ?></label>
 									<select name="contract" id="contract" class="selectpicker" onchange="contract_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
 										<?php foreach ($contracts as $ct) { ?>
 											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->contract == $ct['id']) {
-																													echo 'selected';
-																												} ?>><?php echo pur_html_entity_decode($ct['contract_number']); ?></option>
+												echo 'selected';
+											} ?>><?php echo pur_html_entity_decode($ct['contract_number']); ?></option>
 										<?php } ?>
-									</select>
+									</select> */ ?>
+									<?php
+									$selected = '';
+
+									foreach ($commodity_groups_pur as $group) {
+										if (isset($pur_invoice)) {
+											if ($pur_invoice->group_pur == $group['id']) {
+												$selected = $group['id'];
+											}
+										}
+										if (isset($selected_head)) {
+											if ($selected_head == $group['id']) {
+												$selected = $group['id'];
+											}
+										}
+									}
+									echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), '<span class="text-danger">* </span>Budget Head', $selected ,['required' => 'true']);
+									?>
 								</div>
 
-								<div class="col-md-6 form-group pad_left_0">
+								<div class="col-md-12 form-group pad_left_0 pad_right_0">
 									<label for="pur_order"><?php echo _l('pur_order'); ?></label>
 									<select name="pur_order" id="pur_order" class="selectpicker" onchange="pur_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
 										<?php foreach ($pur_orders as $ct) { ?>
 											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->pur_order == $ct['id']) {
-																													echo 'selected';
-																												} ?>><?php echo pur_html_entity_decode($ct['pur_order_number']); ?></option>
-										<?php } ?>
-									</select>
-								</div>
-								<div class="col-md-6 form-group  pad_right_0">
-									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
-									<select name="wo_order" id="wo_order" class="selectpicker" onchange="wo_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-										<option value=""></option>
-										<?php foreach ($wo_orders as $ct) { ?>
-											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
-																													echo 'selected';
-																												} ?>><?php echo pur_html_entity_decode($ct['wo_order_number']); ?></option>
+												echo 'selected';
+											} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
@@ -113,74 +120,13 @@
 										<option value=""></option>
 										<?php foreach ($projects as $s) { ?>
 											<option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_invoice) && $s['id'] == $pur_invoice->project_id) {
-																												echo 'selected';
-																											} else if (!isset($pur_invoice) && $s['id'] == $project_id) {
-																												echo 'selected';
-																											} ?>><?php echo pur_html_entity_decode($s['name']); ?></option>
+												echo 'selected';
+											} else if (!isset($pur_invoice) && $s['id'] == $project_id) {
+												echo 'selected';
+											} ?>><?php echo pur_html_entity_decode($s['name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
-								<!-- <div id="recurring_div" class="<?php if (isset($pur_invoice) && $pur_invoice->pur_order != null) {
-																		echo 'remove';
-																	} ?>">
-
-									<div class="form-group col-md-12 pad_left_0 pad_right_0">
-										<label for="recurring"><?php echo _l('invoice_add_edit_recurring'); ?></label>
-										<select name="recurring" id="recurring" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-											<?php for ($i = 0; $i <= 12; $i++) { ?>
-												<?php
-												$selected = '';
-												if (isset($pur_invoice)) {
-
-													if ($pur_invoice->recurring == $i) {
-														$selected = 'selected';
-													}
-												}
-												if ($i == 0) {
-													$reccuring_string =  _l('invoice_add_edit_recurring_no');
-												} else if ($i == 1) {
-													$reccuring_string = _l('invoice_add_edit_recurring_month', $i);
-												} else {
-													$reccuring_string = _l('invoice_add_edit_recurring_months', $i);
-												}
-												?>
-
-												<option value="<?php echo $i; ?>" <?php echo $selected; ?>><?php echo $reccuring_string; ?></option>
-											<?php } ?>
-										</select>
-									</div>
-									<div id="cycles_wrapper" class="<?php if (!isset($pur_invoice) || (isset($pur_invoice) && $pur_invoice->recurring == 0)) {
-																		echo ' hide';
-																	} ?>">
-										<div class="col-md-12 pad_left_0 pad_right_0">
-											<?php $value = (isset($pur_invoice) ? $pur_invoice->cycles : 0); ?>
-											<div class="form-group recurring-cycles">
-												<label for="cycles"><?php echo _l('recurring_total_cycles'); ?>
-													<?php if (isset($pur_invoice) && $pur_invoice->total_cycles > 0) {
-														echo '<small>' . _l('cycles_passed', $pur_invoice->total_cycles) . '</small>';
-													}
-													?>
-												</label>
-												<div class="input-group">
-													<input type="number" class="form-control" <?php if ($value == 0) {
-																									echo ' disabled';
-																								} ?> name="cycles" id="cycles" value="<?php echo $value; ?>" <?php if (isset($pur_invoice) && $pur_invoice->total_cycles > 0) {
-																																									echo 'min="' . ($pur_invoice->total_cycles) . '"';
-																																								} ?>>
-													<div class="input-group-addon">
-														<div class="checkbox">
-															<input type="checkbox" <?php if ($value == 0) {
-																						echo ' checked';
-																					} ?> id="unlimited_cycles">
-															<label for="unlimited_cycles"><?php echo _l('cycles_infinity'); ?></label>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-
-								</div> -->
 								
 								<div class="col-md-6 pad_left_0" style="clear: both;">
 									<div class="form-group">
@@ -240,6 +186,20 @@
 										<input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo (isset($pur_invoice) ? prep_tags_input(get_tags_in($pur_invoice->id, 'pur_invoice')) : ''); ?>" data-role="tagsinput">
 									</div>
 								</div>
+
+								<div class="col-md-12 form-group pad_left_0 pad_right_0">
+									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
+									<select name="wo_order" id="wo_order" class="selectpicker" onchange="wo_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+										<option value=""></option>
+										<?php foreach ($wo_orders as $ct) { ?>
+											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
+												echo 'selected';
+											} ?>><?php echo html_entity_decode($ct['wo_order_number'] . ' - ' . $ct['wo_order_name']); ?></option>
+										<?php } ?>
+									</select>
+								</div>
+
+								<?php /*
 								<div class="col-md-6 pad_left_0">
 									<?php $transactionid = (isset($pur_invoice) ? $pur_invoice->transactionid : '');
 									echo render_input('transactionid', 'transaction_id', $transactionid); ?>
@@ -253,101 +213,90 @@
 								<div class="col-md-12  pad_left_0 pad_right_0">
 									<div class="form-group select-placeholder">
 										<label for="discount_type"
-											class="control-label"><?php echo _l('discount_type'); ?></label>
+										class="control-label"><?php echo _l('discount_type'); ?></label>
 										<select name="discount_type" class="selectpicker" data-width="100%"
-											data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
+										data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
 
-											<option value="before_tax" <?php
-																		if (isset($pur_invoice)) {
-																			if ($pur_invoice->discount_type == 'before_tax') {
-																				echo 'selected';
-																			}
-																		} ?>><?php echo _l('discount_type_before_tax'); ?></option>
-											<option value="after_tax" <?php if (isset($pur_invoice)) {
-																			if ($pur_invoice->discount_type == 'after_tax' || $pur_invoice->discount_type == null) {
-																				echo 'selected';
-																			}
-																		} else {
-																			echo 'selected';
-																		} ?>><?php echo _l('discount_type_after_tax'); ?></option>
-										</select>
-									</div>
+										<option value="before_tax" <?php
+										if (isset($pur_invoice)) {
+											if ($pur_invoice->discount_type == 'before_tax') {
+												echo 'selected';
+											}
+										} ?>><?php echo _l('discount_type_before_tax'); ?></option>
+										<option value="after_tax" <?php if (isset($pur_invoice)) {
+											if ($pur_invoice->discount_type == 'after_tax' || $pur_invoice->discount_type == null) {
+												echo 'selected';
+											}
+										} else {
+											echo 'selected';
+										} ?>><?php echo _l('discount_type_after_tax'); ?></option>
+									</select>
 								</div>
+							</div>
+							*/ ?>
 
 
-								<div class="col-md-12 pad_left_0 pad_right_0">
-									<div class="attachments">
-										<div class="attachment">
-											<div class="mbot15">
-												<div class="form-group">
-													<label for="attachment" class="control-label"><?php echo _l('ticket_add_attachments'); ?></label>
-													<div class="input-group">
-														<input type="file" extension="<?php echo str_replace('.', '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
-														<span class="input-group-btn">
-															<button class="btn btn-success add_more_attachments p8-half" data-max="10" type="button"><i class="fa fa-plus"></i></button>
-														</span>
-													</div>
+							<div class="col-md-12 pad_left_0 pad_right_0">
+								<div class="attachments">
+									<div class="attachment">
+										<div class="mbot15">
+											<div class="form-group">
+												<label for="attachment" class="control-label"><?php echo _l('ticket_add_attachments'); ?></label>
+												<div class="input-group">
+													<input type="file" extension="<?php echo str_replace('.', '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+													<span class="input-group-btn">
+														<button class="btn btn-success add_more_attachments p8-half" data-max="10" type="button"><i class="fa fa-plus"></i></button>
+													</span>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
-									<div class="form-group">
-										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount'); ?> ( ₹ )</label>
-										<input type="number" class="form-control" id="vendor_submitted_amount" name="vendor_submitted_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount : '') ?>">
-									</div>
+							</div>
+							<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
+								<div class="form-group">
+									<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount'); ?> ( ₹ )</label>
+									<input type="number" class="form-control" id="vendor_submitted_amount" name="vendor_submitted_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount : '') ?>">
 								</div>
-								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
-									<div class="form-group">
-										<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
-										<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
-									</div>
+							</div>
+							<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
+								<div class="form-group">
+									<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
+									<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
 								</div>
-								<div class="col-md-6 pad_left_0">
-									<div class="form-group">
-										<label for="payment_date"><?php echo _l('payment_date'); ?></label>
-										<?php $payment_date = (isset($pur_invoice) ? _d($pur_invoice->payment_date) : _d(date('Y-m-d')));
-										echo render_date_input('payment_date', '', $payment_date, array('required' => 'false')); ?>
-									</div>
+							</div>
+							<div class="col-md-6 pad_left_0">
+								<div class="form-group">
+									<label for="payment_date_reliance"><?php echo _l('payment_date_reliance'); ?></label>
+									<?php $payment_date = (isset($pur_invoice) ? _d($pur_invoice->payment_date) : _d(date('Y-m-d')));
+									echo render_date_input('payment_date', '', $payment_date, array('required' => 'false')); ?>
 								</div>
-								<div class="col-md-6 pad_left_0">
-									<?php
-									$selected = '';
-									
-									foreach ($commodity_groups_pur as $group) {
-										if (isset($pur_invoice)) {
-											if ($pur_invoice->group_pur == $group['id']) {
-												$selected = $group['id'];
-											}
-										}
-										if (isset($selected_head)) {
-											if ($selected_head == $group['id']) {
-												$selected = $group['id'];
-											}
-										}
-									}
-									echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), '<span class="text-danger">* </span>Budget Head', $selected ,['required' => 'true']);
-									?>
+							</div>
+							<div class="col-md-6 pad_left_0">
+								<div class="form-group">
+									<label for="payment_date_basilius"><?php echo _l('payment_date_basilius'); ?></label>
+									<?php $payment_date_basilius = (isset($pur_invoice) ? _d($pur_invoice->payment_date_basilius) : _d(date('Y-m-d')));
+									echo render_date_input('payment_date_basilius', '', $payment_date_basilius, array('required' => 'false')); ?>
 								</div>
+							</div>
 
-								<div class="col-md-12 pad_left_0">
-									<?php $description_services = (isset($pur_invoice) ? $pur_invoice->description_services : '');
-									echo render_textarea('description_services', 'description_of_services', $description_services, ['rows' => 2]); ?>
-								</div>
-
+							<div class="col-md-12 pad_left_0">
+								<?php $description_services = (isset($pur_invoice) ? $pur_invoice->description_services : '');
+								echo render_textarea('description_services', 'description_of_services', $description_services, ['rows' => 2]); ?>
 							</div>
 
 						</div>
 
-						<?php $rel_id = (isset($pur_invoice) ? $pur_invoice->id : false); ?>
-						<?php echo render_custom_fields('pur_invoice', $rel_id); ?>
-
 					</div>
 
+					<?php $rel_id = (isset($pur_invoice) ? $pur_invoice->id : false); ?>
+					<?php echo render_custom_fields('pur_invoice', $rel_id); ?>
+
+				</div>
 
 
-					<div class="panel-body mtop10 invoice-item">
+
+				<div class="panel-body mtop10 invoice-item">
 
 						<!-- <div class="row">
 		          <div class="col-md-4">
@@ -382,7 +331,7 @@
 						?>
 		            </div>
 		          </div>
-		        </div>  -->
+		      </div>  -->
 						<!-- <div class="row">
 		          <div class="col-md-12">
 		            <div class="table-responsive s_table ">
@@ -479,44 +428,44 @@
 		              </tr>
 		            </tbody>
 		          </table>
-		        </div> -->
-						<div id="removed-items"></div>
+		      </div> -->
+		      <div id="removed-items"></div>
+		  </div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12 mtop15">
+				<div class="panel-body bottom-transaction">
+					<div class="col-md-12 pad_left_0 pad_right_0">
+						<?php $adminnote = (isset($pur_invoice) ? $pur_invoice->adminnote : '');
+						echo render_textarea('adminnote', 'adminnote', $adminnote, array('rows' => 7)) ?>
 					</div>
-				</div>
 
-				<div class="row">
-					<div class="col-md-12 mtop15">
-						<div class="panel-body bottom-transaction">
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<?php $adminnote = (isset($pur_invoice) ? $pur_invoice->adminnote : '');
-								echo render_textarea('adminnote', 'adminnote', $adminnote, array('rows' => 7)) ?>
-							</div>
-
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<?php $vendor_note = (isset($pur_invoice) ? $pur_invoice->vendor_note : '');
-								echo render_textarea('vendor_note', 'vendor_note', $vendor_note, array('rows' => 7)) ?>
-							</div>
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<?php $terms = (isset($pur_invoice) ? $pur_invoice->terms : '');
-								echo render_textarea('terms', 'terms', $terms, array('rows' => 7)) ?>
-							</div>
-
-							<div class="btn-bottom-toolbar text-right">
-
-								<button type="button" class="btn-tr save_detail btn btn-info mleft10 transaction-submit">
-									<?php echo _l('submit'); ?>
-								</button>
-							</div>
-
-						</div>
-						<div class="btn-bottom-pusher"></div>
+					<div class="col-md-12 pad_left_0 pad_right_0">
+						<?php $vendor_note = (isset($pur_invoice) ? $pur_invoice->vendor_note : '');
+						echo render_textarea('vendor_note', 'vendor_note', $vendor_note, array('rows' => 7)) ?>
 					</div>
+					<div class="col-md-12 pad_left_0 pad_right_0">
+						<?php $terms = (isset($pur_invoice) ? $pur_invoice->terms : '');
+						echo render_textarea('terms', 'terms', $terms, array('rows' => 7)) ?>
+					</div>
+
+					<div class="btn-bottom-toolbar text-right">
+
+						<button type="button" class="btn-tr save_detail btn btn-info mleft10 transaction-submit">
+							<?php echo _l('submit'); ?>
+						</button>
+					</div>
+
 				</div>
+				<div class="btn-bottom-pusher"></div>
 			</div>
-
-			<?php echo form_close(); ?>
 		</div>
 	</div>
+
+	<?php echo form_close(); ?>
+</div>
+</div>
 </div>
 
 <?php init_tail(); ?>

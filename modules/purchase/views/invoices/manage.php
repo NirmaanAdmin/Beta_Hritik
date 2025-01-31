@@ -63,6 +63,15 @@
                         <div class="col-md-2 form-group">
                            <?php echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('vendors'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
                         </div>
+                        <div class="col-md-3 form-group">
+                           <select name="billing_invoices" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('pur_invoices'); ?>" data-actions-box="true">
+                              <option value=""></option>
+                              <option value="None">None</option>
+                              <?php foreach ($billing_invoices as $invoice) { ?>
+                                 <option value="<?php echo $invoice['id']; ?>"><?php echo $invoice['value']; ?></option>
+                              <?php } ?>
+                           </select>
+                        </div>
                      </div>
                   </div>
 
@@ -163,7 +172,7 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                              <td></td>
+                              <td class="total_invoice_amount"></td>
                               <td class="total_vendor_submitted_amount_without_tax"></td>
                               <td class="total_vendor_submitted_tax_amount"></td>
                               <td class="total_vendor_submitted_amount"></td>

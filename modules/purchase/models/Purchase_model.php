@@ -6733,6 +6733,9 @@ class Purchase_model extends App_Model
         if ($data['payment_date'] != '') {
             $data['payment_date'] = to_sql_date($data['payment_date']);
         }
+        if ($data['payment_date_basilius'] != '') {
+            $data['payment_date_basilius'] = to_sql_date($data['payment_date_basilius']);
+        }
         $data['transaction_date'] = to_sql_date($data['transaction_date']);
 
         if (isset($data['order_discount'])) {
@@ -6927,6 +6930,9 @@ class Purchase_model extends App_Model
         }
         if ($data['payment_date'] != '') {
             $data['payment_date'] = to_sql_date($data['payment_date']);
+        }
+        if ($data['payment_date_basilius'] != '') {
+            $data['payment_date_basilius'] = to_sql_date($data['payment_date_basilius']);
         }
         if (isset($data['order_discount'])) {
             $order_discount = $data['order_discount'];
@@ -16785,5 +16791,24 @@ class Purchase_model extends App_Model
             return true;
         }
         return false;
+    }
+
+    public function get_billing_invoices()
+    {
+        $this->db->select('id, title');
+        $this->db->from(db_prefix() . 'invoices');
+        $query = $this->db->get();
+        $billing_invoices = $query->result_array();
+
+        $result = array();
+        if(!empty($billing_invoices)) {
+            foreach ($billing_invoices as $key => $value) {
+                $item = array();
+                $item['id'] = $value['id'];
+                $item['value'] = e(format_invoice_number($value['id'])). " (".$value['title'].")";
+                $result[] = $item;
+            }
+        }
+        return $result;
     }
 }

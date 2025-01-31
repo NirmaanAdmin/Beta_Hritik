@@ -3830,3 +3830,36 @@ function get_sum_goods_receipt_po_quantities($id)
     }
     return 0;
 }
+
+function get_expenses_data_by_pur_invoices($invoiceid = '')
+{
+    $CI = &get_instance();
+    $invoice = $CI->db->select('GROUP_CONCAT(vbt_id) as vbt_ids')
+        ->where('invoiceid', $invoiceid)
+        ->from(db_prefix() . 'expenses')
+        ->group_by('invoiceid')
+        ->get()
+        ->row();
+    
+    if ($invoice) {
+        return $invoice;
+    }
+    return '';
+}
+
+function get_pur_invoice_subtotal($invoiceid = '')
+{
+    if (!empty($invoiceid)) {
+        $CI = &get_instance();
+        $invoice_ids = explode(',', $invoiceid);
+        $invoice = $CI->db->select_sum('subtotal')
+            ->where_in('id', $invoice_ids)
+            ->from(db_prefix() . 'invoices')
+            ->get()
+            ->row();
+        if ($invoice) {
+            return $invoice->subtotal;
+        }
+    }
+    return 0;
+}

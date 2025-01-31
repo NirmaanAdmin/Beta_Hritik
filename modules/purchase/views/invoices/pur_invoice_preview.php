@@ -192,7 +192,15 @@
 	         				</div>
 
 	         				<div class="col-md-6 pad_right_0">
-	         					<p><?php echo _l('contract').':'; ?><span class="pull-right bold"><a href="<?php echo admin_url('purchase/contract/'.$pur_invoice->contract); ?>" ><?php echo get_pur_contract_number($pur_invoice->contract); ?></a></span></p>
+	         					<p><?php echo _l('pur_vendor').':'; ?>
+		         					<span class="pull-right bold">
+		         						<a href="<?php echo admin_url('purchase/vendor/'.$pur_invoice->vendor); ?>" >
+		         							<?php 
+		         							echo wh_get_vendor_company_name($pur_invoice->vendor); 
+		         							?>
+		         						</a>
+		         					</span>
+	         					</p>
 	         				</div>
 
 	         				
@@ -241,11 +249,18 @@
 	         					<hr class="mtop5 mbot5">
 	         				</div>
 							 <div class="col-md-6 pad_left_0 border-right">
-							 <p><?php echo _l('payment_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date); ?></span></p>
+							 <p><?php echo _l('payment_date_reliance').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date); ?></span></p>
 	         				</div>
-							 <div class="col-md-6 pad_right_0 ">
+	         				<div class="col-md-6 pad_right_0 ">
 							<p><?php echo _l('group_pur').':'; ?><span class="pull-right bold"><?php echo get_group_name_by_id($pur_invoice->group_pur) ?></span></p>
-									</div></div>
+							</div>
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							 <div class="col-md-6 pad_left_0 border-right">
+							 <p><?php echo _l('payment_date_basilius').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date_basilius); ?></span></p>
+	         				</div>
+							</div>
 
 	         			<div class="col-md-6">
 

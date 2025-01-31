@@ -163,6 +163,25 @@ if (isset($vendors)) {
     }
 }
 
+$billing_invoices = $this->ci->input->post('billing_invoices');
+if (isset($billing_invoices) && !empty($billing_invoices)) {
+    $where_billing_invoices = '';
+    if($billing_invoices == "None") {
+        $where_billing_invoices .= ' AND (' . db_prefix() . 'pur_invoices.expense_convert = 0';
+    } else {
+        $billing_invoice_array = get_expenses_data_by_pur_invoices($billing_invoices);
+        if(!empty($billing_invoice_array)) {
+            $billing_invoice_array = explode(",", $billing_invoice_array->vbt_ids);
+            $where_billing_invoices .= ' AND (' . db_prefix() . 'pur_invoices.id IN (' . implode(',', $billing_invoice_array) . ')';
+        }
+    }
+
+    if ($where_billing_invoices != '') {
+        $where_billing_invoices .= ')';
+        array_push($where, $where_billing_invoices);
+    }
+}
+
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.id as id',
     '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_invoices.id and rel_type="pur_invoice" ORDER by tag_order ASC) as tags',
@@ -182,7 +201,9 @@ $footer_data = [
     'total_vendor_submitted_tax_amount' => 0,
     'total_vendor_submitted_amount' => 0,
     'total_final_certified_amount' => 0,
+    'total_invoice_amount' => 0,
 ];
+$invoice_ids = '';
 
 $this->ci->load->model('purchase/purchase_model');
 
@@ -376,6 +397,7 @@ foreach ($rResult as $aRow) {
                         $invoice_data = get_invoice_data($expense_convert_check->invoiceid);
                         if(!empty($invoice_data)) {
                             $expense_convert = e(format_invoice_number($invoice_data->id)). " (".$invoice_data->title.")";
+                            $invoice_ids .= $invoice_data->id.",";
                         }
                     }
                 } else {
@@ -396,7 +418,14 @@ foreach ($rResult as $aRow) {
     $footer_data['total_vendor_submitted_tax_amount'] += $aRow['vendor_submitted_tax_amount'];
     $footer_data['total_vendor_submitted_amount'] += $aRow['vendor_submitted_amount'];
     $footer_data['total_final_certified_amount'] += $aRow['final_certified_amount'];
+    $footer_data['total_invoice_amount'] = 0;
     $output['aaData'][] = $row;
+}
+
+if(!empty($invoice_ids)) {
+    $invoice_ids = rtrim($invoice_ids, ",");
+    $invoice_amount = get_pur_invoice_subtotal($invoice_ids);
+    $footer_data['total_invoice_amount'] = $invoice_amount;
 }
 
 foreach ($footer_data as $key => $total) {
