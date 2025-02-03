@@ -32,6 +32,8 @@
                         <div class="col-md-2">
                            <?php echo render_date_input('to_date', '', '', array('placeholder' => _l('to_date'))); ?>
                         </div>
+
+                        <?php /*
                         <div class="col-md-2 form-group">
 
                            <select name="contract[]" id="contract" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('contract'); ?>">
@@ -60,6 +62,8 @@
                               <?php } ?>
                            </select>
                         </div>
+                        */ ?>
+                        
                         <div class="col-md-2 form-group">
                            <?php echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('vendors'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
                         </div>
@@ -149,7 +153,7 @@
                               <th><?php echo _l('invoice_number'); ?></th>
                               <th><?php echo _l('vendor'); ?></th>
                               <th><?php echo _l('group_pur'); ?></th>
-                              <th><?php echo _l('order_name'); ?></th>
+                              <th><?php echo _l('description_of_services'); ?></th>
                               <th><?php echo _l('invoice_date'); ?></th>
                               <th><?php echo _l('billing_status'); ?></th>
                               <th><?php echo _l('convert_expense'); ?></th>

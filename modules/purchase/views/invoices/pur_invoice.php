@@ -111,7 +111,7 @@
 
 								<div class="col-md-6 pad_right_0">
 									<label for="invoice_date"><?php echo _l('pur_due_date'); ?></label>
-									<?php $duedate = (isset($pur_invoice) ? _d($pur_invoice->duedate) : _d(date('Y-m-d')));
+									<?php $duedate = (isset($pur_invoice) ? _d($pur_invoice->duedate) : '');
 									echo render_date_input('duedate', '', $duedate); ?>
 								</div>
 								<div class="col-md-6  pad_left_0" style="margin-bottom: 14px;">
@@ -142,13 +142,13 @@
 								</div>
 								<div class="col-md-6 pad_left_0" style="clear: both;">
 									<label for="bill accept date"><?php echo _l('bill_accept_date'); ?></label>
-									<?php $bill_accept_date = (isset($pur_invoice) ? _d($pur_invoice->bill_accept_date) : _d(date('Y-m-d')));
-									echo render_date_input('bill_accept_date', '', $bill_accept_date, array('required' => 'false')); ?>
+									<?php $bill_accept_date = (isset($pur_invoice) ? _d($pur_invoice->bill_accept_date) : '');
+									echo render_date_input('bill_accept_date', '', $bill_accept_date, array()); ?>
 								</div>
 								<div class="col-md-6 pad_right_0 ">
 									<label for="certified bill date"><?php echo _l('certified_bill_date'); ?></label>
-									<?php $certified_bill_date = (isset($pur_invoice) ? _d($pur_invoice->certified_bill_date) : _d(date('Y-m-d')));
-									echo render_date_input('certified_bill_date', '', $certified_bill_date, array('required' => 'false')); ?>
+									<?php $certified_bill_date = (isset($pur_invoice) ? _d($pur_invoice->certified_bill_date) : '');
+									echo render_date_input('certified_bill_date', '', $certified_bill_date, array()); ?>
 								</div>
 								<div class="col-md-12 pad_left_0 pad_right_0">
 									<!-- <label for="bank transcation detail"><?php echo _l('bank_transcation_detail'); ?></label> -->
@@ -188,15 +188,21 @@
 								</div>
 
 								<div class="col-md-12 form-group pad_left_0 pad_right_0">
-									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
-									<select name="wo_order" id="wo_order" class="selectpicker" onchange="wo_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-										<option value=""></option>
-										<?php foreach ($wo_orders as $ct) { ?>
-											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
-												echo 'selected';
-											} ?>><?php echo html_entity_decode($ct['wo_order_number'] . ' - ' . $ct['wo_order_name']); ?></option>
-										<?php } ?>
-									</select>
+									<div class="attachments">
+										<div class="attachment">
+											<div class="mbot15">
+												<div class="form-group">
+													<label for="attachment" class="control-label"><?php echo _l('ticket_add_attachments'); ?></label>
+													<div class="input-group">
+														<input type="file" extension="<?php echo str_replace('.', '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+														<span class="input-group-btn">
+															<button class="btn btn-success add_more_attachments p8-half" data-max="10" type="button"><i class="fa fa-plus"></i></button>
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<?php /*
@@ -236,22 +242,16 @@
 							*/ ?>
 
 
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<div class="attachments">
-									<div class="attachment">
-										<div class="mbot15">
-											<div class="form-group">
-												<label for="attachment" class="control-label"><?php echo _l('ticket_add_attachments'); ?></label>
-												<div class="input-group">
-													<input type="file" extension="<?php echo str_replace('.', '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
-													<span class="input-group-btn">
-														<button class="btn btn-success add_more_attachments p8-half" data-max="10" type="button"><i class="fa fa-plus"></i></button>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
+							<div class="col-md-12 form-group pad_left_0 pad_right_0">
+								<label for="wo_order"><?php echo _l('wo_order'); ?></label>
+								<select name="wo_order" id="wo_order" class="selectpicker" onchange="wo_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+									<option value=""></option>
+									<?php foreach ($wo_orders as $ct) { ?>
+										<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
+											echo 'selected';
+										} ?>><?php echo html_entity_decode($ct['wo_order_number'] . ' - ' . $ct['wo_order_name']); ?></option>
+									<?php } ?>
+								</select>
 							</div>
 							<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
 								<div class="form-group">
@@ -268,21 +268,21 @@
 							<div class="col-md-6 pad_left_0">
 								<div class="form-group">
 									<label for="payment_date_reliance"><?php echo _l('payment_date_reliance'); ?></label>
-									<?php $payment_date = (isset($pur_invoice) ? _d($pur_invoice->payment_date) : _d(date('Y-m-d')));
-									echo render_date_input('payment_date', '', $payment_date, array('required' => 'false')); ?>
+									<?php $payment_date = (isset($pur_invoice) ? _d($pur_invoice->payment_date) : '');
+									echo render_date_input('payment_date', '', $payment_date, array()); ?>
 								</div>
 							</div>
 							<div class="col-md-6 pad_left_0">
 								<div class="form-group">
 									<label for="payment_date_basilius"><?php echo _l('payment_date_basilius'); ?></label>
-									<?php $payment_date_basilius = (isset($pur_invoice) ? _d($pur_invoice->payment_date_basilius) : _d(date('Y-m-d')));
-									echo render_date_input('payment_date_basilius', '', $payment_date_basilius, array('required' => 'false')); ?>
+									<?php $payment_date_basilius = (isset($pur_invoice) ? _d($pur_invoice->payment_date_basilius) : '');
+									echo render_date_input('payment_date_basilius', '', $payment_date_basilius, array()); ?>
 								</div>
 							</div>
 
 							<div class="col-md-12 pad_left_0">
 								<?php $description_services = (isset($pur_invoice) ? $pur_invoice->description_services : '');
-								echo render_textarea('description_services', 'description_of_services', $description_services, ['rows' => 2]); ?>
+								echo render_textarea('description_services', 'description_of_services', $description_services, ['rows' => 2, 'required' => true]); ?>
 							</div>
 
 						</div>

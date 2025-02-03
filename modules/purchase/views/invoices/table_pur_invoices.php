@@ -191,6 +191,7 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     'expense_convert',
     db_prefix() . 'pur_invoices.wo_order',
     db_prefix() . 'items_groups.name',
+    db_prefix() . 'pur_invoices.description_services',
 ]);
 
 $output  = $result['output'];
@@ -376,9 +377,9 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'payment_request_status') {
             $_data = get_payment_request_status_by_inv($aRow['id']);
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.pur_order') {
-            $order_name = '';
-            $order_name .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
-            $order_name .= '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
+            $order_name = $aRow['description_services'];
+            // $order_name .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
+            // $order_name .= '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
             $_data = $order_name;
         } 
         // elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.wo_order') {
