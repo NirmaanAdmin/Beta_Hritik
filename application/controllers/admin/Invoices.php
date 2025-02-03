@@ -754,4 +754,128 @@ class Invoices extends AdminController
             echo json_encode($this->invoices_model->get_payment_modes_by_project($project_id));
         }
     }
+
+    public function import_invoices()
+    {
+        echo "Start";
+        die();
+        ini_set('max_execution_time', 0);
+        $this->load->model('expenses_model');
+        $file = fopen(FCPATH . 'uploads/Invoice_9B_Pro.csv', 'r');
+        while (($line = fgetcsv($file)) !== FALSE) {
+            $vbt = array();
+            $prefix = get_purchase_option('pur_inv_prefix');
+            $next_number = get_purchase_option('next_inv_number');
+            $invoice_number = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
+            $vendor_invoice_number = $line[0];
+            if(empty($vendor_invoice_number)) {
+                $vendor_invoice_number = $invoice_number;
+            }
+            $vendor = 0;
+            if(!empty($line[1])) {
+                $vendor = $this->get_vendor_id($line[1]);
+            }
+            $group_pur = 0;
+            if(!empty($line[2])) {
+                $group_pur = $this->get_budget_head_id($line[2]);
+            }
+
+            $vbt['invoice_number'] = $invoice_number;
+            $vbt['vendor_invoice_number'] = $vendor_invoice_number;
+            $vbt['vendor'] = $vendor;
+            $vbt['group_pur'] = $group_pur;
+            $vbt['description_services'] = $line[3];
+            $vbt['invoice_date'] = !empty($line[5]) ? date('Y-m-d', strtotime($line[5])) : '';
+            $vbt['currency'] = 3;
+            $vbt['to_currency'] = 3;
+            $vbt['date_add'] = date('Y-m-d');
+            $vbt['payment_status'] = 5;
+            $vbt['project_id'] = 1;
+            $vbt['payment_date'] = date('Y-m-d');
+            $vbt['duedate'] = date('Y-m-d');
+            $vbt['payment_date_basilius'] = date('Y-m-d');
+            $vbt['bill_accept_date'] = date('Y-m-d');
+            $vbt['certified_bill_date'] = date('Y-m-d');
+            $vbt['vendor_submitted_amount_without_tax'] = !empty($line[7]) ? $line[7] : 0;
+            $vbt['vendor_submitted_tax_amount'] = !empty($line[8]) ? $line[8] : 0;
+            $vbt['vendor_submitted_amount'] = !empty($line[9]) ? $line[9] : 0;
+            $vbt['final_certified_amount'] = !empty($line[10]) ? $line[10] : 0;
+
+            $this->db->insert(db_prefix() . 'pur_invoices', $vbt);
+            $pur_invoice_id = $this->db->insert_id();
+            if($pur_invoice_id) {
+                $this->db->where('option_name', 'next_inv_number');
+                $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number + 1]);
+            }
+
+            $expense = array();
+            $category = $this->find_budget_head_value($group_pur);
+            $expense['vendor'] = $vendor;
+            $expense['expense_name'] = $line[3];
+            $expense['note'] = '';
+            $expense['clientid'] = 3;
+            $expense['project_id'] = 1;
+            $expense['category'] = $category;
+            $expense['date'] = date('d-m-Y');
+            $expense['amount'] = $vbt['final_certified_amount'];
+            $expense['tax'] = NULL;
+            $expense['currency'] = 3;
+            $expense['billable'] = 'on';
+            $expense['reference_no'] = NULL;
+            $expense['paymentmode'] = NULL;
+            $expense['vbt_id'] = $pur_invoice_id;
+
+            $expense_id = $this->expenses_model->add($expense);
+            $this->mark_converted_pur_invoice($pur_invoice_id, $expense_id);
+
+            $invoice = array();
+            $invoice['invoice_id'] = 21;
+            $invoice['expense_id'] = $expense_id;
+            $this->expenses_model->applied_to_invoice($invoice);
+        }
+        fclose($file);  
+        echo "Success";
+        die();
+    }
+
+    public function get_vendor_id($vendor) 
+    {
+        $this->db->like('company', $vendor);
+        $result = $this->db->get(db_prefix() . 'pur_vendor')->row();
+        if(!empty($result)) {
+            return $result->userid;
+        }
+        return 0;
+    }
+
+    public function get_budget_head_id($budget_head) 
+    {
+        $this->db->like('name', $budget_head);
+        $result = $this->db->get(db_prefix() . 'items_groups')->row();
+        if(!empty($result)) {
+            return $result->id;
+        }
+        return 0;
+    }
+
+    public function find_budget_head_value($group_pur)
+    {
+        $this->db->where('id', $group_pur);
+        $budget_head = $this->db->get('tblitems_groups')->row();
+
+        $this->db->select('id');
+        $this->db->where('name', $budget_head->name);
+        $expenses_categories = $this->db->get('tblexpenses_categories')->row();
+        if (!empty($expenses_categories)) {
+            return $expenses_categories->id;
+        }
+        return '';
+    }
+
+    public function mark_converted_pur_invoice($pur_invoice, $expense)
+    {
+        $this->db->where('id', $pur_invoice);
+        $this->db->update(db_prefix() . 'pur_invoices', ['expense_convert' => $expense]);
+        return true;
+    }
 }
