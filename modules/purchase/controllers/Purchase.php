@@ -10803,4 +10803,265 @@ class purchase extends AdminController
 
         $this->load->view('manage_goods_receipt/view_purchase', $data);
     }
+
+    /**
+     * import file xlsx vendor billing tracker
+     * @return json
+     */
+    public function import_file_xlsx_vendor_billing_tracker()
+    {
+        if (!is_admin() && !has_permission('purchase_items', '', 'create')) {
+            access_denied(_l('purchase'));
+        }
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(PURCHASE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(PURCHASE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+
+            /*delete file old before export file*/
+            $path_before = COMMODITY_ERROR_PUR . 'FILE_ERROR_VENDOR_BILLING_TRACKER' . get_staff_user_id() . '.xlsx';
+            if (file_exists($path_before)) {
+                unlink(COMMODITY_ERROR_PUR . 'FILE_ERROR_VENDOR_BILLING_TRACKER' . get_staff_user_id() . '.xlsx');
+            }
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        $writer_header = array(
+                            'Invoice number' => 'string',
+                            'Vendor' => 'string',
+                            'Budget Head' => 'string',
+                            'Invoice date' => 'string',
+                            'Project' => 'string',
+                            'Description of Services' => 'string',
+                            'Amount w/o Tax' => 'string',
+                            'Tax Value' => 'string',
+                            'Total included tax' => 'string',
+                            'Certified Amount' => 'string',
+                            _l('error') => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+                        $writer->writeSheetHeader('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr]);
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+
+                        $total_rows = 0;
+                        $total_row_false = 0;
+
+                        for ($row = 1; $row < count($data); $row++) {
+
+                            $total_rows++;
+
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+
+                            $string_error = '';
+
+                            $flag_id_vendor_id;
+                            $flag_id_budget_head;
+                            $flag_id_project;
+
+                            $value_invoice_number = isset($data[$row][0]) ? $data[$row][0] : '';
+                            $value_vendor = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_budget_head = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_invoice_date = isset($data[$row][3]) ? $data[$row][3] : '';
+                            $value_project = isset($data[$row][4]) ? $data[$row][4] : '';
+                            $value_description_of_services = isset($data[$row][5]) ? $data[$row][5] : '';
+                            $value_Amount_wo_tax = isset($data[$row][6]) ? $data[$row][6] : '';
+                            $value_tax_value = isset($data[$row][7]) ? $data[$row][7] : '';
+                            $value_total_included_tax = isset($data[$row][8]) ? $data[$row][8] : '';
+                            $value_certified_amount = isset($data[$row][9]) ? $data[$row][9] : '';
+
+                            if(empty($value_vendor)) {
+                                $string_error .= 'Vendor ' . _l('does_not_exist');
+                                $flag2 = 1;
+                            } else {
+                                $this->db->like('company', $value_vendor);
+                                $result = $this->db->get(db_prefix() . 'pur_vendor')->row();
+                                if(empty($result)) {
+                                    $string_error .= 'Vendor ' . _l('does_not_exist');
+                                    $flag2 = 1;
+                                } else {
+                                    $flag_id_vendor_id = $result->userid;
+                                }
+                            }
+
+                            if(empty($value_budget_head)) {
+                                $string_error .= 'Budget Head ' . _l('does_not_exist');
+                                $flag2 = 1;
+                            } else {
+                                $this->db->like('name', $value_budget_head);
+                                $result = $this->db->get(db_prefix() . 'items_groups')->row();
+                                if(empty($result)) {
+                                    $string_error .= 'Budget Head ' . _l('does_not_exist');
+                                    $flag2 = 1;
+                                } else {
+                                    $flag_id_budget_head = $result->id;
+                                }
+                            }
+
+                            if(empty($value_invoice_date)) {
+                                $string_error .= 'Invoice date ' . _l('does_not_exist');
+                                $flag2 = 1;
+                            } else {
+                                $unix_timestamp = ($value_invoice_date - 25569) * 86400;
+                                $value_invoice_date = date('Y-m-d', $unix_timestamp);
+                            }
+
+                            if(empty($value_project)) {
+                                $string_error .= 'Project ' . _l('does_not_exist');
+                                $flag2 = 1;
+                            } else {
+                                $this->db->like('name', $value_project);
+                                $result = $this->db->get(db_prefix() . 'projects')->row();
+                                if(empty($result)) {
+                                    $string_error .= 'Project ' . _l('does_not_exist');
+                                    $flag2 = 1;
+                                } else {
+                                    $flag_id_project = $result->id;
+                                }
+                            }
+
+                            if(empty($value_description_of_services)) {
+                                $string_error .= 'Description of Services ' . _l('does_not_exist');
+                                $flag2 = 1;
+                            } 
+
+                            if(empty($value_Amount_wo_tax)) {
+                                $value_Amount_wo_tax = 0.00;
+                            } else {
+                                $value_Amount_wo_tax = str_replace(",", "", $value_Amount_wo_tax);
+                                $value_Amount_wo_tax = floatval($value_Amount_wo_tax);
+                            }
+
+                            if(empty($value_tax_value)) {
+                                $value_tax_value = 0.00;
+                            } else {
+                                $value_tax_value = str_replace(",", "", $value_tax_value);
+                                $value_tax_value = floatval($value_tax_value);
+                            }
+
+                            if(empty($value_total_included_tax)) {
+                                $value_total_included_tax = 0.00;
+                            } else {
+                                $value_total_included_tax = str_replace(",", "", $value_total_included_tax);
+                                $value_total_included_tax = floatval($value_total_included_tax);
+                            }
+
+                            if(empty($value_certified_amount)) {
+                                $value_certified_amount = 0.00;
+                            } else {
+                                $value_certified_amount = str_replace(",", "", $value_certified_amount);
+                                $value_certified_amount = floatval($value_certified_amount);
+                            }
+
+                            if (($flag == 1) || $flag2 == 1) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_invoice_number,
+                                    $value_vendor,
+                                    $value_budget_head,
+                                    $value_invoice_date,
+                                    $value_project,
+                                    $value_description_of_services,
+                                    $value_Amount_wo_tax,
+                                    $value_tax_value,
+                                    $value_total_included_tax,
+                                    $value_certified_amount,
+                                    $string_error,
+                                ]);
+                                $total_row_false++;
+                            }
+
+                            if ($flag == 0 && $flag2 == 0) {
+                                $prefix = get_purchase_option('pur_inv_prefix');
+                                $next_number = get_purchase_option('next_inv_number');
+                                $invoice_number = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
+
+                                $rd = array();
+                                $rd['invoice_number'] = $invoice_number;
+                                $rd['vendor_invoice_number'] = !empty($value_invoice_number) ? $value_invoice_number : $invoice_number;
+                                $rd['vendor'] = isset($flag_id_vendor_id) ? $flag_id_vendor_id : 0;
+                                $rd['group_pur'] = isset($flag_id_budget_head) ? $flag_id_budget_head : 0;
+                                $rd['description_services'] = $value_description_of_services;
+                                $rd['invoice_date'] = $value_invoice_date;
+                                $rd['currency'] = 3;
+                                $rd['to_currency'] = 3;
+                                $rd['date_add'] = date('Y-m-d');
+                                $rd['payment_status'] = 0;
+                                $rd['project_id'] = isset($flag_id_project) ? $flag_id_project : 1;
+                                $rd['vendor_submitted_amount_without_tax'] = $value_Amount_wo_tax;
+                                $rd['vendor_submitted_tax_amount'] = $value_tax_value;
+                                $rd['vendor_submitted_amount'] = $value_total_included_tax;
+                                $rd['final_certified_amount'] = $value_certified_amount;
+                            
+                                $rows[] = $rd;
+                                
+                                $this->db->insert(db_prefix() . 'pur_invoices', $rd);
+                                $pur_invoice_id = $this->db->insert_id();
+                                if($pur_invoice_id) {
+                                    $this->db->where('option_name', 'next_inv_number');
+                                    $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number + 1]);
+                                }
+                            }
+                        }
+
+                        $total_rows = $total_rows;
+                        $total_row_success = isset($rows) ? count($rows) : 0;
+                        $dataerror = '';
+                        $message = 'Not enought rows for importing';
+
+                        if ($total_row_false != 0) {
+                            if (!file_exists(FCPATH.PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR)) {
+                                mkdir(FCPATH.PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR, 0755, true);
+                            }
+                            $filename = 'Import_item_error_' . get_staff_user_id() . '_' . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR . $filename, $filename));
+                        }
+                    }
+                } else {
+                    set_alert('warning', _l('import_upload_failed'));
+                }
+            }
+        }
+        echo json_encode([
+            'message'           => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false'   => $total_row_false,
+            'total_rows'        => $total_rows,
+            'site_url'          => site_url(),
+            'staff_id'          => get_staff_user_id(),
+            'filename'          => PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR . $filename,
+
+        ]);
+    }
 }
