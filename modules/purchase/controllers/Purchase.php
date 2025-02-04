@@ -10933,8 +10933,12 @@ class purchase extends AdminController
                                 $string_error .= 'Invoice date ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
-                                $unix_timestamp = ($value_invoice_date - 25569) * 86400;
-                                $value_invoice_date = date('Y-m-d', $unix_timestamp);
+                                if(is_numeric($value_invoice_date)) {
+                                    $unix_timestamp = ($value_invoice_date - 25569) * 86400;
+                                    $value_invoice_date = date('Y-m-d', $unix_timestamp);
+                                } else {
+                                    $value_invoice_date = date('Y-m-d', strtotime($value_invoice_date));
+                                }
                             }
 
                             if(empty($value_project)) {
