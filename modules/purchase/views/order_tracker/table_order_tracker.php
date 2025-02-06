@@ -106,7 +106,11 @@ foreach ($rResult as $aRow) {
          $base_currency = get_base_currency_pur();
          $_data = app_format_money($aRow['total'], $base_currency->symbol);
       } elseif ($column == 'order_name') {
-         $_data = '<a href="#">' . $aRow['order_name'] . '</a>';
+         if($aRow['source_table'] == "pur_orders") {
+            $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+         } else {
+            $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+         }
       } elseif ($column == 'vendor') {
          $_data = '<a href="#">' . $aRow['vendor'] . '</a>';
       } elseif ($column == 'order_date') {
