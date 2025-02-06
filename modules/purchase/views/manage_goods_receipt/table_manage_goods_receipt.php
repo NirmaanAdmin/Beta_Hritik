@@ -23,6 +23,10 @@ if ($this->ci->input->post('kind')) {
     $kind = $this->ci->input->post('kind');
 }
 
+if ($this->ci->input->post('delivery')) {
+    $delivery = $this->ci->input->post('delivery');
+}
+
 if ($this->ci->input->post('toggle-filter')) {
     $where[] = 'AND type = 2';
 }
@@ -33,6 +37,18 @@ if (isset($day_vouchers)) {
 
 if (isset($kind)) {
     $where[] = 'AND kind = "' . $kind . '"';
+}
+
+if (isset($delivery)) {
+    if($delivery == "undelivered"){
+        $where[] = 'AND delivery_status = "0"';
+    } else if($delivery == "partially_delivered"){
+        $where[] = 'AND delivery_status = "1"';
+    } else if($delivery == "completely_delivered"){
+        $where[] = 'AND delivery_status = "2"';
+    } else {
+        $where[] = 'AND delivery_status = "0"';
+    }
 }
 
 $result = data_tables_purchase_tracker_init($aColumns, $join, $where, [

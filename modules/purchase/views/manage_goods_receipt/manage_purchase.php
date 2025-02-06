@@ -25,43 +25,36 @@
                                     <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Purchase Tracker</h4>
                                     <hr />
                                 </div>
-                                <?php /* <div class="col-md-2 display-flex" id="filter_div">
-                                    <label>PO Not received</label>
-                                    <div class="onoffswitch" style="margin-left: 10px;">
-                                        <input type="checkbox" name="toggle-filter" class="onoffswitch-checkbox toggle-filter" id="c_' . $aRow['staffid'] . '" value="0">
-                                        <label class="onoffswitch-label" for="c_' . $aRow['staffid'] . '"></label>
-                                    </div>
-
-                                    <hr />
-                                </div> */ ?>
-
                             </div>
-
                         </div>
                         <div class="row">
                             <div class="col-md-1 pull-right">
                                 <a href="#" class="btn btn-default pull-right btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_view_proposal(' .purchase_sm','#purchase_sm_view'); return false;" data-toggle="tooltip" title="<?php echo _l('invoices_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
                             </div>
-
                         </div>
                         <br />
                         <div class="row">
-                            <div class="col-md-3 pull-right">
-                                <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
-                                    <option value=""></option>
-                                    <option value="Client Supply"><?php echo _l('client_supply'); ?></option>
-                                    <option value="Bought out items"><?php echo _l('bought_out_items'); ?></option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 pull-right">
+                            <div class="col-md-3">
                                 <?php
                                 $input_attr_e = [];
                                 $input_attr_e['placeholder'] = _l('day_vouchers');
 
                                 echo render_date_input('date_add', '', '', $input_attr_e); ?>
                             </div>
-                            <div class="col-md-3 pull-right">
-
+                            <div class="col-md-3">
+                                <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
+                                    <option value=""></option>
+                                    <option value="Client Supply"><?php echo _l('client_supply'); ?></option>
+                                    <option value="Bought out items"><?php echo _l('bought_out_items'); ?></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="delivery" id="delivery" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('delivery_status'); ?>">
+                                    <option value=""></option>
+                                    <option value="undelivered"><?php echo _l('undelivered'); ?></option>
+                                    <option value="partially_delivered"><?php echo _l('partially_delivered'); ?></option>
+                                    <option value="completely_delivered"><?php echo _l('completely_delivered'); ?></option>
+                                </select>
                             </div>
                         </div>
                         <br />
