@@ -10,7 +10,7 @@ $aColumns = [
     'buyer_id',
     'kind',
     'date_add',
-    'approval',
+    'delivery_status',
 ];
 $join = [];
 $where = [];
@@ -78,26 +78,11 @@ foreach ($rResult as $aRow) {
                 }
             }
             $_data = $name;
-        } elseif ($aColumns[$i] == 'approval') {
-            $status = 0;
-            if ($aRow['type'] == 1) {
-                $po_quantities = get_sum_goods_receipt_po_quantities($aRow['id']);
-                $quantities = get_sum_goods_receipt_quantities($aRow['id']);
-                $remaining = $po_quantities - $quantities;
-                if($po_quantities == $quantities) {
-                    $status = 2;
-                } else if($quantities == 0) {
-                    $status = 0;
-                } else if($quantities > 0) {
-                    $status = 1;
-                }  else {
-                    $status = 0;
-                }
-            }
+        } elseif ($aColumns[$i] == 'delivery_status') {
             $delivery_status = '';
-            if($status == 0) {
+            if($aRow['delivery_status'] == 0) {
                 $delivery_status = '<span class="inline-block label label-danger" task-status-table="undelivered">'._l('undelivered');
-            } else if($status == 1) {
+            } else if($aRow['delivery_status'] == 1) {
                 $delivery_status = '<span class="inline-block label label-warning" task-status-table="partially_delivered">'._l('partially_delivered');
             } else {
                 $delivery_status = '<span class="inline-block label label-success" task-status-table="completely_delivered">'._l('completely_delivered');
