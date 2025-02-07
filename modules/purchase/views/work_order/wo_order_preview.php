@@ -509,7 +509,7 @@ if ($estimate->currency != 0) {
                            <table class="table items items-preview estimate-items-preview" data-type="estimate">
                               <thead>
                                  <tr>
-                                    <th align="center">#</th>
+                                    <th align="center"><?php echo _l('serial_no'); ?></th>
                                     <th class="description" width="50%" align="left"><?php echo _l('items'); ?></th>
                                     <th align="left" width="100"><?php echo _l('decription'); ?></th>
                                     <th align="left"> <?php echo _l('sub_groups_pur'); ?></th>
@@ -534,7 +534,13 @@ if ($estimate->currency != 0) {
                                     $item_discount = 0;
                                     foreach ($estimate_detail as $es) { ?>
                                        <tr nobr="true" class="sortable">
-                                          <td class="dragger item_no ui-sortable-handle" align="center"><?php echo pur_html_entity_decode($count); ?></td>
+                                          <td align="center">
+                                             <?php if(!empty($es['serial_no'])) {
+                                                echo $es['serial_no'];
+                                             } else {
+                                                echo pur_html_entity_decode($count); 
+                                             } ?>
+                                          </td>
                                           <td class="description" align="left">
                                              <div style="width: 250px"><span><strong><?php
                                                                                        $item = get_item_hp($es['item_code']);
