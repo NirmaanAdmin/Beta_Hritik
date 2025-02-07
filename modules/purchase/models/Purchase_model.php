@@ -2457,6 +2457,7 @@ class Purchase_model extends App_Model
         unset($data['tax_value']);
         unset($data['leads_import']);
         unset($data['sub_groups_pur']);
+        unset($data['serial_no']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -2599,6 +2600,7 @@ class Purchase_model extends App_Model
                     $dt_data['discount_money'] = $rqd['discount_money'];
                     $dt_data['discount_%'] = $rqd['discount'];
                     $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
+                    $dt_data['serial_no'] = $rqd['serial_no'];
 
                     $tax_money = 0;
                     $tax_rate_value = 0;
@@ -2692,6 +2694,7 @@ class Purchase_model extends App_Model
         unset($data['tax_value']);
         unset($data['isedit']);
         unset($data['sub_groups_pur']);
+        unset($data['serial_no']);
         if (isset($data['tax_select'])) {
             unset($data['tax_select']);
         }
@@ -2809,6 +2812,7 @@ class Purchase_model extends App_Model
                 $dt_data['discount_%'] = $rqd['discount'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
+                $dt_data['serial_no'] = $rqd['serial_no'];
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -2867,6 +2871,7 @@ class Purchase_model extends App_Model
                 $dt_data['discount_%'] = $rqd['discount'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
+                $dt_data['serial_no'] = $rqd['serial_no'];
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -4980,7 +4985,7 @@ class Purchase_model extends App_Model
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
-            <th class="thead-dark" align="left" style="width: 3%">#</th>
+            <th class="thead-dark" align="left" style="width: 3%">' . _l('serial_no') . '</th>
             <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
             <th class="thead-dark" align="left" style="' . $width . '">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('sub_groups_pur') . '</th>
@@ -5017,8 +5022,9 @@ class Purchase_model extends App_Model
                 $item_base_url = base_url('uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image']);
                 $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
             }
+            $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 3%">' . $sr++ . '</td>
+            <td style="width: 3%">' . $serial_no . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="' . $width . '">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . $get_sub_head . '</td>
@@ -11480,7 +11486,7 @@ class Purchase_model extends App_Model
      *
      * @return     string      
      */
-    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '')
+    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '', $serial_no = '')
     {
 
         $this->load->model('invoice_items_model');
@@ -11508,6 +11514,7 @@ class Purchase_model extends App_Model
         $name_discount_money = 'discount_money';
         $name_total_money = 'total_money';
         $name_sub_groups_pur = 'sub_groups_pur';
+        $name_serial_no = 'serial_no';
 
         $array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
         $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
@@ -11552,6 +11559,7 @@ class Purchase_model extends App_Model
             $name_total_money = $name . '[total_money]';
             $name_tax_value = $name . '[tax_value]';
             $name_sub_groups_pur = $name . '[sub_groups_pur]';
+            $name_serial_no = $name . '[serial_no]';
 
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
@@ -11599,7 +11607,16 @@ class Purchase_model extends App_Model
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
 
-
+        if(!empty($name)) {
+            if(!empty($serial_no)) {
+                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
+            } else {
+                $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
+                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
+            }
+        } else {
+            $row .= '<td class="serial_no"></td>';
+        }
         // $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
         $get_selected_item = pur_get_item_selcted_select($item_code,$name_item_name);
        

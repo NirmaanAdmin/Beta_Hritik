@@ -626,6 +626,7 @@
                     <thead>
                       <tr>
                         <th></th>
+                        <th align="left" style="min-width: 76px"><?php echo _l('serial_no'); ?></th>
                         <th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
                         <th align="left"><?php echo _l('item_description'); ?></th>
                         <th align="left"><?php echo _l('sub_groups_pur'); ?></th>

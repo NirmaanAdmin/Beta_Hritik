@@ -805,3 +805,4 @@ $lang['change_budget_head_successfully'] = 'Change budget head successfully';
 $lang['remaining_quantity'] = 'Remaining quantity';
 $lang['payment_date_reliance'] = 'Payment Date Reliance';
 $lang['payment_date_basilius'] = 'Payment Date Basilius';
+$lang['serial_no'] = 'No';
