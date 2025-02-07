@@ -1529,7 +1529,7 @@ class changee extends AdminController
                         $item_name = changee_pur_get_item_variatiom($order_detail['item_code']);
                     }
 
-                    $pur_order_row_template .= $this->changee_model->create_changee_order_row_template('items[' . $index_order . ']', $order_detail['item_code'], $item_name, $order_detail['description'], $order_detail['original_unit_price'], $order_detail['unit_price'], $order_detail['original_quantity'], $order_detail['quantity'], $unit_name, $order_detail['unit_id'], $order_detail['into_money'], $order_detail['into_money_updated'], $order_detail['id'], $order_detail['tax_value'], $order_detail['total'], $order_detail['tax_name'], $order_detail['tax_rate'], $order_detail['tax'], true, $currency_rate, $to_currency, $order_detail['remarks'], $order_detail['tender_item']);
+                    $pur_order_row_template .= $this->changee_model->create_changee_order_row_template('items[' . $index_order . ']', $order_detail['item_code'], $item_name, $order_detail['description'], $order_detail['original_unit_price'], $order_detail['unit_price'], $order_detail['original_quantity'], $order_detail['quantity'], $unit_name, $order_detail['unit_id'], $order_detail['into_money'], $order_detail['into_money_updated'], $order_detail['id'], $order_detail['tax_value'], $order_detail['total'], $order_detail['tax_name'], $order_detail['tax_rate'], $order_detail['tax'], true, $currency_rate, $to_currency, $order_detail['remarks'], $order_detail['tender_item'], $order_detail['serial_no']);
                 }
             }
         }

@@ -2368,6 +2368,7 @@ class Changee_model extends App_Model
         unset($data['tender_item']);
         unset($data['variation']);
         unset($data['additional_discount']);
+        unset($data['serial_no']);
 
         // $check_appr = $this->get_approve_setting('pur_order');
         // $data['approve_status'] = 1;
@@ -2505,6 +2506,7 @@ class Changee_model extends App_Model
                     $dt_data['remarks'] = $rqd['remarks'];
                     $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
                     $dt_data['variation'] = $rqd['variation'];
+                    $dt_data['serial_no'] = $rqd['serial_no'];
                     $tax_money = 0;
                     $tax_rate_value = 0;
                     $tax_rate = null;
@@ -2588,6 +2590,7 @@ class Changee_model extends App_Model
         unset($data['tender_item']);
         unset($data['variation']);
         unset($data['additional_discount']);
+        unset($data['serial_no']);
 
         $new_order = [];
         if (isset($data['newitems'])) {
@@ -2702,6 +2705,7 @@ class Changee_model extends App_Model
                 $dt_data['remarks'] = $rqd['remarks'];
                 $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
                 $dt_data['variation'] = $rqd['variation'];
+                $dt_data['serial_no'] = $rqd['serial_no'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -2751,6 +2755,7 @@ class Changee_model extends App_Model
                 $dt_data['remarks'] = nl2br($rqd['remarks']);
                 $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
                 $dt_data['variation'] = $rqd['variation'];
+                $dt_data['serial_no'] = $rqd['serial_no'];
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -11098,7 +11103,7 @@ class Changee_model extends App_Model
      *
      * @return     string      
      */
-    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $remarks = '', $tender_item = 0)
+    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $remarks = '', $tender_item = 0, $serial_no = '')
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -11120,6 +11125,7 @@ class Changee_model extends App_Model
         $name_tax_id_select = 'tax_select';
         $name_total = 'total';
         $name_remarks = 'remarks';
+        $name_serial_no = 'serial_no';
         $array_rate_attr = ['min' => '0.0', 'step' => 'any'];
         $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
         $array_subtotal_attr = ['readonly' => true];
@@ -11161,6 +11167,7 @@ class Changee_model extends App_Model
             $name_total = $name . '[total]';
             $name_remarks = $name . '[remarks]';
             $name_variation = $name . '[variation]';
+            $name_serial_no = $name . '[serial_no]';
             $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
@@ -11195,6 +11202,16 @@ class Changee_model extends App_Model
             $variation = (float)$into_money_updated - (float)$into_money;
         }
 
+        if(!empty($name)) {
+            if(!empty($serial_no)) {
+                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
+            } else {
+                $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
+                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
+            }
+        } else {
+            $row .= '<td class="serial_no"></td>';
+        }
 
         $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => _l('pur_item_name')]);
         if ($tender_item == 1) {

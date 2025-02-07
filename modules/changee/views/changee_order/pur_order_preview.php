@@ -490,6 +490,7 @@ if ($estimate->currency != 0) {
                            <table class="table items items-preview estimate-items-preview" data-type="estimate">
                               <thead>
                                  <tr>
+                                    <th align="center"><?php echo _l('serial_no'); ?></th>
                                     <th width="15%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
                                     <th width="15%" align="right" class="qty"><?php echo _l('decription'); ?></th>
                                     <th width="10%" align="right" class="qty"><?php echo _l('original_quantity'); ?></th>
@@ -514,6 +515,13 @@ if ($estimate->currency != 0) {
                                        $_subtotal += $es['into_money_updated'];
                                        $_total += $es['total']; ?>
                                        <tr nobr="true" class="sortable">
+                                          <td align="center">
+                                             <?php if(!empty($es['serial_no'])) {
+                                                echo $es['serial_no'];
+                                             } else {
+                                                echo pur_html_entity_decode($count); 
+                                             } ?>
+                                          </td>
                                           <td class="description" align="left;"><span><strong><?php
                                                                                                 $item = changee_get_item_hp($es['item_code']);
                                                                                                 if (isset($item) && isset($item->commodity_code) && isset($item->description)) {
