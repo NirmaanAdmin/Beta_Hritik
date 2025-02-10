@@ -3,7 +3,7 @@
 <style>
    .show_hide_columns {
       position: absolute;
-      z-index: 99999;
+      z-index: 999;
       left: 204px
    }
 </style>
@@ -30,26 +30,26 @@
 
                         <div class="vbt_all_filters">
                            <div class="col-md-2">
-                              <?php 
+                              <?php
                               $from_date_filter = get_module_filter($module_name, 'from_date');
                               $from_date_filter_val = !empty($from_date_filter) ? $from_date_filter->filter_value : '';
-                              echo render_date_input('from_date', '', $from_date_filter_val, array('placeholder' => _l('from_date'))); 
+                              echo render_date_input('from_date', '', $from_date_filter_val, array('placeholder' => _l('from_date')));
                               ?>
                            </div>
 
                            <div class="col-md-2">
-                              <?php 
+                              <?php
                               $to_date_filter = get_module_filter($module_name, 'to_date');
                               $to_date_filter_val = !empty($to_date_filter) ? $to_date_filter->filter_value : '';
-                              echo render_date_input('to_date', '', $to_date_filter_val, array('placeholder' => _l('to_date'))); 
+                              echo render_date_input('to_date', '', $to_date_filter_val, array('placeholder' => _l('to_date')));
                               ?>
                            </div>
-                        
+
                            <div class="col-md-3 form-group">
-                              <?php 
+                              <?php
                               $vendors_filter = get_module_filter($module_name, 'vendors');
                               $vendors_filter_val = !empty($vendors_filter) ? explode(",", $vendors_filter->filter_value) : '';
-                              echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), '', $vendors_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('vendors'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+                              echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), '', $vendors_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('vendors'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
                               ?>
                            </div>
 
@@ -66,26 +66,65 @@
                                  <?php } ?>
                               </select>
                            </div>
-
+                           <div class="col-md-3 form-group">
+                              <?php
+                              $budget_head_filter = get_module_filter($module_name, 'budget_head');
+                              $budget_head_filter_val = !empty($budget_head_filter) ? $budget_head_filter->filter_value : '';
+                              ?>
+                              <select name="budget_head" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('group_pur'); ?>" data-actions-box="true">
+                                 <option value=""></option>
+                                 <option value="None">None</option>
+                                 <?php foreach ($budget_head as $head) { ?>
+                                    <option value="<?php echo $head['id']; ?>" <?php echo ($budget_head_filter == $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
+                                 <?php } ?>
+                              </select>
+                           </div>
+                           <div class="col-md-3 form-group">
+                              <?php
+                              $billing_status_filter = get_module_filter($module_name, 'billing_status');
+                              $billing_status_filter_val = !empty($billing_status_filter) ? $billing_status_filter->filter_value : '';
+                              $billing_status = [
+                                 ['id' => 1, 'name' => _l('rejected')],
+                                 ['id' => 2, 'name' => _l('recevied_with_comments')],
+                                 ['id' => 3, 'name' => _l('bill_verification_in_process')],
+                                 ['id' => 4, 'name' => _l('bill_verification_on_hold')],
+                                 ['id' => 5, 'name' => _l('bill_verified_by_ril')],
+                                 ['id' => 6, 'name' => _l('payment_certifiate_issued')],
+                                 ['id' => 7, 'name' => _l('payment_processed')],
+                                 ['id' => 0, 'name' => _l('unpaid')]
+                             ];
+                             
+                              ?>
+                              <select name="billing_status" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('billing_status'); ?>" data-actions-box="true">
+                                 <option value=""></option>
+                                 <option value="None">None</option>
+                                 <?php foreach ($billing_status as $head) { ?>
+                                    <option value="<?php echo $head['id']; ?>" <?php echo ($billing_status_filter_val === $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
+                                 <?php } ?>
+                              </select>
+                           </div>
                            <div class="col-md-1 form-group">
                               <a href="javascript:void(0)" class="btn btn-info btn-icon reset_vbt_all_filters">
-                              <?php echo _l('reset_filter'); ?>
+                                 <?php echo _l('reset_filter'); ?>
                               </a>
                            </div>
-                        </div>
-                        
-                        <div class="col-md-8" style="display: flex;align-items: end;padding: 0px;">
-                          <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_vendor_billing_tracker'), array('id' => 'import_form')); ?>
-                          <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
-                          <div class="form-group">
-                            <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadfilecsv(this);"><?php echo _l('import'); ?></button>
-                            <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_vendor_billing_tracker_item_en.xlsx') ?>" class="btn btn-primary">Template</a>
-                          </div>
-                          <?php echo form_close(); ?>
-                          <div class="form-group" id="file_upload_response" style="padding-left: 20px;">
-                          </div>
-                         </div>
+                        </div></br>
 
+
+
+                     </div>
+                     <div class="_buttons col-md-12">
+                        <div class="col-md-8" style="display: flex;align-items: end;padding: 0px;">
+                           <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_vendor_billing_tracker'), array('id' => 'import_form')); ?>
+                           <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+                           <div class="form-group">
+                              <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadfilecsv(this);"><?php echo _l('import'); ?></button>
+                              <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_vendor_billing_tracker_item_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                           </div>
+                           <?php echo form_close(); ?>
+                           <div class="form-group" id="file_upload_response" style="padding-left: 20px;">
+                           </div>
+                        </div>
                      </div>
                   </div>
 
@@ -116,45 +155,45 @@
                      array_push($table_data,$field['name']);
                     } ?> */ ?>
                   <div class="btn-group show_hide_columns" id="show_hide_columns">
-                        <!-- Settings Icon -->
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
-                           <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
-                        </button>
-                        <!-- Dropdown Menu with Checkboxes -->
-                        <div class="dropdown-menu" style="padding: 10px; min-width: 250px;">
-                           <!-- Select All / Deselect All -->
-                           <div>
-                              <input type="checkbox" id="select-all-columns"> <strong><?php echo _l('select_all'); ?></strong>
-                           </div>
-                           <hr>
-                           <!-- Column Checkboxes -->
-                           <?php
-                           $columns = [
-                              'invoice_code',
-                              'invoice_number',
-                              'vendor',
-                              'group_pur',
-                              'order_name',
-                              'invoice_date',
-                              'billing_status',
-                              'convert_expense',
-                              'amount_without_tax',
-                              'tax_value',
-                              'total_included_tax',
-                              'certified_amount',
-                              'transaction_id',
-                              'tag',
-                           ];
-                           ?>
-                           <div>
-                              <?php foreach ($columns as $key => $label): ?>
-                                 <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
-                                 <?php echo _l($label); ?><br>
-                              <?php endforeach; ?>
-                           </div>
-
+                     <!-- Settings Icon -->
+                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
+                        <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
+                     </button>
+                     <!-- Dropdown Menu with Checkboxes -->
+                     <div class="dropdown-menu" style="padding: 10px; min-width: 250px;">
+                        <!-- Select All / Deselect All -->
+                        <div>
+                           <input type="checkbox" id="select-all-columns"> <strong><?php echo _l('select_all'); ?></strong>
                         </div>
+                        <hr>
+                        <!-- Column Checkboxes -->
+                        <?php
+                        $columns = [
+                           'invoice_code',
+                           'invoice_number',
+                           'vendor',
+                           'group_pur',
+                           'order_name',
+                           'invoice_date',
+                           'billing_status',
+                           'ril_invoice',
+                           'amount_without_tax',
+                           'tax_value',
+                           'total_included_tax',
+                           'certified_amount',
+                           'transaction_id',
+                           'tag',
+                        ];
+                        ?>
+                        <div>
+                           <?php foreach ($columns as $key => $label): ?>
+                              <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
+                              <?php echo _l($label); ?><br>
+                           <?php endforeach; ?>
+                        </div>
+
                      </div>
+                  </div>
                   <div class="">
                      <table class="dt-table-loading table table-table_pur_invoices">
                         <thead>
@@ -166,7 +205,7 @@
                               <th><?php echo _l('description_of_services'); ?></th>
                               <th><?php echo _l('invoice_date'); ?></th>
                               <th><?php echo _l('billing_status'); ?></th>
-                              <th><?php echo _l('convert_expense'); ?></th>
+                              <th><?php echo _l('ril_invoice'); ?></th>
                               <th><?php echo _l('amount_without_tax'); ?></th>
                               <th><?php echo _l('tax_value'); ?></th>
                               <th><?php echo _l('total_included_tax'); ?></th>
@@ -326,50 +365,49 @@
       });
    });
 
-function uploadfilecsv(){
-  "use strict";
+   function uploadfilecsv() {
+      "use strict";
 
-    if(($("#file_csv").val() != '') && ($("#file_csv").val().split('.').pop() == 'xlsx')){
-    var formData = new FormData();
-    formData.append("file_csv", $('#file_csv')[0].files[0]);
-    if(<?php echo  pur_check_csrf_protection(); ?>){
-      formData.append(csrfData.token_name, csrfData.hash);
-    }
-
-    $.ajax({ 
-      url: admin_url + 'purchase/import_file_xlsx_vendor_billing_tracker', 
-      method: 'post', 
-      data: formData, 
-      contentType: false, 
-      processData: false
-      
-    }).done(function(response) {
-      response = JSON.parse(response);
-         $("#file_csv").val(null);
-         $("#file_csv").change();
-         $(".panel-body").find("#file_upload_response").html();
-
-         if($(".panel-body").find("#file_upload_response").html() != ''){
-           $(".panel-body").find("#file_upload_response").empty();
-         };
-         $( "#file_upload_response" ).append( "<h4><?php echo _l("_Result") ?></h4><h5><?php echo _l('import_line_number') ?> :"+response.total_rows+" </h5>" );
-         $( "#file_upload_response" ).append( "<h5><?php echo _l('import_line_number_success') ?> :"+response.total_row_success+" </h5>" );
-         $( "#file_upload_response" ).append( "<h5><?php echo _l('import_line_number_failed') ?> :"+response.total_row_false+" </h5>" );
-         if((response.total_row_false > 0) || (response.total_rows_data_error > 0))
-         {
-           $( "#file_upload_response" ).append( '<a href="'+site_url +response.filename+'" class="btn btn-warning"  ><?php echo _l('download_file_error') ?></a>' );
+      if (($("#file_csv").val() != '') && ($("#file_csv").val().split('.').pop() == 'xlsx')) {
+         var formData = new FormData();
+         formData.append("file_csv", $('#file_csv')[0].files[0]);
+         if (<?php echo  pur_check_csrf_protection(); ?>) {
+            formData.append(csrfData.token_name, csrfData.hash);
          }
-         if(response.total_rows < 1){
-           alert_float('warning', response.message);
-         }
-    });
-    return false;
 
-    } else if($("#file_csv").val() != '') {
-      alert_float('warning', "<?php echo _l('_please_select_a_file') ?>");
-    }
+         $.ajax({
+            url: admin_url + 'purchase/import_file_xlsx_vendor_billing_tracker',
+            method: 'post',
+            data: formData,
+            contentType: false,
+            processData: false
 
-}
+         }).done(function(response) {
+            response = JSON.parse(response);
+            $("#file_csv").val(null);
+            $("#file_csv").change();
+            $(".panel-body").find("#file_upload_response").html();
+
+            if ($(".panel-body").find("#file_upload_response").html() != '') {
+               $(".panel-body").find("#file_upload_response").empty();
+            };
+            $("#file_upload_response").append("<h4><?php echo _l("_Result") ?></h4><h5><?php echo _l('import_line_number') ?> :" + response.total_rows + " </h5>");
+            $("#file_upload_response").append("<h5><?php echo _l('import_line_number_success') ?> :" + response.total_row_success + " </h5>");
+            $("#file_upload_response").append("<h5><?php echo _l('import_line_number_failed') ?> :" + response.total_row_false + " </h5>");
+            if ((response.total_row_false > 0) || (response.total_rows_data_error > 0)) {
+               $("#file_upload_response").append('<a href="' + site_url + response.filename + '" class="btn btn-warning"  ><?php echo _l('download_file_error') ?></a>');
+            }
+            if (response.total_rows < 1) {
+               alert_float('warning', response.message);
+            }
+         });
+         return false;
+
+      } else if ($("#file_csv").val() != '') {
+         alert_float('warning', "<?php echo _l('_please_select_a_file') ?>");
+      }
+
+   }
 </script>
 </body>
 

@@ -11,6 +11,8 @@ $from_date_filter_name = 'from_date';
 $to_date_filter_name = 'to_date';
 $vendors_filter_name = 'vendors';
 $billing_invoices_filter_name = 'billing_invoices';
+$budget_head_filter_name = 'budget_head';
+$billing_status_filter_name = 'billing_status';
 
 
 $aColumns = [
@@ -187,6 +189,46 @@ if (isset($billing_invoices) && !empty($billing_invoices)) {
         array_push($where, $where_billing_invoices);
     }
 }
+$budget_head = $this->ci->input->post('budget_head');
+if (isset($budget_head)) {
+    
+    $where_budget_head = '';
+    
+
+    if($budget_head != ''){
+        if ($where_budget_head == '') {
+            $where_budget_head .= ' AND (' . db_prefix() . 'pur_invoices.group_pur = "' . $budget_head . '"';
+        } else {
+            $where_budget_head .= ' or ' . db_prefix() . 'pur_invoices.group_pur = "' . $budget_head . '"';
+        }
+    }
+    if ($where_budget_head != '') {
+        $where_budget_head .= ')';
+        array_push($where, $where_budget_head);
+    }
+
+   
+}
+$billing_status= $this->ci->input->post('billing_status');
+if (isset($billing_status)) {
+    
+    $where_billing_status = '';
+    
+
+    if($billing_status != ''){
+        if ($where_billing_status == '') {
+            $where_billing_status .= ' AND (' . db_prefix() . 'pur_invoices.payment_status = "' . $billing_status . '"';
+        } else {
+            $where_billing_status .= ' or ' . db_prefix() . 'pur_invoices.payment_status = "' . $billing_status . '"';
+        }
+    }
+    if ($where_billing_status != '') {
+        $where_billing_status .= ')';
+        array_push($where, $where_billing_status);
+    }
+
+   
+}
 
 $from_date_filter_value = !empty($this->ci->input->post('from_date')) ? $this->ci->input->post('from_date') : NULL;
 update_module_filter($module_name, $from_date_filter_name, $from_date_filter_value);
@@ -199,6 +241,15 @@ update_module_filter($module_name, $vendors_filter_name, $vendors_filter_value);
 
 $billing_invoices_filter_value = !empty($this->ci->input->post('billing_invoices')) ? $this->ci->input->post('billing_invoices') : NULL;
 update_module_filter($module_name, $billing_invoices_filter_name, $billing_invoices_filter_value);
+
+$budget_head_filter_name_value = !empty($this->ci->input->post('budget_head')) ? $this->ci->input->post('budget_head') : NULL;
+update_module_filter($module_name, $budget_head_filter_name, $budget_head_filter_name_value);
+
+$billing_status_filter_name_value = !empty($this->ci->input->post('billing_status')) ? $this->ci->input->post('billing_status') : NULL;
+update_module_filter($module_name, $billing_status_filter_name, $billing_status_filter_name_value);
+
+
+
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.id as id',

@@ -4970,6 +4970,7 @@ class purchase extends AdminController
         $data['currency'] = $this->currencies_model->get_base_currency();
         $data['payment_modes'] = $this->payment_modes_model->get('', [], true);
         $data['billing_invoices'] = $this->purchase_model->get_billing_invoices();
+        $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
         $this->load->view('invoices/manage', $data);
     }
 
