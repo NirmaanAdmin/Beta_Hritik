@@ -126,6 +126,46 @@ var expenseDropzone;
       }
     });
   });
+  $('body').on('change', '.description-services-input', function (e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var description_services = $(this).val();
+
+    // Perform AJAX request to update the invoice date
+    $.post(admin_url + 'purchase/update_description_services', {
+      id: rowId,
+      description_services: description_services
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+  $('body').on('change', '.adminnote-input', function (e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var adminnote = $(this).val();
+
+    // Perform AJAX request to update the invoice date
+    $.post(admin_url + 'purchase/update_adminnote', {
+      id: rowId,
+      admin_note: adminnote
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
 
   appValidateForm($('#pur_invoice-expense-form'), {
     expense_name: 'required',

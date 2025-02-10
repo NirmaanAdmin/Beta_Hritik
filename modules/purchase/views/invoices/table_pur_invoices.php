@@ -28,13 +28,14 @@ $aColumns = [
     'payment_status',
     'expense_convert',
     'vendor_submitted_amount_without_tax',
-    'vendor_submitted_tax_amount',    
+    'vendor_submitted_tax_amount',
     'vendor_submitted_amount',
     'final_certified_amount',
     'transactionid',
     'vendor_note',
+    'adminnote'
 ];
-if(isset($vendor) || isset($project)){
+if (isset($vendor) || isset($project)) {
     $aColumns = [
         'invoice_number',
         'vendor_invoice_number',
@@ -46,7 +47,7 @@ if(isset($vendor) || isset($project)){
         // 'payment_request_status',
         'payment_status',
         'vendor_submitted_amount_without_tax',
-        'vendor_submitted_tax_amount',    
+        'vendor_submitted_tax_amount',
         'vendor_submitted_amount',
         'final_certified_amount',
         'transactionid',
@@ -174,11 +175,11 @@ if (isset($vendors)) {
 $billing_invoices = $this->ci->input->post('billing_invoices');
 if (isset($billing_invoices) && !empty($billing_invoices)) {
     $where_billing_invoices = '';
-    if($billing_invoices == "None") {
+    if ($billing_invoices == "None") {
         $where_billing_invoices .= ' AND (' . db_prefix() . 'pur_invoices.expense_convert = 0';
     } else {
         $billing_invoice_array = get_expenses_data_by_pur_invoices($billing_invoices);
-        if(!empty($billing_invoice_array)) {
+        if (!empty($billing_invoice_array)) {
             $billing_invoice_array = explode(",", $billing_invoice_array->vbt_ids);
             $where_billing_invoices .= ' AND (' . db_prefix() . 'pur_invoices.id IN (' . implode(',', $billing_invoice_array) . ')';
         }
@@ -191,11 +192,11 @@ if (isset($billing_invoices) && !empty($billing_invoices)) {
 }
 $budget_head = $this->ci->input->post('budget_head');
 if (isset($budget_head)) {
-    
-    $where_budget_head = '';
-    
 
-    if($budget_head != ''){
+    $where_budget_head = '';
+
+
+    if ($budget_head != '') {
         if ($where_budget_head == '') {
             $where_budget_head .= ' AND (' . db_prefix() . 'pur_invoices.group_pur = "' . $budget_head . '"';
         } else {
@@ -206,16 +207,14 @@ if (isset($budget_head)) {
         $where_budget_head .= ')';
         array_push($where, $where_budget_head);
     }
-
-   
 }
-$billing_status= $this->ci->input->post('billing_status');
+$billing_status = $this->ci->input->post('billing_status');
 if (isset($billing_status)) {
-    
-    $where_billing_status = '';
-    
 
-    if($billing_status != ''){
+    $where_billing_status = '';
+
+
+    if ($billing_status != '') {
         if ($where_billing_status == '') {
             $where_billing_status .= ' AND (' . db_prefix() . 'pur_invoices.payment_status = "' . $billing_status . '"';
         } else {
@@ -226,8 +225,6 @@ if (isset($billing_status)) {
         $where_billing_status .= ')';
         array_push($where, $where_billing_status);
     }
-
-   
 }
 
 $from_date_filter_value = !empty($this->ci->input->post('from_date')) ? $this->ci->input->post('from_date') : NULL;
@@ -311,7 +308,7 @@ foreach ($rResult as $aRow) {
             $numberOutput .= '</div>';
 
             $_data = $numberOutput;
-        } else if($aColumns[$i] == db_prefix() . 'items_groups.name') {
+        } else if ($aColumns[$i] == db_prefix() . 'items_groups.name') {
             $budget_head = '';
             $budget_head .= '<span class="inline-block label label-info" id="budget_span_' . $aRow['id'] . '">' . $aRow['name'];
             $budget_head .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
@@ -355,7 +352,7 @@ foreach ($rResult as $aRow) {
             $_data = app_format_money($aRow['final_certified_amount'], $base_currency->symbol);
         } elseif ($aColumns[$i] == 'vendor_submitted_amount') {
             $_data = app_format_money($aRow['vendor_submitted_amount'], $base_currency->symbol);
-        }elseif ($aColumns[$i] == 'payment_status') {
+        } elseif ($aColumns[$i] == 'payment_status') {
             // $class = ''; 
             // if($aRow['payment_status'] == 'unpaid'){
             //     $class = 'danger';
@@ -446,11 +443,15 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'payment_request_status') {
             $_data = get_payment_request_status_by_inv($aRow['id']);
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.pur_order') {
-            $order_name = $aRow['description_services'];
+            // $order_name = $aRow['description_services'];
+
+
+
+            $order_name = '<textarea class="form-control description-services-input"  data-id="' . $aRow['id'] . '">' . $aRow['description_services'] . '</textarea>';
             // $order_name .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow[db_prefix() . 'pur_invoices.pur_order']) . '">' . get_pur_order_subject($aRow[db_prefix() . 'pur_invoices.pur_order']) . '</a>';
             // $order_name .= '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
             $_data = $order_name;
-        } 
+        }
         // elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.wo_order') {
         //     $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
         // } 
@@ -458,23 +459,27 @@ foreach ($rResult as $aRow) {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" target="_blank">' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
         } elseif ($aColumns[$i] == 'expense_convert') {
             $expense_convert = '';
-            if($aRow['expense_convert'] == 0){
-             $expense_convert = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
-            }else{
+            if ($aRow['expense_convert'] == 0) {
+                $expense_convert = '<a href="javascript:void(0)" onclick="convert_expense(' . $aRow['id'] . ',' . $aRow['final_certified_amount'] . '); return false;" class="btn btn-warning btn-icon">' . _l('convert') . '</a>';
+            } else {
                 $expense_convert_check = get_expense_data($aRow['expense_convert']);
-                if(!empty($expense_convert_check)) {
-                    if(!empty($expense_convert_check->invoiceid)) {
+                if (!empty($expense_convert_check)) {
+                    if (!empty($expense_convert_check->invoiceid)) {
                         $invoice_data = get_invoice_data($expense_convert_check->invoiceid);
-                        if(!empty($invoice_data)) {
-                            $expense_convert = e(format_invoice_number($invoice_data->id)). " (".$invoice_data->title.")";
-                            $invoice_ids .= $invoice_data->id.",";
+                        if (!empty($invoice_data)) {
+                            $expense_convert = e(format_invoice_number($invoice_data->id)) . " (" . $invoice_data->title . ")";
+                            $invoice_ids .= $invoice_data->id . ",";
                         }
                     }
                 } else {
-                    $expense_convert = '<a href="javascript:void(0)" onclick="convert_expense('.$aRow['id'].','.$aRow['final_certified_amount'].'); return false;" class="btn btn-warning btn-icon">'._l('convert').'</a>';
+                    $expense_convert = '<a href="javascript:void(0)" onclick="convert_expense(' . $aRow['id'] . ',' . $aRow['final_certified_amount'] . '); return false;" class="btn btn-warning btn-icon">' . _l('convert') . '</a>';
                 }
             }
             $_data = $expense_convert;
+        } elseif ($aColumns[$i] == 'adminnote') {
+            // $_data = '<input type="date" class="form-control invoice-date-input" value="' . $aRow['invoice_date'] . '" data-id="' . $aRow['id'] . '">';
+
+            $_data = '<textarea class="form-control adminnote-input"  data-id="' . $aRow['id'] . '">' . $aRow['adminnote'] . '</textarea>';
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {
                 $_data = (strpos($_data, ' ') !== false ? _dt($_data) : _d($_data));
@@ -492,7 +497,7 @@ foreach ($rResult as $aRow) {
     $output['aaData'][] = $row;
 }
 
-if(!empty($invoice_ids)) {
+if (!empty($invoice_ids)) {
     $invoice_ids = rtrim($invoice_ids, ",");
     $invoice_amount = get_pur_invoice_subtotal($invoice_ids);
     $footer_data['total_invoice_amount'] = $invoice_amount;

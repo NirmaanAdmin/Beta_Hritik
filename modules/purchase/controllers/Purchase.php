@@ -10649,6 +10649,51 @@ class purchase extends AdminController
         }
     }
 
+
+    public function update_adminnote()
+    {
+        $id = $this->input->post('id');
+        $admin_note = $this->input->post('admin_note');
+
+        if (!$id || !$admin_note) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['adminnote' => $admin_note]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Admin Note is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+
+
+    public function update_description_services()
+    {
+        $id = $this->input->post('id');
+        $update_description_services = $this->input->post('description_services');
+
+        if (!$id || !$update_description_services) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['description_services' => $update_description_services]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Description Services is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
     public function change_budget_head($budgetid, $invoice_id)
     {
         $success = $this->purchase_model->change_budget_head($budgetid, $invoice_id);

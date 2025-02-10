@@ -183,6 +183,7 @@
                            'certified_amount',
                            'transaction_id',
                            'tag',
+                           'adminnote',
                         ];
                         ?>
                         <div>
@@ -212,6 +213,7 @@
                               <th><?php echo _l('certified_amount'); ?></th>
                               <th><?php echo _l('transaction_id'); ?></th>
                               <th><?php echo _l('tag'); ?></th>
+                              <th><?php echo _l('adminnote'); ?></th>
                            </tr>
                         </thead>
                         <tbody>
