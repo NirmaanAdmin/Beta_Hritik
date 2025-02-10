@@ -18,7 +18,7 @@ $aColumns = [
     'project',
     'department',
     'approve_status',
-    'expense_convert',
+    // 'expense_convert',
     'subtotal',
     'total_tax',
     'total',
