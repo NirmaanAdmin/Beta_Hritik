@@ -598,10 +598,10 @@
                                             $qty_heading = _l('invoice_table_quantity_heading') . '/' . _l('invoice_table_hours_heading');
                                         }
                                         ?>
-                                        <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th>
+                                        <?php /* <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
                                         <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
                                         <th width="20%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                                        <th width="10%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                        <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -614,9 +614,9 @@
                                             <?php echo '<textarea name="final_inv_desc" class="form-control" rows="5"> ' . clear_textarea_breaks($annexure_invoice['final_invoice']['description']) . '</textarea>';
                                             ?>
                                         </td>
-                                        <td align="right">
+                                        <?php /* <td align="right">
                                             <?php echo $annexure_invoice['final_invoice']['qty']; ?>
-                                        </td>
+                                        </td> */ ?>
                                         <td align="right">
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
                                         </td>
@@ -766,10 +766,10 @@
                                             $qty_heading = _l('invoice_table_quantity_heading') . '/' . _l('invoice_table_hours_heading');
                                         }
                                         ?>
-                                        <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th>
+                                        <?php /*<th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
                                         <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
                                         <th width="20%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                                        <th width="10%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                        <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -785,9 +785,9 @@
                                                 <td align="left">
                                                     <?php echo $ivalue['description']; ?>
                                                 </td>
-                                                <td align="right">
+                                                <?php /* <td align="right">
                                                     <?php echo $ivalue['qty']; ?>
-                                                </td>
+                                                </td> */ ?>
                                                 <td align="right">
                                                     <?php echo app_format_money($ivalue['subtotal'], $base_currency); ?>
                                                 </td>
@@ -864,10 +864,10 @@
                                             ?>
                                             <th width="13%" align="left"><?php echo _l('vendor'); ?></th>
                                             <th width="13%" align="left"><?php echo _l('invoice_no'); ?></th>
-                                            <th width="5%" align="right" class="qty"><?php echo e($qty_heading); ?></th>
+                                            <?php /* <th width="5%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
                                             <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
                                             <th width="10%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                                            <th width="10%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                            <th width="15%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                             <th align="center"><i class="fa fa-cog"></i></th>
                                         </tr>
                                     </thead>
@@ -926,7 +926,7 @@
                                                     $table_row .= '<td>'.$vendor_name.'</td>';
                                                     $table_row .= '<td>'.$invoice_no.'</td>';
 
-                                                    $table_row .= '<td><input type="number" min="0" onblur="calculate_total();" onchange="calculate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control" disabled>';
+                                                    $table_row .= '<td class="hide"><input type="hidden" min="0" onblur="calculate_total();" onchange="calculate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control" disabled>';
 
                                                     $unit_placeholder = '';
                                                     if (!$item['unit']) {
