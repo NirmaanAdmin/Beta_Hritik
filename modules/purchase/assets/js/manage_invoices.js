@@ -33,6 +33,21 @@ var expenseDropzone;
                 .responsive.recalc();
     });
 
+    $(document).on('change', 'select[name="vendor_ft[]"]', function() {
+      $('select[name="vendor_ft[]"]').selectpicker('refresh');
+    });
+
+    $(document).on('change', 'select[name="billing_invoices"]', function() {
+      $('select[name="billing_invoices"]').selectpicker('refresh');
+    });
+
+    $(document).on('click', '.reset_vbt_all_filters', function() {
+      var filterArea = $('.vbt_all_filters');
+      filterArea.find('input').val("");
+      filterArea.find('select').selectpicker("val", "");
+      table_invoice.DataTable().ajax.reload().columns.adjust().responsive.recalc();
+    });
+
     if ($('#pur_invoice-expense-form').length > 0) {
         expenseDropzone = new Dropzone("#pur_invoice-expense-form", appCreateDropzoneOptions({
             autoProcessQueue: false,

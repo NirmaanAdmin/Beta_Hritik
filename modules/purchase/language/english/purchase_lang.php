@@ -806,3 +806,4 @@ $lang['remaining_quantity'] = 'Remaining quantity';
 $lang['payment_date_reliance'] = 'Payment Date Reliance';
 $lang['payment_date_basilius'] = 'Payment Date Basilius';
 $lang['serial_no'] = 'No';
+$lang['reset_filter'] = 'Reset filter';

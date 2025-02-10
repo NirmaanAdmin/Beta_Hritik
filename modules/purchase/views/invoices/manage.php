@@ -7,6 +7,7 @@
       left: 204px
    }
 </style>
+<?php $module_name = 'vendor_billing_tracker'; ?>
 <div id="wrapper">
    <div class="content">
       <div class="row">
@@ -26,55 +27,51 @@
                               <?php echo _l('new'); ?>
                            </a>
                         <?php } ?>
-                        <div class="col-md-2">
-                           <?php echo render_date_input('from_date', '', '', array('placeholder' => _l('from_date'))); ?>
-                        </div>
-                        <div class="col-md-2">
-                           <?php echo render_date_input('to_date', '', '', array('placeholder' => _l('to_date'))); ?>
-                        </div>
 
-                        <?php /*
-                        <div class="col-md-2 form-group">
+                        <div class="vbt_all_filters">
+                           <div class="col-md-2">
+                              <?php 
+                              $from_date_filter = get_module_filter($module_name, 'from_date');
+                              $from_date_filter_val = !empty($from_date_filter) ? $from_date_filter->filter_value : '';
+                              echo render_date_input('from_date', '', $from_date_filter_val, array('placeholder' => _l('from_date'))); 
+                              ?>
+                           </div>
 
-                           <select name="contract[]" id="contract" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('contract'); ?>">
-                              <?php foreach ($contracts as $ct) { ?>
-                                 <option value="<?php echo pur_html_entity_decode($ct['id']); ?>"><?php echo pur_html_entity_decode($ct['contract_number']); ?></option>
-                              <?php } ?>
-                           </select>
-
-
-                        </div>
-                        <div class="col-md-2 form-group">
-                           <select name="pur_orders[]" id="pur_orders" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('purchase_order'); ?>">
-                              <?php foreach ($pur_orders as $ct) { ?>
-                                 <option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if ($this->input->get('po') != null && $this->input->get('po') == $ct['id']) {
-                                                                                                      echo 'selected';
-                                                                                                   } ?>><?php echo pur_html_entity_decode($ct['pur_order_number']); ?></option>
-                              <?php } ?>
-                           </select>
-                        </div>
-                        <div class="col-md-2 form-group">
-                           <select name="wo_orders[]" id="wo_orders" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('work_order'); ?>">
-                              <?php foreach ($wo_orders as $ct) { ?>
-                                 <option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if ($this->input->get('po') != null && $this->input->get('po') == $ct['id']) {
-                                                                                                      echo 'selected';
-                                                                                                   } ?>><?php echo pur_html_entity_decode($ct['wo_order_number']); ?></option>
-                              <?php } ?>
-                           </select>
-                        </div>
-                        */ ?>
+                           <div class="col-md-2">
+                              <?php 
+                              $to_date_filter = get_module_filter($module_name, 'to_date');
+                              $to_date_filter_val = !empty($to_date_filter) ? $to_date_filter->filter_value : '';
+                              echo render_date_input('to_date', '', $to_date_filter_val, array('placeholder' => _l('to_date'))); 
+                              ?>
+                           </div>
                         
-                        <div class="col-md-2 form-group">
-                           <?php echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('vendors'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
-                        </div>
-                        <div class="col-md-3 form-group">
-                           <select name="billing_invoices" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('pur_invoices'); ?>" data-actions-box="true">
-                              <option value=""></option>
-                              <option value="None">None</option>
-                              <?php foreach ($billing_invoices as $invoice) { ?>
-                                 <option value="<?php echo $invoice['id']; ?>"><?php echo $invoice['value']; ?></option>
-                              <?php } ?>
-                           </select>
+                           <div class="col-md-3 form-group">
+                              <?php 
+                              $vendors_filter = get_module_filter($module_name, 'vendors');
+                              $vendors_filter_val = !empty($vendors_filter) ? explode(",", $vendors_filter->filter_value) : '';
+                              echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), '', $vendors_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('vendors'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+                              ?>
+                           </div>
+
+                           <div class="col-md-3 form-group">
+                              <?php
+                              $billing_invoices_filter = get_module_filter($module_name, 'billing_invoices');
+                              $billing_invoices_filter_val = !empty($billing_invoices_filter) ? $billing_invoices_filter->filter_value : '';
+                              ?>
+                              <select name="billing_invoices" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('pur_invoices'); ?>" data-actions-box="true">
+                                 <option value=""></option>
+                                 <option value="None">None</option>
+                                 <?php foreach ($billing_invoices as $invoice) { ?>
+                                    <option value="<?php echo $invoice['id']; ?>" <?php echo ($billing_invoices_filter_val == $invoice['id']) ? 'selected' : ''; ?>><?php echo $invoice['value']; ?></option>
+                                 <?php } ?>
+                              </select>
+                           </div>
+
+                           <div class="col-md-1 form-group">
+                              <a href="javascript:void(0)" class="btn btn-info btn-icon reset_vbt_all_filters">
+                              <?php echo _l('reset_filter'); ?>
+                              </a>
+                           </div>
                         </div>
                         
                         <div class="col-md-8" style="display: flex;align-items: end;padding: 0px;">

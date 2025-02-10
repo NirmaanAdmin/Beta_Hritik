@@ -1005,3 +1005,40 @@ if (!function_exists('previous_url')) {
         return get_instance()->session->userdata('_prev_url');
     }
 }
+
+function update_module_filter($module_name, $filter_name, $filter_value)
+{
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'module_filter');
+    $CI->db->where('module_name', $module_name);
+    $CI->db->where('filter_name', $filter_name);
+    $row = $CI->db->get()->row();
+    if(!empty($row)) {
+        $CI->db->where('module_name', $module_name);
+        $CI->db->where('filter_name', $filter_name);
+        $CI->db->update(db_prefix() . 'module_filter', [
+            'filter_value' => $filter_value,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+    } else {
+        $data = array();
+        $data['module_name'] = $module_name;
+        $data['filter_name'] = $filter_name;
+        $data['filter_value'] = $filter_value;
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $CI->db->insert(db_prefix() . 'module_filter', $data);
+    }
+    return true;
+}
+
+function get_module_filter($module_name, $filter_name) 
+{
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'module_filter');
+    $CI->db->where('module_name', $module_name);
+    $CI->db->where('filter_name', $filter_name);
+    $row = $CI->db->get()->row();
+    return $row;
+}

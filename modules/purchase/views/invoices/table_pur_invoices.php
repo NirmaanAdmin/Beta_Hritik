@@ -6,6 +6,12 @@ $custom_fields = get_custom_fields('pur_invoice', [
     'show_on_table' => 1,
 ]);
 
+$module_name = 'vendor_billing_tracker';
+$from_date_filter_name = 'from_date';
+$to_date_filter_name = 'to_date';
+$vendors_filter_name = 'vendors';
+$billing_invoices_filter_name = 'billing_invoices';
+
 
 $aColumns = [
     'invoice_number',
@@ -181,6 +187,18 @@ if (isset($billing_invoices) && !empty($billing_invoices)) {
         array_push($where, $where_billing_invoices);
     }
 }
+
+$from_date_filter_value = !empty($this->ci->input->post('from_date')) ? $this->ci->input->post('from_date') : NULL;
+update_module_filter($module_name, $from_date_filter_name, $from_date_filter_value);
+
+$to_date_filter_value = !empty($this->ci->input->post('to_date')) ? $this->ci->input->post('to_date') : NULL;
+update_module_filter($module_name, $to_date_filter_name, $to_date_filter_value);
+
+$vendors_filter_value = !empty($this->ci->input->post('vendors')) ? implode(',', $this->ci->input->post('vendors')) : NULL;
+update_module_filter($module_name, $vendors_filter_name, $vendors_filter_value);
+
+$billing_invoices_filter_value = !empty($this->ci->input->post('billing_invoices')) ? $this->ci->input->post('billing_invoices') : NULL;
+update_module_filter($module_name, $billing_invoices_filter_name, $billing_invoices_filter_value);
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.id as id',
