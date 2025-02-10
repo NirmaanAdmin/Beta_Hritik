@@ -226,15 +226,15 @@ foreach ($rResult as $aRow) {
         if ($aColumns[$i] == 'invoice_number') {
             $numberOutput = '';
 
-            $numberOutput = '<a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '"  >' . $aRow['invoice_number'] . '</a>';
+            $numberOutput = '<a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '" target="_blank"  >' . $aRow['invoice_number'] . '</a>';
 
             $numberOutput .= '<div class="row-options">';
 
             if (has_permission('purchase_invoices', '', 'view') || has_permission('purchase_invoices', '', 'view_own')) {
-                $numberOutput .= ' <a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '" >' . _l('view') . '</a>';
+                $numberOutput .= ' <a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '" target="_blank">' . _l('view') . '</a>';
             }
             if ((has_permission('purchase_invoices', '', 'edit') || is_admin())) {
-                $numberOutput .= ' | <a href="' . admin_url('purchase/pur_invoice/' . $aRow['id']) . '">' . _l('edit') . '</a>';
+                $numberOutput .= ' | <a href="' . admin_url('purchase/pur_invoice/' . $aRow['id']) . '" target="_blank">' . _l('edit') . '</a>';
             }
             if (has_permission('purchase_invoices', '', 'delete') || is_admin()) {
                 $numberOutput .= ' | <a href="' . admin_url('purchase/delete_pur_invoice/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
@@ -373,7 +373,7 @@ foreach ($rResult as $aRow) {
             $delivery_status .= '</span>';
             $_data = $delivery_status;
         } elseif ($aColumns[$i] == 'contract') {
-            $_data = '<a href="' . admin_url('purchase/contract/' . $aRow['contract']) . '">' . $aRow['contract_number'] . '</a>';
+            $_data = '<a href="' . admin_url('purchase/contract/' . $aRow['contract']) . '" target="_blank">' . $aRow['contract_number'] . '</a>';
         } elseif ($aColumns[$i] == 'payment_request_status') {
             $_data = get_payment_request_status_by_inv($aRow['id']);
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.pur_order') {
@@ -386,7 +386,7 @@ foreach ($rResult as $aRow) {
         //     $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
         // } 
         elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
-            $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" >' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
+            $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" target="_blank">' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
         } elseif ($aColumns[$i] == 'expense_convert') {
             $expense_convert = '';
             if($aRow['expense_convert'] == 0){
