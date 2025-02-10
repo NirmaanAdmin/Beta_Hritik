@@ -1941,7 +1941,7 @@ class Invoices_model extends App_Model
 
         $indexa = array();
         $final_invoice = array();
-        $invoice_tax = get_annexurewise_tax($invoice->id);
+        // $invoice_tax = get_annexurewise_tax($invoice->id);
         if($is_pdf) {
             $budgeted_annexure_data = $this->get_budgeted_annexure_amount($invoice->estimate);
             $previous_billing_data = $this->get_previous_billing_amount($invoice);
@@ -1956,14 +1956,14 @@ class Invoices_model extends App_Model
             $indexa[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
             $item_tax = 0;
             $itemid = $value['id'];
-            if(!empty($invoice_tax)) {
-                $item_tax_array = array_filter($invoice_tax, function ($item) use ($itemid) {
-                    return $item['item_id'] == $itemid;
-                });
-                $item_tax_array = !empty($item_tax_array) ? array_values($item_tax_array) : array();
-                $item_tax = !empty($item_tax_array) ? $item_tax_array[0]['total_tax'] : 0;
-            }
-            $indexa[$annexure]['tax'] = $indexa[$annexure]['tax'] + $item_tax;
+            // if(!empty($invoice_tax)) {
+            //     $item_tax_array = array_filter($invoice_tax, function ($item) use ($itemid) {
+            //         return $item['item_id'] == $itemid;
+            //     });
+            //     $item_tax_array = !empty($item_tax_array) ? array_values($item_tax_array) : array();
+            //     $item_tax = !empty($item_tax_array) ? $item_tax_array[0]['total_tax'] : 0;
+            // }
+            $indexa[$annexure]['tax'] = $indexa[$annexure]['tax'] + $value['tax'];
             $indexa[$annexure]['amount'] = $indexa[$annexure]['subtotal'] + $indexa[$annexure]['tax'];
             $indexa[$annexure]['annexure'] = $annexure;
         }

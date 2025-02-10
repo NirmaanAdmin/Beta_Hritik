@@ -267,7 +267,7 @@
 
             <?php echo render_select('category', $expense_categories, array('id', 'name'), 'expense_category'); ?>
             <?php echo render_date_input('date', 'expense_add_edit_date', _d(date('Y-m-d'))); ?>
-            <?php echo render_input('amount', 'expense_add_edit_amount', '', 'number'); ?>
+            <?php echo render_input('amount', 'expense_add_edit_amount', '', 'number', ['readonly' => true]); ?>
             <div class="row mbot15">
                <div class="col-md-6">
                   <div class="form-group">

@@ -878,4 +878,39 @@ class Invoices extends AdminController
         $this->db->update(db_prefix() . 'pur_invoices', ['expense_convert' => $expense]);
         return true;
     }
+
+    public function script_invoice_tax()
+    {
+        $this->db->select('*');
+        $this->db->where('rel_type', 'invoice');
+        $this->db->where('vbt_id !=', NULL);
+        $this->db->where('annexure !=', 17);
+        $itemable = $this->db->get('tblitemable')->result_array();
+
+        if(!empty($itemable)) {
+            foreach ($itemable as $key => $value) {
+                $this->db->select('vendor_submitted_amount_without_tax, vendor_submitted_tax_amount');
+                $this->db->where('id', $value['vbt_id']);
+                $pur_invoices = $this->db->get('tblpur_invoices')->row();
+
+                if(!empty($pur_invoices)) {
+                    $this->db->where('id', $value['id']);
+                    $this->db->update(db_prefix() . 'itemable', ['rate' => $pur_invoices->vendor_submitted_amount_without_tax, 'tax' => $pur_invoices->vendor_submitted_tax_amount]);
+                }
+            }
+        }
+
+        $this->db->select('*');
+        $pur_invoices = $this->db->get('tblpur_invoices')->result_array();
+        if(!empty($pur_invoices)) {
+            foreach ($pur_invoices as $key => $value) {
+                $final_value = $value['vendor_submitted_amount_without_tax'] + $value['vendor_submitted_tax_amount'];
+                $this->db->where('id', $value['id']);
+                $this->db->update(db_prefix() . 'pur_invoices', ['vendor_submitted_amount' => $final_value, 'final_certified_amount' => $final_value]);
+            }
+        }
+
+        echo "Success";
+        die();
+    }
 }

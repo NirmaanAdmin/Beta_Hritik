@@ -938,7 +938,8 @@
 
                                                     $table_row .= '</td>';
                                                     $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_total();" onchange="calculate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control" disabled></td>';
-                                                    $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $invoice_item_taxes, 'invoice', $item['id'], true, $manual, true) . '</td>';
+                                                    $table_row .= '<td class="taxrate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_total();" onchange="calculate_total();" name="' . $items_indicator . '[' . $i . '][taxname]" value="' . $item['tax'] . '" class="form-control" disabled></td>';
+                                                    // $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $invoice_item_taxes, 'invoice', $item['id'], true, $manual, true) . '</td>';
                                                     $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
                                                     $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
                                                     if (isset($item['task_id'])) {
@@ -970,6 +971,12 @@
                                                 <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
                                             </td>
                                             <td class="annexture_subtotal">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                            </td>
+                                            <td class="annexture_tax">
                                             </td>
                                         </tr>
                                         <tr>

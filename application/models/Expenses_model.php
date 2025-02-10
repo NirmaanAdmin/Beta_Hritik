@@ -621,6 +621,7 @@ class Expenses_model extends App_Model
                 }
             }
         } else {
+            $vbt_data = $this->get_vendor_billing_tracker($expense->vbt_id);
             $new_invoice_data['newitems'][1]['description']      = $expense->name;
             $new_invoice_data['newitems'][1]['long_description'] = $expense->description;
 
@@ -643,7 +644,8 @@ class Expenses_model extends App_Model
                 array_push($new_invoice_data['newitems'][1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
             }
 
-            $new_invoice_data['newitems'][1]['rate']  = $expense->amount;
+            $new_invoice_data['newitems'][1]['rate']  = $vbt_data->vendor_submitted_amount_without_tax;
+            $new_invoice_data['newitems'][1]['tax']  = $vbt_data->vendor_submitted_tax_amount;
             $new_invoice_data['newitems'][1]['order'] = 1;
             $new_invoice_data['newitems'][1]['annexure'] = $new_invoice_data['group_pur'];
             $new_invoice_data['newitems'][1]['vbt_id'] = $expense->vbt_id;
@@ -995,6 +997,7 @@ class Expenses_model extends App_Model
                 }
             }
         } else {
+            $vbt_data = $this->get_vendor_billing_tracker($expense->vbt_id);
             $new_item_data = array();
             $new_item_data['rel_id'] = $invoice_id;
             $new_item_data['rel_type'] = 'invoice';
@@ -1007,7 +1010,8 @@ class Expenses_model extends App_Model
                 $new_item_data['long_description'] .= PHP_EOL . $expense->expense_name;
             }
             $new_item_data['qty'] = 1;
-            $new_item_data['rate'] = $expense->amount;
+            $new_item_data['rate'] = $vbt_data->vendor_submitted_amount_without_tax;
+            $new_item_data['tax'] = $vbt_data->vendor_submitted_tax_amount;
             $new_item_data['unit'] = 'nos';
             $new_item_data['item_order'] = $item_order;
             $new_item_data['annexure'] = $annexure;
@@ -1042,5 +1046,11 @@ class Expenses_model extends App_Model
     {
         $this->db->where('id', $invoice_id);
         return $this->db->get(db_prefix() . 'invoices')->row();
+    }
+
+    public function get_vendor_billing_tracker($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get(db_prefix() . 'pur_invoices')->row();
     }
 }

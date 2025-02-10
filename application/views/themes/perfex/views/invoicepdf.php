@@ -118,10 +118,10 @@ $tblfinvoicehtml .= '
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
      <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
      <th width="11%" align="left">' . _l('budget_head') . '</th>
-     <th width="28%" align="left">' . _l('description_of_services') . '</th>
+     <th width="26%" align="left">' . _l('description_of_services') . '</th>
      <th width="10%" align="left">HSN/SAC</th>
      <th width="13%" align="right">' . _l('invoice_table_rate_heading') . '</th>
-     <th width="11%" align="right">' . _l('invoice_table_tax_heading') . '</th>
+     <th width="13%" align="right">' . _l('invoice_table_tax_heading') . '</th>
      <th width="18%" align="right">' . _l('invoice_table_amount_heading') . '</th>
   </tr>
 </thead>';
@@ -130,10 +130,10 @@ $tblfinvoicehtml .= '
 <tr style="font-size:12px;">
     <td width="5%;" align="center">1</td>
     <td width="11%" align="left;"><span style="font-size:12px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
-    <td width="28%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
+    <td width="26%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
     <td width="10%" align="left">' . $hsn_sac_code . '</td>
     <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
-    <td width="11%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
+    <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
     <td width="18%" align="right">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
 </tr>';
 $tblfinvoicehtml .= '</tbody>';
@@ -287,23 +287,23 @@ if (!empty($indexa)) {
         $tblannexurehtml .= '<tbody>';
         $invoice_items = $invoice->items;
         $inv = 1;
-        $invoice_tax = get_annexurewise_tax($invoice->id);
+        // $invoice_tax = get_annexurewise_tax($invoice->id);
         foreach ($invoice_items as $item) {
             if ($item['annexure'] == $avalue['annexure']) {
                 if (!is_numeric($item['qty'])) {
                     $item['qty'] = 1;
                 }
                 $amount = $item['rate'] * $item['qty'];
-                $total_tax = 0;
+                $total_tax = $item['tax'];
                 $annexure = $item['annexure'];
                 $itemid = $item['id'];
-                if(!empty($invoice_tax)) {
-                    $item_tax_array = array_filter($invoice_tax, function ($item) use ($annexure, $itemid) {
-                        return ($item['annexure'] == $annexure && $item['item_id'] == $itemid);
-                    });
-                    $item_tax_array = !empty($item_tax_array) ? array_values($item_tax_array) : array();
-                    $total_tax = !empty($item_tax_array) ? $item_tax_array[0]['total_tax'] : 0;
-                }
+                // if(!empty($invoice_tax)) {
+                //     $item_tax_array = array_filter($invoice_tax, function ($item) use ($annexure, $itemid) {
+                //         return ($item['annexure'] == $annexure && $item['item_id'] == $itemid);
+                //     });
+                //     $item_tax_array = !empty($item_tax_array) ? array_values($item_tax_array) : array();
+                //     $total_tax = !empty($item_tax_array) ? $item_tax_array[0]['total_tax'] : 0;
+                // }
                 $vendor_name = '';
                 $invoice_no = '';
                 if (!empty($item['po_id'])) {

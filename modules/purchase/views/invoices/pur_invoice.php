@@ -262,7 +262,7 @@
 							<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
 								<div class="form-group">
 									<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
-									<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
+									<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
 								</div>
 							</div>
 							<div class="col-md-6 pad_left_0">
@@ -486,6 +486,7 @@
 
 			// Update the sum in another input field
 			$('#vendor_submitted_amount').val(sum);
+			$('#final_certified_amount').val(sum);
 		}
 
 		// Attach the function to the keypress event of the second input
