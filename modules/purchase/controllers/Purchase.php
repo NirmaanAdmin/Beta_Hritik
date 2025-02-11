@@ -10504,9 +10504,9 @@ class purchase extends AdminController
 
             $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
             $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
-            
+
             $rResult = array_merge($rResult0, $rResult1);
-            
+
 
             $tracker = [];
 
@@ -10514,37 +10514,37 @@ class purchase extends AdminController
                 $row = [];
 
                 $goods_receipt = get_goods_receipt_code($aRow['goods_receipt_id']);
-                if($goods_receipt->pr_order_id > 0){
+                if ($goods_receipt->pr_order_id > 0) {
                     $row[] = get_pur_order_name($goods_receipt->pr_order_id);
-                }else{
+                } else {
                     $row[] = get_pur_order_name($aRow['pur_order']);
                 }
-                
+
 
                 $row[] = $aRow['commodity_name'];
 
                 $row[] = $aRow['description'];
 
-                if($goods_receipt->pr_order_id > 0){
-                    $row[] = isset($aRow['po_quantities']) && $aRow['po_quantities'] !== null ? app_format_number($aRow['po_quantities']): '-';
-                }else{
-                    $row[] = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']): '-';
+                if ($goods_receipt->pr_order_id > 0) {
+                    $row[] = isset($aRow['po_quantities']) && $aRow['po_quantities'] !== null ? app_format_number($aRow['po_quantities']) : '-';
+                } else {
+                    $row[] = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']) : '-';
                 }
-                
-                if($goods_receipt->pr_order_id > 0){
-                    $row[] = app_format_number($aRow['quantities']);
-                }else{
-                    $row[] = isset($aRow['po_quantities']) && $aRow['po_quantities'] !== null ? app_format_number($aRow['po_quantities']): '-';
-                }
-                
-                if($goods_receipt->pr_order_id > 0){
-                    $remaining_quantities = $aRow['po_quantities'] - $aRow['quantities'];
-                }else{
-                    $remaining_quantities = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']): '-';
-                }
-                
 
-                
+                if ($goods_receipt->pr_order_id > 0) {
+                    $row[] = app_format_number($aRow['quantities']);
+                } else {
+                    $row[] = isset($aRow['po_quantities']) && $aRow['po_quantities'] !== null ? app_format_number($aRow['po_quantities']) : '-';
+                }
+
+                if ($goods_receipt->pr_order_id > 0) {
+                    $remaining_quantities = $aRow['po_quantities'] - $aRow['quantities'];
+                } else {
+                    $remaining_quantities = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']) : '-';
+                }
+
+
+
                 $row[] = app_format_number($remaining_quantities);
 
                 $production_status = '';
@@ -10947,13 +10947,13 @@ class purchase extends AdminController
                             $value_total_included_tax = isset($data[$row][8]) ? $data[$row][8] : '';
                             $value_certified_amount = isset($data[$row][9]) ? $data[$row][9] : '';
 
-                            if(empty($value_vendor)) {
+                            if (empty($value_vendor)) {
                                 $string_error .= 'Vendor ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('company', $value_vendor);
                                 $result = $this->db->get(db_prefix() . 'pur_vendor')->row();
-                                if(empty($result)) {
+                                if (empty($result)) {
                                     $string_error .= 'Vendor ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
@@ -10961,13 +10961,13 @@ class purchase extends AdminController
                                 }
                             }
 
-                            if(empty($value_budget_head)) {
+                            if (empty($value_budget_head)) {
                                 $string_error .= 'Budget Head ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('name', $value_budget_head);
                                 $result = $this->db->get(db_prefix() . 'items_groups')->row();
-                                if(empty($result)) {
+                                if (empty($result)) {
                                     $string_error .= 'Budget Head ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
@@ -10975,11 +10975,11 @@ class purchase extends AdminController
                                 }
                             }
 
-                            if(empty($value_invoice_date)) {
+                            if (empty($value_invoice_date)) {
                                 $string_error .= 'Invoice date ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
-                                if(is_numeric($value_invoice_date)) {
+                                if (is_numeric($value_invoice_date)) {
                                     $unix_timestamp = ($value_invoice_date - 25569) * 86400;
                                     $value_invoice_date = date('Y-m-d', $unix_timestamp);
                                 } else {
@@ -10987,13 +10987,13 @@ class purchase extends AdminController
                                 }
                             }
 
-                            if(empty($value_project)) {
+                            if (empty($value_project)) {
                                 $string_error .= 'Project ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('name', $value_project);
                                 $result = $this->db->get(db_prefix() . 'projects')->row();
-                                if(empty($result)) {
+                                if (empty($result)) {
                                     $string_error .= 'Project ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
@@ -11001,33 +11001,33 @@ class purchase extends AdminController
                                 }
                             }
 
-                            if(empty($value_description_of_services)) {
+                            if (empty($value_description_of_services)) {
                                 $string_error .= 'Description of Services ' . _l('does_not_exist');
                                 $flag2 = 1;
-                            } 
+                            }
 
-                            if(empty($value_Amount_wo_tax)) {
+                            if (empty($value_Amount_wo_tax)) {
                                 $value_Amount_wo_tax = 0.00;
                             } else {
                                 $value_Amount_wo_tax = str_replace(",", "", $value_Amount_wo_tax);
                                 $value_Amount_wo_tax = floatval($value_Amount_wo_tax);
                             }
 
-                            if(empty($value_tax_value)) {
+                            if (empty($value_tax_value)) {
                                 $value_tax_value = 0.00;
                             } else {
                                 $value_tax_value = str_replace(",", "", $value_tax_value);
                                 $value_tax_value = floatval($value_tax_value);
                             }
 
-                            if(empty($value_total_included_tax)) {
+                            if (empty($value_total_included_tax)) {
                                 $value_total_included_tax = 0.00;
                             } else {
                                 $value_total_included_tax = str_replace(",", "", $value_total_included_tax);
                                 $value_total_included_tax = floatval($value_total_included_tax);
                             }
 
-                            if(empty($value_certified_amount)) {
+                            if (empty($value_certified_amount)) {
                                 $value_certified_amount = 0.00;
                             } else {
                                 $value_certified_amount = str_replace(",", "", $value_certified_amount);
@@ -11073,12 +11073,12 @@ class purchase extends AdminController
                                 $rd['vendor_submitted_tax_amount'] = $value_tax_value;
                                 $rd['vendor_submitted_amount'] = $value_total_included_tax;
                                 $rd['final_certified_amount'] = $value_certified_amount;
-                            
+
                                 $rows[] = $rd;
-                                
+
                                 $this->db->insert(db_prefix() . 'pur_invoices', $rd);
                                 $pur_invoice_id = $this->db->insert_id();
-                                if($pur_invoice_id) {
+                                if ($pur_invoice_id) {
                                     $this->db->where('option_name', 'next_inv_number');
                                     $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number + 1]);
                                 }
@@ -11091,8 +11091,8 @@ class purchase extends AdminController
                         $message = 'Not enought rows for importing';
 
                         if ($total_row_false != 0) {
-                            if (!file_exists(FCPATH.PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR)) {
-                                mkdir(FCPATH.PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR, 0755, true);
+                            if (!file_exists(FCPATH . PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR)) {
+                                mkdir(FCPATH . PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR, 0755, true);
                             }
                             $filename = 'Import_item_error_' . get_staff_user_id() . '_' . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
                             $writer->writeToFile(str_replace($filename, PURCHASE_IMPORT_VENDOR_BILLING_TRACKER_ERROR . $filename, $filename));
@@ -11114,4 +11114,69 @@ class purchase extends AdminController
 
         ]);
     }
+
+    public function update_certified_amount_without_tax()
+    {
+        $id = $this->input->post('id');
+        $amount = $this->input->post('amount');
+
+        if (!$id || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['vendor_submitted_amount_without_tax' => $amount]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Certified amount without tax is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+
+    public function update_vendor_submitted_tax_amount()
+    {
+        $id = $this->input->post('id');
+        $amount = $this->input->post('amount');
+
+        if (!$id || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['vendor_submitted_tax_amount' => $amount]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Certified Tax amount is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    
+
+    public function update_total_amount(){
+        $id = $this->input->post('id');
+        $amount = $this->input->post('total_amount');
+
+        if (!$id || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['final_certified_amount' => $amount]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Total Certified amount is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    
 }

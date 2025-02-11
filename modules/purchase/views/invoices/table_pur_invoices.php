@@ -339,7 +339,22 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'invoice_date') {
             $_data = '<input type="date" class="form-control invoice-date-input" value="' . $aRow['invoice_date'] . '" data-id="' . $aRow['id'] . '">';
         } elseif ($aColumns[$i] == 'vendor_submitted_amount_without_tax') {
-            $_data = app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol);
+
+            // $_data = '<input type="text" class="form-control vsawt-input"  data-id="' . $aRow['id'] . '" value="' . app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol) . '" >';
+            // $_data = app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol);
+
+            // Check if budget exists in the database
+            if (!empty($aRow['vendor_submitted_amount_without_tax'])) {
+                // Display as plain text
+                $_data = '<span class="vsawt-display" data-id="' . $aRow['id'] . '">' .
+                app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol) .
+                    '</span>';
+            } else {
+                // Render as an editable input if no budget exists
+                $_data = '<input type="number" class="form-control vsawt-input" 
+                         placeholder="Enter Certified Amount w/o Tax ( ₹ )" 
+                         data-id="' . $aRow['id'] . '">';
+            }
         } elseif ($aColumns[$i] == 'vendor_submitted_tax_amount') {
             // $tax = $this->ci->purchase_model->get_html_tax_pur_invoice($aRow['id']);
             // $total_tax = 0;
@@ -348,11 +363,25 @@ foreach ($rResult as $aRow) {
             // }
 
             $_data = app_format_money($aRow['vendor_submitted_tax_amount'], $base_currency->symbol);
+
+            if (!empty($aRow['vendor_submitted_tax_amount'])) {
+                // Display as plain text
+                $_data = '<span class="vsta-display" data-id="' . $aRow['id'] . '">' .
+                app_format_money($aRow['vendor_submitted_tax_amount'], $base_currency->symbol) .
+                    '</span>';
+            } else {
+                // Render as an editable input if no budget exists
+                $_data = '<input type="number" class="form-control budget-input" 
+                         placeholder="Enter Certified Amount w/o Tax ( ₹ )" 
+                         data-id="' . $aRow['id'] . '">';
+            }
         } elseif ($aColumns[$i] == 'final_certified_amount') {
             $_data = app_format_money($aRow['final_certified_amount'], $base_currency->symbol);
-        } elseif ($aColumns[$i] == 'vendor_submitted_amount') {
-            // $_data = app_format_money($aRow['vendor_submitted_amount'], $base_currency->symbol);
-        } elseif ($aColumns[$i] == 'payment_status') {
+        }
+        // elseif ($aColumns[$i] == 'vendor_submitted_amount') {
+        //     $_data = app_format_money($aRow['vendor_submitted_amount'], $base_currency->symbol);
+        // } 
+        elseif ($aColumns[$i] == 'payment_status') {
             // $class = ''; 
             // if($aRow['payment_status'] == 'unpaid'){
             //     $class = 'danger';

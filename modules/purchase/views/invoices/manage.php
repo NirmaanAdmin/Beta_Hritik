@@ -92,8 +92,8 @@
                                  ['id' => 6, 'name' => _l('payment_certifiate_issued')],
                                  ['id' => 7, 'name' => _l('payment_processed')],
                                  ['id' => 0, 'name' => _l('unpaid')]
-                             ];
-                             
+                              ];
+
                               ?>
                               <select name="billing_status" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('billing_status'); ?>" data-actions-box="true">
                                  <option value=""></option>
@@ -409,6 +409,93 @@
          alert_float('warning', "<?php echo _l('_please_select_a_file') ?>");
       }
 
+   }
+   $('body').on('click', '.vsawt-display', function(e) {
+      e.preventDefault();
+
+      var rowId = $(this).data('id');
+      var tableType = $(this).data('type');
+      var currentAmount = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
+
+      // Replace the span with an input field
+      $(this).replaceWith('<input type="number" class="form-control vsawt-input" value="' + currentAmount + '" data-id="' + rowId + '">');
+   });
+   // Initialize the DataTable
+   var table_pur_invoices = $('.table-table_pur_invoices').DataTable();
+   // Inline editing for "budget"
+   $('body').on('change', '.vsawt-input', function(e) {
+      e.preventDefault();
+
+      var rowId = $(this).data('id');
+      var amount = $(this).val();
+
+      var amountWithoutTax = parseFloat($(this).val()) || 0;
+      var taxAmount = parseFloat($(`.vsta-display[data-id="${rowId}"]`).text().replace(/[^\d.-]/g, '')) || 0;
+      var totalAmount = amountWithoutTax + taxAmount;
+
+      // Perform AJAX request to update the budget
+      $.post(admin_url + 'purchase/update_certified_amount_without_tax', {
+         id: rowId,
+         amount: amount
+      }).done(function(response) {
+
+         response = JSON.parse(response);
+         updateAmount(rowId, totalAmount);
+         if (response.success) {
+            alert_float('success', response.message);
+            table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+         } else {
+            alert_float('danger', response.message);
+         }
+      });
+   });
+   $('body').on('click', '.vsta-display', function(e) {
+      e.preventDefault();
+
+      var rowId = $(this).data('id');
+      var tableType = $(this).data('type');
+      var currentAmount = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
+
+      // Replace the span with an input field
+      $(this).replaceWith('<input type="number" class="form-control vsta-input" value="' + currentAmount + '" data-id="' + rowId + '">');
+   });
+   $('body').on('change', '.vsta-input', function(e) {
+      e.preventDefault();
+
+      var rowId = $(this).data('id');
+      var amount = $(this).val();
+      var amountWithoutTax = parseFloat($(this).val()) || 0;
+      var taxAmount = parseFloat($(`.vsawt-display[data-id="${rowId}"]`).text().replace(/[^\d.-]/g, '')) || 0;
+      var totalAmount = amountWithoutTax + taxAmount;
+      // Perform AJAX request to update the budget
+      $.post(admin_url + 'purchase/update_vendor_submitted_tax_amount', {
+         id: rowId,
+         amount: amount
+      }).done(function(response) {
+         response = JSON.parse(response);
+         updateAmount(rowId, totalAmount)
+         if (response.success) {
+            alert_float('success', response.message);
+            table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+         } else {
+            alert_float('danger', response.message);
+         }
+      });
+   });
+
+   function updateAmount(rowId, totalAmount) {
+      $.post(admin_url + 'purchase/update_total_amount', {
+         id: rowId,
+         total_amount: totalAmount
+      }).done(function(response) {
+         response = JSON.parse(response);
+         if (response.success) {
+            alert_float('success', response.message);
+            table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+         } else {
+            alert_float('danger', response.message);
+         }
+      });
    }
 </script>
 </body>
