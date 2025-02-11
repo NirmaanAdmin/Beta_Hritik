@@ -10884,6 +10884,7 @@ class purchase extends AdminController
      */
     public function import_file_xlsx_vendor_billing_tracker()
     {
+        $this->load->model('invoices_model');
         if (!is_admin() && !has_permission('purchase_items', '', 'create')) {
             access_denied(_l('purchase'));
         }
@@ -10921,16 +10922,15 @@ class purchase extends AdminController
                     $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
                     if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                         $writer_header = array(
-                            'Invoice number' => 'string',
-                            'Vendor' => 'string',
-                            'Budget Head' => 'string',
-                            'Invoice date' => 'string',
-                            'Project' => 'string',
-                            'Description of Services' => 'string',
-                            'Amount w/o Tax' => 'string',
-                            'Tax Value' => 'string',
-                            'Total included tax' => 'string',
-                            'Certified Amount' => 'string',
+                            _l('invoice_code') => 'string',
+                            _l('invoice_number') => 'string',
+                            _l('pur_vendor') => 'string',
+                            _l('group_pur') => 'string',
+                            _l('invoice_date') => 'string',
+                            _l('project') => 'string',
+                            _l('description_of_services') => 'string',
+                            _l('amount_without_tax') => 'string',
+                            _l('vendor_submitted_tax_amount') => 'string',
                             _l('error') => 'string',
                         );
 
@@ -10959,30 +10959,43 @@ class purchase extends AdminController
                             $flag2 = 0;
 
                             $string_error = '';
+                            $flag_id_invoice_id = '';
 
                             $flag_id_vendor_id;
                             $flag_id_budget_head;
                             $flag_id_project;
 
-                            $value_invoice_number = isset($data[$row][0]) ? $data[$row][0] : '';
-                            $value_vendor = isset($data[$row][1]) ? $data[$row][1] : '';
-                            $value_budget_head = isset($data[$row][2]) ? $data[$row][2] : '';
-                            $value_invoice_date = isset($data[$row][3]) ? $data[$row][3] : '';
-                            $value_project = isset($data[$row][4]) ? $data[$row][4] : '';
-                            $value_description_of_services = isset($data[$row][5]) ? $data[$row][5] : '';
-                            $value_Amount_wo_tax = isset($data[$row][6]) ? $data[$row][6] : '';
-                            $value_tax_value = isset($data[$row][7]) ? $data[$row][7] : '';
-                            $value_total_included_tax = isset($data[$row][8]) ? $data[$row][8] : '';
-                            $value_certified_amount = isset($data[$row][9]) ? $data[$row][9] : '';
+                            $value_invoice_code = isset($data[$row][0]) ? $data[$row][0] : '';
+                            $value_invoice_number = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_vendor = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_budget_head = isset($data[$row][3]) ? $data[$row][3] : '';
+                            $value_invoice_date = isset($data[$row][4]) ? $data[$row][4] : '';
+                            $value_project = isset($data[$row][5]) ? $data[$row][5] : '';
+                            $value_description_of_services = isset($data[$row][6]) ? $data[$row][6] : '';
+                            $value_amount_wo_tax = isset($data[$row][7]) ? $data[$row][7] : '';
+                            $value_tax_value = isset($data[$row][8]) ? $data[$row][8] : '';
+                            $value_total_included_tax = 0.00;
+                            $value_certified_amount = 0.00;
+
+                            if(!empty($value_invoice_code)) {
+                                $this->db->like('invoice_number', $value_invoice_code);
+                                $result = $this->db->get(db_prefix() . 'pur_invoices')->row();
+                                if (empty($result)) {
+                                    $string_error .= _l('invoice_code').' '._l('does_not_exist');
+                                    $flag2 = 1;
+                                } else {
+                                    $flag_id_invoice_id = $result->id;
+                                }
+                            }
 
                             if (empty($value_vendor)) {
-                                $string_error .= 'Vendor ' . _l('does_not_exist');
+                                $string_error .= _l('pur_vendor').' '._l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('company', $value_vendor);
                                 $result = $this->db->get(db_prefix() . 'pur_vendor')->row();
                                 if (empty($result)) {
-                                    $string_error .= 'Vendor ' . _l('does_not_exist');
+                                    $string_error .= _l('pur_vendor').' '._l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_vendor_id = $result->userid;
@@ -10990,13 +11003,13 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_budget_head)) {
-                                $string_error .= 'Budget Head ' . _l('does_not_exist');
+                                $string_error .= _l('group_pur').' '._l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('name', $value_budget_head);
                                 $result = $this->db->get(db_prefix() . 'items_groups')->row();
                                 if (empty($result)) {
-                                    $string_error .= 'Budget Head ' . _l('does_not_exist');
+                                    $string_error .= _l('group_pur').' '._l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_budget_head = $result->id;
@@ -11004,7 +11017,7 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_invoice_date)) {
-                                $string_error .= 'Invoice date ' . _l('does_not_exist');
+                                $string_error .= _l('invoice_date').' '._l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 if (is_numeric($value_invoice_date)) {
@@ -11016,13 +11029,13 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_project)) {
-                                $string_error .= 'Project ' . _l('does_not_exist');
+                                $string_error .= _l('project').' '._l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('name', $value_project);
                                 $result = $this->db->get(db_prefix() . 'projects')->row();
                                 if (empty($result)) {
-                                    $string_error .= 'Project ' . _l('does_not_exist');
+                                    $string_error .= _l('project').' '._l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_project = $result->id;
@@ -11030,15 +11043,15 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_description_of_services)) {
-                                $string_error .= 'Description of Services ' . _l('does_not_exist');
+                                $string_error .= _l('description_of_services').' '._l('does_not_exist');
                                 $flag2 = 1;
                             }
 
-                            if (empty($value_Amount_wo_tax)) {
-                                $value_Amount_wo_tax = 0.00;
+                            if (empty($value_amount_wo_tax)) {
+                                $value_amount_wo_tax = 0.00;
                             } else {
-                                $value_Amount_wo_tax = str_replace(",", "", $value_Amount_wo_tax);
-                                $value_Amount_wo_tax = floatval($value_Amount_wo_tax);
+                                $value_amount_wo_tax = str_replace(",", "", $value_amount_wo_tax);
+                                $value_amount_wo_tax = floatval($value_amount_wo_tax);
                             }
 
                             if (empty($value_tax_value)) {
@@ -11048,33 +11061,21 @@ class purchase extends AdminController
                                 $value_tax_value = floatval($value_tax_value);
                             }
 
-                            if (empty($value_total_included_tax)) {
-                                $value_total_included_tax = 0.00;
-                            } else {
-                                $value_total_included_tax = str_replace(",", "", $value_total_included_tax);
-                                $value_total_included_tax = floatval($value_total_included_tax);
-                            }
-
-                            if (empty($value_certified_amount)) {
-                                $value_certified_amount = 0.00;
-                            } else {
-                                $value_certified_amount = str_replace(",", "", $value_certified_amount);
-                                $value_certified_amount = floatval($value_certified_amount);
-                            }
+                            $value_total_included_tax = $value_amount_wo_tax + $value_tax_value;
+                            $value_certified_amount = $value_amount_wo_tax + $value_tax_value; 
 
                             if (($flag == 1) || $flag2 == 1) {
                                 //write error file
                                 $writer->writeSheetRow('Sheet1', [
+                                    $value_invoice_code,
                                     $value_invoice_number,
                                     $value_vendor,
                                     $value_budget_head,
                                     $value_invoice_date,
                                     $value_project,
                                     $value_description_of_services,
-                                    $value_Amount_wo_tax,
+                                    $value_amount_wo_tax,
                                     $value_tax_value,
-                                    $value_total_included_tax,
-                                    $value_certified_amount,
                                     $string_error,
                                 ]);
                                 $total_row_false++;
@@ -11086,29 +11087,67 @@ class purchase extends AdminController
                                 $invoice_number = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
 
                                 $rd = array();
-                                $rd['invoice_number'] = $invoice_number;
-                                $rd['vendor_invoice_number'] = !empty($value_invoice_number) ? $value_invoice_number : $invoice_number;
-                                $rd['vendor'] = isset($flag_id_vendor_id) ? $flag_id_vendor_id : 0;
-                                $rd['group_pur'] = isset($flag_id_budget_head) ? $flag_id_budget_head : 0;
-                                $rd['description_services'] = $value_description_of_services;
-                                $rd['invoice_date'] = $value_invoice_date;
-                                $rd['currency'] = 3;
-                                $rd['to_currency'] = 3;
-                                $rd['date_add'] = date('Y-m-d');
-                                $rd['payment_status'] = 0;
-                                $rd['project_id'] = isset($flag_id_project) ? $flag_id_project : 1;
-                                $rd['vendor_submitted_amount_without_tax'] = $value_Amount_wo_tax;
-                                $rd['vendor_submitted_tax_amount'] = $value_tax_value;
-                                $rd['vendor_submitted_amount'] = $value_total_included_tax;
-                                $rd['final_certified_amount'] = $value_certified_amount;
 
-                                $rows[] = $rd;
+                                if(!empty($flag_id_invoice_id)) {
+                                    $rd['vendor_invoice_number'] = !empty($value_invoice_number) ? $value_invoice_number : $invoice_number;
+                                    $rd['vendor'] = isset($flag_id_vendor_id) ? $flag_id_vendor_id : 0;
+                                    $rd['group_pur'] = isset($flag_id_budget_head) ? $flag_id_budget_head : 0;
+                                    $rd['description_services'] = $value_description_of_services;
+                                    $rd['invoice_date'] = $value_invoice_date;
+                                    $rd['project_id'] = isset($flag_id_project) ? $flag_id_project : 1;
+                                    $rd['vendor_submitted_amount_without_tax'] = $value_amount_wo_tax;
+                                    $rd['vendor_submitted_tax_amount'] = $value_tax_value;
+                                    $rd['vendor_submitted_amount'] = $value_total_included_tax;
+                                    $rd['final_certified_amount'] = $value_certified_amount;
 
-                                $this->db->insert(db_prefix() . 'pur_invoices', $rd);
-                                $pur_invoice_id = $this->db->insert_id();
-                                if ($pur_invoice_id) {
-                                    $this->db->where('option_name', 'next_inv_number');
-                                    $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number + 1]);
+                                    // Update Vendor billing tracker
+                                    $this->db->where('id', $flag_id_invoice_id);
+                                    $this->db->update(db_prefix() . 'pur_invoices', $rd);
+
+                                    // Update RIL Invoices
+                                    $this->db->where('vbt_id', $flag_id_invoice_id);
+                                    $this->db->where('rel_type', 'invoice');
+                                    $this->db->where('annexure !=', 17);
+                                    $this->db->update(db_prefix() . 'itemable', [
+                                        'rate' => $value_amount_wo_tax,
+                                        'tax' => $value_tax_value,
+                                    ]);
+
+                                    $this->db->where('vbt_id', $flag_id_invoice_id);
+                                    $this->db->where('rel_type', 'invoice');
+                                    $this->db->where('annexure !=', 17);
+                                    $itemable_row = $this->db->get(db_prefix() . 'itemable')->row();
+                                    if(!empty($itemable_row)) {
+                                        if(!empty($itemable_row->rel_id)) {
+                                            $this->invoices_model->update_management_fees($itemable_row->rel_id);
+                                            $this->invoices_model->update_basic_invoice_details($itemable_row->rel_id);
+                                        }
+                                    }
+                                } else {
+                                    $rd['invoice_number'] = $invoice_number;
+                                    $rd['vendor_invoice_number'] = !empty($value_invoice_number) ? $value_invoice_number : $invoice_number;
+                                    $rd['vendor'] = isset($flag_id_vendor_id) ? $flag_id_vendor_id : 0;
+                                    $rd['group_pur'] = isset($flag_id_budget_head) ? $flag_id_budget_head : 0;
+                                    $rd['description_services'] = $value_description_of_services;
+                                    $rd['invoice_date'] = $value_invoice_date;
+                                    $rd['currency'] = 3;
+                                    $rd['to_currency'] = 3;
+                                    $rd['date_add'] = date('Y-m-d');
+                                    $rd['payment_status'] = 0;
+                                    $rd['project_id'] = isset($flag_id_project) ? $flag_id_project : 1;
+                                    $rd['vendor_submitted_amount_without_tax'] = $value_amount_wo_tax;
+                                    $rd['vendor_submitted_tax_amount'] = $value_tax_value;
+                                    $rd['vendor_submitted_amount'] = $value_total_included_tax;
+                                    $rd['final_certified_amount'] = $value_certified_amount;
+
+                                    $rows[] = $rd;
+
+                                    $this->db->insert(db_prefix() . 'pur_invoices', $rd);
+                                    $pur_invoice_id = $this->db->insert_id();
+                                    if ($pur_invoice_id) {
+                                        $this->db->where('option_name', 'next_inv_number');
+                                        $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number + 1]);
+                                    }
                                 }
                             }
                         }
