@@ -215,6 +215,7 @@ $tblbudgetsummaryhtml .= '</tbody>';
 $tblbudgetsummaryhtml .= '</table>';
 
 $pdf->writeHTML($tblbudgetsummaryhtml, true, false, false, false, '');
+$pdf->AddPage();
 
 $tblindexahtml = '';
 $tblindexahtml .= '<h3 style="text-align:center; ">Index - A</h3>';
