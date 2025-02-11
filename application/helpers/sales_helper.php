@@ -732,6 +732,7 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'long_description' => nl2br($item['long_description']),
                     'qty'              => $item['qty'],
                     'rate'             => number_format($item['rate'], get_decimal_places(), '.', ''),
+                    'tax'              => isset($item['tax']) ? $item['tax'] : 0.00,
                     'rel_id'           => $rel_id,
                     'rel_type'         => $rel_type,
                     'item_order'       => $item['order'],

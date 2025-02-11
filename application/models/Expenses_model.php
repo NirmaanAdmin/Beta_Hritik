@@ -622,6 +622,7 @@ class Expenses_model extends App_Model
             }
         } else {
             $vbt_data = $this->get_vendor_billing_tracker($expense->vbt_id);
+            $new_invoice_data['subtotal'] = $vbt_data->vendor_submitted_amount_without_tax;
             $new_invoice_data['newitems'][1]['description']      = $expense->name;
             $new_invoice_data['newitems'][1]['long_description'] = $expense->description;
 
