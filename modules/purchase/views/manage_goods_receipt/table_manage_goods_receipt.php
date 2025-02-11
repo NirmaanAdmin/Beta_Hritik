@@ -79,7 +79,7 @@ foreach ($rResult as $aRow) {
                 $aRow['goods_receipt_code'] . '</a>';
      
             } else {
-                $name .= '<a href="' . admin_url('purchase/view_po_tracker/' . $aRow['id']) . '" onclick="init_po_tracker(' . $aRow['id'] . '); small_table_full_view(); return false;">' . _l('view') . '</a>';
+                $name .= '<a href="' . admin_url('purchase/view_po_tracker/' . $aRow['id']) . '" onclick="init_po_tracker(' . $aRow['id'] . '); small_table_full_view(); return false;">' . _l('Update') . '</a>';
             }
             $_data = $name;
         } elseif ($aColumns[$i] == 'pr_order_id') {
