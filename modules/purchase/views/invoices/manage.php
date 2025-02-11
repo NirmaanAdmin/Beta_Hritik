@@ -178,7 +178,7 @@
                            'billing_status',
                            'ril_invoice',
                            'amount_without_tax',
-                           'tax_value',
+                           'vendor_submitted_tax_amount',
                            'total_included_tax',
                            'certified_amount',
                            'transaction_id',
@@ -208,9 +208,9 @@
                               <th><?php echo _l('billing_status'); ?></th>
                               <th><?php echo _l('ril_invoice'); ?></th>
                               <th><?php echo _l('amount_without_tax'); ?></th>
-                              <th><?php echo _l('tax_value'); ?></th>
-                              <th><?php echo _l('total_included_tax'); ?></th>
-                              <th><?php echo _l('certified_amount'); ?></th>
+                              <th><?php echo _l('vendor_submitted_tax_amount'); ?></th>
+                              <!-- <th><?php echo _l('total_included_tax'); ?></th> -->
+                              <th><?php echo _l('final_certified_amount'); ?></th>
                               <th><?php echo _l('transaction_id'); ?></th>
                               <th><?php echo _l('tag'); ?></th>
                               <th><?php echo _l('adminnote'); ?></th>

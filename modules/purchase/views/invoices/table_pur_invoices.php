@@ -29,7 +29,7 @@ $aColumns = [
     'expense_convert',
     'vendor_submitted_amount_without_tax',
     'vendor_submitted_tax_amount',
-    'vendor_submitted_amount',
+    // 'vendor_submitted_amount',
     'final_certified_amount',
     'transactionid',
     'vendor_note',
@@ -351,7 +351,7 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'final_certified_amount') {
             $_data = app_format_money($aRow['final_certified_amount'], $base_currency->symbol);
         } elseif ($aColumns[$i] == 'vendor_submitted_amount') {
-            $_data = app_format_money($aRow['vendor_submitted_amount'], $base_currency->symbol);
+            // $_data = app_format_money($aRow['vendor_submitted_amount'], $base_currency->symbol);
         } elseif ($aColumns[$i] == 'payment_status') {
             // $class = ''; 
             // if($aRow['payment_status'] == 'unpaid'){

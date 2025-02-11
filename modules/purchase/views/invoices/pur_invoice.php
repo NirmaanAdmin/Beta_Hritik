@@ -21,8 +21,8 @@
 																				} else {
 																					echo 'fa-plus';
 																				} ?>" aria-hidden="true"></i> <?php echo _l($title); ?> <?php if (isset($pur_invoice)) {
-																							echo ' ' . pur_html_entity_decode($pur_invoice->invoice_number);
-																						} ?></h4>
+																																			echo ' ' . pur_html_entity_decode($pur_invoice->invoice_number);
+																																		} ?></h4>
 								<hr />
 							</div>
 						</div>
@@ -253,18 +253,13 @@
 										<?php } ?>
 									</select>
 								</div>
-								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
+								<div class="col-md-6 pad_left_0 hide" style="margin-top: 0%;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount'); ?> ( ₹ )</label>
 										<input type="number" class="form-control" id="vendor_submitted_amount" name="vendor_submitted_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->vendor_submitted_amount : '') ?>">
 									</div>
 								</div>
-								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
-									<div class="form-group">
-										<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
-										<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
-									</div>
-								</div>
+
 								<div class="col-md-6 pad_left_0">
 									<div class="form-group">
 										<label for="payment_date_reliance"><?php echo _l('payment_date_reliance'); ?></label>
@@ -277,6 +272,12 @@
 										<label for="payment_date_basilius"><?php echo _l('payment_date_basilius'); ?></label>
 										<?php $payment_date_basilius = (isset($pur_invoice) ? _d($pur_invoice->payment_date_basilius) : '');
 										echo render_date_input('payment_date_basilius', '', $payment_date_basilius, array()); ?>
+									</div>
+								</div>
+								<div class="col-md-6 pad_left_0" style="margin-top: 0%;">
+									<div class="form-group">
+										<label for="final certified amount" class="control-label"> <?php echo _l('final_certified_amount'); ?> ( ₹ )</label>
+										<input type="number" class="form-control" id="final_certified_amount" name="final_certified_amount" readonly value="<?= (isset($pur_invoice) ? $pur_invoice->final_certified_amount : '') ?>">
 									</div>
 								</div>
 
