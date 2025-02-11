@@ -11100,6 +11100,8 @@ class purchase extends AdminController
                                     $rd['vendor_submitted_amount'] = $value_total_included_tax;
                                     $rd['final_certified_amount'] = $value_certified_amount;
 
+                                    $rows[] = $rd;
+                                    
                                     // Update Vendor billing tracker
                                     $this->db->where('id', $flag_id_invoice_id);
                                     $this->db->update(db_prefix() . 'pur_invoices', $rd);
