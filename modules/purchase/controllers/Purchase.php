@@ -3477,8 +3477,12 @@ class purchase extends AdminController
 
             if (isset($data['pur_invoice'])) {
                 $pur_invoice = $data['pur_invoice'];
+                $select_invoice = $data['select_invoice'];
+                $applied_to_invoice = $data['applied_to_invoice'];
                 $data['vbt_id'] = $pur_invoice;
                 unset($data['pur_invoice']);
+                unset($data['select_invoice']);
+                unset($data['applied_to_invoice']);
             }
 
             $id = $this->expenses_model->add($data);
@@ -3487,11 +3491,34 @@ class purchase extends AdminController
 
                 $this->purchase_model->mark_converted_pur_invoice($pur_invoice, $id);
 
-                set_alert('success', _l('converted', _l('expense')));
-                echo json_encode([
-                    'url'       => admin_url('expenses/list_expenses/' . $id),
-                    'expenseid' => $id,
-                ]);
+                if($select_invoice == "create_invoice") {
+                    $invoiceid = $this->expenses_model->convert_to_invoice($id);
+                    if ($invoiceid) {
+                        set_alert('success', _l('expense_converted_to_invoice'));
+                        echo json_encode([
+                            'url' => admin_url('invoices/invoice/' . $invoiceid),
+                            'expenseid' => $id,
+                        ]);
+                    } 
+                } else {
+                    $input = array();
+                    $input['invoice_id'] = $applied_to_invoice;
+                    $input['expense_id'] = $id;
+                    $invoiceid = $this->expenses_model->applied_to_invoice($input);
+                    if ($invoiceid) {
+                        set_alert('success', _l('expense_applied_to_invoice'));
+                        echo json_encode([
+                            'url' => admin_url('invoices/invoice/' . $invoiceid),
+                            'expenseid' => $id,
+                        ]);
+                    }
+                }
+
+                // set_alert('success', _l('converted', _l('expense')));
+                // echo json_encode([
+                //     'url'       => admin_url('expenses/list_expenses/' . $id),
+                //     'expenseid' => $id,
+                // ]);
                 die;
             }
         }
@@ -4971,6 +4998,7 @@ class purchase extends AdminController
         $data['payment_modes'] = $this->payment_modes_model->get('', [], true);
         $data['billing_invoices'] = $this->purchase_model->get_billing_invoices();
         $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['invoices'] = get_all_applied_invoices();
         $this->load->view('invoices/manage', $data);
     }
 

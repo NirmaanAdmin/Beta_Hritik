@@ -318,6 +318,32 @@
             }
             ?>
             <?php echo render_select('paymentmode', $expenses_modes, array('id', 'name'), 'payment_mode'); ?>
+
+            <div class="row mbot15">
+               <div class="col-md-6">
+                  <div class="form-group">
+                     <label class="control-label" for="select_invoice"><?php echo _l('invoice'); ?></label>
+                     <select class="selectpicker display-block" data-width="100%" name="select_invoice" id="select_invoice" data-none-selected-text="<?php echo _l('none'); ?>">
+                        <option value=""></option>
+                        <option value="create_invoice"><?php echo _l('expense_convert_to_invoice'); ?></option>
+                        <option value="applied_invoice"><?php echo _l('applied_to_invoice'); ?></option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-md-6 applied-to-invoice hide">
+                  <div class="form-group">
+                     <label class="control-label" for="applied_to_invoice"><?php echo _l('applied_to_invoice'); ?></label>
+                     <select class="selectpicker display-block" data-width="100%" name="applied_to_invoice" id="applied_to_invoice" data-none-selected-text="<?php echo _l('applied_to_invoice'); ?>">
+                        <option value=""></option>
+                        <?php
+                        foreach ($invoices as $i) { ?>
+                         <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])). " (".$i['title'].")"; ?></option>
+                        <?php } ?>
+                     </select>
+                  </div>
+               </div>
+            </div>
+            
             <div class="clearfix mbot15"></div>
             <?php echo render_custom_fields('expenses'); ?>
             <div id="pur_invoice_additional"></div>

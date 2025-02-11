@@ -167,11 +167,28 @@ var expenseDropzone;
     });
   });
 
+  $('body').on('change', '#select_invoice', function (e) {
+    e.preventDefault();
+    var select_invoice = $(this).val();
+    if(select_invoice == 'applied_invoice') {
+      $('.applied-to-invoice').removeClass('hide');
+    } else {
+      $('.applied-to-invoice').addClass('hide');
+      $('#applied_to_invoice').val('').selectpicker('refresh');
+    }
+  });
+
   appValidateForm($('#pur_invoice-expense-form'), {
     expense_name: 'required',
     category: 'required',
     date: 'required',
-    amount: 'required'
+    amount: 'required',
+    select_invoice: 'required',
+    applied_to_invoice: {
+      required: function () {
+          return $('#select_invoice').val() == 'applied_invoice';
+      }
+    },
   }, projectExpenseSubmitHandler);
 })(jQuery);
 /**
