@@ -347,7 +347,7 @@ foreach ($rResult as $aRow) {
             if (!empty($aRow['vendor_submitted_amount_without_tax'])) {
                 // Display as plain text
                 $_data = '<span class="vsawt-display" data-id="' . $aRow['id'] . '">' .
-                app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol) .
+                    app_format_money($aRow['vendor_submitted_amount_without_tax'], $base_currency->symbol) .
                     '</span>';
             } else {
                 // Render as an editable input if no budget exists
@@ -367,7 +367,7 @@ foreach ($rResult as $aRow) {
             if (!empty($aRow['vendor_submitted_tax_amount'])) {
                 // Display as plain text
                 $_data = '<span class="vsta-display" data-id="' . $aRow['id'] . '">' .
-                app_format_money($aRow['vendor_submitted_tax_amount'], $base_currency->symbol) .
+                    app_format_money($aRow['vendor_submitted_tax_amount'], $base_currency->symbol) .
                     '</span>';
             } else {
                 // Render as an editable input if no budget exists
@@ -496,7 +496,9 @@ foreach ($rResult as $aRow) {
                     if (!empty($expense_convert_check->invoiceid)) {
                         $invoice_data = get_invoice_data($expense_convert_check->invoiceid);
                         if (!empty($invoice_data)) {
-                            $expense_convert =  $invoice_data->title;
+
+                            $expense_convert = '<a href="' . admin_url('invoices/list_invoices/' . $invoice_data->id) . '">' . $invoice_data->title . '</a>';
+
                             $invoice_ids .= $invoice_data->id . ",";
                         }
                     }

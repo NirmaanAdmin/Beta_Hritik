@@ -158,7 +158,8 @@ return App_table::find('expenses')
             $row[] = '<a href="' . admin_url('clients/client/' . $aRow['clientid']) . '">' . e($aRow['company']) . '</a>';
 
             if ($aRow['invoiceid']) {
-                $row[] = '<a href="' . admin_url('invoices/list_invoices/' . $aRow['invoiceid']) . '">' . e(format_invoice_number($aRow['invoiceid'])) . '</a>';
+                $invoice_data = get_invoice_data($aRow['invoiceid']);
+                $row[] = '<a href="' . admin_url('invoices/list_invoices/' . $aRow['invoiceid']) . '">' .$invoice_data->title . '</a>';
             } else {
                 $row[] = '';
             }
@@ -201,7 +202,7 @@ return App_table::find('expenses')
                 }
             })
             ->options(function ($ci) {
-                return collect($ci->expenses_model->get_expenses_years())->map(fn ($data) => [
+                return collect($ci->expenses_model->get_expenses_years())->map(fn($data) => [
                     'value' => $data['year'],
                     'label' => $data['year'],
                 ])->all();
@@ -210,7 +211,7 @@ return App_table::find('expenses')
         App_table_filter::new('category', 'MultiSelectRule')
             ->label(_l('expense_report_category'))
             ->options(function ($ci) {
-                return collect($ci->expenses_model->get_category())->map(fn ($category) => [
+                return collect($ci->expenses_model->get_category())->map(fn($category) => [
                     'value' => $category['id'],
                     'label' => $category['name'],
                 ])->all();
@@ -223,17 +224,17 @@ return App_table::find('expenses')
         App_table_filter::new('paymentmode', 'SelectRule')->label(_l('payment_mode'))->options(function ($ci) {
             return collect($ci->payment_modes_model->get('', [
                 'invoices_only !=' => 1,
-            ], true))->map(fn ($mode) => [
+            ], true))->map(fn($mode) => [
                 'value' => $mode['id'],
                 'label' => $mode['name'],
             ])->all();
         }),
         App_table_filter::new('vendor', 'MultiSelectRule')
-        ->label(_l('vendor'))
-        ->options(function ($ci) {
-            return collect($ci->expenses_model->get_vendor_list())->map(fn ($vendor) => [
-                'value' => $vendor['userid'],
-                'label' => $vendor['company'],
-            ])->all();
-        }),
+            ->label(_l('vendor'))
+            ->options(function ($ci) {
+                return collect($ci->expenses_model->get_vendor_list())->map(fn($vendor) => [
+                    'value' => $vendor['userid'],
+                    'label' => $vendor['company'],
+                ])->all();
+            }),
     ]);
