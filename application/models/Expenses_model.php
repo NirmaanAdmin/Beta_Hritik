@@ -453,6 +453,10 @@ class Expenses_model extends App_Model
         $this->db->delete(db_prefix() . 'expenses');
 
         if ($this->db->affected_rows() > 0) {
+
+            $this->db->where('id', $_expense->vbt_id);
+            $this->db->update(db_prefix() . 'pur_invoices', ['expense_convert' => 0]);
+
             // Delete the custom field values
             $this->db->where('relid', $id);
             $this->db->where('fieldto', 'expenses');
