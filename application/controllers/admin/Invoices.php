@@ -489,6 +489,7 @@ class Invoices extends AdminController
             $data['send_later'] = true;
             $this->session->unset_userdata('send_later');
         }
+        $data['annexure_invoice'] = $this->invoices_model->get_annexure_invoice_details($id, false, true);
 
         $this->load->view('admin/invoices/invoice_preview_template', $data);
     }

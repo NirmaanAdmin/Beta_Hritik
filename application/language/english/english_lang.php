@@ -4173,3 +4173,4 @@ $lang['total_current_billing_amount'] = 'Total Current RA  Billing Amount';
 $lang['total_cumulative_billing'] = 'Total Cumulative Billing';
 $lang['balance_available'] = 'Balance available Under 2011 SPC';
 $lang['remarks'] = 'Remarks';
+$lang['budget_summary'] = 'Previous Billing';

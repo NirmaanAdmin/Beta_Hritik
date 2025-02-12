@@ -164,11 +164,195 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="table-responsive">
+            <?php $base_currency = $invoice->currency_name; ?>
+            <div class="horizontal-tabs">
+                <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#final_invoice" aria-controls="final_invoice" role="tab" id="tab_final_invoice" data-toggle="tab">
+                            Final invoice
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#indexa" aria-controls="indexa" role="tab" id="tab_indexa" data-toggle="tab">
+                            Index - A
+                        </a>
+                    </li>
+
+                    <?php
+                    $annexures = get_all_annexures(); ?>
+                    <li role="presentation" class="dropdown">
+                        <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Annexures
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
+                            <?php
+                            foreach ($annexures as $key => $annexure) { ?>
+                                <li>
+                                    <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
+                                        <?php echo $annexure['name']." (".$annexure['annexure_name'].")" ?>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="final_invoice">
+                    <div class="table-responsive s_table">
+                        <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+                            <thead>
+                                <tr>
+                                    <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                    aria-hidden="true" data-toggle="tooltip"
+                                    data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
+                                    <?php echo _l('budget_head'); ?></th>
+                                    <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                    <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="main">
+                                    <td align="left">
+                                        <?php echo $annexure_invoice['final_invoice']['name']; ?>
+                                    </td>
+                                    <td align="left">
+                                        <?php 
+                                        echo clear_textarea_breaks($annexure_invoice['final_invoice']['description']);
+                                        ?>
+                                    </td>
+                                    <td align="right">
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
+                                    </td>
+                                    <td align="right">
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
+                                    </td>
+                                    <td align="right">
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
+                                    </td>
+                                    <td align="right">
+                                        <?php 
+                                        echo clear_textarea_breaks($annexure_invoice['final_invoice']['remarks']);
+                                        ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="indexa">
+                    <div class="table-responsive s_table">
+                        <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+                            <thead>
+                                <tr>
+                                    <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                    aria-hidden="true" data-toggle="tooltip"
+                                    data-title="<?php echo _l('budget_head'); ?>"></i>
+                                    <?php echo _l('budget_head'); ?></th>
+                                    <th width="25%" align="left"><?php echo _l('invoice_table_item_description'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                    <th width="20%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                    <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if(!empty($annexure_invoice['indexa'])) {
+                                    $indexa = $annexure_invoice['indexa'];
+                                    foreach($indexa as $ikey => $ivalue) { ?>
+                                        <tr class="main">
+                                            <td align="left">
+                                                <?php echo $ivalue['name']; ?>
+                                            </td>
+                                            <td align="left">
+                                                <?php echo $ivalue['description']; ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($ivalue['subtotal'], $base_currency); ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($ivalue['tax'], $base_currency); ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($ivalue['amount'], $base_currency); ?>
+                                            </td>
+                                        </tr>
+                                    <?php } 
+                                } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <?php
-                    $items = get_items_table_data($invoice, 'invoice', 'html', true);
-                    echo $items->table();
-                ?>
+                $annexures = get_all_annexures();
+                $i = 1; 
+                foreach ($annexures as $key => $annexure) { ?>
+                    <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>">
+                        <div class="table-responsive s_table">
+                            <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                        <th width="13%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                        aria-hidden="true" data-toggle="tooltip"
+                                        data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
+                                        <?php echo _l('budget_head'); ?></th>
+                                        <th width="15%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                        <th width="13%" align="left"><?php echo _l('vendor'); ?></th>
+                                        <th width="13%" align="left"><?php echo _l('invoice_no'); ?></th>
+                                        <th width="13%" align="left"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                        <th width="10%" align="left"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                        <th width="13%" align="left"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                        <th width="13%" align="right"><?php echo _l('remarks'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    if (isset($invoice) || isset($add_items)) 
+                                    {
+                                        if (isset($invoice)) {
+                                            $add_items = $invoice->items;
+                                        }
+                                        foreach ($add_items as $item) {
+                                            if($item['annexure'] == $annexure['id']) {
+                                                $vendor_name = '';
+                                                $invoice_no = '';
+                                                if(!empty($item['vbt_id'])) {
+                                                    $pur_invoices = get_pur_invoices($item['vbt_id']);
+                                                    $vendor = get_vendor_details($pur_invoices->vendor);
+                                                    $vendor_name = $vendor->company;
+                                                    $invoice_no = $pur_invoices->vendor_invoice_number;
+                                                }
+                                                $table_row = '<tr class="sortable item">';
+                                                $amount = $item['rate'] * $item['qty'];
+                                                $amount = app_format_money($amount, $base_currency);
+                                                $table_row .= '<td>' . clear_textarea_breaks($item['description']) . '</td>';
+                                                $table_row .= '<td>' . clear_textarea_breaks($item['long_description']) . '</td>';
+                                                $table_row .= '<td>'.$vendor_name.'</td>';
+                                                $table_row .= '<td>'.$invoice_no.'</td>';
+                                                $table_row .= '<td>' . app_format_money($item['rate'],$base_currency) . '</td>';
+                                                $table_row .= '<td>' . app_format_money($item['tax'],$base_currency) . '</td>';
+                                                $table_row .= '<td>' . $amount . '</td>';
+                                                $table_row .= '<td align="right">' . clear_textarea_breaks($item['remarks']) . '</td>';
+                                                $table_row .= '</tr>';
+                                                echo $table_row;
+                                                $i++;
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <?php } ?>
+
             </div>
         </div>
         <div class="col-md-5 col-md-offset-7">
@@ -196,11 +380,6 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                         </td>
                     </tr>
                     <?php } ?>
-                    <?php
-                        foreach ($items->taxes() as $tax) {
-                            echo '<tr class="tax-area"><td class="bold !tw-text-neutral-700">' . e($tax['taxname']) . ' (' . e(app_format_number($tax['taxrate'])) . '%)</td><td>' . e(app_format_money($tax['total_tax'], $invoice->currency_name)) . '</td></tr>';
-                        }
-                    ?>
                     <?php if ((int)$invoice->adjustment != 0) { ?>
                     <tr>
                         <td>

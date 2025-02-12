@@ -184,7 +184,7 @@ $pdf->writeHTML($tblbanksignhtml, true, false, false, false, '');
 $pdf->AddPage();
 
 $tblbudgetsummaryhtml = '';
-$tblbudgetsummaryhtml .= '<h3 style="text-align:center; ">Budget summary</h3>';
+$tblbudgetsummaryhtml .= '<h3 style="text-align:center; ">'._l('budget_summary').'</h3>';
 $tblbudgetsummaryhtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="3">';
 $tblbudgetsummaryhtml .= '
 <thead>
