@@ -228,4 +228,12 @@ return App_table::find('expenses')
                 'label' => $mode['name'],
             ])->all();
         }),
+        App_table_filter::new('vendor', 'MultiSelectRule')
+        ->label(_l('vendor'))
+        ->options(function ($ci) {
+            return collect($ci->expenses_model->get_vendor_list())->map(fn ($vendor) => [
+                'value' => $vendor['userid'],
+                'label' => $vendor['company'],
+            ])->all();
+        }),
     ]);

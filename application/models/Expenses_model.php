@@ -1054,4 +1054,19 @@ class Expenses_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->get(db_prefix() . 'pur_invoices')->row();
     }
+
+    /**
+     * Get vendor list
+     * @param  mixed $id vendor id (Optional)
+     * @return mixed     object or array
+     */
+    public function get_vendor_list($id = '')
+    {
+        if (is_numeric($id)) {
+            $this->db->where('userid', $id);
+            return $this->db->get(db_prefix() . 'pur_vendor')->row();
+        }
+        $this->db->order_by('company', 'asc');
+        return $this->db->get(db_prefix() . 'pur_vendor')->result_array();
+    }
 }
