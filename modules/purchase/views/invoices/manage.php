@@ -60,7 +60,7 @@
                               ?>
                               <select name="billing_invoices" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('pur_invoices'); ?>" data-actions-box="true">
                                  <option value=""></option>
-                                 <option value="None">None</option>
+                                 <option value="None">To Be Converted</option>
                                  <?php foreach ($billing_invoices as $invoice) { ?>
                                     <option value="<?php echo $invoice['id']; ?>" <?php echo ($billing_invoices_filter_val == $invoice['id']) ? 'selected' : ''; ?>><?php echo $invoice['value']; ?></option>
                                  <?php } ?>
