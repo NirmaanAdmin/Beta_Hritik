@@ -118,23 +118,25 @@ $tblfinvoicehtml .= '
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
      <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
      <th width="11%" align="left">' . _l('budget_head') . '</th>
-     <th width="26%" align="left">' . _l('description_of_services') . '</th>
+     <th width="18%" align="left">' . _l('description_of_services') . '</th>
      <th width="10%" align="left">HSN/SAC</th>
      <th width="13%" align="right">' . _l('invoice_table_rate_heading') . '</th>
      <th width="13%" align="right">' . _l('invoice_table_tax_heading') . '</th>
-     <th width="18%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+     <th width="17%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+     <th width="13%" align="right">' . _l('remarks') . '</th>
   </tr>
 </thead>';
 $tblfinvoicehtml .= '<tbody>';
 $tblfinvoicehtml .= '
-<tr style="font-size:12px;">
+<tr style="font-size:11px;">
     <td width="5%;" align="center">1</td>
-    <td width="11%" align="left;"><span style="font-size:12px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
-    <td width="26%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
+    <td width="11%" align="left;"><span style="font-size:10px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
+    <td width="18%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
     <td width="10%" align="left">' . $hsn_sac_code . '</td>
     <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
     <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
-    <td width="18%" align="right">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
+    <td width="17%" align="right">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
+    <td width="13%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
 </tr>';
 $tblfinvoicehtml .= '</tbody>';
 $tblfinvoicehtml .= '</table>';
@@ -274,15 +276,16 @@ if (!empty($indexa)) {
         $tblannexurehtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="5">';
         $tblannexurehtml .= '
             <thead>
-              <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
+              <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
                  <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
-                 <th width="13%" align="left">' . _l('budget_head') . '</th>
-                 <th width="16%" align="left">' . _l('description_of_services') . '</th>
+                 <th width="12%" align="left">' . _l('budget_head') . '</th>
+                 <th width="12%" align="left">' . _l('description_of_services') . '</th>
                  <th width="16%" align="left">' . _l('vendor') . '</th>
-                 <th width="12%" align="left">' . _l('invoice_no') . '</th>
-                 <th width="12%" align="right">' . _l('invoice_table_rate_heading') . '</th>
+                 <th width="11%" align="left">' . _l('invoice_no') . '</th>
+                 <th width="11%" align="right">' . _l('invoice_table_rate_heading') . '</th>
                  <th width="11%" align="right">' . _l('invoice_table_tax_heading') . '</th>
-                 <th width="15%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+                 <th width="12%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+                 <th width="10%" align="right">' . _l('remarks') . '</th>
               </tr>
             </thead>';
         $tblannexurehtml .= '<tbody>';
@@ -326,15 +329,16 @@ if (!empty($indexa)) {
                     $invoice_no = $pur_invoices->vendor_invoice_number;
                 }
                 $tblannexurehtml .= '
-                <tr style="font-size:12px;">
+                <tr style="font-size:11px;">
                     <td width="5%;" align="center">' . $inv . '</td>
-                    <td width="13%" align="left;"><span style="font-size:11px;"><strong>' . clear_textarea_breaks($item['description']) . '</strong></span></td>
-                    <td width="16%" align="left"><span style="color:#424242;">' . clear_textarea_breaks($item['long_description']) . '</span></td>
+                    <td width="12%" align="left;"><span style="font-size:11px;"><strong>' . clear_textarea_breaks($item['description']) . '</strong></span></td>
+                    <td width="12%" align="left"><span style="color:#424242;">' . clear_textarea_breaks($item['long_description']) . '</span></td>
                     <td width="16%" align="left">' . $vendor_name . '</td>
-                    <td width="12%" align="left">' . $invoice_no . '</td>
-                    <td width="12%" align="right">' . app_format_money($item['rate'], $invoice->currency_name) . '</td>
+                    <td width="11%" align="left">' . $invoice_no . '</td>
+                    <td width="11%" align="right">' . app_format_money($item['rate'], $invoice->currency_name) . '</td>
                     <td width="11%" align="right">' . app_format_money($total_tax, $invoice->currency_name) . '</td>
-                    <td width="15%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
+                    <td width="12%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
+                    <td width="10%" align="right">' . clear_textarea_breaks($item['remarks']) . '</td>
                 </tr>';
                 $inv++;
             }

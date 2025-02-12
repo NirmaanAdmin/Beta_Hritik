@@ -1982,6 +1982,7 @@ class Invoices_model extends App_Model
             $final_invoice['subtotal'] += $value['subtotal'];
             $final_invoice['tax'] += $value['tax'];
             $final_invoice['amount'] += $value['amount'];
+            $final_invoice['remarks'] = $invoice->remarks;
         }
 
         $budgetsummary = array();
@@ -2117,6 +2118,7 @@ class Invoices_model extends App_Model
             foreach ($items as $key => $value) {
                 $this->db->where('id', $value['itemid']);
                 $this->db->update(db_prefix() . 'itemable', [
+                    'remarks' => $value['remarks'],
                     'long_description' => $value['long_description'],
                 ]);
             }

@@ -581,11 +581,11 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                        <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
                                         aria-hidden="true" data-toggle="tooltip"
                                         data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
                                         <?php echo _l('budget_head'); ?></th>
-                                        <th width="25%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                        <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
                                         <?php
                                         $custom_fields = get_custom_fields('items');
                                         foreach ($custom_fields as $cf) {
@@ -600,8 +600,9 @@
                                         ?>
                                         <?php /* <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
                                         <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
-                                        <th width="20%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                                         <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -625,6 +626,10 @@
                                         </td>
                                         <td align="right">
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo '<textarea name="remarks" class="form-control" rows="5"> ' . clear_textarea_breaks($annexure_invoice['final_invoice']['remarks']) . '</textarea>';
+                                            ?>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -845,11 +850,11 @@
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                            <th width="13%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
                                             aria-hidden="true" data-toggle="tooltip"
                                             data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
                                             <?php echo _l('budget_head'); ?></th>
-                                            <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                            <th width="15%" align="left"><?php echo _l('description_of_services'); ?></th>
                                             <?php
                                             $custom_fields = get_custom_fields('items');
                                             foreach ($custom_fields as $cf) {
@@ -865,9 +870,10 @@
                                             <th width="13%" align="left"><?php echo _l('vendor'); ?></th>
                                             <th width="13%" align="left"><?php echo _l('invoice_no'); ?></th>
                                             <?php /* <th width="5%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
-                                            <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                            <th width="13%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
                                             <th width="10%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
-                                            <th width="15%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                            <th width="13%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
+                                            <th width="13%" align="right"><?php echo _l('remarks'); ?></th>
                                             <th align="center"><i class="fa fa-cog"></i></th>
                                         </tr>
                                     </thead>
@@ -941,6 +947,7 @@
                                                     $table_row .= '<td class="taxrate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_total();" onchange="calculate_total();" name="' . $items_indicator . '[' . $i . '][taxname]" value="' . $item['tax'] . '" class="form-control" disabled></td>';
                                                     // $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $invoice_item_taxes, 'invoice', $item['id'], true, $manual, true) . '</td>';
                                                     $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
+                                                    $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][remarks]" class="form-control" rows="5">' . clear_textarea_breaks($item['remarks']) . '</textarea></td>';
                                                     $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
                                                     if (isset($item['task_id'])) {
                                                         if (!is_array($item['task_id'])) {
