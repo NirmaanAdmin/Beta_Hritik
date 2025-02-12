@@ -1395,5 +1395,5 @@ function amount_to_word($number) {
   $str = array_reverse($str);
   $result = implode('', $str);
   $points = ($point) ? "." . $words[$point / 10] . " " .$words[$point = $point % 10] : '';
-  return $result . $points . " Only";
+  return $result  . " Only";
 }

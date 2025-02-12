@@ -496,7 +496,7 @@ foreach ($rResult as $aRow) {
                     if (!empty($expense_convert_check->invoiceid)) {
                         $invoice_data = get_invoice_data($expense_convert_check->invoiceid);
                         if (!empty($invoice_data)) {
-                            $expense_convert = e(format_invoice_number($invoice_data->id)) . " (" . $invoice_data->title . ")";
+                            $expense_convert =  $invoice_data->title;
                             $invoice_ids .= $invoice_data->id . ",";
                         }
                     }
