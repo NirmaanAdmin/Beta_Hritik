@@ -173,6 +173,11 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                         </a>
                     </li>
                     <li role="presentation">
+                        <a href="#budget_summary" aria-controls="budget_summary" role="tab" id="tab_budget_summary" data-toggle="tab">
+                            <?php echo _l('budget_summary'); ?>
+                        </a>
+                    </li>
+                    <li role="presentation">
                         <a href="#indexa" aria-controls="indexa" role="tab" id="tab_indexa" data-toggle="tab">
                             Index - A
                         </a>
@@ -281,6 +286,51 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                             </td>
                                             <td align="right">
                                                 <?php echo app_format_money($ivalue['amount'], $base_currency); ?>
+                                            </td>
+                                        </tr>
+                                    <?php } 
+                                } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="budget_summary">
+                    <div class="table-responsive s_table">
+                        <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+                            <thead>
+                                <tr>
+                                    <th width="20%" align="left"><?php echo _l('budget_head'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('budgeted_amount'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('total_previous_billing'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('total_current_billing_amount'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('total_cumulative_billing'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('balance_available'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if(!empty($annexure_invoice['budgetsummary'])) {
+                                    $budgetsummary = $annexure_invoice['budgetsummary'];
+                                    foreach($budgetsummary as $bkey => $bvalue) { ?>
+                                        <tr class="main">
+                                            <td align="left">
+                                                <?php echo $bvalue['name']; ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($bvalue['budgeted_amount'], $base_currency); ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($bvalue['total_previous_billing'], $base_currency); ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($bvalue['total_current_billing_amount'], $base_currency); ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($bvalue['total_cumulative_billing'], $base_currency); ?>
+                                            </td>
+                                            <td align="right">
+                                                <?php echo app_format_money($bvalue['balance_available'], $base_currency); ?>
                                             </td>
                                         </tr>
                                     <?php } 
