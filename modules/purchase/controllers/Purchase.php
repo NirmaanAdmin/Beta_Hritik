@@ -2865,7 +2865,6 @@ class purchase extends AdminController
         $this->load->model('currencies_model');
         $data['currencies'] = $this->currencies_model->get();
         $data['title'] = _l('purchase_reports');
-        $data['items'] = $this->purchase_model->get_items();
         $this->load->view('reports/manage_report', $data);
     }
 
@@ -10576,12 +10575,12 @@ class purchase extends AdminController
                 $row[] = app_format_number($remaining_quantities);
 
                 $production_status = '';
-                if ($receipt_value['production_status'] > 0) {
-                    if ($receipt_value['production_status'] == 1) {
+                if ($aRow['production_status'] > 0) {
+                    if ($aRow['production_status'] == 1) {
                         $production_status = _l('not_started');
-                    } elseif ($receipt_value['production_status'] == 2) {
+                    } elseif ($aRow['production_status'] == 2) {
                         $production_status = _l('on_going');
-                    } elseif ($receipt_value['production_status'] == 3) {
+                    } elseif ($aRow['production_status'] == 3) {
                         $production_status = _l('approved');
                     } else {
                         $production_status = '';

@@ -3863,3 +3863,11 @@ function get_pur_invoice_subtotal($invoiceid = '')
     }
     return 0;
 }
+
+function get_pur_all_orders(){
+    $CI = &get_instance();
+    $CI->db->select('id, pur_order_name, pur_order_number');
+    $CI->db->from(db_prefix() . 'pur_orders');
+    $pur_order = $CI->db->get()->result_array();
+    return $pur_order;
+}

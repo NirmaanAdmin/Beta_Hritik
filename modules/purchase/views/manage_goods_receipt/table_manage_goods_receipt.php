@@ -7,7 +7,7 @@ $aColumns = [
     'goods_receipt_code',
     'pr_order_id',
     'supplier_name',
-    'buyer_id',
+    // 'buyer_id',
     'kind',
     'date_add',
     'delivery_status',
@@ -64,13 +64,15 @@ foreach ($rResult as $aRow) {
         $_data = $aRow[$aColumns[$i]];
         if ($aColumns[$i] == 'supplier_name') {
             $_data = wh_get_vendor_company_name($aRow['supplier_name']);
-        } elseif ($aColumns[$i] == 'buyer_id') {
-            $_data = '<a href="' . admin_url('staff/profile/' . $aRow['buyer_id']) . '">' . staff_profile_image($aRow['buyer_id'], [
-                'staff-profile-image-small',
-            ]) . '</a>';
-            $_data .= ' <a href="' . admin_url('staff/profile/' . $aRow['buyer_id']) . '">' . get_staff_full_name($aRow['buyer_id']) . '</a>';
-        } elseif ($aColumns[$i] == 'date_add') {
-            $_data = _d($aRow['date_add']);
+        }
+        //  elseif ($aColumns[$i] == 'buyer_id') {
+        //     $_data = '<a href="' . admin_url('staff/profile/' . $aRow['buyer_id']) . '">' . staff_profile_image($aRow['buyer_id'], [
+        //         'staff-profile-image-small',
+        //     ]) . '</a>';
+        //     $_data .= ' <a href="' . admin_url('staff/profile/' . $aRow['buyer_id']) . '">' . get_staff_full_name($aRow['buyer_id']) . '</a>';
+        // } 
+        elseif ($aColumns[$i] == 'date_add') {
+            $_data = date('d M, Y', strtotime($aRow['date_add']));
         } elseif($aColumns[$i] == 'goods_receipt_code') {
             $name = '';
             if(!empty($aRow['goods_receipt_code'])) {

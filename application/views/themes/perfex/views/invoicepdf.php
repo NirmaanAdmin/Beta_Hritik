@@ -126,6 +126,8 @@ $tblfinvoicehtml .= '
      <th width="13%" align="right">' . _l('remarks') . '</th>
   </tr>
 </thead>';
+$amount = $basic_invoice['final_invoice']['amount']; // Get the original amount
+$rounded_amount = round($amount); // Round off the amount
 $tblfinvoicehtml .= '<tbody>';
 $tblfinvoicehtml .= '
 <tr style="font-size:11px;">
@@ -135,7 +137,7 @@ $tblfinvoicehtml .= '
     <td width="10%" align="left">' . $hsn_sac_code . '</td>
     <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
     <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
-    <td width="17%" align="right">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
+    <td width="17%" align="right">' . app_format_money($rounded_amount, $invoice->currency_name) . '</td>
     <td width="13%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
 </tr>';
 $tblfinvoicehtml .= '</tbody>';
@@ -143,7 +145,7 @@ $tblfinvoicehtml .= '</table>';
 
 $pdf->writeHTML($tblfinvoicehtml, true, false, false, false, '');
 
-$amount_to_word = amount_to_word($basic_invoice['final_invoice']['amount']);
+$amount_to_word = amount_to_word($rounded_amount);
 $tbltotalinvhtml = '';
 $tbltotalinvhtml .= '<table width="100%" cellspacing="0" cellpadding="0">';
 $tbltotalinvhtml .= '
