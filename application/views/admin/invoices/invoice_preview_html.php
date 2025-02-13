@@ -249,6 +249,36 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                             </tbody>
                         </table>
                     </div>
+                    <div class="col-md-8 col-md-offset-4">
+                        <table class="table text-right">
+                            <tbody>
+                                <tr id="subtotal">
+                                    <td>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <tr id="total_tax">
+                                    <td>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="indexa">
@@ -290,6 +320,36 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                         </tr>
                                     <?php } 
                                 } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-8 col-md-offset-4">
+                        <table class="table text-right">
+                            <tbody>
+                                <tr id="subtotal">
+                                    <td>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <tr id="total_tax">
+                                    <td>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
                             </tbody>
                         </table>
                     </div>
@@ -415,6 +475,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
 
             </div>
         </div>
+        <?php /*
         <div class="col-md-5 col-md-offset-7">
             <table class="table text-right">
                 <tbody>
@@ -494,7 +555,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                     <?php } ?>
                 </tbody>
             </table>
-        </div>
+        </div> */ ?>
     </div>
     <?php if (count($invoice->attachments) > 0) { ?>
     <div class="clearfix"></div>
