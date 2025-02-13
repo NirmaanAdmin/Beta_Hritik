@@ -898,6 +898,53 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('total').' '._l('budgeted_amount'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['total_budget_summary']['budgeted_amount'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('total_previous_billing'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['total_budget_summary']['total_previous_billing'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('total_current_billing_amount'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['total_budget_summary']['total_current_billing_amount'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('total_cumulative_billing'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['total_budget_summary']['total_cumulative_billing'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('total').' '._l('balance_available'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['total_budget_summary']['balance_available'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <?php

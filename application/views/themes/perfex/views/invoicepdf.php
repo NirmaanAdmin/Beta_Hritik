@@ -217,6 +217,36 @@ $tblbudgetsummaryhtml .= '</tbody>';
 $tblbudgetsummaryhtml .= '</table>';
 
 $pdf->writeHTML($tblbudgetsummaryhtml, true, false, false, false, '');
+$pdf->Ln(3);
+$tblbudgetsummaryhtml = '';
+$tblbudgetsummaryhtml .= '<table cellpadding="6" style="font-size:14px">';
+$tblbudgetsummaryhtml .= '
+<tr>
+    <td align="right" width="75%"><strong>' . _l('total').' '._l('budgeted_amount') . '</strong></td>
+    <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['budgeted_amount'], $invoice->currency_name) . '</td>
+</tr>';
+$tblbudgetsummaryhtml .= '
+<tr>
+    <td align="right" width="75%"><strong>' ._l('total_previous_billing') . '</strong></td>
+    <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['total_previous_billing'], $invoice->currency_name) . '</td>
+</tr>';
+$tblbudgetsummaryhtml .= '
+<tr>
+    <td align="right" width="75%"><strong>' ._l('total_current_billing_amount') . '</strong></td>
+    <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['total_current_billing_amount'], $invoice->currency_name) . '</td>
+</tr>';
+$tblbudgetsummaryhtml .= '
+<tr>
+    <td align="right" width="75%"><strong>' ._l('total_cumulative_billing') . '</strong></td>
+    <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['total_cumulative_billing'], $invoice->currency_name) . '</td>
+</tr>';
+$tblbudgetsummaryhtml .= '
+<tr>
+    <td align="right" width="75%"><strong>' . _l('total').' '._l('balance_available') . '</strong></td>
+    <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['balance_available'], $invoice->currency_name) . '</td>
+</tr>';
+$tblbudgetsummaryhtml .= '</table>';
+$pdf->writeHTML($tblbudgetsummaryhtml, true, false, false, false, '');
 $pdf->AddPage();
 
 $tblindexahtml = '';

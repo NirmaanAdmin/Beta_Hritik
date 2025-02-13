@@ -2043,11 +2043,23 @@ class Invoices_model extends App_Model
                 $budgetsummary = array_values($budgetsummary);
             }
         }
+
+        $total_budget_summary = array();
+        if(!empty($budgetsummary)) {
+            foreach ($budgetsummary as $key => $value) {
+                $total_budget_summary['budgeted_amount'] += $value['budgeted_amount'];
+                $total_budget_summary['total_previous_billing'] += $value['total_previous_billing'];
+                $total_budget_summary['total_current_billing_amount'] += $value['total_current_billing_amount'];
+                $total_budget_summary['total_cumulative_billing'] += $value['total_cumulative_billing'];
+                $total_budget_summary['balance_available'] += $value['balance_available'];
+            }
+        }
     
         $response = array();
         $response['indexa'] = $indexa;
         $response['final_invoice'] = $final_invoice;
         $response['budgetsummary'] = $budgetsummary;
+        $response['total_budget_summary'] = $total_budget_summary;
 
         return $response;
     }
