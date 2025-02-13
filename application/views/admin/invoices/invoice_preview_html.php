@@ -318,19 +318,29 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                                 <?php echo $bvalue['name']; ?>
                                             </td>
                                             <td align="right">
-                                                <?php echo app_format_money($bvalue['budgeted_amount'], $base_currency); ?>
+                                                <span class="budgeted-amount-display" data-invoice="<?php echo $bvalue['invoiceid']; ?>" data-annexure="<?php echo $bvalue['annexure']; ?>" data-id="<?php echo $bkey+1; ?>">
+                                                    <?php echo app_format_money($bvalue['budgeted_amount'], $base_currency); ?>
+                                                </span>
                                             </td>
                                             <td align="right">
-                                                <?php echo app_format_money($bvalue['total_previous_billing'], $base_currency); ?>
+                                                <span class="total-previous-billing-display" data-invoice="<?php echo $bvalue['invoiceid']; ?>" data-annexure="<?php echo $bvalue['annexure']; ?>" data-id="<?php echo $bkey+1; ?>">
+                                                    <?php echo app_format_money($bvalue['total_previous_billing'], $base_currency); ?>
+                                                </span>
                                             </td>
                                             <td align="right">
-                                                <?php echo app_format_money($bvalue['total_current_billing_amount'], $base_currency); ?>
+                                                <span class="total-current-billing-amount-display" data-id="<?php echo $bkey+1; ?>">
+                                                    <?php echo app_format_money($bvalue['total_current_billing_amount'], $base_currency); ?>
+                                                </span>
                                             </td>
                                             <td align="right">
-                                                <?php echo app_format_money($bvalue['total_cumulative_billing'], $base_currency); ?>
+                                                <span class="total-cumulative-billing-display" data-id="<?php echo $bkey+1; ?>">
+                                                    <?php echo app_format_money($bvalue['total_cumulative_billing'], $base_currency); ?>
+                                                </span>
                                             </td>
                                             <td align="right">
-                                                <?php echo app_format_money($bvalue['balance_available'], $base_currency); ?>
+                                                <span class="balance-available-display" data-id="<?php echo $bkey+1; ?>">
+                                                    <?php echo app_format_money($bvalue['balance_available'], $base_currency); ?>
+                                                </span>
                                             </td>
                                         </tr>
                                     <?php } 

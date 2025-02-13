@@ -548,6 +548,11 @@
                             </a>
                         </li>
                         <li role="presentation">
+                            <a href="#budget_summary" aria-controls="budget_summary" role="tab" id="tab_budget_summary" data-toggle="tab">
+                                <?php echo _l('budget_summary'); ?>
+                            </a>
+                        </li>
+                        <li role="presentation">
                             <a href="#indexa" aria-controls="indexa" role="tab" id="tab_indexa" data-toggle="tab">
                                 Index - A
                             </a>
@@ -835,6 +840,61 @@
                                         </td>
                                     </tr>
                                     <?php hooks()->do_action('after_admin_invoice_form_total_field', $invoice ?? null); ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="budget_summary">
+                        <div class="table-responsive s_table">
+                            <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                        <th width="20%" align="left"><?php echo _l('budget_head'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('budgeted_amount'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('total_previous_billing'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('total_current_billing_amount'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('total_cumulative_billing'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('balance_available'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    if(!empty($annexure_invoice['budgetsummary'])) {
+                                        $budgetsummary = $annexure_invoice['budgetsummary'];
+                                        foreach($budgetsummary as $bkey => $bvalue) { ?>
+                                            <tr class="main">
+                                                <td align="left">
+                                                    <?php echo $bvalue['name']; ?>
+                                                </td>
+                                                <td align="right">
+                                                    <span class="budgeted-amount-display" data-invoice="<?php echo $bvalue['invoiceid']; ?>" data-annexure="<?php echo $bvalue['annexure']; ?>" data-id="<?php echo $bkey+1; ?>">
+                                                        <?php echo app_format_money($bvalue['budgeted_amount'], $base_currency); ?>
+                                                    </span>
+                                                </td>
+                                                <td align="right">
+                                                    <span class="total-previous-billing-display" data-invoice="<?php echo $bvalue['invoiceid']; ?>" data-annexure="<?php echo $bvalue['annexure']; ?>" data-id="<?php echo $bkey+1; ?>">
+                                                        <?php echo app_format_money($bvalue['total_previous_billing'], $base_currency); ?>
+                                                    </span>
+                                                </td>
+                                                <td align="right">
+                                                    <span class="total-current-billing-amount-display" data-id="<?php echo $bkey+1; ?>">
+                                                        <?php echo app_format_money($bvalue['total_current_billing_amount'], $base_currency); ?>
+                                                    </span>
+                                                </td>
+                                                <td align="right">
+                                                    <span class="total-cumulative-billing-display" data-id="<?php echo $bkey+1; ?>">
+                                                        <?php echo app_format_money($bvalue['total_cumulative_billing'], $base_currency); ?>
+                                                    </span>
+                                                </td>
+                                                <td align="right">
+                                                    <span class="balance-available-display" data-id="<?php echo $bkey+1; ?>">
+                                                        <?php echo app_format_money($bvalue['balance_available'], $base_currency); ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        <?php } 
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>

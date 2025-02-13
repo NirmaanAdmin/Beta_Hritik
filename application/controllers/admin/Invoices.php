@@ -879,4 +879,48 @@ class Invoices extends AdminController
         $this->db->update(db_prefix() . 'pur_invoices', ['expense_convert' => $expense]);
         return true;
     }
+
+    public function update_total_previous_billing_summary()
+    {
+        $invoiceid = $this->input->post('invoiceid');
+        $annexure = $this->input->post('annexure');
+        $amount = $this->input->post('amount');
+
+        if (!$invoiceid || !$annexure || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('invoiceid', $invoiceid);
+        $this->db->where('annexure', $annexure);
+        $success = $this->db->update('tblinvoice_budget_summary', ['total_previous_billing' => $amount]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Total Previous Billing is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    // public function update_budgeted_amount_summary()
+    // {
+    //     $invoiceid = $this->input->post('invoiceid');
+    //     $annexure = $this->input->post('annexure');
+    //     $amount = $this->input->post('amount');
+
+    //     if (!$invoiceid || !$annexure || !$amount) {
+    //         echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+    //         return;
+    //     }
+
+    //     $this->db->where('invoiceid', $invoiceid);
+    //     $this->db->where('annexure', $annexure);
+    //     $success = $this->db->update('tblinvoice_budget_summary', ['budgeted_amount' => $amount]);
+
+    //     if ($success) {
+    //         echo json_encode(['success' => true, 'message' => 'Budgeted Amount is updated']);
+    //     } else {
+    //         echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+    //     }
+    // }
 }

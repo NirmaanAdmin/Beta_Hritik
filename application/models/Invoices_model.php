@@ -1983,6 +1983,8 @@ class Invoices_model extends App_Model
             foreach ($all_annexures as $akey => $avalue) {
                 $annexure = $avalue['id'];
                 $budgetsummary[$annexure]['name'] = $avalue['name']." (".$avalue['annexure_name'].")";
+                $budgetsummary[$annexure]['invoiceid'] = $invoiceid;
+                $budgetsummary[$annexure]['annexure'] = $annexure;
                 $budgeted_amount = 0;
                 $total_previous_billing = 0;
                 $total_current_billing_amount = 0;
@@ -2019,11 +2021,10 @@ class Invoices_model extends App_Model
                     $total_current_billing_amount = !empty($total_current_billing_array) ? $total_current_billing_array[0]['amount'] : 0;
                 }
 
-                // $invoice_budget_summary = $this->update_invoice_budget_summary($invoiceid, $annexure, $budgeted_amount, $total_previous_billing);
-                // if(!empty($invoice_budget_summary)) {
-                //     $budgeted_amount = $invoice_budget_summary['budgeted_amount'];
-                //     $total_previous_billing = $invoice_budget_summary['total_previous_billing'];
-                // }
+                $invoice_budget_summary = $this->update_invoice_budget_summary($invoiceid, $annexure, $total_previous_billing);
+                if(!empty($invoice_budget_summary)) {
+                    $total_previous_billing = $invoice_budget_summary['total_previous_billing'];
+                }
 
                 $budgetsummary[$annexure]['budgeted_amount'] = $budgeted_amount;
                 $budgetsummary[$annexure]['total_previous_billing'] = $total_previous_billing;
@@ -2152,24 +2153,21 @@ class Invoices_model extends App_Model
         return $all_indexes;
     }
 
-    public function update_invoice_budget_summary($invoiceid, $annexure, $budgeted_amount, $total_previous_billing)
+    public function update_invoice_budget_summary($invoiceid, $annexure, $total_previous_billing)
     {
         $response = array();
         $this->db->where('invoiceid', $invoiceid);
         $this->db->where('annexure', $annexure);
         $result = $this->db->get(db_prefix() . 'invoice_budget_summary')->row();
         if(!empty($result)) {
-            $response['budgeted_amount'] = $result->budgeted_amount;
             $response['total_previous_billing'] = $result->total_previous_billing;
             return $response;
         } else {
             $input = array();
             $input['invoiceid'] = $invoiceid;
             $input['annexure'] = $annexure;
-            $input['budgeted_amount'] = $budgeted_amount;
             $input['total_previous_billing'] = $total_previous_billing;
             $this->db->insert(db_prefix() . 'invoice_budget_summary', $input);
-            $response['budgeted_amount'] = $budgeted_amount;
             $response['total_previous_billing'] = $total_previous_billing;
             return $response;
         }
