@@ -923,4 +923,71 @@ class Invoices extends AdminController
     //         echo json_encode(['success' => false, 'message' => _l('update_failed')]);
     //     }
     // }
+
+    public function export_to_xlsx($invoiceid)
+    {
+        $sheets = $this->invoices_model->get_invoice_export_data($invoiceid);
+        $invoice_number = format_invoice_number($invoiceid);
+        $file_name = mb_strtoupper(slug_it($invoice_number));
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=".$file_name.".xls");
+        header("Cache-Control: max-age=0");
+
+        echo '<?xml version="1.0"?>';
+        echo '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+        xmlns:html="http://www.w3.org/TR/REC-html40">';
+
+        // Define styles
+        echo '<Styles>
+            <Style ss:ID="HeaderStyle">
+                <Font ss:Bold="1" ss:Color="#FFFFFF"/>
+                <Interior ss:Color="#323a45" ss:Pattern="Solid"/>
+                <Alignment ss:Horizontal="Center"/>
+            </Style>
+            <Style ss:ID="DataStyle">
+                <Font ss:Color="#000000"/>
+            </Style>
+            <Style ss:ID="PriceStyle">
+                <NumberFormat ss:Format="Currency"/>
+            </Style>
+        </Styles>';
+
+        foreach ($sheets as $sheetName => $htmlTable) 
+        {
+            echo '<Worksheet ss:Name="' . htmlspecialchars($sheetName) . '">
+            <Table ss:DefaultColumnWidth="120">';
+
+            $dom = new DOMDocument();
+            @$dom->loadHTML($htmlTable);
+            $rows = $dom->getElementsByTagName('tr');
+
+            $isHeader = true;
+
+            foreach ($rows as $row) {
+                echo '<Row>';
+                $cols = $row->getElementsByTagName('td');
+                $headers = $row->getElementsByTagName('th');
+                if ($headers->length > 0) {
+                    foreach ($headers as $header) {
+                        echo '<Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">' . htmlspecialchars($header->nodeValue) . '</Data></Cell>';
+                    }
+                } else {
+                    $colIndex = 0;
+                    foreach ($cols as $col) {
+                        $styleID = ($colIndex == 1) ? 'PriceStyle' : 'DataStyle'; // Apply currency format to price column
+                        echo '<Cell ss:StyleID="' . $styleID . '"><Data ss:Type="String">' . htmlspecialchars($col->nodeValue) . '</Data></Cell>';
+                        $colIndex++;
+                    }
+                }
+                echo '</Row>';
+            }
+
+            echo '</Table></Worksheet>';
+        }
+        echo '</Workbook>';
+        exit;
+    }
 }

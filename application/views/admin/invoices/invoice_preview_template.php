@@ -154,6 +154,7 @@
                         <div class="mtop10"></div>
                     </div>
                     <div class="pull-right">
+                        <a href="<?php echo admin_url('invoices/export_to_xlsx/' . $invoice->id); ?>" class="btn btn-primary"><?php echo _l('export_to_xlsx'); ?></a>
                         <?php
                      $_tooltip              = _l('invoice_sent_to_email_tooltip');
                      $_tooltip_already_send = '';

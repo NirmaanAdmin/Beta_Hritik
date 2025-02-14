@@ -2184,4 +2184,185 @@ class Invoices_model extends App_Model
             return $response;
         }
     }
+
+    public function get_invoice_export_data($invoiceid)
+    {
+        $response = array();
+        $invoice = $this->get($invoiceid);
+        $basic_invoice = $this->get_annexure_invoice_details($invoiceid);
+
+        // Final invoice
+        $tblfinvoicehtml = '';
+        $tblfinvoicehtml .= '<table>';
+        $tblfinvoicehtml .= '
+          <tr>
+            <th>' . _l('the_number_sign') . '</th>
+            <th>' . _l('budget_head') . '</th>
+            <th>' . _l('description_of_services') . '</th>
+            <th>HSN/SAC</th>
+            <th>' . _l('invoice_table_rate_heading') . '</th>
+            <th>' . _l('invoice_table_tax_heading') . '</th>
+            <th>' . _l('invoice_table_amount_heading') . '</th>
+            <th>' . _l('remarks') . '</th>
+          </tr>';
+        $amount = $basic_invoice['final_invoice']['amount'];
+        $rounded_amount = round($amount);
+        $tblfinvoicehtml .= '
+        <tr>
+            <td>1</td>
+            <td>' . $basic_invoice['final_invoice']['name'] . '</td>
+            <td>' . $basic_invoice['final_invoice']['description'] . '</td>
+            <td>' . $hsn_sac_code . '</td>
+            <td>' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name, true) . '</td>
+            <td>' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name, true) . '</td>
+            <td>' . app_format_money($rounded_amount, $invoice->currency_name, true) . '</td>
+            <td>' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
+        </tr>';
+        $tblfinvoicehtml .= '</table>';
+
+        $response['Final invoice'] = $tblfinvoicehtml;
+
+        // Budget summary
+        $tblbudgetsummaryhtml = '';
+        $tblbudgetsummaryhtml .= '<table>';
+        $tblbudgetsummaryhtml .= '
+          <tr>
+            <th>' . _l('the_number_sign') . '</th>
+            <th>' . _l('budget_head') . '</th>
+            <th>' . _l('budgeted_amount') . '</th>
+            <th>' . _l('total_previous_billing') . '</th>
+            <th>' . _l('total_current_billing_amount') . '</th>
+            <th>' . _l('total_cumulative_billing') . '</th>
+            <th>' . _l('balance_available') . '</th>
+          </tr>';
+        $budgetsummary = $basic_invoice['budgetsummary'];
+        foreach ($budgetsummary as $ikey => $ivalue) {
+            $tblbudgetsummaryhtml .= '
+            <tr>
+                <td>' . ($ikey + 1) . '</td>
+                <td>' . $ivalue['name'] . '</td>
+                <td>' . app_format_money($ivalue['budgeted_amount'], $invoice->currency_name, true) . '</td>
+                <td>' . app_format_money($ivalue['total_previous_billing'], $invoice->currency_name, true) . '</td>
+                <td>' . app_format_money($ivalue['total_current_billing_amount'], $invoice->currency_name, true) . '</td>
+                <td>' . app_format_money($ivalue['total_cumulative_billing'], $invoice->currency_name, true) . '</td>
+                <td>' . app_format_money($ivalue['balance_available'], $invoice->currency_name, true) . '</td>
+            </tr>';
+        }
+        $tblbudgetsummaryhtml .= '
+          <tr>
+            <th>' . _l('total') . '</th>
+            <th></th>
+            <th>' . app_format_money($basic_invoice['total_budget_summary']['budgeted_amount'], $invoice->currency_name, true) . '</th>
+            <th>' . app_format_money($basic_invoice['total_budget_summary']['total_previous_billing'], $invoice->currency_name, true) . '</th>
+            <th>' . app_format_money($basic_invoice['total_budget_summary']['total_current_billing_amount'], $invoice->currency_name, true) . '</th>
+            <th>' . app_format_money($basic_invoice['total_budget_summary']['total_cumulative_billing'], $invoice->currency_name, true) . '</th>
+            <th>' . app_format_money($basic_invoice['total_budget_summary']['balance_available'], $invoice->currency_name, true) . '</th>
+          </tr>';
+        $tblbudgetsummaryhtml .= '</table>';
+
+        $response[_l('budget_summary')] = $tblbudgetsummaryhtml;
+
+        $tblindexahtml = '';
+        $tblindexahtml .= '<table>';
+        $tblindexahtml .= '
+          <tr>
+            <th>' . _l('the_number_sign') . '</th>
+            <th>' . _l('budget_head') . '</th>
+            <th>' . _l('invoice_table_rate_heading') . '</th>
+            <th>' . _l('invoice_table_tax_heading') . '</th>
+            <th>' . _l('invoice_table_amount_heading') . '</th>
+          </tr>';
+        $indexa = $basic_invoice['indexa'];
+        foreach ($indexa as $ikey => $ivalue) {
+            $tblindexahtml .= '
+            <tr>
+                <td>' . ($ikey + 1) . '</td>
+                <td>' . $ivalue['name'] . '</td>
+                <td>' . app_format_money($ivalue['subtotal'], $invoice->currency_name, true) . '</td>
+                <td>' . app_format_money($ivalue['tax'], $invoice->currency_name, true) . '</td>
+                <td>' . app_format_money($ivalue['amount'], $invoice->currency_name, true) . '</td>
+            </tr>';
+        }
+        $tblindexahtml .= '
+          <tr>
+            <th>' . _l('total') . '</th>
+            <th></th>
+            <th>' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name, true) . '</th>
+            <th>' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name, true) . '</th>
+            <th>' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name, true) . '</th>
+          </tr>';
+        $tblindexahtml .= '</table>';
+
+        $response['Index - A'] = $tblindexahtml;
+
+        if (!empty($indexa)) {
+            foreach ($indexa as $akey => $avalue) {
+                $tblannexurehtml = '';
+                $tblannexurehtml .= '<table>';
+                $tblannexurehtml .= '
+                  <tr>
+                    <th>' . _l('the_number_sign') . '</th>
+                    <th>' . _l('budget_head') . '</th>
+                    <th>' . _l('description_of_services') . '</th>
+                    <th>' . _l('vendor') . '</th>
+                    <th>' . _l('invoice_no') . '</th>
+                    <th>' . _l('invoice_table_rate_heading') . '</th>
+                    <th>' . _l('invoice_table_tax_heading') . '</th>
+                    <th>' . _l('invoice_table_amount_heading') . '</th>
+                    <th>' . _l('remarks') . '</th>
+                  </tr>';
+                $invoice_items = $invoice->items;
+                $inv = 1;
+                foreach ($invoice_items as $item) {
+                    if ($item['annexure'] == $avalue['annexure']) {
+                        if (!is_numeric($item['qty'])) {
+                            $item['qty'] = 1;
+                        }
+                        $amount = $item['rate'] * $item['qty'];
+                        $total_tax = $item['tax'];
+                        $annexure = $item['annexure'];
+                        $itemid = $item['id'];
+                        $vendor_name = '';
+                        $invoice_no = '';
+                        if (!empty($item['vbt_id'])) {
+                            $pur_invoices = get_pur_invoices($item['vbt_id']);
+                            $vendor = get_vendor_details($pur_invoices->vendor);
+                            $vendor_name = $vendor->company;
+                            $invoice_no = $pur_invoices->vendor_invoice_number;
+                        }
+                        $tblannexurehtml .= '
+                        <tr>
+                            <td>' . $inv . '</td>
+                            <td>' . clear_textarea_breaks($item['description']) . '</td>
+                            <td>' . clear_textarea_breaks($item['long_description']) . '</td>
+                            <td>' . $vendor_name . '</td>
+                            <td>' . $invoice_no . '</td>
+                            <td>' . app_format_money($item['rate'], $invoice->currency_name, true) . '</td>
+                            <td>' . app_format_money($total_tax, $invoice->currency_name, true) . '</td>
+                            <td>' . app_format_money($amount, $invoice->currency_name, true) . '</td>
+                            <td>' . clear_textarea_breaks($item['remarks']) . '</td>
+                        </tr>';
+                        $inv++;
+                    }
+                }
+                $tblannexurehtml .= '
+                  <tr>
+                    <th>' . _l('total') . '</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>' . app_format_money($avalue['subtotal'], $invoice->currency_name, true) . '</th>
+                    <th>' . app_format_money($avalue['tax'], $invoice->currency_name, true) . '</th>
+                    <th>' . app_format_money($avalue['amount'], $invoice->currency_name, true) . '</th>
+                    <th></th>
+                  </tr>';
+                $tblannexurehtml .= '</table>';
+
+                $response[$avalue['name']] = $tblannexurehtml;
+            }
+        }
+
+        return $response;
+    }
 }
