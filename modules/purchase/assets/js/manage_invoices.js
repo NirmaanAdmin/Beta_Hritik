@@ -15,7 +15,7 @@ var expenseDropzone;
     "billing_status": "[name='billing_status']",
   };
 
-  initDataTable(table_invoice, admin_url + 'purchase/table_pur_invoices', [], [], Params, [5, 'desc']);
+  initDataTable(table_invoice, admin_url + 'purchase/table_pur_invoices', [], [], Params, [6, 'desc']);
   $.each(Params, function (i, obj) {
     $('select' + obj).on('change', function () {
       table_invoice.DataTable().ajax.reload()
