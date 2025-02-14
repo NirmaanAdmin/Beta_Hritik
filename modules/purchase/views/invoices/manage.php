@@ -6,6 +6,49 @@
       z-index: 999;
       left: 204px
    }
+
+   /* Ensure the table uses correct layout */
+   table {
+      table-layout: auto !important;
+      width: 100%;
+      border-collapse: collapse;
+   }
+
+   /* Ensure table cells do not force text stacking */
+   th,
+   td {
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      vertical-align: top;
+   }
+
+   /* Ensure tag container allows wrapping */
+   .tags-labels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      max-width: 100%;
+      align-items: center;
+   }
+
+   /* Ensure each tag is inline and does not stack vertically */
+   .label-tag {
+      display: inline-block;
+      max-width: 100%;
+      white-space: nowrap;
+      /* Prevent text from stacking */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 5px 10px;
+      background: #f0f0f0;
+      border-radius: 5px;
+   }
+
+   /* Ensure tags do not stretch vertically */
+   .label-tag .tag {
+      display: inline;
+   }
 </style>
 <?php $module_name = 'vendor_billing_tracker'; ?>
 <div id="wrapper">
@@ -179,7 +222,7 @@
                            'ril_invoice',
                            'amount_without_tax',
                            'vendor_submitted_tax_amount',
-                           'total_included_tax',
+                           // 'total_included_tax',
                            'certified_amount',
                            'transaction_id',
                            'tag',
@@ -337,13 +380,13 @@
                         <option value=""></option>
                         <?php
                         foreach ($invoices as $i) { ?>
-                         <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])). " (".$i['title'].")"; ?></option>
+                           <option value="<?php echo $i['id']; ?>"><?php echo e(format_invoice_number($i['id'])) . " (" . $i['title'] . ")"; ?></option>
                         <?php } ?>
                      </select>
                   </div>
                </div>
             </div>
-            
+
             <div class="clearfix mbot15"></div>
             <?php echo render_custom_fields('expenses'); ?>
             <div id="pur_invoice_additional"></div>
