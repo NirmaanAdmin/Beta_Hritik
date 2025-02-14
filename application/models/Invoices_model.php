@@ -2098,12 +2098,12 @@ class Invoices_model extends App_Model
 
     public function update_management_fees($invoice_id) 
     {
-        $annexure_invoice = $this->get_annexure_invoice_details($invoice_id, true);
-        $this->db->where('rel_id', $invoice_id);
-        $this->db->where('annexure', 17);
-        $this->db->update(db_prefix() . 'itemable', [
-            'rate' => $annexure_invoice['final_invoice']['subtotal'],
-        ]);
+        // $annexure_invoice = $this->get_annexure_invoice_details($invoice_id, true);
+        // $this->db->where('rel_id', $invoice_id);
+        // $this->db->where('annexure', 17);
+        // $this->db->update(db_prefix() . 'itemable', [
+        //     'rate' => $annexure_invoice['final_invoice']['subtotal'],
+        // ]);
         return true;
     }
 

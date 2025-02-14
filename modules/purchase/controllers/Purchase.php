@@ -11136,7 +11136,7 @@ class purchase extends AdminController
                                     // Update RIL Invoices
                                     $this->db->where('vbt_id', $flag_id_invoice_id);
                                     $this->db->where('rel_type', 'invoice');
-                                    $this->db->where('annexure !=', 17);
+                                    // $this->db->where('annexure !=', 17);
                                     $this->db->update(db_prefix() . 'itemable', [
                                         'rate' => $value_amount_wo_tax,
                                         'tax' => $value_tax_value,
@@ -11144,7 +11144,7 @@ class purchase extends AdminController
 
                                     $this->db->where('vbt_id', $flag_id_invoice_id);
                                     $this->db->where('rel_type', 'invoice');
-                                    $this->db->where('annexure !=', 17);
+                                    // $this->db->where('annexure !=', 17);
                                     $itemable_row = $this->db->get(db_prefix() . 'itemable')->row();
                                     if (!empty($itemable_row)) {
                                         if (!empty($itemable_row->rel_id)) {

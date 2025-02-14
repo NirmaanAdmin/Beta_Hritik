@@ -656,16 +656,16 @@ class Expenses_model extends App_Model
             $new_invoice_data['newitems'][1]['vbt_id'] = $expense->vbt_id;
             $new_invoice_data['newitems'][1]['expense_id'] = $expense->id;
         }
-        $management_fees = array();
-        $management_fees['description'] = 'Management Fees';
-        $management_fees['long_description'] = '';
-        $management_fees['unit'] = 'nos';
-        $management_fees['qty'] = 0.1235;
-        $management_fees['rate'] = $new_invoice_data['subtotal'];
-        $management_fees['order'] = 1;
-        $management_fees['annexure'] = 17;
-        $management_fees['taxname'] = array();
-        $new_invoice_data['newitems'][] = $management_fees;
+        // $management_fees = array();
+        // $management_fees['description'] = 'Management Fees';
+        // $management_fees['long_description'] = '';
+        // $management_fees['unit'] = 'nos';
+        // $management_fees['qty'] = 0.1235;
+        // $management_fees['rate'] = $new_invoice_data['subtotal'];
+        // $management_fees['order'] = 1;
+        // $management_fees['annexure'] = 17;
+        // $management_fees['taxname'] = array();
+        // $new_invoice_data['newitems'][] = $management_fees;
         $this->load->model('invoices_model');
         
         $invoiceid = $this->invoices_model->add($new_invoice_data, true);
