@@ -11275,4 +11275,32 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    public function savePreferences()
+    {
+        $data = $this->input->post();
+
+
+
+        $id = $this->purchase_model->add_update_preferences($data);
+        if ($id) {
+            set_alert('success', _l('added_successfully', _l('pur_order')));
+
+            redirect(admin_url('purchase/invoices'));
+        }
+    }
+
+    public function getPreferences() {
+
+        // Retrieve user preferences using the model
+        $preferences = $this->purchase_model->get_datatable_preferences();
+        // If no preferences exist, return an empty array (or set defaults)
+        if (!$preferences) {
+            $preferences = array();
+        }
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode(['preferences' => $preferences]));
+    }
 }

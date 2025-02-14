@@ -1824,7 +1824,7 @@ class Purchase_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
-      
+
         $this->db->insert(db_prefix() . 'pur_estimates', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_quotation', 'quotation', $insert_id);
@@ -5041,7 +5041,7 @@ class Purchase_model extends App_Model
             
             <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
-        //   <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            //   <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
             $t_mn += $row['total_money'];
             $tax_total += $row['total'] - $row['into_money'];
             $sub_total_amn += $row['total_money'] - $tax_total;
@@ -7901,7 +7901,7 @@ class Purchase_model extends App_Model
     }
     public function change_rli_filter($status, $id, $table_name)
     {
-       
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . $table_name, ['rli_filter' => $status]);
         return true;
@@ -11607,8 +11607,8 @@ class Purchase_model extends App_Model
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
 
-        if(!empty($name)) {
-            if(!empty($serial_no)) {
+        if (!empty($name)) {
+            if (!empty($serial_no)) {
                 $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
             } else {
                 $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
@@ -11618,16 +11618,16 @@ class Purchase_model extends App_Model
             $row .= '<td class="serial_no"></td>';
         }
         // $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
-        $get_selected_item = pur_get_item_selcted_select($item_code,$name_item_name);
-       
+        $get_selected_item = pur_get_item_selcted_select($item_code, $name_item_name);
+
         if ($item_code == '') {
             $row .= '<td class="">
-            <select id="'.$name_item_name.'" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
+            <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
                 <option value="">Type at least 3 letters...</option>
             </select>
          </td>';
         } else {
-            $row .= '<td class="">' .$get_selected_item . '</td>';
+            $row .= '<td class="">' . $get_selected_item . '</td>';
         }
 
         $style_description = '';
@@ -11672,7 +11672,7 @@ class Purchase_model extends App_Model
         // $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
         // $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
         $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
-        
+
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
 
@@ -11683,10 +11683,10 @@ class Purchase_model extends App_Model
         $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
 
         if ($name == '') {
-            if($hide_add_button == true){
-                $add_class= 'hide';
-            }else{
-                $add_class= '';
+            if ($hide_add_button == true) {
+                $add_class = 'hide';
+            } else {
+                $add_class = '';
             }
             $row .= '<td class="' . $add_class . '"><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info "><i class="fa fa-check"></i></button></td>';
         } else {
@@ -15625,7 +15625,7 @@ class Purchase_model extends App_Model
             
             <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
-        //   <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
+            //   <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
             $t_mn += $row['total_money'];
             $tax_total += $row['total'] - $row['into_money'];
             $sub_total_amn += $row['total_money'] - $tax_total;
@@ -16466,7 +16466,7 @@ class Purchase_model extends App_Model
         $rs['taxes_val'] = $tax_val_rs;
         return $rs;
     }
-    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(),$hide_add_button = false,$sub_groups_pur = '', $serial_no = '')
+    public function create_wo_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '', $serial_no = '')
     {
 
         $this->load->model('invoice_items_model');
@@ -16586,8 +16586,8 @@ class Purchase_model extends App_Model
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
 
-        if(!empty($name)) {
-            if(!empty($serial_no)) {
+        if (!empty($name)) {
+            if (!empty($serial_no)) {
                 $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
             } else {
                 $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
@@ -16597,16 +16597,16 @@ class Purchase_model extends App_Model
             $row .= '<td class="serial_no"></td>';
         }
         // $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => 'Product code name', 'readonly' => true]) . '</td>';
-        $get_selected_item = pur_get_item_selcted_select($item_code,$name_item_name);
-       
+        $get_selected_item = pur_get_item_selcted_select($item_code, $name_item_name);
+
         if ($item_code == '') {
             $row .= '<td class="">
-            <select id="'.$name_item_name.'" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
+            <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
                 <option value="">Type at least 3 letters...</option>
             </select>
          </td>';
         } else {
-            $row .= '<td class="">' .$get_selected_item . '</td>';
+            $row .= '<td class="">' . $get_selected_item . '</td>';
         }
 
         $style_description = '';
@@ -16663,10 +16663,10 @@ class Purchase_model extends App_Model
         $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
 
         if ($name == '') {
-             if($hide_add_button == true){
-                $add_class= 'hide';
-            }else{
-                $add_class= '';
+            if ($hide_add_button == true) {
+                $add_class = 'hide';
+            } else {
+                $add_class = '';
             }
             $row .= '<td class="' . $add_class . '"><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
         } else {
@@ -16835,14 +16835,63 @@ class Purchase_model extends App_Model
         $billing_invoices = $query->result_array();
 
         $result = array();
-        if(!empty($billing_invoices)) {
+        if (!empty($billing_invoices)) {
             foreach ($billing_invoices as $key => $value) {
                 $item = array();
                 $item['id'] = $value['id'];
-                $item['value'] = e(format_invoice_number($value['id'])). " (".$value['title'].")";
+                $item['value'] = e(format_invoice_number($value['id'])) . " (" . $value['title'] . ")";
                 $result[] = $item;
             }
         }
         return $result;
+    }
+
+    public function add_update_preferences($data)
+    {
+        // Get the preferences data and the current user's ID.
+        $preferences = $data['preferences'];
+        $user_id = get_staff_user_id();
+
+        // Convert the preferences to JSON if necessary.
+        $preferences_json = is_array($preferences) || is_object($preferences)
+            ? json_encode($preferences)
+            : $preferences;
+
+        // Prepare the data array for the query.
+        $data = array(
+            'staff_id' => $user_id, // Assuming the 'id' column holds the user ID.
+            'datatable_preferences' => $preferences_json
+        );
+
+        // Check if a record already exists for the user.
+        $this->db->where('staff_id', $user_id);
+        $query = $this->db->get('tbluser_preferences');
+
+        if ($query->num_rows() > 0) {
+            // Record exists, so update it.
+            $this->db->where('staff_id', $user_id);
+            return $this->db->update('tbluser_preferences', array('datatable_preferences' => $preferences_json));
+        } else {
+            // No record found, so insert a new one.
+            return $this->db->insert('tbluser_preferences', $data);
+        }
+    }
+
+    public function get_datatable_preferences()
+    {
+        $this->db->select('datatable_preferences');
+        $this->db->from('tbluser_preferences');
+        $this->db->where('staff_id', get_staff_user_id());
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            // Decode the JSON string into an associative array if it's not empty
+            if (!empty($row->datatable_preferences)) {
+                return json_decode($row->datatable_preferences, true);
+            }
+        }
+        // Return an empty array if no preferences are set
+        return array();
     }
 }
