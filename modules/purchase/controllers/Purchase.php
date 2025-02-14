@@ -2918,7 +2918,6 @@ class purchase extends AdminController
                     array_push($where, 'AND tblitems.id IN (' . implode(', ', $_products_services) . ')');
                 }
             }
-
             $aColumns     = $select;
             $sIndexColumn = 'id';
             $sTable       = db_prefix() . 'pur_order_detail';
@@ -3490,7 +3489,7 @@ class purchase extends AdminController
 
                 $this->purchase_model->mark_converted_pur_invoice($pur_invoice, $id);
 
-                if($select_invoice == "create_invoice") {
+                if ($select_invoice == "create_invoice") {
                     $invoiceid = $this->expenses_model->convert_to_invoice($id);
                     if ($invoiceid) {
                         set_alert('success', _l('expense_converted_to_invoice'));
@@ -3498,7 +3497,7 @@ class purchase extends AdminController
                             'url' => admin_url('invoices/invoice/' . $invoiceid),
                             'expenseid' => $id,
                         ]);
-                    } 
+                    }
                 } else {
                     $input = array();
                     $input['invoice_id'] = $applied_to_invoice;
@@ -10499,7 +10498,27 @@ class purchase extends AdminController
             $join         = [
                 'INNER JOIN ' . db_prefix() . 'goods_receipt ON ' . db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id',
             ];
+            if ($this->input->post('pur_order')) {
+                $pur_order_ids_filters = $this->input->post('pur_order');
 
+                $purOrdersReturn1 = [];
+                $purOrdersReturn0 = [];
+
+                foreach ($pur_order_ids_filters as $pur_order_id) {
+                    $status = get_pur_order_goods_status($pur_order_id);
+
+                    if ($status == 1) {
+                        $purOrdersReturn1[] = $pur_order_id;
+                    } elseif ($status == 0) {
+                        $purOrdersReturn0[] = $pur_order_id;
+                    }
+                }
+            }
+
+
+            if ($purOrdersReturn1) {
+                array_push($where, 'AND ' . db_prefix() . 'goods_receipt.pr_order_id IN (' . implode(',', $purOrdersReturn1) . ')');
+            }
             $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
 
             $select1 = [
@@ -10524,16 +10543,25 @@ class purchase extends AdminController
                 'INNER JOIN ' . db_prefix() . 'pur_orders ON ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order where ' . db_prefix() . 'pur_orders.goods_id = 0',
             ];
 
-
+            if ($purOrdersReturn0) {
+                array_push($where1, 'AND ' . db_prefix() . 'pur_orders.id IN (' . implode(',', $purOrdersReturn0) . ')');
+            }
             $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
 
             $output  = $result['output'];
 
-            $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
-            $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
 
-            $rResult = array_merge($rResult0, $rResult1);
-
+            if ($purOrdersReturn1) {
+                $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+                $rResult = $rResult0;
+            } else if (!empty($purOrdersReturn0)) {
+                $rResult1 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+                $rResult = $rResult1;
+            } else {
+                $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+                $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
+                $rResult = array_merge($rResult0, $rResult1);
+            }
 
             $tracker = [];
 
@@ -10976,11 +11004,11 @@ class purchase extends AdminController
                             $value_total_included_tax = 0.00;
                             $value_certified_amount = 0.00;
 
-                            if(!empty($value_invoice_code)) {
+                            if (!empty($value_invoice_code)) {
                                 $this->db->like('invoice_number', $value_invoice_code);
                                 $result = $this->db->get(db_prefix() . 'pur_invoices')->row();
                                 if (empty($result)) {
-                                    $string_error .= _l('invoice_code').' '._l('does_not_exist');
+                                    $string_error .= _l('invoice_code') . ' ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_invoice_id = $result->id;
@@ -10988,13 +11016,13 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_vendor)) {
-                                $string_error .= _l('pur_vendor').' '._l('does_not_exist');
+                                $string_error .= _l('pur_vendor') . ' ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('company', $value_vendor);
                                 $result = $this->db->get(db_prefix() . 'pur_vendor')->row();
                                 if (empty($result)) {
-                                    $string_error .= _l('pur_vendor').' '._l('does_not_exist');
+                                    $string_error .= _l('pur_vendor') . ' ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_vendor_id = $result->userid;
@@ -11002,13 +11030,13 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_budget_head)) {
-                                $string_error .= _l('group_pur').' '._l('does_not_exist');
+                                $string_error .= _l('group_pur') . ' ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('name', $value_budget_head);
                                 $result = $this->db->get(db_prefix() . 'items_groups')->row();
                                 if (empty($result)) {
-                                    $string_error .= _l('group_pur').' '._l('does_not_exist');
+                                    $string_error .= _l('group_pur') . ' ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_budget_head = $result->id;
@@ -11016,7 +11044,7 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_invoice_date)) {
-                                $string_error .= _l('invoice_date').' '._l('does_not_exist');
+                                $string_error .= _l('invoice_date') . ' ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 if (is_numeric($value_invoice_date)) {
@@ -11028,13 +11056,13 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_project)) {
-                                $string_error .= _l('project').' '._l('does_not_exist');
+                                $string_error .= _l('project') . ' ' . _l('does_not_exist');
                                 $flag2 = 1;
                             } else {
                                 $this->db->like('name', $value_project);
                                 $result = $this->db->get(db_prefix() . 'projects')->row();
                                 if (empty($result)) {
-                                    $string_error .= _l('project').' '._l('does_not_exist');
+                                    $string_error .= _l('project') . ' ' . _l('does_not_exist');
                                     $flag2 = 1;
                                 } else {
                                     $flag_id_project = $result->id;
@@ -11042,7 +11070,7 @@ class purchase extends AdminController
                             }
 
                             if (empty($value_description_of_services)) {
-                                $string_error .= _l('description_of_services').' '._l('does_not_exist');
+                                $string_error .= _l('description_of_services') . ' ' . _l('does_not_exist');
                                 $flag2 = 1;
                             }
 
@@ -11061,7 +11089,7 @@ class purchase extends AdminController
                             }
 
                             $value_total_included_tax = $value_amount_wo_tax + $value_tax_value;
-                            $value_certified_amount = $value_amount_wo_tax + $value_tax_value; 
+                            $value_certified_amount = $value_amount_wo_tax + $value_tax_value;
 
                             if (($flag == 1) || $flag2 == 1) {
                                 //write error file
@@ -11087,7 +11115,7 @@ class purchase extends AdminController
 
                                 $rd = array();
 
-                                if(!empty($flag_id_invoice_id)) {
+                                if (!empty($flag_id_invoice_id)) {
                                     $rd['vendor_invoice_number'] = !empty($value_invoice_number) ? $value_invoice_number : $invoice_number;
                                     $rd['vendor'] = isset($flag_id_vendor_id) ? $flag_id_vendor_id : 0;
                                     $rd['group_pur'] = isset($flag_id_budget_head) ? $flag_id_budget_head : 0;
@@ -11100,7 +11128,7 @@ class purchase extends AdminController
                                     $rd['final_certified_amount'] = $value_certified_amount;
 
                                     $rows[] = $rd;
-                                    
+
                                     // Update Vendor billing tracker
                                     $this->db->where('id', $flag_id_invoice_id);
                                     $this->db->update(db_prefix() . 'pur_invoices', $rd);
@@ -11118,8 +11146,8 @@ class purchase extends AdminController
                                     $this->db->where('rel_type', 'invoice');
                                     $this->db->where('annexure !=', 17);
                                     $itemable_row = $this->db->get(db_prefix() . 'itemable')->row();
-                                    if(!empty($itemable_row)) {
-                                        if(!empty($itemable_row->rel_id)) {
+                                    if (!empty($itemable_row)) {
+                                        if (!empty($itemable_row->rel_id)) {
                                             $this->invoices_model->update_management_fees($itemable_row->rel_id);
                                             $this->invoices_model->update_basic_invoice_details($itemable_row->rel_id);
                                         }
@@ -11225,9 +11253,10 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
-    
 
-    public function update_total_amount(){
+
+    public function update_total_amount()
+    {
         $id = $this->input->post('id');
         $amount = $this->input->post('total_amount');
 
@@ -11246,5 +11275,4 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
-    
 }

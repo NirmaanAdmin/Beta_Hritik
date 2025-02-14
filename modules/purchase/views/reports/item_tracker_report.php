@@ -9,12 +9,12 @@
 </style>
 <div class="col-md-3 form-group">
    <!-- <label for="type"><?php echo _l('type'); ?></label> -->
-   <select name="type[]" id="type" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('pur_order'); ?>">
+   <select name="pur_order[]" id="pur_order" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('pur_order'); ?>">
       <option value=""></option>
       <?php
       $pur_order = get_pur_all_orders();
       foreach ($pur_order as $order) { ?>
-         <option value="<?php echo $order['id']; ?>"><?php echo $order['pur_order_name']; ?></option>
+         <option value="<?php echo $order['id']; ?>"><?php echo  $order['pur_order_number'].'-'.$order['pur_order_name']; ?></option>
       <?php  } ?>
    </select>
 </div>

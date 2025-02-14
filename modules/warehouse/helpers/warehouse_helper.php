@@ -647,6 +647,22 @@ function get_pur_order_name($id)
 
 }
 
+function get_pur_order_goods_status($id)
+{   
+    $status='';
+    $CI = & get_instance();
+    $CI->db->where('id',$id);
+    $pur_orders = $CI->db->get(db_prefix().'pur_orders')->row();
+
+    if($pur_orders){
+       $status = $pur_orders->goods_id;
+    }
+
+   return $status;
+
+}
+
+
 /**
  * get staff
  * @param  integer $id
