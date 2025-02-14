@@ -10,6 +10,7 @@ return App_table::find('invoices')
         $project_id = $this->ci->input->post('project_id');
 
         $aColumns = [
+            '1',
             'number',
             'title',
             'total',
@@ -79,7 +80,7 @@ return App_table::find('invoices')
         ]);
         $output  = $result['output'];
         $rResult = $result['rResult'];
-
+        $sr = 1 + $this->ci->input->post('start');
         foreach ($rResult as $aRow) {
             $row = [];
 
@@ -103,7 +104,7 @@ return App_table::find('invoices')
                 $numberOutput .= ' | <a href="' . admin_url('invoices/invoice/' . $aRow['id']) . '">' . _l('edit') . '</a>';
             }
             $numberOutput .= '</div>';
-
+            $row[] = $sr++;
             $row[] = $numberOutput;
 
             $row[] = $aRow['title'];

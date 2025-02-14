@@ -16,6 +16,7 @@ $billing_status_filter_name = 'billing_status';
 
 
 $aColumns = [
+    1,
     'invoice_number',
     'vendor_invoice_number',
     db_prefix() . 'pur_invoices.vendor',
@@ -273,11 +274,12 @@ $footer_data = [
 $invoice_ids = '';
 
 $this->ci->load->model('purchase/purchase_model');
-
+$sr = 1 + $this->ci->input->post('start');
 foreach ($rResult as $aRow) {
     $row = [];
 
     for ($i = 0; $i < count($aColumns); $i++) {
+       
 
         $base_currency = get_base_currency_pur();
         if ($aRow['currency'] != 0) {
@@ -289,7 +291,9 @@ foreach ($rResult as $aRow) {
         } else {
             $_data = $aRow[$aColumns[$i]];
         }
-        if ($aColumns[$i] == 'invoice_number') {
+        if($aColumns[$i] == 1){
+            $_data = $sr++;
+        }else if ($aColumns[$i] == 'invoice_number') {
             $numberOutput = '';
 
             $numberOutput = '<a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '" target="_blank"  >' . $aRow['invoice_number'] . '</a>';

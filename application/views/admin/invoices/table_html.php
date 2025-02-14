@@ -1,6 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 $table_data = array(
+  '#',
   _l('invoice_dt_table_heading_number'),
   _l('invoice_title'),
   _l('invoice_dt_table_heading_amount'),

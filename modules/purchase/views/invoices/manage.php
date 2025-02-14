@@ -212,6 +212,7 @@
                         <!-- Column Checkboxes -->
                         <?php
                         $columns = [
+                           'id',
                            'invoice_code',
                            'invoice_number',
                            'vendor',
@@ -242,6 +243,7 @@
                      <table class="dt-table-loading table table-table_pur_invoices">
                         <thead>
                            <tr>
+                              <th>#</th>
                               <th><?php echo _l('invoice_code'); ?></th>
                               <th><?php echo _l('invoice_number'); ?></th>
                               <th><?php echo _l('vendor'); ?></th>
