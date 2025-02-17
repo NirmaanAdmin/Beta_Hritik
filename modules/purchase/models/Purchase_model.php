@@ -16894,4 +16894,93 @@ class Purchase_model extends App_Model
         // Return an empty array if no preferences are set
         return array();
     }
+
+    public function update_final_bil_total($id)
+    {
+        $tds_amount = 0;
+        $payment_made_amount = 0;
+        $total = 0;
+
+        $this->db->where('id', $id);
+        $pur_invoice = $this->db->get(db_prefix() . 'pur_invoices')->row();
+
+        $this->db->select_sum('payment_made');
+        $this->db->where('vbt_id', $id);
+        $bil_payment_details = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+
+        if(!empty($pur_invoice)) {
+            $total = $total + $pur_invoice->bil_tds;
+        }
+        if(!empty($bil_payment_details)) {
+            $total = $total + $bil_payment_details->payment_made;
+        }
+
+        $this->db->where('id', $id);
+        $this->db->update('tblpur_invoices', array('bil_total' => $total));
+        return true;
+    }
+
+    public function update_final_ril_total($id)
+    {
+        $this->db->where('id', $id);
+        $pur_invoice = $this->db->get(db_prefix() . 'pur_invoices')->row();
+        if(!empty($pur_invoice)) {
+            $ril_previous_amount = $pur_invoice->ril_previous;
+            $ril_this_bill_amount = $pur_invoice->ril_this_bill;
+            $total = $ril_previous_amount + $ril_this_bill_amount;
+            $this->db->where('id', $id);
+            $this->db->update('tblpur_invoices', array('ril_amount' => $total));
+        }
+        return true;
+    }
+
+    public function update_bil_payment_date($data)
+    {
+        $id = $data['id'];
+        $vbt_id = $data['vbt_id'];
+        $payment_date = $data['payment_date'];
+
+        $this->db->where('id', $id);
+        $this->db->where('vbt_id', $vbt_id);
+        $bil_payment_detail = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+
+        if(!empty($bil_payment_detail)) {
+            $this->db->where('id', $id);
+            $this->db->where('vbt_id', $vbt_id);
+            $this->db->update('tblbil_payment_details', array('payment_date' => $payment_date));
+        } else {
+            $input = array();
+            $input['vbt_id'] = $vbt_id;
+            $input['payment_date'] = $payment_date;
+            $input['dateadded'] = date('Y-m-d H:i:s');
+            $this->db->insert('tblbil_payment_details', $input);
+        }
+
+        return true;
+    }
+
+    public function update_bil_payment_made($data)
+    {
+        $id = $data['id'];
+        $vbt_id = $data['vbt_id'];
+        $payment_made = $data['payment_made'];
+
+        $this->db->where('id', $id);
+        $this->db->where('vbt_id', $vbt_id);
+        $bil_payment_detail = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+
+        if(!empty($bil_payment_detail)) {
+            $this->db->where('id', $id);
+            $this->db->where('vbt_id', $vbt_id);
+            $this->db->update('tblbil_payment_details', array('payment_made' => $payment_made));
+        } else {
+            $input = array();
+            $input['vbt_id'] = $vbt_id;
+            $input['payment_made'] = $payment_made;
+            $input['dateadded'] = date('Y-m-d H:i:s');
+            $this->db->insert('tblbil_payment_details', $input);
+        }
+
+        return true;
+    }
 }

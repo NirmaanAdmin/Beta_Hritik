@@ -11303,4 +11303,178 @@ class purchase extends AdminController
             ->set_content_type('application/json')
             ->set_output(json_encode(['preferences' => $preferences]));
     }
+
+    public function invoice_payments()
+    {
+        $this->load->model('taxes_model');
+        $this->load->model('currencies_model');
+        $data['title'] = _l('payments');
+        $data['contracts'] = $this->purchase_model->get_contract();
+        $data['pur_orders'] = $this->purchase_model->get_list_pur_orders();
+        $data['wo_orders'] = $this->purchase_model->get_list_wo_orders();
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['customers'] = $this->clients_model->get();
+        $data['projects'] = $this->projects_model->get();
+        $data['expense_categories'] = $this->expenses_model->get_category();
+        $data['taxes'] = $this->taxes_model->get();
+        $data['currencies'] = $this->currencies_model->get();
+        $data['currency'] = $this->currencies_model->get_base_currency();
+        $data['payment_modes'] = $this->payment_modes_model->get('', [], true);
+        $data['billing_invoices'] = $this->purchase_model->get_billing_invoices();
+        $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['invoices'] = get_all_applied_invoices();
+        $this->load->view('invoice_payments/manage', $data);
+    }
+
+    public function table_pur_invoice_payments()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'invoice_payments/table_pur_invoice_payments'));
+    }
+
+    public function update_bil_tds_amount()
+    {
+        $id = $this->input->post('id');
+        $amount = $this->input->post('amount');
+
+        if (!$id || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['bil_tds' => $amount]);
+        $this->purchase_model->update_final_bil_total($id);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'TDS is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_ril_bill_no()
+    {
+        $id = $this->input->post('id');
+        $ril_bill_no = $this->input->post('ril_bill_no');
+
+        if (!$id || !$ril_bill_no) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['ril_bill_no' => $ril_bill_no]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'RA Bill No is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_ril_previous_amount()
+    {
+        $id = $this->input->post('id');
+        $amount = $this->input->post('amount');
+
+        if (!$id || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['ril_previous' => $amount]);
+        $this->purchase_model->update_final_ril_total($id);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'RIL upto previous is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_ril_this_bill_amount()
+    {
+        $id = $this->input->post('id');
+        $amount = $this->input->post('amount');
+
+        if (!$id || !$amount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['ril_this_bill' => $amount]);
+        $this->purchase_model->update_final_ril_total($id);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'RIL this bill is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_ril_date()
+    {
+        $id = $this->input->post('id');
+        $ril_date = $this->input->post('ril_date');
+
+        if (!$id || !$ril_date) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['ril_date' => $ril_date]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'RIL date is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_bil_payment_date()
+    {
+        $data = $this->input->post();
+
+        if (empty($data)) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $success = $this->purchase_model->update_bil_payment_date($data);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Payment date is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_bil_payment_made()
+    {
+        $data = $this->input->post();
+
+        if (empty($data)) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $success = $this->purchase_model->update_bil_payment_made($data);
+        $this->purchase_model->update_final_bil_total($data['vbt_id']);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Payment made is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
 }

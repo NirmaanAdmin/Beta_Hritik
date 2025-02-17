@@ -3871,3 +3871,13 @@ function get_pur_all_orders(){
     $pur_order = $CI->db->get()->result_array();
     return $pur_order;
 }
+
+function get_bil_payment_details($id)
+{
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'bil_payment_details');
+    $CI->db->where('vbt_id', $id);
+    $bil_payment_details = $CI->db->get()->result_array();
+    return $bil_payment_details;
+}

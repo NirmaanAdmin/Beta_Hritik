@@ -296,6 +296,16 @@ function purchase_module_init_menu_items()
         ]);
     }
 
+    if (has_permission('purchase_invoices', '', 'view') || has_permission('purchase_invoices', '', 'view_own')) {
+        $CI->app_menu->add_sidebar_children_item('purchase', [
+            'slug' => 'purchase-invoices-payments',
+            'name' => 'Vendor Billing Payments',
+            'icon' => 'fa fa-clipboard',
+            'href' => admin_url('purchase/invoice_payments'),
+            'position' => 10,
+        ]);
+    }
+
     if (has_permission('purchase_reports', '', 'view')) {
         value: $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'purchase_reports',
@@ -605,6 +615,10 @@ function purchase_add_footer_components()
 
     if (!(strpos($viewuri, '/admin/projects/view') === false)  && !(strpos($viewuri, '?group=purchase_request') === false)) {
         echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/pur_request_on_project.js') . '?v=' . PURCHASE_REVISION . '"></script>';
+    }
+
+    if (!(strpos($viewuri, '/admin/purchase/invoice_payments') === false)) {
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/manage_invoice_payments.js') . '?v=' . PURCHASE_REVISION . '"></script>';
     }
 }
 
