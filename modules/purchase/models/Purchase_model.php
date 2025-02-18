@@ -7192,6 +7192,7 @@ class Purchase_model extends App_Model
         $data['approval_status'] = ($check_appr == true) ? 2 : 1;
         $this->db->insert(db_prefix() . 'pur_invoice_payment', $data);
         $insert_id = $this->db->insert_id();
+        $this->update_final_bil_total($invoice);
         if ($insert_id) {
             if ($data['approval_status'] == 2) {
                 $pur_invoice = $this->get_pur_invoice($invoice);
