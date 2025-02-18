@@ -10290,6 +10290,222 @@ class purchase extends AdminController
             'list_item' => $list_item
         ]);
     }
+    public function import_file_xlsx_order_tracker_items()
+    {
+        if (!is_admin() && !has_permission('order_tracker', '', 'create')) {
+            access_denied(_l('order_tracker'));
+        }
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if ($this->input->post()) {
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                //do_action('before_import_leads');
+
+                // Get the temp file path
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                // Make sure we have a filepath
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+
+                    // Setup our new file path
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+
+                        $import_result = true;
+                        $rows = [];
+
+                        //Writer file
+                        $writer_header = array(
+                            "(*)" . _l('order_scope') => 'string',
+                            _l('order_date') => 'date',
+                            _l('completion_date')    => 'date',
+                            _l('budget_ro_projection')    => 'numeric',
+                            _l('order_value')    => 'numeric',
+                            _l('committed_contract_amount')    => 'numeric',
+                            _l('change_order_amount')    => 'numeric',
+                            _l('anticipate_variation')    => 'numeric',
+                            _l('final_certified_amount')    => 'numeric',
+                            _l('remarks')    => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+
+                        $col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+                        $style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
+
+                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
+
+                        //init file error end
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+
+
+                        // start row write 2
+                        $numRow = 2;
+                        $total_rows = 0;
+                        $total_rows_actualy = 0;
+                        $list_item = $this->purchase_model->create_order_tracker_row_template();
+                        //get data for compare
+                        $index_quote = 0;
+                        for ($row = 1; $row < count($data); $row++) {
+
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+
+                            $string_error = '';
+                            $flag_contract_form = 0;
+
+                            $flag_id_commodity_code;
+                            $flag_id_order_scope;
+
+
+                            $value_cell_order_scope = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_order_date = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_cell_completion_date = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_cell_budget = isset($data[$row][3]) ? $data[$row][3] : '';
+                            $value_cell_order_value = isset($data[$row][4]) ? $data[$row][4] : '';
+                            $value_cell_contract_amount = isset($data[$row][5]) ? $data[$row][5] : '';
+                            $value_cell_change_order = isset($data[$row][6]) ? $data[$row][6] : '';
+                            $value_cell_anticipate_variation = isset($data[$row][7]) ? $data[$row][7] : '';
+                            $value_cell_total_certified_amount = isset($data[$row][8]) ? $data[$row][8] : '';
+                            $value_cell_total_remaks = isset($data[$row][9]) ? $data[$row][9] : '';
+
+
+                            /*check null*/
+                            if (is_null($value_cell_order_scope) == true) {
+                                $string_error .= _l('order_scope') . ' ' . _l('not_yet_entered');
+                                $flag = 1;
+                            }
+                            $value_cell_budget = trim($value_cell_budget, " ");
+                            if ($value_cell_budget !== "" && !is_numeric($value_cell_budget)) {
+                                $string_error .= _l('budget_ro_projection') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+                            $value_cell_order_value = trim($value_cell_order_value, " ");
+                            if ($value_cell_order_value !== "" && !is_numeric($value_cell_order_value)) {
+                                $string_error .= _l('order_value') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+                            $value_cell_contract_amount = trim($value_cell_contract_amount, " ");
+                            if ($value_cell_contract_amount !== "" && !is_numeric($value_cell_contract_amount)) {
+                                $string_error .= _l('committed_contract_amount') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+                            $value_cell_change_order = trim($value_cell_change_order, " ");
+                            if ($value_cell_change_order !== "" && !is_numeric($value_cell_change_order)) {
+                                $string_error .= _l('change_order_amount') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+                            $value_cell_anticipate_variation = trim($value_cell_anticipate_variation, " ");
+                            if ($value_cell_anticipate_variation !== "" && !is_numeric($value_cell_anticipate_variation)) {
+                                $string_error .= _l('anticipate_variation') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+                            $value_cell_total_certified_amount = trim($value_cell_total_certified_amount, " ");
+                            if ($value_cell_total_certified_amount !== "" && !is_numeric($value_cell_total_certified_amount)) {
+                                $string_error .= _l('final_certified_amount') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+                            if (($flag == 1) || ($flag2 == 1)) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_cell_order_scope,
+                                    $value_cell_order_date,
+                                    $value_cell_completion_date,
+                                    $value_cell_budget,
+                                    $value_cell_order_value,
+                                    $value_cell_contract_amount,
+                                    $value_cell_change_order,
+                                    $value_cell_anticipate_variation,
+                                    $value_cell_total_certified_amount,
+                                    $value_cell_total_remaks,
+                                    $string_error,
+                                ]);
+
+                                $numRow++;
+                                $total_rows_data_error++;
+                                $message = 'Import Error In Some Item';
+                            }
+                            if (($flag == 0) && ($flag2 == 0)) {
+
+                                $rows[] = $row;
+                                $list_item .= $this->purchase_model->create_order_tracker_row_template('newitems[' . $index_quote . ']', $value_cell_order_scope, '', $value_cell_order_date, $value_cell_completion_date, $value_cell_budget, $value_cell_order_value, $value_cell_contract_amount, $value_cell_change_order, $value_cell_anticipate_variation, $value_cell_total_certified_amount, '', '', $value_cell_total_remaks);
+
+                                $index_quote++;
+                                $total_rows_data++;
+                                $message = 'Data Import successfully';
+                            }
+                        }
+
+                        $total_rows = $total_rows;
+                        $data['total_rows_post'] = count($rows);
+                        $total_row_success = count($rows);
+                        $total_row_false = $total_rows - (int) count($rows);
+
+                        if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
+
+                            $filename = 'FILE_ERROR_IMPORT_ORDER_TRACKER' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ORDER_TRACKER_ERROR . $filename, $filename));
+
+                            $filename = PURCHASE_ORDER_IMPORT_ORDER_TRACKER_ERROR . $filename;
+                        }
+                        $list_item = $list_item;
+                        @delete_dir($tmpDir);
+                    }
+                } else {
+                    set_alert('warning', 'Import Item failed');
+                }
+            }
+        }
+
+        echo json_encode([
+            'message' => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false' => $total_rows_data_error,
+            'total_rows' => $total_rows_data,
+            'site_url' => site_url(),
+            'staff_id' => get_staff_user_id(),
+            'total_rows_data_error' => $total_rows_data_error,
+            'filename' => $filename,
+            'list_item' => $list_item
+        ]);
+    }
 
     public function get_rating($id)
     {
@@ -10376,9 +10592,9 @@ class purchase extends AdminController
         $data['title'] = _l('order_tracker');
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
-       
+
         $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
-        
+
         $this->load->view('order_tracker/manage', $data);
     }
     public function update_completion_date()
@@ -10493,10 +10709,10 @@ class purchase extends AdminController
         } elseif ($table === 'order_tracker') {
             $tableName = 'tblpur_order_tracker';
         }
-        if($table == 'pur_orders' || $table == 'wo_orders'){
+        if ($table == 'pur_orders' || $table == 'wo_orders') {
             $this->db->where($aColumn_name, $id);
             $success = $this->db->update($tableName, ['final_certified_amount' => $finalCertifiedAmount]);
-        }else{
+        } else {
             $this->db->where('id', $id);
             $success = $this->db->update($tableName, ['final_certified_amount' => $finalCertifiedAmount]);
         }
@@ -10525,10 +10741,10 @@ class purchase extends AdminController
         } elseif ($table === 'order_tracker') {
             $tableName = 'tblpur_order_tracker';
         }
-        if($table == 'pur_orders' || $table == 'wo_orders'){
+        if ($table == 'pur_orders' || $table == 'wo_orders') {
             $this->db->where($aColumn_name, $id);
             $success = $this->db->update($tableName, ['total' => $changeOrderAmount]);
-        }else{
+        } else {
             $this->db->where('id', $id);
             $success = $this->db->update($tableName, ['co_total' => $changeOrderAmount]);
         }
@@ -11601,6 +11817,4 @@ class purchase extends AdminController
 
         echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value);
     }
-
-
 }
