@@ -268,7 +268,7 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
     $sOrder
     $sLimit
     ";
-    
+
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),
@@ -333,7 +333,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.total AS total,
             co.total AS co_total,
             (po.total + IFNULL(co.total, 0)) AS total_rev_contract_value, 
-            anticipate_variation,
+            po.anticipate_variation,
             (IFNULL(po.anticipate_variation, 0) + (po.total + IFNULL(co.total, 0))) AS cost_to_complete,
             inv.final_certified_amount AS final_certified_amount,
             po.group_pur,
@@ -344,7 +344,9 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
         LEFT JOIN tblco_request co ON co.po_order_id = po.id
         LEFT JOIN tblpur_invoices inv ON inv.pur_order = po.id
+    
         UNION ALL
+    
         SELECT DISTINCT
             wo.id,
             wo.wo_order_name AS order_name,
@@ -356,7 +358,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.total AS total,
             co.total AS co_total,
             (wo.total + IFNULL(co.total, 0)) AS total_rev_contract_value,
-            anticipate_variation,
+            wo.anticipate_variation,
             (IFNULL(wo.anticipate_variation, 0) + (wo.total + IFNULL(co.total, 0))) AS cost_to_complete,
             inv.final_certified_amount AS final_certified_amount,
             wo.group_pur,
@@ -367,7 +369,31 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
         LEFT JOIN tblco_request co ON co.wo_order_id = wo.id
         LEFT JOIN tblpur_invoices inv ON inv.wo_order = wo.id
+    
+        UNION ALL
+    
+        SELECT DISTINCT
+            t.id,
+            t.pur_order_name AS order_name,
+            t.rli_filter,
+            pv.company AS vendor,
+            t.order_date,
+            t.completion_date,
+            t.budget,
+            t.total AS total,
+            t.co_total AS co_total,
+            (t.total + IFNULL(t.co_total, 0)) AS total_rev_contract_value,
+            t.anticipate_variation,
+            (IFNULL(t.anticipate_variation, 0) + (t.total + IFNULL(t.co_total, 0))) AS cost_to_complete,
+            t.final_certified_amount AS final_certified_amount,
+            t.group_pur,
+            t.kind,
+            t.remarks AS remarks,
+            'order_tracker' AS source_table
+        FROM tblpur_order_tracker t
+        LEFT JOIN tblpur_vendor pv ON pv.userid = t.vendor
     ) AS combined_orders";
+
 
     $allColumns = [];
     foreach ($aColumns as $column) {
@@ -769,7 +795,7 @@ function data_tables_purchase_tracker_init($aColumns, $join = [], $where = [], $
     $sOrder
     $sLimit
     ";
-    
+
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),

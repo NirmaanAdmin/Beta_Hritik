@@ -33,7 +33,7 @@
 
    .show_hide_columns {
       position: absolute;
-      z-index: 99999;
+      z-index: 999;
       left: 204px
    }
 </style>
@@ -48,6 +48,7 @@
                      <strong>
                         <h3><?php echo _l('order_tracker'); ?></h3>
                      </strong>
+
                   </div>
                </div>
                <div class="row">
@@ -59,6 +60,9 @@
                         <option value="wo_orders"><?php echo _l('wo_order'); ?></option>
                      </select>
                   </div>
+                  <button class="btn btn-info pull-right" style="margin-right: 10px;" data-toggle="modal" data-target="#addNewRowModal">
+                     <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
+                  </button>
                </div>
             </div>
          </div>
@@ -135,190 +139,53 @@
       </div>
    </div>
 </div>
+<div class="modal fade" id="addNewRowModal" tabindex="-1" role="dialog">
+   <div class="modal-dialog" role="document" style="width: 98%;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title"><?php echo _l('Add New Order'); ?></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+         </div>
+         <div class="modal-body invoice-item">
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="table-responsive" style="overflow-x: unset !important;">
+                     <?php
+                     echo form_open_multipart('', array('id' => 'order_tracker-form'));
+                     ?>
+                     <table class="table order-tracker-items-table items table-main-invoice-edit has-calculations no-mtop">
+                        <thead>
+                           <tr>
+                              <!-- <th align="left"><?php echo _l('serial_no'); ?></th> -->
+                              <th align="left"><?php echo _l('order_scope'); ?></th>
+                              <th align="left"><?php echo _l('contractor'); ?></th>
+                              <th align="left"><?php echo _l('order_date'); ?></th>
+                              <th align="left"><?php echo _l('completion_date'); ?></th>
+                              <th align="left"><?php echo _l('budget_ro_projection'); ?></th>
+                              <th align="left"><?php echo _l('committed_contract_amount'); ?></th>
+                              <th align="left"><?php echo _l('change_order_amount'); ?></th>
+                              <th align="left"><?php echo _l('anticipate_variation'); ?></th>
+                              <th align="left"><?php echo _l('final_certified_amount'); ?></th>
+                              <th align="left"><?php echo _l('category'); ?></th>
+                              <th align="left"><?php echo _l('group_pur'); ?></th>
+                              <th align="left"><?php echo _l('remarks'); ?></th>
+                              <th align="center"><i class="fa fa-cog"></i></th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <?php echo  $order_tracker_row_template; ?>
+                        </tbody>
+                     </table>
+                     <button type="submit" class="btn btn-info pull-right"><?php echo _l('Save'); ?></button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
 
-<?php init_tail(); ?>
-<script>
-   $(function() {
-      "use strict";
-
-      // Initialize the DataTable
-      var table_order_tracker = $('.table-table_order_tracker').DataTable();
-
-      // Inline editing for "Completion Date"
-      $('body').on('change', '.completion-date-input', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type'); // wo_order or pur_order
-         var completionDate = $(this).val();
-
-         // Perform AJAX request to update the completion date
-         $.post(admin_url + 'purchase/update_completion_date', {
-            id: rowId,
-            table: tableType,
-            completion_date: completionDate
-         }).done(function(response) {
-            response = JSON.parse(response);
-            if (response.success) {
-               alert_float('success', response.message);
-               table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
-            } else {
-               alert_float('danger', response.message);
-            }
-         });
-      });
-      // Inline editing for "budget"
-      $('body').on('change', '.budget-input', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type'); // wo_order or pur_order
-         var budget = $(this).val();
-
-         // Perform AJAX request to update the budget
-         $.post(admin_url + 'purchase/update_budget', {
-            id: rowId,
-            table: tableType,
-            budget: budget
-         }).done(function(response) {
-            response = JSON.parse(response);
-            if (response.success) {
-               alert_float('success', response.message);
-               table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
-            } else {
-               alert_float('danger', response.message);
-            }
-         });
-      });
-
-      // Inline editing for "Amount" (toggle span to input)
-      $('body').on('click', '.budget-display', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type');
-         var currentAmount = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
-
-         // Replace the span with an input field
-         $(this).replaceWith('<input type="number" class="form-control budget-input" value="' + currentAmount + '" data-id="' + rowId + '" data-type="' + tableType + '">');
-      });
-      // Inline editing for "Anticipate Variation" (toggle span to input)
-      $('body').on('click', '.anticipate-variation-display', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type');
-         var currentValue = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
-
-         // Replace the span with an input field
-         $(this).replaceWith('<input type="number" class="form-control anticipate-variation-input" value="' + currentValue + '" data-id="' + rowId + '" data-type="' + tableType + '">');
-      });
-
-      // Save updated "Anticipate Variation" to the database
-      $('body').on('change', '.anticipate-variation-input', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type');
-         var anticipateVariation = $(this).val();
-
-         // Perform AJAX request to update the anticipate_variation
-         $.post(admin_url + 'purchase/update_anticipate_variation', {
-            id: rowId,
-            table: tableType,
-            anticipate_variation: anticipateVariation
-         }).done(function(response) {
-            response = JSON.parse(response);
-            if (response.success) {
-               alert_float('success', response.message);
-
-               // Replace input back with formatted value
-               var formattedValue = new Intl.NumberFormat('en-IN', {
-                  style: 'currency',
-                  currency: 'INR'
-               }).format(anticipateVariation);
-
-               $('.anticipate-variation-input[data-id="' + rowId + '"]').replaceWith('<span class="anticipate-variation-display" data-id="' + rowId + '" data-type="' + tableType + '">' + formattedValue + '</span>');
-
-               // Optionally reload the table if necessary
-               table_order_tracker.ajax.reload(null, false);
-            } else {
-               alert_float('danger', response.message);
-            }
-         });
-      });
-      // Inline editing for "Remarks" (toggle span to textarea)
-      $('body').on('click', '.remarks-display', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type');
-         var currentRemarks = $(this).text();
-
-         // Replace the span with a textarea for editing
-         $(this).replaceWith('<textarea class="form-control remarks-input" data-id="' + rowId + '" data-type="' + tableType + '">' + currentRemarks + '</textarea>');
-      });
-
-      // Save updated "Remarks" to the database
-      $('body').on('change', '.remarks-input', function(e) {
-         e.preventDefault();
-
-         var rowId = $(this).data('id');
-         var tableType = $(this).data('type');
-         var remarks = $(this).val();
-
-         // Perform AJAX request to update the remarks
-         $.post(admin_url + 'purchase/update_remarks', {
-            id: rowId,
-            table: tableType,
-            remarks: remarks
-         }).done(function(response) {
-            response = JSON.parse(response);
-            if (response.success) {
-               alert_float('success', response.message);
-
-               // Replace textarea back with formatted remarks
-               $('.remarks-input[data-id="' + rowId + '"]').replaceWith('<span class="remarks-display" data-id="' + rowId + '" data-type="' + tableType + '">' + remarks + '</span>');
-
-               // Optionally reload the table if necessary
-               table_order_tracker.ajax.reload(null, false);
-            } else {
-               alert_float('danger', response.message);
-            }
-         });
-      });
-   });
-   $(document).ready(function() {
-      var table = $('.table-table_order_tracker').DataTable();
-
-      // Handle "Select All" checkbox
-      $('#select-all-columns').on('change', function() {
-         var isChecked = $(this).is(':checked');
-         $('.toggle-column').prop('checked', isChecked).trigger('change');
-      });
-
-      // Handle individual column visibility toggling
-      $('.toggle-column').on('change', function() {
-         var column = table.column($(this).val());
-         column.visible($(this).is(':checked'));
-
-         // Sync "Select All" checkbox state
-         var allChecked = $('.toggle-column').length === $('.toggle-column:checked').length;
-         $('#select-all-columns').prop('checked', allChecked);
-      });
-
-      // Sync checkboxes with column visibility on page load
-      table.columns().every(function(index) {
-         var column = this;
-         $('.toggle-column[value="' + index + '"]').prop('checked', column.visible());
-      });
-
-      // Prevent dropdown from closing when clicking inside
-      $('.dropdown-menu').on('click', function(e) {
-         e.stopPropagation();
-      });
-   });
-</script>
-</body>
-
-</html>
+   <?php init_tail(); ?>
+   <?php require 'modules/purchase/assets/js/order_tracker_js.php'; ?>
+   </body>
+   </html>

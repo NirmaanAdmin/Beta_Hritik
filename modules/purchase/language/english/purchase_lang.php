@@ -818,3 +818,7 @@ $lang['ril_date'] = 'Date';
 $lang['ril_amount'] = 'Amount';
 $lang['payment_date'] = 'Payment date';
 $lang['payment_made'] = 'Payment made';
+$lang['remarks_updated'] = 'Remarks updated successfully';
+$lang['anticipate_variation_updated'] = 'Anticipate variation updated successfully';
+$lang['amount_updated'] = 'Budget updated successfully';
+$lang['final_certified_amount_updated'] = 'Final certified amount updated successfully';

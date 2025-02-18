@@ -1,6 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<?php echo form_hidden('_attachment_sale_id', $goods_receipt->id); ?>
-<?php echo form_hidden('_attachment_sale_type', 'estimate'); ?>
+
 <style type="text/css">
   /* .purchase-head th,
   .purchase-body td {
@@ -29,6 +28,11 @@
             <li role="presentation" class="active">
               <a href="#tab_estimate" aria-controls="tab_estimate" role="tab" data-toggle="tab">
                 Item Tracking
+              </a>
+            </li>
+            <li role="presentation">
+              <a href="#tab_attachment" aria-controls="tab_attachment" role="tab" data-toggle="tab">
+                Attachment
               </a>
             </li>
           </ul>
@@ -367,6 +371,35 @@
             </div>
           </div>
         </div>
+        <div role="tabpanel" class="tab-pane" id="tab_attachment">.
+          <form id="attachmentForm" action="<?php echo admin_url('purchase/add_attachment_pur_tracker'); ?>" method="post" enctype="multipart/form-data">
+            <div class="panel-body">
+
+              <div class="col-md-12">
+
+                <label for="attachment"><?php echo _l('attachment'); ?></label>
+                <div class="attachments">
+                  <div class="attachment">
+                    <div class="col-md-5 form-group" style="padding-left: 0px;">
+                      <div class="input-group">
+                        <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                        <span class="input-group-btn">
+                          <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12" style="margin-top: 10px;">
+                <button type="submit" class="btn-tr save_detail btn btn-info mleft10  pull-right">
+                  <?php echo _l('submit'); ?>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
 
       </div>
 
@@ -538,6 +571,38 @@
         const cells = row.querySelectorAll('th, td');
         if (cells[columnIndex]) {
           cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
+        }
+      });
+    });
+  });
+  $(document).ready(function() {
+    $('#attachmentForm').submit(function(e) {
+      e.preventDefault(); // Prevent default form submission
+
+      var formData = new FormData(this); // Create FormData object
+      $.ajax({
+        url: $(this).attr('action'), // Get form action URL
+        type: 'POST',
+        data: formData,
+        contentType: false, // Prevent jQuery from setting content type
+        processData: false, // Prevent jQuery from processing data
+        beforeSend: function() {
+          $('.save_detail').prop('disabled', true).text('Submitting...'); // Disable button & show loading
+        },
+        success: function(response) {
+          response = JSON.parse(response);
+          if (response.success) {
+            alert_float('success', 'Attachment uploaded successfully!');
+            $('#attachmentForm')[0].reset(); // Reset form
+          } else {
+            alert_float('danger', 'Error uploading attachment: ' + response.message);
+          }
+        },
+        error: function() {
+          alert_float('danger', 'Something went wrong, please try again.');
+        },
+        complete: function() {
+          $('.save_detail').prop('disabled', false).text('Submit'); // Re-enable button
         }
       });
     });

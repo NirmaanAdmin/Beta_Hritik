@@ -3451,6 +3451,46 @@ function get_area_list($name_area, $area)
     }
     return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple' => true), array(), '', '', false);
 }
+function get_vemdor_list($name_vendor, $area)
+{
+    $CI = &get_instance();
+    $CI->load->model('purchase_model');
+    $get_vendors = $CI->purchase_model->get_vendor();
+    $selected = !empty($area) ? $area : array();
+    if (!is_array($selected)) {
+        $selected = explode(",", $selected);
+    }
+    return render_select($name_vendor, $get_vendors, array('userid', 'company'), '', $selected, array(), array(), '', '', true);
+}
+function get_kind_list($name_kind, $category)
+{
+    $kinds = [
+        [
+            'id'   => 'Client Supply',
+            'name' => 'Client Supply'
+        ],
+        [
+            'id'   => 'Bought out items',
+            'name' => 'Bought out items'
+        ]
+    ];
+    $selected = !empty($category) ? $category : array();
+    if (!is_array($selected)) {
+        $selected = explode(",", $selected);
+    }
+    return render_select($name_kind, $kinds, array('id', 'name'), '', $selected, array(), array(), '', '', true);
+}
+function get_budget_head_list($name_kind, $category)
+{
+    $CI = &get_instance();
+    $CI->load->model('purchase_model');
+    $get_buget_head = $CI->purchase_model->get_commodity_group_add_commodity();
+    $selected = !empty($category) ? $category : array();
+    if (!is_array($selected)) {
+        $selected = explode(",", $selected);
+    }
+    return render_select($name_kind, $get_buget_head, array('id', 'name'), '', $selected, array(), array(), '', '', true);
+}
 function get_sub_head_list($name_sub_head, $sub_head)
 {
     $CI = &get_instance();

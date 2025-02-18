@@ -7901,9 +7901,15 @@ class Purchase_model extends App_Model
     }
     public function change_rli_filter($status, $id, $table_name)
     {
-
+        if($table_name === 'pur_orders'){
+            $tableName = 'pur_orders';
+        }elseif ($table_name === 'wo_orders') {
+            $tableName = 'wo_orders';
+        }elseif ($table_name === 'order_tracker') {
+            $tableName = 'pur_order_tracker';
+        }
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . $table_name, ['rli_filter' => $status]);
+        $this->db->update(db_prefix() . $tableName, ['rli_filter' => $status]);
         return true;
     }
 
@@ -17021,5 +17027,108 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update('tblpur_invoices', array('bil_total' => $total));
         return true;
+    }
+    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '')
+    {
+        $row = '';
+        $name_order_scope = 'order_scope';
+        $name_vendor = 'vendor';
+        $name_order_date = 'order_date';
+        $name_completion_date = 'completion_date';
+        $name_budget_ro_projection = 'budget_ro_projection';
+        $name_committed_contract_amount = 'committed_contract_amount';
+        $name_change_order_amount = 'change_order_amount';
+        $name_anticipate_variation = 'anticipate_variation';
+        $name_final_certified_amount = 'final_certified_amount';
+        $name_kind = 'kind';
+        $name_group_pur = 'group_pur';
+        $name_remarks = 'remarks';
+
+
+        if ($name == '') {
+            $row .= '<tr class="main">';
+        } else {
+            $row .= '<tr class="sortable item">';
+            $name_order_scope = $name . '[order_scope]';
+            $name_vendor = $name . '[vendor]';
+            $name_order_date = $name . '[order_date]';
+            $name_completion_date = $name . '[completion_date]';
+            $name_budget_ro_projection = $name . '[budget_ro_projection]';
+            $name_committed_contract_amount = $name . '[committed_contract_amount]';
+            $name_change_order_amount = $name . '[change_order_amount]';
+            $name_anticipate_variation = $name . '[anticipate_variation]';
+            $name_final_certified_amount = $name . '[final_certified_amount]';
+            $name_kind = $name . '[kind]';
+            $name_group_pur = $name . '[group_pur]';
+            $name_remarks = $name . '[remarks]';
+        }
+
+
+        $row .= '<td class="">' . render_textarea($name_order_scope, '', $order_scope, ['rows' => 2, 'placeholder' => _l('order_scope')]) . '</td>';
+        $row .= '<td class="">' .  get_vemdor_list($name_vendor, $contractor) . '</td>';
+
+        $row .= '<td class="">' .  render_input($name_order_date, '', $order_date, 'date') . '</td>';
+        $row .= '<td class="">' .  render_input($name_completion_date, '', $completion_date, 'date') . '</td>';
+        $row .= '<td class="">' .  render_input($name_budget_ro_projection, '', $budget_ro_projection, 'number') . '</td>';
+        $row .= '<td class="">' .  render_input($name_committed_contract_amount, '', $committed_contract_amount, 'number') . '</td>';
+        $row .= '<td class="">' .  render_input($name_change_order_amount, '', $change_order_amount, 'number') . '</td>';
+        $row .= '<td class="">' .  render_input($name_anticipate_variation, '', $anticipate_variation, 'number') . '</td>';
+        $row .= '<td class="">' .  render_input($name_final_certified_amount, '', $final_certified_amount, 'number') . '</td>';
+        $row .= '<td class="">' .  get_kind_list($name_kind, $category) . '</td>';
+        $row .= '<td class="">' .  get_budget_head_list($name_group_pur, $group_pur) . '</td>';
+        $row .= '<td class="">' .  render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
+
+        $add_class = '';
+        if ($name == '') {
+            $row .= '<td><button type="button" onclick="order_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
+        } else {
+            $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="order_delete_item(this,\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
+        }
+        $row .= '</tr>';
+        return $row;
+    }
+
+    public function add_order_tracker($data)
+    {
+        unset($data['order_scope']);
+        unset($data['vendor']);
+        unset($data['order_date']);
+        unset($data['completion_date']);
+        unset($data['budget_ro_projection']);
+        unset($data['committed_contract_amount']);
+        unset($data['change_order_amount']);
+        unset($data['anticipate_variation']);
+        unset($data['final_certified_amount']);
+        unset($data['kind']);
+        unset($data['group_pur']);
+        unset($data['remarks']);
+        $order_detail = [];
+        if (isset($data['newitems'])) {
+            $order_detail = $data['newitems'];
+            unset($data['newitems']);
+        }
+
+        if (count($order_detail) > 0) {
+            foreach ($order_detail as $key => $rqd) {
+                $dt_data = [];
+
+                $dt_data['pur_order_name'] = $rqd['order_scope'];
+                $dt_data['vendor'] = $rqd['vendor'];
+                $dt_data['order_date'] = $rqd['order_date'];
+                $dt_data['completion_date'] = $rqd['completion_date'];
+                $dt_data['budget'] = $rqd['budget_ro_projection'];
+                $dt_data['total'] = $rqd['committed_contract_amount'];
+                $dt_data['co_total'] = $rqd['change_order_amount'];
+                $dt_data['anticipate_variation'] = $rqd['anticipate_variation'];
+                $dt_data['final_certified_amount'] = $rqd['final_certified_amount'];
+                $dt_data['kind'] = $rqd['kind'];
+                $dt_data['group_pur'] = $rqd['group_pur'];
+                $dt_data['remarks'] = $rqd['remarks'];
+
+                $this->db->insert(db_prefix() . 'pur_order_tracker', $dt_data);
+                return $last_insert_id = $this->db->insert_id();
+            }
+        }
+        return false;
     }
 }

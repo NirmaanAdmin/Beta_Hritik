@@ -45,29 +45,27 @@ $sTable = "(
 ) as combined_orders";
 
 $join = [
-  
    'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = combined_orders.group_pur',
 ];
-
 
 $where = [];
 
 $type = $this->ci->input->post('type');
 if (isset($type)) {
-    $where_type = '';
-    foreach ($type as $t) {
-        if ($t != '') {
-            if ($where_type == '') {
-                $where_type .= ' AND (source_table  = "' . $t . '"';
-            } else {
-                $where_type .= ' or source_table  = "' . $t . '"';
-            }
-        }
-    }
-    if ($where_type != '') {
-        $where_type .= ')';
-        array_push($where, $where_type);
-    }
+   $where_type = '';
+   foreach ($type as $t) {
+      if ($t != '') {
+         if ($where_type == '') {
+            $where_type .= ' AND (source_table  = "' . $t . '"';
+         } else {
+            $where_type .= ' or source_table  = "' . $t . '"';
+         }
+      }
+   }
+   if ($where_type != '') {
+      $where_type .= ')';
+      array_push($where, $where_type);
+   }
 }
 $having = '';
 
@@ -106,10 +104,12 @@ foreach ($rResult as $aRow) {
          $base_currency = get_base_currency_pur();
          $_data = app_format_money($aRow['total'], $base_currency->symbol);
       } elseif ($column == 'order_name') {
-         if($aRow['source_table'] == "pur_orders") {
+         if ($aRow['source_table'] == "pur_orders") {
             $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
-         } else {
+         } elseif ($aRow['source_table'] == "wo_orders") {
             $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+         } elseif ($aRow['source_table'] == "order_tracker") {
+            $_data = $aRow['order_name'];
          }
       } elseif ($column == 'vendor') {
          $_data = '<a href="#">' . $aRow['vendor'] . '</a>';
@@ -207,7 +207,17 @@ foreach ($rResult as $aRow) {
          $_data = app_format_money($aRow['cost_to_complete'], $base_currency->symbol);
       } elseif ($column == 'final_certified_amount') {
          // Format final_certified_amount to display as currency
-         $_data = app_format_money($aRow['final_certified_amount'], '₹');
+         // $_data = app_format_money($aRow['final_certified_amount'], '₹');
+
+         if (!empty($aRow['final_certified_amount'])) {
+            // Display as plain text
+            $_data = '<span class="final-certified-amount-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+               app_format_money($aRow['final_certified_amount'], '₹') .
+               '</span>';
+         } else {
+            // Render as an editable input if no value exists
+            $_data = '<span style="font-style: italic;font-size: 12px;">Please enter the certified amount in Vendor Billing Tracker</span>';
+         }
       } elseif ($column == 'remarks') {
          // If remarks exist, display as plain text with an inline editing option
          $_data = '<span class="remarks-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .

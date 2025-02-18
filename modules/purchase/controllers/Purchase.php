@@ -10374,6 +10374,9 @@ class purchase extends AdminController
     public function order_tracker()
     {
         $data['title'] = _l('order_tracker');
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
         $this->load->view('order_tracker/manage', $data);
     }
     public function update_completion_date()
@@ -10388,7 +10391,14 @@ class purchase extends AdminController
         }
 
         // Determine the table to update
-        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        // $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        if ($table === 'pur_orders') {
+            $tableName = 'tblpur_orders';
+        } elseif ($table === 'wo_orders') {
+            $tableName = 'tblwo_orders';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
 
         // Perform the update
         $this->db->where('id', $id);
@@ -10412,7 +10422,14 @@ class purchase extends AdminController
         }
 
         // Determine the table to update
-        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        // $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        if ($table === 'pur_orders') {
+            $tableName = 'tblpur_orders';
+        } elseif ($table === 'wo_orders') {
+            $tableName = 'tblwo_orders';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
 
         // Perform the update
         $this->db->where('id', $id);
@@ -10435,13 +10452,54 @@ class purchase extends AdminController
             return;
         }
 
-        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        // $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+
+        if ($table === 'pur_orders') {
+            $tableName = 'tblpur_orders';
+        } elseif ($table === 'wo_orders') {
+            $tableName = 'tblwo_orders';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
 
         $this->db->where('id', $id);
         $success = $this->db->update($tableName, ['anticipate_variation' => $anticipate_variation]);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => _l('anticipate_variation_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_final_certified_amount()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $finalCertifiedAmount = $this->input->post('finalCertifiedAmount');
+
+        if (!$id || !$table || !$finalCertifiedAmount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+        if ($table === 'pur_orders') {
+            $aColumn_name = 'pur_order';
+            $tableName = 'tblpur_invoices';
+        } elseif ($table === 'wo_orders') {
+            $aColumn_name = 'wo_order';
+            $tableName = 'tblpur_invoices';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
+        if($table == 'pur_orders' || $table == 'wo_orders'){
+            $this->db->where($aColumn_name, $id);
+            $success = $this->db->update($tableName, ['final_certified_amount' => $finalCertifiedAmount]);
+        }else{
+            $this->db->where('id', $id);
+            $success = $this->db->update($tableName, ['final_certified_amount' => $finalCertifiedAmount]);
+        }
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('final_certified_amount_updated')]);
         } else {
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
@@ -10457,7 +10515,14 @@ class purchase extends AdminController
             return;
         }
 
-        $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        // $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        if ($table === 'pur_orders') {
+            $tableName = 'tblpur_orders';
+        } elseif ($table === 'wo_orders') {
+            $tableName = 'tblwo_orders';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
 
         $this->db->where('id', $id);
         $success = $this->db->update($tableName, ['remarks' => $remarks]);
@@ -11280,8 +11345,6 @@ class purchase extends AdminController
     {
         $data = $this->input->post();
 
-
-
         $id = $this->purchase_model->add_update_preferences($data);
         if ($id) {
             set_alert('success', _l('added_successfully', _l('pur_order')));
@@ -11290,7 +11353,8 @@ class purchase extends AdminController
         }
     }
 
-    public function getPreferences() {
+    public function getPreferences()
+    {
 
         // Retrieve user preferences using the model
         $preferences = $this->purchase_model->get_datatable_preferences();
@@ -11303,7 +11367,6 @@ class purchase extends AdminController
             ->set_content_type('application/json')
             ->set_output(json_encode(['preferences' => $preferences]));
     }
-
     public function invoice_payments()
     {
         $this->load->model('taxes_model');
@@ -11470,5 +11533,57 @@ class purchase extends AdminController
         } else {
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
+    }
+    public function add_order()
+    {
+        $data = $this->input->post();
+
+        if ($data) {
+            $id = $this->purchase_model->add_order_tracker($data);
+            if ($id) {
+                // Set a flash message if needed
+                // set_alert('success', _l('added_successfully', _l('order_tracker')));
+
+                // Return a JSON success response
+                echo json_encode([
+                    'success' => true,
+                    'row_template' => $this->purchase_model->create_order_tracker_row_template(),
+                    'message' => _l('added_successfully', _l('order_tracker'))
+                ]);
+            } else {
+                // Return a JSON error response if the insert failed
+                echo json_encode([
+                    'success' => false,
+                    'message' => _l('problem_adding_order')
+                ]);
+            }
+        } else {
+            // Return a JSON error response if no data was posted
+            echo json_encode([
+                'success' => false,
+                'message' => _l('no_data_received')
+            ]);
+        }
+        exit; // Stop further execution
+    }
+
+
+    public function get_order_tracker_row_template()
+    {
+        $name = $this->input->post('name');
+        $order_scope = $this->input->post('order_scope');
+        $vendor = $this->input->post('vendor');
+        $order_date = $this->input->post('order_date');
+        $completion_date = $this->input->post('completion_date');
+        $budget_ro_projection = $this->input->post('budget_ro_projection');
+        $committed_contract_amount = $this->input->post('committed_contract_amount');
+        $change_order_amount = $this->input->post('change_order_amount');
+        $anticipate_variation = $this->input->post('anticipate_variation');
+        $final_certified_amount = $this->input->post('final_certified_amount');
+        $kind = $this->input->post('kind');
+        $group_pur = $this->input->post('group_pur');
+        $remarks = $this->input->post('remarks');
+
+        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks);
     }
 }
