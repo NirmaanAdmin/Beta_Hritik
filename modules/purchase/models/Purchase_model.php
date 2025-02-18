@@ -17023,7 +17023,7 @@ class Purchase_model extends App_Model
         $this->db->update('tblpur_invoices', array('bil_total' => $total));
         return true;
     }
-    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '')
+    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value= '')
     {
         $row = '';
         $name_order_scope = 'order_scope';
@@ -17038,7 +17038,7 @@ class Purchase_model extends App_Model
         $name_kind = 'kind';
         $name_group_pur = 'group_pur';
         $name_remarks = 'remarks';
-
+        $name_order_value = 'order_value';
 
         if ($name == '') {
             $row .= '<tr class="main">';
@@ -17056,6 +17056,7 @@ class Purchase_model extends App_Model
             $name_kind = $name . '[kind]';
             $name_group_pur = $name . '[group_pur]';
             $name_remarks = $name . '[remarks]';
+            $name_order_value = $name . '[order_value]';
         }
 
 
@@ -17065,6 +17066,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="">' .  render_input($name_order_date, '', $order_date, 'date') . '</td>';
         $row .= '<td class="">' .  render_input($name_completion_date, '', $completion_date, 'date') . '</td>';
         $row .= '<td class="">' .  render_input($name_budget_ro_projection, '', $budget_ro_projection, 'number') . '</td>';
+        $row .= '<td class="">' .  render_input($name_order_value, '', $order_value, 'number') . '</td>';
         $row .= '<td class="">' .  render_input($name_committed_contract_amount, '', $committed_contract_amount, 'number') . '</td>';
         $row .= '<td class="">' .  render_input($name_change_order_amount, '', $change_order_amount, 'number') . '</td>';
         $row .= '<td class="">' .  render_input($name_anticipate_variation, '', $anticipate_variation, 'number') . '</td>';
@@ -17097,6 +17099,7 @@ class Purchase_model extends App_Model
         unset($data['kind']);
         unset($data['group_pur']);
         unset($data['remarks']);
+        unset($data['order_value']);
         $order_detail = [];
         if (isset($data['newitems'])) {
             $order_detail = $data['newitems'];
@@ -17119,6 +17122,7 @@ class Purchase_model extends App_Model
                 $dt_data['kind'] = $rqd['kind'];
                 $dt_data['group_pur'] = $rqd['group_pur'];
                 $dt_data['remarks'] = $rqd['remarks'];
+                $dt_data['order_value'] = $rqd['order_value'];
 
                 $this->db->insert(db_prefix() . 'pur_order_tracker', $dt_data);
                 return $last_insert_id = $this->db->insert_id();

@@ -91,6 +91,7 @@
                               _l('order_date'),
                               _l('completion_date'),
                               _l('budget_ro_projection'),
+                              _l('order_value'),
                               _l('committed_contract_amount'),
                               _l('change_order_amount'),
                               _l('total_rev_contract_value'),
@@ -114,21 +115,22 @@
                      <?php
                      // Updated table headers to include "Completion Date"
                      $table_data = array(
-                        _l('order_scope'),               // Corresponds to `order_name`
+                        _l('order_scope'),
                         _l('rli_filter'),
-                        _l('contractor'),                // Corresponds to `vendor`
-                        _l('order_date'),                // Corresponds to `order_date`
-                        _l('completion_date'),           // New field for Completion Date
-                        _l('budget_ro_projection'),             // Corresponds to `total`
-                        _l('committed_contract_amount'), // Corresponds to `total`
-                        _l('change_order_amount'),               // Corresponds to `total`
+                        _l('contractor'),
+                        _l('order_date'),
+                        _l('completion_date'),
+                        _l('budget_ro_projection'),
+                        _l('order_value'),
+                        _l('committed_contract_amount'),
+                        _l('change_order_amount'),
                         _l('total_rev_contract_value'),
                         _l('anticipate_variation'),
                         _l('cost_to_complete'),
                         _l('final_certified_amount'),
-                        _l('category'),                  // Corresponds to `kind`
+                        _l('category'),
                         _l('group_pur'),
-                        _l('remarks')                // Corresponds to `group_pur`
+                        _l('remarks')
                      );
                      render_datatable($table_data, 'table_order_tracker');
                      ?>
@@ -145,6 +147,7 @@
          <div class="modal-header">
             <h4 class="modal-title"><?php echo _l('Add New Order'); ?></h4>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
+            
          </div>
          <div class="modal-body invoice-item">
             <div class="row">
@@ -162,6 +165,7 @@
                               <th align="left"><?php echo _l('order_date'); ?></th>
                               <th align="left"><?php echo _l('completion_date'); ?></th>
                               <th align="left"><?php echo _l('budget_ro_projection'); ?></th>
+                              <th align="left"><?php echo _l('order_value'); ?></th>
                               <th align="left"><?php echo _l('committed_contract_amount'); ?></th>
                               <th align="left"><?php echo _l('change_order_amount'); ?></th>
                               <th align="left"><?php echo _l('anticipate_variation'); ?></th>
@@ -188,4 +192,5 @@
    <?php init_tail(); ?>
    <?php require 'modules/purchase/assets/js/order_tracker_js.php'; ?>
    </body>
+
    </html>

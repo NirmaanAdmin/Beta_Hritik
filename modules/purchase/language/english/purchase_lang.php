@@ -822,3 +822,5 @@ $lang['remarks_updated'] = 'Remarks updated successfully';
 $lang['anticipate_variation_updated'] = 'Anticipate variation updated successfully';
 $lang['amount_updated'] = 'Budget updated successfully';
 $lang['final_certified_amount_updated'] = 'Final certified amount updated successfully';
+$lang['order_value'] = 'Order value';
+$lang['change_order_amount_updated'] = 'Change order amount updated successfully';

@@ -10,6 +10,7 @@ $aColumns = [
    'order_date',
    'completion_date',
    'budget',
+   'order_value',
    'total',
    'co_total',
    'total_rev_contract_value',
@@ -77,6 +78,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'order_date',
    'completion_date',
    'budget',
+   'order_value',
    'co_total',
    'total',
    'total_rev_contract_value',
@@ -86,6 +88,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'kind',
    'group_name',
    'remarks',
+
    'source_table',
 ]);
 
@@ -183,8 +186,23 @@ foreach ($rResult as $aRow) {
                          data-type="' . $aRow['source_table'] . '">';
          }
       } elseif ($column == 'co_total') {
-         $base_currency = get_base_currency_pur();
-         $_data = app_format_money($aRow['co_total'], $base_currency->symbol);
+         // $base_currency = get_base_currency_pur();
+         // $_data = app_format_money($aRow['co_total'], $base_currency->symbol);
+
+         // Check if anticipate_variation exists in the database
+         if (!empty($aRow['co_total'])) {
+            // Display as plain text
+            $_data = '<span class="co-total-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+               app_format_money($aRow['co_total'], '₹') .
+               '</span>';
+         } else {
+            // Render as an editable input if no value exists
+            // $_data = '<input type="number" class="form-control co-total-input" 
+            //          placeholder="Enter Change Order" 
+            //          data-id="' . $aRow['id'] . '" 
+            //          data-type="' . $aRow['source_table'] . '">';
+            $_data = '<span style="font-style: italic;font-size: 12px;">Values will be fetched directly from the change order module</span>';
+         }
       } elseif ($column == 'total_rev_contract_value') {
          $base_currency = get_base_currency_pur();
          $_data = app_format_money($aRow['total_rev_contract_value'], $base_currency->symbol);
@@ -227,6 +245,9 @@ foreach ($rResult as $aRow) {
          if (empty($aRow['remarks'])) {
             $_data = '<textarea class="form-control remarks-input" placeholder="Enter remarks" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '"></textarea>';
          }
+      } elseif ($column == 'order_value') {
+         $base_currency = get_base_currency_pur();
+         $_data = app_format_money($aRow['order_value'], $base_currency->symbol);
       }
 
       $row[] = $_data;

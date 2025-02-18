@@ -330,6 +330,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.order_date,
             po.completion_date,
             po.budget,
+            po.order_value,
             po.total AS total,
             co.total AS co_total,
             (po.total + IFNULL(co.total, 0)) AS total_rev_contract_value, 
@@ -339,6 +340,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.group_pur,
             po.kind,
             po.remarks AS remarks,
+            
             'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
@@ -355,6 +357,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.order_date,
             wo.completion_date,
             wo.budget,
+            wo.order_value,
             wo.total AS total,
             co.total AS co_total,
             (wo.total + IFNULL(co.total, 0)) AS total_rev_contract_value,
@@ -364,6 +367,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.group_pur,
             wo.kind,
             wo.remarks AS remarks,
+            
             'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
@@ -380,6 +384,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             t.order_date,
             t.completion_date,
             t.budget,
+             t.order_value,
             t.total AS total,
             t.co_total AS co_total,
             (t.total + IFNULL(t.co_total, 0)) AS total_rev_contract_value,
@@ -389,6 +394,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             t.group_pur,
             t.kind,
             t.remarks AS remarks,
+           
             'order_tracker' AS source_table
         FROM tblpur_order_tracker t
         LEFT JOIN tblpur_vendor pv ON pv.userid = t.vendor
@@ -500,7 +506,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     $sOrder
     $sLimit
     ";
-    
+
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),

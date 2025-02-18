@@ -10376,7 +10376,9 @@ class purchase extends AdminController
         $data['title'] = _l('order_tracker');
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+       
         $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
+        
         $this->load->view('order_tracker/manage', $data);
     }
     public function update_completion_date()
@@ -10500,6 +10502,38 @@ class purchase extends AdminController
         }
         if ($success) {
             echo json_encode(['success' => true, 'message' => _l('final_certified_amount_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_change_order_amount()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $changeOrderAmount = $this->input->post('changeOrderAmount');
+
+        if (!$id || !$table || !$changeOrderAmount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+        if ($table === 'pur_orders') {
+            $aColumn_name = 'po_order_id';
+            $tableName = 'tblco_request';
+        } elseif ($table === 'wo_orders') {
+            $aColumn_name = 'wo_order_id';
+            $tableName = 'tblco_request';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
+        if($table == 'pur_orders' || $table == 'wo_orders'){
+            $this->db->where($aColumn_name, $id);
+            $success = $this->db->update($tableName, ['total' => $changeOrderAmount]);
+        }else{
+            $this->db->where('id', $id);
+            $success = $this->db->update($tableName, ['co_total' => $changeOrderAmount]);
+        }
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('change_order_amount_updated')]);
         } else {
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
@@ -11583,7 +11617,10 @@ class purchase extends AdminController
         $kind = $this->input->post('kind');
         $group_pur = $this->input->post('group_pur');
         $remarks = $this->input->post('remarks');
+        $order_value = $this->input->post('order_value');
 
-        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks);
+        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value);
     }
+
+
 }

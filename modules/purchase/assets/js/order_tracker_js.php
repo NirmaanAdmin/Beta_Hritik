@@ -51,7 +51,51 @@
                 }
             });
         });
+        
+        // Inline editing for "Co Total Display" (toggle span to input)
+        $('body').on('click', '.co-total-display', function(e) {
+            e.preventDefault();
 
+            var rowId = $(this).data('id');
+            var tableType = $(this).data('type');
+            var currentAmount = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
+
+            // Replace the span with an input field
+            $(this).replaceWith('<input type="number" class="form-control co-total-input" value="' + currentAmount + '" data-id="' + rowId + '" data-type="' + tableType + '">');
+        });
+         // Save updated "Anticipate Variation" to the database
+         $('body').on('change', '.co-total-input', function(e) {
+            e.preventDefault();
+
+            var rowId = $(this).data('id');
+            var tableType = $(this).data('type');
+            var changeOrderAmount = $(this).val();
+
+            // Perform AJAX request to update the anticipate_variation
+            $.post(admin_url + 'purchase/update_change_order_amount', {
+                id: rowId,
+                table: tableType,
+                changeOrderAmount: changeOrderAmount
+            }).done(function(response) {
+                response = JSON.parse(response);
+                if (response.success) {
+                    alert_float('success', response.message);
+
+                    // Replace input back with formatted value
+                    var formattedValue = new Intl.NumberFormat('en-IN', {
+                        style: 'currency',
+                        currency: 'INR'
+                    }).format(changeOrderAmount);
+
+                    $('.co-total-input[data-id="' + rowId + '"]').replaceWith('<span class="co-total-display" data-id="' + rowId + '" data-type="' + tableType + '">' + formattedValue + '</span>');
+
+                    // Optionally reload the table if necessary
+                    table_order_tracker.ajax.reload(null, false);
+                } else {
+                    alert_float('danger', response.message);
+                }
+            });
+        });
         // Inline editing for "Amount" (toggle span to input)
         $('body').on('click', '.budget-display', function(e) {
             e.preventDefault();
@@ -244,7 +288,7 @@
         var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.order-tracker-items-table tbody .item').length + 1;
         lastAddedItemKey = item_key;
         // $("body").append('<div class="dt-loader"></div>');
-        order_get_item_row_template('newitems[' + item_key + ']', data.order_scope, data.vendor, data.order_date, data.completion_date, data.budget_ro_projection, data.committed_contract_amount, data.change_order_amount, data.anticipate_variation, data.final_certified_amount, data.kind, data.group_pur, data.remarks).done(function(output) {
+        order_get_item_row_template('newitems[' + item_key + ']', data.order_scope, data.vendor, data.order_date, data.completion_date, data.budget_ro_projection, data.committed_contract_amount, data.change_order_amount, data.anticipate_variation, data.final_certified_amount, data.kind, data.group_pur, data.remarks, data.order_value).done(function(output) {
             table_row += output;
 
             $('.invoice-item table.order-tracker-items-table.items tbody').append(table_row);
@@ -271,6 +315,7 @@
         response.order_date = $('.invoice-item .main input[name="order_date"]').val();
         response.completion_date = $('.invoice-item .main input[name="completion_date"]').val();
         response.budget_ro_projection = $('.invoice-item .main input[name="budget_ro_projection"]').val();
+        response.order_value = $('.invoice-item .main input[name="order_value"]').val();
         response.committed_contract_amount = $('.invoice-item .main input[name="committed_contract_amount"]').val();
         response.change_order_amount = $('.invoice-item .main input[name="change_order_amount"]').val();
         response.anticipate_variation = $('.invoice-item .main input[name="anticipate_variation"]').val();
@@ -292,7 +337,7 @@
         previewArea.find('select').val('').selectpicker('refresh');
     }
 
-    function order_get_item_row_template(name, order_scope, vendor, order_date, completion_date, budget_ro_projection, committed_contract_amount, change_order_amount, anticipate_variation, final_certified_amount, kind, group_pur, remarks) {
+    function order_get_item_row_template(name, order_scope, vendor, order_date, completion_date, budget_ro_projection, committed_contract_amount, change_order_amount, anticipate_variation, final_certified_amount, kind, group_pur, remarks, order_value) {
         "use strict";
 
         jQuery.ajaxSetup({
@@ -313,6 +358,7 @@
             kind: kind,
             group_pur: group_pur,
             remarks: remarks,
+            order_value: order_value
         });
         jQuery.ajaxSetup({
             async: true
