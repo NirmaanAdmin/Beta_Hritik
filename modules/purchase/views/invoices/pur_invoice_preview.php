@@ -476,20 +476,22 @@
 		               <div class="clearfix"></div>
 		               <table class="table dt-table">
 		                   <thead>
-		                     <th><?php echo _l('payments_table_amount_heading'); ?></th>
+		                   	  <th><?php echo _l('payment_date'); ?></th>
+		                      <th><?php echo _l('payment_made'); ?></th>
+		                      <th><?php echo _l('bil_tds'); ?></th>
 		                      <th><?php echo _l('payments_table_mode_heading'); ?></th>
 		                      <th><?php echo _l('payment_transaction_id'); ?></th>
-		                      <th><?php echo _l('payments_table_date_heading'); ?></th>
 		                      <th><?php echo _l('approval_status'); ?></th>
 		                      <th><?php echo _l('options'); ?></th>
 		                   </thead>
 		                  <tbody>
 		                     <?php foreach($payment as $pay) { ?>
 		                        <tr>
+		                           <td><?php echo _d($pay['date']); ?></td>
 		                           <td><?php echo app_format_money($pay['amount'],$base_currency->symbol); ?></td>
+		                           <td><?php echo app_format_money($pay['tds'],$base_currency->symbol); ?></td>
 		                           <td><?php echo get_payment_mode_by_id($pay['paymentmode']); ?></td>
 		                           <td><?php echo pur_html_entity_decode($pay['transactionid']); ?></td>
-		                           <td><?php echo _d($pay['date']); ?></td>
 		                           <td><?php echo get_status_approve($pay['approval_status']); ?></td>
 		                           <td>
 		                           	<?php if(has_permission('purchase_invoices','','edit') || is_admin()){ ?>
@@ -621,12 +623,12 @@
                 <div class="row">
                     <div class="col-md-12">
                      <div id="additional"></div>
-                     <?php echo render_input('amount','amount',purinvoice_left_to_pay($pur_invoice->id),'number',array('max' => purinvoice_left_to_pay($pur_invoice->id))); ?>
-                        <?php echo render_date_input('date','payment_edit_date'); ?>
-                        <?php echo render_select('paymentmode',$payment_modes,array('id','name'),'payment_mode'); ?>
-                        
-                        <?php echo render_input('transactionid','payment_transaction_id'); ?>
-                        <?php echo render_textarea('note','note','',array('rows'=>7)); ?>
+                     	<?php echo render_date_input('date', 'payment_date'); ?>
+                     	<?php echo render_input('amount', 'payment_made', purinvoice_left_to_pay($pur_invoice->id), 'number', array('max' => purinvoice_left_to_pay($pur_invoice->id))); ?>
+                     	<?php echo render_input('tds', 'bil_tds', 0, 'number', array('min' => 0)); ?>
+                        <?php echo render_select('paymentmode', $payment_modes, array('id','name'),'payment_mode'); ?>
+                        <?php echo render_input('transactionid', 'payment_transaction_id'); ?>
+                        <?php echo render_textarea('note', 'note', '', array('rows'=>7)); ?>
 
                     </div>
                 </div>

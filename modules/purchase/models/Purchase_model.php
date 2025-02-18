@@ -7184,24 +7184,15 @@ class Purchase_model extends App_Model
     {
         $data['date'] = to_sql_date($data['date']);
         $data['daterecorded'] = date('Y-m-d H:i:s');
-
         $data['pur_invoice'] = $invoice;
         $data['approval_status'] = 1;
         $data['requester'] = get_staff_user_id();
         $pur_invoice_detail = $this->get_pur_invoice($invoice);
         $check_appr = $this->check_approval_setting($pur_invoice_detail->project_id, 'payment_request', 0);
         $data['approval_status'] = ($check_appr == true) ? 2 : 1;
-        // $check_appr = $this->get_approve_setting('payment_request');
-        // if ($check_appr && $check_appr != false) {
-        //     $data['approval_status'] = 1;
-        // } else {
-        //     $data['approval_status'] = 2;
-        // }
-
         $this->db->insert(db_prefix() . 'pur_invoice_payment', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {
-
             if ($data['approval_status'] == 2) {
                 $pur_invoice = $this->get_pur_invoice($invoice);
                 if ($pur_invoice) {
@@ -16937,75 +16928,78 @@ class Purchase_model extends App_Model
     public function update_bil_payment_date($data)
     {
         $id = $data['id'];
-        $vbt_id = $data['vbt_id'];
-        $payment_date = $data['payment_date'];
+        $pur_invoice = $data['vbt_id'];
+        $date = $data['payment_date'];
 
         $this->db->where('id', $id);
-        $this->db->where('vbt_id', $vbt_id);
-        $bil_payment_detail = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+        $this->db->where('pur_invoice', $pur_invoice);
+        $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($bil_payment_detail)) {
+        if(!empty($pur_invoice_payment)) {
             $this->db->where('id', $id);
-            $this->db->where('vbt_id', $vbt_id);
-            $this->db->update('tblbil_payment_details', array('payment_date' => $payment_date));
+            $this->db->where('pur_invoice', $pur_invoice);
+            $this->db->update('tblpur_invoice_payment', array('date' => $date));
         } else {
             $input = array();
-            $input['vbt_id'] = $vbt_id;
-            $input['payment_date'] = $payment_date;
-            $input['dateadded'] = date('Y-m-d H:i:s');
-            $this->db->insert('tblbil_payment_details', $input);
+            $input['pur_invoice'] = $pur_invoice;
+            $input['date'] = $date;
+            $input['approval_status'] = 1;
+            $input['requester'] = get_staff_user_id();
+            $input['daterecorded'] = date('Y-m-d H:i:s');
+            $this->db->insert('tblpur_invoice_payment', $input);
         }
-
         return true;
     }
 
     public function update_bil_payment_made($data)
     {
         $id = $data['id'];
-        $vbt_id = $data['vbt_id'];
-        $payment_made = $data['payment_made'];
+        $pur_invoice = $data['vbt_id'];
+        $amount = $data['payment_made'];
 
         $this->db->where('id', $id);
-        $this->db->where('vbt_id', $vbt_id);
-        $bil_payment_detail = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+        $this->db->where('pur_invoice', $pur_invoice);
+        $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($bil_payment_detail)) {
+        if(!empty($pur_invoice_payment)) {
             $this->db->where('id', $id);
-            $this->db->where('vbt_id', $vbt_id);
-            $this->db->update('tblbil_payment_details', array('payment_made' => $payment_made));
+            $this->db->where('pur_invoice', $pur_invoice);
+            $this->db->update('tblpur_invoice_payment', array('amount' => $amount));
         } else {
             $input = array();
-            $input['vbt_id'] = $vbt_id;
-            $input['payment_made'] = $payment_made;
-            $input['dateadded'] = date('Y-m-d H:i:s');
-            $this->db->insert('tblbil_payment_details', $input);
+            $input['pur_invoice'] = $pur_invoice;
+            $input['amount'] = $amount;
+            $input['approval_status'] = 1;
+            $input['requester'] = get_staff_user_id();
+            $input['daterecorded'] = date('Y-m-d H:i:s');
+            $this->db->insert('tblpur_invoice_payment', $input);
         }
-
         return true;
     }
 
     public function update_bil_payment_tds($data)
     {
         $id = $data['id'];
-        $vbt_id = $data['vbt_id'];
-        $payment_tds = $data['payment_tds'];
+        $pur_invoice = $data['vbt_id'];
+        $tds = $data['payment_tds'];
 
         $this->db->where('id', $id);
-        $this->db->where('vbt_id', $vbt_id);
-        $bil_payment_detail = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+        $this->db->where('pur_invoice', $pur_invoice);
+        $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($bil_payment_detail)) {
+        if(!empty($pur_invoice_payment)) {
             $this->db->where('id', $id);
-            $this->db->where('vbt_id', $vbt_id);
-            $this->db->update('tblbil_payment_details', array('payment_tds' => $payment_tds));
+            $this->db->where('pur_invoice', $pur_invoice);
+            $this->db->update('tblpur_invoice_payment', array('tds' => $tds));
         } else {
             $input = array();
-            $input['vbt_id'] = $vbt_id;
-            $input['payment_tds'] = $payment_tds;
-            $input['dateadded'] = date('Y-m-d H:i:s');
-            $this->db->insert('tblbil_payment_details', $input);
+            $input['pur_invoice'] = $pur_invoice;
+            $input['tds'] = $tds;
+            $input['approval_status'] = 1;
+            $input['requester'] = get_staff_user_id();
+            $input['daterecorded'] = date('Y-m-d H:i:s');
+            $this->db->insert('tblpur_invoice_payment', $input);
         }
-
         return true;
     }
 
@@ -17015,13 +17009,13 @@ class Purchase_model extends App_Model
         $payment_made_amount = 0;
         $total = 0;
 
-        $this->db->select_sum('payment_made', 'total_payment_made');
-        $this->db->select_sum('payment_tds', 'total_payment_tds');
-        $this->db->where('vbt_id', $id);
-        $bil_payment_details = $this->db->get(db_prefix() . 'bil_payment_details')->row();
+        $this->db->select_sum('amount', 'total_payment_made');
+        $this->db->select_sum('tds', 'total_payment_tds');
+        $this->db->where('pur_invoice', $id);
+        $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($bil_payment_details)) {
-            $total = $bil_payment_details->total_payment_made + $bil_payment_details->total_payment_tds;
+        if(!empty($pur_invoice_payment)) {
+            $total = $pur_invoice_payment->total_payment_made + $pur_invoice_payment->total_payment_tds;
         }
 
         $this->db->where('id', $id);

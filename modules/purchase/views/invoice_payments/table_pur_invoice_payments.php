@@ -209,7 +209,7 @@ foreach ($rResult as $aRow) {
                 $_data = '';
                 foreach ($bil_payment_details as $bkey => $bvalue) {
                     $_data .= '<div class="input-group date all_payment_date" data-id="' . $aRow['id'] . '">
-                        <input type="date" class="form-control payment-date-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['payment_date'] . '" style="width: 138px">
+                        <input type="date" class="form-control payment-date-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['date'] . '" style="width: 138px">
                         <div class="input-group-addon">
                             <i class="fa fa-plus add_new_payment_date" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
                         </div>
@@ -229,7 +229,7 @@ foreach ($rResult as $aRow) {
                 $_data = '';
                 foreach ($bil_payment_details as $bkey => $bvalue) {
                     $_data .= '<div class="input-group all_payment_made" data-id="' . $aRow['id'] . '">
-                        <input type="number" class="form-control payment-made-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['payment_made'] . '" style="width: 138px">
+                        <input type="number" class="form-control payment-made-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['amount'] . '" style="width: 138px">
                         <div class="input-group-addon">
                             <i class="fa fa-plus add_new_payment_made" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
                         </div>
@@ -249,7 +249,7 @@ foreach ($rResult as $aRow) {
                 $_data = '';
                 foreach ($bil_payment_details as $bkey => $bvalue) {
                     $_data .= '<div class="input-group all_payment_tds" data-id="' . $aRow['id'] . '">
-                        <input type="number" class="form-control payment-tds-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['payment_tds'] . '" style="width: 138px">
+                        <input type="number" class="form-control payment-tds-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['tds'] . '" style="width: 138px">
                         <div class="input-group-addon">
                             <i class="fa fa-plus add_new_payment_tds" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
                         </div>

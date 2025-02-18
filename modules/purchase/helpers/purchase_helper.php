@@ -3916,8 +3916,8 @@ function get_bil_payment_details($id)
 {
     $CI = &get_instance();
     $CI->db->select('*');
-    $CI->db->from(db_prefix() . 'bil_payment_details');
-    $CI->db->where('vbt_id', $id);
-    $bil_payment_details = $CI->db->get()->result_array();
-    return $bil_payment_details;
+    $CI->db->from(db_prefix() . 'pur_invoice_payment');
+    $CI->db->where('pur_invoice', $id);
+    $pur_invoice_payment = $CI->db->get()->result_array();
+    return $pur_invoice_payment;
 }
