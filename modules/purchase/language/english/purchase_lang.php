@@ -824,3 +824,4 @@ $lang['amount_updated'] = 'Budget updated successfully';
 $lang['final_certified_amount_updated'] = 'Final certified amount updated successfully';
 $lang['order_value'] = 'Order value';
 $lang['change_order_amount_updated'] = 'Change order amount updated successfully';
+$lang['purchase_tracker'] = 'Purchase Tracker';
