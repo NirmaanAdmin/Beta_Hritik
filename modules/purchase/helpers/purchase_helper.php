@@ -3921,3 +3921,14 @@ function get_bil_payment_details($id)
     $pur_invoice_payment = $CI->db->get()->result_array();
     return $pur_invoice_payment;
 }
+
+function get_ril_invoice_item($id)
+{
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'itemable');
+    $CI->db->where('vbt_id', $id);
+    $CI->db->where('rel_type', 'invoice');
+    $ril_invoice_item = $CI->db->get()->row();
+    return $ril_invoice_item;
+}

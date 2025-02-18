@@ -84,24 +84,6 @@
       });
    });
 
-   $('body').on('change', '.ril-bill-no-input', function(e) {
-      e.preventDefault();
-      var rowId = $(this).data('id');
-      var ril_bill_no = $(this).val();
-      $.post(admin_url + 'purchase/update_ril_bill_no', {
-         id: rowId,
-         ril_bill_no: ril_bill_no
-      }).done(function(response) {
-         response = JSON.parse(response);
-         if (response.success) {
-            alert_float('success', response.message);
-            table_pur_invoice_payments.ajax.reload(null, false);
-         } else {
-            alert_float('danger', response.message);
-         }
-      });
-   });
-
    $('body').on('click', '.ril-previous-display', function(e) {
       e.preventDefault();
       var rowId = $(this).data('id');

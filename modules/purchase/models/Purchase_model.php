@@ -16895,33 +16895,40 @@ class Purchase_model extends App_Model
 
     public function update_ril_payment_details($id, $column_name, $column_value)
     {
-        $this->db->where('vbt_id', $id);
-        $ril_payment_detail = $this->db->get(db_prefix() . 'ril_payment_details')->row();
+        $ril_invoice_item = get_ril_invoice_item($id);
+        if(!empty($ril_invoice_item)) {
+            $invoiceid = $ril_invoice_item->rel_id;
 
-        if(!empty($ril_payment_detail)) {
-            $this->db->where('vbt_id', $id);
-            $this->db->update('tblril_payment_details', array($column_name => $column_value));
-        } else {
-            $input = array();
-            $input['vbt_id'] = $id;
-            $input[$column_name] = $column_value;
-            $input['dateadded'] = date('Y-m-d H:i:s');
-            $this->db->insert('tblril_payment_details', $input);
+            $this->db->where('invoiceid', $invoiceid);
+            $this->db->where('pur_invoice', $id);
+            $invoicepaymentrecords = $this->db->get(db_prefix() . 'invoicepaymentrecords')->row();
+
+            if(!empty($invoicepaymentrecords)) {
+                $this->db->where('invoiceid', $invoiceid);
+                $this->db->where('pur_invoice', $id);
+                $this->db->update('tblinvoicepaymentrecords', array($column_name => $column_value));
+            } else {
+                $input = array();
+                $input['invoiceid'] = $invoiceid;
+                $input['pur_invoice'] = $id;
+                $input[$column_name] = $column_value;
+                $input['daterecorded'] = date('Y-m-d H:i:s');
+                $this->db->insert('tblinvoicepaymentrecords', $input);
+            }
         }
-
         return true;
     }
 
     public function update_final_ril_total($id)
     {
-        $this->db->where('vbt_id', $id);
-        $ril_payment_details = $this->db->get(db_prefix() . 'ril_payment_details')->row();
-        if(!empty($ril_payment_details)) {
-            $ril_previous_amount = $ril_payment_details->ril_previous;
-            $ril_this_bill_amount = $ril_payment_details->ril_this_bill;
+        $this->db->where('pur_invoice', $id);
+        $invoicepaymentrecords = $this->db->get(db_prefix() . 'invoicepaymentrecords')->row();
+        if(!empty($invoicepaymentrecords)) {
+            $ril_previous_amount = $invoicepaymentrecords->ril_previous;
+            $ril_this_bill_amount = $invoicepaymentrecords->amount;
             $total = $ril_previous_amount + $ril_this_bill_amount;
-            $this->db->where('vbt_id', $id);
-            $this->db->update('tblril_payment_details', array('ril_amount' => $total));
+            $this->db->where('pur_invoice', $id);
+            $this->db->update('tblinvoicepaymentrecords', array('ril_amount' => $total));
         }
         return true;
     }

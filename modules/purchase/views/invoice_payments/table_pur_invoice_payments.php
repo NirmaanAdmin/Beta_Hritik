@@ -22,17 +22,17 @@ $aColumns = [
     3,
     4,
     'bil_total',
-    'ril_bill_no',
+    5,
     'ril_previous',
-    'ril_this_bill',
-    'ril_date',
+    db_prefix() . 'invoicepaymentrecords.amount as ril_this_bill',
+    db_prefix() . 'invoicepaymentrecords.date as ril_date',
     'ril_amount',
 ];
 
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'pur_invoices';
 $join         = [
-    'LEFT JOIN ' . db_prefix() . 'ril_payment_details ON ' . db_prefix() . 'ril_payment_details.vbt_id = ' . db_prefix() . 'pur_invoices.id',
+    'LEFT JOIN ' . db_prefix() . 'invoicepaymentrecords ON ' . db_prefix() . 'invoicepaymentrecords.pur_invoice = ' . db_prefix() . 'pur_invoices.id',
     'LEFT JOIN ' . db_prefix() . 'pur_contracts ON ' . db_prefix() . 'pur_contracts.id = ' . db_prefix() . 'pur_invoices.contract',
     'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'pur_invoices.project_id = ' . db_prefix() . 'projects.id',
     'LEFT JOIN ' . db_prefix() . 'items_groups ON ' . db_prefix() . 'pur_invoices.group_pur = ' . db_prefix() . 'items_groups.id',
@@ -114,9 +114,6 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.wo_order',
     db_prefix() . 'items_groups.name',
     db_prefix() . 'pur_invoices.description_services',
-    'CASE WHEN ril_previous IS NULL OR ril_previous = "" THEN "0" ELSE ril_previous END AS ril_previous',
-    'CASE WHEN ril_this_bill IS NULL OR ril_this_bill = "" THEN "0" ELSE ril_this_bill END AS ril_this_bill',
-    'CASE WHEN ril_amount IS NULL OR ril_amount = "" THEN "0" ELSE ril_amount END AS ril_amount',
 ]);
 
 $output  = $result['output'];
@@ -143,6 +140,13 @@ foreach ($rResult as $aRow) {
         $base_currency = get_base_currency_pur();
         if ($aRow['currency'] != 0) {
             $base_currency = pur_get_currency_by_id($aRow['currency']);
+        }
+
+        $ril_invoice_link = '';
+        $ril_invoice_item = get_ril_invoice_item($aRow['id']);
+        if(!empty($ril_invoice_item)) {
+            $invoice_data = get_invoice_data($ril_invoice_item->rel_id);
+            $ril_invoice_link = '<a href="' . admin_url('invoices/list_invoices/' . $invoice_data->id) . '">' . $invoice_data->title . '</a>';
         }
 
         if (strpos($aColumns[$i], 'as') !== false && !isset($aRow[$aColumns[$i]])) {
@@ -193,16 +197,30 @@ foreach ($rResult as $aRow) {
             $_data = '<span class="bil-tds-display" data-id="' . $aRow['id'] . '">' .app_format_money($aRow['bil_tds'], $base_currency->symbol) .'</span>';
         } elseif ($aColumns[$i] == 'bil_total') {
             $_data = app_format_money($aRow['bil_total'], $base_currency->symbol);
-        } elseif ($aColumns[$i] == 'ril_bill_no') {
-            $_data = '<input type="text" class="form-control ril-bill-no-input" value="' . $aRow['ril_bill_no'] . '" data-id="' . $aRow['id'] . '" style="width: 138px">';
         } elseif ($aColumns[$i] == 'ril_previous') {
-            $_data = '<span class="ril-previous-display" data-id="' . $aRow['id'] . '">' .app_format_money($aRow['ril_previous'], $base_currency->symbol) .'</span>';
-        } elseif ($aColumns[$i] == 'ril_this_bill') {
-            $_data = '<span class="ril-this-bill-display" data-id="' . $aRow['id'] . '">' .app_format_money($aRow['ril_this_bill'], $base_currency->symbol) .'</span>';
-        } elseif ($aColumns[$i] == 'ril_date') {
-            $_data = '<input type="date" class="form-control ril-date-input" value="' . $aRow['ril_date'] . '" data-id="' . $aRow['id'] . '" style="width: 138px">';
+            if(!empty($ril_invoice_link)) {
+                $_data = '<span class="ril-previous-display" data-id="' . $aRow['id'] . '">' .app_format_money($aRow['ril_previous'], $base_currency->symbol) .'</span>';
+            } else {
+                $_data = '';
+            }
+        } elseif ($aColumns[$i] == db_prefix() . 'invoicepaymentrecords.amount as ril_this_bill') {
+            if(!empty($ril_invoice_link)) {
+                $_data = '<span class="ril-this-bill-display" data-id="' . $aRow['id'] . '">' .app_format_money($aRow['ril_this_bill'], $base_currency->symbol) .'</span>';
+            } else {
+                $_data = '';
+            }
+        } elseif ($aColumns[$i] == db_prefix() . 'invoicepaymentrecords.date as ril_date') {
+            if(!empty($ril_invoice_link)) {
+                $_data = '<input type="date" class="form-control ril-date-input" value="' . $aRow['ril_date'] . '" data-id="' . $aRow['id'] . '" style="width: 138px">';
+            } else {
+                $_data = '';
+            }
         } elseif ($aColumns[$i] == 'ril_amount') {
-            $_data = app_format_money($aRow['ril_amount'], $base_currency->symbol);
+            if(!empty($ril_invoice_link)) {
+                $_data = app_format_money($aRow['ril_amount'], $base_currency->symbol);
+            } else {
+                $_data = '';
+            }
         } elseif ($aColumns[$i] == 2) {
             $bil_payment_details = get_bil_payment_details($aRow['id']);
             if(!empty($bil_payment_details)) {
@@ -262,6 +280,12 @@ foreach ($rResult as $aRow) {
                         <i class="fa fa-plus add_new_payment_tds" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
                     </div>
                 </div>';
+            }
+        } elseif ($aColumns[$i] == 5) {
+            if(!empty($ril_invoice_link)) {
+                $_data = $ril_invoice_link;
+            } else {
+                $_data = '';
             }
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {

@@ -11428,26 +11428,6 @@ class purchase extends AdminController
         $this->app->get_table_data(module_views_path('purchase', 'invoice_payments/table_pur_invoice_payments'));
     }
 
-    public function update_ril_bill_no()
-    {
-        $id = $this->input->post('id');
-        $ril_bill_no = $this->input->post('ril_bill_no');
-
-        if (!$id || !$ril_bill_no) {
-            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
-            return;
-        }
-
-        // Perform the update
-        $success = $this->purchase_model->update_ril_payment_details($id, 'ril_bill_no', $ril_bill_no);
-
-        if ($success) {
-            echo json_encode(['success' => true, 'message' => 'RA Bill No is updated']);
-        } else {
-            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
-        }
-    }
-
     public function update_ril_previous_amount()
     {
         $id = $this->input->post('id');
@@ -11480,7 +11460,7 @@ class purchase extends AdminController
         }
 
         // Perform the update
-        $success = $this->purchase_model->update_ril_payment_details($id, 'ril_this_bill', $amount);
+        $success = $this->purchase_model->update_ril_payment_details($id, 'amount', $amount);
         $this->purchase_model->update_final_ril_total($id);
 
         if ($success) {
@@ -11501,7 +11481,7 @@ class purchase extends AdminController
         }
 
         // Perform the update
-        $success = $this->purchase_model->update_ril_payment_details($id, 'ril_date', $ril_date);
+        $success = $this->purchase_model->update_ril_payment_details($id, 'date', $ril_date);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'RIL date is updated']);
