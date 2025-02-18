@@ -32,7 +32,6 @@ $aColumns = [
     'vendor_submitted_tax_amount',
     // 'vendor_submitted_amount',
     'final_certified_amount',
-    'transactionid',
     'vendor_note',
     'adminnote'
 ];
@@ -51,7 +50,6 @@ if (isset($vendor) || isset($project)) {
         'vendor_submitted_tax_amount',
         'vendor_submitted_amount',
         'final_certified_amount',
-        'transactionid',
         'vendor_note',
     ];
 }
