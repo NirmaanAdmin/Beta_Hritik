@@ -238,4 +238,38 @@
     });
   });
 
+  $('body').on('click', '.add_new_payment_tds', function(e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var newPaymentMadeHTML = `
+      <div class="input-group all_payment_tds" data-id="${rowId}">
+        <input type="number" class="form-control payment-tds-input" data-payment-id="0" data-id="${rowId}" style="width: 138px">
+        <div class="input-group-addon">
+            <i class="fa fa-plus add_new_payment_tds" data-id="${rowId}" style="cursor: pointer;"></i>
+        </div>
+      </div>
+    `;
+    $(this).closest('.all_payment_tds').after(newPaymentMadeHTML);
+  });
+
+  $('body').on('change', '.payment-tds-input', function (e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var paymentId = $(this).data('payment-id');
+    var paymentMade = $(this).val();
+    $.post(admin_url + 'purchase/update_bil_payment_tds', {
+      id: paymentId,
+      vbt_id: rowId,
+      payment_tds: paymentMade,
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_pur_invoice_payments.ajax.reload(null, false);
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
 })(jQuery);

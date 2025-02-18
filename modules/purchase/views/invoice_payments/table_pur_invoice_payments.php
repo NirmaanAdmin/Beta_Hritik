@@ -20,7 +20,7 @@ $aColumns = [
     'final_certified_amount',
     2,
     3,
-    'bil_tds',
+    4,
     'bil_total',
     'ril_bill_no',
     'ril_previous',
@@ -32,6 +32,7 @@ $aColumns = [
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'pur_invoices';
 $join         = [
+    'LEFT JOIN ' . db_prefix() . 'ril_payment_details ON ' . db_prefix() . 'ril_payment_details.vbt_id = ' . db_prefix() . 'pur_invoices.id',
     'LEFT JOIN ' . db_prefix() . 'pur_contracts ON ' . db_prefix() . 'pur_contracts.id = ' . db_prefix() . 'pur_invoices.contract',
     'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'pur_invoices.project_id = ' . db_prefix() . 'projects.id',
     'LEFT JOIN ' . db_prefix() . 'items_groups ON ' . db_prefix() . 'pur_invoices.group_pur = ' . db_prefix() . 'items_groups.id',
@@ -113,6 +114,9 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.wo_order',
     db_prefix() . 'items_groups.name',
     db_prefix() . 'pur_invoices.description_services',
+    'CASE WHEN ril_previous IS NULL OR ril_previous = "" THEN "0" ELSE ril_previous END AS ril_previous',
+    'CASE WHEN ril_this_bill IS NULL OR ril_this_bill = "" THEN "0" ELSE ril_this_bill END AS ril_this_bill',
+    'CASE WHEN ril_amount IS NULL OR ril_amount = "" THEN "0" ELSE ril_amount END AS ril_amount',
 ]);
 
 $output  = $result['output'];
@@ -236,6 +240,26 @@ foreach ($rResult as $aRow) {
                     <input type="number" class="form-control payment-made-input" data-payment-id="0" data-id="' . $aRow['id'] . '" style="width: 138px">
                     <div class="input-group-addon">
                         <i class="fa fa-plus add_new_payment_made" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
+                    </div>
+                </div>';
+            }
+        } elseif ($aColumns[$i] == 4) {
+            $bil_payment_details = get_bil_payment_details($aRow['id']);
+            if(!empty($bil_payment_details)) {
+                $_data = '';
+                foreach ($bil_payment_details as $bkey => $bvalue) {
+                    $_data .= '<div class="input-group all_payment_tds" data-id="' . $aRow['id'] . '">
+                        <input type="number" class="form-control payment-tds-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['payment_tds'] . '" style="width: 138px">
+                        <div class="input-group-addon">
+                            <i class="fa fa-plus add_new_payment_tds" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
+                        </div>
+                    </div>';
+                }
+            } else {
+                $_data = '<div class="input-group all_payment_tds" data-id="' . $aRow['id'] . '">
+                    <input type="number" class="form-control payment-tds-input" data-payment-id="0" data-id="' . $aRow['id'] . '" style="width: 138px">
+                    <div class="input-group-addon">
+                        <i class="fa fa-plus add_new_payment_tds" data-id="' . $aRow['id'] . '" style="cursor: pointer;"></i>
                     </div>
                 </div>';
             }
