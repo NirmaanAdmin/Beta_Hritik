@@ -167,6 +167,27 @@ var expenseDropzone;
     });
   });
 
+  $('body').on('change', '.billing-remarks-input', function (e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var billing_remarks = $(this).val();
+
+    // Perform AJAX request to update the invoice date
+    $.post(admin_url + 'purchase/update_billing_remarks', {
+      id: rowId,
+      billing_remarks: billing_remarks
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_pur_invoices.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
   $('body').on('change', '#select_invoice', function (e) {
     e.preventDefault();
     var select_invoice = $(this).val();

@@ -33,7 +33,8 @@ $aColumns = [
     // 'vendor_submitted_amount',
     'final_certified_amount',
     'vendor_note',
-    'adminnote'
+    'adminnote',
+    'billing_remarks'
 ];
 if (isset($vendor) || isset($project)) {
     $aColumns = [
@@ -513,6 +514,9 @@ foreach ($rResult as $aRow) {
             // $_data = '<input type="date" class="form-control invoice-date-input" value="' . $aRow['invoice_date'] . '" data-id="' . $aRow['id'] . '">';
 
             $_data = '<textarea class="form-control adminnote-input"  data-id="' . $aRow['id'] . '">' . $aRow['adminnote'] . '</textarea>';
+        } elseif ($aColumns[$i] == 'billing_remarks') {
+            $order_name = '<textarea class="form-control billing-remarks-input"  data-id="' . $aRow['id'] . '" rows="3" style="width: 150px">' . $aRow['billing_remarks'] . '</textarea>';
+            $_data = $order_name;
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {
                 $_data = (strpos($_data, ' ') !== false ? _dt($_data) : _d($_data));

@@ -46,6 +46,25 @@
    .table-table_pur_invoice_payments td {
       font-size: 12px !important;
    }
+   #scroll-slider {
+      position: absolute;
+      right: 10px;
+      width: 200px;
+      height: 2px;
+      background-color: #000000;
+      border-radius: 5px;
+      z-index: 10000;
+      cursor: pointer;
+  }
+
+  #scroll-thumb {
+      width: 15px;
+      height: 15px;
+      background-color: #ad729f;
+      border-radius: 15px;
+      position: relative;
+      top: -6px;
+  }
 </style>
 <?php $module_name = 'vendor_billing_payments'; ?>
 <div id="wrapper">
@@ -108,6 +127,14 @@
                            </div>
                         </div></br>
                   </div>
+
+                  <div class="row">
+                     <div id="scroll-slider">
+                        <div id="scroll-thumb"></div>
+                     </div>
+                  </div>
+                  </br>
+
                   <div class="btn-group show_hide_columns" id="show_hide_columns">
                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
                         <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
@@ -128,8 +155,8 @@
                            'amount_without_tax',
                            'vendor_submitted_tax_amount',
                            'certified_amount',
-                           'payment_date',
-                           'payment_made',
+                           'bil_payment_date',
+                           'bil_payment_made',
                            'bil_tds',
                            'bil_total',
                            'ril_bill_no',
@@ -137,6 +164,7 @@
                            'ril_this_bill',
                            'ril_date',
                            'ril_amount',
+                           'remarks',
                         ];
                         ?>
                         <div>
@@ -160,8 +188,8 @@
                               <th><?php echo _l('amount_without_tax'); ?></th>
                               <th><?php echo _l('vendor_submitted_tax_amount'); ?></th>
                               <th><?php echo _l('final_certified_amount'); ?></th>
-                              <th><?php echo _l('payment_date'); ?></th>
-                              <th><?php echo _l('payment_made'); ?></th>
+                              <th><?php echo _l('bil_payment_date'); ?></th>
+                              <th><?php echo _l('bil_payment_made'); ?></th>
                               <th><?php echo _l('bil_tds'); ?></th>
                               <th><?php echo _l('bil_total'); ?></th>
                               <th><?php echo _l('ril_bill_no'); ?></th>
@@ -169,6 +197,7 @@
                               <th><?php echo _l('ril_this_bill'); ?></th>
                               <th><?php echo _l('ril_date'); ?></th>
                               <th><?php echo _l('ril_amount'); ?></th>
+                              <th><?php echo _l('remarks'); ?></th>
                            </tr>
                         </thead>
                         <tbody>
@@ -193,6 +222,7 @@
                               <td class="total_ril_this_bill"></td>
                               <td></td>
                               <td class="total_ril_amount"></td>
+                              <td></td>
                            </tr>
                         </tfoot>
                      </table>

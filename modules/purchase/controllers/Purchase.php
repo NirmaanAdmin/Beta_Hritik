@@ -4982,7 +4982,7 @@ class purchase extends AdminController
         $this->load->model('taxes_model');
         $this->load->model('currencies_model');
 
-        $data['title'] = _l('invoices');
+        $data['title'] = _l('vendor_billing_tracker');
         $data['contracts'] = $this->purchase_model->get_contract();
         $data['pur_orders'] = $this->purchase_model->get_list_pur_orders();
         $data['wo_orders'] = $this->purchase_model->get_list_wo_orders();
@@ -11607,7 +11607,7 @@ class purchase extends AdminController
     {
         $this->load->model('taxes_model');
         $this->load->model('currencies_model');
-        $data['title'] = _l('payments');
+        $data['title'] = _l('vendor_payment_tracker');
         $data['contracts'] = $this->purchase_model->get_contract();
         $data['pur_orders'] = $this->purchase_model->get_list_pur_orders();
         $data['wo_orders'] = $this->purchase_model->get_list_wo_orders();
@@ -11802,5 +11802,47 @@ class purchase extends AdminController
         $order_value = $this->input->post('order_value');
 
         echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value);
+    }
+
+    public function update_billing_remarks()
+    {
+        $id = $this->input->post('id');
+        $billing_remarks = $this->input->post('billing_remarks');
+
+        if (!$id || !$billing_remarks) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['billing_remarks' => $billing_remarks]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Remarks is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_payment_remarks()
+    {
+        $id = $this->input->post('id');
+        $payment_remarks = $this->input->post('payment_remarks');
+
+        if (!$id || !$payment_remarks) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_invoices', ['payment_remarks' => $payment_remarks]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Remarks is updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
     }
 }

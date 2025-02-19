@@ -254,4 +254,25 @@
     });
   });
 
+  $('body').on('change', '.payment-remarks-input', function (e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var payment_remarks = $(this).val();
+
+    // Perform AJAX request to update the invoice date
+    $.post(admin_url + 'purchase/update_payment_remarks', {
+      id: rowId,
+      payment_remarks: payment_remarks
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_pur_invoice_payments.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
 })(jQuery);

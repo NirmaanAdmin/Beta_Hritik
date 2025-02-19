@@ -4175,3 +4175,5 @@ $lang['balance_available'] = 'Balance available Under 2011 SPC';
 $lang['remarks'] = 'Remarks';
 $lang['budget_summary'] = 'Budget Summary';
 $lang['export_to_xlsx'] = 'Export to XLSX';
+$lang['vendor_billing_tracker'] = 'Vendor Billing Tracker';
+$lang['vendor_payment_tracker'] = 'Vendor Payment Tracker';

@@ -27,6 +27,7 @@ $aColumns = [
     db_prefix() . 'invoicepaymentrecords.amount as ril_this_bill',
     db_prefix() . 'invoicepaymentrecords.date as ril_date',
     'ril_amount',
+    'payment_remarks',
 ];
 
 $sIndexColumn = 'id';
@@ -287,6 +288,9 @@ foreach ($rResult as $aRow) {
             } else {
                 $_data = '';
             }
+        } elseif ($aColumns[$i] == 'payment_remarks') {
+            $order_name = '<textarea class="form-control payment-remarks-input"  data-id="' . $aRow['id'] . '" rows="3" style="width: 150px">' . $aRow['payment_remarks'] . '</textarea>';
+            $_data = $order_name;
         } else {
             if (strpos($aColumns[$i], 'date_picker_') !== false) {
                 $_data = (strpos($_data, ' ') !== false ? _dt($_data) : _d($_data));

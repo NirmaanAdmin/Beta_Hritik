@@ -290,7 +290,7 @@ function purchase_module_init_menu_items()
     if (has_permission('purchase_invoices', '', 'view') || has_permission('purchase_invoices', '', 'view_own')) {
         $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'purchase-invoices',
-            'name' => 'Vendor Billing Tracker',
+            'name' => _l('vendor_billing_tracker'),
             'icon' => 'fa fa-clipboard',
             'href' => admin_url('purchase/invoices'),
             'position' => 10,
@@ -300,7 +300,7 @@ function purchase_module_init_menu_items()
     if (has_permission('purchase_invoices', '', 'view') || has_permission('purchase_invoices', '', 'view_own')) {
         $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'purchase-invoices-payments',
-            'name' => 'Vendor Billing Payments',
+            'name' => _l('vendor_payment_tracker'),
             'icon' => 'fa fa-clipboard',
             'href' => admin_url('purchase/invoice_payments'),
             'position' => 10,

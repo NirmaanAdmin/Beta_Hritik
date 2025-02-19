@@ -109,7 +109,7 @@
                                  <?php } ?>
                               </select>
                            </div>
-                           <div class="col-md-3 form-group">
+                           <div class="col-md-3 form-group" style="padding-left: 0px">
                               <?php
                               $budget_head_filter = get_module_filter($module_name, 'budget_head');
                               $budget_head_filter_val = !empty($budget_head_filter) ? $budget_head_filter->filter_value : '';
@@ -156,8 +156,8 @@
 
 
                      </div>
-                     <div class="_buttons col-md-12">
-                        <div class="col-md-8" style="display: flex;align-items: end;padding: 0px;">
+                     <div class="col-md-offset-9 col-md-3">
+                        <div style="display: flex;align-items: end;padding: 0px;">
                            <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_vendor_billing_tracker'), array('id' => 'import_form')); ?>
                            <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
                            <div class="form-group">
@@ -226,6 +226,7 @@
                            'certified_amount',
                            'tag',
                            'adminnote',
+                           'remarks',
                         ];
                         ?>
                         <div>
@@ -255,6 +256,7 @@
                               <th><?php echo _l('final_certified_amount'); ?></th>
                               <th><?php echo _l('tag'); ?></th>
                               <th><?php echo _l('adminnote'); ?></th>
+                              <th><?php echo _l('remarks'); ?></th>
                            </tr>
                         </thead>
                         <tbody>
@@ -273,6 +275,7 @@
                               <td class="total_vendor_submitted_amount_without_tax"></td>
                               <td class="total_vendor_submitted_tax_amount"></td>
                               <td class="total_final_certified_amount"></td>
+                              <td></td>
                               <td></td>
                               <td></td>
                            </tr>
