@@ -308,6 +308,10 @@ function convert_expense(pur_invoice, total) {
 
 function projectExpenseSubmitHandler(form) {
   "use strict";
+  var userConfirmed = confirm("Are you sure you want to convert this bill?");
+  if (!userConfirmed) {
+    return false;
+  }
   $.post(form.action, $(form).serialize()).done(function (response) {
     response = JSON.parse(response);
     if (response.expenseid) {
