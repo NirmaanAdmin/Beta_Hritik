@@ -574,69 +574,11 @@ class Expenses_model extends App_Model
             $expense->expenseid,
         ];
         $new_invoice_data['allowed_payment_modes']           = $temp_modes;
-        if(!empty($expense->po_id)) {
-            $pur_order_detail = $this->pur_order_detail($expense->po_id);
-            if(!empty($pur_order_detail)) {
-                $pur_order = $this->pur_order($expense->po_id);
-                $new_invoice_data['subtotal'] = $pur_order->subtotal;
-                foreach ($pur_order_detail as $key => $po_value) {
-                    $new_invoice_data['newitems'][$key+1]['description'] = $po_value['item_name'];
-                    $new_invoice_data['newitems'][$key+1]['long_description'] = $po_value['description'];
-                    $new_invoice_data['newitems'][$key+1]['unit'] = 'nos';
-                    $new_invoice_data['newitems'][$key+1]['qty'] = $po_value['quantity'];
-                    $new_invoice_data['newitems'][$key+1]['rate'] = $po_value['unit_price'];
-                    $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
-                    $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
-                    $new_invoice_data['newitems'][$key+1]['po_id'] = $pur_order->id;
-                    $new_invoice_data['newitems'][$key+1]['expense_id'] = $expense->id;
-                    $new_invoice_data['newitems'][$key+1]['taxname'] = [];
-                    if(!empty($po_value['tax'])) {
-                        $po_tax_array = explode('|', $po_value['tax']);
-                        foreach ($po_tax_array as $ptkey => $ptvalue) {
-                            $tax_data = get_tax_by_id($ptvalue);
-                            array_push($new_invoice_data['newitems'][$key+1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
-                        }
-                    }
-                }
-            }
-        } else if(!empty($expense->wo_id)) {
-            $work_order_detail = $this->work_order_detail($expense->wo_id);
-            if(!empty($work_order_detail)) {
-                $wo_order = $this->wo_order($expense->wo_id);
-                $new_invoice_data['subtotal'] = $wo_order->subtotal;
-                foreach ($work_order_detail as $key => $wo_value) {
-                    $new_invoice_data['newitems'][$key+1]['description'] = $wo_value['item_name'];
-                    $new_invoice_data['newitems'][$key+1]['long_description'] = $wo_value['description'];
-                    $new_invoice_data['newitems'][$key+1]['unit'] = 'nos';
-                    $new_invoice_data['newitems'][$key+1]['qty'] = $wo_value['quantity'];
-                    $new_invoice_data['newitems'][$key+1]['rate'] = $wo_value['unit_price'];
-                    $new_invoice_data['newitems'][$key+1]['order'] = $key+1;
-                    $new_invoice_data['newitems'][$key+1]['annexure'] = $new_invoice_data['group_pur'];
-                    $new_invoice_data['newitems'][$key+1]['wo_id'] = $wo_order->id;
-                    $new_invoice_data['newitems'][$key+1]['expense_id'] = $expense->id;
-                    $new_invoice_data['newitems'][$key+1]['taxname'] = [];
-                    if(!empty($wo_value['tax'])) {
-                        $wo_tax_array = explode('|', $wo_value['tax']);
-                        foreach ($wo_tax_array as $wtkey => $wtvalue) {
-                            $tax_data = get_tax_by_id($wtvalue);
-                            array_push($new_invoice_data['newitems'][$key+1]['taxname'], $tax_data->name . '|' . $tax_data->taxrate);
-                        }
-                    }
-                }
-            }
-        } else {
+        if(!empty($expense->vbt_id)) {
             $vbt_data = $this->get_vendor_billing_tracker($expense->vbt_id);
             $new_invoice_data['subtotal'] = $vbt_data->vendor_submitted_amount_without_tax;
             $new_invoice_data['newitems'][1]['description']      = $expense->name;
-            $new_invoice_data['newitems'][1]['long_description'] = $expense->description;
-
-            if (isset($params['include_note']) && $params['include_note'] == true && !empty($expense->note)) {
-                $new_invoice_data['newitems'][1]['long_description'] .= PHP_EOL . $expense->note;
-            }
-            if (isset($params['include_name']) && $params['include_name'] == true && !empty($expense->expense_name)) {
-                $new_invoice_data['newitems'][1]['long_description'] .= PHP_EOL . $expense->expense_name;
-            }
-
+            $new_invoice_data['newitems'][1]['long_description'] = $expense->expense_name;
             $new_invoice_data['newitems'][1]['unit']    = '';
             $new_invoice_data['newitems'][1]['qty']     = 1;
             $new_invoice_data['newitems'][1]['taxname'] = [];
@@ -926,94 +868,14 @@ class Expenses_model extends App_Model
         $expense = $this->get($expense_id);
         $annexure = $this->find_budget_head_value($expense->category);
         $item_order = $this->get_item_order_annexure($invoice_id, $annexure);
-        
-        if(!empty($expense->po_id)) {
-            $pur_order = $this->pur_order($expense->po_id);
-            $pur_order_detail = $this->pur_order_detail($expense->po_id);
-
-            if(!empty($pur_order_detail)) {
-                foreach ($pur_order_detail as $pkey => $po_value) {
-                    $new_item_data = array();
-                    $new_item_data['rel_id'] = $invoice_id;
-                    $new_item_data['rel_type'] = 'invoice';
-                    $new_item_data['description'] = $po_value['item_name'];
-                    $new_item_data['long_description'] = $po_value['description'];
-                    $new_item_data['qty'] = $po_value['quantity'];
-                    $new_item_data['rate'] = $po_value['unit_price'];
-                    $new_item_data['unit'] = 'nos';
-                    $new_item_data['item_order'] = $item_order;
-                    $new_item_data['annexure'] = $annexure;
-                    $new_item_data['po_id'] = $pur_order->id;
-                    $new_item_data['expense_id'] = $expense_id;
-                    $this->db->insert(db_prefix() . 'itemable', $new_item_data);
-                    $insert_id = $this->db->insert_id();
-
-                    if(!empty($po_value['tax'])) {
-                        $po_tax_array = explode('|', $po_value['tax']);
-                        foreach ($po_tax_array as $ttkey => $ttvalue) {
-                            $tax_data = get_tax_by_id($ttvalue);
-                            $item_tax = array();
-                            $item_tax['itemid'] = $insert_id;
-                            $item_tax['rel_id'] = $invoice_id;
-                            $item_tax['rel_type'] = 'invoice';
-                            $item_tax['taxrate'] = $tax_data->taxrate;
-                            $item_tax['taxname'] = $tax_data->name;
-                            $this->db->insert(db_prefix() . 'item_tax', $item_tax);
-                        }
-                    }
-                    $item_order++;
-                }
-            }
-        } else if(!empty($expense->wo_id)) {
-            $wo_order = $this->wo_order($expense->wo_id);
-            $work_order_detail = $this->work_order_detail($expense->wo_id);
-
-            if(!empty($work_order_detail)) {
-                foreach ($work_order_detail as $wkey => $wo_value) {
-                    $new_item_data = array();
-                    $new_item_data['rel_id'] = $invoice_id;
-                    $new_item_data['rel_type'] = 'invoice';
-                    $new_item_data['description'] = $wo_value['item_name'];
-                    $new_item_data['long_description'] = $wo_value['description'];
-                    $new_item_data['qty'] = $wo_value['quantity'];
-                    $new_item_data['rate'] = $wo_value['unit_price'];
-                    $new_item_data['unit'] = 'nos';
-                    $new_item_data['item_order'] = $item_order;
-                    $new_item_data['annexure'] = $annexure;
-                    $new_item_data['wo_id'] = $wo_order->id;
-                    $new_item_data['expense_id'] = $expense_id;
-                    $this->db->insert(db_prefix() . 'itemable', $new_item_data);
-                    $insert_id = $this->db->insert_id();
-
-                    if(!empty($wo_value['tax'])) {
-                        $wo_tax_array = explode('|', $wo_value['tax']);
-                        foreach ($wo_tax_array as $ttkey => $ttvalue) {
-                            $tax_data = get_tax_by_id($ttvalue);
-                            $item_tax = array();
-                            $item_tax['itemid'] = $insert_id;
-                            $item_tax['rel_id'] = $invoice_id;
-                            $item_tax['rel_type'] = 'invoice';
-                            $item_tax['taxrate'] = $tax_data->taxrate;
-                            $item_tax['taxname'] = $tax_data->name;
-                            $this->db->insert(db_prefix() . 'item_tax', $item_tax);
-                        }
-                    }
-                    $item_order++;
-                }
-            }
-        } else {
+    
+        if(!empty($expense->vbt_id)) {
             $vbt_data = $this->get_vendor_billing_tracker($expense->vbt_id);
             $new_item_data = array();
             $new_item_data['rel_id'] = $invoice_id;
             $new_item_data['rel_type'] = 'invoice';
             $new_item_data['description'] = $expense->name;
-            $new_item_data['long_description'] = $expense->description;
-            if (!empty($expense->note)) {
-                $new_item_data['long_description'] .= PHP_EOL . $expense->note;
-            }
-            if (!empty($expense->expense_name)) {
-                $new_item_data['long_description'] .= PHP_EOL . $expense->expense_name;
-            }
+            $new_item_data['long_description'] = $expense->expense_name;
             $new_item_data['qty'] = 1;
             $new_item_data['rate'] = $vbt_data->vendor_submitted_amount_without_tax;
             $new_item_data['tax'] = $vbt_data->vendor_submitted_tax_amount;

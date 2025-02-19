@@ -10990,6 +10990,7 @@ class purchase extends AdminController
         // Perform the update
         $this->db->where('id', $id);
         $success = $this->db->update('tblpur_invoices', ['vendor_invoice_number' => $vin]);
+        $this->purchase_model->update_vbt_expense_ril_data($id);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'Invoice number is updated']);
@@ -11056,6 +11057,7 @@ class purchase extends AdminController
         // Perform the update
         $this->db->where('id', $id);
         $success = $this->db->update('tblpur_invoices', ['description_services' => $update_description_services]);
+        $this->purchase_model->update_vbt_expense_ril_data($id);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'Description Services is updated']);
@@ -11447,26 +11449,7 @@ class purchase extends AdminController
                                     // Update Vendor billing tracker
                                     $this->db->where('id', $flag_id_invoice_id);
                                     $this->db->update(db_prefix() . 'pur_invoices', $rd);
-
-                                    // Update RIL Invoices
-                                    $this->db->where('vbt_id', $flag_id_invoice_id);
-                                    $this->db->where('rel_type', 'invoice');
-                                    // $this->db->where('annexure !=', 17);
-                                    $this->db->update(db_prefix() . 'itemable', [
-                                        'rate' => $value_amount_wo_tax,
-                                        'tax' => $value_tax_value,
-                                    ]);
-
-                                    $this->db->where('vbt_id', $flag_id_invoice_id);
-                                    $this->db->where('rel_type', 'invoice');
-                                    // $this->db->where('annexure !=', 17);
-                                    $itemable_row = $this->db->get(db_prefix() . 'itemable')->row();
-                                    if (!empty($itemable_row)) {
-                                        if (!empty($itemable_row->rel_id)) {
-                                            $this->invoices_model->update_management_fees($itemable_row->rel_id);
-                                            $this->invoices_model->update_basic_invoice_details($itemable_row->rel_id);
-                                        }
-                                    }
+                                    $this->purchase_model->update_vbt_expense_ril_data($flag_id_invoice_id);
                                 } else {
                                     $rd['invoice_number'] = $invoice_number;
                                     $rd['vendor_invoice_number'] = !empty($value_invoice_number) ? $value_invoice_number : $invoice_number;
@@ -11539,6 +11522,7 @@ class purchase extends AdminController
         // Perform the update
         $this->db->where('id', $id);
         $success = $this->db->update('tblpur_invoices', ['vendor_submitted_amount_without_tax' => $amount]);
+        $this->purchase_model->update_vbt_expense_ril_data($id);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'Certified amount without tax is updated']);
@@ -11561,6 +11545,7 @@ class purchase extends AdminController
         // Perform the update
         $this->db->where('id', $id);
         $success = $this->db->update('tblpur_invoices', ['vendor_submitted_tax_amount' => $amount]);
+        $this->purchase_model->update_vbt_expense_ril_data($id);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'Certified Tax amount is updated']);
@@ -11583,6 +11568,7 @@ class purchase extends AdminController
         // Perform the update
         $this->db->where('id', $id);
         $success = $this->db->update('tblpur_invoices', ['final_certified_amount' => $amount]);
+        $this->purchase_model->update_vbt_expense_ril_data($id);
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'Total Certified amount is updated']);

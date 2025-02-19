@@ -7077,6 +7077,7 @@ class Purchase_model extends App_Model
         $this->db->update(db_prefix() . 'pur_invoices', $total);
 
         $this->update_pur_invoice_status($id);
+        $this->update_vbt_expense_ril_data($id);
 
         hooks()->do_action('after_pur_invoice_updated', $id);
         if ($this->db->affected_rows() > 0) {
@@ -7143,6 +7144,17 @@ class Purchase_model extends App_Model
 
         $this->db->where('pur_invoice', $id);
         $this->db->delete(db_prefix() . 'pur_invoice_details');
+
+        $this->db->where('vbt_id', $id);
+        $this->db->delete(db_prefix() . 'expenses');
+
+        $ril_invoice_item = get_ril_invoice_item($id);
+        if(!empty($ril_invoice_item)) {
+            $this->db->where('vbt_id', $id);
+            $this->db->delete(db_prefix() . 'itemable');
+            $this->load->model('invoices_model');
+            $this->invoices_model->update_basic_invoice_details($itemable->rel_id);
+        }
 
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'pur_invoices');
@@ -17136,5 +17148,44 @@ class Purchase_model extends App_Model
             }
         }
         return false;
+    }
+
+    public function update_vbt_expense_ril_data($id)
+    {
+        $this->load->model('invoices_model');
+        $this->db->where('id', $id);
+        $pur_invoices = $this->db->get(db_prefix() . 'pur_invoices')->row();
+        if(!empty($pur_invoices)) {
+            $expense_convert = $pur_invoices->expense_convert;
+
+            $this->db->where('vbt_id', $id);
+            if(!empty($expense_convert)) {
+                $this->db->or_where('id', $expense_convert);
+            }
+            $expenses = $this->db->get(db_prefix() . 'expenses')->row();
+            if(!empty($expenses)) {
+                $expenses_input = array();
+                $expenses_input['expense_name'] = $pur_invoices->description_services;
+                $expenses_input['vendor'] = $pur_invoices->vendor;
+                $expenses_input['amount'] = $pur_invoices->final_certified_amount;
+                $this->db->where('id', $expenses->id);
+                $this->db->update('tblexpenses', $expenses_input);
+            }
+            
+            $this->db->where('vbt_id', $id);
+            $itemable = $this->db->get(db_prefix() . 'itemable')->row();
+            if(!empty($itemable)) {
+                $itemable_input = array();
+                $itemable_input['long_description'] = $pur_invoices->description_services;
+                $itemable_input['rate'] = $pur_invoices->vendor_submitted_amount_without_tax;
+                $itemable_input['tax'] = $pur_invoices->vendor_submitted_tax_amount;
+                $this->db->where('id', $itemable->id);
+                $this->db->update('tblitemable', $itemable_input);
+
+                $this->invoices_model->update_basic_invoice_details($itemable->rel_id);
+            }
+        }
+
+        return true;
     }
 }

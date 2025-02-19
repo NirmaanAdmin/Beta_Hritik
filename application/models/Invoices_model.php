@@ -2086,7 +2086,7 @@ class Invoices_model extends App_Model
 
     public function update_basic_invoice_details($invoice_id)
     {
-        $annexure_invoice = $this->get_annexure_invoice_details($invoice_id);
+        $annexure_invoice = $this->get_annexure_invoice_details($invoice_id, false, false);
         $update_invoice = array();
         $update_invoice['subtotal'] = $annexure_invoice['final_invoice']['subtotal'];
         $update_invoice['total_tax'] = $annexure_invoice['final_invoice']['tax'];
