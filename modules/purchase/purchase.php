@@ -350,7 +350,7 @@ function purchase_module_init_menu_items()
          ]);
      }
 
-    if (has_permission('purchase_tracker', '', 'view')) {
+    // if (has_permission('purchase_tracker', '', 'view')) {
         
         $CI->app_menu->add_sidebar_children_item('purchase', [
              'slug' => 'purchase-tracker',
@@ -359,7 +359,7 @@ function purchase_module_init_menu_items()
              'href' => admin_url('purchase/manage_purchase'),
              'position' => 21,
          ]);
-    }
+    // }
 }
 
 /**
