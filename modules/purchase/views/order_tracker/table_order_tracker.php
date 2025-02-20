@@ -2,6 +2,13 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
+$module_name = 'order_tracker';
+$type_filter_name = 'order_tracker_type';
+$rli_filter_name = 'rli_filter';
+$vendors_filter_name = 'vendors';
+$kind_filter_name = 'order_tracker_kind';
+$budget_head_filter_name = 'budget_head';
+
 // Define common columns for both tables
 $aColumns = [
    'order_name', // Will represent 'pur_order_name' or 'wo_order_name'
@@ -68,13 +75,112 @@ if (isset($type)) {
       array_push($where, $where_type);
    }
 }
+
+$vendors = $this->ci->input->post('vendors');
+if (isset($vendors)) {
+    $where_vendors = '';
+    foreach ($vendors as $t) {
+        if ($t != '') {
+            if ($where_vendors == '') {
+                $where_vendors .= ' AND (vendor_id = "' . $t . '"';
+            } else {
+                $where_vendors .= ' or vendor_id = "' . $t . '"';
+            }
+        }
+    }
+    if ($where_vendors != '') {
+        $where_vendors .= ')';
+        array_push($where, $where_vendors);
+    }
+}
+
+$budget_head = $this->ci->input->post('budget_head');
+if (isset($budget_head)) {
+    $where_budget_head = '';
+    if ($budget_head != '') {
+        if ($where_budget_head == '') {
+            $where_budget_head .= ' AND (group_pur = "' . $budget_head . '"';
+        } else {
+            $where_budget_head .= ' or group_pur = "' . $budget_head . '"';
+        }
+    }
+    if ($where_budget_head != '') {
+        $where_budget_head .= ')';
+        array_push($where, $where_budget_head);
+    }
+}
+
+$budget_head = $this->ci->input->post('budget_head');
+if (isset($budget_head)) {
+    $where_budget_head = '';
+    if ($budget_head != '') {
+        if ($where_budget_head == '') {
+            $where_budget_head .= ' AND (group_pur = "' . $budget_head . '"';
+        } else {
+            $where_budget_head .= ' or group_pur = "' . $budget_head . '"';
+        }
+    }
+    if ($where_budget_head != '') {
+        $where_budget_head .= ')';
+        array_push($where, $where_budget_head);
+    }
+}
+
+$rli_filter = $this->ci->input->post('rli_filter');
+if (isset($rli_filter)) {
+    $where_rli_filter = '';
+    if ($rli_filter != '') {
+        if ($where_rli_filter == '') {
+            $where_rli_filter .= ' AND (rli_filter = "' . $rli_filter . '"';
+        } else {
+            $where_rli_filter .= ' or rli_filter = "' . $rli_filter . '"';
+        }
+    }
+    if ($where_rli_filter != '') {
+        $where_rli_filter .= ')';
+        array_push($where, $where_rli_filter);
+    }
+}
+
+$kind = $this->ci->input->post('kind');
+if (isset($kind)) {
+    $where_kind = '';
+    if ($kind != '') {
+        if ($where_kind == '') {
+            $where_kind .= ' AND (kind = "' . $kind . '"';
+        } else {
+            $where_kind .= ' or kind = "' . $kind . '"';
+        }
+    }
+    if ($where_kind != '') {
+        $where_kind .= ')';
+        array_push($where, $where_kind);
+    }
+}
+
 $having = '';
+
+$type_filter_value = !empty($this->ci->input->post('type')) ? implode(',', $this->ci->input->post('type')) : NULL;
+update_module_filter($module_name, $type_filter_name, $type_filter_value);
+
+$vendors_filter_value = !empty($this->ci->input->post('vendors')) ? implode(',', $this->ci->input->post('vendors')) : NULL;
+update_module_filter($module_name, $vendors_filter_name, $vendors_filter_value);
+
+$rli_filter_value = !empty($this->ci->input->post('rli_filter')) ? $this->ci->input->post('rli_filter') : NULL;
+update_module_filter($module_name, $rli_filter_name, $rli_filter_value);
+
+$kind_filter_value = !empty($this->ci->input->post('kind')) ? $this->ci->input->post('kind') : NULL;
+update_module_filter($module_name, $kind_filter_name, $kind_filter_value);
+
+$budget_head_filter_name_value = !empty($this->ci->input->post('budget_head')) ? $this->ci->input->post('budget_head') : NULL;
+update_module_filter($module_name, $budget_head_filter_name, $budget_head_filter_name_value);
 
 // Query and process data
 $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $where, [
    'combined_orders.id as id',
    'rli_filter',
    'vendor',
+   'vendor_id',
    'order_date',
    'completion_date',
    'budget',
@@ -88,7 +194,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'kind',
    'group_name',
    'remarks',
-
+   'group_pur',
    'source_table',
 ]);
 

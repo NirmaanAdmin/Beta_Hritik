@@ -17188,4 +17188,20 @@ class Purchase_model extends App_Model
 
         return true;
     }
+
+    public function get_all_rli_filters()
+    {
+        return $status_labels = [
+            1 => ['id' => 1, 'name' => _l('new_item_service_been_addded_as_per_instruction')],
+            2 => ['id' => 2, 'name' => _l('due_to_spec_change_then_original_cost')],
+            3 => ['id' => 3, 'name' => _l('deal_slip')],
+            4 => ['id' => 4, 'name' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+            5 => ['id' => 5, 'name' => _l('due_to_additional_item_as_per_apex_instrution')],
+            6 => ['id' => 6, 'name' => _l('event_expense')],
+            7 => ['id' => 7, 'name' => _l('pending_procurements')],
+            8 => ['id' => 8, 'name' => _l('common_services_in_ghj_scope')],
+            9 => ['id' => 9, 'name' => _l('common_services_in_ril_scope')],
+            10 => ['id' => 10, 'name' => _l('due_to_site_specfic_constraint')],
+        ];
+    }
 }

@@ -56,7 +56,7 @@
       height: 100px;
    }
 </style>
-
+<?php $module_name = 'order_tracker'; ?>
 <div id="wrapper">
    <div class="content">
       <div class="loader-container hide" id="loader-container">
@@ -66,25 +66,88 @@
          <div class="panel_s mbot10">
             <div class="panel-body">
                <div class="row">
-                  <div class="_buttons col-md-3">
-                     <strong>
-                        <h3><?php echo _l('order_tracker'); ?></h3>
-                     </strong>
-
+                  <div class="col-md-12">
+                     <h4 class="no-margin font-bold"><i class="fa fa-clipboard" aria-hidden="true"></i> <?php echo _l('order_tracker'); ?></h4>
+                     <hr />
                   </div>
                </div>
+
                <div class="row">
-                  <hr>
-                  <div class="col-md-3 form-group">
-                     <label for="type"><?php echo _l('type'); ?></label>
-                     <select name="type[]" id="type" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('leads_all'); ?>">
-                        <option value="pur_orders"><?php echo _l('pur_order'); ?></option>
-                        <option value="wo_orders"><?php echo _l('wo_order'); ?></option>
-                     </select>
-                  </div>
-                  <button class="btn btn-info pull-right" style="margin-right: 10px;" data-toggle="modal" data-target="#addNewRowModal">
+                  <div class="_buttons col-md-12">
+                     <button class="btn btn-info pull-left mright10 display-block" style="margin-right: 10px;" data-toggle="modal" data-target="#addNewRowModal">
                      <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
-                  </button>
+                     </button>
+
+                     <div class="all_ot_filters">
+
+                        <div class="col-md-2 form-group">
+                           <?php
+                           $order_tracker_type_filter = get_module_filter($module_name, 'order_tracker_type');
+                           $order_tracker_type_filter_val = !empty($order_tracker_type_filter) ? explode(",", $order_tracker_type_filter->filter_value) : '';
+                           ?>
+                           <select name="type[]" id="type" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('type'); ?>">
+                              <option value=""></option>
+                              <option value="pur_orders" <?php echo ($order_tracker_type_filter_val == "pur_orders") ? 'selected' : ''; ?>><?php echo _l('pur_order'); ?></option>
+                              <option value="wo_orders" <?php echo ($order_tracker_type_filter_val == "wo_orders") ? 'selected' : ''; ?>><?php echo _l('wo_order'); ?></option>
+                           </select>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                           <?php
+                           $rli_filter = get_module_filter($module_name, 'rli_filter');
+                           $rli_filter_val = !empty($rli_filter) ? $rli_filter->filter_value : '';
+                           ?>
+                           <select name="rli_filter" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('rli_filter'); ?>" data-actions-box="true">
+                              <option value=""></option>
+                              <option value="None">None</option>
+                              <?php foreach ($rli_filters as $rli) { ?>
+                                 <option value="<?php echo $rli['id']; ?>" <?php echo ($rli_filter_val == $rli['id']) ? 'selected' : ''; ?>><?php echo $rli['name']; ?></option>
+                              <?php } ?>
+                           </select>
+                        </div>
+
+                        <div class="col-md-3">
+                           <?php
+                           $vendors_filter = get_module_filter($module_name, 'vendors');
+                           $vendors_filter_val = !empty($vendors_filter) ? explode(",", $vendors_filter->filter_value) : '';
+                           echo render_select('vendors[]', $vendors, array('userid', 'company'), '', $vendors_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('contractor'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                           ?>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                           <?php
+                           $order_tracker_kind_filter = get_module_filter($module_name, 'order_tracker_kind');
+                           $order_tracker_kind_filter_val = !empty($order_tracker_kind_filter) ? $order_tracker_kind_filter->filter_value : '';
+                           ?>
+                          <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
+                              <option value=""></option>
+                              <option value="Client Supply" <?php echo ($order_tracker_kind_filter_val == "Client Supply") ? 'selected' : ''; ?>><?php echo _l('client_supply'); ?></option>
+                              <option value="Bought out items" <?php echo ($order_tracker_kind_filter_val == "Bought out items") ? 'selected' : ''; ?>><?php echo _l('bought_out_items'); ?></option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-3 form-group" style="padding-left: 0px;">
+                           <?php
+                           $budget_head_filter = get_module_filter($module_name, 'budget_head');
+                           $budget_head_filter_val = !empty($budget_head_filter) ? $budget_head_filter->filter_value : '';
+                           ?>
+                           <select name="budget_head" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('group_pur'); ?>" data-actions-box="true">
+                              <option value=""></option>
+                              <option value="None">None</option>
+                              <?php foreach ($budget_head as $head) { ?>
+                                 <option value="<?php echo $head['id']; ?>" <?php echo ($budget_head_filter_val == $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
+                              <?php } ?>
+                           </select>
+                        </div>
+
+                        <div class="col-md-1 form-group">
+                           <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
+                              <?php echo _l('reset_filter'); ?>
+                           </a>
+                        </div>
+
+                     </div>
+                  </div>
                </div>
             </div>
          </div>

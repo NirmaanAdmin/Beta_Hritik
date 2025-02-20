@@ -7,6 +7,10 @@ var expenseDropzone;
 
     var Params = {        
         "type": "[name='type[]']",
+        "rli_filter": "[name='rli_filter']",
+        "vendors": "[name='vendors[]']",
+        "kind": "[name='kind']",
+        "budget_head": "[name='budget_head']",
     };
 
     initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[3, 'desc']);
@@ -18,6 +22,33 @@ var expenseDropzone;
                 .columns.adjust()
                 .responsive.recalc();
         });
+    });
+
+    $(document).on('change', 'select[name="type[]"]', function () {
+        $('select[name="type[]"]').selectpicker('refresh');
+    });
+
+    $(document).on('change', 'select[name="vendors[]"]', function () {
+        $('select[name="vendors[]"]').selectpicker('refresh');
+    });
+
+    $(document).on('change', 'select[name="rli_filter"]', function () {
+        $('select[name="rli_filter"]').selectpicker('refresh');
+    });
+
+    $(document).on('change', 'select[name="kind"]', function () {
+        $('select[name="kind"]').selectpicker('refresh');
+    });
+
+    $(document).on('change', 'select[name="budget_head"]', function () {
+        $('select[name="budget_head"]').selectpicker('refresh');
+    });
+
+    $(document).on('click', '.reset_all_ot_filters', function () {
+        var filterArea = $('.all_ot_filters');
+        filterArea.find('input').val("");
+        filterArea.find('select').selectpicker("val", "");
+        table_rec_campaign.DataTable().ajax.reload().columns.adjust().responsive.recalc();
     });
 
 

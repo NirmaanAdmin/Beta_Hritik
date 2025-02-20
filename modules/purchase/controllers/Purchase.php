@@ -10594,6 +10594,8 @@ class purchase extends AdminController
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
 
         $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
+        $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['rli_filters'] = $this->purchase_model->get_all_rli_filters();
 
         $this->load->view('order_tracker/manage', $data);
     }
