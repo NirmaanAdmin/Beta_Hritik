@@ -9242,4 +9242,28 @@ class warehouse extends AdminController
 
 		$pdf->Output('vendor_allocation_report.pdf', $type);
 	}
+
+	/**
+	 * print qr PDF
+	 * @param  integer $id 
+	 */
+	public function print_qrcode_pdf($id_s)
+	{
+		$type = 'D';
+		if ($this->input->get('output_type')) {
+			$type = $this->input->get('output_type');
+		}
+
+		if ($this->input->get('print')) {
+			$type = 'I';
+		}
+
+		$data['title'] = _l('fe_print_qrcode');
+		$data['type'] = $type;
+		$data['list_id'] = explode(',', urldecode($id_s));
+		$html = $this->load->view('print_commodity/print_commodity_qrcode_html_view', $data, true);
+		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/sign_document_pdf.css') . '"  rel="stylesheet" type="text/css" />';
+		$data['html'] = $html;
+		$this->load->view('print_commodity/preview_pdf', $data);
+	}
 }

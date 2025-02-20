@@ -33,6 +33,7 @@ define('ACTIVE_BRAND_MODEL_SERIES', false);
 define('ACTIVE_PROPOSAL', true);
 define('ACTIVE_PROPOSAL_OLD_CUSTOMER', false);
 define('WAREHOUSE_PATH_LIBRARIES', 'modules/warehouse/libraries');
+define('WAREHOUSE_PATH_PLUGIN', 'modules/warehouse/assets/plugins');
 
 
 

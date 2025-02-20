@@ -1364,6 +1364,26 @@ $(document).ready(function() {
       }
   }
 
+  function print_qrcode_item() {
+    "use strict";
+    var print_id = '';
+    var rows = $('#table-table_commodity_list').find('tbody tr');
+    $.each(rows, function() {
+      var checkbox = $($(this).find('td').eq(0)).find('input');
+      if (checkbox.prop('checked') === true) {
+          if (print_id !== '') {
+              print_id += ','; // Append a comma before adding the next value
+          }
+          print_id += checkbox.val();
+      }
+    });
+    if (print_id !== '') {
+      window.location.href = admin_url + "warehouse/print_qrcode_pdf/" + encodeURIComponent(print_id) + "?output_type=I";
+    } else {
+      alert_float('danger', '<?php echo _l('please_select_at_least_one_item_from_the_list'); ?>');
+    }
+  }
+
 
 /*print barcode*/
   function print_barcode_bulk_actions(){

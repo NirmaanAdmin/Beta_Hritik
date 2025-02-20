@@ -11,6 +11,9 @@ class Warehouse_model extends App_Model
 	public function __construct()
 	{
 		parent::__construct();
+		if (!class_exists('qrstr')) {
+			include_once(WAREHOUSE_PATH_PLUGIN . '/phpqrcode/qrlib.php');
+		}
 	}
 
 	/**
@@ -20466,5 +20469,34 @@ class Warehouse_model extends App_Model
 	function vendor_allocation_report_pdf($vendor_allocation)
 	{
 		return app_pdf('vendor_allocation_report', module_dir_path(WAREHOUSE_MODULE_NAME, 'libraries/pdf/Vendor_allocation_report_pdf.php'), $vendor_allocation);
+	}
+
+	public function fe_get_item_image_qrcode_pdf($item_id) 
+	{
+	    $url = site_url('modules/warehouse/assets/images/no_image.jpg');
+	    $this->db->where('id', $item_id);
+		$data_items = $this->db->get(db_prefix() . 'items')->row();
+	    if($data_items){
+	        if($data_items->qr_code != ''){
+	            $url  = FCPATH. 'modules/warehouse/uploads/qrcodes/'.$data_items->qr_code.'.png';
+	        } else {
+	        	$tempDir = WAREHOUSE_PATH . 'qrcodes/';
+	        	$commodity_code = $data_items->commodity_code;
+	        	$qr_code = md5($commodity_code);
+	        	$html = '';
+	        	$html .= "\n" . _l('commodity_code') . ': ' . $commodity_code . "\n";
+	        	$codeContents = $html;
+	        	$fileName = $qr_code;
+	        	$pngAbsoluteFilePath = $tempDir . $fileName;
+				$urlRelativeFilePath = $tempDir . $fileName;
+				if (!file_exists($pngAbsoluteFilePath)) {
+					QRcode::png($codeContents, $pngAbsoluteFilePath . '.png', "L", 4, 4);
+					$this->db->where('id', $item_id);
+					$this->db->update(db_prefix() . 'items', ['qr_code' => $qr_code]);
+					$url  = FCPATH. 'modules/warehouse/uploads/qrcodes/'.$qr_code.'.png';
+				}
+	        }
+	    }
+	    return $url;
 	}
 }
