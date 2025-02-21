@@ -11847,4 +11847,43 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+    // Example controller method to download invoice attachments as a ZIP file:
+    public function download_invoice_attachments($invoice_id)
+    {
+        $this->load->model('purchase/purchase_model');
+        $attachments = $this->purchase_model->get_purchase_invoice_attachments($invoice_id);
+
+        if (empty($attachments)) {
+            // No attachments to download.
+            echo _l('no_attachments_found');
+            return;
+        }
+
+        // Create a temporary file for the ZIP archive.
+        $tempZipPath = tempnam(sys_get_temp_dir(), 'attachments_') . '.zip';
+        $zip = new ZipArchive();
+        if ($zip->open($tempZipPath, ZipArchive::CREATE) !== TRUE) {
+            echo _l('unable_to_create_zip');
+            return;
+        }
+
+        // Loop through each attachment and add it to the ZIP.
+        foreach ($attachments as $attachment) {
+            // Build the file path. Adjust PURCHASE_PATH if necessary.
+            $file_path = PURCHASE_PATH . 'pur_invoice/' . $attachment['rel_id'] . '/' . $attachment['file_name'];
+            if (file_exists($file_path)) {
+                // Add the file with its original file name.
+                $zip->addFile($file_path, $attachment['file_name']);
+            }
+        }
+        $zip->close();
+
+        // Set headers to download the ZIP file.
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="invoice_' . $invoice_id . '_attachments.zip"');
+        header('Content-Length: ' . filesize($tempZipPath));
+        readfile($tempZipPath);
+        unlink($tempZipPath); // Remove the temporary file.
+        exit;
+    }
 }

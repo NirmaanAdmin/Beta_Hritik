@@ -255,6 +255,7 @@
                               <th><?php echo _l('vendor_submitted_tax_amount'); ?></th>
                               <th><?php echo _l('final_certified_amount'); ?></th>
                               <th><?php echo _l('tag'); ?></th>
+                              <th><?php echo _l('attachment'); ?></th>
                               <th><?php echo _l('adminnote'); ?></th>
                               <th><?php echo _l('remarks'); ?></th>
                            </tr>
@@ -275,6 +276,7 @@
                               <td class="total_vendor_submitted_amount_without_tax"></td>
                               <td class="total_vendor_submitted_tax_amount"></td>
                               <td class="total_final_certified_amount"></td>
+                              <td></td>
                               <td></td>
                               <td></td>
                               <td></td>

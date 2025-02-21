@@ -33,6 +33,7 @@ $aColumns = [
     // 'vendor_submitted_amount',
     'final_certified_amount',
     'vendor_note',
+    db_prefix() . 'pur_invoices.id as inv_id',
     'adminnote',
     'billing_remarks'
 ];
@@ -278,7 +279,7 @@ foreach ($rResult as $aRow) {
     $row = [];
 
     for ($i = 0; $i < count($aColumns); $i++) {
-       
+
 
         $base_currency = get_base_currency_pur();
         if ($aRow['currency'] != 0) {
@@ -290,9 +291,9 @@ foreach ($rResult as $aRow) {
         } else {
             $_data = $aRow[$aColumns[$i]];
         }
-        if($aColumns[$i] == 1){
+        if ($aColumns[$i] == 1) {
             $_data = $sr++;
-        }else if ($aColumns[$i] == 'invoice_number') {
+        } else if ($aColumns[$i] == 'invoice_number') {
             $numberOutput = '';
 
             $numberOutput = '<a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '" target="_blank"  >' . $aRow['invoice_number'] . '</a>';
@@ -337,7 +338,25 @@ foreach ($rResult as $aRow) {
             } else {
                 $_data = $aRow['invoice_number'];
             }
-        } elseif ($aColumns[$i] == 'vendor_note') {
+        } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.id as inv_id') {
+       
+            $this->ci->load->model('purchase/purchase_model');
+            $attachments = $this->ci->purchase_model->get_purchase_invoice_attachments($aRow['id']);
+            $file_html = '';
+        
+            if (!empty($attachments)) {
+                
+                // URL for downloading the attachments as a ZIP file.
+                // Ensure that you have a controller method at purchase/download_invoice_attachments/ that creates the ZIP.
+                $zip_download_url = admin_url('purchase/download_invoice_attachments/' . $aRow['id']);
+                
+                $file_html .= '<a href="' . $zip_download_url . '" class="btn btn-primary" download>' . _l('Zip') . '</a>';
+                $file_html .= '<hr>';
+            }
+        
+            $_data = $file_html;
+        }
+        elseif ($aColumns[$i] == 'vendor_note') {
             $_data = render_tags($aRow['tags']);
         } elseif ($aColumns[$i] == 'invoice_date') {
             $_data = '<input type="date" class="form-control invoice-date-input" value="' . $aRow['invoice_date'] . '" data-id="' . $aRow['id'] . '">';
