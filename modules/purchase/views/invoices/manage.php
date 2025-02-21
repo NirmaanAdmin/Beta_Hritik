@@ -4,7 +4,7 @@
    .show_hide_columns {
       position: absolute;
       z-index: 999;
-      left: 204px
+      left: 289px
    }
 
    /* Ensure the table uses correct layout */
@@ -48,6 +48,10 @@
    /* Ensure tags do not stretch vertically */
    .label-tag .tag {
       display: inline;
+   }
+   .bulk-title {
+      text-align: center;
+      font-weight: bold;
    }
 </style>
 <?php $module_name = 'vendor_billing_tracker'; ?>
@@ -171,6 +175,10 @@
                      </div>
                   </div>
 
+                  <div class="row">
+                     <a onclick="bulk_convert_ril_bill(); return false;" data-toggle="modal" data-table=".table-table_pur_invoices" class=" hide bulk-actions-btn table-btn"><?php echo _l('bulk_actions'); ?></a>
+                  </div>
+
                   <?php
                   /*
                     $table_data = array(
@@ -212,6 +220,7 @@
                         <!-- Column Checkboxes -->
                         <?php
                         $columns = [
+                           'Checkbox',
                            'id',
                            'invoice_code',
                            'invoice_number',
@@ -242,6 +251,7 @@
                      <table class="dt-table-loading table table-table_pur_invoices">
                         <thead>
                            <tr>
+                              <th><span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="table_pur_invoices"><label></label></div></th>
                               <th>#</th>
                               <th><?php echo _l('invoice_code'); ?></th>
                               <th><?php echo _l('invoice_number'); ?></th>
@@ -404,6 +414,25 @@
       <!-- /.modal-content -->
    </div>
    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="convert_ril_bill_modal" tabindex="-1" role="dialog">
+   <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+         <?php echo form_open(admin_url('purchase/add_bulk_convert_ril_bill'), array('id' => 'convert_ril_bill_form', 'class' => '')); ?>
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><?php echo _l('bulk_actions'); ?></h4>
+         </div>
+         <div class="modal-body convert-bulk-actions-body">
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
+            <button type="submit" class="btn btn-info"><?php echo _l('submit'); ?></button>
+         </div>
+         <?php echo form_close(); ?>
+      </div>
+   </div>
 </div>
 
 <?php init_tail(); ?>

@@ -537,7 +537,7 @@ class Expenses_model extends App_Model
 
         $new_invoice_data['total']     = $total;
         $new_invoice_data['currency']  = $expense->currency;
-        $new_invoice_data['status']    = 1;
+        $new_invoice_data['status']    = 6;
         $new_invoice_data['adminnote'] = '';
         // Since version 1.0.6
         $new_invoice_data['billing_street']  = clear_textarea_breaks($client->billing_street);

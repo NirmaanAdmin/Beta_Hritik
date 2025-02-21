@@ -4177,3 +4177,4 @@ $lang['budget_summary'] = 'Budget Summary';
 $lang['export_to_xlsx'] = 'Export to XLSX';
 $lang['vendor_billing_tracker'] = 'Vendor Billing Tracker';
 $lang['vendor_payment_tracker'] = 'Vendor Payment Tracker';
+$lang['vendor_bills_converted_to_ril_invoices'] = 'All vendor bills are converted to RIL invoices';

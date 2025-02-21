@@ -827,3 +827,4 @@ $lang['change_order_amount_updated'] = 'Change order amount updated successfully
 $lang['purchase_tracker'] = 'Purchase Tracker';
 $lang['bil_payment_date'] = 'BIL Payment date';
 $lang['bil_payment_made'] = 'BIL Payment made';
+$lang['you_have_not_select_the_convert_button_rows'] = 'You have not select the convert button rows.';
