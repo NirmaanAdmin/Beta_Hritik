@@ -26,7 +26,7 @@
 </style>
 <div id="wrapper">
   <div class="content">
-  <div class="loader-container hide" id="loader-container">
+    <div class="loader-container hide" id="loader-container">
       <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
     </div>
     <div class="row">
@@ -332,7 +332,11 @@
                         }
                         echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
                         ?>
-                        
+
+                      </div>
+                      <div class="col-md-6">
+                        <?php $budget = (isset($wo_order) ? $wo_order->budget : '');
+                        echo render_input('budget', 'budget_ro_projection', $budget, 'number'); ?>
                       </div>
                       <!-- <div class="col-md-6 ">
 
@@ -355,27 +359,28 @@
                         ?>
                       </div> -->
                       <div class="col-md-6 ">
-                      <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
-                      <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true" data-width="100%">
-                        <option value=""></option>
-                        <?php foreach ($get_hsn_sac_code as $item): ?>
-                          <?php
-                          $selected = '';
-                          if (isset($wo_order)) {
-                            if ($wo_order->hsn_sac == $item['id']) {
-                              $selected = 'selected';
+                        <label for="hsn_sac" class="control-label"><?php echo _l('hsn_sac') ?></label>
+                        <select name="hsn_sac" id="hsn_sac" class="selectpicker" data-live-search="true" data-width="100%">
+                          <option value=""></option>
+                          <?php foreach ($get_hsn_sac_code as $item): ?>
+                            <?php
+                            $selected = '';
+                            if (isset($wo_order)) {
+                              if ($wo_order->hsn_sac == $item['id']) {
+                                $selected = 'selected';
+                              }
                             }
-                          }
 
-                          $words = explode(' ', $item['name']);
-                          $shortName = implode(' ', array_slice($words, 0, 7));
-                          ?>
-                          <option value="<?= $item['id'] ?>" <?= $selected  ?>>
-                            <?= htmlspecialchars($shortName) ?>
-                          </option>
-                        <?php endforeach; ?>
-                      </select>
-                    </div>
+                            $words = explode(' ', $item['name']);
+                            $shortName = implode(' ', array_slice($words, 0, 7));
+                            ?>
+                            <option value="<?= $item['id'] ?>" <?= $selected  ?>>
+                              <?= htmlspecialchars($shortName) ?>
+                            </option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
+
                       <!-- <div class="col-md-6 form-group select-placeholder">
                         <label for="clients" class="control-label"><?php echo _l('clients'); ?></label>
                         <select id="clients" name="clients[]" data-live-search="true" onchange="client_change(this); return false;" multiple data-width="100%" class="ajax-search client-ajax-search" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
@@ -438,10 +443,10 @@
                         ?>
                       </div>
                     </div> -->
-                    
+
                   </div>
-                  
-                  
+
+
                 </div>
 
                 <?php if ($customer_custom_fields) { ?>
