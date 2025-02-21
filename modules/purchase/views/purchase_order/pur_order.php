@@ -551,7 +551,7 @@
                   <?php } ?>
                 </a>
                 <?php
-                echo '</div>';
+                // echo '</div>';
                 echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                 ?>
             <?php echo '</div>';
