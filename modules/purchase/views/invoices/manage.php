@@ -4,7 +4,7 @@
    .show_hide_columns {
       position: absolute;
       z-index: 999;
-      left: 289px
+      left: 298px
    }
 
    /* Ensure the table uses correct layout */
@@ -234,6 +234,7 @@
                            'vendor_submitted_tax_amount',
                            'certified_amount',
                            'tag',
+                           'attachment',
                            'adminnote',
                            'remarks',
                         ];
