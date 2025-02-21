@@ -169,6 +169,7 @@
                         <th><?php echo _l('payment_date') ?></th>
                         <th><?php echo _l('est_delivery_date') ?></th>
                         <th><?php echo _l('delivery_date') ?></th>
+                        <th><?php echo _l('remarks') ?></th>
                       </tr>
                     </thead>
                     <tbody class="ui-sortable purchase-body">
@@ -243,6 +244,7 @@
 
                           $production_status .= '</span>';
                         }
+                        $remarks = $receipt_value['remarks'];
                       ?>
 
                         <tr data-toggle="tooltip" data-original-title="<?php echo html_entity_decode($name_serial_number_tooltip); ?>">
@@ -280,6 +282,7 @@
                               ">';
                             ?>
                           </td>
+                          <td><?php echo '<textarea style="width: 154px;height: 50px;" class="form-control  remarks-input" data-id="' . $receipt_value['id'] . '">' . $remarks . '</textarea>' ?></td>
                         </tr>
                       <?php  } ?>
                     </tbody>
@@ -500,6 +503,30 @@
     $.post(admin_url + 'warehouse/update_delivery_date', {
       id: rowId,
       delivery_date: DeliveryDate,
+      purchase_tracker: purchase_tracker
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+        table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+  // Inline editing for "Remarks"
+  $('body').on('change', '.remarks-input', function(e) {
+    e.preventDefault();
+
+    var rowId = $(this).data('id');
+    var remarks = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+
+    // Perform AJAX request to update the completion date
+    $.post(admin_url + 'warehouse/update_remarks', {
+      id: rowId,
+      remarks: remarks,
       purchase_tracker: purchase_tracker
     }).done(function(response) {
       response = JSON.parse(response);

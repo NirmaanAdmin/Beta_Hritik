@@ -9102,7 +9102,7 @@ class warehouse extends AdminController
 		}
 		// Perform the update
 		$this->db->where('id', $id);
-		if($purchase_tracker == "false") {
+		if ($purchase_tracker == "false") {
 			$success = $this->db->update('tblpur_order_detail', ['payment_date' => $payment_date]);
 		} else {
 			$success = $this->db->update('tblgoods_receipt_detail', ['payment_date' => $payment_date]);
@@ -9126,7 +9126,7 @@ class warehouse extends AdminController
 		}
 		// Perform the update
 		$this->db->where('id', $id);
-		if($purchase_tracker == "false") {
+		if ($purchase_tracker == "false") {
 			$success = $this->db->update('tblpur_order_detail', ['est_delivery_date' => $est_delivery_date_date]);
 		} else {
 			$success = $this->db->update('tblgoods_receipt_detail', ['est_delivery_date' => $est_delivery_date_date]);
@@ -9134,6 +9134,30 @@ class warehouse extends AdminController
 
 		if ($success) {
 			echo json_encode(['success' => true, 'message' => _l('est_delivery_date_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+	public function update_remarks()
+	{
+		$id = $this->input->post('id');
+		$remarks = $this->input->post('remarks');
+		$purchase_tracker = $this->input->post('purchase_tracker');
+
+		if (!$id  || !$remarks) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['remarks' => $remarks]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['remarks' => $remarks]);
+		}
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('remarks_updated')]);
 		} else {
 			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
 		}
@@ -9151,7 +9175,7 @@ class warehouse extends AdminController
 		}
 		// Perform the update
 		$this->db->where('id', $id);
-		if($purchase_tracker == "false") {
+		if ($purchase_tracker == "false") {
 			$success = $this->db->update('tblpur_order_detail', ['delivery_date' => $delivery_date]);
 		} else {
 			$success = $this->db->update('tblgoods_receipt_detail', ['delivery_date' => $delivery_date]);
@@ -9165,12 +9189,12 @@ class warehouse extends AdminController
 	}
 
 	public function delete_attachment($id)
-    {
-        $this->warehouse_model->delete_inventory_attachment($id);
-        redirect($_SERVER['HTTP_REFERER']);
-    }
+	{
+		$this->warehouse_model->delete_inventory_attachment($id);
+		redirect($_SERVER['HTTP_REFERER']);
+	}
 
-    public function get_vendor_issued_data()
+	public function get_vendor_issued_data()
 	{
 		$data = $this->input->post();
 		$this->warehouse_model->get_vendor_issued_data($data);

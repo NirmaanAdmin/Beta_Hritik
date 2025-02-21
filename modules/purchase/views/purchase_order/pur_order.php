@@ -343,6 +343,10 @@
                         echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
                         ?>
                       </div>
+                      <div class="col-md-6">
+                        <?php $budget = (isset($pur_order) ? $pur_order->budget : '');
+                        echo render_input('budget', 'budget_ro_projection', $budget,'number'); ?>
+                      </div>
                       <!-- <div class="col-md-6 ">
 
                         <?php
