@@ -17307,7 +17307,6 @@ class Purchase_model extends App_Model
 
                     $html .= '<div class="col-md-2">
                         <select class="selectpicker display-block" data-width="100%" name="'.$select_invoice_name_attr.'" id="bulk_select_invoice" data-id="'.$pvalue['id'].'" data-none-selected-text="'._l('none').'">
-                            <option value=""></option>
                             <option value="create_invoice">'._l('expense_convert_to_invoice').'</option>
                             <option value="applied_invoice">'._l('applied_to_invoice').'</option>
                         </select>
