@@ -4,7 +4,7 @@
    .show_hide_columns {
       position: absolute;
       z-index: 999;
-      left: 289px
+      left: 298px
    }
 
    /* Ensure the table uses correct layout */
