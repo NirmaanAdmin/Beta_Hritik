@@ -16,6 +16,7 @@ $billing_status_filter_name = 'billing_status';
 
 
 $aColumns = [
+    0,
     1,
     'invoice_number',
     'vendor_invoice_number',
@@ -292,7 +293,9 @@ foreach ($rResult as $aRow) {
         }
         if($aColumns[$i] == 1){
             $_data = $sr++;
-        }else if ($aColumns[$i] == 'invoice_number') {
+        } elseif($aColumns[$i] == '0') {
+            $_data = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';
+        } else if ($aColumns[$i] == 'invoice_number') {
             $numberOutput = '';
 
             $numberOutput = '<a href="' . admin_url('purchase/purchase_invoice/' . $aRow['id']) . '" target="_blank"  >' . $aRow['invoice_number'] . '</a>';

@@ -11847,4 +11847,53 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    public function bulk_convert_ril_bill()
+    {
+        $response = array();
+        $data = $this->input->post();
+        $bulk_html = $this->purchase_model->bulk_convert_ril_bill($data);
+        if(!empty($bulk_html)) {
+            $response['success'] = true;
+            $response['bulk_html'] = $bulk_html;
+        } else {
+            $response['success'] = false;
+            $response['message'] = _l('you_have_not_select_the_convert_button_rows');
+        }
+        echo json_encode($response);
+    }
+
+    public function add_bulk_convert_ril_bill()
+    {
+        $input = $this->input->post();
+        if(!empty($input)) {
+            $this->load->model('expenses_model');
+            $input = $input['newitems'];
+            foreach ($input as $ikey => $data) {
+                if (isset($data['pur_invoice'])) {
+                    $pur_invoice = $data['pur_invoice'];
+                    $select_invoice = $data['select_invoice'];
+                    $applied_to_invoice = $data['applied_to_invoice'];
+                    $data['vbt_id'] = $pur_invoice;
+                    unset($data['pur_invoice']);
+                    unset($data['select_invoice']);
+                    unset($data['applied_to_invoice']);
+                }
+                $id = $this->expenses_model->add($data);
+                if ($id) {
+                    $this->purchase_model->mark_converted_pur_invoice($pur_invoice, $id);
+                    if ($select_invoice == "create_invoice") {
+                        $invoiceid = $this->expenses_model->convert_to_invoice($id);
+                    } else {
+                        $applied = array();
+                        $applied['invoice_id'] = $applied_to_invoice;
+                        $applied['expense_id'] = $id;
+                        $invoiceid = $this->expenses_model->applied_to_invoice($applied);
+                    }
+                }
+            }
+        }
+        set_alert('success', _l('vendor_bills_converted_to_ril_invoices'));
+        redirect(admin_url('purchase/invoices'));
+    }
 }

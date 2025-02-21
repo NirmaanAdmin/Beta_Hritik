@@ -17224,4 +17224,117 @@ class Purchase_model extends App_Model
             return 0;
         }
     }
+
+    public function bulk_convert_ril_bill($data)
+    {
+        $html = '';
+        $final_ids = '';
+        $this->load->model('projects_model');
+        $this->load->model('expenses_model');
+
+        if(!empty($data)) {
+            $pur_ids = explode(",", $data['ids']);
+            $pur_invoices = $this->get_multiple_pur_invoices($pur_ids);
+            if(!empty($pur_invoices)) {
+                foreach ($pur_invoices as $pkey => $pvalue) {
+                    if($pvalue['expense_convert'] == 0) {
+                        $final_ids .= $pvalue['id'].",";
+                    } else {
+                        $expense_convert_check = get_expense_data($pvalue['expense_convert']);
+                        if (empty($expense_convert_check)) {
+                            $final_ids .= $pvalue['id'].",";
+                        }
+                    }
+                }
+            }
+            $final_ids = !empty($final_ids) ? explode(",", rtrim($final_ids, ",")) : '';
+            if(!empty($final_ids)) {
+                $pur_invoices = $this->get_multiple_pur_invoices($final_ids);
+                $html .= '<div class="row">
+                        <div class="col-md-2 bulk-title">'._l('invoice_code').'</div>
+                        <div class="col-md-2 bulk-title">'._l('description_of_services').'</div>
+                        <div class="col-md-2 bulk-title">'._l('expense_category').'</div>
+                        <div class="col-md-2 bulk-title">'._l('pur_date').'</div>
+                        <div class="col-md-2 bulk-title">'._l('expense_add_edit_amount').'</div>
+                        <div class="col-md-2 bulk-title">'._l('invoice').'</div>
+                    </div><br/>';
+
+                foreach ($pur_invoices as $pkey => $pvalue) {
+                    $project = $this->projects_model->get($pvalue['project_id']);
+                    $customer = $project->clientid;
+                    $expense_categories = $this->expenses_model->get_category();
+                    $budget_head = $this->find_budget_head_value($pvalue['group_pur']);
+                    $invoices = get_all_applied_invoices();
+
+                    $vendor_name_attr = "newitems[$pkey][vendor]";
+                    $note_name_attr = "newitems[$pkey][note]";
+                    $clientid_name_attr = "newitems[$pkey][clientid]";
+                    $project_name_attr = "newitems[$pkey][project_id]";
+                    $tax_name_attr = "newitems[$pkey][tax]";
+                    $currency_name_attr = "newitems[$pkey][currency]";
+                    $billable_name_attr = "newitems[$pkey][billable]";
+                    $reference_no_name_attr = "newitems[$pkey][reference_no]";
+                    $paymentmode_name_attr = "newitems[$pkey][paymentmode]";
+                    $pur_invoice_name_attr = "newitems[$pkey][pur_invoice]";
+                    $expense_name_attr = "newitems[$pkey][expense_name]";
+                    $category_name_attr = "newitems[$pkey][category]";
+                    $date_name_attr = "newitems[$pkey][date]";
+                    $amount_name_attr = "newitems[$pkey][amount]";
+                    $select_invoice_name_attr = "newitems[$pkey][select_invoice]";
+                    $applied_to_invoice_name_attr = "newitems[$pkey][applied_to_invoice]";
+
+                    $html .= '<div class="row">';
+                    $html .= form_hidden($vendor_name_attr, $pvalue['vendor']);
+                    $html .= form_hidden($note_name_attr, '');
+                    $html .= form_hidden($clientid_name_attr, $customer);
+                    $html .= form_hidden($project_name_attr, $pvalue['project_id']);
+                    $html .= form_hidden($tax_name_attr, '');
+                    $html .= form_hidden($currency_name_attr, $pvalue['currency']);
+                    $html .= form_hidden($billable_name_attr, '');
+                    $html .= form_hidden($reference_no_name_attr, '');
+                    $html .= form_hidden($paymentmode_name_attr, '');
+                    $html .= form_hidden($pur_invoice_name_attr, $pvalue['id']);
+
+                    $html .= '<div class="col-md-2 bulk-title">'.$pvalue['invoice_number'].'</div>';
+
+                    $html .= '<div class="col-md-2">'.render_input($expense_name_attr, '', $pvalue['description_services']).'</div>';
+
+                    $html .= '<div class="col-md-2">'.render_select($category_name_attr, $expense_categories, array('id', 'name'), '', $budget_head).'</div>';
+
+                    $html .= '<div class="col-md-2">'.render_date_input($date_name_attr, '', _d(date('Y-m-d'))).'</div>';
+
+                    $html .= '<div class="col-md-2">'.render_input($amount_name_attr, '', $pvalue['final_certified_amount'], 'number', ['readonly' => true]).'</div>';
+
+                    $html .= '<div class="col-md-2">
+                        <select class="selectpicker display-block" data-width="100%" name="'.$select_invoice_name_attr.'" id="bulk_select_invoice" data-id="'.$pvalue['id'].'" data-none-selected-text="'._l('none').'">
+                            <option value=""></option>
+                            <option value="create_invoice">'._l('expense_convert_to_invoice').'</option>
+                            <option value="applied_invoice">'._l('applied_to_invoice').'</option>
+                        </select>
+                    </div>';
+
+                    $html .= '<div class="col-md-2 bulk-applied-to-invoice hide">
+                    <br/>
+                    <select class="selectpicker display-block" data-width="100%" name="'.$applied_to_invoice_name_attr.'" id="bulk_applied_to_invoice" data-id="'.$pvalue['id'].'" data-none-selected-text="'._l('applied_to_invoice').'">
+                    <option value=""></option>';
+                    foreach ($invoices as $i) {
+                        $html .= '<option value="'.$i['id'].'">' . format_invoice_number($i['id']) . " (" . $i['title'] . ')</option>';
+                    }
+                    $html .= '</select></div>';
+
+
+                    $html .= '</div><br/>';
+                    
+                }
+            }
+        }
+
+        return $html;
+    }
+
+    public function get_multiple_pur_invoices($pur_ids) 
+    {
+        $this->db->where_in('id', $pur_ids);
+        return $this->db->get(db_prefix() . 'pur_invoices')->result_array();
+    }
 }
