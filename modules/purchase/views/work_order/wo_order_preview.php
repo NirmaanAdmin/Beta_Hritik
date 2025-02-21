@@ -703,9 +703,9 @@ if ($estimate->currency != 0) {
                               <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
                            <?php } ?>
                         </a>
-                        <?php if ($is_image) {
-                           echo '</div>';
-                        } ?>
+                        <?php 
+                            echo '<a href="' . admin_url('purchase/delete_work_order_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                        ?>
                   <?php echo '</div>';
                      }
                   } ?>

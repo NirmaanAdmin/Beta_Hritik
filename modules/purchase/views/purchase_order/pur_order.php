@@ -345,7 +345,7 @@
                       </div>
                       <div class="col-md-6">
                         <?php $budget = (isset($pur_order) ? $pur_order->budget : '');
-                        echo render_input('budget', 'budget_ro_projection', $budget,'number'); ?>
+                        echo render_input('budget', 'budget_ro_projection', $budget, 'number'); ?>
                       </div>
                       <!-- <div class="col-md-6 ">
 
@@ -550,10 +550,10 @@
                     <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
                   <?php } ?>
                 </a>
-                <?php if ($is_image) {
-                  echo '</div>';
-                  echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
-                } ?>
+                <?php
+                echo '</div>';
+                echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                ?>
             <?php echo '</div>';
               }
             } ?>

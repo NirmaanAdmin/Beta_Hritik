@@ -492,7 +492,7 @@ if ($estimate->currency != 0) {
                               <label><input type="checkbox" class="column-toggle" data-column="13" checked=""> Total</label>
                            </div>
                         </span>
-                        <span  style="padding: 0px;">
+                        <span style="padding: 0px;">
                            <button id="export-csv" class="btn btn-primary pull-right">Export to CSV</button>
                         </span>
                      </div>
@@ -537,10 +537,10 @@ if ($estimate->currency != 0) {
                                     foreach ($estimate_detail as $es) { ?>
                                        <tr nobr="true" class="sortable">
                                           <td align="center">
-                                             <?php if(!empty($es['serial_no'])) {
+                                             <?php if (!empty($es['serial_no'])) {
                                                 echo $es['serial_no'];
                                              } else {
-                                                echo pur_html_entity_decode($count); 
+                                                echo pur_html_entity_decode($count);
                                              } ?>
                                           </td>
                                           <td class="description" align="left">
@@ -712,9 +712,10 @@ if ($estimate->currency != 0) {
                               <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
                            <?php } ?>
                         </a>
-                        <?php if ($is_image) {
-                           echo '</div>';
-                        } ?>
+                        <?php 
+                           
+                           echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                     ?>
                   <?php echo '</div>';
                      }
                   } ?>
