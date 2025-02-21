@@ -947,7 +947,8 @@ class Invoices_model extends App_Model
             if (handle_removed_sales_item_post($itemId, 'invoice')) {
                 $updated = true;
                 $expense_id = $original_item->expense_id;
-                $this->update_expense_to_invoice_relation($expense_id);
+                $vbt_id = $original_item->vbt_id;
+                $this->remove_expense_and_vendor_bills($expense_id, $vbt_id);
 
                 $this->log_invoice_activity($id, 'invoice_estimate_activity_removed_item', false, serialize([
                     $original_item->description,
@@ -2107,16 +2108,16 @@ class Invoices_model extends App_Model
         return true;
     }
 
-    public function update_expense_to_invoice_relation($expense_id)
+    public function remove_expense_and_vendor_bills($expense_id, $vbt_id)
     {
-        $this->db->where('expense_id', $expense_id);
-        $result = $this->db->get(db_prefix() . 'itemable')->result_array();
-        if(empty($result)) {
-            $this->db->where('id', $expense_id);
-            $this->db->update(db_prefix() . 'expenses', [
-                'invoiceid' => NULL,
-            ]);
-        }
+        $this->db->where('vbt_id', $vbt_id);
+        $this->db->where('id', $expense_id);
+        $this->db->delete(db_prefix() . 'expenses');
+
+        $this->db->where('id', $vbt_id);
+        $this->db->update(db_prefix() . 'pur_invoices', [
+            'expense_convert' => 0,
+        ]);
         return true;
     }
 

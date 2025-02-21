@@ -116,7 +116,7 @@ return App_table::find('expenses')
 
             $categoryOutput .= '<a href="' . admin_url('expenses/list_expenses/' . $aRow['id']) . '" onclick="init_expense(' . $aRow['id'] . ');return false;">' . _l('view') . '</a>';
 
-            if (staff_can('edit',  'expenses')) {
+            if (staff_can('edit',  'expenses') && empty($aRow['invoiceid'])) {
                 $categoryOutput .= ' | <a href="' . admin_url('expenses/expense/' . $aRow['id']) . '">' . _l('edit') . '</a>';
             }
 
