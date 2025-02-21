@@ -234,6 +234,7 @@
                            'vendor_submitted_tax_amount',
                            'certified_amount',
                            'tag',
+                           'attachment',
                            'adminnote',
                            'remarks',
                         ];
