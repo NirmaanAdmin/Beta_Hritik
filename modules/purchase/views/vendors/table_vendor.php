@@ -9,31 +9,31 @@ $this->ci->db->query("SET sql_mode = ''");
 
 $aColumns = [
     '1',
-    db_prefix().'pur_vendor.userid as userid',
+    db_prefix() . 'pur_vendor.userid as userid',
     'company',
     'firstname',
     'email',
-    db_prefix().'pur_vendor.phonenumber as phonenumber',
-    db_prefix().'pur_vendor.active',
-    db_prefix().'pur_vendor.category',
-    db_prefix().'pur_vendor.datecreated as datecreated',
+    db_prefix() . 'pur_vendor.phonenumber as phonenumber',
+    db_prefix() . 'pur_vendor.active',
+    db_prefix() . 'pur_vendor.category',
+    db_prefix() . 'pur_vendor.datecreated as datecreated',
 ];
 
 $sIndexColumn = 'userid';
-$sTable       = db_prefix().'pur_vendor';
+$sTable       = db_prefix() . 'pur_vendor';
 $where        = [];
 // Add blank where all filter can be stored
 $filter = [];
 
 $join = [
-    'LEFT JOIN '.db_prefix().'pur_contacts ON '.db_prefix().'pur_contacts.userid='.db_prefix().'pur_vendor.userid AND '.db_prefix().'pur_contacts.is_primary=1',
+    'LEFT JOIN ' . db_prefix() . 'pur_contacts ON ' . db_prefix() . 'pur_contacts.userid=' . db_prefix() . 'pur_vendor.userid AND ' . db_prefix() . 'pur_contacts.is_primary=1',
 ];
 
 foreach ($custom_fields as $key => $field) {
     $selectAs = (is_cf_date($field) ? 'date_picker_cvalue_' . $key : 'cvalue_' . $key);
     array_push($customFieldsColumns, $selectAs);
     array_push($aColumns, 'ctable_' . $key . '.value as ' . $selectAs);
-    array_push($join, 'LEFT JOIN '.db_prefix().'customfieldsvalues as ctable_' . $key . ' ON '.db_prefix().'pur_vendor.userid = ctable_' . $key . '.relid AND ctable_' . $key . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $key . '.fieldid=' . $field['id']);
+    array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $key . ' ON ' . db_prefix() . 'pur_vendor.userid = ctable_' . $key . '.relid AND ctable_' . $key . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $key . '.fieldid=' . $field['id']);
 }
 
 // Filter by vendor category
@@ -49,9 +49,9 @@ if (count($groupIds) > 0) {
     foreach ($groupIds as $t) {
         if ($t != '') {
             if ($where_category == '') {
-                $where_category .= ' AND (find_in_set('.$t.', category)';
+                $where_category .= ' AND (find_in_set(' . $t . ', category)';
             } else {
-                $where_category .= ' or find_in_set('.$t.', category)';
+                $where_category .= ' or find_in_set(' . $t . ', category)';
             }
         }
     }
@@ -63,7 +63,7 @@ if (count($groupIds) > 0) {
 
 // Filter by Purchase order
 $purorderStatusIds = [];
-$purorder_statuses = [1,2,3,4];
+$purorder_statuses = [1, 2, 3, 4];
 foreach ($purorder_statuses as $status) {
     if ($this->ci->input->post('pur_order_status_' . $status)) {
         array_push($purorderStatusIds, $status);
@@ -71,12 +71,12 @@ foreach ($purorder_statuses as $status) {
 }
 
 if (count($purorderStatusIds) > 0) {
-    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor FROM '.db_prefix().'pur_orders WHERE approve_status IN (' . implode(', ', $purorderStatusIds) . '))');
+    array_push($where, 'AND ' . db_prefix() . 'pur_vendor.userid IN (SELECT vendor FROM ' . db_prefix() . 'pur_orders WHERE approve_status IN (' . implode(', ', $purorderStatusIds) . '))');
 }
 
 // Filter by Purchase estimate
 $purestimateStatusIds = [];
-$purestimate_statuses = [1,2,3];
+$purestimate_statuses = [1, 2, 3];
 foreach ($purestimate_statuses as $status) {
     if ($this->ci->input->post('estimate_status_' . $status)) {
         array_push($purestimateStatusIds, $status);
@@ -84,23 +84,23 @@ foreach ($purestimate_statuses as $status) {
 }
 
 if (count($purestimateStatusIds) > 0) {
-    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor FROM '.db_prefix().'pur_estimates WHERE status IN (' . implode(', ', $purestimateStatusIds) . '))');
+    array_push($where, 'AND ' . db_prefix() . 'pur_vendor.userid IN (SELECT vendor FROM ' . db_prefix() . 'pur_estimates WHERE status IN (' . implode(', ', $purestimateStatusIds) . '))');
 }
 
 
 // Filter by my vendors
 if ($this->ci->input->post('my_vendors')) {
-    array_push($where, 'AND '.db_prefix().'pur_vendor.userid IN (SELECT vendor_id FROM '.db_prefix().'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . ')');
+    array_push($where, 'AND ' . db_prefix() . 'pur_vendor.userid IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . ')');
 }
 
-if(has_permission('purchase_vendors', '', 'view_own') && !is_admin()){
-    array_push($where, 'AND ('.db_prefix().'pur_vendor.userid IN (SELECT vendor_id FROM '.db_prefix().'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . ') OR '.db_prefix().'pur_vendor.addedfrom = '.get_staff_user_id().' )');
+if (has_permission('purchase_vendors', '', 'view_own') && !is_admin()) {
+    array_push($where, 'AND (' . db_prefix() . 'pur_vendor.userid IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . ') OR ' . db_prefix() . 'pur_vendor.addedfrom = ' . get_staff_user_id() . ' )');
 }
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-    db_prefix().'pur_contacts.id as contact_id',
+    db_prefix() . 'pur_contacts.id as contact_id',
     'lastname',
-    db_prefix().'pur_vendor.zip as zip',
+    db_prefix() . 'pur_vendor.zip as zip',
     'registration_confirmed',
 ]);
 
@@ -150,7 +150,10 @@ foreach ($rResult as $key => $aRow) {
         $company .= ' | <a href="' . admin_url('purchase/vendor/' . $aRow['userid'] . '?group=contacts') . '">' . _l('customer_contacts') . '</a>';
     }
     if ($hasPermissionDelete) {
-        $company .= ' | <a href="' . admin_url('purchase/delete_vendor/' . $aRow['userid']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+        $check_vendor_po_and_wo = $this->ci->purchase_model->check_vendor_po_and_wo($aRow['userid']);
+        if ($check_vendor_po_and_wo == 0) {
+            $company .= ' | <a href="' . admin_url('purchase/delete_vendor/' . $aRow['userid']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+        }
     }
 
     $company .= '</div>';
@@ -167,8 +170,8 @@ foreach ($rResult as $key => $aRow) {
     $row[] = ($aRow['phonenumber'] ? '<a href="tel:' . $aRow['phonenumber'] . '">' . $aRow['phonenumber'] . '</a>' : '');
 
     $groupsRow = '';
-    if ($aRow[db_prefix().'pur_vendor.category']) {
-        $groups = explode(',', $aRow[db_prefix().'pur_vendor.category']);
+    if ($aRow[db_prefix() . 'pur_vendor.category']) {
+        $groups = explode(',', $aRow[db_prefix() . 'pur_vendor.category']);
         foreach ($groups as $group) {
             $groupsRow .= '<span class="label label-default mleft5 inline-block">' . get_vendor_cate_name_by_id($group) . '</span>';
         }
@@ -178,12 +181,12 @@ foreach ($rResult as $key => $aRow) {
 
     // Toggle active/inactive customer
     $toggleActive = '<div class="onoffswitch" data-toggle="tooltip" data-title="' . _l('customer_active_inactive_help') . '">
-    <input type="checkbox"' . ($aRow['registration_confirmed'] == 0 ? ' disabled' : '') . ' data-switch-url="' . admin_url() . 'purchase/change_vendor_status" name="onoffswitch" class="onoffswitch-checkbox" id="' . $aRow['userid'] . '" data-id="' . $aRow['userid'] . '" ' . ($aRow[db_prefix().'pur_vendor.active'] == 1 ? 'checked' : '') . '>
+    <input type="checkbox"' . ($aRow['registration_confirmed'] == 0 ? ' disabled' : '') . ' data-switch-url="' . admin_url() . 'purchase/change_vendor_status" name="onoffswitch" class="onoffswitch-checkbox" id="' . $aRow['userid'] . '" data-id="' . $aRow['userid'] . '" ' . ($aRow[db_prefix() . 'pur_vendor.active'] == 1 ? 'checked' : '') . '>
     <label class="onoffswitch-label" for="' . $aRow['userid'] . '"></label>
     </div>';
 
     // For exporting
-    $toggleActive .= '<span class="hide">' . ($aRow[db_prefix().'pur_vendor.active'] == 1 ? _l('is_active_export') : _l('is_not_active_export')) . '</span>';
+    $toggleActive .= '<span class="hide">' . ($aRow[db_prefix() . 'pur_vendor.active'] == 1 ? _l('is_active_export') : _l('is_not_active_export')) . '</span>';
 
     $row[] = $toggleActive;
 

@@ -7149,7 +7149,7 @@ class Purchase_model extends App_Model
         $this->db->delete(db_prefix() . 'expenses');
 
         $ril_invoice_item = get_ril_invoice_item($id);
-        if(!empty($ril_invoice_item)) {
+        if (!empty($ril_invoice_item)) {
             $this->db->where('vbt_id', $id);
             $this->db->delete(db_prefix() . 'itemable');
             $this->load->model('invoices_model');
@@ -7905,11 +7905,11 @@ class Purchase_model extends App_Model
     }
     public function change_rli_filter($status, $id, $table_name)
     {
-        if($table_name === 'pur_orders'){
+        if ($table_name === 'pur_orders') {
             $tableName = 'pur_orders';
-        }elseif ($table_name === 'wo_orders') {
+        } elseif ($table_name === 'wo_orders') {
             $tableName = 'wo_orders';
-        }elseif ($table_name === 'order_tracker') {
+        } elseif ($table_name === 'order_tracker') {
             $tableName = 'pur_order_tracker';
         }
         $this->db->where('id', $id);
@@ -16908,14 +16908,14 @@ class Purchase_model extends App_Model
     public function update_ril_payment_details($id, $column_name, $column_value)
     {
         $ril_invoice_item = get_ril_invoice_item($id);
-        if(!empty($ril_invoice_item)) {
+        if (!empty($ril_invoice_item)) {
             $invoiceid = $ril_invoice_item->rel_id;
 
             $this->db->where('invoiceid', $invoiceid);
             $this->db->where('pur_invoice', $id);
             $invoicepaymentrecords = $this->db->get(db_prefix() . 'invoicepaymentrecords')->row();
 
-            if(!empty($invoicepaymentrecords)) {
+            if (!empty($invoicepaymentrecords)) {
                 $this->db->where('invoiceid', $invoiceid);
                 $this->db->where('pur_invoice', $id);
                 $this->db->update('tblinvoicepaymentrecords', array($column_name => $column_value));
@@ -16935,7 +16935,7 @@ class Purchase_model extends App_Model
     {
         $this->db->where('pur_invoice', $id);
         $invoicepaymentrecords = $this->db->get(db_prefix() . 'invoicepaymentrecords')->row();
-        if(!empty($invoicepaymentrecords)) {
+        if (!empty($invoicepaymentrecords)) {
             $ril_previous_amount = $invoicepaymentrecords->ril_previous;
             $ril_this_bill_amount = $invoicepaymentrecords->amount;
             $total = $ril_previous_amount + $ril_this_bill_amount;
@@ -16955,7 +16955,7 @@ class Purchase_model extends App_Model
         $this->db->where('pur_invoice', $pur_invoice);
         $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($pur_invoice_payment)) {
+        if (!empty($pur_invoice_payment)) {
             $this->db->where('id', $id);
             $this->db->where('pur_invoice', $pur_invoice);
             $this->db->update('tblpur_invoice_payment', array('date' => $date));
@@ -16981,7 +16981,7 @@ class Purchase_model extends App_Model
         $this->db->where('pur_invoice', $pur_invoice);
         $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($pur_invoice_payment)) {
+        if (!empty($pur_invoice_payment)) {
             $this->db->where('id', $id);
             $this->db->where('pur_invoice', $pur_invoice);
             $this->db->update('tblpur_invoice_payment', array('amount' => $amount));
@@ -17007,7 +17007,7 @@ class Purchase_model extends App_Model
         $this->db->where('pur_invoice', $pur_invoice);
         $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($pur_invoice_payment)) {
+        if (!empty($pur_invoice_payment)) {
             $this->db->where('id', $id);
             $this->db->where('pur_invoice', $pur_invoice);
             $this->db->update('tblpur_invoice_payment', array('tds' => $tds));
@@ -17034,7 +17034,7 @@ class Purchase_model extends App_Model
         $this->db->where('pur_invoice', $id);
         $pur_invoice_payment = $this->db->get(db_prefix() . 'pur_invoice_payment')->row();
 
-        if(!empty($pur_invoice_payment)) {
+        if (!empty($pur_invoice_payment)) {
             $total = $pur_invoice_payment->total_payment_made + $pur_invoice_payment->total_payment_tds;
         }
 
@@ -17042,7 +17042,7 @@ class Purchase_model extends App_Model
         $this->db->update('tblpur_invoices', array('bil_total' => $total));
         return true;
     }
-    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value= '')
+    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value = '')
     {
         $row = '';
         $name_order_scope = 'order_scope';
@@ -17155,15 +17155,15 @@ class Purchase_model extends App_Model
         $this->load->model('invoices_model');
         $this->db->where('id', $id);
         $pur_invoices = $this->db->get(db_prefix() . 'pur_invoices')->row();
-        if(!empty($pur_invoices)) {
+        if (!empty($pur_invoices)) {
             $expense_convert = $pur_invoices->expense_convert;
 
             $this->db->where('vbt_id', $id);
-            if(!empty($expense_convert)) {
+            if (!empty($expense_convert)) {
                 $this->db->or_where('id', $expense_convert);
             }
             $expenses = $this->db->get(db_prefix() . 'expenses')->row();
-            if(!empty($expenses)) {
+            if (!empty($expenses)) {
                 $expenses_input = array();
                 $expenses_input['expense_name'] = $pur_invoices->description_services;
                 $expenses_input['vendor'] = $pur_invoices->vendor;
@@ -17171,10 +17171,10 @@ class Purchase_model extends App_Model
                 $this->db->where('id', $expenses->id);
                 $this->db->update('tblexpenses', $expenses_input);
             }
-            
+
             $this->db->where('vbt_id', $id);
             $itemable = $this->db->get(db_prefix() . 'itemable')->row();
-            if(!empty($itemable)) {
+            if (!empty($itemable)) {
                 $itemable_input = array();
                 $itemable_input['long_description'] = $pur_invoices->description_services;
                 $itemable_input['rate'] = $pur_invoices->vendor_submitted_amount_without_tax;
@@ -17203,5 +17203,25 @@ class Purchase_model extends App_Model
             9 => ['id' => 9, 'name' => _l('common_services_in_ril_scope')],
             10 => ['id' => 10, 'name' => _l('due_to_site_specfic_constraint')],
         ];
+    }
+
+    public function check_vendor_po_and_wo($vendor_id)
+    {
+        // Check in tblpur_orders (Purchase Orders)
+        $this->db->where('vendor', $vendor_id);
+        $po_query = $this->db->get('tblpur_orders');
+        $po_count = $po_query->num_rows();
+
+        // Check in tblwo_orders (Work Orders)
+        $this->db->where('vendor', $vendor_id);
+        $wo_query = $this->db->get('tblwo_orders');
+        $wo_count = $wo_query->num_rows();
+
+        // Return 1 if vendor exists in both tables, else return 0.
+        if ($po_count > 0 || $wo_count > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
