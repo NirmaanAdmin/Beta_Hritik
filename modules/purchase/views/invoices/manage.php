@@ -283,10 +283,11 @@
                               <td></td>
                               <td></td>
                               <td></td>
+                              <td></td>
                               <td class="total_vendor_submitted_amount_without_tax"></td>
                               <td class="total_vendor_submitted_tax_amount"></td>
                               <td class="total_final_certified_amount"></td>
-                              <td></td>
+                              
                               <td></td>
                               <td></td>
                               <td></td>
