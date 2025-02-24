@@ -727,3 +727,6 @@ $lang['non_tender_items_in_change_order'] = 'Non tender items in CO';
 $lang['serial_no'] = 'No';
 $lang['qty_after_incl_co'] = 'Qty after Incl CO';
 $lang['rate_after_incl_co'] = 'Rate after Incl CO';
+$lang['rate_after_incl_co'] = 'Rate after Incl CO';
+$lang['awarded_qty'] = 'Awarded Qty';
+$lang['awarded_rate'] = 'Awarded Rate';

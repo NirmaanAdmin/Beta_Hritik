@@ -4752,12 +4752,11 @@ class Changee_model extends App_Model
         <thead>
           <tr>
             <th class="thead-dark" style="width: 10%;font-size: 11px">' . _l('items') . '</th>
-            <th class="thead-dark" style="width: 25%;font-size: 11px">' . _l('decription') . '</th>
-            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_quantity') . '</th>
+            <th class="thead-dark" style="width: 32%;font-size: 11px">' . _l('decription') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('awarded_qty') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('qty_after_incl_co') . '</th>
-            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('awarded_rate') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('rate_after_incl_co') . '</th>
-            <th class="thead-dark" align="right" style="width: 9%;font-size: 11px">' . _l('contract_value_before_tax') . '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">'. _l('updated_subtotal_before_tax'). '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('tax_value') . '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('debit_note_total') . '</th>
@@ -4800,16 +4799,15 @@ class Changee_model extends App_Model
             }
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 10%; font-size: 11px">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
-            <td style="width: 25%; font-size: 11px">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td style="width: 32%; font-size: 11px">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="right" style="width: 7%; font-size: 11px">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff_unit . '</span></td>
             <td align="right" style="width: 7%; font-size: 11px">' . changee_pur_html_entity_decode($row['quantity']) . ' ' . $units->unit_name . '</td>
             <td align="right" style="width: 7%; font-size: 11px">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
             <td align="right" style="width: 7%; font-size: 11px">₹' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['into_money'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['into_money_updated'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['tax_value'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['total'], '') . '</td>
-            <td align="right" style="width: 7%; font-size: 11px">' . $row['remarks'] . '</td>
+            <td align="right" style="width: 6%; font-size: 11px">' . $row['remarks'] . '</td>
           </tr>';
 
             $t_mn += $row['total_money'];
