@@ -4757,11 +4757,11 @@ class Changee_model extends App_Model
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('updated_quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('updated_unit_price') . '</th>
-            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">CO (before tax)</th>
-            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">Contract Value Incl CO</th>
+            <th class="thead-dark" align="right" style="width: 9%;font-size: 11px">' . _l('contract_value_before_tax') . '</th>
+            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">'. _l('updated_subtotal_before_tax'). '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('tax_value') . '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('debit_note_total') . '</th>
-            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">Remark</th>
+            <th class="thead-dark" align="right" style="width: 6%;font-size: 11px">Remark</th>
           </tr>
         </thead>
         <tbody>';
