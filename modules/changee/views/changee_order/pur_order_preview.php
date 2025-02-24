@@ -494,9 +494,9 @@ if ($estimate->currency != 0) {
                                     <th width="15%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
                                     <th width="15%" align="right" class="qty"><?php echo _l('decription'); ?></th>
                                     <th width="10%" align="right" class="qty"><?php echo _l('original_quantity'); ?></th>
-                                    <th width="10%" align="right" class="qty"><?php echo _l('updated_quantity'); ?></th>
+                                    <th width="10%" align="right" class="qty"><?php echo _l('qty_after_incl_co'); ?></th>
                                     <th width="10%" align="right"><?php echo _l('original_unit_price'); ?></th>
-                                    <th width="10%" align="right"><?php echo _l('updated_unit_price'); ?></th>
+                                    <th width="10%" align="right"><?php echo _l('rate_after_incl_co'); ?></th>
                                     <th width="10%" align="right"><?php echo _l('contract_value_before_tax'); ?></th>
                                     <th width="10%" align="right"><?php echo _l('updated_subtotal_before_tax'); ?></th>
                                     <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>

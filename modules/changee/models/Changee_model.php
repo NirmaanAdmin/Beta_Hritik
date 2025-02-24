@@ -4754,9 +4754,9 @@ class Changee_model extends App_Model
             <th class="thead-dark" style="width: 10%;font-size: 11px">' . _l('items') . '</th>
             <th class="thead-dark" style="width: 25%;font-size: 11px">' . _l('decription') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_quantity') . '</th>
-            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('updated_quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('qty_after_incl_co') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('original_unit_price') . '</th>
-            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('updated_unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('rate_after_incl_co') . '</th>
             <th class="thead-dark" align="right" style="width: 9%;font-size: 11px">' . _l('contract_value_before_tax') . '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">'. _l('updated_subtotal_before_tax'). '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('tax_value') . '</th>
