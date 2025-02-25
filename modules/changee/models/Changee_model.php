@@ -2495,7 +2495,7 @@ class Changee_model extends App_Model
                     $dt_data['pur_order'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['description'] = nl2br($rqd['item_description']);
-                    $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                     $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                     $dt_data['unit_price'] = $rqd['unit_price'];
                     $dt_data['into_money'] = $rqd['into_money'];
@@ -2694,7 +2694,7 @@ class Changee_model extends App_Model
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -2744,7 +2744,7 @@ class Changee_model extends App_Model
                 $dt_data['pur_order'] = $id;
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['original_unit_price'] = $rqd['original_unit_price'];
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
@@ -11242,9 +11242,13 @@ class Changee_model extends App_Model
         $row .=  '</td>';
 
         $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Amendment : </span> ' . $unit_name . '</td>';
+
+        $units_list = $this->get_units();
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
-            render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_name, ['id']) .
+            '</td>';
             '</td>';
 
         $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';

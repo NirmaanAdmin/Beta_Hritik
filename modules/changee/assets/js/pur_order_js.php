@@ -423,6 +423,7 @@ function pur_add_item_to_preview(id) {
 
     $('.main select.taxes').selectpicker('val', taxSelectedArray);
     $('.main input[name="unit"]').val(response.unit_name);
+    $('.main select#unit_name').selectpicker('val', response.unit_id);
 
     var $currency = $("body").find('.accounting-template select[name="currency"]');
     var baseCurency = $currency.attr('data-base');
@@ -492,7 +493,7 @@ function pur_get_item_preview_values() {
   response.description = $('.invoice-item .main textarea[name="description"]').val();
   response.original_quantity = $('.invoice-item .main input[name="original_quantity"]').val();
   response.quantity = $('.invoice-item .main input[name="quantity"]').val();
-  response.unit_name = $('.invoice-item .main input[name="unit_name"]').val();
+  response.unit_name = $('.invoice-item .main select[name="unit_name"]').val();
   response.unit_id = $('.invoice-item .main input[name="unit_id"]').val();
   response.original_unit_price = $('.invoice-item .main input[name="original_unit_price"]').val();
   response.unit_price = $('.invoice-item .main input[name="unit_price"]').val();
