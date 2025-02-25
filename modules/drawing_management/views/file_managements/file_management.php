@@ -198,7 +198,7 @@
 											<label for="status" class="control-label"><?php echo _l('status'); ?></label>
 											<select id="status" name="status" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
 												<option value=""></option>
-												<option value="under_review"  <?= ($status_filter_val == "under_review") ? 'selected' : ''; ?>>Under Review</option>
+												<option value="under_review" <?= ($status_filter_val == "under_review") ? 'selected' : ''; ?>>Under Review</option>
 												<option value="released" <?= ($status_filter_val == "released") ? 'selected' : ''; ?>>Released</option>
 												<option value="released_with_comments" <?= ($status_filter_val == "released_with_comments") ? 'selected' : ''; ?>>Released with comments</option>
 												<option value="rejected" <?= ($status_filter_val == "rejected") ? 'selected' : ''; ?>>Rejected</option>
@@ -207,7 +207,7 @@
 										<div class="col-md-3">
 										</div>
 										<div class="col-md-2 mtop15">
-										<?php
+											<?php
 											$controlled_document_filter = get_module_filter($module_name, 'controlled_document');
 											$controlled_document_filter_val = !empty($controlled_document_filter) ? $controlled_document_filter->filter_value : '';
 											?>
@@ -768,10 +768,10 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 				let purpose = $('#purpose').val();
 				let status = $('#status').val();
 				let controlled_document = $('#controlled_document').val();
-				if(designStage == '' && discipline == '' && purpose == '' && status == '' && controlled_document == ''){
-					$('#append_fillter_data').html(initialTableContent); 
-					return;
-				}
+				// if (designStage == '' && discipline == '' && purpose == '' && status == '' && controlled_document == '') {
+				// 	$('#append_fillter_data').html(initialTableContent);
+				// 	return;
+				// }
 				$.ajax({
 					url: '<?= base_url("drawing_management/get_file_and_folder_by_filter") ?>',
 					type: 'GET',
@@ -785,21 +785,26 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 					dataType: 'json',
 					success: function(data) {
 						$('#append_fillter_data').empty().show(); // Clear previous results and show dropdown
-						if (data.length > 0) {
-							$.each(data, function(index, item) {
-								let breadcrumb = item.breadcrumb.join(' > '); // Join breadcrumb with ">"
-								let url = `<?= admin_url('drawing_management?id=') ?>${item.id}`;
-								$('#append_fillter_data').append(
-									`<a href="${url}" class="dropdown-item bg-light-gray" style="color: rgb(37 99 235/var(--tw-text-opacity));outline: none!important;text-decoration: none!important;">
+						if (!empty(data)) {
+							if (data.length > 0) {
+								$.each(data, function(index, item) {
+									let breadcrumb = item.breadcrumb.join(' > '); // Join breadcrumb with ">"
+									let url = `<?= admin_url('drawing_management?id=') ?>${item.id}`;
+									$('#append_fillter_data').append(
+										`<a href="${url}" class="dropdown-item bg-light-gray" style="color: rgb(37 99 235/var(--tw-text-opacity));outline: none!important;text-decoration: none!important;">
                                 <i class="fa fa-file text-primary fs-14"></i><strong class="fs-14 mleft10">${item.name} </strong>
                             </a>`
-								);
-							});
-						} else {
-							// $('#append_fillter_data').append('<a href="#" class="dropdown-item disabled">No results found</a>');
+									);
+								});
+							} else {
+								// $('#append_fillter_data').append('<a href="#" class="dropdown-item disabled">No results found</a>');
+								$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+							}
+						}else{
 							$('#append_fillter_data').html(initialTableContent); // Restore the original table content
 						}
 					}
+
 				});
 			}
 
@@ -807,12 +812,14 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 			$('#design_stage, #discipline, #purpose, #status, #controlled_document').on('change', function() {
 				fetchFilteredData();
 			});
+			$(".reset_vbt_all_filters").click(function() {				
+				$('#design_stage, #discipline, #purpose, #status, #controlled_document').val('');
+				$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+				$('select').selectpicker('refresh');
+				fetchFilteredData();
+			});
 		});
 
-		$(".reset_vbt_all_filters").click(function() {
-			$('#design_stage, #discipline, #purpose, #status, #controlled_document').val('');
-			$('#append_fillter_data').html(initialTableContent); // Restore the original table content
-			$('select').selectpicker('refresh');
-		});
+
 	});
 </script>
