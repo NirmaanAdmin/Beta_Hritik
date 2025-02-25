@@ -11241,7 +11241,7 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
-        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Amendment : </span> ' . $unit_name . '</td>';
+        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Amendment : </span> ' . pur_get_unit_name($unit_name) . '</td>';
 
         $units_list = $this->get_units();
         $row .= '<td class="quantities">' .
