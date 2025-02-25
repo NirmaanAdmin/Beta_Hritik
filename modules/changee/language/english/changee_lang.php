@@ -730,3 +730,4 @@ $lang['rate_after_incl_co'] = 'Rate after Incl CO';
 $lang['rate_after_incl_co'] = 'Rate after Incl CO';
 $lang['awarded_qty'] = 'Awarded Qty';
 $lang['awarded_rate'] = 'Awarded Rate';
+$lang['releted_to'] = 'Releted To';

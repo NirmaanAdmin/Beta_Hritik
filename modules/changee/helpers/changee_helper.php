@@ -3324,7 +3324,7 @@ function get_wo_order_name_by_id($wo_order)
         $result = $CI->db->get()->row_array();
 
         if (!empty($result)) {
-            return $result['wo_order_number'] . '-' . $result['wo_order_name'];
+            return $result['wo_order_number'] . ' - ' . $result['wo_order_name'];
         }
     }
     return '';
@@ -3340,7 +3340,7 @@ function get_pur_name_by_id($pur_id)
         $result = $CI->db->get()->row_array();
 
         if (!empty($result)) {
-            return $result['pur_order_number'] . '-' . $result['pur_order_name'];
+            return $result['pur_order_number'] . ' - ' . $result['pur_order_name'];
         }
     }
     return '';

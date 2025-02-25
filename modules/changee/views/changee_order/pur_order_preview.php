@@ -170,6 +170,13 @@ if ($estimate->currency != 0) {
                                                                               }
                                                                            } ?> </p>
                <?php }
+               if ($pur_order->po_order_id > 0) { ?>
+                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?> <?php echo get_pur_name_by_id($pur_order->po_order_id); ?>
+               <?php }
+               if ($pur_order->wo_order_id > 0) { ?>
+                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?> <?php echo get_wo_order_name_by_id($pur_order->wo_order_id); ?>
+               <?php } ?> 
+               <?php
                if ($pur_order->kind > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('kind') . ': ' ?> <?php echo $pur_order->kind ?> </p>
                <?php }

@@ -4736,6 +4736,12 @@ class Changee_model extends App_Model
         if ($group_req_area_po != '') {
             $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area_po($pur_order->id) . '</span><br />';
         }
+        if (!empty($pur_order->po_order_id)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('releted_to') . ':</b> ' .get_pur_name_by_id($pur_order->po_order_id) . '</span><br />';
+        }
+        if (!empty($pur_order->wo_order_id)) {
+            $html .= '<span style="text-align: right;"><b>' . _l('releted_to') . ':</b> ' .get_wo_order_name_by_id($pur_order->wo_order_id) . '</span><br />';
+        }
         $html .= '            
             </td>
           </tr>
