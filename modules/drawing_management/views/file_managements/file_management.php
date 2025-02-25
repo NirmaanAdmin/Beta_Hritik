@@ -2,7 +2,6 @@
 <?php init_head(); ?>
 <input type="hidden" name="parent_id" value="<?php echo drawing_htmldecode($parent_id); ?>">
 <style>
-
 	/* Basic styles for dropdown */
 	.dropdown-menu {
 		width: 100%;
@@ -58,15 +57,19 @@
 													<?php echo _l('dmg_upload'); ?>
 												</span>
 											</button>
-											<?php if(is_admin()) { ?>
+											<?php if (is_admin()) { ?>
 												<button class="btn btn-default pull-right mright10 display-flex default-tool" onclick="create_folder()">
-													<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder-plus"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+													<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder-plus">
+														<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+														<line x1="12" y1="11" x2="12" y2="17" />
+														<line x1="9" y1="14" x2="15" y2="14" />
+													</svg>
 													<span class="mleft5 mtop2">
-														<?php echo _l('dmg_new_folder'); ?>											
+														<?php echo _l('dmg_new_folder'); ?>
 													</span>
-												</button> 
+												</button>
 											<?php } ?>
-											
+
 											<!-- <?php echo render_input('search_new', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?> -->
 											<div class="input-group">
 												<!-- <input type="text" class="form-control" id="searchBox" placeholder="Type to search files or folders" autocomplete="off"> -->
@@ -74,7 +77,7 @@
 												<div id="dropdown" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000;"></div>
 											</div>
 
-											
+
 
 											<?php } else {
 											if (isset($item) && $edit != 1) {
@@ -134,6 +137,91 @@
 											</span>
 										</button>
 										<!-- For bulk select -->
+									</div>
+									<div class="col-md-12 mtop15">
+										<div class="col-md-3">
+										</div>
+										<div class="col-md-2">
+											<?php
+											$module_name = 'drawing_management';
+											$design_stage_filter = get_module_filter($module_name, 'design_stage');
+											$design_stage_filter_val = !empty($design_stage_filter) ? $design_stage_filter->filter_value : '';
+											$statuses = [
+												0 => ['id' => 'Concept Design', 'name' => 'Concept Design'],
+												1 => ['id' => 'Schematic Design', 'name' => 'Schematic Design'],
+												2 => ['id' => 'Design Development', 'name' => 'Design Development'],
+												3 => ['id' => 'Construction Documents', 'name' => 'Construction Documents'],
+											];
+
+											echo render_select('design_stage', $statuses, array('id', 'name'), 'design_stage', $design_stage_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('design_stage'),  'data-actions-box' => true), array(), 'no-mbot', '', true); ?>
+										</div>
+
+										<div class="col-md-2">
+											<label for="discipline">Discipline</label>
+											<select id="discipline" name="discipline[]" data-live-search="true" class="form-control selectpicker" multiple>
+												<option value=""></option>
+												<?php
+												$discipline_filter = get_module_filter($module_name, 'discipline');
+												$discipline_filter_val = !empty($discipline_filter) ? $discipline_filter->filter_value : '';
+
+												// Convert comma-separated values to an array
+												$selected = !empty($discipline_filter_val) ? explode(',', $discipline_filter_val) : [];
+
+												foreach ($discipline as $option) : ?>
+													<option value="<?= $option['id']; ?>" <?= in_array($option['id'], $selected) ? 'selected' : ''; ?>>
+														<?= $option['name']; ?>
+													</option>
+												<?php endforeach; ?>
+											</select>
+										</div>
+										<div class="col-md-2">
+											<?php
+											$purpose_filter = get_module_filter($module_name, 'purpose');
+											$purpose_filter_val = !empty($purpose_filter) ? $purpose_filter->filter_value : '';
+											?>
+
+											<label for="purpose" class="control-label"><?php echo _l('purpose'); ?></label>
+											<select id="purpose" name="purpose" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+												<option value=""></option>
+												<option value="Issued for Information" <?= ($purpose_filter_val == "Issued for Information") ? 'selected' : ''; ?>>Issued for Information</option>
+												<option value="Issued for review" <?= ($purpose_filter_val == "Issued for review") ? 'selected' : ''; ?>>Issued for review</option>
+												<option value="Issued for approval" <?= ($purpose_filter_val == "Issued for approval") ? 'selected' : ''; ?>>Issued for approval</option>
+												<option value="Issued for tender" <?= ($purpose_filter_val == "Issued for tender") ? 'selected' : ''; ?>>Issued for tender</option>
+												<option value="Issued for construction" <?= ($purpose_filter_val == "Issued for construction") ? 'selected' : ''; ?>>Issued for construction</option>
+											</select>
+										</div>
+										<div class="col-md-2">
+											<?php
+											$status_filter = get_module_filter($module_name, 'status');
+											$status_filter_val = !empty($status_filter) ? $status_filter->filter_value : '';
+											?>
+											<label for="status" class="control-label"><?php echo _l('status'); ?></label>
+											<select id="status" name="status" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+												<option value=""></option>
+												<option value="under_review"  <?= ($status_filter_val == "under_review") ? 'selected' : ''; ?>>Under Review</option>
+												<option value="released" <?= ($status_filter_val == "released") ? 'selected' : ''; ?>>Released</option>
+												<option value="released_with_comments" <?= ($status_filter_val == "released_with_comments") ? 'selected' : ''; ?>>Released with comments</option>
+												<option value="rejected" <?= ($status_filter_val == "rejected") ? 'selected' : ''; ?>>Rejected</option>
+											</select>
+										</div>
+										<div class="col-md-3">
+										</div>
+										<div class="col-md-2 mtop15">
+										<?php
+											$controlled_document_filter = get_module_filter($module_name, 'controlled_document');
+											$controlled_document_filter_val = !empty($controlled_document_filter) ? $controlled_document_filter->filter_value : '';
+											?>
+											<label for="controlled_document" class="control-label"><?php echo _l('Controlled Document'); ?></label>
+											<select id="controlled_document" name="controlled_document" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+												<option value=""></option>
+												<option value="1" <?= ($controlled_document_filter_val == 1) ? 'selected' : ''; ?>>Yes</option>
+												<option value="0" <?= ($controlled_document_filter_val === 0) ? 'selected' : ''; ?>>No</option>
+											</select>
+										</div>
+										<div class="col-md-2 mtop35">
+											<a href="javascript:void(0)" class="btn btn-info btn-icon reset_vbt_all_filters">
+												Reset filter </a>
+										</div>
 									</div>
 									<?php } else {
 									if (($share_to_me == 1 && $parent_id == 0) || (isset($item) && $item->filetype == 'folder' && !drawing_check_share_permission($parent_id, 'upload_only'))) { ?>
@@ -242,7 +330,7 @@
 							</div>
 
 
-							<div class="col-md-9">
+							<div class="col-md-9" id="append_fillter_data">
 								<?php if ($share_to_me == 0 && $my_approval == 0 && $electronic_signing == 0) { ?>
 									<div class="row">
 										<div class="col-md-12">
@@ -628,6 +716,7 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 </html>
 <script>
 	$(document).ready(function() {
+		var initialTableContent = $('#append_fillter_data').html();
 		$('#searchBox').on('keyup', function() {
 			let query = $(this).val();
 
@@ -667,6 +756,60 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 			if (!$(e.target).closest('#searchBox').length && !$(e.target).closest('#dropdown').length) {
 				$('#dropdown').hide();
 			}
+		});
+
+
+		$(document).ready(function() {
+			fetchFilteredData();
+
+			function fetchFilteredData() {
+				let designStage = $('#design_stage').val();
+				let discipline = $('#discipline').val(); // For multi-select, this returns an array
+				let purpose = $('#purpose').val();
+				let status = $('#status').val();
+				let controlled_document = $('#controlled_document').val();
+
+				$.ajax({
+					url: '<?= base_url("drawing_management/get_file_and_folder_by_filter") ?>',
+					type: 'GET',
+					data: {
+						design_stage: designStage,
+						discipline: discipline,
+						purpose: purpose,
+						status: status,
+						controlled_document: controlled_document
+					},
+					dataType: 'json',
+					success: function(data) {
+						$('#append_fillter_data').empty().show(); // Clear previous results and show dropdown
+						if (data.length > 0) {
+							$.each(data, function(index, item) {
+								let breadcrumb = item.breadcrumb.join(' > '); // Join breadcrumb with ">"
+								let url = `<?= admin_url('drawing_management?id=') ?>${item.id}`;
+								$('#append_fillter_data').append(
+									`<a href="${url}" class="dropdown-item bg-light-gray" style="color: rgb(37 99 235/var(--tw-text-opacity));outline: none!important;text-decoration: none!important;">
+                                <i class="fa fa-file text-primary fs-14"></i><strong class="fs-14 mleft10">${item.name} </strong>
+                            </a>`
+								);
+							});
+						} else {
+							// $('#append_fillter_data').append('<a href="#" class="dropdown-item disabled">No results found</a>');
+							$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+						}
+					}
+				});
+			}
+
+			// Listen for changes in both dropdowns
+			$('#design_stage, #discipline, #purpose, #status, #controlled_document').on('change', function() {
+				fetchFilteredData();
+			});
+		});
+
+		$(".reset_vbt_all_filters").click(function() {
+			$('#design_stage, #discipline, #purpose, #status, #controlled_document').val('');
+			$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+			$('select').selectpicker('refresh');
 		});
 	});
 </script>

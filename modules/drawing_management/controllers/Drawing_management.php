@@ -1256,12 +1256,24 @@ class drawing_management extends AdminController
 		$query = $this->input->get('query');  // Get the search term from AJAX
 
 		if (strlen($query) >= 3) {  // Only search if the query is at least 3 characters
-			
+
 			$results = $this->drawing_management_model->searchFilesAndFolders($query);
 			echo json_encode($results);  // Return results as JSON
 		} else {
 			echo json_encode([]);  // Return an empty array if query is too short
 		}
 	}
-	
+
+	public function get_file_and_folder_by_filter()
+	{
+		$design_stage = $this->input->get('design_stage');  // Get design stage filter
+		$discipline = $this->input->get('discipline'); // Get discipline filter (array for multi-select)
+		$purpose = $this->input->get('purpose'); // Get purpose filter
+		$status  = $this->input->get('status'); // Get status filter
+		$controlled_document = $this->input->get('controlled_document'); // Get controlled document filter 
+		// Fetch filtered results from the model
+		$results = $this->drawing_management_model->filterFilesAndFolders($design_stage, $discipline, $purpose, $status, $controlled_document);
+
+		echo json_encode($results);  // Return results as JSON
+	}
 }
