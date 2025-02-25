@@ -583,7 +583,7 @@ if ($estimate->currency != 0) {
                         <table class="table text-right">
                            <tbody>
                               <tr id="subtotal">
-                                 <td><span class="bold"><?php echo _l('subtotal'); ?></span>
+                                 <td><span class="bold"><?php echo _l('subtotal_wo_tax'); ?></span>
                                  </td>
                                  <td class="subtotal">
                                     <?php echo app_format_money($estimate->subtotal, $base_currency->symbol); ?>
