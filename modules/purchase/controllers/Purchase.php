@@ -11934,4 +11934,28 @@ class purchase extends AdminController
         set_alert('success', _l('vendor_bills_converted_to_ril_invoices'));
         redirect(admin_url('purchase/invoices'));
     }
+
+    public function update_order_value_amount()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $orderValueAmount = $this->input->post('orderValueAmount');
+
+        if (!$id || !$table || !$orderValueAmount) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+        if ($table === 'pur_orders') {
+            $tableName = 'tblpur_orders';
+        } else {
+            $tableName = 'tblwo_orders';
+        }
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['order_value' => $orderValueAmount]);
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('change_order_amount_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
 }

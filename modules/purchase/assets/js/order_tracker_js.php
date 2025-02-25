@@ -236,6 +236,36 @@
                 }
             });
         });
+
+        $('body').on('click', '.order-value-display', function(e) {
+            e.preventDefault();
+            var rowId = $(this).data('id');
+            var tableType = $(this).data('type');
+            var currentAmount = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
+            // Replace the span with an input field
+            $(this).replaceWith('<input type="number" class="form-control order-value-input" value="' + currentAmount + '" data-id="' + rowId + '" data-type="' + tableType + '">');
+        });
+
+        $('body').on('change', '.order-value-input', function(e) {
+            e.preventDefault();
+            var rowId = $(this).data('id');
+            var tableType = $(this).data('type');
+            var orderValueAmount = $(this).val();
+
+            $.post(admin_url + 'purchase/update_order_value_amount', {
+                id: rowId,
+                table: tableType,
+                orderValueAmount: orderValueAmount
+            }).done(function(response) {
+                response = JSON.parse(response);
+                if (response.success) {
+                    alert_float('success', response.message);
+                    table_order_tracker.ajax.reload(null, false);
+                } else {
+                    alert_float('danger', response.message);
+                }
+            });
+        });
     });
     $(document).ready(function() {
         var table = $('.table-table_order_tracker').DataTable();

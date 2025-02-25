@@ -353,7 +353,7 @@ foreach ($rResult as $aRow) {
          }
       } elseif ($column == 'order_value') {
          $base_currency = get_base_currency_pur();
-         $_data = app_format_money($aRow['order_value'], $base_currency->symbol);
+         $_data = '<span class="order-value-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .app_format_money($aRow['order_value'], $base_currency->symbol) .'</span>';
       }
 
       $row[] = $_data;
