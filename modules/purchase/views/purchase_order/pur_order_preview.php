@@ -29,6 +29,11 @@ if ($estimate->currency != 0) {
                         <?php echo _l('pur_order'); ?>
                      </a>
                   </li>
+                  <li role="presentation" class="tab-separator">
+                     <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
+                        <?php echo _l('attachment'); ?>
+                     </a>
+                  </li>
                   <li role="presentation">
                      <a href="#payment_record" aria-controls="payment_record" role="tab" data-toggle="tab">
                         <?php echo _l('payment_record'); ?>
@@ -99,12 +104,6 @@ if ($estimate->currency != 0) {
                      <a href="#discuss" aria-controls="discuss" role="tab" data-toggle="tab">
                         <?php echo _l('pur_discuss'); ?>
                         <span class="badge comments-indicator<?php echo $totalComments == 0 ? ' hide' : ''; ?>"><?php echo $totalComments; ?></span>
-                     </a>
-                  </li>
-
-                  <li role="presentation" class="tab-separator">
-                     <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
-                        <?php echo _l('attachment'); ?>
                      </a>
                   </li>
 
