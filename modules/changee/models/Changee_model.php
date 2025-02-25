@@ -4800,20 +4800,24 @@ class Changee_model extends App_Model
                 }
             }
             $non_tender = '';
+            $font_weight = '';
+            if($diff_unit > 0) {
+                $font_weight = 'font-weight: bold;';
+            }
             if ($row['tender_item'] == 1) {
                 $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
             }
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 10%; font-size: 11px">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
+            <td style="width: 10%; font-size: 11px;'.$font_weight.'">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
             <td style="width: 32%; font-size: 11px">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 7%; font-size: 11px">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff_unit . '</span></td>
-            <td align="right" style="width: 7%; font-size: 11px">' . changee_pur_html_entity_decode($row['quantity']) . ' ' . $units->unit_name . '</td>
-            <td align="right" style="width: 7%; font-size: 11px">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
-            <td align="right" style="width: 7%; font-size: 11px">₹' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['into_money_updated'], '') . '</td>
-            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['tax_value'], '') . '</td>
-            <td align="right" style="width: 8%; font-size: 11px">₹' . app_format_money($row['total'], '') . '</td>
-            <td align="right" style="width: 6%; font-size: 11px">' . $row['remarks'] . '</td>
+            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff_unit . '</span></td>
+            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['quantity']) . ' ' . $units->unit_name . '</td>
+            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
+            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['into_money_updated'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['tax_value'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['total'], '') . '</td>
+            <td align="right" style="width: 6%; font-size: 11px;'.$font_weight.'">' . $row['remarks'] . '</td>
           </tr>';
 
             $t_mn += $row['total_money'];
