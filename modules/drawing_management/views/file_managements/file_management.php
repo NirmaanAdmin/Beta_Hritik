@@ -768,7 +768,10 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 				let purpose = $('#purpose').val();
 				let status = $('#status').val();
 				let controlled_document = $('#controlled_document').val();
-
+				if(designStage == '' || discipline == '' || purpose == '' || status == '' || controlled_document == ''){
+					$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+					return;
+				}
 				$.ajax({
 					url: '<?= base_url("drawing_management/get_file_and_folder_by_filter") ?>',
 					type: 'GET',
