@@ -73,7 +73,7 @@
 											<!-- <?php echo render_input('search_new', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?> -->
 											<div class="input-group">
 												<!-- <input type="text" class="form-control" id="searchBox" placeholder="Type to search files or folders" autocomplete="off"> -->
-												<?php echo render_input('searchBox', '', '', 'text', ['placeholder' => 'Type to search files or folder'], [], 'pull-right default-tool'); ?>
+												<?php echo render_input('searchBox', '', '', 'text', ['placeholder' => 'Type to search files or folder', 'style' => 'width: 700px;'], [], 'pull-right default-tool'); ?>
 												<div id="dropdown" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000;"></div>
 											</div>
 
@@ -137,91 +137,6 @@
 											</span>
 										</button>
 										<!-- For bulk select -->
-									</div>
-									<div class="col-md-12 mtop15">
-										<div class="col-md-3">
-										</div>
-										<div class="col-md-2">
-											<?php
-											$module_name = 'drawing_management';
-											$design_stage_filter = get_module_filter($module_name, 'design_stage');
-											$design_stage_filter_val = !empty($design_stage_filter) ? $design_stage_filter->filter_value : '';
-											$statuses = [
-												0 => ['id' => 'Concept Design', 'name' => 'Concept Design'],
-												1 => ['id' => 'Schematic Design', 'name' => 'Schematic Design'],
-												2 => ['id' => 'Design Development', 'name' => 'Design Development'],
-												3 => ['id' => 'Construction Documents', 'name' => 'Construction Documents'],
-											];
-
-											echo render_select('design_stage', $statuses, array('id', 'name'), 'design_stage', $design_stage_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('design_stage'),  'data-actions-box' => true), array(), 'no-mbot', '', true); ?>
-										</div>
-
-										<div class="col-md-2">
-											<label for="discipline">Discipline</label>
-											<select id="discipline" name="discipline[]" data-live-search="true" class="form-control selectpicker" multiple>
-												<option value=""></option>
-												<?php
-												$discipline_filter = get_module_filter($module_name, 'discipline');
-												$discipline_filter_val = !empty($discipline_filter) ? $discipline_filter->filter_value : '';
-
-												// Convert comma-separated values to an array
-												$selected = !empty($discipline_filter_val) ? explode(',', $discipline_filter_val) : [];
-
-												foreach ($discipline as $option) : ?>
-													<option value="<?= $option['id']; ?>" <?= in_array($option['id'], $selected) ? 'selected' : ''; ?>>
-														<?= $option['name']; ?>
-													</option>
-												<?php endforeach; ?>
-											</select>
-										</div>
-										<div class="col-md-2">
-											<?php
-											$purpose_filter = get_module_filter($module_name, 'purpose');
-											$purpose_filter_val = !empty($purpose_filter) ? $purpose_filter->filter_value : '';
-											?>
-
-											<label for="purpose" class="control-label"><?php echo _l('purpose'); ?></label>
-											<select id="purpose" name="purpose" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
-												<option value=""></option>
-												<option value="Issued for Information" <?= ($purpose_filter_val == "Issued for Information") ? 'selected' : ''; ?>>Issued for Information</option>
-												<option value="Issued for review" <?= ($purpose_filter_val == "Issued for review") ? 'selected' : ''; ?>>Issued for review</option>
-												<option value="Issued for approval" <?= ($purpose_filter_val == "Issued for approval") ? 'selected' : ''; ?>>Issued for approval</option>
-												<option value="Issued for tender" <?= ($purpose_filter_val == "Issued for tender") ? 'selected' : ''; ?>>Issued for tender</option>
-												<option value="Issued for construction" <?= ($purpose_filter_val == "Issued for construction") ? 'selected' : ''; ?>>Issued for construction</option>
-											</select>
-										</div>
-										<div class="col-md-2">
-											<?php
-											$status_filter = get_module_filter($module_name, 'status');
-											$status_filter_val = !empty($status_filter) ? $status_filter->filter_value : '';
-											?>
-											<label for="status" class="control-label"><?php echo _l('status'); ?></label>
-											<select id="status" name="status" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
-												<option value=""></option>
-												<option value="under_review" <?= ($status_filter_val == "under_review") ? 'selected' : ''; ?>>Under Review</option>
-												<option value="released" <?= ($status_filter_val == "released") ? 'selected' : ''; ?>>Released</option>
-												<option value="released_with_comments" <?= ($status_filter_val == "released_with_comments") ? 'selected' : ''; ?>>Released with comments</option>
-												<option value="rejected" <?= ($status_filter_val == "rejected") ? 'selected' : ''; ?>>Rejected</option>
-											</select>
-										</div>
-										<div class="col-md-3">
-										</div>
-										<div class="col-md-2 mtop15">
-											<?php
-											$controlled_document_filter = get_module_filter($module_name, 'controlled_document');
-											$controlled_document_filter_val = !empty($controlled_document_filter) ? $controlled_document_filter->filter_value : '';
-											?>
-											<label for="controlled_document" class="control-label"><?php echo _l('Controlled Document'); ?></label>
-											<select id="controlled_document" name="controlled_document" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
-												<option value=""></option>
-												<option value="1" <?= ($controlled_document_filter_val == 1) ? 'selected' : ''; ?>>Yes</option>
-												<option value="0" <?= ($controlled_document_filter_val === 0) ? 'selected' : ''; ?>>No</option>
-											</select>
-										</div>
-										<div class="col-md-2 mtop35">
-											<a href="javascript:void(0)" class="btn btn-info btn-icon reset_vbt_all_filters">
-												Reset filter </a>
-										</div>
 									</div>
 									<?php } else {
 									if (($share_to_me == 1 && $parent_id == 0) || (isset($item) && $item->filetype == 'folder' && !drawing_check_share_permission($parent_id, 'upload_only'))) { ?>
@@ -330,150 +245,139 @@
 							</div>
 
 
-							<div class="col-md-9" id="append_fillter_data">
-								<?php if ($share_to_me == 0 && $my_approval == 0 && $electronic_signing == 0) { ?>
-									<div class="row">
-										<div class="col-md-12">
-											<?php
-											$html_breadcrumb = '';
-											$data_breadcrumb = $this->drawing_management_model->breadcrum_array($parent_id);
-											foreach ($data_breadcrumb as $key => $value) {
-												$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . admin_url('drawing_management?id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
-											}
-											$col_class = '';
-											?>
-											<?php if ($value['id'] == 1) {
-												$col_class = 'col-md-9';
-											} elseif ($value['id'] == 2) {
-												$col_class = 'col-md-7';
-											} else {
-												$col_class = 'col-md-8';
-											} ?>
-											<nav aria-label="breadcrumb">
-												<ol class="breadcrumb <?= $col_class ?>">
-													<?php echo drawing_htmldecode($html_breadcrumb); ?>
-												</ol>
-												<?php if ($value['id'] == 1) { ?>
-													<h5 class="text-muted display-flex col-md-3" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
+							<div class="col-md-9">
 
-														<span class="mtop3 mleft5">These are your private files</span>
-													</h5>
-												<?php	} elseif ($value['id'] == 2) { ?>
-													<h5 class="text-muted display-flex col-md-5" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
-
-														<span class="mtop3 mleft5">These files are viewable by entire company</span>
-													</h5>
-												<?php } else { ?>
-													<h5 class="text-muted display-flex col-md-4" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
-
-														<span class="mtop3 mleft5">These are project specific design files</span>
-													<?php 	}
-													?>
-
-											</nav>
-										</div>
-									</div>
-									<?php
-									if (isset($item)) {
-										if (isset($item) && $item->filetype == 'folder') {
-											$child_items = $this->drawing_management_model->get_item('', 'parent_id = ' . $parent_id, 'name, id, dateadded, filetype,parent_id');
-											if (count($child_items)) {
-												$this->load->view('file_managements/includes/item_list.php', ['child_items' => $child_items]);
-											} else { ?>
-												<div class="row mbot20">
-													<div class="col-md-12">
-														<h5 class="text-muted display-flex">
-															<span class="text-warning">
-																<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
-																	<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-																</svg>
-															</span>
-															<span class="mtop3 mleft5"><?php echo _l('dmg_the_folder_is_empty_you_can_create_a_folder_or_upload_a_file') . '.'; ?></span>
-														</h5>
-													</div>
-												</div>
-											<?php } ?>
-											<div class="file-form-group file-form">
-												<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id), array('id' => 'form_upload_file')); ?>
-												<input type="file" id="files" name="file[]" multiple="">
-												<div class="file-form-preview hide">
-													<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
-													<hr>
-													<button class="btn btn-primary pull-right mright10 display-flex">
-														<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
-															<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-															<polyline points="17 8 12 3 7 8" />
-															<line x1="12" y1="3" x2="12" y2="15" />
-														</svg>
-														<span class="mleft5 mtop2">
-															<?php echo _l('dmg_upload_all'); ?>
-														</span>
-													</button>
-												</div>
-												<?php echo form_close(); ?>
-											</div>
-									<?php } else {
-											if ($edit == 1) {
-												$this->load->view('file_managements/includes/file_edit.php');
-											} else {
-												$this->load->view('file_managements/includes/file_detail.php');
-											}
-										}
-									} ?>
-								<?php } else { ?>
-
-									<!-- Share to me -->
-									<?php if ($share_to_me == 1) { ?>
-										<?php if ($parent_id > 0) { ?>
-											<div class="row">
-												<div class="col-md-12">
-													<?php
-													$html_breadcrumb = '';
-													$data_breadcrumb = $this->drawing_management_model->breadcrum_array2($parent_id);
-													foreach ($data_breadcrumb as $key => $value) {
-														$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . admin_url('drawing_management?share_to_me=1&id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
-													}
-													?>
-													<nav aria-label="breadcrumb">
-														<ol class="breadcrumb">
-															<?php echo drawing_htmldecode($html_breadcrumb); ?>
-														</ol>
-													</nav>
-												</div>
-											</div>
+								<div class="col-md-12 mtop15">
+									<div class="col-md-2">
 										<?php
-										}
-										if (drawing_check_share_permission($parent_id, 'upload_only')) { ?>
-											<div class="file-form-group file-form">
-												<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
-												<input type="file" id="files" name="file[]" multiple="">
-												<div class="file-form-preview hide">
-													<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
-													<hr>
-													<button class="btn btn-primary pull-right mright10 display-flex">
-														<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
-															<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-															<polyline points="17 8 12 3 7 8" />
-															<line x1="12" y1="3" x2="12" y2="15" />
-														</svg>
-														<span class="mleft5 mtop2">
-															<?php echo _l('dmg_upload_all'); ?>
-														</span>
-													</button>
-												</div>
-												<?php echo form_close(); ?>
-											</div>
+										$module_name = 'drawing_management';
+										$design_stage_filter = get_module_filter($module_name, 'design_stage');
+										$design_stage_filter_val = !empty($design_stage_filter) ? $design_stage_filter->filter_value : '';
+										$statuses = [
+											0 => ['id' => 'Concept Design', 'name' => 'Concept Design'],
+											1 => ['id' => 'Schematic Design', 'name' => 'Schematic Design'],
+											2 => ['id' => 'Design Development', 'name' => 'Design Development'],
+											3 => ['id' => 'Construction Documents', 'name' => 'Construction Documents'],
+										];
+
+										echo render_select('design_stage', $statuses, array('id', 'name'), 'design_stage', $design_stage_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('design_stage'),  'data-actions-box' => true), array(), 'no-mbot', '', true); ?>
+									</div>
+									<div class="col-md-2">
+										<label for="discipline">Discipline</label>
+										<select id="discipline" name="discipline[]" data-live-search="true" class="form-control selectpicker" multiple>
+											<option value=""></option>
 											<?php
-										} else {
-											$child_items = [];
-											if ($parent_id == 0) {
-												$child_items = $this->drawing_management_model->get_item('', 'id IN (' . $share_id . ')', 'name, id, dateadded, filetype, parent_id');
-											} else {
-												$child_items = $this->drawing_management_model->get_item('', 'parent_id = ' . $parent_id, 'name, id, dateadded, filetype, parent_id');
-											}
-											if ($parent_id == 0 || (is_numeric($parent_id) && $parent_id > 0 && drawing_dmg_get_file_type($parent_id) == 'folder')) {
+											$discipline_filter = get_module_filter($module_name, 'discipline');
+											$discipline_filter_val = !empty($discipline_filter) ? $discipline_filter->filter_value : '';
+
+											// Convert comma-separated values to an array
+											$selected = !empty($discipline_filter_val) ? explode(',', $discipline_filter_val) : [];
+
+											foreach ($discipline as $option) : ?>
+												<option value="<?= $option['id']; ?>" <?= in_array($option['id'], $selected) ? 'selected' : ''; ?>>
+													<?= $option['name']; ?>
+												</option>
+											<?php endforeach; ?>
+										</select>
+									</div>
+									<div class="col-md-2">
+										<?php
+										$purpose_filter = get_module_filter($module_name, 'purpose');
+										$purpose_filter_val = !empty($purpose_filter) ? $purpose_filter->filter_value : '';
+										?>
+
+										<label for="purpose" class="control-label"><?php echo _l('purpose'); ?></label>
+										<select id="purpose" name="purpose" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+											<option value=""></option>
+											<option value="Issued for Information" <?= ($purpose_filter_val == "Issued for Information") ? 'selected' : ''; ?>>Issued for Information</option>
+											<option value="Issued for review" <?= ($purpose_filter_val == "Issued for review") ? 'selected' : ''; ?>>Issued for review</option>
+											<option value="Issued for approval" <?= ($purpose_filter_val == "Issued for approval") ? 'selected' : ''; ?>>Issued for approval</option>
+											<option value="Issued for tender" <?= ($purpose_filter_val == "Issued for tender") ? 'selected' : ''; ?>>Issued for tender</option>
+											<option value="Issued for construction" <?= ($purpose_filter_val == "Issued for construction") ? 'selected' : ''; ?>>Issued for construction</option>
+										</select>
+									</div>
+									<div class="col-md-2">
+										<?php
+										$status_filter = get_module_filter($module_name, 'status');
+										$status_filter_val = !empty($status_filter) ? $status_filter->filter_value : '';
+										?>
+										<label for="status" class="control-label"><?php echo _l('status'); ?></label>
+										<select id="status" name="status" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+											<option value=""></option>
+											<option value="under_review" <?= ($status_filter_val == "under_review") ? 'selected' : ''; ?>>Under Review</option>
+											<option value="released" <?= ($status_filter_val == "released") ? 'selected' : ''; ?>>Released</option>
+											<option value="released_with_comments" <?= ($status_filter_val == "released_with_comments") ? 'selected' : ''; ?>>Released with comments</option>
+											<option value="rejected" <?= ($status_filter_val == "rejected") ? 'selected' : ''; ?>>Rejected</option>
+										</select>
+									</div>
+									<div class="col-md-2">
+										<?php
+										$controlled_document_filter = get_module_filter($module_name, 'controlled_document');
+										$controlled_document_filter_val = !empty($controlled_document_filter) ? $controlled_document_filter->filter_value : '';
+										?>
+										<label for="controlled_document" class="control-label"><?php echo _l('Controlled Document'); ?></label>
+										<select id="controlled_document" name="controlled_document" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+											<option value=""></option>
+											<option value="1" <?= ($controlled_document_filter_val == 1) ? 'selected' : ''; ?>>Yes</option>
+											<option value="0" <?= ($controlled_document_filter_val === 0) ? 'selected' : ''; ?>>No</option>
+										</select>
+									</div>
+									<div class="col-md-2" style="margin-top: 22px;">
+										<a href="javascript:void(0)" class="btn btn-info btn-icon reset_vbt_all_filters">
+											Reset filter </a>
+									</div>
+								</div>
+
+								<div class="col-md-12 mtop15">
+									<div id="append_fillter_data">
+									<?php if ($share_to_me == 0 && $my_approval == 0 && $electronic_signing == 0) { ?>
+										<div class="row">
+											<div class="col-md-12">
+												<?php
+												$html_breadcrumb = '';
+												$data_breadcrumb = $this->drawing_management_model->breadcrum_array($parent_id);
+												foreach ($data_breadcrumb as $key => $value) {
+													$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . admin_url('drawing_management?id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
+												}
+												$col_class = '';
+												?>
+												<?php if ($value['id'] == 1) {
+													$col_class = 'col-md-9';
+												} elseif ($value['id'] == 2) {
+													$col_class = 'col-md-7';
+												} else {
+													$col_class = 'col-md-8';
+												} ?>
+												<nav aria-label="breadcrumb">
+													<ol class="breadcrumb <?= $col_class ?>">
+														<?php echo drawing_htmldecode($html_breadcrumb); ?>
+													</ol>
+													<?php if ($value['id'] == 1) { ?>
+														<h5 class="text-muted display-flex col-md-3" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
+
+															<span class="mtop3 mleft5">These are your private files</span>
+														</h5>
+													<?php	} elseif ($value['id'] == 2) { ?>
+														<h5 class="text-muted display-flex col-md-5" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
+
+															<span class="mtop3 mleft5">These files are viewable by entire company</span>
+														</h5>
+													<?php } else { ?>
+														<h5 class="text-muted display-flex col-md-4" style="border-bottom: 1px solid #f0f0f0;padding-bottom: 18px !important;justify-content: end;padding: 0px; margin-top: 0px;">
+
+															<span class="mtop3 mleft5">These are project specific design files</span>
+														<?php 	}
+														?>
+
+												</nav>
+											</div>
+										</div>
+										<?php
+										if (isset($item)) {
+											if (isset($item) && $item->filetype == 'folder') {
+												$child_items = $this->drawing_management_model->get_item('', 'parent_id = ' . $parent_id, 'name, id, dateadded, filetype,parent_id');
 												if (count($child_items)) {
-													$this->load->view('file_managements/includes/item_list_share_to_me.php', ['child_items' => $child_items]);
+													$this->load->view('file_managements/includes/item_list.php', ['child_items' => $child_items]);
 												} else { ?>
 													<div class="row mbot20">
 														<div class="col-md-12">
@@ -483,81 +387,178 @@
 																		<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
 																	</svg>
 																</span>
-																<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_files_or_folders_shared') . '.'; ?></span>
+																<span class="mtop3 mleft5"><?php echo _l('dmg_the_folder_is_empty_you_can_create_a_folder_or_upload_a_file') . '.'; ?></span>
 															</h5>
 														</div>
 													</div>
-												<?php
-												}
-												if (drawing_check_share_permission($parent_id, 'editor')) { ?>
-													<div class="file-form-group file-form">
-														<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
-														<input type="file" id="files" name="file[]" multiple="">
-														<div class="file-form-preview hide">
-															<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
-															<hr>
-															<button class="btn btn-primary pull-right mright10 display-flex">
-																<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
-																	<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-																	<polyline points="17 8 12 3 7 8" />
-																	<line x1="12" y1="3" x2="12" y2="15" />
-																</svg>
-																<span class="mleft5 mtop2">
-																	<?php echo _l('dmg_upload_all'); ?>
-																</span>
-															</button>
-														</div>
-														<?php echo form_close(); ?>
+												<?php } ?>
+												<div class="file-form-group file-form">
+													<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id), array('id' => 'form_upload_file')); ?>
+													<input type="file" id="files" name="file[]" multiple="">
+													<div class="file-form-preview hide">
+														<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
+														<hr>
+														<button class="btn btn-primary pull-right mright10 display-flex">
+															<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
+																<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+																<polyline points="17 8 12 3 7 8" />
+																<line x1="12" y1="3" x2="12" y2="15" />
+															</svg>
+															<span class="mleft5 mtop2">
+																<?php echo _l('dmg_upload_all'); ?>
+															</span>
+														</button>
 													</div>
-											<?php
-												}
-											} else {
+													<?php echo form_close(); ?>
+												</div>
+										<?php } else {
 												if ($edit == 1) {
 													$this->load->view('file_managements/includes/file_edit.php');
 												} else {
-													$this->load->view('file_managements/includes/file_share_detail.php');
+													$this->load->view('file_managements/includes/file_detail.php');
 												}
 											}
-										}
-									} elseif ($my_approval == 1) {
-										if (count($approve_items)) {
-											$this->load->view('file_managements/includes/item_list_approval.php', ['child_items' => $approve_items]);
-										} else { ?>
-											<div class="row mbot20">
-												<div class="col-md-12">
-													<h5 class="text-muted display-flex">
-														<span class="text-warning">
-															<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
-																<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-															</svg>
-														</span>
-														<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_approval_requests') . '.'; ?></span>
-													</h5>
+										} ?>
+									<?php } else { ?>
+
+										<!-- Share to me -->
+										<?php if ($share_to_me == 1) { ?>
+											<?php if ($parent_id > 0) { ?>
+												<div class="row">
+													<div class="col-md-12">
+														<?php
+														$html_breadcrumb = '';
+														$data_breadcrumb = $this->drawing_management_model->breadcrum_array2($parent_id);
+														foreach ($data_breadcrumb as $key => $value) {
+															$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . admin_url('drawing_management?share_to_me=1&id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
+														}
+														?>
+														<nav aria-label="breadcrumb">
+															<ol class="breadcrumb">
+																<?php echo drawing_htmldecode($html_breadcrumb); ?>
+															</ol>
+														</nav>
+													</div>
 												</div>
-											</div>
-										<?php
-										}
-									} elseif ($electronic_signing == 1) {
-										if (count($approve_item_eids)) {
-											$this->load->view('file_managements/includes/item_list_sign_approval.php', ['child_items' => $approve_item_eids]);
-										} else { ?>
-											<div class="row mbot20">
-												<div class="col-md-12">
-													<h5 class="text-muted display-flex">
-														<span class="text-warning">
-															<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
-																<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+											<?php
+											}
+											if (drawing_check_share_permission($parent_id, 'upload_only')) { ?>
+												<div class="file-form-group file-form">
+													<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
+													<input type="file" id="files" name="file[]" multiple="">
+													<div class="file-form-preview hide">
+														<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
+														<hr>
+														<button class="btn btn-primary pull-right mright10 display-flex">
+															<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
+																<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+																<polyline points="17 8 12 3 7 8" />
+																<line x1="12" y1="3" x2="12" y2="15" />
 															</svg>
-														</span>
-														<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_approval_requests') . '.'; ?></span>
-													</h5>
+															<span class="mleft5 mtop2">
+																<?php echo _l('dmg_upload_all'); ?>
+															</span>
+														</button>
+													</div>
+													<?php echo form_close(); ?>
 												</div>
-											</div>
-								<?php
+												<?php
+											} else {
+												$child_items = [];
+												if ($parent_id == 0) {
+													$child_items = $this->drawing_management_model->get_item('', 'id IN (' . $share_id . ')', 'name, id, dateadded, filetype, parent_id');
+												} else {
+													$child_items = $this->drawing_management_model->get_item('', 'parent_id = ' . $parent_id, 'name, id, dateadded, filetype, parent_id');
+												}
+												if ($parent_id == 0 || (is_numeric($parent_id) && $parent_id > 0 && drawing_dmg_get_file_type($parent_id) == 'folder')) {
+													if (count($child_items)) {
+														$this->load->view('file_managements/includes/item_list_share_to_me.php', ['child_items' => $child_items]);
+													} else { ?>
+														<div class="row mbot20">
+															<div class="col-md-12">
+																<h5 class="text-muted display-flex">
+																	<span class="text-warning">
+																		<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
+																			<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+																		</svg>
+																	</span>
+																	<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_files_or_folders_shared') . '.'; ?></span>
+																</h5>
+															</div>
+														</div>
+													<?php
+													}
+													if (drawing_check_share_permission($parent_id, 'editor')) { ?>
+														<div class="file-form-group file-form">
+															<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
+															<input type="file" id="files" name="file[]" multiple="">
+															<div class="file-form-preview hide">
+																<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
+																<hr>
+																<button class="btn btn-primary pull-right mright10 display-flex">
+																	<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
+																		<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+																		<polyline points="17 8 12 3 7 8" />
+																		<line x1="12" y1="3" x2="12" y2="15" />
+																	</svg>
+																	<span class="mleft5 mtop2">
+																		<?php echo _l('dmg_upload_all'); ?>
+																	</span>
+																</button>
+															</div>
+															<?php echo form_close(); ?>
+														</div>
+												<?php
+													}
+												} else {
+													if ($edit == 1) {
+														$this->load->view('file_managements/includes/file_edit.php');
+													} else {
+														$this->load->view('file_managements/includes/file_share_detail.php');
+													}
+												}
+											}
+										} elseif ($my_approval == 1) {
+											if (count($approve_items)) {
+												$this->load->view('file_managements/includes/item_list_approval.php', ['child_items' => $approve_items]);
+											} else { ?>
+												<div class="row mbot20">
+													<div class="col-md-12">
+														<h5 class="text-muted display-flex">
+															<span class="text-warning">
+																<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
+																	<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+																</svg>
+															</span>
+															<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_approval_requests') . '.'; ?></span>
+														</h5>
+													</div>
+												</div>
+											<?php
+											}
+										} elseif ($electronic_signing == 1) {
+											if (count($approve_item_eids)) {
+												$this->load->view('file_managements/includes/item_list_sign_approval.php', ['child_items' => $approve_item_eids]);
+											} else { ?>
+												<div class="row mbot20">
+													<div class="col-md-12">
+														<h5 class="text-muted display-flex">
+															<span class="text-warning">
+																<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
+																	<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+																</svg>
+															</span>
+															<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_approval_requests') . '.'; ?></span>
+														</h5>
+													</div>
+												</div>
+									<?php
+											}
 										}
 									}
-								}
-								?>
+									?>
+									</div>
+								</div>
 							</div>
 
 
