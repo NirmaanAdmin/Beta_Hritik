@@ -11210,7 +11210,7 @@ class Warehouse_model extends App_Model
 
 		if (count($arr_purchase_orders) > 0) {
 
-			return $this->db->query('select * from tblpur_orders where approve_status = 2 AND id NOT IN (' . implode(",", $arr_purchase_orders) . ') order by id desc')->result_array();
+			return $this->db->query('select * from tblpur_orders where approve_status = 2 order by id desc')->result_array();
 		}
 		return $this->db->query('select * from tblpur_orders where approve_status = 2 order by id desc')->result_array();
 	}
