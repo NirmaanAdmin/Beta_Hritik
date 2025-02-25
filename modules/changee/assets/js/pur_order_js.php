@@ -324,8 +324,8 @@ function pur_calculate_total(from_discount_money){
       $(this).find('td.tax_value input').val(item_tax);
       var variation = 0;
       variation = $(this).find('td.into_money_updated input').val() - $(this).find('td.into_money input').val();
-      $(this).find('td.variation input').val(variation);
-      co_value = co_value + variation;
+      $(this).find('td.variation input').val(variation + item_tax);
+      co_value = co_value + variation + item_tax;
 
       var tender_item = $(this).find('.tender-item').val();
       if(tender_item == 1) {
