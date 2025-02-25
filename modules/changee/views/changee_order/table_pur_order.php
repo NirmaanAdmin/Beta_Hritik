@@ -186,12 +186,12 @@ foreach ($rResult as $aRow) {
 
             $numberOutput = '';
     
-            $numberOutput = '<a href="' . admin_url('changee/changee_order/' . $aRow['id']) . '"  onclick="init_pur_order(' . $aRow['id'] . '); return false;" >'.$aRow['pur_order_number']. '</a>';
+            $numberOutput = '<a href="' . admin_url('changee/changee_order/' . $aRow['id']) . '"  onclick="init_pur_order(' . $aRow['id'] . '); small_table_full_view(); return false;" >'.$aRow['pur_order_number']. '</a>';
             
             $numberOutput .= '<div class="row-options">';
 
             if (has_permission('changee_orders', '', 'view') || has_permission('changee_orders', '', 'view_own')) {
-                $numberOutput .= ' <a href="' . admin_url('changee/changee_order/' . $aRow['id']) . '" onclick="init_pur_order(' . $aRow['id'] . '); return false;" >' . _l('view') . '</a>';
+                $numberOutput .= ' <a href="' . admin_url('changee/changee_order/' . $aRow['id']) . '" onclick="init_pur_order(' . $aRow['id'] . '); small_table_full_view(); return false;" >' . _l('view') . '</a>';
             }
             if ((has_permission('changee_orders', '', 'edit') || is_admin()) && $aRow['approve_status'] != 2 ) {
                 $numberOutput .= ' | <a href="' . admin_url('changee/pur_order/' . $aRow['id']) . '">' . _l('edit') . '</a>';

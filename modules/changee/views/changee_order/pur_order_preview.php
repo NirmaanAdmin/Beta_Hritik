@@ -485,7 +485,7 @@ if ($estimate->currency != 0) {
                      <div class="col-md-12">
 
                         <?php if ($estimate->approve_status != 2) { ?>
-                           <a href="javascript:void(0)" onclick="refresh_order_value(<?php echo changee_pur_html_entity_decode($estimate->id); ?>); return false;" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="<?php echo _l('refresh_value_note'); ?>"><i class="fa fa-refresh"></i> <?php echo ' ' . _l('refresh_order_value'); ?></a>
+                           <a href="javascript:void(0)" onclick="refresh_order_value(<?php echo changee_pur_html_entity_decode($estimate->id); ?>); return false;" class="btn btn-sm btn-warning hide" data-toggle="tooltip" data-placement="top" title="<?php echo _l('refresh_value_note'); ?>"><i class="fa fa-refresh"></i> <?php echo ' ' . _l('refresh_order_value'); ?></a>
                         <?php } ?>
 
 
