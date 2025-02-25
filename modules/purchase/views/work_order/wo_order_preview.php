@@ -728,8 +728,8 @@ if ($estimate->currency != 0) {
                                  <?php foreach ($changes as $change) { ?>
 
                                     <tr>
-                                       <td><?php echo '<a href="' . admin_url('changee/view_co_request/' . $change['id']) . '"><p>' . $change['pur_rq_code'] . '-' . $change['pur_rq_name'] . '</p></a>' ?></td>
-                                       <td><?php echo date('d M Y', strtotime($change['request_date'])) ?></td>
+                                       <td><?php echo '<a href="' . admin_url('changee/pur_order/' . $change['id']) . '"><p>' . $change['pur_order_number'] . '</p></a>' ?></td>
+                                       <td><?php echo date('d M Y', strtotime($change['order_date'])) ?></td>
                                        <td><?php echo app_format_money($change['total'], $base_currency->symbol); ?></td>
 
                                     </tr>

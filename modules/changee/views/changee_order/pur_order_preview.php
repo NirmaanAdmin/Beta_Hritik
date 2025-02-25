@@ -171,19 +171,15 @@ if ($estimate->currency != 0) {
                                                                            } ?> </p>
                <?php }
                if ($pur_order->po_order_id > 0) { ?>
-                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?> <?php echo get_pur_name_by_id($pur_order->po_order_id); ?>
+                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/purchase_order/' . $pur_order->po_order_id); ?>"><?php echo get_pur_name_by_id($pur_order->po_order_id); ?></a></p>
                <?php }
                if ($pur_order->wo_order_id > 0) { ?>
-                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?> <?php echo get_wo_order_name_by_id($pur_order->wo_order_id); ?>
+                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/wo_order/' . $pur_order->wo_order_id); ?>"><?php echo get_wo_order_name_by_id($pur_order->wo_order_id); ?></a></p>
                <?php } ?> 
                <?php
                if ($pur_order->kind > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('kind') . ': ' ?> <?php echo $pur_order->kind ?> </p>
-               <?php }
-               if ($pur_order->po_order_id) { ?>
-                  <p class="bold p_mar"><?php echo _l('pur_order') . ': ' ?> <?php echo get_pur_name_by_id($pur_order->po_order_id); ?> </p>
-               <?php }
-               ?>
+               <?php } ?>
 
 
             </div>
