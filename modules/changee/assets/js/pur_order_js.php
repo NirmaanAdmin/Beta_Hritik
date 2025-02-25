@@ -244,9 +244,9 @@ function pur_calculate_total(from_discount_money){
 
       $(this).find('td.into_money_updated input').val(_amount);
       var variation =  $(this).find('td.rate input').val() - $(this).find('td.original_rate input').val();
-      $(this).find('td.original_rate span').html('Diff: ' + variation);
+      $(this).find('td.original_rate span').html('Amendment: ' + variation);
       var variation_unit = $(this).find('td.quantities input').val() - $(this).find('td.original_quantities input').val() ;
-      $(this).find('td.original_quantities span').html('Diff: ' + variation_unit);
+      $(this).find('td.original_quantities span').html('Amendment: ' + variation_unit);
 
       subtotal += _amount;
       row = $(this);

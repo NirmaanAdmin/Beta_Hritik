@@ -3924,9 +3924,9 @@ class Changee_model extends App_Model
             <td>' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
             <td>' . $row['description'] . '</td>
             <td align="right">' . $units->unit_name . '</td>
-            <td align="right">' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
+            <td align="right">' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff . '</span></td>
             <td align="right">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right">' . $row['original_quantity'] . '<br><span style="display: block;font-size: 10px;font-style: italic;">Diff : ' . $diff_unit . '</span></td>
+            <td align="right">' . $row['original_quantity'] . '<br><span style="display: block;font-size: 10px;font-style: italic;">Amendment : ' . $diff_unit . '</span></td>
             <td align="right">' . $row['quantity'] . '</td>
             <td align="right">' . app_format_money($row['into_money_updated'], '') . '</td>
              <td align="right">' . app_format_money($row['tax_value'], '') . '</td>
@@ -4810,9 +4810,9 @@ class Changee_model extends App_Model
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 10%; font-size: 11px;'.$font_weight.'">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
             <td style="width: 32%; font-size: 11px">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff_unit . '</span></td>
+            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff_unit . '</span></td>
             <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['quantity']) . ' ' . $units->unit_name . '</td>
-            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Diff : ' . $diff . '</span></td>
+            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff . '</span></td>
             <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['unit_price'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['into_money_updated'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['tax_value'], '') . '</td>
@@ -10588,7 +10588,7 @@ class Changee_model extends App_Model
         }
         $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Diff : </span></td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Amendment : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -10602,7 +10602,7 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
-        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Diff : </span> ' . $unit_name . '</td>';
+        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Amendment : </span> ' . $unit_name . '</td>';
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
@@ -11227,7 +11227,7 @@ class Changee_model extends App_Model
         }
         $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
-        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Diff : </span></td>';
+        $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Amendment : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
             $original_price = round(($unit_price / $currency_rate), 2);
@@ -11241,7 +11241,7 @@ class Changee_model extends App_Model
 
         $row .=  '</td>';
 
-        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Diff : </span> ' . $unit_name . '</td>';
+        $row .= '<td class="original_quantities">' . render_input($name_original_quantity, '', $original_quantity, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation_unit">Amendment : </span> ' . $unit_name . '</td>';
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .

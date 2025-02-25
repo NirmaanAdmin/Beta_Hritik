@@ -540,9 +540,9 @@ if ($estimate->currency != 0) {
                                           $unit_name = changee_pur_get_unit_name($es['unit_id']);
                                           ?>
                                           <td align="right"><?php echo nl2br($es['description']); ?></td>
-                                          <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></br><span>Diff :<?php echo  $diff_unit; ?></span></td>
+                                          <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></br><span>Amendment :<?php echo  $diff_unit; ?></span></td>
                                           <td align="right"><?php echo changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
-                                          <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></br><span>Diff :<?php echo  $diff; ?></span></td>
+                                          <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></br><span>Amendment :<?php echo  $diff; ?></span></td>
                                           <td align="right"><?php echo app_format_money($es['unit_price'], $base_currency->symbol); ?></td>
                                           <?php /*
                                           <td align="right"><?php echo app_format_money($es['into_money'], $base_currency->symbol); ?></td> */ ?>
