@@ -4934,7 +4934,7 @@ class Changee_model extends App_Model
                 if (isset($common_items[$detail['item_code']])) {
                     $common_items[$detail['item_code']][] = $detail;
                 } else {
-                    $new_items[$detail['item_code']] = $detail;
+                    $new_items[] = $detail;
                 }
             }
         }
