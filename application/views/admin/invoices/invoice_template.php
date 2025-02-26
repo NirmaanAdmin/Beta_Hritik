@@ -605,7 +605,7 @@
                                         ?>
                                         <?php /* <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
                                         <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
-                                        <th width="15%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('tax_with_eighteen_percentage'); ?></th>
                                         <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                         <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
                                     </tr>
@@ -713,7 +713,7 @@
                                     */ ?>
                                     <tr id="total_tax">
                                         <td>
-                                            <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('tax_with_eighteen_percentage'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>

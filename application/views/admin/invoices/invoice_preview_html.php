@@ -216,7 +216,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                     <?php echo _l('budget_head'); ?></th>
                                     <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
-                                    <th width="15%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('tax_with_eighteen_percentage'); ?></th>
                                     <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
                                 </tr>
@@ -262,7 +262,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                 </tr>
                                 <tr id="total_tax">
                                     <td>
-                                        <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('tax_with_eighteen_percentage'); ?> :</span>
                                     </td>
                                     <td>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>

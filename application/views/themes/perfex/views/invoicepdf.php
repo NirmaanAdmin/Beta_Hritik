@@ -121,7 +121,7 @@ $tblfinvoicehtml .= '
      <th width="18%" align="left">' . _l('description_of_services') . '</th>
      <th width="10%" align="left">HSN/SAC</th>
      <th width="13%" align="right">' . _l('invoice_table_rate_heading') . '</th>
-     <th width="13%" align="right">' . _l('invoice_table_tax_heading') . '</th>
+     <th width="13%" align="right">' . _l('tax_with_eighteen_percentage') . '</th>
      <th width="17%" align="right">' . _l('invoice_table_amount_heading') . '</th>
      <th width="13%" align="right">' . _l('remarks') . '</th>
   </tr>

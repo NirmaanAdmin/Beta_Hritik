@@ -1973,8 +1973,8 @@ class Invoices_model extends App_Model
             $final_invoice['description'] = $invoice->final_inv_desc;
             $final_invoice['qty'] = 1;
             $final_invoice['subtotal'] += $value['subtotal'];
-            $final_invoice['tax'] += $value['tax'];
-            $final_invoice['amount'] += $value['amount'];
+            $final_invoice['tax'] = $final_invoice['subtotal'] * 0.18;
+            $final_invoice['amount'] = $final_invoice['subtotal'] + $final_invoice['tax'];
             $final_invoice['remarks'] = $invoice->remarks;
         }
 
@@ -2202,7 +2202,7 @@ class Invoices_model extends App_Model
             <th>' . _l('description_of_services') . '</th>
             <th>HSN/SAC</th>
             <th>' . _l('invoice_table_rate_heading') . '</th>
-            <th>' . _l('invoice_table_tax_heading') . '</th>
+            <th>' . _l('tax_with_eighteen_percentage') . '</th>
             <th>' . _l('invoice_table_amount_heading') . '</th>
             <th>' . _l('remarks') . '</th>
           </tr>';
