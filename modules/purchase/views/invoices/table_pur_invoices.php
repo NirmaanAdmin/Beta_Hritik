@@ -36,7 +36,7 @@ $aColumns = [
     'vendor_note',
     db_prefix() . 'pur_invoices.id as inv_id',
     'adminnote',
-    'billing_remarks'
+    // 'billing_remarks'
 ];
 if (isset($vendor) || isset($project)) {
     $aColumns = [

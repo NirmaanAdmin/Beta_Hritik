@@ -236,7 +236,6 @@
                            'tag',
                            'attachment',
                            'adminnote',
-                           'remarks',
                         ];
                         ?>
                         <div>
@@ -252,7 +251,7 @@
                      <table class="dt-table-loading table table-table_pur_invoices">
                         <thead>
                            <tr>
-                              <th><span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="table_pur_invoices"><label></label></div></th>
+                              <th style="width: 5px"><span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="table_pur_invoices"><label></label></div></th>
                               <th>#</th>
                               <th><?php echo _l('invoice_code'); ?></th>
                               <th><?php echo _l('invoice_number'); ?></th>
@@ -268,7 +267,6 @@
                               <th><?php echo _l('tag'); ?></th>
                               <th><?php echo _l('attachment'); ?></th>
                               <th><?php echo _l('adminnote'); ?></th>
-                              <th><?php echo _l('remarks'); ?></th>
                            </tr>
                         </thead>
                         <tbody>
@@ -288,7 +286,6 @@
                               <td class="total_vendor_submitted_amount_without_tax"></td>
                               <td class="total_vendor_submitted_tax_amount"></td>
                               <td class="total_final_certified_amount"></td>
-                              
                               <td></td>
                               <td></td>
                               <td></td>
