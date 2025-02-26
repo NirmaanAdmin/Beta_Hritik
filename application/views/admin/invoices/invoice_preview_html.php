@@ -254,7 +254,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                             <tbody>
                                 <tr id="subtotal">
                                     <td>
-                                        <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
                                     </td>
                                     <td>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
@@ -328,13 +328,13 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                             <tbody>
                                 <tr id="subtotal">
                                     <td>
-                                        <span class="bold tw-text-neutral-700"><?php echo _l('invoice_subtotal'); ?> :</span>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
                                     </td>
                                     <td>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
                                     </td>
                                 </tr>
-                                <tr id="total_tax">
+                                <tr id="total_tax" class="hide">
                                     <td>
                                         <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
                                     </td>
@@ -342,7 +342,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['tax'], $base_currency); ?>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr class="hide">
                                     <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
                                     </td>
                                     <td>

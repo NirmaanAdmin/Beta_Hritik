@@ -285,19 +285,19 @@ $tblindexafinalhtml = '';
 $tblindexafinalhtml .= '<table cellpadding="6" style="font-size:14px">';
 $tblindexafinalhtml .= '
 <tr>
-    <td align="right" width="85%"><strong>' . _l('invoice_subtotal') . '</strong></td>
+    <td align="right" width="85%"><strong>' . _l('subtotal_without_tax') . '</strong></td>
     <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
 </tr>';
-$tblindexafinalhtml .= '
-<tr>
-    <td align="right" width="85%"><strong>' . _l('tax') . '</strong></td>
-    <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
-</tr>';
-$tblindexafinalhtml .= '
-<tr>
-    <td align="right" width="85%"><strong>' . _l('invoice_total') . '</strong></td>
-    <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
-</tr>';
+// $tblindexafinalhtml .= '
+// <tr>
+//     <td align="right" width="85%"><strong>' . _l('tax') . '</strong></td>
+//     <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
+// </tr>';
+// $tblindexafinalhtml .= '
+// <tr>
+//     <td align="right" width="85%"><strong>' . _l('invoice_total') . '</strong></td>
+//     <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['amount'], $invoice->currency_name) . '</td>
+// </tr>';
 $tblindexafinalhtml .= '</table>';
 $pdf->writeHTML($tblindexafinalhtml, true, false, false, false, '');
 
