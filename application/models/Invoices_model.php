@@ -2029,7 +2029,7 @@ class Invoices_model extends App_Model
 
                 $budgetsummary[$annexure]['budgeted_amount'] = $budgeted_amount;
                 $budgetsummary[$annexure]['total_previous_billing'] = $total_previous_billing;
-                $budgetsummary[$annexure]['total_current_billing_amount'] = round($total_current_billing_amount);
+                $budgetsummary[$annexure]['total_current_billing_amount'] = $total_current_billing_amount;
                 $total_cumulative_billing = $total_previous_billing + $total_current_billing_amount;
                 $budgetsummary[$annexure]['total_cumulative_billing'] = $total_cumulative_billing;
                 $balance_available = $budgeted_amount - $total_cumulative_billing;
