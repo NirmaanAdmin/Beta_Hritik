@@ -12,6 +12,9 @@
                 $is_admin = is_admin($member->staffid);
             }
          foreach (get_available_staff_permissions($funcData) as $feature => $permission) { ?>
+            <?php if($feature == 'work_order') {
+                $feature = 'work_orders';
+            } ?>
             <tr data-name="<?php echo e($feature); ?>">
                 <td>
                     <b><?php echo e($permission['name']); ?></b>
