@@ -604,7 +604,7 @@
                                         }
                                         ?>
                                         <?php /* <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
-                                        <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('rate_without_tax'); ?></th>
                                         <th width="10%" align="right"><?php echo _l('cgst_tax'); ?></th>
                                         <th width="10%" align="right"><?php echo _l('sgst_tax'); ?></th>
                                         <th width="15%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
@@ -789,7 +789,7 @@
                                         }
                                         ?>
                                         <?php /*<th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
-                                        <th width="15%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('rate_without_tax'); ?></th>
                                         <th width="20%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                                         <th width="20%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                     </tr>
@@ -989,7 +989,7 @@
                                             <th width="13%" align="left"><?php echo _l('vendor'); ?></th>
                                             <th width="13%" align="left"><?php echo _l('invoice_no'); ?></th>
                                             <?php /* <th width="5%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
-                                            <th width="13%" align="right"><?php echo _l('invoice_table_rate_heading'); ?></th>
+                                            <th width="13%" align="right"><?php echo _l('rate_without_tax'); ?></th>
                                             <th width="10%" align="right"><?php echo _l('invoice_table_tax_heading'); ?></th>
                                             <th width="13%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                             <th width="13%" align="right"><?php echo _l('remarks'); ?></th>

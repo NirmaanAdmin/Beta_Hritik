@@ -4182,3 +4182,4 @@ $lang['tax_with_eighteen_percentage'] = ' Tax (18%)';
 $lang['subtotal_without_tax'] = ' Subtotal w/o tax';
 $lang['cgst_tax'] = 'CGST (9%)';
 $lang['sgst_tax'] = 'SGST (9%)';
+$lang['rate_without_tax'] = 'Amount w/o tax';

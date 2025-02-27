@@ -120,7 +120,7 @@ $tblfinvoicehtml .= '
      <th width="11%" align="left">' . _l('budget_head') . '</th>
      <th width="16%" align="left">' . _l('description_of_services') . '</th>
      <th width="10%" align="left">HSN/SAC</th>
-     <th width="12%" align="right">' . _l('invoice_table_rate_heading') . '</th>
+     <th width="12%" align="right">' . _l('rate_without_tax') . '</th>
      <th width="11%" align="right">' . _l('cgst_tax') . '</th>
      <th width="11%" align="right">' . _l('sgst_tax') . '</th>
      <th width="12%" align="right">' . _l('invoice_table_amount_heading') . '</th>
@@ -261,7 +261,7 @@ $tblindexahtml .= '
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:14px;">
      <th width="7%;" align="center">' . _l('the_number_sign') . '</th>
      <th width="38%" align="left">' . _l('budget_head') . '</th>
-     <th width="20%" align="right">' . _l('invoice_table_rate_heading') . '</th>
+     <th width="20%" align="right">' . _l('rate_without_tax') . '</th>
      <th width="15%" align="right">' . _l('invoice_table_tax_heading') . '</th>
      <th width="20%" align="right">' . _l('invoice_table_amount_heading') . '</th>
   </tr>
@@ -316,7 +316,7 @@ if (!empty($indexa)) {
                  <th width="12%" align="left">' . _l('description_of_services') . '</th>
                  <th width="16%" align="left">' . _l('vendor') . '</th>
                  <th width="11%" align="left">' . _l('invoice_no') . '</th>
-                 <th width="11%" align="right">' . _l('invoice_table_rate_heading') . '</th>
+                 <th width="11%" align="right">' . _l('rate_without_tax') . '</th>
                  <th width="11%" align="right">' . _l('invoice_table_tax_heading') . '</th>
                  <th width="12%" align="right">' . _l('invoice_table_amount_heading') . '</th>
                  <th width="10%" align="right">' . _l('remarks') . '</th>

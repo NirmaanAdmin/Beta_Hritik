@@ -2203,7 +2203,7 @@ class Invoices_model extends App_Model
             <th>' . _l('budget_head') . '</th>
             <th>' . _l('description_of_services') . '</th>
             <th>HSN/SAC</th>
-            <th>' . _l('invoice_table_rate_heading') . '</th>
+            <th>' . _l('rate_without_tax') . '</th>
             <th>' . _l('cgst_tax') . '</th>
             <th>' . _l('sgst_tax') . '</th>
             <th>' . _l('invoice_table_amount_heading') . '</th>
@@ -2273,7 +2273,7 @@ class Invoices_model extends App_Model
           <tr>
             <th>' . _l('the_number_sign') . '</th>
             <th>' . _l('budget_head') . '</th>
-            <th>' . _l('invoice_table_rate_heading') . '</th>
+            <th>' . _l('rate_without_tax') . '</th>
             <th>' . _l('invoice_table_tax_heading') . '</th>
             <th>' . _l('invoice_table_amount_heading') . '</th>
           </tr>';
@@ -2311,7 +2311,7 @@ class Invoices_model extends App_Model
                     <th>' . _l('description_of_services') . '</th>
                     <th>' . _l('vendor') . '</th>
                     <th>' . _l('invoice_no') . '</th>
-                    <th>' . _l('invoice_table_rate_heading') . '</th>
+                    <th>' . _l('rate_without_tax') . '</th>
                     <th>' . _l('invoice_table_tax_heading') . '</th>
                     <th>' . _l('invoice_table_amount_heading') . '</th>
                     <th>' . _l('remarks') . '</th>
