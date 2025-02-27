@@ -1974,6 +1974,8 @@ class Invoices_model extends App_Model
             $final_invoice['qty'] = 1;
             $final_invoice['subtotal'] += $value['subtotal'];
             $final_invoice['tax'] = $final_invoice['subtotal'] * 0.18;
+            $final_invoice['cgst_tax'] = $final_invoice['subtotal'] * 0.09;
+            $final_invoice['sgst_tax'] = $final_invoice['subtotal'] * 0.09;
             $final_invoice['amount'] = $final_invoice['subtotal'] + $final_invoice['tax'];
             $final_invoice['remarks'] = $invoice->remarks;
         }
@@ -2202,7 +2204,8 @@ class Invoices_model extends App_Model
             <th>' . _l('description_of_services') . '</th>
             <th>HSN/SAC</th>
             <th>' . _l('invoice_table_rate_heading') . '</th>
-            <th>' . _l('tax_with_eighteen_percentage') . '</th>
+            <th>' . _l('cgst_tax') . '</th>
+            <th>' . _l('sgst_tax') . '</th>
             <th>' . _l('invoice_table_amount_heading') . '</th>
             <th>' . _l('remarks') . '</th>
           </tr>';
@@ -2215,7 +2218,8 @@ class Invoices_model extends App_Model
             <td>' . $basic_invoice['final_invoice']['description'] . '</td>
             <td>' . $hsn_sac_code . '</td>
             <td>' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name, true) . '</td>
-            <td>' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name, true) . '</td>
+            <td>' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name, true) . '</td>
+            <td>' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name, true) . '</td>
             <td>' . app_format_money($rounded_amount, $invoice->currency_name, true) . '</td>
             <td>' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
         </tr>';

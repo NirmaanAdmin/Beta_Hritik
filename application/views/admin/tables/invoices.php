@@ -99,7 +99,7 @@ return App_table::find('invoices')
 
             $numberOutput .= '<div class="row-options">';
 
-            $numberOutput .= '<a href="' . site_url('invoice/' . $aRow['id'] . '/' . $aRow['hash']) . '" target="_blank">' . _l('view') . '</a>';
+            $numberOutput .= '<a href="' . admin_url('invoices/list_invoices/' . $aRow['id']) . '" onclick="init_invoice(' . $aRow['id'] . '); small_table_full_view(); return false;">' . _l('view') . '</a>';
             if (staff_can('edit',  'invoices')) {
                 $numberOutput .= ' | <a href="' . admin_url('invoices/invoice/' . $aRow['id']) . '">' . _l('edit') . '</a>';
             }

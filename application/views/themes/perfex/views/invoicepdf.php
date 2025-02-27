@@ -118,12 +118,13 @@ $tblfinvoicehtml .= '
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
      <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
      <th width="11%" align="left">' . _l('budget_head') . '</th>
-     <th width="18%" align="left">' . _l('description_of_services') . '</th>
+     <th width="16%" align="left">' . _l('description_of_services') . '</th>
      <th width="10%" align="left">HSN/SAC</th>
-     <th width="13%" align="right">' . _l('invoice_table_rate_heading') . '</th>
-     <th width="13%" align="right">' . _l('tax_with_eighteen_percentage') . '</th>
-     <th width="17%" align="right">' . _l('invoice_table_amount_heading') . '</th>
-     <th width="13%" align="right">' . _l('remarks') . '</th>
+     <th width="12%" align="right">' . _l('invoice_table_rate_heading') . '</th>
+     <th width="11%" align="right">' . _l('cgst_tax') . '</th>
+     <th width="11%" align="right">' . _l('sgst_tax') . '</th>
+     <th width="12%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+     <th width="12%" align="right">' . _l('remarks') . '</th>
   </tr>
 </thead>';
 $amount = $basic_invoice['final_invoice']['amount']; // Get the original amount
@@ -133,12 +134,13 @@ $tblfinvoicehtml .= '
 <tr style="font-size:11px;">
     <td width="5%;" align="center">1</td>
     <td width="11%" align="left;"><span style="font-size:10px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
-    <td width="18%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
+    <td width="16%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
     <td width="10%" align="left">' . $hsn_sac_code . '</td>
-    <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
-    <td width="13%" align="right">' . app_format_money($basic_invoice['final_invoice']['tax'], $invoice->currency_name) . '</td>
-    <td width="17%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
-    <td width="13%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
+    <td width="12%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
+    <td width="11%" align="right">' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name) . '</td>
+    <td width="11%" align="right">' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name) . '</td>
+    <td width="12%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
+    <td width="12%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
 </tr>';
 $tblfinvoicehtml .= '</tbody>';
 $tblfinvoicehtml .= '</table>';

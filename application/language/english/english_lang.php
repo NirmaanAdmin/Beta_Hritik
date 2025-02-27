@@ -4180,3 +4180,5 @@ $lang['vendor_payment_tracker'] = 'Vendor Payment Tracker';
 $lang['vendor_bills_converted_to_ril_invoices'] = 'All vendor bills are converted to RIL invoices';
 $lang['tax_with_eighteen_percentage'] = ' Tax (18%)';
 $lang['subtotal_without_tax'] = ' Subtotal w/o tax';
+$lang['cgst_tax'] = 'CGST (9%)';
+$lang['sgst_tax'] = 'SGST (9%)';
