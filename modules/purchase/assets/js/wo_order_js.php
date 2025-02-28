@@ -85,6 +85,109 @@ $(function(){
         // Recalculate the total
         pur_calculate_total();
       });
+
+      $("body").on('change', 'select[name="vendor"]', function () {
+        var vendorid = $(this).selectpicker('val');
+        $.post(admin_url + 'purchase/get_vendor_detail/' + vendorid).done(function (response) {
+            response = JSON.parse(response);
+            setTimeout(function () {
+                var editor = tinymce.get('order_summary');
+                if (editor) {
+                    var currentContent = editor.getContent();
+
+                    if (response.pur_vendor.company) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_name">.*?<\/span>/g,
+                            '<span class="vendor_name">' + response.pur_vendor.company + '</span>'
+                        );
+                    }
+
+                    if (response.pur_vendor.address) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_address">.*?<\/span>/g,
+                            '<span class="vendor_address">' + response.pur_vendor.address + '</span>'
+                        );
+                    }
+
+                    if (response.pur_vendor.city) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_city">.*?<\/span>/g,
+                            '<span class="vendor_city">' + response.pur_vendor.city + '</span> '
+                        );
+                    }
+
+                    if (response.pur_vendor.state) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_state">.*?<\/span>/g,
+                            '<span class="vendor_state">' + response.pur_vendor.state + '</span> '
+                        );
+                    }
+
+                    if (response.pur_vendor.vat) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_gst">.*?<\/span>/g,
+                            '<span class="vendor_gst">' + response.pur_vendor.vat + '</span>'
+                        );
+                    }
+
+                    if (response.pur_vendor.bank_detail) {
+                      var formattedBankDetails = response.pur_vendor.bank_detail.replace(/\n/g, '<br>');
+                      currentContent = currentContent.replace(
+                        /<span class="vendor_bank_details">.*?<\/span>/g,
+                        '<span class="vendor_bank_details">' + formattedBankDetails + '</span>'
+                      );
+                    }
+
+                    if (response.pur_contacts) {
+                        if(response.pur_contacts.firstname != '' || response.pur_contacts.lastname != '')
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_contact">.*?<\/span>/g,
+                            '<span class="vendor_contact">' + response.pur_contacts.firstname + ' ' + response.pur_contacts.lastname + '</span>'
+                        );
+                    }
+
+                    if (response.pur_contacts) {
+                        if(response.pur_contacts.phonenumber)
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_contact_phone">.*?<\/span>/g,
+                            '<span class="vendor_contact_phone">' + response.pur_contacts.phonenumber + '</span>'
+                        );
+                    }
+
+                    if (response.pur_contacts) {
+                        if(response.pur_contacts.email)
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_contact_email">.*?<\/span>/g,
+                            '<span class="vendor_contact_email">' + response.pur_contacts.email + '</span>'
+                        );
+                    }
+
+                    editor.setContent(currentContent);
+                } else {
+                    console.error("TinyMCE is not initialized yet.");
+                }
+            }, 500);
+        });
+      });
+
+      $("body").on('change', 'input[name="wo_order_name"]', function () {
+        var wo_order_name = $(this).val();
+        setTimeout(function () {
+          var editor = tinymce.get('order_summary');
+          if (editor) {
+              var currentContent = editor.getContent();
+              if (wo_order_name) {
+                  currentContent = currentContent.replace(
+                      /<span class="wo_order_name">.*?<\/span>/g,
+                      '<span class="wo_order_name">' + wo_order_name + '</span>'
+                  );
+              }
+              editor.setContent(currentContent);
+          } else {
+              console.error("TinyMCE is not initialized yet.");
+          }
+        }, 500);
+      });
     });
 
 var lastAddedItemKey = null;
@@ -461,9 +564,121 @@ function pur_calculate_total(from_discount_money){
   $('.adjustment').html(format_money(adjustment));
   $('.wh-subtotal').html(format_money(subtotal) + hidden_input('total_mn', accounting.toFixed(subtotal, app.options.decimal_places)));
   $('.wh-total').html(format_money(total) + hidden_input('grand_total', accounting.toFixed(total, app.options.decimal_places)));
+  // subtotal_value_order_detail(subtotal);
+  // subtotal_amount_order_detail(subtotal);
+  // total_value_order_detail(total);
+  // total_tax_value_order_detail(total_tax_money);
 
   $(document).trigger('purchase-quotation-total-calculated');
 
+}
+
+function subtotal_value_order_detail(subtotal) {
+  setTimeout(function () {
+  var editor = tinymce.get('order_summary');
+    if (editor) {
+      var currentContent = editor.getContent();
+      if (subtotal) {
+          currentContent = currentContent.replace(
+              /<span class="subtotal_in_value">.*?<\/span>/g,
+              '<span class="subtotal_in_value">' + subtotal + '</span>'
+          );
+      }
+      editor.setContent(currentContent);
+    } else {
+        console.error("TinyMCE is not initialized yet.");
+    }
+  }, 500);
+}
+
+function total_value_order_detail(total) {
+  setTimeout(function () {
+  var editor = tinymce.get('order_summary');
+    if (editor) {
+      var currentContent = editor.getContent();
+      if (total) {
+          currentContent = currentContent.replace(
+              /<span class="total_in_value">.*?<\/span>/g,
+              '<span class="total_in_value">' + total + '</span>'
+          );
+      }
+      editor.setContent(currentContent);
+    } else {
+        console.error("TinyMCE is not initialized yet.");
+    }
+  }, 500);
+}
+
+function total_tax_value_order_detail(total_tax) {
+  setTimeout(function () {
+  var editor = tinymce.get('order_summary');
+    if (editor) {
+      var currentContent = editor.getContent();
+      if (total_tax) {
+          currentContent = currentContent.replace(
+              /<span class="total_tax_in_value">.*?<\/span>/g,
+              '<span class="total_tax_in_value">' + total_tax + '</span>'
+          );
+      }
+      editor.setContent(currentContent);
+    } else {
+        console.error("TinyMCE is not initialized yet.");
+    }
+  }, 500);
+}
+
+function subtotal_amount_order_detail(subtotal) {
+  var subtotal_word = numberToWords(subtotal);
+  setTimeout(function () {
+  var editor = tinymce.get('order_summary');
+    if (editor) {
+      var currentContent = editor.getContent();
+      if (subtotal_word) {
+          currentContent = currentContent.replace(
+              /<span class="subtotal_in_words">.*?<\/span>/g,
+              '<span class="subtotal_in_words">' + subtotal_word + '</span>'
+          );
+      }
+      editor.setContent(currentContent);
+    } else {
+        console.error("TinyMCE is not initialized yet.");
+    }
+  }, 500);
+}
+
+function numberToWords(num) {
+    if (num === 0) return "zero";
+    var ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    var teens = ["", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    var tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    var thousands = ["", "Thousand", "Million", "Billion"];
+
+    function convertHundreds(num) {
+        var word = "";
+        if (num >= 100) {
+            word += ones[Math.floor(num / 100)] + " Hundred ";
+            num %= 100;
+        }
+        if (num >= 11 && num <= 19) {
+            word += teens[num - 10] + " ";
+        } else if (num >= 10 || num > 0) {
+            word += tens[Math.floor(num / 10)] + " ";
+            word += ones[num % 10] + " ";
+        }
+        return word.trim();
+    }
+
+    var word = "";
+    var i = 0;
+
+    while (num > 0) {
+      if (num % 1000 !== 0) {
+        word = convertHundreds(num % 1000) + " " + thousands[i] + " " + word;
+      }
+      num = Math.floor(num / 1000);
+      i++;
+    }
+    return word.trim();
 }
 
 

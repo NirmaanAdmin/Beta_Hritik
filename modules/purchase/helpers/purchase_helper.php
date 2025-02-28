@@ -3580,19 +3580,19 @@ function get_by_deafult_order_summary()
 <p class="p1"><b><span class="Apple-converted-space">                                                                                                            </span></b></p>
 <p class="p3">Ref: Bl/JAMNAGR/24-25/026 <strong><br>Dated: 23.11.2024</strong></p>
 <p class="p5">To,<b></b></p>
-<p class="p6"><b>M/s. RASHI INTERIORS.<br></b>Pinnacolo, Flat No-2205, Beverly Park Road,<br>Mira Bhayandar, Thane, Maharashtra- 401107<br>Email:<span class="s2"> </span><span class="s1">kmistry@rashiinteriors.com</span> <br>Contact - +91-9820058771<br>GST Registration no- 27AFVPM8298L1Z5<br>Bank Details;<span class="s2"> </span>ACCOUNT NAME- RASHI INTERIOR,<br>BANK NAME: AXIS BANK,<br>ACCOUNT NUMBER: 923020048204026<br>IFSC CODE: UTIB0004251S</p>
+<p class="p6"><b>M/s. <span class="vendor_name"></span><br></b><span class="vendor_address"></span><br><span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br>Email:<span class="s2"> </span><span class="s1"><span class="vendor_contact_email"></span></span> <br>Contact - <span class="vendor_contact_phone"><br>GST Registration no- <span class="vendor_gst"></span><br>Bank Details:<span class="vendor_bank_details"></span></p>
 <p class="p5">Dear Mr. Kanaiyalal Misstry,</p>
-<p class="p5"><b>Sub: Work Order for External Hard Finishes Works at Basilius Guest House in Jamnagar, Gujarat. </b></p>
-<p class="p7">As subsequent discussions we had with you, We at <b>Basilius International LLP</b> (referred as Employer), accept your final offer and appoint <b>M/s. Rashi Interiors</b> (herein after called the Contractor) for<b> External Hard Finishes Works at Basilius Guest House in Jamnagar, Gujarat.</b> on the basis of detailed Bill of Quantities inclusive of remedying of any defects and safety measures of the above project for the item rate Contract Amount of <b>INR 1,50,23,359/- (Indian Rupees One Crore Fifty Lacs Twenty-Three Thousand Three Hundred Fifty-Nine only) inclusive of GST, as tabulated below; </b></p>
+<p class="p5"><b>Sub: Work Order for <span class="wo_order_name"></span> at Basilius Guest House in Jamnagar, Gujarat. </b></p>
+<p class="p7">As subsequent discussions we had with you, We at <b>Basilius International LLP</b> (referred as Employer), accept your final offer and appoint <b>M/s. <span class="vendor_name"></span></b> (herein after called the Contractor) for<b> <span class="wo_order_name"></span> at Basilius Guest House in Jamnagar, Gujarat.</b> on the basis of detailed Bill of Quantities inclusive of remedying of any defects and safety measures of the above project for the item rate Contract Amount of <b>INR <span class="subtotal_in_value"></span>/- (<span class="subtotal_in_words"></span> only) inclusive of GST, as tabulated below; </b></p>
 <p class="p4"><b></b></p>
 <table cellspacing="0" cellpadding="0" class="t1">
 <tbody>
 <tr>
 <td valign="middle" class="td1">
-<p class="p8"><b>External Hard Finishes Works</b></p>
+<p class="p8"><b><span class="wo_order_name"></span></b></p>
 </td>
 <td valign="middle" class="td2">
-<p class="p9">INR          1,27,31,660<span class="Apple-converted-space">       </span></p>
+<p class="p9">INR          <span class="subtotal_in_value"></span><span class="Apple-converted-space">       </span></p>
 </td>
 </tr>
 <tr>
@@ -3600,7 +3600,7 @@ function get_by_deafult_order_summary()
 <p class="p8"><b>GST @ 18% in INR </b></p>
 </td>
 <td valign="middle" class="td4">
-<p class="p9"><span class="Apple-converted-space">   </span>INR <span class="Apple-converted-space">        </span>22,91,699</p>
+<p class="p9"><span class="Apple-converted-space">   </span>INR <span class="Apple-converted-space">        </span><span class="total_tax_in_value"></span></p>
 </td>
 </tr>
 <tr>
@@ -3608,7 +3608,7 @@ function get_by_deafult_order_summary()
 <p class="p8"><b> GRAND TOTAL </b></p>
 </td>
 <td valign="middle" class="td2">
-<p class="p9"><b> INR<span class="Apple-converted-space">          </span>1,50,23,359</b></p>
+<p class="p9"><b> INR<span class="Apple-converted-space">          </span><span class="total_in_value"></span></b></p>
 </td>
 </tr>
 </tbody>
