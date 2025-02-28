@@ -733,29 +733,28 @@
                 if (!isset($pur_order) && $pur_order->order_summary == '') {
                   $value = '<strong>PURCHASE ORDER</strong><br><br>
 
-                <strong>M/S SURFACES PLUS</strong><br>
-                G.F. PREMIER HOUSE-1, SARKHEJ- GANDHINAGAR HIGHWAY, OPP. GURUDWARA, THALTEJ, <br>
-                AHMEDABAD - 380 054, INDIA<br><br>
+                <strong>M/S <span class="vendor_name"></span></strong><br>
+                <span class="vendor_address"></span><br>
+                <span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br><br>
 
                 <strong>P.O. Number:</strong> BI/JAMNAGAR/24-25/027<br>
                 <strong>P.O. Date:</strong> 22-Oct-24<br>
                 <strong>Rev. No.:</strong><br>
                 <strong>Rev. Date:</strong><br><br>
 
-                <strong>PAN No.:</strong> AAHFS1631G<br>
-                <strong>Beneficiary name:</strong> SURFACES PLUS<br>
-                <strong>GST No.:</strong> 24AAHFS1631G1ZI<br>
-                <strong>Bank name:</strong> Yes Bank.<br>
-                <strong>Bank branch:</strong> Yes bank C.G.Road branch<br>
-                <strong>Bank A/c no.:</strong> 000784600000404<br>
-                <strong>SWIFT/RTGS code:</strong> YESB0000007<br><br>
+                <strong>PAN No.:</strong><br>
+                <strong>Beneficiary name:</strong> <br>
+                <strong>GST No.:</strong> <span class="vendor_gst"></span><br>
+                <strong>Bank Details:</strong> <span class="vendor_bank_details"></span>
+                <br>
+                <br>
 
-                <strong>Contact Person:</strong> Anand Patel<br>
-                <strong>Telephone:</strong> +91 7575001193<br>
-                <strong>Email:</strong> Sales1@surfacesplus.in<br><br>
+                <strong>Contact Person:</strong> <span class="vendor_contact"></span><br>
+                <strong>Telephone:</strong> <span class="vendor_contact_phone"></span><br>
+                <strong>Email:</strong> <span class="vendor_contact_email"></span><br><br>
 
-                <strong>Project:</strong> Basilius International Jamnagar<br>
-                <strong>Subject:</strong> Supply and Installation of “Mathios Stone and Tiles” for Proposed BGJ Guest House Project<br><br>
+                <strong>Project:</strong> <span class="project_name"></span><br>
+                <strong>Subject:</strong> <span class="pur_order_name"></span><br><br>
 
                 Dear Sir/Madam,<br>
                 This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>

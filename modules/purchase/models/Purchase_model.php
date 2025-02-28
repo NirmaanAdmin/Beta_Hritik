@@ -17336,4 +17336,20 @@ class Purchase_model extends App_Model
         $this->db->where_in('id', $pur_ids);
         return $this->db->get(db_prefix() . 'pur_invoices')->result_array();
     }
+
+    public function get_vendor_detail($vendor_id)
+    {
+        $result = [];
+
+        $this->db->where('userid', $vendor_id);
+        $pur_vendor = $this->db->get(db_prefix() . 'pur_vendor')->result_array();
+        $result['pur_vendor'] = !empty($pur_vendor) ? $pur_vendor[0] : array();
+
+        $this->db->where('userid', $vendor_id);
+        $this->db->where('is_primary', 1);
+        $pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
+        $result['pur_contacts'] = !empty($pur_contacts) ? $pur_contacts[0] : array();
+
+        return $result;
+    }
 }

@@ -86,6 +86,129 @@ $(function(){
         // Recalculate the total
         pur_calculate_total();
       });
+
+      $("body").on('change', 'select[name="vendor"]', function () {
+        var vendorid = $(this).selectpicker('val');
+        $.post(admin_url + 'purchase/get_vendor_detail/' + vendorid).done(function (response) {
+            response = JSON.parse(response);
+            setTimeout(function () {
+                var editor = tinymce.get('order_summary');
+                if (editor) {
+                    var currentContent = editor.getContent();
+
+                    if (response.pur_vendor.company) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_name">.*?<\/span>/g,
+                            '<span class="vendor_name">' + response.pur_vendor.company + '</span>'
+                        );
+                    }
+
+                    if (response.pur_vendor.address) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_address">.*?<\/span>/g,
+                            '<span class="vendor_address">' + response.pur_vendor.address + '</span>'
+                        );
+                    }
+
+                    if (response.pur_vendor.city) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_city">.*?<\/span>/g,
+                            '<span class="vendor_city">' + response.pur_vendor.city + '</span> '
+                        );
+                    }
+
+                    if (response.pur_vendor.state) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_state">.*?<\/span>/g,
+                            '<span class="vendor_state">' + response.pur_vendor.state + '</span> '
+                        );
+                    }
+
+                    if (response.pur_vendor.vat) {
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_gst">.*?<\/span>/g,
+                            '<span class="vendor_gst">' + response.pur_vendor.vat + '</span>'
+                        );
+                    }
+
+                    if (response.pur_vendor.bank_detail) {
+                      var formattedBankDetails = response.pur_vendor.bank_detail.replace(/\n/g, '<br>');
+                      currentContent = currentContent.replace(
+                        /<span class="vendor_bank_details">.*?<\/span>/g,
+                        '<span class="vendor_bank_details">' + formattedBankDetails + '</span>'
+                      );
+                    }
+
+                    if (response.pur_contacts) {
+                        if(response.pur_contacts.firstname != '' || response.pur_contacts.lastname != '')
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_contact">.*?<\/span>/g,
+                            '<span class="vendor_contact">' + response.pur_contacts.firstname + ' ' + response.pur_contacts.lastname + '</span>'
+                        );
+                    }
+
+                    if (response.pur_contacts) {
+                        if(response.pur_contacts.phonenumber)
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_contact_phone">.*?<\/span>/g,
+                            '<span class="vendor_contact_phone">' + response.pur_contacts.phonenumber + '</span>'
+                        );
+                    }
+
+                    if (response.pur_contacts) {
+                        if(response.pur_contacts.email)
+                        currentContent = currentContent.replace(
+                            /<span class="vendor_contact_email">.*?<\/span>/g,
+                            '<span class="vendor_contact_email">' + response.pur_contacts.email + '</span>'
+                        );
+                    }
+
+                    editor.setContent(currentContent);
+                } else {
+                    console.error("TinyMCE is not initialized yet.");
+                }
+            }, 500);
+        });
+      });
+
+      $("body").on('change', 'select[name="project"]', function () {
+        var project_name = $('select[name="project"] option:selected').text();
+        setTimeout(function () {
+          var editor = tinymce.get('order_summary');
+          if (editor) {
+              var currentContent = editor.getContent();
+              if (project_name) {
+                  currentContent = currentContent.replace(
+                      /<span class="project_name">.*?<\/span>/g,
+                      '<span class="project_name">' + project_name + '</span>'
+                  );
+              }
+              editor.setContent(currentContent);
+          } else {
+              console.error("TinyMCE is not initialized yet.");
+          }
+        }, 500);
+      });
+
+      $("body").on('change', 'input[name="pur_order_name"]', function () {
+        var pur_order_name = $(this).val();
+        setTimeout(function () {
+          var editor = tinymce.get('order_summary');
+          if (editor) {
+              var currentContent = editor.getContent();
+              if (pur_order_name) {
+                  currentContent = currentContent.replace(
+                      /<span class="pur_order_name">.*?<\/span>/g,
+                      '<span class="pur_order_name">' + pur_order_name + '</span>'
+                  );
+              }
+              editor.setContent(currentContent);
+          } else {
+              console.error("TinyMCE is not initialized yet.");
+          }
+        }, 500);
+      });
+
     });
 
 var lastAddedItemKey = null;

@@ -11958,4 +11958,9 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    public function get_vendor_detail($vendor_id) {
+        $vendor_detail = $this->purchase_model->get_vendor_detail($vendor_id);
+        echo json_encode($vendor_detail);
+    }
 }
