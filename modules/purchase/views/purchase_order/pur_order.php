@@ -757,7 +757,7 @@
                 <strong>Subject:</strong> <span class="pur_order_name"></span><br><br>
 
                 Dear Sir/Madam,<br>
-                This is with reference to your final offer dated 19th October and further our subsequent discussions with regards to “Supply of Mathios Stone and Tiles” for our above-mentioned project. We are pleased to issue you the order of <strong>INR xxxx/-</strong> (In Words- ) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+                This is with reference to your final offer dated <span class="order_date"></span> and further our subsequent discussions with regards to <span class="pur_order_name"></span> for our above-mentioned project. We are pleased to issue you the order of <strong>INR <span class="subtotal_in_value"></span>/-</strong> (<span class="subtotal_in_words"></span>) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
 
                 <strong>Currency:</strong> INR<br><br>
 

@@ -209,6 +209,46 @@ $(function(){
         }, 500);
       });
 
+      var order_date = $('input[name="order_date"]').val();
+      get_order_date(order_date);
+      function get_order_date(order_date) {
+        var [day, month, year] = order_date.split('-');
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        function getOrdinalSuffix(day) {
+            if (day > 3 && day < 21) return day + "th"; // Special case for 11-20
+            switch (day % 10) {
+                case 1: return day + "st";
+                case 2: return day + "nd";
+                case 3: return day + "rd";
+                default: return day + "th";
+            }
+        }
+        var order_date = `${getOrdinalSuffix(parseInt(day))} ${monthNames[parseInt(month) - 1]}`;
+        setTimeout(function () {
+          var editor = tinymce.get('order_summary');
+          if (editor) {
+              var currentContent = editor.getContent();
+              if (order_date) {
+                  currentContent = currentContent.replace(
+                      /<span class="order_date">.*?<\/span>/g,
+                      '<span class="order_date">' + order_date + '</span>'
+                  );
+              }
+              editor.setContent(currentContent);
+          } else {
+              console.error("TinyMCE is not initialized yet.");
+          }
+        }, 500);
+      }
+
+      $("body").on('change', 'input[name="order_date"]', function () {
+        var order_date = $(this).val();
+        get_order_date(order_date);
+      });
+
     });
 
 var lastAddedItemKey = null;
@@ -585,11 +625,84 @@ function pur_calculate_total(from_discount_money){
   $('.adjustment').html(format_money(adjustment));
   $('.wh-subtotal').html(format_money(subtotal) + hidden_input('total_mn', accounting.toFixed(subtotal, app.options.decimal_places)));
   $('.wh-total').html(format_money(total) + hidden_input('grand_total', accounting.toFixed(total, app.options.decimal_places)));
+  subtotal_value_order_detail(subtotal);
+  subtotal_amount_order_detail(subtotal);
 
   $(document).trigger('purchase-quotation-total-calculated');
 
 }
 
+function subtotal_value_order_detail(subtotal) {
+  setTimeout(function () {
+  var editor = tinymce.get('order_summary');
+    if (editor) {
+      var currentContent = editor.getContent();
+      if (subtotal) {
+          currentContent = currentContent.replace(
+              /<span class="subtotal_in_value">.*?<\/span>/g,
+              '<span class="subtotal_in_value">' + subtotal + '</span>'
+          );
+      }
+      editor.setContent(currentContent);
+    } else {
+        console.error("TinyMCE is not initialized yet.");
+    }
+  }, 500);
+}
+
+function subtotal_amount_order_detail(subtotal) {
+  var subtotal_word = numberToWords(subtotal);
+  setTimeout(function () {
+  var editor = tinymce.get('order_summary');
+    if (editor) {
+      var currentContent = editor.getContent();
+      if (subtotal_word) {
+          currentContent = currentContent.replace(
+              /<span class="subtotal_in_words">.*?<\/span>/g,
+              '<span class="subtotal_in_words">' + subtotal_word + '</span>'
+          );
+      }
+      editor.setContent(currentContent);
+    } else {
+        console.error("TinyMCE is not initialized yet.");
+    }
+  }, 500);
+}
+
+function numberToWords(num) {
+    if (num === 0) return "zero";
+    var ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    var teens = ["", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    var tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    var thousands = ["", "Thousand", "Million", "Billion"];
+
+    function convertHundreds(num) {
+        var word = "";
+        if (num >= 100) {
+            word += ones[Math.floor(num / 100)] + " Hundred ";
+            num %= 100;
+        }
+        if (num >= 11 && num <= 19) {
+            word += teens[num - 10] + " ";
+        } else if (num >= 10 || num > 0) {
+            word += tens[Math.floor(num / 10)] + " ";
+            word += ones[num % 10] + " ";
+        }
+        return word.trim();
+    }
+
+    var word = "";
+    var i = 0;
+
+    while (num > 0) {
+      if (num % 1000 !== 0) {
+        word = convertHundreds(num % 1000) + " " + thousands[i] + " " + word;
+      }
+      num = Math.floor(num / 1000);
+      i++;
+    }
+    return word.trim();
+}
 
 function pur_add_item_to_preview(id) {
   "use strict";
