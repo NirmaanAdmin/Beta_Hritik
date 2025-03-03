@@ -730,6 +730,19 @@
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
                 <?php $value = (isset($pur_order) ? $pur_order->order_summary : get_purchase_option('order_summary'));
+                $day = date("j");
+                $month = date("F");
+                $year = date("Y");
+                function getOrdinalSuffix($day) {
+                    if ($day > 3 && $day < 21) return $day . "th";
+                    switch ($day % 10) {
+                        case 1: return $day . "st";
+                        case 2: return $day . "nd";
+                        case 3: return $day . "rd";
+                        default: return $day . "th";
+                    }
+                }
+                $formatted_date = getOrdinalSuffix($day) . " " . $month . " " . $year;
                 if (!isset($pur_order) && $pur_order->order_summary == '') {
                   $value = '<strong>PURCHASE ORDER</strong><br><br>
 
@@ -738,7 +751,7 @@
                 <span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br><br>
 
                 <strong>P.O. Number:</strong> BI/JAMNAGAR/24-25/027<br>
-                <strong>P.O. Date:</strong> 22-Oct-24<br>
+                <strong>P.O. Date:</strong> <span class="order_full_date">'.date("d-M-y").'</span><br>
                 <strong>Rev. No.:</strong><br>
                 <strong>Rev. Date:</strong><br><br>
 
@@ -757,7 +770,7 @@
                 <strong>Subject:</strong> <span class="pur_order_name"></span><br><br>
 
                 Dear Sir/Madam,<br>
-                This is with reference to your final offer dated <span class="order_date"></span> and further our subsequent discussions with regards to <span class="pur_order_name"></span> for our above-mentioned project. We are pleased to issue you the order of <strong>INR <span class="subtotal_in_value"></span>/-</strong> (<span class="subtotal_in_words"></span>) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+                This is with reference to your final offer dated <span class="order_date">'.$formatted_date.'</span> and further our subsequent discussions with regards to <span class="pur_order_name"></span> for our above-mentioned project. We are pleased to issue you the order of <strong>INR <span class="subtotal_in_value"></span>/-</strong> (<span class="subtotal_in_words"></span>) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
 
                 <strong>Currency:</strong> INR<br><br>
 

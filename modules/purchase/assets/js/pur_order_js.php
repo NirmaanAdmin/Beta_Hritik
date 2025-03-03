@@ -209,8 +209,6 @@ $(function(){
         }, 500);
       });
 
-      var order_date = $('input[name="order_date"]').val();
-      get_order_date(order_date);
       function get_order_date(order_date) {
         var [day, month, year] = order_date.split('-');
         const monthNames = [
@@ -226,15 +224,30 @@ $(function(){
                 default: return day + "th";
             }
         }
-        var order_date = `${getOrdinalSuffix(parseInt(day))} ${monthNames[parseInt(month) - 1]}`;
+        var order_date_updated = `${getOrdinalSuffix(parseInt(day))} ${monthNames[parseInt(month) - 1]} ${year}`;
+
+        var [day, month, year] = order_date.split('-'); // Extract day, month, year
+        var monthAbbr = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        day = day.padStart(2, '0');
+        var formattedDate = `${day}-${monthAbbr[parseInt(month) - 1]}-${year.slice(-2)}`;
+
         setTimeout(function () {
           var editor = tinymce.get('order_summary');
           if (editor) {
               var currentContent = editor.getContent();
-              if (order_date) {
+              if (order_date_updated) {
                   currentContent = currentContent.replace(
                       /<span class="order_date">.*?<\/span>/g,
-                      '<span class="order_date">' + order_date + '</span>'
+                      '<span class="order_date">' + order_date_updated + '</span>'
+                  );
+              }
+              if (formattedDate) {
+                  currentContent = currentContent.replace(
+                      /<span class="order_full_date">.*?<\/span>/g,
+                      '<span class="order_full_date">' + formattedDate + '</span>'
                   );
               }
               editor.setContent(currentContent);
