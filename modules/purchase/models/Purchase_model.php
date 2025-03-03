@@ -17352,4 +17352,59 @@ class Purchase_model extends App_Model
 
         return $result;
     }
+
+    public function get_po_contract_data($po_id, $payment_certificate_id = '')
+    {
+        $result = array();
+        $payment_certificate = array();
+        $pur_order = $this->get_pur_order($po_id);
+        $result['po_name'] = $pur_order->pur_order_name;
+        $result['po_contract_amount'] = 62410666;
+        $result['po_previous'] = 3458914;
+        $result['po_this_bill'] = 7250411;
+        $result['po_comulative'] = 41958321;
+        return $result;
+    }
+
+    public function add_payment_certificate($data)
+    {
+        unset($data['payment_certificate_id']);
+        $data['bill_received_on'] = to_sql_date($data['bill_received_on']);
+        if(!empty($data['bill_period_upto'])) {
+            $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
+        }
+        $this->db->insert(db_prefix() . 'payment_certificate', $data);
+        return true;
+    }
+
+    public function update_payment_certificate($data, $id)
+    {
+        unset($data['isedit']);
+        unset($data['payment_certificate_id']);
+        $data['bill_received_on'] = to_sql_date($data['bill_received_on']);
+        if(!empty($data['bill_period_upto'])) {
+            $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
+        }
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'payment_certificate', $data);
+        return true;
+    }
+
+    public function get_payment_certificate($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get(db_prefix() . 'payment_certificate')->row();
+    }
+
+    public function get_all_po_payment_certificate($id)
+    {
+        $this->db->where('po_id', $id);
+        return $this->db->get(db_prefix() . 'payment_certificate')->result_array();
+    }
+
+    public function delete_payment_certificate($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->delete('tblpayment_certificate');
+    }
 }

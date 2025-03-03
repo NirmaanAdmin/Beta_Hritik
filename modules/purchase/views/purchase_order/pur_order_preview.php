@@ -29,7 +29,7 @@ if ($estimate->currency != 0) {
                         <?php echo _l('pur_order'); ?>
                      </a>
                   </li>
-                  <li role="presentation" class="tab-separator">
+                  <li role="presentation">
                      <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
                         <?php echo _l('attachment'); ?>
                      </a>
@@ -37,6 +37,11 @@ if ($estimate->currency != 0) {
                   <li role="presentation">
                      <a href="#payment_record" aria-controls="payment_record" role="tab" data-toggle="tab">
                         <?php echo _l('payment_record'); ?>
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#payment_certificate" aria-controls="payment_certificate" role="tab" data-toggle="tab">
+                        <?php echo _l('payment_certificate'); ?>
                      </a>
                   </li>
                   <li role="presentation">
@@ -873,6 +878,37 @@ if ($estimate->currency != 0) {
                               <?php if (has_permission('purchase_invoices', '', 'delete') || is_admin()) { ?>
                                  <a href="<?php echo admin_url('purchase/delete_payment/' . $pay['id'] . '/' . $estimate->id); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
                               <?php } ?>
+                           </td>
+                        </tr>
+                     <?php } ?>
+                  </tbody>
+               </table>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="payment_certificate">
+               <div class="col-md-6 pad_div_0">
+                  <h4 class="font-medium mbot15 bold text-success"><?php echo _l('payment_certificate_for_pur_order') . ' ' . $estimate->pur_order_number; ?></h4>
+               </div>
+               <div class="col-md-6 padr_div_0">
+                  <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id); ?>" target="_blank" class="btn btn-success pull-right"><i class="fa fa-plus"></i><?php echo ' ' . _l('payment_certificate'); ?></a>
+               </div>
+               <div class="clearfix"></div>
+               <table class="table dt-table">
+                  <thead>
+                     <th><?php echo _l('serial_no'); ?></th>
+                     <th><?php echo _l('vendor'); ?></th>
+                     <th><?php echo _l('po_no'); ?></th>
+                     <th><?php echo _l('options'); ?></th>
+                  </thead>
+                  <tbody>
+                     <?php foreach ($payment_certificate as $pay) { ?>
+                        <tr>
+                           <td><?php echo $pay['serial_no']; ?></td>
+                           <td><?php echo get_vendor_company_name($estimate->vendor); ?></td>
+                           <td><?php echo $estimate->pur_order_number; ?></td>
+                           <td>
+                           <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
+                           <a href="<?php echo admin_url('purchase/delete_payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
                            </td>
                         </tr>
                      <?php } ?>

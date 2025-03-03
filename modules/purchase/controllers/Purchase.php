@@ -1592,6 +1592,7 @@ class purchase extends AdminController
         $data['area'] = $this->purchase_model->get_area();
         $data['activity'] = $this->purchase_model->get_po_activity($id);
         $data['changes'] = $this->purchase_model->get_po_changes($id);
+        $data['payment_certificate'] = $this->purchase_model->get_all_po_payment_certificate($id);
         if ($to_return == false) {
             $this->load->view('purchase_order/pur_order_preview', $data);
         } else {
@@ -11962,5 +11963,56 @@ class purchase extends AdminController
     public function get_vendor_detail($vendor_id) {
         $vendor_detail = $this->purchase_model->get_vendor_detail($vendor_id);
         echo json_encode($vendor_detail);
+    }
+
+    public function payment_certificate($po_id, $payment_certificate_id = '')
+    {
+        if ($this->input->post()) {
+            $pur_cert_data = $this->input->post();
+            if ($payment_certificate_id == '') {
+                $this->purchase_model->add_payment_certificate($pur_cert_data);
+                set_alert('success', _l('added_successfully', _l('payment_certificate')));
+                redirect(admin_url('purchase/purchase_order/' . $po_id));
+            } else {
+                $success = $this->purchase_model->update_payment_certificate($pur_cert_data, $payment_certificate_id);
+                if ($success) {
+                    set_alert('success', _l('updated_successfully', _l('payment_certificate')));
+                }
+                redirect(admin_url('purchase/purchase_order/' . $po_id));
+            }
+        }
+
+        if ($payment_certificate_id == '') {
+            $title = _l('create_new_payment_certificate');
+            $is_edit = false;
+        } else {
+            $data['payment_certificate'] = $this->purchase_model->get_payment_certificate($payment_certificate_id);
+            $title = _l('pur_cert_detail');
+            $is_edit = true;
+        }
+
+        $this->load->model('currencies_model');
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
+        $data['po_id'] = $po_id;
+        $data['payment_certificate_id'] = $payment_certificate_id;
+        $data['pur_order'] = $this->purchase_model->get_pur_order($po_id);
+        $data['title'] = $title;
+        $data['is_edit'] = $is_edit;
+        $this->load->view('payment_certificate/payment_certificate', $data);
+    }
+
+    public function get_po_contract_data($po_id, $payment_certificate_id = '')
+    {
+        $po_contract_data = $this->purchase_model->get_po_contract_data($po_id, $payment_certificate_id);
+        echo json_encode($po_contract_data);
+    }
+
+    public function delete_payment_certificate($po_id, $id)
+    {
+        if (!$id) {
+            redirect(admin_url('purchase/purchase_order/' . $po_id));
+        }
+        $response = $this->purchase_model->delete_payment_certificate($id);
+        redirect(admin_url('purchase/purchase_order/' . $po_id));
     }
 }
