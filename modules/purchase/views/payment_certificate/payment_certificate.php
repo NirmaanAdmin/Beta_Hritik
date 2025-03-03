@@ -117,7 +117,12 @@
                         <td>A1</td>
                         <td class="po_name"></td>
                         <td class="po_contract_amount"></td>
-                        <td class="po_previous"></td>
+                        <td>
+                          <?php 
+                          $po_previous = (isset($payment_certificate) ? $payment_certificate->po_previous : '');
+                          echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"]); 
+                          ?>
+                        </td>
                         <td class="po_this_bill"></td>
                         <td class="po_comulative"></td>
                       </tr>
@@ -125,7 +130,7 @@
                         <td>A</td>
                         <td><?php echo _l('total_value_of_works_executed'); ?></td>
                         <td class="po_contract_amount"></td>
-                        <td class="po_previous"></td>
+                        <td class="total_po_previous"></td>
                         <td class="po_this_bill"></td>
                         <td class="po_comulative"></td>
                       </tr>

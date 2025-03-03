@@ -17359,10 +17359,25 @@ class Purchase_model extends App_Model
         $payment_certificate = array();
         $pur_order = $this->get_pur_order($po_id);
         $result['po_name'] = $pur_order->pur_order_name;
-        $result['po_contract_amount'] = 62410666;
-        $result['po_previous'] = 3458914;
-        $result['po_this_bill'] = 7250411;
-        $result['po_comulative'] = 41958321;
+        $result['po_contract_amount'] = 0;
+        $result['po_previous'] = 0;
+        $result['po_this_bill'] = 0;
+        $result['po_comulative'] = 0;
+
+        $this->db->select_sum('total');
+        $this->db->where('po_order_id', $po_id);
+        $co_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
+        if(!empty($co_orders)) {
+            $result['po_contract_amount'] = $co_orders[0]['total'];
+        }
+
+        $this->db->select('total');
+        $this->db->where('id', $po_id);
+        $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->row();
+        if(!empty($pur_orders)) {
+            $result['po_this_bill'] = $pur_orders->total;
+        }
+
         return $result;
     }
 

@@ -14,10 +14,25 @@ function calculate_payment_certificate() {
 		$.post(admin_url + 'purchase/get_po_contract_data/'+po_id+'/'+payment_certificate_id).done(function(response){
 	        response = JSON.parse(response);
 	        $('.po_name').html(response.po_name);
-	        $('.po_contract_amount').html(format_money(response.po_contract_amount, true));
-	        $('.po_previous').html(format_money(response.po_previous, true));
-	        $('.po_this_bill').html(format_money(response.po_this_bill, true));
-	        $('.po_comulative').html(format_money(response.po_comulative, true));
+
+	        var po_contract_amount = response.po_contract_amount;
+	        po_contract_amount = (po_contract_amount !== null && po_contract_amount !== undefined && po_contract_amount.toString().trim() !== "") 
+			    ? po_contract_amount 
+			    : 0;
+	        $('.po_contract_amount').html(format_money(po_contract_amount, true));
+
+	        var po_this_bill = response.po_this_bill;
+	        po_this_bill = (po_this_bill !== null && po_this_bill !== undefined && po_this_bill.toString().trim() !== "") 
+			    ? po_this_bill 
+			    : 0;
+	        $('.po_this_bill').html(format_money(po_this_bill, true));
+
+	        var po_previous = $('input[name="po_previous"]').val();
+	        po_previous = po_previous.trim() != "" ? po_previous : 0;
+	        $('.total_po_previous').html(format_money(po_previous, true));
+
+	        var po_comulative = parseFloat(po_previous) + parseFloat(po_this_bill);
+	        $('.po_comulative').html(format_money(po_comulative, true));
 
 	        var pay_cert_c1_1 = $('input[name="pay_cert_c1_1"]').val();
 	        var pay_cert_c2_1 = $('input[name="pay_cert_c2_1"]').val();
@@ -47,16 +62,16 @@ function calculate_payment_certificate() {
 	        var net_advance_4 = parseFloat(pay_cert_c1_4) + parseFloat(pay_cert_c2_4);
 	        $('.net_advance_4').html(format_money(net_advance_4, true));
 
-	        var sub_total_ac_1 = parseFloat(response.po_contract_amount) + parseFloat(net_advance_1);
+	        var sub_total_ac_1 = parseFloat(po_contract_amount) + parseFloat(net_advance_1);
 	        $('.sub_total_ac_1').html(format_money(sub_total_ac_1, true));
 
-	        var sub_total_ac_2 = parseFloat(response.po_previous) + parseFloat(net_advance_2);
+	        var sub_total_ac_2 = parseFloat(po_previous) + parseFloat(net_advance_2);
 	        $('.sub_total_ac_2').html(format_money(sub_total_ac_2, true));
 
-	        var sub_total_ac_3 = parseFloat(response.po_this_bill) + parseFloat(net_advance_3);
+	        var sub_total_ac_3 = parseFloat(po_this_bill) + parseFloat(net_advance_3);
 	        $('.sub_total_ac_3').html(format_money(sub_total_ac_3, true));
 
-	        var sub_total_ac_4 = parseFloat(response.po_comulative) + parseFloat(net_advance_4);
+	        var sub_total_ac_4 = parseFloat(po_comulative) + parseFloat(net_advance_4);
 	        $('.sub_total_ac_4').html(format_money(sub_total_ac_4, true));
 
 	        var ret_fund_1 = $('input[name="ret_fund_1"]').val();
@@ -131,47 +146,47 @@ function calculate_payment_certificate() {
 	        var sub_fg_4 = parseFloat(sub_t_de_4) + parseFloat(less_ded_4);
 	        $('.sub_fg_4').html(format_money(sub_fg_4, true));
 
-	        var cgst_on_a1 = response.po_contract_amount * 0.09;
+	        var cgst_on_a1 = po_contract_amount * 0.09;
 	        $('.cgst_on_a1').html(format_money(cgst_on_a1, true));
 
-	        var cgst_on_a2 = response.po_previous * 0.09;
+	        var cgst_on_a2 = po_previous * 0.09;
 	        $('.cgst_on_a2').html(format_money(cgst_on_a2, true));
 
-	        var cgst_on_a3 = response.po_this_bill * 0.09;
+	        var cgst_on_a3 = po_this_bill * 0.09;
 	        $('.cgst_on_a3').html(format_money(cgst_on_a3, true));
 
-	        var cgst_on_a4 = response.po_comulative * 0.09;
+	        var cgst_on_a4 = po_comulative * 0.09;
 	        $('.cgst_on_a4').html(format_money(cgst_on_a4, true));
 
-	        var sgst_on_a1 = response.po_contract_amount * 0.09;
+	        var sgst_on_a1 = po_contract_amount * 0.09;
 	        $('.sgst_on_a1').html(format_money(sgst_on_a1, true));
 
-	        var sgst_on_a2 = response.po_previous * 0.09;
+	        var sgst_on_a2 = po_previous * 0.09;
 	        $('.sgst_on_a2').html(format_money(sgst_on_a2, true));
 
-	        var sgst_on_a3 = response.po_this_bill * 0.09;
+	        var sgst_on_a3 = po_this_bill * 0.09;
 	        $('.sgst_on_a3').html(format_money(sgst_on_a3, true));
 
-	        var sgst_on_a4 = response.po_comulative * 0.09;
+	        var sgst_on_a4 = po_comulative * 0.09;
 	        $('.sgst_on_a4').html(format_money(sgst_on_a4, true));
 
 	        var labour_cess_1 = $('input[name="labour_cess_1"]').val();
-	        labour_cess_1 = labour_cess_1.trim() != "" ? response.po_contract_amount * (labour_cess_1 / 100) : 0;
+	        labour_cess_1 = labour_cess_1.trim() != "" ? po_contract_amount * (labour_cess_1 / 100) : 0;
 	        var tot_app_tax_1 = parseFloat(cgst_on_a1) + parseFloat(sgst_on_a1) + parseFloat(labour_cess_1);
 	        $('.tot_app_tax_1').html(format_money(tot_app_tax_1, true));
 
 	        var labour_cess_2 = $('input[name="labour_cess_2"]').val();
-	        labour_cess_2 = labour_cess_2.trim() != "" ? response.po_previous * (labour_cess_2 / 200) : 0;
+	        labour_cess_2 = labour_cess_2.trim() != "" ? po_previous * (labour_cess_2 / 200) : 0;
 	        var tot_app_tax_2 = parseFloat(cgst_on_a2) + parseFloat(sgst_on_a2) + parseFloat(labour_cess_2);
 	        $('.tot_app_tax_2').html(format_money(tot_app_tax_2, true));
 
 	        var labour_cess_3 = $('input[name="labour_cess_3"]').val();
-	        labour_cess_3 = labour_cess_3.trim() != "" ? response.po_this_bill * (labour_cess_3 / 300) : 0;
+	        labour_cess_3 = labour_cess_3.trim() != "" ? po_this_bill * (labour_cess_3 / 300) : 0;
 	        var tot_app_tax_3 = parseFloat(cgst_on_a3) + parseFloat(sgst_on_a3) + parseFloat(labour_cess_3);
 	        $('.tot_app_tax_3').html(format_money(tot_app_tax_3, true));
 
 	        var labour_cess_4 = $('input[name="labour_cess_4"]').val();
-	        labour_cess_4 = labour_cess_4.trim() != "" ? response.po_comulative * (labour_cess_4 / 400) : 0;
+	        labour_cess_4 = labour_cess_4.trim() != "" ? po_comulative * (labour_cess_4 / 400) : 0;
 	        var tot_app_tax_4 = parseFloat(cgst_on_a4) + parseFloat(sgst_on_a4) + parseFloat(labour_cess_4);
 	        $('.tot_app_tax_4').html(format_money(tot_app_tax_4, true));
 
