@@ -17415,4 +17415,299 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->delete('tblpayment_certificate');
     }
+
+    public function get_paymentcertificate_pdf_html($id)
+    {
+        $html = '';
+        $pay_cert_data = $this->get_payment_certificate($id);
+        $pur_order = $this->get_pur_order($pay_cert_data->po_id);
+        $po_contract_data = $this->get_po_contract_data($pay_cert_data->po_id);
+        $po_contract_amount = $po_contract_data['po_contract_amount'];
+        $po_comulative = $pay_cert_data->po_previous + $pay_cert_data->po_this_bill;
+
+        $logo = '';
+        $company_logo = get_option('company_logo_dark');
+        if (!empty($company_logo)) {
+            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+        }
+
+        $html .= '<p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('payment_certificate')) . '</h2></p>';
+
+        $html .= '<table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        ' . $logo . '
+                        ' . format_organization_info() . '
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br><br>';
+
+        $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
+            <tbody>
+                <tr>
+                  <td class="cert_title">'._l('serial_no').'</td>
+                  <td>'.$pay_cert_data->serial_no.'</td>
+                  <td class="cert_title">'._l('pay_cert_options').'</td>
+                  <td>'.ucfirst($pay_cert_data->pay_cert_options).'</td>
+                </tr>
+                <tr>
+                  <td class="cert_title">'._l('vendor').'</td>
+                  <td>'.get_vendor_company_name($pur_order->vendor).'</td>
+                  <td class="cert_title">'._l('po_no').'</td>
+                  <td>'.$pur_order->pur_order_number.'</td>
+                </tr>
+                <tr>
+                  <td class="cert_title">'._l('po_date').'</td>
+                  <td>'._d($pur_order->order_date).'</td>
+                  <td class="cert_title">'._l('po_description').'</td>
+                  <td>'.$pur_order->pur_order_name.'</td>
+                </tr>
+                <tr>
+                  <td class="cert_title">'._l('project').'</td>
+                  <td>'.get_project_name_by_id($pur_order->project).'</td>
+                  <td class="cert_title">'._l('Location').'</td>
+                  <td>'.$pay_cert_data->location.'</td>
+                </tr>
+                <tr>
+                  <td class="cert_title">'._l('invoice_ref').'</td>
+                  <td>'.$pay_cert_data->invoice_ref.'</td>
+                  <td class="cert_title">'._l('bill_period_upto').'</td>
+                  <td>'._d($pay_cert_data->bill_period_upto).'</td>
+                </tr>
+                <tr>
+                  <td class="cert_title">'._l('bill_received_on').'</td>
+                  <td>'._d($pay_cert_data->bill_received_on).'</td>
+                  <td class="cert_title"></td>
+                  <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <br><br>';
+
+        $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
+            <tbody>
+                <tr class="pay_cert_title">
+                  <td style="width:5%">'._l('serial_no').'</td>
+                  <td style="width:35%">'._l('decription').'</td>
+                  <td style="width:15%">'._l('contract_amount').'</td>
+                  <td style="width:15%">'._l('previous').'</td>
+                  <td style="width:15%">'._l('this_bill').'</td>
+                  <td style="width:15%">'._l('comulative').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>A1</td>
+                  <td>'.$pur_order->pur_order_name.'</td>
+                  <td>'.app_format_money($po_contract_amount, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_previous, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_this_bill, '').'</td>
+                  <td>'.app_format_money($po_comulative, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>A</td>
+                  <td>'._l('total_value_of_works_executed').'</td>
+                  <td>'.app_format_money($po_contract_amount, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_previous, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_this_bill, '').'</td>
+                  <td>'.app_format_money($po_comulative, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>B</td>
+                  <td>'._l('pay_cert_b_title').'</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>C1</td>
+                  <td>'._l('pay_cert_c1_title').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>C2</td>
+                  <td>'._l('pay_cert_c2_title').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>C</td>
+                  <td>'._l('net_advance').'</td>
+                  <td>'.app_format_money($pay_cert_data->net_advance_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->net_advance_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->net_advance_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->net_advance_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>D</td>
+                  <td>'._l('sub_total_ac').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_total_ac_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_total_ac_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_total_ac_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_total_ac_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>E1</td>
+                  <td>'._l('retention_fund').'</td>
+                  <td>'.app_format_money($pay_cert_data->ret_fund_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->ret_fund_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->ret_fund_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->ret_fund_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>E2</td>
+                  <td>'._l('works_executed_5_of_A').' '.$pay_cert_data->works_executed_on_a.'</td>
+                  <td>'.app_format_money($pay_cert_data->works_exe_a_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->works_exe_a_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->works_exe_a_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->works_exe_a_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>E</td>
+                  <td>'._l('less_total_retention').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ret_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ret_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ret_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ret_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>F</td>
+                  <td>'._l('sub_total_de').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_t_de_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_t_de_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_t_de_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_t_de_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>G1</td>
+                  <td>'._l('less_title').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>G2</td>
+                  <td>'._l('less_amount_hold_for_quality_ncr').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ah_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ah_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ah_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ah_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>G2</td>
+                  <td>'._l('less_amount_hold_for_testing_and_comissioning').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_aht_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_aht_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_aht_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_aht_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>G</td>
+                  <td>'._l('less_deductions').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ded_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ded_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ded_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->less_ded_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>H</td>
+                  <td>'._l('sub_total_exclusive_of_taxes').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_fg_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_fg_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_fg_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sub_fg_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>I1</td>
+                  <td>'._l('cgst_on_a').'</td>
+                  <td>'.app_format_money($pay_cert_data->cgst_on_a1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->cgst_on_a2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->cgst_on_a3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->cgst_on_a4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>I2</td>
+                  <td>'._l('sgst_on_a').'</td>
+                  <td>'.app_format_money($pay_cert_data->sgst_on_a1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sgst_on_a2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sgst_on_a3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->sgst_on_a4, '').'</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>I3</td>
+                  <td>'._l('labour_cess').' '.$pay_cert_data->labour_cess.'</td>
+                  <td>'.app_format_money($pay_cert_data->labour_cess_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->labour_cess_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->labour_cess_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->labour_cess_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>I</td>
+                  <td>'._l('total_applicable_taxes').'</td>
+                  <td>'.app_format_money($pay_cert_data->tot_app_tax_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->tot_app_tax_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->tot_app_tax_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->tot_app_tax_4, '').'</td>
+                </tr>
+                <tr class="pay_cert_title">
+                  <td>J</td>
+                  <td>'._l('amount_recommended').'</td>
+                  <td>'.app_format_money($pay_cert_data->amount_rec_1, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->amount_rec_2, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->amount_rec_3, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->amount_rec_4, '').'</td>
+                </tr>
+            </tbody>
+        </table>
+        <br><br>';
+
+        $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
+            <tbody>
+                <tr class="footer_cert_title">
+                  <td style="width:25%">Payment Authorized</td>
+                  <td style="width:25%">Project Coordinator</td>
+                  <td style="width:25%">Project Head</td>
+                  <td style="width:25%">Director</td>
+                </tr>
+                <tr class="footer_cert_title">
+                  <td>Name</td>
+                  <td>Rupesh Singh</td>
+                  <td>Rahul Singh</td>
+                  <td>Abhishek Intodia</td>
+                </tr>
+                <tr class="footer_cert_title">
+                  <td>Signature</td>
+                  <td style="height: 80px"></td>
+                  <td style="height: 80px"></td>
+                  <td style="height: 80px"></td>
+                </tr>
+                <tr class="footer_cert_title">
+                  <td>Date</td>
+                  <td>'.date('d-m-Y').'</td>
+                  <td>'.date('d-m-Y').'</td>
+                  <td>'.date('d-m-Y').'</td>
+                </tr>
+            </tbody>
+        </table>
+        <br><br>';
+
+        $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/payment_certificate_style.css') . '"  rel="stylesheet" type="text/css" />';
+
+        return $html;
+    }
+
+    public function paymentcertificate_pdf($payment_certificate, $id)
+    {
+        $pay_cert_data = $this->get_payment_certificate($id);
+        $footer_text = '';
+        return app_pdf('payment_certificate', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Payment_certificate_pdf'), $payment_certificate, $footer_text);
+    }
 }

@@ -12015,4 +12015,32 @@ class purchase extends AdminController
         $response = $this->purchase_model->delete_payment_certificate($id);
         redirect(admin_url('purchase/purchase_order/' . $po_id));
     }
+
+    public function payment_certificate_pdf($id)
+    {
+        if (!$id) {
+            redirect(admin_url('purchase/purchase_order'));
+        }
+
+        $payment_certificate = $this->purchase_model->get_paymentcertificate_pdf_html($id);
+
+        try {
+            $pdf = $this->purchase_model->paymentcertificate_pdf($payment_certificate, $id);
+        } catch (Exception $e) {
+            echo pur_html_entity_decode($e->getMessage());
+            die;
+        }
+
+        $type = 'D';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+        $pdf_name = _l('payment_certificate').'.pdf';
+        $pdf->Output($pdf_name, $type);
+    }
 }

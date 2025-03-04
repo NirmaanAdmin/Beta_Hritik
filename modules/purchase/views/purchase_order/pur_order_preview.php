@@ -896,7 +896,6 @@ if ($estimate->currency != 0) {
                <table class="table dt-table">
                   <thead>
                      <th><?php echo _l('serial_no'); ?></th>
-                     <th><?php echo _l('vendor'); ?></th>
                      <th><?php echo _l('po_no'); ?></th>
                      <th><?php echo _l('options'); ?></th>
                   </thead>
@@ -904,11 +903,23 @@ if ($estimate->currency != 0) {
                      <?php foreach ($payment_certificate as $pay) { ?>
                         <tr>
                            <td><?php echo $pay['serial_no']; ?></td>
-                           <td><?php echo get_vendor_company_name($estimate->vendor); ?></td>
                            <td><?php echo $estimate->pur_order_number; ?></td>
                            <td>
                            <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
                            <a href="<?php echo admin_url('purchase/delete_payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
+                           <div class="btn-group">
+                              <a href="javascript:void(0)" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
+                              <ul class="dropdown-menu dropdown-menu-right">
+                                 <li class="hidden-xs"><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
+                                 <li class="hidden-xs"><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                                 <li><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id']); ?>"><?php echo _l('download'); ?></a></li>
+                                 <li>
+                                    <a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?print=true'); ?>" target="_blank">
+                                       <?php echo _l('print'); ?>
+                                    </a>
+                                 </li>
+                              </ul>
+                           </div>
                            </td>
                         </tr>
                      <?php } ?>
