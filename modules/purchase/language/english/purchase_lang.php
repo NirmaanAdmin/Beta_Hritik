@@ -864,3 +864,4 @@ $lang['sgst_on_a'] = 'SGST @ `9%` on A';
 $lang['labour_cess'] = 'Labour Cess on A';
 $lang['total_applicable_taxes'] = 'Total Applicable Taxes';
 $lang['amount_recommended'] = 'Amount Recommended (H + I)';
+$lang['convert_to_vendor_bill'] = 'Convert to vendor bill';

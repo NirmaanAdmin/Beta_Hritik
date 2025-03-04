@@ -897,6 +897,7 @@ if ($estimate->currency != 0) {
                   <thead>
                      <th><?php echo _l('serial_no'); ?></th>
                      <th><?php echo _l('po_no'); ?></th>
+                     <th><?php echo _l('convert'); ?></th>
                      <th><?php echo _l('options'); ?></th>
                   </thead>
                   <tbody>
@@ -904,6 +905,9 @@ if ($estimate->currency != 0) {
                         <tr>
                            <td><?php echo $pay['serial_no']; ?></td>
                            <td><?php echo $estimate->pur_order_number; ?></td>
+                           <td>
+                              <a href="<?php echo admin_url('purchase/convert_pur_invoice_from_po/' . $pay['id']); ?>" class="btn btn-info convert-pur-invoice" target="_blank"><?php echo _l('convert_to_vendor_bill'); ?></a>
+                           </td>
                            <td>
                            <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
                            <a href="<?php echo admin_url('purchase/delete_payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
@@ -1132,4 +1136,15 @@ if ($estimate->currency != 0) {
       link.click();
       document.body.removeChild(link);
    });
+</script>
+<script>
+$(document).ready(function() {
+    $('.convert-pur-invoice').click(function(e) {
+      e.preventDefault();
+      var url = $(this).attr('href');
+      if (confirm("Are you sure you want to convert this to a vendor bill?")) {
+         window.open(url, '_blank');
+      }
+    });
+});
 </script>

@@ -12043,4 +12043,69 @@ class purchase extends AdminController
         $pdf_name = _l('payment_certificate').'.pdf';
         $pdf->Output($pdf_name, $type);
     }
+
+    public function convert_pur_invoice_from_po($id) 
+    {
+        if (!$id) {
+            redirect(admin_url('purchase/purchase_order'));
+        }
+        $payment_certificate = $this->purchase_model->get_payment_certificate($id);
+        if(empty($payment_certificate)) {
+            redirect(admin_url('purchase/purchase_order'));
+        }
+
+        $pur_order = $this->purchase_model->get_pur_order($payment_certificate->po_id);
+        $pur_invoice = array();
+        $input = array();
+        $prefix = get_purchase_option('pur_inv_prefix');
+        $next_number = get_purchase_option('next_inv_number');
+        $invoice_number = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
+        $value_certified_amount = $payment_certificate->sub_fg_3 + $payment_certificate->tot_app_tax_3;
+        if(!empty($payment_certificate->pur_invoice_id)) {
+            $pur_invoice = $this->purchase_model->get_pur_invoice($payment_certificate->pur_invoice_id);
+        }
+        
+        if(empty($pur_invoice)) {
+            $input['invoice_number'] = $invoice_number;
+            $input['vendor_invoice_number'] = $invoice_number;
+            $input['vendor'] = isset($pur_order->vendor) ? $pur_order->vendor : 0;
+            $input['group_pur'] = isset($pur_order->group_pur) ? $pur_order->group_pur : 0;
+            $input['description_services'] = '';
+            $input['invoice_date'] = date('Y-m-d');
+            $input['currency'] = 3;
+            $input['to_currency'] = 3;
+            $input['date_add'] = date('Y-m-d');
+            $input['payment_status'] = 0;
+            $input['project_id'] = isset($pur_order->project) ? $pur_order->project : 1;
+            $input['vendor_submitted_amount_without_tax'] = $payment_certificate->sub_fg_3;
+            $input['vendor_submitted_tax_amount'] = $payment_certificate->tot_app_tax_3;
+            $input['vendor_submitted_amount'] = $value_certified_amount;
+            $input['final_certified_amount'] = $value_certified_amount;
+            $this->db->insert(db_prefix() . 'pur_invoices', $input);
+            $insert_id = $this->db->insert_id();
+            if ($insert_id) {
+                $this->db->where('option_name', 'next_inv_number');
+                $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number + 1]);
+            }
+            $this->db->where('id', $id);
+            $this->db->update(db_prefix() . 'payment_certificate', ['pur_invoice_id' => $insert_id]);
+            set_alert('success', _l('purchase_invoice') . ' ' . _l('added_successfully'));
+            redirect(admin_url('purchase/pur_invoice/'.$insert_id));
+        } else {
+            $input['vendor_invoice_number'] = $invoice_number;
+            $input['vendor'] = isset($pur_order->vendor) ? $pur_order->vendor : 0;
+            $input['group_pur'] = isset($pur_order->group_pur) ? $pur_order->group_pur : 0;
+            $input['project_id'] = isset($pur_order->project) ? $pur_order->project : 1;
+            $input['vendor_submitted_amount_without_tax'] = $payment_certificate->sub_fg_3;
+            $input['vendor_submitted_tax_amount'] = $payment_certificate->tot_app_tax_3;
+            $input['vendor_submitted_amount'] = $value_certified_amount;
+            $input['final_certified_amount'] = $value_certified_amount;
+            // Update Vendor billing tracker
+            $this->db->where('id', $pur_invoice->id);
+            $this->db->update(db_prefix() . 'pur_invoices', $input);
+            $this->purchase_model->update_vbt_expense_ril_data($pur_invoice->id);
+            set_alert('success', _l('purchase_invoice') . ' ' . _l('updated_successfully'));
+            redirect(admin_url('purchase/pur_invoice/'.$pur_invoice->id));
+        }
+    }
 }
