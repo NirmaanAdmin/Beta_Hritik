@@ -21,6 +21,12 @@
   .payment_certificate_body .form-group {
     margin-bottom: 0px !important;
   }
+  .works_executed_on_a_class .bootstrap-select {
+    width: 100px !important;
+  }
+  .labour_cess_class .bootstrap-select {
+    width: 100px !important;
+  }
 </style>
 <div id="wrapper">
   <div class="content">
@@ -119,11 +125,16 @@
                         <td class="po_contract_amount"></td>
                         <td>
                           <?php 
-                          $po_previous = (isset($payment_certificate) ? $payment_certificate->po_previous : '');
+                          $po_previous = (isset($payment_certificate) ? $payment_certificate->po_previous : 0);
                           echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
-                        <td class="po_this_bill"></td>
+                        <td>
+                          <?php 
+                          $po_this_bill = (isset($payment_certificate) ? $payment_certificate->po_this_bill : 0);
+                          echo render_input('po_this_bill', '', $po_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"]); 
+                          ?>
+                        </td>
                         <td class="po_comulative"></td>
                       </tr>
                       <tr class="table_head">
@@ -131,7 +142,7 @@
                         <td><?php echo _l('total_value_of_works_executed'); ?></td>
                         <td class="po_contract_amount"></td>
                         <td class="total_po_previous"></td>
-                        <td class="po_this_bill"></td>
+                        <td class="total_po_this_bill"></td>
                         <td class="po_comulative"></td>
                       </tr>
                       <tr class="table_head">
@@ -205,6 +216,10 @@
                         <td class="net_advance_2"></td>
                         <td class="net_advance_3"></td>
                         <td class="net_advance_4"></td>
+                        <?php echo form_hidden('net_advance_1', ''); ?>
+                        <?php echo form_hidden('net_advance_2', ''); ?>
+                        <?php echo form_hidden('net_advance_3', ''); ?>
+                        <?php echo form_hidden('net_advance_4', ''); ?>
                       </tr>
                       <tr class="table_head">
                         <td>D</td>
@@ -213,6 +228,10 @@
                         <td class="sub_total_ac_2"></td>
                         <td class="sub_total_ac_3"></td>
                         <td class="sub_total_ac_4"></td>
+                        <?php echo form_hidden('sub_total_ac_1', ''); ?>
+                        <?php echo form_hidden('sub_total_ac_2', ''); ?>
+                        <?php echo form_hidden('sub_total_ac_3', ''); ?>
+                        <?php echo form_hidden('sub_total_ac_4', ''); ?>
                       </tr>
                       <tr>
                         <td>E1</td>
@@ -244,34 +263,37 @@
                       </tr>
                       <tr>
                         <td>E2</td>
-                        <td><?php echo _l('works_executed_5_of_A'); ?></td>
+                        <td class="works_executed_on_a_class">
+                          <?php echo _l('works_executed_5_of_A'); ?>
+                          <select name="works_executed_on_a" id="works_executed_on_a" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                            <option value=""></option>
+                            <option value="5%" <?php if (isset($payment_certificate) && $payment_certificate->works_executed_on_a == '5%') { echo 'selected';} ?>>5%</option>
+                            <option value="10%" <?php if (isset($payment_certificate) && $payment_certificate->works_executed_on_a == '10%') { echo 'selected';} ?>>10%</option>
+                          </select>
+                        </td>
                         <td>
                           <?php 
                           $works_exe_a_1 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_1 : '');
-                          echo render_input('works_exe_a_1', '', $works_exe_a_1, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 5]); 
+                          echo render_input('works_exe_a_1', '', $works_exe_a_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
-                          %
                         </td>
                         <td>
                           <?php 
                           $works_exe_a_2 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_2 : '');
-                          echo render_input('works_exe_a_2', '', $works_exe_a_2, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 5]); 
+                          echo render_input('works_exe_a_2', '', $works_exe_a_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
-                          %
                         </td>
                         <td>
                           <?php 
                           $works_exe_a_3 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_3 : '');
-                          echo render_input('works_exe_a_3', '', $works_exe_a_3, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 5]);  
+                          echo render_input('works_exe_a_3', '', $works_exe_a_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
-                          %
                         </td>
                         <td>
                           <?php
                           $works_exe_a_4 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_4 : ''); 
-                          echo render_input('works_exe_a_4', '', $works_exe_a_4, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 5]); 
+                          echo render_input('works_exe_a_4', '', $works_exe_a_4, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
-                          %
                         </td>
                       </tr>
                       <tr class="table_head">
@@ -281,6 +303,10 @@
                         <td class="less_ret_2"></td>
                         <td class="less_ret_3"></td>
                         <td class="less_ret_4"></td>
+                        <?php echo form_hidden('less_ret_1', ''); ?>
+                        <?php echo form_hidden('less_ret_2', ''); ?>
+                        <?php echo form_hidden('less_ret_3', ''); ?>
+                        <?php echo form_hidden('less_ret_4', ''); ?>
                       </tr>
                       <tr class="table_head">
                         <td>F</td>
@@ -289,6 +315,10 @@
                         <td class="sub_t_de_2"></td>
                         <td class="sub_t_de_3"></td>
                         <td class="sub_t_de_4"></td>
+                        <?php echo form_hidden('sub_t_de_1', ''); ?>
+                        <?php echo form_hidden('sub_t_de_2', ''); ?>
+                        <?php echo form_hidden('sub_t_de_3', ''); ?>
+                        <?php echo form_hidden('sub_t_de_4', ''); ?>
                       </tr>
                       <tr>
                         <td>G1</td>
@@ -381,6 +411,10 @@
                         <td class="less_ded_2"></td>
                         <td class="less_ded_3"></td>
                         <td class="less_ded_4"></td>
+                        <?php echo form_hidden('less_ded_1', ''); ?>
+                        <?php echo form_hidden('less_ded_2', ''); ?>
+                        <?php echo form_hidden('less_ded_3', ''); ?>
+                        <?php echo form_hidden('less_ded_4', ''); ?>
                       </tr>
                       <tr class="table_head">
                         <td>H</td>
@@ -389,6 +423,10 @@
                         <td class="sub_fg_2"></td>
                         <td class="sub_fg_3"></td>
                         <td class="sub_fg_4"></td>
+                        <?php echo form_hidden('sub_fg_1', ''); ?>
+                        <?php echo form_hidden('sub_fg_2', ''); ?>
+                        <?php echo form_hidden('sub_fg_3', ''); ?>
+                        <?php echo form_hidden('sub_fg_4', ''); ?>
                       </tr>
                       <tr>
                         <td>I1</td>
@@ -397,6 +435,10 @@
                         <td class="cgst_on_a2"></td>
                         <td class="cgst_on_a3"></td>
                         <td class="cgst_on_a4"></td>
+                        <?php echo form_hidden('cgst_on_a1', ''); ?>
+                        <?php echo form_hidden('cgst_on_a2', ''); ?>
+                        <?php echo form_hidden('cgst_on_a3', ''); ?>
+                        <?php echo form_hidden('cgst_on_a4', ''); ?>
                       </tr>
                       <tr>
                         <td>I2</td>
@@ -405,37 +447,43 @@
                         <td class="sgst_on_a2"></td>
                         <td class="sgst_on_a3"></td>
                         <td class="sgst_on_a4"></td>
+                        <?php echo form_hidden('sgst_on_a1', ''); ?>
+                        <?php echo form_hidden('sgst_on_a2', ''); ?>
+                        <?php echo form_hidden('sgst_on_a3', ''); ?>
+                        <?php echo form_hidden('sgst_on_a4', ''); ?>
                       </tr>
                       <tr>
                         <td>I3</td>
-                        <td><?php echo _l('labour_cess'); ?></td>
+                        <td class="labour_cess_class">
+                          <?php echo _l('labour_cess'); ?>
+                          <select name="labour_cess" id="labour_cess" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                            <option value=""></option>
+                            <option value="1%" <?php if (isset($payment_certificate) && $payment_certificate->labour_cess == '1%') { echo 'selected';} ?>>1%</option>
+                          </select>
+                        </td>
                         <td>
                           <?php
                           $labour_cess_1 = (isset($payment_certificate) ? $payment_certificate->labour_cess_1 : ''); 
-                          echo render_input('labour_cess_1', '', $labour_cess_1, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 1]); 
+                          echo render_input('labour_cess_1', '', $labour_cess_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
-                          %
                         </td>
                         <td>
                           <?php
                           $labour_cess_2 = (isset($payment_certificate) ? $payment_certificate->labour_cess_2 : ''); 
-                          echo render_input('labour_cess_2', '', $labour_cess_2, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 1]); 
+                          echo render_input('labour_cess_2', '', $labour_cess_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
-                          %
                         </td>
                         <td>
                           <?php 
                           $labour_cess_3 = (isset($payment_certificate) ? $payment_certificate->labour_cess_3 : '');
-                          echo render_input('labour_cess_3', '', $labour_cess_3, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 1]);  
+                          echo render_input('labour_cess_3', '', $labour_cess_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
-                          %
                         </td>
                         <td>
                           <?php 
                           $labour_cess_4 = (isset($payment_certificate) ? $payment_certificate->labour_cess_4 : '');
-                          echo render_input('labour_cess_4', '', $labour_cess_4, 'number', ['oninput' => "calculate_payment_certificate()", 'min' => 1, 'max' => 1]); 
+                          echo render_input('labour_cess_4', '', $labour_cess_4, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
-                          %
                         </td>
                       </tr>
                       <tr class="table_head">
@@ -445,6 +493,10 @@
                         <td class="tot_app_tax_2"></td>
                         <td class="tot_app_tax_3"></td>
                         <td class="tot_app_tax_4"></td>
+                        <?php echo form_hidden('tot_app_tax_1', ''); ?>
+                        <?php echo form_hidden('tot_app_tax_2', ''); ?>
+                        <?php echo form_hidden('tot_app_tax_3', ''); ?>
+                        <?php echo form_hidden('tot_app_tax_4', ''); ?>
                       </tr>
                       <tr class="table_head">
                         <td>J</td>
@@ -453,6 +505,10 @@
                         <td class="amount_rec_2"></td>
                         <td class="amount_rec_3"></td>
                         <td class="amount_rec_4"></td>
+                        <?php echo form_hidden('amount_rec_1', ''); ?>
+                        <?php echo form_hidden('amount_rec_2', ''); ?>
+                        <?php echo form_hidden('amount_rec_3', ''); ?>
+                        <?php echo form_hidden('amount_rec_4', ''); ?>
                       </tr>
                     </tbody>
                   </table>

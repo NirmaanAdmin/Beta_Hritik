@@ -17364,18 +17364,11 @@ class Purchase_model extends App_Model
         $result['po_this_bill'] = 0;
         $result['po_comulative'] = 0;
 
-        $this->db->select_sum('total');
-        $this->db->where('po_order_id', $po_id);
-        $co_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
-        if(!empty($co_orders)) {
-            $result['po_contract_amount'] = $co_orders[0]['total'];
-        }
-
-        $this->db->select('total');
+        $this->db->select('subtotal');
         $this->db->where('id', $po_id);
         $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->row();
         if(!empty($pur_orders)) {
-            $result['po_this_bill'] = $pur_orders->total;
+            $result['po_contract_amount'] = $pur_orders->subtotal;
         }
 
         return $result;
