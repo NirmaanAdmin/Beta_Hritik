@@ -798,11 +798,18 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 									);
 								});
 							} else {
-								// $('#append_fillter_data').append('<a href="#" class="dropdown-item disabled">No results found</a>');
-								$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+								if(empty(designStage) && empty(discipline) && empty(purpose) && empty(status) && empty(controlled_document)) {
+									$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+								} else {
+									$('#append_fillter_data').append('<a href="#" class="dropdown-item disabled">No results found</a>');
+								}
 							}
 						}else{
-							$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+							if(empty(designStage) && empty(discipline) && empty(purpose) && empty(status) && empty(controlled_document)) {
+								$('#append_fillter_data').html(initialTableContent); // Restore the original table content
+							} else {
+								$('#append_fillter_data').append('<a href="#" class="dropdown-item disabled">No results found</a>');
+							}
 						}
 					}
 
