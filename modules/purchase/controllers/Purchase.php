@@ -1526,6 +1526,7 @@ class purchase extends AdminController
         $data['pur_request'] = $this->purchase_model->get_pur_request_by_status(2);
 
         $data['projects'] = $this->projects_model->get();
+        $data['item_group'] = $this->purchase_model->get_commodity_group_add_commodity();
 
         $this->load->view('purchase_order/manage', $data);
     }
@@ -9627,8 +9628,6 @@ class purchase extends AdminController
     }
     public function work_order($id = '')
     {
-        // die(;asdasd);
-        // die('asda');
         // if (!has_permission('work_orders', '', 'view') && !is_admin() && !has_permission('work_orders', '', 'view_own')) {
         //     access_denied('work_order');
         // }
@@ -9655,6 +9654,7 @@ class purchase extends AdminController
         $data['pur_request'] = $this->purchase_model->get_pur_request_by_status(2);
 
         $data['projects'] = $this->projects_model->get();
+        $data['item_group'] = $this->purchase_model->get_commodity_group_add_commodity();
         $this->load->view('work_order/manage', $data);
     }
     public function table_wo_order()

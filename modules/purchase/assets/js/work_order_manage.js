@@ -11,7 +11,7 @@ var expenseDropzone;
         "vendor": "[name='vendor_ft[]']",
         "status": "[name='status[]']",
         "item_filter": "[name='item_filter[]']",
-        "type": "[name='type[]']",
+        "group_pur": "[name='group_pur[]']",
         "project": "[name='project[]']",
         "department": "[name='department[]']",
         "delivery_status": "[name='delivery_status[]']",

@@ -80,11 +80,12 @@
                   </div>
 
                   <div class="col-md-3 form-group">
-                     <label for="type"><?php echo _l('type'); ?></label>
+                     <?php /* <label for="type"><?php echo _l('type'); ?></label>
                      <select name="type[]" id="type" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('leads_all'); ?>">
                         <option value="capex"><?php echo _l('capex'); ?></option>
                         <option value="opex"><?php echo _l('opex'); ?></option>
-                     </select>
+                     </select> */ ?>
+                     <?php echo render_select('group_pur[]', $item_group, array('id', 'name'), 'group_pur', '', array('data-width' => '100%', 'data-none-selected-text' => _l('leads_all'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
                   </div>
 
                   <div class="col-md-3 form-group">

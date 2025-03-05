@@ -90,6 +90,11 @@ if ($this->ci->input->post('vendor')
     array_push($where, 'AND vendor IN (' . implode(',', $this->ci->input->post('vendor')) . ')');
 }
 
+if ($this->ci->input->post('group_pur')
+    && count($this->ci->input->post('group_pur')) > 0) {
+    array_push($where, 'AND group_pur IN (' . implode(',', $this->ci->input->post('group_pur')) . ')');
+}
+
 if ($this->ci->input->post('project')
     && count($this->ci->input->post('project')) > 0) {
     array_push($where, 'AND project IN (' . implode(',', $this->ci->input->post('project')) . ')');
@@ -180,12 +185,12 @@ foreach ($rResult as $aRow) {
         }elseif($aColumns[$i] == 'wo_order_number'){
 
             $numberOutput = '';
-            $numberOutput .= '<a href="' . admin_url('purchase/work_order/' . $aRow['id']) . '"  onclick="init_wo_order(' . $aRow['id'] . '); return false;" >'.$aRow['wo_order_number']. '</a>';
+            $numberOutput .= '<a href="' . admin_url('purchase/work_order/' . $aRow['id']) . '"  onclick="init_wo_order(' . $aRow['id'] . '); small_table_full_view(); return false;" >'.$aRow['wo_order_number']. '</a>';
             
             $numberOutput .= '<div class="row-options">';
 
             if (has_permission('work_orders', '', 'view') || has_permission('work_orders', '', 'view_own')) {
-                $numberOutput .= ' <a href="' . admin_url('purchase/work_order/' . $aRow['id']) . '" onclick="init_wo_order(' . $aRow['id'] . '); return false;" >' . _l('view') . '</a>';
+                $numberOutput .= ' <a href="' . admin_url('purchase/work_order/' . $aRow['id']) . '" onclick="init_wo_order(' . $aRow['id'] . '); small_table_full_view(); return false;" >' . _l('view') . '</a>';
             }
             if ((has_permission('work_orders', '', 'edit') || is_admin()) && $aRow['approve_status'] != 2 ) {
                 $numberOutput .= ' | <a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '">' . _l('edit') . '</a>';
