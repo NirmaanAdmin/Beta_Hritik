@@ -188,6 +188,59 @@ $(function(){
           }
         }, 500);
       });
+
+      function get_order_date(order_date) {
+        var [day, month, year] = order_date.split('-');
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        function getOrdinalSuffix(day) {
+            if (day > 3 && day < 21) return day + "th"; // Special case for 11-20
+            switch (day % 10) {
+                case 1: return day + "st";
+                case 2: return day + "nd";
+                case 3: return day + "rd";
+                default: return day + "th";
+            }
+        }
+        var order_date_updated = `${getOrdinalSuffix(parseInt(day))} ${monthNames[parseInt(month) - 1]} ${year}`;
+
+        var [day, month, year] = order_date.split('-'); // Extract day, month, year
+        var monthAbbr = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        day = day.padStart(2, '0');
+        var formattedDate = `${day}-${monthAbbr[parseInt(month) - 1]}-${year}`;
+
+        setTimeout(function () {
+          var editor = tinymce.get('order_summary');
+          if (editor) {
+              var currentContent = editor.getContent();
+              if (order_date_updated) {
+                  currentContent = currentContent.replace(
+                      /<span class="order_date">.*?<\/span>/g,
+                      '<span class="order_date">' + order_date_updated + '</span>'
+                  );
+              }
+              if (formattedDate) {
+                  currentContent = currentContent.replace(
+                      /<span class="order_full_date">.*?<\/span>/g,
+                      '<span class="order_full_date">' + formattedDate + '</span>'
+                  );
+              }
+              editor.setContent(currentContent);
+          } else {
+              console.error("TinyMCE is not initialized yet.");
+          }
+        }, 500);
+      }
+
+      $("body").on('change', 'input[name="order_date"]', function () {
+        var order_date = $(this).val();
+        get_order_date(order_date);
+      });
     });
 
 var lastAddedItemKey = null;
@@ -564,10 +617,10 @@ function pur_calculate_total(from_discount_money){
   $('.adjustment').html(format_money(adjustment));
   $('.wh-subtotal').html(format_money(subtotal) + hidden_input('total_mn', accounting.toFixed(subtotal, app.options.decimal_places)));
   $('.wh-total').html(format_money(total) + hidden_input('grand_total', accounting.toFixed(total, app.options.decimal_places)));
-  // subtotal_value_order_detail(subtotal);
-  // subtotal_amount_order_detail(subtotal);
-  // total_value_order_detail(total);
-  // total_tax_value_order_detail(total_tax_money);
+  subtotal_value_order_detail(subtotal);
+  subtotal_amount_order_detail(subtotal);
+  total_value_order_detail(total);
+  total_tax_value_order_detail(total_tax_money);
 
   $(document).trigger('purchase-quotation-total-calculated');
 
