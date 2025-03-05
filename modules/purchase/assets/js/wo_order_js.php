@@ -618,7 +618,7 @@ function pur_calculate_total(from_discount_money){
   $('.wh-subtotal').html(format_money(subtotal) + hidden_input('total_mn', accounting.toFixed(subtotal, app.options.decimal_places)));
   $('.wh-total').html(format_money(total) + hidden_input('grand_total', accounting.toFixed(total, app.options.decimal_places)));
   subtotal_value_order_detail(subtotal);
-  subtotal_amount_order_detail(subtotal);
+  total_amount_order_detail(total);
   total_value_order_detail(total);
   total_tax_value_order_detail(total_tax_money);
 
@@ -680,16 +680,16 @@ function total_tax_value_order_detail(total_tax) {
   }, 500);
 }
 
-function subtotal_amount_order_detail(subtotal) {
-  var subtotal_word = numberToWords(subtotal);
+function total_amount_order_detail(total) {
+  var total_word = numberToWords(total);
   setTimeout(function () {
   var editor = tinymce.get('order_summary');
     if (editor) {
       var currentContent = editor.getContent();
-      if (subtotal_word) {
+      if (total_word) {
           currentContent = currentContent.replace(
               /<span class="subtotal_in_words">.*?<\/span>/g,
-              '<span class="subtotal_in_words">' + subtotal_word + '</span>'
+              '<span class="subtotal_in_words">' + total_word + '</span>'
           );
       }
       editor.setContent(currentContent);
