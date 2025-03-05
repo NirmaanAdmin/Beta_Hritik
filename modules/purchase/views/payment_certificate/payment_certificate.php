@@ -6,12 +6,13 @@
     border-collapse: collapse;
   }
   .table th {
+    text-align: left;
     font-weight: bold !important;
   }
   .table th, .table td {
     border: 1px solid black !important;
     padding: 8px;
-    text-align: center;
+    text-align: left;
     color: black !important;
   }
   .table thead, .table_head {
@@ -110,12 +111,12 @@
                   <table class="table items no-mtop">
                     <thead>
                       <tr>
-                        <th align="center" width="5%"><?php echo _l('serial_no'); ?></th>
-                        <th align="center" width="43%"><?php echo _l('decription'); ?></th>
-                        <th align="center" width="13%"><?php echo _l('contract_amount'); ?></th>
-                        <th align="center" width="13%"><?php echo _l('previous'); ?></th>
-                        <th align="center" width="13%"><?php echo _l('this_bill'); ?></th>
-                        <th align="center" width="13%"><?php echo _l('comulative'); ?></th>
+                        <th width="5%"><?php echo _l('serial_no'); ?></th>
+                        <th width="43%"><?php echo _l('decription'); ?></th>
+                        <th width="13%"><?php echo _l('contract_amount'); ?></th>
+                        <th width="13%"><?php echo _l('previous'); ?></th>
+                        <th width="13%"><?php echo _l('this_bill'); ?></th>
+                        <th width="13%"><?php echo _l('comulative'); ?></th>
                       </tr>
                     </thead>
                     <tbody class="payment_certificate_body">
@@ -266,7 +267,7 @@
                         <td class="works_executed_on_a_class">
                           <?php echo _l('works_executed_5_of_A'); ?>
                           <select name="works_executed_on_a" id="works_executed_on_a" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
-                            <option value=""></option>
+                            <option value="0%" <?php if (isset($payment_certificate) && $payment_certificate->works_executed_on_a == '0%') { echo 'selected';} ?>>0%</option>
                             <option value="5%" <?php if (isset($payment_certificate) && $payment_certificate->works_executed_on_a == '5%') { echo 'selected';} ?>>5%</option>
                             <option value="10%" <?php if (isset($payment_certificate) && $payment_certificate->works_executed_on_a == '10%') { echo 'selected';} ?>>10%</option>
                           </select>
@@ -457,7 +458,7 @@
                         <td class="labour_cess_class">
                           <?php echo _l('labour_cess'); ?>
                           <select name="labour_cess" id="labour_cess" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
-                            <option value=""></option>
+                            <option value="0%" <?php if (isset($payment_certificate) && $payment_certificate->labour_cess == '0%') { echo 'selected';} ?>>0%</option>
                             <option value="1%" <?php if (isset($payment_certificate) && $payment_certificate->labour_cess == '1%') { echo 'selected';} ?>>1%</option>
                           </select>
                         </td>

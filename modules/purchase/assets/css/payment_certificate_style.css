@@ -351,12 +351,12 @@ span.print-barcode-td-height{
 
 .pay_cert_title td {
 	font-weight: bold;
-	text-align: center;
+	text-align: left;
 	background-color: #f2f2f2;
 }
 
 .pay_cert_value td {
-	text-align: center;
+	text-align: left;
 }
 
 .footer_cert_title td {
