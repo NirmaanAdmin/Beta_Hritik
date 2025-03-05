@@ -3581,9 +3581,9 @@ function get_by_deafult_order_summary()
 <p class="p3">Ref: Bl/JAMNAGR/24-25/026 <strong><br>Dated: <span class="order_full_date">'.date("d-M-Y").'</span></strong></p>
 <p class="p5">To,<b></b></p>
 <p class="p6"><b>M/s. <span class="vendor_name"></span><br></b><span class="vendor_address"></span><br><span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br>Email:<span class="s2"> </span><span class="s1"><span class="vendor_contact_email"></span></span> <br>Contact - <span class="vendor_contact_phone"><br>GST Registration no- <span class="vendor_gst"></span><br>Bank Details:<span class="vendor_bank_details"></span></p>
-<p class="p5">Dear Mr. Kanaiyalal Misstry,</p>
+<p class="p5">Dear Mr. <span class="vendor_name"></span>,</p>
 <p class="p5"><b>Sub: Work Order for <span class="wo_order_name"></span> at Basilius Guest House in Jamnagar, Gujarat. </b></p>
-<p class="p7">As subsequent discussions we had with you, We at <b>Basilius International LLP</b> (referred as Employer), accept your final offer and appoint <b>M/s. <span class="vendor_name"></span></b> (herein after called the Contractor) for<b> <span class="wo_order_name"></span> at Basilius Guest House in Jamnagar, Gujarat.</b> on the basis of detailed Bill of Quantities inclusive of remedying of any defects and safety measures of the above project for the item rate Contract Amount of <b>INR <span class="subtotal_in_value"></span>/- (<span class="subtotal_in_words"></span> only) inclusive of GST, as tabulated below; </b></p>
+<p class="p7">As subsequent discussions we had with you, We at <b>Basilius International LLP</b> (referred as Employer), accept your final offer and appoint <b>M/s. <span class="vendor_name"></span></b> (herein after called the Contractor) for<b> <span class="wo_order_name"></span> at Basilius Guest House in Jamnagar, Gujarat.</b> on the basis of detailed Bill of Quantities inclusive of remedying of any defects and safety measures of the above project for the item rate Contract Amount of <b>INR <span class="total_in_value"></span>/- (<span class="subtotal_in_words"></span> only) inclusive of GST, as tabulated below; </b></p>
 <p class="p4"><b></b></p>
 <table cellspacing="0" cellpadding="0" class="t1">
 <tbody>
@@ -3725,7 +3725,7 @@ function get_by_deafult_order_summary()
 <p class="p27"><b><span class="Apple-tab-span"> ____________________________________</span></b></p>
 <p class="p28"><b>ACKNOWLEDGMENT</b></p>
 <p class="p29"></p>
-<p class="p7">I, ____________________________________ in the capacity of Authorized Signatory to sign for and on behalf of <b>Rashi Interior, </b>hereby acknowledge the receipt of your Work Order and confirm acceptance of the terms and conditions stated therein.</p>
+<p class="p7">I, ____________________________________ in the capacity of Authorized Signatory to sign for and on behalf of <b><span class="vendor_name"></span>, </b>hereby acknowledge the receipt of your Work Order and confirm acceptance of the terms and conditions stated therein.</p>
 <p class="p1"></p>
 <p class="p1"></p>
 <p class="p1"></p>
