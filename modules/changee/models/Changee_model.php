@@ -1579,6 +1579,26 @@ class Changee_model extends App_Model
                 $cron_email['options'] = json_encode($cron_email_options, true);
                 $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
+        }
+
+        if ($status == 2) {
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'co_request');
+            $this->db->where('staffid', get_staff_user_id());
+            $this->db->update(db_prefix() . 'co_approval_details', ['approve_by_admin' => 1, 'approve' => 2, 'date' => date('Y-m-d H:i:s')]);
+
+            if ($this->db->affected_rows() == 0) {
+                $row = array();
+                $row['approve'] = 2;
+                $row['action'] = 'approve';
+                $row['staffid'] = get_staff_user_id();
+                $row['date'] = date('Y-m-d H:i:s');
+                $row['date_send'] = date('Y-m-d H:i:s');
+                $row['rel_id'] = $id;
+                $row['rel_type'] = 'co_request';
+                $row['approve_by_admin'] = 1;
+                $this->db->insert('tblco_approval_details', $row);
+            }
             return true;
         }
         return false;
@@ -2300,6 +2320,26 @@ class Changee_model extends App_Model
             }
 
             // hooks()->apply_filters('create_goods_receipt',['status' => $status,'id' => $id]);
+        }
+
+        if ($status == 2) {
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'pur_order');
+            $this->db->where('staffid', get_staff_user_id());
+            $this->db->update(db_prefix() . 'co_approval_details', ['approve_by_admin' => 1]);
+
+            if ($this->db->affected_rows() == 0) {
+                $row = array();
+                $row['approve'] = 2;
+                $row['action'] = 'approve';
+                $row['staffid'] = get_staff_user_id();
+                $row['date'] = date('Y-m-d H:i:s');
+                $row['date_send'] = date('Y-m-d H:i:s');
+                $row['rel_id'] = $id;
+                $row['rel_type'] = 'pur_order';
+                $row['approve_by_admin'] = 1;
+                $this->db->insert('tblco_approval_details', $row);
+            }
             return true;
         }
         return false;
