@@ -54,11 +54,12 @@ if(get_status_modules_pur('hr_profile') == true){
 						<?php echo render_select('project_id', $projects, array('id','name'), 'project'); ?>
 						<?php echo render_input('name','subject','','text'); ?>
 						<?php $related = [ 
-								0 => ['id' => 'pur_request', 'name' => _l('pur_request')],
-								1 => ['id' => 'pur_quotation', 'name' => _l('pur_quotation')],
 								2 => ['id' => 'pur_order', 'name' => _l('pur_order')],
-								3 => ['id' => 'payment_request', 'name' => _l('payment_request')],
 								4 => ['id' => 'wo_order', 'name' => _l('wo_order')],
+								5 => ['id' => 'payment_certificate', 'name' => _l('payment_certificate')],
+								1 => ['id' => 'pur_quotation', 'name' => _l('pur_quotation')],
+								0 => ['id' => 'pur_request', 'name' => _l('pur_request')],
+								3 => ['id' => 'payment_request', 'name' => _l('payment_request')],
 							]; ?>
 						<?php echo render_select('related',$related,array('id','name'),'task_single_related'); ?>
 						<div class="select-placeholder form-group">

@@ -900,6 +900,7 @@ if ($estimate->currency != 0) {
                      <th><?php echo _l('po_no'); ?></th>
                      <th><?php echo _l('convert'); ?></th>
                      <th><?php echo _l('options'); ?></th>
+                     <th><?php echo _l('approval_status'); ?></th>
                   </thead>
                   <tbody>
                      <?php foreach ($payment_certificate as $pay) { ?>
@@ -907,10 +908,15 @@ if ($estimate->currency != 0) {
                            <td><?php echo $pay['serial_no']; ?></td>
                            <td><?php echo $estimate->pur_order_number; ?></td>
                            <td>
-                              <a href="<?php echo admin_url('purchase/convert_pur_invoice_from_po/' . $pay['id']); ?>" class="btn btn-info convert-pur-invoice" target="_blank"><?php echo _l('convert_to_vendor_bill'); ?></a>
+                              <?php if($pay['approve_status'] == 2) { ?>
+                                 <a href="<?php echo admin_url('purchase/convert_pur_invoice_from_po/' . $pay['id']); ?>" class="btn btn-info convert-pur-invoice" target="_blank"><?php echo _l('convert_to_vendor_bill'); ?></a>
+                              <?php } ?>
                            </td>
                            <td>
-                           <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
+                           <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id'] .'/1'); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
+                           <?php if($pay['approve_status'] == 1) { ?>
+                              <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('edit'); ?>"><i class="fa fa-pencil-square "></i></a>
+                           <?php } ?>
                            <a href="<?php echo admin_url('purchase/delete_payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
                            <div class="btn-group">
                               <a href="javascript:void(0)" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
@@ -925,6 +931,24 @@ if ($estimate->currency != 0) {
                                  </li>
                               </ul>
                            </div>
+                           </td>
+                           <td>
+                              <?php 
+                              $list_approval_details = get_list_approval_details($pay['id'], 'payment_certificate');
+                              if(empty($list_approval_details)) { ?>
+                                 <?php if($pay['approve_status'] == 2) { ?>
+                                    <span class="label label-primary"><?php echo _l('approved'); ?></span>
+                                 <?php } else { ?>
+                                    <a data-toggle="tooltip" data-loading-text="<?php echo _l('wait_text'); ?>" class="btn btn-success lead-top-btn lead-view" data-placement="top" href="#" onclick="send_payment_certificate_approve(<?php echo pur_html_entity_decode($pay['id']); ?>); return false;"><?php echo _l('send_request_approve_pur'); ?></a>
+                                 <?php } ?>
+                              <?php } else if($pay['approve_status'] == 1) { ?>
+                                 <span class="label label-primary"><?php echo _l('pur_draft'); ?></span>
+                              <?php } else if($pay['approve_status'] == 2) { ?>
+                                 <span class="label label-primary"><?php echo _l('approved'); ?></span>
+                              <?php } else if($pay['approve_status'] == 3) { ?>
+                                 <span class="label label-danger"><?php echo _l('rejected'); ?></span>
+                              <?php } else { ?>
+                              <?php } ?>
                            </td>
                         </tr>
                      <?php } ?>

@@ -158,7 +158,7 @@ function calculate_payment_certificate() {
 	        var less_ah_2 = $('input[name="less_ah_2"]').val();
 	        less_ah_2 = less_ah_2.trim() != "" ? less_ah_2 : 0;
 	        var less_ah_3 = $('input[name="less_ah_3"]').val();
-	        less_ah_3 = less_ah_2.trim() != "" ? less_ah_3 : 0;
+	        less_ah_3 = less_ah_3.trim() != "" ? less_ah_3 : 0;
 	        var less_ah_4 = parseFloat(less_ah_2) + parseFloat(less_ah_3);
 	        $('.less_ah_4').html(format_money(less_ah_4, true));
 
@@ -263,6 +263,40 @@ function calculate_payment_certificate() {
 	        $('.amount_rec_4').html(format_money(amount_rec_4, true));
 	    });
 	}
+}
+
+function approve_payment_certificate_request(id){
+  "use strict";
+  payment_certificate_request_approval_status(id,2);
+}
+function deny_payment_certificate_request(id){
+  "use strict";
+   payment_certificate_request_approval_status(id,3);
+}
+
+function payment_certificate_request_approval_status(id, status){
+  "use strict";
+  var data = {};
+  data.rel_id = id;
+  data.rel_type = 'payment_certificate';
+  data.approve = status;
+  data.note = $('textarea[name="reason"]').val();
+  $.post(admin_url + 'purchase/payment_certificate_request/' + id, data).done(function(response){
+      response = JSON.parse(response); 
+      if (response.success === true || response.success == 'true') {
+          alert_float('success', response.message);
+          window.location.reload();
+      }
+  });
+}
+
+function change_status_pay_cert(invoker,id){
+  "use strict"; 
+   $.post(admin_url+'purchase/change_status_pay_cert/'+invoker.value+'/'+id).done(function(reponse){
+    reponse = JSON.parse(reponse);
+    alert_float('success', reponse.result);
+    window.location.reload();
+  });
 }
 
 $("body").on('click', '.pay-cert-submit', function () { 

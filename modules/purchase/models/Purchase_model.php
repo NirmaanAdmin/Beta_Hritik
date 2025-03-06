@@ -17793,35 +17793,48 @@ class Purchase_model extends App_Model
         </table>
         <br><br>';
 
-        $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
-            <tbody>
-                <tr class="footer_cert_title">
-                  <td style="width:25%">Payment Authorized</td>
-                  <td style="width:25%">Project Coordinator</td>
-                  <td style="width:25%">Project Head</td>
-                  <td style="width:25%">Director</td>
-                </tr>
-                <tr class="footer_cert_title">
-                  <td>Name</td>
-                  <td>Rupesh Singh</td>
-                  <td>Rahul Singh</td>
-                  <td>Abhishek Intodia</td>
-                </tr>
-                <tr class="footer_cert_title">
-                  <td>Signature</td>
-                  <td style="height: 80px"></td>
-                  <td style="height: 80px"></td>
-                  <td style="height: 80px"></td>
-                </tr>
-                <tr class="footer_cert_title">
-                  <td>Date</td>
-                  <td>'.date('d-m-Y').'</td>
-                  <td>'.date('d-m-Y').'</td>
-                  <td>'.date('d-m-Y').'</td>
-                </tr>
-            </tbody>
-        </table>
-        <br><br>';
+        $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
+        $approved_by_admin_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px">';
+        $approved_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px">';
+        $rejected_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px">';
+
+        $html .= '<table class="table" style="width: 100%" style="font-size:13px">
+            <tbody>';
+
+        if(!empty($list_approve_status)) {
+            $html .= '<tr class="footer_cert_title">';
+            foreach($list_approve_status as $akey => $avalue) {
+                $html .= '
+                  <td>'.get_staff_full_name($avalue['staffid']).'</td>
+                ';
+            }
+            $html .= '</tr>';
+
+            $html .= '<tr class="footer_cert_title">';
+            foreach ($list_approve_status as $akey => $avalue) {
+                $html .= '<td>';
+                if ($avalue['approve'] == 2) {
+                    if ($avalue['approve_by_admin'] == 1) {
+                        $html .= $approved_by_admin_image;
+                    } else {
+                        $html .= $approved_image;
+                    }
+                } elseif ($avalue['approve'] == 3) {
+                    $html .= $rejected_image;
+                }
+                if($avalue['note']) {
+                    $html .= '<br>';
+                    $html .= $avalue['note'];
+                }
+                $html .= '<br>';
+                $html .= _dt($avalue['date']);
+                $html .= '</td>';
+            }
+
+            $html .= '</tr>';
+        }
+            
+        $html .= '</tbody></table><br><br>';
 
         $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/payment_certificate_style.css') . '"  rel="stylesheet" type="text/css" />';
 
@@ -17833,5 +17846,125 @@ class Purchase_model extends App_Model
         $pay_cert_data = $this->get_payment_certificate($id);
         $footer_text = '';
         return app_pdf('payment_certificate', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Payment_certificate_pdf'), $payment_certificate, $footer_text);
+    }
+
+    public function send_payment_certificate_approve($data)
+    {
+        if (!isset($data['status'])) {
+            $data['status'] = '';
+        }
+        $date_send = date('Y-m-d H:i:s');
+        $sender = get_staff_user_id();
+        $project = 0;
+        $rel_name = 'payment_certificate';
+        $module = $this->get_payment_certificate($data['rel_id']);
+        $pur_order = $this->get_pur_order($module->po_id);
+        $project = $pur_order->project;
+        $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
+
+        foreach ($data_new as $key => $value) {
+            $row = [];
+            $row['action'] = 'approve';
+            $row['staffid'] = $value['id'];
+            $row['date_send'] = $date_send;
+            $row['rel_id'] = $data['rel_id'];
+            $row['rel_type'] = $data['rel_type'];
+            $row['sender'] = $sender;
+            $this->db->insert('tblpayment_certificate_details', $row);
+        }
+        return true;
+    }
+
+    public function get_list_pay_cert_approval_details($rel_id, $rel_type)
+    {
+        $this->db->select('*');
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        return $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
+    }
+
+    public function check_pay_cert_approval_details($rel_id, $rel_type)
+    {
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        $approve_status = $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
+        if (count($approve_status) > 0) {
+            foreach ($approve_status as $value) {
+                if($value['staffid'] == get_staff_user_id()) {
+                    if ($value['approve'] == -1) {
+                        return 'reject';
+                    }
+                    if ($value['approve'] == 0) {
+                        $value['staffid'] = explode(', ', $value['staffid']);
+                        return $value;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public function get_pay_cert_staff_sign($rel_id, $rel_type)
+    {
+        $this->db->select('*');
+
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        $this->db->where('action', 'sign');
+        $approve_status = $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
+        if (isset($approve_status)) {
+            $array_return = [];
+            foreach ($approve_status as $key => $value) {
+                array_push($array_return, $value['staffid']);
+            }
+            return $array_return;
+        }
+        return [];
+    }
+
+    public function update_pay_cert_approval_details($id, $data)
+    {
+        $data['date'] = date('Y-m-d H:i:s');
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'payment_certificate_details', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function update_pay_cert_approve_request($rel_id, $rel_type, $status)
+    {
+        $all_approved = $this->db->query("SELECT COUNT(*) = SUM(approve = 2) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '".$rel_id."' AND rel_type = '".$rel_type."'")->result_array();
+
+        $all_rejected = $this->db->query("SELECT COUNT(*) = SUM(approve = 3) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '".$rel_id."' AND rel_type = '".$rel_type."'")->result_array();
+
+        if(!empty($all_approved)) {
+            if($all_approved[0]['all_approved'] == 1) {
+                $this->db->where('id', $rel_id);
+                $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => 2]);
+            }
+        }
+
+        if(!empty($all_rejected)) {
+            if($all_rejected[0]['all_rejected'] == 1) {
+                $this->db->where('id', $rel_id);
+                $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => 3]);
+            }
+        }
+
+        return true;
+    }
+
+    public function change_status_pay_cert($status, $id)
+    {
+        $original_po = $this->get_payment_certificate($id);
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => $status]);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
     }
 }
