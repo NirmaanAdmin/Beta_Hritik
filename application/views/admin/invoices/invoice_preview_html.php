@@ -103,6 +103,9 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
             <address>
                 <?php echo format_organization_info(); ?>
             </address>
+            <span id="invoice-name">
+                <?php echo $invoice->title; ?>
+            </span>
             <?php hooks()->do_action('after_left_panel_invoice_preview_template', $invoice); ?>
         </div>
         <div class="col-sm-6 text-right">
@@ -195,7 +198,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                             foreach ($annexures as $key => $annexure) { ?>
                                 <li>
                                     <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
-                                        <?php echo $annexure['name']." (".$annexure['annexure_name'].")" ?>
+                                        <?php echo $annexure['name']/*." (".$annexure['annexure_name'].")"*/ ?>
                                     </a>
                                 </li>
                             <?php } ?>
@@ -228,7 +231,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                         <?php echo $annexure_invoice['final_invoice']['name']; ?>
                                     </td>
                                     <td align="left">
-                                        <?php 
+                                        <?php
                                         echo clear_textarea_breaks($annexure_invoice['final_invoice']['description']);
                                         ?>
                                     </td>
@@ -245,7 +248,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['amount'], $base_currency); ?>
                                     </td>
                                     <td align="right">
-                                        <?php 
+                                        <?php
                                         echo clear_textarea_breaks($annexure_invoice['final_invoice']['remarks']);
                                         ?>
                                     </td>
@@ -330,7 +333,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                                 <?php echo app_format_money($ivalue['amount'], $base_currency); ?>
                                             </td>
                                         </tr>
-                                    <?php } 
+                                    <?php }
                                 } ?>
                             </tbody>
                         </table>
@@ -415,7 +418,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                                 </span>
                                             </td>
                                         </tr>
-                                    <?php } 
+                                    <?php }
                                 } ?>
                             </tbody>
                         </table>
@@ -471,7 +474,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
 
                 <?php
                 $annexures = get_all_annexures();
-                $i = 1; 
+                $i = 1;
                 foreach ($annexures as $key => $annexure) { ?>
                     <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>">
                         <div class="table-responsive s_table">
@@ -492,8 +495,8 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                    if (isset($invoice) || isset($add_items)) 
+                                    <?php
+                                    if (isset($invoice) || isset($add_items))
                                     {
                                         if (isset($invoice)) {
                                             $add_items = $invoice->items;

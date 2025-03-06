@@ -1,5 +1,4 @@
 <?php
-
 defined('BASEPATH') or exit('No direct script access allowed');
 
 $dimensions = $pdf->getPageDimensions();
@@ -44,7 +43,7 @@ if ($invoice->hsn_sac) {
     }
 }
 
-$organization_info .= '</div>';
+$organization_info .= '<br /><span>'.$invoice->title.'</span></div>';
 
 // Bill to
 $invoice_info = '<b>' . _l('invoice_bill_to') . ':</b>';

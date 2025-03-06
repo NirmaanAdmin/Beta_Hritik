@@ -903,7 +903,7 @@ class Invoices_model extends App_Model
                 );
             }
         }
-        
+
         if ($this->save_invoice_items($inv_items, $id)) {
             $updated = true;
         }
@@ -934,7 +934,7 @@ class Invoices_model extends App_Model
 
         $this->update_management_fees($id);
         $this->update_basic_invoice_details($id);
-        
+
         return $updated;
     }
 
@@ -1950,7 +1950,7 @@ class Invoices_model extends App_Model
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
             $items_group = $this->get_items_groups($annexure);
-            $indexa[$annexure]['name'] = $items_group->name." (".$items_group->annexure_name.")";
+            $indexa[$annexure]['name'] = $items_group->name/*." (".$items_group->annexure_name.")"*/;
             $indexa[$annexure]['description'] = '';
             $indexa[$annexure]['qty'] = 1;
             $indexa[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
@@ -1985,7 +1985,7 @@ class Invoices_model extends App_Model
             $all_annexures = get_all_annexures();
             foreach ($all_annexures as $akey => $avalue) {
                 $annexure = $avalue['id'];
-                $budgetsummary[$annexure]['name'] = $avalue['name']." (".$avalue['annexure_name'].")";
+                $budgetsummary[$annexure]['name'] = $avalue['name']/*." (".$avalue['annexure_name'].")"*/;
                 $budgetsummary[$annexure]['invoiceid'] = $invoiceid;
                 $budgetsummary[$annexure]['annexure'] = $annexure;
                 $budgeted_amount = 0;
@@ -2057,7 +2057,7 @@ class Invoices_model extends App_Model
                 $total_budget_summary['balance_available'] += $value['balance_available'];
             }
         }
-    
+
         $response = array();
         $response['indexa'] = $indexa;
         $response['final_invoice'] = $final_invoice;
@@ -2099,7 +2099,7 @@ class Invoices_model extends App_Model
         return true;
     }
 
-    public function update_management_fees($invoice_id) 
+    public function update_management_fees($invoice_id)
     {
         // $annexure_invoice = $this->get_annexure_invoice_details($invoice_id, true);
         // $this->db->where('rel_id', $invoice_id);
