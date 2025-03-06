@@ -43,7 +43,7 @@ if ($invoice->hsn_sac) {
     }
 }
 
-$organization_info .= '<br /><span>'.$invoice->title.'</span></div>';
+$organization_info .= '<br /><span><b>'.$invoice->title.'</b></span></div>';
 
 // Bill to
 $invoice_info = '<b>' . _l('invoice_bill_to') . ':</b>';
