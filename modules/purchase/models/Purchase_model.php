@@ -17476,14 +17476,78 @@ class Purchase_model extends App_Model
         return $this->db->delete('tblpayment_certificate');
     }
 
+    public function get_payment_certificate_calc($id)
+    {
+        $result = array();
+
+        $this->db->where('id', $id);
+        $pay_cert_data = $this->db->get(db_prefix() . 'payment_certificate')->result_array();
+        $result = !empty($pay_cert_data) ? $pay_cert_data[0] : array();
+
+        $po_contract_data = $this->get_po_contract_data($result['po_id']);
+        $po_contract_amount = $po_contract_data['po_contract_amount'];
+
+        $result['po_contract_amount'] = $po_contract_amount;
+        $result['po_comulative'] = $result['po_previous'] + $result['po_this_bill'];
+        $result['pay_cert_c1_4'] = $result['pay_cert_c1_2'] + $result['pay_cert_c1_3'];
+        $result['pay_cert_c2_4'] = $result['pay_cert_c2_2'] + $result['pay_cert_c2_3'];
+        $result['net_advance_1'] = $result['pay_cert_c1_1'] + $result['pay_cert_c2_1'];
+        $result['net_advance_2'] = $result['pay_cert_c1_2'] + $result['pay_cert_c2_2'];
+        $result['net_advance_3'] = $result['pay_cert_c1_3'] + $result['pay_cert_c2_3'];
+        $result['net_advance_4'] = $result['pay_cert_c1_4'] + $result['pay_cert_c2_4'];
+        $result['sub_total_ac_1'] = $po_contract_amount + $result['net_advance_1'];
+        $result['sub_total_ac_2'] = $result['po_previous'] + $result['net_advance_2'];
+        $result['sub_total_ac_3'] = $result['po_this_bill'] + $result['net_advance_3'];
+        $result['sub_total_ac_4'] = $result['sub_total_ac_2'] + $result['sub_total_ac_3'];
+        $result['works_exe_a_4'] = $result['works_exe_a_2'] + $result['works_exe_a_3'];
+        $result['works_exe_a_4'] = $result['works_exe_a_2'] + $result['works_exe_a_3'];
+        $result['ret_fund_4'] = $result['ret_fund_2'] + $result['ret_fund_3'];
+        $result['less_ret_1'] = $result['ret_fund_1'] + $result['works_exe_a_1'];
+        $result['less_ret_2'] = $result['ret_fund_2'] + $result['works_exe_a_2'];
+        $result['less_ret_3'] = $result['ret_fund_3'] + $result['works_exe_a_3'];
+        $result['less_ret_4'] = $result['less_ret_2'] + $result['less_ret_3'];
+        $result['sub_t_de_1'] = $result['sub_total_ac_1'] + $result['less_ret_1'];
+        $result['sub_t_de_2'] = $result['sub_total_ac_2'] + $result['less_ret_2'];
+        $result['sub_t_de_3'] = $result['sub_total_ac_3'] + $result['less_ret_3'];
+        $result['sub_t_de_4'] = $result['sub_t_de_2'] + $result['sub_t_de_3'];
+        $result['less_4'] = $result['less_2'] + $result['less_3'];
+        $result['less_ah_4'] = $result['less_ah_2'] + $result['less_ah_3'];
+        $result['less_aht_4'] = $result['less_aht_2'] + $result['less_aht_3'];
+        $result['less_ded_1'] = $result['less_1'];
+        $result['less_ded_2'] = $result['less_2'];
+        $result['less_ded_3'] = $result['less_3'];
+        $result['less_ded_4'] = $result['less_4'];
+        $result['sub_fg_1'] = $result['sub_t_de_1'] + $result['less_ded_1'];
+        $result['sub_fg_2'] = $result['sub_t_de_2'] + $result['less_ded_2'];
+        $result['sub_fg_3'] = $result['sub_t_de_3'] + $result['less_ded_3'];
+        $result['sub_fg_4'] = $result['sub_fg_2'] + $result['sub_fg_3'];
+        $result['cgst_on_a1'] = $po_contract_amount * 0.09;
+        $result['cgst_on_a2'] = $result['po_previous'] * 0.09;
+        $result['cgst_on_a3'] = $result['po_this_bill'] * 0.09;
+        $result['cgst_on_a4'] = $result['cgst_on_a2'] + $result['cgst_on_a3'];
+        $result['sgst_on_a1'] = $po_contract_amount * 0.09;
+        $result['sgst_on_a2'] = $result['po_previous'] * 0.09;
+        $result['sgst_on_a3'] = $result['po_this_bill'] * 0.09;
+        $result['sgst_on_a4'] = $result['sgst_on_a2'] + $result['sgst_on_a3'];
+        $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
+        $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['labour_cess_1'];
+        $result['tot_app_tax_2'] = $result['cgst_on_a2'] + $result['sgst_on_a2'] + $result['labour_cess_2'];
+        $result['tot_app_tax_3'] = $result['cgst_on_a3'] + $result['sgst_on_a3'] + $result['labour_cess_3'];
+        $result['tot_app_tax_4'] = $result['tot_app_tax_2'] + $result['tot_app_tax_3'];
+        $result['amount_rec_1'] = $result['sub_fg_1'] + $result['tot_app_tax_1'];
+        $result['amount_rec_2'] = $result['sub_fg_2'] + $result['tot_app_tax_2'];
+        $result['amount_rec_3'] = $result['sub_fg_3'] + $result['tot_app_tax_3'];
+        $result['amount_rec_4'] = $result['amount_rec_2'] + $result['amount_rec_3'];
+        return $result;
+    }
+
     public function get_paymentcertificate_pdf_html($id)
     {
         $html = '';
-        $pay_cert_data = $this->get_payment_certificate($id);
-        $pur_order = $this->get_pur_order($pay_cert_data->po_id);
-        $po_contract_data = $this->get_po_contract_data($pay_cert_data->po_id);
-        $po_contract_amount = $po_contract_data['po_contract_amount'];
-        $po_comulative = $pay_cert_data->po_previous + $pay_cert_data->po_this_bill;
+        $payment_certificate = $this->get_payment_certificate($id);
+        $pur_order = $this->get_pur_order($payment_certificate->po_id);
+        $pay_cert_data = $this->get_payment_certificate_calc($id);
+        $pay_cert_data = (object) $pay_cert_data;
 
         $logo = '';
         $company_logo = get_option('company_logo_dark');
@@ -17560,18 +17624,18 @@ class Purchase_model extends App_Model
                 <tr class="pay_cert_value">
                   <td>A1</td>
                   <td>'.$pur_order->pur_order_name.'</td>
-                  <td>'.app_format_money($po_contract_amount, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_contract_amount, '').'</td>
                   <td>'.app_format_money($pay_cert_data->po_previous, '').'</td>
                   <td>'.app_format_money($pay_cert_data->po_this_bill, '').'</td>
-                  <td>'.app_format_money($po_comulative, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_comulative, '').'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>A</td>
                   <td>'._l('total_value_of_works_executed').'</td>
-                  <td>'.app_format_money($po_contract_amount, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_contract_amount, '').'</td>
                   <td>'.app_format_money($pay_cert_data->po_previous, '').'</td>
                   <td>'.app_format_money($pay_cert_data->po_this_bill, '').'</td>
-                  <td>'.app_format_money($po_comulative, '').'</td>
+                  <td>'.app_format_money($pay_cert_data->po_comulative, '').'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>B</td>
