@@ -5,11 +5,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $aColumns = [
     'id',
     'goods_delivery_code',
-    'customer_code',
     'date_add',
     'invoice_id',
-    'to_', 
-    'address',
     'staff_id',
     'approval',
     'delivery_status',
@@ -28,7 +25,7 @@ if($this->ci->input->post('day_vouchers')){
 if (isset($day_vouchers)) {
 
     $where[] = ' AND tblgoods_delivery.date_add <= "' . $day_vouchers . '"';
-    
+
 }
 
 
@@ -52,8 +49,6 @@ $output  = $result['output'];
 $rResult = $result['rResult'];
 
 foreach ($rResult as $aRow) {
-    $row = [];
-
    for ($i = 0; $i < count($aColumns); $i++) {
     $CI           = & get_instance();
 
@@ -104,7 +99,7 @@ foreach ($rResult as $aRow) {
             $name .= '<div class="row-options">';
 
             $name .= '<a href="' . admin_url('warehouse/edit_delivery/' . $aRow['id'] ).'" >' . _l('view') . '</a>';
-            
+
             if((has_permission('warehouse', '', 'edit') || is_admin()) && ($aRow['approval'] == 0)){
                 $name .= ' | <a href="' . admin_url('warehouse/goods_delivery/' . $aRow['id'] ).'" >' . _l('edit') . '</a>';
             }
@@ -122,7 +117,7 @@ foreach ($rResult as $aRow) {
                     $name .= ' | <a href="' . admin_url('warehouse/revert_goods_delivery/' . $aRow['id'] ).'" class="text-danger _delete" >' . _l('delete_after_approval') . '</a>';
                 }
             }
-            
+
 
             $name .= '</div>';
 
@@ -134,7 +129,7 @@ foreach ($rResult as $aRow) {
         }elseif($aColumns[$i] == 'address') {
             $_data = $aRow['address'];
         }elseif($aColumns[$i] == 'approval') {
-             
+
              if($aRow['approval'] == 1){
                 $_data = '<span class="label label-tag tag-id-1 label-tab1"><span class="tag">'._l('approved').'</span><span class="hide">, </span></span>&nbsp';
              }elseif($aRow['approval'] == 0){
@@ -153,7 +148,7 @@ foreach ($rResult as $aRow) {
             $pdf .= '<li><a href="' . admin_url('warehouse/stock_export_pdf/' . $aRow['id']) . '">' . _l('download') . '</a></li>';
             $pdf .= '<li><a href="' . admin_url('warehouse/stock_export_pdf/' . $aRow['id'] . '?print=true') . '" target="_blank">' . _l('print') . '</a></li>';
             $pdf .= '</ul>';
-            
+
 
             // Add the View/Edit button
             if (has_permission("warehouse", "", "edit")) {
@@ -164,7 +159,7 @@ foreach ($rResult as $aRow) {
 
             $_data .= $pdf;
         }
-   
+
 
 
         $row[] = $_data;

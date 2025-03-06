@@ -146,15 +146,15 @@ if ($estimate->currency != 0) {
                   <p class="bold p_mar"><?php echo _l('order_status') . ': '; ?><span class="label <?php echo pur_html_entity_decode($order_status_class); ?>"><?php echo pur_html_entity_decode($order_status_text); ?></span></p>
                <?php } ?>
 
-               <?php $clients_ids = explode(',', $estimate->clients ?? ''); ?>
-               <?php if (count($clients_ids) > 0) { ?>
+               <?php /*$clients_ids = explode(',', $estimate->clients ?? ''); */?><!--
+               <?php /*if (count($clients_ids) > 0) { */?>
 
-                  <p class="bold p_mar"><?php echo _l('clients') . ': ' ?></p>
-                  <?php foreach ($clients_ids as $ids) {
-                  ?>
-                     <a href="<?php echo admin_url('clients/client/' . $ids); ?>"><span class="label label-tag"><?php echo get_company_name($ids); ?></span></a>
-                  <?php } ?>
-               <?php } ?>
+                  <p class="bold p_mar"><?php /*echo _l('clients') . ': ' */?></p>
+                  <?php /*foreach ($clients_ids as $ids) {
+                  */?>
+                     <a href="<?php /*echo admin_url('clients/client/' . $ids); */?>"><span class="label label-tag"><?php /*echo get_company_name($ids); */?></span></a>
+                  <?php /*} */?>
+               --><?php /*} */?>
 
                <p class="bold p_mar"><?php echo _l('cat') . ': ' ?>
                   <?php
@@ -168,11 +168,11 @@ if ($estimate->currency != 0) {
                                                                                  echo $group['name'];
                                                                               }
                                                                            } ?> </p>
-               <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
+<!--               <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
                                                                                     if ($group['id'] == $pur_order->sub_groups_pur) {
                                                                                        echo $group['sub_group_name'];
                                                                                     }
-                                                                                 } ?> </p>
+                                                                                 } ?> </p>-->
                <p class="bold p_mar"><?php echo _l('hsn_sac') . ': ' ?> <?php echo get_hsn_sac_name_by_id($pur_order->hsn_sac); ?></p>
                <p class="bold p_mar"><?php echo _l('purchase_requestor') . ': ' ?> <?php echo get_staff_full_name($pur_order->addedfrom); ?></p>
 
@@ -721,8 +721,8 @@ if ($estimate->currency != 0) {
                               <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
                            <?php } ?>
                         </a>
-                        <?php 
-                           
+                        <?php
+
                            echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                      ?>
                   <?php echo '</div>';

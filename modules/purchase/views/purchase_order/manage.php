@@ -3,13 +3,13 @@
 <style>
    .show_hide_columns {
       position: absolute;
-      z-index: 99999;
+      z-index: 5000;
       left: 204px
    }
 
    .show_hide_columns1 {
       position: absolute;
-      z-index: 99999;
+      z-index: 5000;
       left: 204px
    }
 </style>
@@ -145,7 +145,7 @@
                               'po_description',
                               'order_date',
                               'group_pur',
-                              'sub_groups_pur',
+                              //'sub_groups_pur',
                               'cat',
                               'project',
                               'department',
@@ -178,7 +178,7 @@
                         _l('po_description'),
                         _l('order_date'),
                         _l('group_pur'),
-                        _l('sub_groups_pur'),
+//                        _l('sub_groups_pur'),
                         // _l('area_pur'),
                         _l('cat'),
                         _l('project'),

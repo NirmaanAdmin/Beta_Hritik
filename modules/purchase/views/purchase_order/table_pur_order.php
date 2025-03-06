@@ -12,7 +12,7 @@ $aColumns = [
     'pur_order_name',
     'order_date',
     'group_name',
-    'sub_group_name',
+//    'sub_group_name',
     // 'area_name',
     'kind',
     'project',
@@ -20,10 +20,10 @@ $aColumns = [
     'approve_status',
     // 'expense_convert',
     'subtotal',
-    'total_tax',   
+    'total_tax',
     'total',
-    '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags', 
-    
+    '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags',
+
     'delivery_date',
     'delivery_status',
     'number',
@@ -34,11 +34,11 @@ if(isset($vendor) || isset($project)){
     'pur_order_number',
     'total',
     'total_tax',
-    'vendor', 
+    'vendor',
     'order_date',
     'number',
     'approve_status',
-    
+
     ];
 }
 
@@ -192,7 +192,7 @@ foreach ($rResult as $aRow) {
 
             $numberOutput = '';
             $numberOutput .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow['id']) . '"  onclick="init_pur_order(' . $aRow['id'] . '); small_table_full_view(); return false;" >'.$aRow['pur_order_number']. '</a>';
-            
+
             $numberOutput .= '<div class="row-options">';
 
             if (has_permission('purchase_orders', '', 'view') || has_permission('purchase_orders', '', 'view_own')) {
@@ -234,7 +234,7 @@ foreach ($rResult as $aRow) {
                 }
             }
         }elseif($aColumns[$i] == '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags'){
-                
+
                 $_data = render_tags($aRow['tags']);
 
         }elseif($aColumns[$i] == 'type'){
@@ -257,7 +257,7 @@ foreach ($rResult as $aRow) {
             }else if($aRow['delivery_status'] == 3){
                 $delivery_status = '<span class="inline-block label label-warning" id="status_span_'.$aRow['id'].'" task-status-table="partially_delivered">'._l('partially_delivered');
             }
-            
+
             if(has_permission('purchase_orders', '', 'edit') || is_admin()){
                 $delivery_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
                 $delivery_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
@@ -335,7 +335,7 @@ foreach ($rResult as $aRow) {
 
                 $delivery_status .= '</ul>';
                 $delivery_status .= '</div>';
-                
+
             }
             $delivery_status .= '</span>';
             $_data = $delivery_status;
@@ -352,7 +352,7 @@ foreach ($rResult as $aRow) {
 
             }
 
-            
+
 
             $_data = '<div class="progress">
 

@@ -12,7 +12,7 @@ $aColumns = [
     'wo_order_name',
     'order_date',
     'group_name',
-    'sub_group_name',
+//    'sub_group_name',
     // 'area_name',
     'type',
     'project',
@@ -22,7 +22,7 @@ $aColumns = [
     'subtotal',
     'total_tax',
     'total',
-    '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'wo_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags', 
+    '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'wo_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags',
     'number',
     ];
 
@@ -31,11 +31,11 @@ if(isset($vendor) || isset($project)){
     'wo_order_number',
     'total',
     'total_tax',
-    'vendor', 
+    'vendor',
     'order_date',
     'number',
     'approve_status',
-    
+
     ];
 }
 
@@ -186,7 +186,7 @@ foreach ($rResult as $aRow) {
 
             $numberOutput = '';
             $numberOutput .= '<a href="' . admin_url('purchase/work_order/' . $aRow['id']) . '"  onclick="init_wo_order(' . $aRow['id'] . '); small_table_full_view(); return false;" >'.$aRow['wo_order_number']. '</a>';
-            
+
             $numberOutput .= '<div class="row-options">';
 
             if (has_permission('work_orders', '', 'view') || has_permission('work_orders', '', 'view_own')) {
@@ -228,7 +228,7 @@ foreach ($rResult as $aRow) {
                 }
             }
         }elseif($aColumns[$i] == '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'wo_orders.id and rel_type="pur_order" ORDER by tag_order ASC) as tags'){
-                
+
                 $_data = render_tags($aRow['tags']);
 
         }elseif($aColumns[$i] == 'type'){
@@ -250,7 +250,7 @@ foreach ($rResult as $aRow) {
 
             }
 
-            
+
 
             $_data = '<div class="progress">
 

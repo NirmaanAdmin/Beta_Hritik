@@ -144,32 +144,32 @@ if ($estimate->currency != 0) {
                <?php } ?>
 
                <?php $clients_ids = explode(',', $estimate->clients ?? ''); ?>
-               <?php if (count($clients_ids) > 0) { ?>
+               <?php /*if (count($clients_ids) > 0) { */?><!--
 
-                  <p class="bold p_mar"><?php echo _l('clients') . ': ' ?></p>
-                  <?php foreach ($clients_ids as $ids) {
-                  ?>
-                     <a href="<?php echo admin_url('clients/client/' . $ids); ?>"><span class="label label-tag"><?php echo get_company_name($ids); ?></span></a>
-                  <?php } ?>
-               <?php } ?>
+                  <p class="bold p_mar"><?php /*echo _l('clients') . ': ' */?></p>
+                  <?php /*foreach ($clients_ids as $ids) {
+                  */?>
+                     <a href="<?php /*echo admin_url('clients/client/' . $ids); */?>"><span class="label label-tag"><?php /*echo get_company_name($ids); */?></span></a>
+                  <?php /*} */?>
+               --><?php /*} */?>
 
-               <p class="bold p_mar"><?php echo _l('kind') . ': ' ?>
+<!--               <p class="bold p_mar"><?php echo _l('kind') . ': ' ?>
                   <?php
                   if (!empty($estimate->kind)) {
                      echo $estimate->kind;
                   } ?>
-               </p>
+               </p>-->
 
                <p class="bold p_mar"><?php echo _l('group_pur') . ': ' ?> <?php foreach ($commodity_groups as $group) {
                                                                               if ($group['id'] == $pur_order->group_pur) {
                                                                                  echo $group['name'];
                                                                               }
                                                                            } ?> </p>
-               <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
+<!--               <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
                                                                                     if ($group['id'] == $pur_order->sub_groups_pur) {
                                                                                        echo $group['sub_group_name'];
                                                                                     }
-                                                                                 } ?> </p>
+                                                                                 } ?> </p>-->
                <?php if (!empty($estimate->hsn_sac)) { ?>
                   <p class="bold p_mar"><?php echo _l('hsn_sac') . ': ' ?> <?php echo get_hsn_sac_name_by_id($pur_order->hsn_sac); ?></p>
                <?php } ?>
@@ -542,7 +542,7 @@ if ($estimate->currency != 0) {
                                              <?php if(!empty($es['serial_no'])) {
                                                 echo $es['serial_no'];
                                              } else {
-                                                echo pur_html_entity_decode($count); 
+                                                echo pur_html_entity_decode($count);
                                              } ?>
                                           </td>
                                           <td class="description" align="left">
@@ -707,7 +707,7 @@ if ($estimate->currency != 0) {
                               <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
                            <?php } ?>
                         </a>
-                        <?php 
+                        <?php
                             echo '<a href="' . admin_url('purchase/delete_work_order_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                         ?>
                   <?php echo '</div>';

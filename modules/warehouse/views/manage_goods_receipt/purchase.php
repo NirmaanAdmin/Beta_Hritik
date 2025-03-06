@@ -57,7 +57,7 @@
 										<?php foreach ($pr_orders as $pr_order) { ?>
 											<option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_receipt) && ($goods_receipt->pr_order_id == $pr_order['id'])) {
 																													echo 'selected';
-																												} ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?></option>
+																												} ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name'] . ' - ' . get_vendor_name($pr_order['vendor'])); ?></option>
 										<?php } ?>
 									</select>
 								</div>
@@ -309,8 +309,8 @@
 												<th width="1%"></th>
 												<th align="left" style="width: 15%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
 												<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
-												
-												
+
+
 											</tr>
 										</thead>
 										<tbody>

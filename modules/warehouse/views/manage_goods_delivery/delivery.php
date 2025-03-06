@@ -63,11 +63,11 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="pr_order_id"><?php echo _l('reference_purchase_order'); ?></label>
-                      <select onchange="pr_order_change(this); return false;" name="pr_order_id" id="pr_order_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" 
+                      <select onchange="pr_order_change(this); return false;" name="pr_order_id" id="pr_order_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>"
                       <?php echo ($edit_approval == 'true') ? 'disabled' : ''; ?>>
                         <option value=""></option>
                         <?php foreach ($pr_orders as $pr_order) { ?>
-                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_delivery) && ($goods_delivery->pr_order_id == $pr_order['id'])) { echo 'selected';} ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?>
+                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_delivery) && ($goods_delivery->pr_order_id == $pr_order['id'])) { echo 'selected';} ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']. ' - ' . get_vendor_name($pr_order['vendor'])); ?>
                           </option>
                         <?php } ?>
                         </select>
@@ -84,7 +84,7 @@
                                                                                                                                                                                                                                                                               echo 'disabled';
                                                                                                                                                                                                                                                                             }; ?>>
                         <option value=""></option>
-                        
+
                         <?php foreach ($goods_receipt as $value) { ?>
                           <option value="<?php echo html_entity_decode($value['id']); ?>" <?php if (isset($goods_delivery) && $goods_delivery->goods_receipt_id == $value['id']) {
                                                                                             echo 'selected';
@@ -95,7 +95,7 @@
                   </div>
                   */ ?>
 
-                  <div class="col-md-3">
+<!--                  <div class="col-md-3">
 
                     <div class="form-group">
                       <label for="customer_code"><?php echo _l('customer_name'); ?></label>
@@ -111,17 +111,17 @@
                       </select>
                     </div>
 
-                  </div>
+                  </div>-->
 
 
-                  <div class=" col-md-3">
+<!--                  <div class=" col-md-3">
                     <?php $to = (isset($goods_delivery) ? $goods_delivery->to_ : '');
                     echo render_input('to_', 'receiver', $to, '', $disabled) ?>
                   </div>
                   <div class=" col-md-6">
                     <?php $address = (isset($goods_delivery) ? $goods_delivery->address : '');
                     echo render_input('address', 'address', $address, '', $disabled) ?>
-                  </div>
+                  </div>-->
 
                   <?php if (ACTIVE_PROPOSAL == true) { ?>
 

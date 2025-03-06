@@ -3,7 +3,7 @@
 <style>
    .show_hide_columns {
       position: absolute;
-      z-index: 99999;
+      z-index: 5000;
       left: 204px
    }
 </style>
@@ -139,7 +139,7 @@
                               _l('wo_description'),
                               _l('order_date'),
                               _l('group_pur'),
-                              _l('sub_groups_pur'),
+                              //_l('sub_groups_pur'),
                               _l('type'),
                               _l('project'),
                               _l('department'),
@@ -168,7 +168,7 @@
                         _l('wo_description'),
                         _l('order_date'),
                         _l('group_pur'),
-                        _l('sub_groups_pur'),
+                        //_l('sub_groups_pur'),
                         _l('type'),
                         _l('project'),
                         _l('department'),

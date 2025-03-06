@@ -13,7 +13,7 @@
 		                  <hr />
 		                 </div>
 		              	</div>
-		              	<div class="row">    
+		              	<div class="row">
 	                        <div class="_buttons col-md-3">
 	                        	<?php if(!isset($invoice_id)){ ?>
 		                        	<?php if (has_permission('warehouse', '', 'create') || is_admin()) { ?>
@@ -31,12 +31,12 @@
                     	<br/>
                         <div class="row">
                             <div  class="col-md-3 pull-right">
-                                <?php 
+                                <?php
                                  $input_attr_e = [];
                                  $input_attr_e['placeholder'] = _l('day_vouchers');
 
                              echo render_date_input('date_add','','',$input_attr_e ); ?>
-                            </div> 
+                            </div>
 
                         </div>
 
@@ -44,17 +44,14 @@
                     <?php render_datatable(array(
                         _l('id'),
                         _l('goods_delivery_code_new'),
-                        _l('customer_name'),
                         _l('day_vouchers'),
                         _l('invoices'),
-                        _l('to'),
-                        _l('address'),
                         _l('staff_id'),
                         _l('status_label'),
                         _l('delivery_status_new'),
                         _l('options'),
                         ),'table_manage_delivery',['delivery_sm' => 'delivery_sm']); ?>
-						
+
 					</div>
 				</div>
 			</div>
@@ -86,7 +83,7 @@
                 <div class="col-md-12 form-group">
                   <label for="customer_name"><span class="text-danger">* </span><?php echo _l('customer_name'); ?></label>
                     <select name="customer_name" id="customer_name" class="selectpicker" required  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" >
-                        
+
                     </select>
                     <br>
                 </div>
@@ -106,10 +103,10 @@
                 </div>
                 <div class="col-md-12">
                   <?php echo render_textarea('content','email_content','',array(),array(),'','tinymce') ?>
-                </div>     
+                </div>
                 <div id="type_care">
-                  
-                </div>        
+
+                </div>
               </div>
           </div>
           <div class="modal-footer">
