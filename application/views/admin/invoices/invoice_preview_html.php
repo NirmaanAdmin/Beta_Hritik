@@ -103,7 +103,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
             <address>
                 <?php echo format_organization_info(); ?>
             </address>
-            <h5 class="bold"> <?php echo $invoice->title; ?> </h5>
+            <h5> <?php echo $invoice->title; ?> </h5>
             <?php hooks()->do_action('after_left_panel_invoice_preview_template', $invoice); ?>
         </div>
         <div class="col-sm-6 text-right">
