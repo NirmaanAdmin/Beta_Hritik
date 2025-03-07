@@ -725,7 +725,7 @@ if ($estimate->currency != 0) {
 
                            echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                      ?>
-                  <?php echo '</div>';
+                  <?php echo '</div></div>';
                      }
                   } ?>
                </div>
