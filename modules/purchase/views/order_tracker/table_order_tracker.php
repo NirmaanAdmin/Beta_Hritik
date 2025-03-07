@@ -8,6 +8,7 @@ $rli_filter_name = 'rli_filter';
 $vendors_filter_name = 'vendors';
 $kind_filter_name = 'order_tracker_kind';
 $budget_head_filter_name = 'budget_head';
+$order_type_filter_name = 'order_type_filter';
 
 // Define common columns for both tables
 $aColumns = [
@@ -74,6 +75,26 @@ if (isset($type)) {
       $where_type .= ')';
       array_push($where, $where_type);
    }
+}
+
+$orderType = $this->ci->input->post('order_type_filter');
+if (isset($orderType)) {
+    $where_order_type = '';
+    if ($orderType == 'created') {
+        if ($where_order_type == '') {
+            $where_order_type .= ' AND (source_table  = "order_tracker"';
+        }
+    }
+    if ($orderType == 'fetched') {
+        if ($where_order_type == '') {
+            $where_order_type .= ' AND (source_table  = "pur_orders"';
+            $where_order_type .= ' or source_table = "wo_orders"';
+        }
+    }
+    if ($where_order_type != '') {
+        $where_order_type .= ')';
+        array_push($where, $where_order_type);
+    }
 }
 
 $vendors = $this->ci->input->post('vendors');
@@ -175,6 +196,9 @@ update_module_filter($module_name, $kind_filter_name, $kind_filter_value);
 $budget_head_filter_name_value = !empty($this->ci->input->post('budget_head')) ? $this->ci->input->post('budget_head') : NULL;
 update_module_filter($module_name, $budget_head_filter_name, $budget_head_filter_name_value);
 
+$order_type_filter_name_value = !empty($this->ci->input->post('order_type_filter')) ? $this->ci->input->post('order_type_filter') : NULL;
+update_module_filter($module_name, $order_type_filter_name, $order_type_filter_name_value);
+
 // Query and process data
 $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $where, [
    'combined_orders.id as id',
@@ -204,7 +228,6 @@ $rResult = $result['rResult'];
 $sr = 1;
 foreach ($rResult as $aRow) {
    $row = [];
-
    foreach ($aColumns as $column) {
       $_data = isset($aRow[$column]) ? $aRow[$column] : '';
 
@@ -303,9 +326,9 @@ foreach ($rResult as $aRow) {
                '</span>';
          } else {
             // Render as an editable input if no value exists
-            // $_data = '<input type="number" class="form-control co-total-input" 
-            //          placeholder="Enter Change Order" 
-            //          data-id="' . $aRow['id'] . '" 
+            // $_data = '<input type="number" class="form-control co-total-input"
+            //          placeholder="Enter Change Order"
+            //          data-id="' . $aRow['id'] . '"
             //          data-type="' . $aRow['source_table'] . '">';
             $_data = '<span style="font-style: italic;font-size: 12px;">Values will be fetched directly from the change order module</span>';
          }
