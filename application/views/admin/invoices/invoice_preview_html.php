@@ -211,23 +211,16 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                         <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
                             <thead>
                                 <tr>
-                                    <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
-                                    aria-hidden="true" data-toggle="tooltip"
-                                    data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                    <?php echo _l('budget_head'); ?></th>
-                                    <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                    <th width="25%" align="left"><?php echo _l('description_of_services'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('rate_without_tax'); ?></th>
-                                    <th width="10%" align="right"><?php echo _l('cgst_tax'); ?></th>
-                                    <th width="10%" align="right"><?php echo _l('sgst_tax'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('cgst_tax'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('sgst_tax'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="main">
-                                    <td align="left">
-                                        <?php echo $annexure_invoice['final_invoice']['name']; ?>
-                                    </td>
                                     <td align="left">
                                         <?php
                                         echo clear_textarea_breaks($annexure_invoice['final_invoice']['description']);
