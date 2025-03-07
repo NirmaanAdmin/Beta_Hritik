@@ -341,7 +341,15 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                             <tbody>
                                 <tr id="subtotal">
                                     <td>
-                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_management_fees_and_tax'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['total_without_man_fees'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <tr id="subtotal">
+                                    <td>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('grand_subtotal_without_tax'); ?> :</span>
                                     </td>
                                     <td>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
@@ -527,6 +535,43 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                         }
                                     }
                                     ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <?php
+                                    if (!empty($indexa)) {
+                                        foreach ($indexa as $akey => $avalue) {
+                                            if($annexure['id'] == $avalue['annexure']) { ?>
+                                                <tr id="subtotal">
+                                                    <td>
+                                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo app_format_money($avalue['subtotal'], $base_currency); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr id="total_tax">
+                                                    <td>
+                                                        <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo app_format_money($avalue['tax'], $base_currency); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo app_format_money($avalue['amount'], $base_currency); ?>
+                                                    </td>
+                                                </tr>
+                                            <?php }
+                                        }
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>

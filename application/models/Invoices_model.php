@@ -1968,6 +1968,7 @@ class Invoices_model extends App_Model
             $indexa = array_values($indexa);
         }
 
+        $final_invoice['total_without_man_fees'] = 0;
         foreach ($indexa as $key => $value) {
             $final_invoice['name'] = _l('final_invoice_by_all_annexures');
             $final_invoice['description'] = $invoice->final_inv_desc;
@@ -1978,6 +1979,9 @@ class Invoices_model extends App_Model
             $final_invoice['sgst_tax'] = $final_invoice['subtotal'] * 0.09;
             $final_invoice['amount'] = $final_invoice['subtotal'] + $final_invoice['tax'];
             $final_invoice['remarks'] = $invoice->remarks;
+            if($value['annexure'] != 17) {
+                $final_invoice['total_without_man_fees'] = $final_invoice['subtotal'];
+            }
         }
 
         $budgetsummary = array();
@@ -2021,7 +2025,7 @@ class Invoices_model extends App_Model
                         return $item['annexure'] == $annexure;
                     });
                     $total_current_billing_array = !empty($total_current_billing_array) ? array_values($total_current_billing_array) : array();
-                    $total_current_billing_amount = !empty($total_current_billing_array) ? $total_current_billing_array[0]['amount'] : 0;
+                    $total_current_billing_amount = !empty($total_current_billing_array) ? $total_current_billing_array[0]['subtotal'] : 0;
                 }
 
                 $invoice_budget_summary = $this->update_invoice_budget_summary($invoiceid, $annexure, $total_previous_billing);

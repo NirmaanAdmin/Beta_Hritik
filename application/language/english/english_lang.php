@@ -4183,3 +4183,5 @@ $lang['subtotal_without_tax'] = ' Subtotal w/o tax';
 $lang['cgst_tax'] = 'CGST (9%)';
 $lang['sgst_tax'] = 'SGST (9%)';
 $lang['rate_without_tax'] = 'Amount w/o tax';
+$lang['subtotal_without_management_fees_and_tax'] = 'Subtotal w/o management fees and tax';
+$lang['grand_subtotal_without_tax'] = 'Grand subtotal w/o tax';

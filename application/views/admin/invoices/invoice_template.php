@@ -830,7 +830,15 @@
                                 <tbody>
                                     <tr id="subtotal">
                                         <td>
-                                            <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_management_fees_and_tax'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['total_without_man_fees'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr id="subtotal">
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('grand_subtotal_without_tax'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
