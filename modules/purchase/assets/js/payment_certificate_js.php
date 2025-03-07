@@ -31,22 +31,46 @@ function calculate_payment_certificate() {
 	        $('.po_comulative').html(format_money(po_comulative, true));
 
 	        var pay_cert_c1_1 = $('input[name="pay_cert_c1_1"]').val();
+        	var mobilization_advance = $('select[name="mobilization_advance"]').val();
+	        if(mobilization_advance) {
+	        	mobilization_advance = mobilization_advance.replace('%', '');
+	        	pay_cert_c1_1 = po_contract_amount * (mobilization_advance / 100);
+	        	$('input[name="pay_cert_c1_1"]').val(pay_cert_c1_1);
+	        } else {
+	        	pay_cert_c1_1 = 0;
+	        }
+
+	        var pay_cert_c1_2 = $('input[name="pay_cert_c1_2"]').val();
+        	var mobilization_advance = $('select[name="mobilization_advance"]').val();
+	        if(mobilization_advance) {
+	        	mobilization_advance = mobilization_advance.replace('%', '');
+	        	pay_cert_c1_2 = po_previous * (mobilization_advance / 100);
+	        	$('input[name="pay_cert_c1_2"]').val(pay_cert_c1_2);
+	        } else {
+	        	pay_cert_c1_2 = 0;
+	        }
+
+	        var pay_cert_c1_3 = $('input[name="pay_cert_c1_3"]').val();
+        	var mobilization_advance = $('select[name="mobilization_advance"]').val();
+	        if(mobilization_advance) {
+	        	mobilization_advance = mobilization_advance.replace('%', '');
+	        	pay_cert_c1_3 = po_this_bill * (mobilization_advance / 100);
+	        	$('input[name="pay_cert_c1_3"]').val(pay_cert_c1_3);
+	        } else {
+	        	pay_cert_c1_3 = 0;
+	        }
+
 	        var pay_cert_c2_1 = $('input[name="pay_cert_c2_1"]').val();
-	        pay_cert_c1_1 = pay_cert_c1_1.trim() != "" ? pay_cert_c1_1 : 0;
 	        pay_cert_c2_1 = pay_cert_c2_1.trim() != "" ? pay_cert_c2_1 : 0;
 	        var net_advance_1 = parseFloat(pay_cert_c1_1) + parseFloat(pay_cert_c2_1);
 	        $('.net_advance_1').html(format_money(net_advance_1, true));
 
-	        var pay_cert_c1_2 = $('input[name="pay_cert_c1_2"]').val();
 	        var pay_cert_c2_2 = $('input[name="pay_cert_c2_2"]').val();
-	        pay_cert_c1_2 = pay_cert_c1_2.trim() != "" ? pay_cert_c1_2 : 0;
 	        pay_cert_c2_2 = pay_cert_c2_2.trim() != "" ? pay_cert_c2_2 : 0;
 	        var net_advance_2 = parseFloat(pay_cert_c1_2) + parseFloat(pay_cert_c2_2);
 	        $('.net_advance_2').html(format_money(net_advance_2, true));
 
-	        var pay_cert_c1_3 = $('input[name="pay_cert_c1_3"]').val();
 	        var pay_cert_c2_3 = $('input[name="pay_cert_c2_3"]').val();
-	        pay_cert_c1_3 = pay_cert_c1_3.trim() != "" ? pay_cert_c1_3 : 0;
 	        pay_cert_c2_3 = pay_cert_c2_3.trim() != "" ? pay_cert_c2_3 : 0;
 	        var net_advance_3 = parseFloat(pay_cert_c1_3) + parseFloat(pay_cert_c2_3);
 	        $('.net_advance_3').html(format_money(net_advance_3, true));
@@ -158,7 +182,7 @@ function calculate_payment_certificate() {
 	        var less_ah_2 = $('input[name="less_ah_2"]').val();
 	        less_ah_2 = less_ah_2.trim() != "" ? less_ah_2 : 0;
 	        var less_ah_3 = $('input[name="less_ah_3"]').val();
-	        less_ah_3 = less_ah_2.trim() != "" ? less_ah_3 : 0;
+	        less_ah_3 = less_ah_3.trim() != "" ? less_ah_3 : 0;
 	        var less_ah_4 = parseFloat(less_ah_2) + parseFloat(less_ah_3);
 	        $('.less_ah_4').html(format_money(less_ah_4, true));
 
@@ -181,25 +205,55 @@ function calculate_payment_certificate() {
 	        var sub_fg_4 = parseFloat(sub_fg_2) + parseFloat(sub_fg_3);
 	        $('.sub_fg_4').html(format_money(sub_fg_4, true));
 
-	        var cgst_on_a1 = po_contract_amount * 0.09;
+	        var cgst_on_a1 = 0;
+        	var cgst_tax_1 = $('select[name="cgst_tax"]').val();
+	        if(cgst_tax_1) {
+	        	cgst_tax_1 = cgst_tax_1.replace('%', '');
+	        	cgst_on_a1 = po_contract_amount * (cgst_tax_1 / 100);
+	        }
 	        $('.cgst_on_a1').html(format_money(cgst_on_a1, true));
 
-	        var cgst_on_a2 = po_previous * 0.09;
+	        var cgst_on_a2 = 0;
+        	var cgst_tax_2 = $('select[name="cgst_tax"]').val();
+	        if(cgst_tax_2) {
+	        	cgst_tax_2 = cgst_tax_2.replace('%', '');
+	        	cgst_on_a2 = po_previous * (cgst_tax_2 / 100);
+	        }
 	        $('.cgst_on_a2').html(format_money(cgst_on_a2, true));
 
-	        var cgst_on_a3 = po_this_bill * 0.09;
+	        var cgst_on_a3 = 0;
+        	var cgst_tax_3 = $('select[name="cgst_tax"]').val();
+	        if(cgst_tax_3) {
+	        	cgst_tax_3 = cgst_tax_3.replace('%', '');
+	        	cgst_on_a3 = po_this_bill * (cgst_tax_3 / 100);
+	        }
 	        $('.cgst_on_a3').html(format_money(cgst_on_a3, true));
 
 	        var cgst_on_a4 = parseFloat(cgst_on_a2) + parseFloat(cgst_on_a3);
 	        $('.cgst_on_a4').html(format_money(cgst_on_a4, true));
 
-	        var sgst_on_a1 = po_contract_amount * 0.09;
+	        var sgst_on_a1 = 0;
+        	var sgst_tax_1 = $('select[name="sgst_tax"]').val();
+	        if(sgst_tax_1) {
+	        	sgst_tax_1 = sgst_tax_1.replace('%', '');
+	        	sgst_on_a1 = po_contract_amount * (sgst_tax_1 / 100);
+	        }
 	        $('.sgst_on_a1').html(format_money(sgst_on_a1, true));
 
-	        var sgst_on_a2 = po_previous * 0.09;
+	        var sgst_on_a2 = 0;
+        	var sgst_tax_2 = $('select[name="sgst_tax"]').val();
+	        if(sgst_tax_2) {
+	        	sgst_tax_2 = sgst_tax_2.replace('%', '');
+	        	sgst_on_a2 = po_previous * (sgst_tax_2 / 100);
+	        }
 	        $('.sgst_on_a2').html(format_money(sgst_on_a2, true));
 
-	        var sgst_on_a3 = po_this_bill * 0.09;
+	        var sgst_on_a3 = 0;
+        	var sgst_tax_3 = $('select[name="sgst_tax"]').val();
+	        if(sgst_tax_3) {
+	        	sgst_tax_3 = sgst_tax_3.replace('%', '');
+	        	sgst_on_a3 = po_this_bill * (sgst_tax_3 / 100);
+	        }
 	        $('.sgst_on_a3').html(format_money(sgst_on_a3, true));
 
 	        var sgst_on_a4 = parseFloat(sgst_on_a2) + parseFloat(sgst_on_a3);
@@ -263,6 +317,40 @@ function calculate_payment_certificate() {
 	        $('.amount_rec_4').html(format_money(amount_rec_4, true));
 	    });
 	}
+}
+
+function approve_payment_certificate_request(id){
+  "use strict";
+  payment_certificate_request_approval_status(id,2);
+}
+function deny_payment_certificate_request(id){
+  "use strict";
+   payment_certificate_request_approval_status(id,3);
+}
+
+function payment_certificate_request_approval_status(id, status){
+  "use strict";
+  var data = {};
+  data.rel_id = id;
+  data.rel_type = 'payment_certificate';
+  data.approve = status;
+  data.note = $('textarea[name="reason"]').val();
+  $.post(admin_url + 'purchase/payment_certificate_request/' + id, data).done(function(response){
+      response = JSON.parse(response); 
+      if (response.success === true || response.success == 'true') {
+          alert_float('success', response.message);
+          window.location.reload();
+      }
+  });
+}
+
+function change_status_pay_cert(invoker,id){
+  "use strict"; 
+   $.post(admin_url+'purchase/change_status_pay_cert/'+invoker.value+'/'+id).done(function(reponse){
+    reponse = JSON.parse(reponse);
+    alert_float('success', reponse.result);
+    window.location.reload();
+  });
 }
 
 $("body").on('click', '.pay-cert-submit', function () { 

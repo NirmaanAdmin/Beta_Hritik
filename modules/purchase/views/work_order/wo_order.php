@@ -558,7 +558,8 @@
                 <?php
                 echo '<a href="' . admin_url('purchase/delete_work_order_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                 ?>
-            <?php echo '</div></div>';
+            <?php if ($is_image) { echo '</div>'; } ?>
+            <?php echo '</div>';
               }
             } ?>
           </div>

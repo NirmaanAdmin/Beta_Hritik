@@ -211,23 +211,16 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                         <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
                             <thead>
                                 <tr>
-                                    <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
-                                    aria-hidden="true" data-toggle="tooltip"
-                                    data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                    <?php echo _l('budget_head'); ?></th>
-                                    <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                    <th width="25%" align="left"><?php echo _l('description_of_services'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('rate_without_tax'); ?></th>
-                                    <th width="10%" align="right"><?php echo _l('cgst_tax'); ?></th>
-                                    <th width="10%" align="right"><?php echo _l('sgst_tax'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('cgst_tax'); ?></th>
+                                    <th width="15%" align="right"><?php echo _l('sgst_tax'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                     <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="main">
-                                    <td align="left">
-                                        <?php echo $annexure_invoice['final_invoice']['name']; ?>
-                                    </td>
                                     <td align="left">
                                         <?php
                                         echo clear_textarea_breaks($annexure_invoice['final_invoice']['description']);
@@ -341,7 +334,15 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                             <tbody>
                                 <tr id="subtotal">
                                     <td>
-                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_management_fees_and_tax'); ?> :</span>
+                                    </td>
+                                    <td>
+                                        <?php echo app_format_money($annexure_invoice['final_invoice']['total_without_man_fees'], $base_currency); ?>
+                                    </td>
+                                </tr>
+                                <tr id="subtotal">
+                                    <td>
+                                        <span class="bold tw-text-neutral-700"><?php echo _l('grand_subtotal_without_tax'); ?> :</span>
                                     </td>
                                     <td>
                                         <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>
@@ -527,6 +528,43 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                         }
                                     }
                                     ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <?php
+                                    if (!empty($indexa)) {
+                                        foreach ($indexa as $akey => $avalue) {
+                                            if($annexure['id'] == $avalue['annexure']) { ?>
+                                                <tr id="subtotal">
+                                                    <td>
+                                                        <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo app_format_money($avalue['subtotal'], $base_currency); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr id="total_tax">
+                                                    <td>
+                                                        <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo app_format_money($avalue['tax'], $base_currency); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('invoice_total'); ?> :</span>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo app_format_money($avalue['amount'], $base_currency); ?>
+                                                    </td>
+                                                </tr>
+                                            <?php }
+                                        }
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>

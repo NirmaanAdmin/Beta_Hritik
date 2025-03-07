@@ -688,32 +688,30 @@ if ($estimate->currency != 0) {
             </div>
 
             <div role="tabpanel" class="tab-pane" id="attachment">
-               <div class="col-md-12">
-                  <?php
+               <?php
+               if (isset($attachments) && count($attachments) > 0) {
+                  foreach ($attachments as $value) {
+                     echo '<div class="col-md-6" style="padding-bottom: 10px">';
+                     $path = get_upload_path_by_type('purchase') . 'wo_order/' . $value['rel_id'] . '/' . $value['file_name'];
 
-                  if (isset($attachments) && count($attachments) > 0) {
-                     foreach ($attachments as $value) {
-                        echo '<div class="col-md-6" style="padding-bottom: 10px">';
-                        $path = get_upload_path_by_type('purchase') . 'wo_order/' . $value['rel_id'] . '/' . $value['file_name'];
-
-                        $is_image = is_image($path);
-                        if ($is_image) {
-                           echo '<div class="preview_image">';
-                        }
-                  ?>
-                        <a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
-                           <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
-                           <?php if ($is_image) { ?>
-                              <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
-                           <?php } ?>
-                        </a>
-                        <?php
-                            echo '<a href="' . admin_url('purchase/delete_work_order_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
-                        ?>
-                  <?php echo '</div>';
+                     $is_image = is_image($path);
+                     if ($is_image) {
+                        echo '<div class="preview_image">';
                      }
-                  } ?>
-               </div>
+               ?>
+                     <a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                        <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                        <?php if ($is_image) { ?>
+                           <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                        <?php } ?>
+                     </a>
+                     <?php
+                         echo '<a href="' . admin_url('purchase/delete_work_order_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                     ?>
+               <?php if ($is_image) { echo '</div>'; } ?>
+               <?php echo '</div>';
+                  }
+               } ?>
             </div>
             <div role="tabpanel" class="tab-pane ptop10" id="changes">
                <div class="row">

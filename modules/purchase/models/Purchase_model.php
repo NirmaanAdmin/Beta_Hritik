@@ -17225,10 +17225,16 @@ class Purchase_model extends App_Model
             }
             $expenses = $this->db->get(db_prefix() . 'expenses')->row();
             if (!empty($expenses)) {
+                if (!empty($pur_invoices->group_pur)) {
+                    $expense_category = $this->find_budget_head_value($pur_invoices->group_pur);
+                }
                 $expenses_input = array();
                 $expenses_input['expense_name'] = $pur_invoices->description_services;
                 $expenses_input['vendor'] = $pur_invoices->vendor;
                 $expenses_input['amount'] = $pur_invoices->final_certified_amount;
+                if(isset($expense_category)) {
+                    $expenses_input['category'] = $expense_category;
+                }
                 $this->db->where('id', $expenses->id);
                 $this->db->update('tblexpenses', $expenses_input);
             }
@@ -17236,10 +17242,13 @@ class Purchase_model extends App_Model
             $this->db->where('vbt_id', $id);
             $itemable = $this->db->get(db_prefix() . 'itemable')->row();
             if (!empty($itemable)) {
+                $budget_head_data = $this->get_commodity_group_type($pur_invoices->group_pur);
                 $itemable_input = array();
+                $itemable_input['description'] = $budget_head_data->name;
                 $itemable_input['long_description'] = $pur_invoices->description_services;
                 $itemable_input['rate'] = $pur_invoices->vendor_submitted_amount_without_tax;
                 $itemable_input['tax'] = $pur_invoices->vendor_submitted_tax_amount;
+                $itemable_input['annexure'] = $pur_invoices->group_pur;
                 $this->db->where('id', $itemable->id);
                 $this->db->update('tblitemable', $itemable_input);
 
@@ -17488,6 +17497,9 @@ class Purchase_model extends App_Model
         $po_contract_data = $this->get_po_contract_data($result['po_id']);
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
+        $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;
+        $sgst_tax = !empty($result['sgst_tax']) ? str_replace("%", "", $result['sgst_tax']) : 0;
+
         $result['po_contract_amount'] = $po_contract_amount;
         $result['po_comulative'] = $result['po_previous'] + $result['po_this_bill'];
         $result['pay_cert_c1_4'] = $result['pay_cert_c1_2'] + $result['pay_cert_c1_3'];
@@ -17522,13 +17534,13 @@ class Purchase_model extends App_Model
         $result['sub_fg_2'] = $result['sub_t_de_2'] + $result['less_ded_2'];
         $result['sub_fg_3'] = $result['sub_t_de_3'] + $result['less_ded_3'];
         $result['sub_fg_4'] = $result['sub_fg_2'] + $result['sub_fg_3'];
-        $result['cgst_on_a1'] = $po_contract_amount * 0.09;
-        $result['cgst_on_a2'] = $result['po_previous'] * 0.09;
-        $result['cgst_on_a3'] = $result['po_this_bill'] * 0.09;
+        $result['cgst_on_a1'] = $po_contract_amount * ($cgst_tax / 100);
+        $result['cgst_on_a2'] = $result['po_previous'] * ($cgst_tax / 100);
+        $result['cgst_on_a3'] = $result['po_this_bill'] * ($cgst_tax / 100);
         $result['cgst_on_a4'] = $result['cgst_on_a2'] + $result['cgst_on_a3'];
-        $result['sgst_on_a1'] = $po_contract_amount * 0.09;
-        $result['sgst_on_a2'] = $result['po_previous'] * 0.09;
-        $result['sgst_on_a3'] = $result['po_this_bill'] * 0.09;
+        $result['sgst_on_a1'] = $po_contract_amount * ($sgst_tax / 100);
+        $result['sgst_on_a2'] = $result['po_previous'] * ($sgst_tax / 100);
+        $result['sgst_on_a3'] = $result['po_this_bill'] * ($sgst_tax / 100);
         $result['sgst_on_a4'] = $result['sgst_on_a2'] + $result['sgst_on_a3'];
         $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
         $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['labour_cess_1'];
@@ -17549,6 +17561,10 @@ class Purchase_model extends App_Model
         $pur_order = $this->get_pur_order($payment_certificate->po_id);
         $pay_cert_data = $this->get_payment_certificate_calc($id);
         $pay_cert_data = (object) $pay_cert_data;
+        $mobilization_advance = !empty($pay_cert_data->mobilization_advance) ? $pay_cert_data->mobilization_advance : '0%';
+        $payment_clause = !empty($pay_cert_data->payment_clause) ? $pay_cert_data->payment_clause : '14.2';
+        $cgst_tax = !empty($pay_cert_data->cgst_tax) ? $pay_cert_data->cgst_tax : '0%';
+        $sgst_tax = !empty($pay_cert_data->sgst_tax) ? $pay_cert_data->sgst_tax : '0%';
 
         $logo = '';
         $company_logo = get_option('company_logo_dark');
@@ -17648,7 +17664,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>C1</td>
-                  <td>'._l('pay_cert_c1_title').'</td>
+                  <td>Mobilization Advance payment '.$mobilization_advance.' as per clause '.$payment_clause.'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_3, '').'</td>
@@ -17752,7 +17768,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I1</td>
-                  <td>'._l('cgst_on_a').'</td>
+                  <td>CGST @ '.$cgst_tax.' on A</td>
                   <td>'.app_format_money($pay_cert_data->cgst_on_a1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->cgst_on_a2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->cgst_on_a3, '').'</td>
@@ -17760,7 +17776,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I2</td>
-                  <td>'._l('sgst_on_a').'</td>
+                  <td>SGST @ '.$cgst_tax.' on A</td>
                   <td>'.app_format_money($pay_cert_data->sgst_on_a1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->sgst_on_a2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->sgst_on_a3, '').'</td>
@@ -17794,35 +17810,47 @@ class Purchase_model extends App_Model
         </table>
         <br><br>';
 
-        $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
-            <tbody>
-                <tr class="footer_cert_title">
-                  <td style="width:25%">Payment Authorized</td>
-                  <td style="width:25%">Project Coordinator</td>
-                  <td style="width:25%">Project Head</td>
-                  <td style="width:25%">Director</td>
-                </tr>
-                <tr class="footer_cert_title">
-                  <td>Name</td>
-                  <td>Rupesh Singh</td>
-                  <td>Rahul Singh</td>
-                  <td>Abhishek Intodia</td>
-                </tr>
-                <tr class="footer_cert_title">
-                  <td>Signature</td>
-                  <td style="height: 80px"></td>
-                  <td style="height: 80px"></td>
-                  <td style="height: 80px"></td>
-                </tr>
-                <tr class="footer_cert_title">
-                  <td>Date</td>
-                  <td>'.date('d-m-Y').'</td>
-                  <td>'.date('d-m-Y').'</td>
-                  <td>'.date('d-m-Y').'</td>
-                </tr>
-            </tbody>
-        </table>
-        <br><br>';
+        $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
+        if(!empty($list_approve_status)) {
+            $approved_by_admin_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px">';
+            $approved_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px">';
+            $rejected_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px">';
+
+            $html .= '<table class="table" style="width: 100%" style="font-size:13px">
+                <tbody>';
+            $html .= '<tr class="footer_cert_title">';
+            foreach($list_approve_status as $akey => $avalue) {
+                $html .= '
+                  <td>'.get_staff_full_name($avalue['staffid']).'</td>
+                ';
+            }
+            $html .= '</tr>';
+
+            $html .= '<tr class="footer_cert_title">';
+            foreach ($list_approve_status as $akey => $avalue) {
+                $html .= '<td>';
+                if ($avalue['approve'] == 2) {
+                    if ($avalue['approve_by_admin'] == 1) {
+                        $html .= $approved_by_admin_image;
+                    } else {
+                        $html .= $approved_image;
+                    }
+                } elseif ($avalue['approve'] == 3) {
+                    $html .= $rejected_image;
+                }
+                if($avalue['note']) {
+                    $html .= '<br>';
+                    $html .= $avalue['note'];
+                }
+                $html .= '<br>';
+                $html .= _dt($avalue['date']);
+                $html .= '</td>';
+            }
+
+            $html .= '</tr>';
+                
+            $html .= '</tbody></table><br><br>';
+        }
 
         $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/payment_certificate_style.css') . '"  rel="stylesheet" type="text/css" />';
 
@@ -17834,5 +17862,125 @@ class Purchase_model extends App_Model
         $pay_cert_data = $this->get_payment_certificate($id);
         $footer_text = '';
         return app_pdf('payment_certificate', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Payment_certificate_pdf'), $payment_certificate, $footer_text);
+    }
+
+    public function send_payment_certificate_approve($data)
+    {
+        if (!isset($data['status'])) {
+            $data['status'] = '';
+        }
+        $date_send = date('Y-m-d H:i:s');
+        $sender = get_staff_user_id();
+        $project = 0;
+        $rel_name = 'payment_certificate';
+        $module = $this->get_payment_certificate($data['rel_id']);
+        $pur_order = $this->get_pur_order($module->po_id);
+        $project = $pur_order->project;
+        $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
+
+        foreach ($data_new as $key => $value) {
+            $row = [];
+            $row['action'] = 'approve';
+            $row['staffid'] = $value['id'];
+            $row['date_send'] = $date_send;
+            $row['rel_id'] = $data['rel_id'];
+            $row['rel_type'] = $data['rel_type'];
+            $row['sender'] = $sender;
+            $this->db->insert('tblpayment_certificate_details', $row);
+        }
+        return true;
+    }
+
+    public function get_list_pay_cert_approval_details($rel_id, $rel_type)
+    {
+        $this->db->select('*');
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        return $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
+    }
+
+    public function check_pay_cert_approval_details($rel_id, $rel_type)
+    {
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        $approve_status = $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
+        if (count($approve_status) > 0) {
+            foreach ($approve_status as $value) {
+                if($value['staffid'] == get_staff_user_id()) {
+                    if ($value['approve'] == -1) {
+                        return 'reject';
+                    }
+                    if ($value['approve'] == 0) {
+                        $value['staffid'] = explode(', ', $value['staffid']);
+                        return $value;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public function get_pay_cert_staff_sign($rel_id, $rel_type)
+    {
+        $this->db->select('*');
+
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        $this->db->where('action', 'sign');
+        $approve_status = $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
+        if (isset($approve_status)) {
+            $array_return = [];
+            foreach ($approve_status as $key => $value) {
+                array_push($array_return, $value['staffid']);
+            }
+            return $array_return;
+        }
+        return [];
+    }
+
+    public function update_pay_cert_approval_details($id, $data)
+    {
+        $data['date'] = date('Y-m-d H:i:s');
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'payment_certificate_details', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function update_pay_cert_approve_request($rel_id, $rel_type, $status)
+    {
+        $all_approved = $this->db->query("SELECT COUNT(*) = SUM(approve = 2) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '".$rel_id."' AND rel_type = '".$rel_type."'")->result_array();
+
+        $all_rejected = $this->db->query("SELECT COUNT(*) = SUM(approve = 3) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '".$rel_id."' AND rel_type = '".$rel_type."'")->result_array();
+
+        if(!empty($all_approved)) {
+            if($all_approved[0]['all_approved'] == 1) {
+                $this->db->where('id', $rel_id);
+                $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => 2]);
+            }
+        }
+
+        if(!empty($all_rejected)) {
+            if($all_rejected[0]['all_rejected'] == 1) {
+                $this->db->where('id', $rel_id);
+                $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => 3]);
+            }
+        }
+
+        return true;
+    }
+
+    public function change_status_pay_cert($status, $id)
+    {
+        $original_po = $this->get_payment_certificate($id);
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => $status]);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
     }
 }

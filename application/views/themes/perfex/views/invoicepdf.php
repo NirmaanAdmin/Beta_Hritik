@@ -43,8 +43,6 @@ if ($invoice->hsn_sac) {
     }
 }
 
-$organization_info .= '<br /><span><b>'.$invoice->title.'</b></span></div>';
-
 // Bill to
 $invoice_info = '<b>' . _l('invoice_bill_to') . ':</b>';
 $invoice_info .= '<div style="color:#424242;">';
@@ -83,6 +81,7 @@ if ($invoice->project_id && get_option('show_project_on_invoice') == 1) {
 if ($invoice->deal_slip_no) {
     $invoice_info .= _l('deal_slip_no') . ': ' . $invoice->deal_slip_no . '<br />';
 }
+$invoice_info .= '<span><b>'.$invoice->title.'</b></span></div>';
 $invoice_info = hooks()->apply_filters('invoice_pdf_header_before_custom_fields', $invoice_info, $invoice);
 
 foreach ($pdf_custom_fields as $field) {
@@ -116,14 +115,13 @@ $tblfinvoicehtml .= '
 <thead>
   <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
      <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
-     <th width="11%" align="left">' . _l('budget_head') . '</th>
-     <th width="16%" align="left">' . _l('description_of_services') . '</th>
+     <th width="19%" align="left">' . _l('description_of_services') . '</th>
      <th width="10%" align="left">HSN/SAC</th>
-     <th width="12%" align="right">' . _l('rate_without_tax') . '</th>
-     <th width="11%" align="right">' . _l('cgst_tax') . '</th>
-     <th width="11%" align="right">' . _l('sgst_tax') . '</th>
-     <th width="12%" align="right">' . _l('invoice_table_amount_heading') . '</th>
-     <th width="12%" align="right">' . _l('remarks') . '</th>
+     <th width="14%" align="right">' . _l('rate_without_tax') . '</th>
+     <th width="12%" align="right">' . _l('cgst_tax') . '</th>
+     <th width="12%" align="right">' . _l('sgst_tax') . '</th>
+     <th width="14%" align="right">' . _l('invoice_table_amount_heading') . '</th>
+     <th width="14%" align="right">' . _l('remarks') . '</th>
   </tr>
 </thead>';
 $amount = $basic_invoice['final_invoice']['amount']; // Get the original amount
@@ -132,14 +130,13 @@ $tblfinvoicehtml .= '<tbody>';
 $tblfinvoicehtml .= '
 <tr style="font-size:11px;">
     <td width="5%;" align="center">1</td>
-    <td width="11%" align="left;"><span style="font-size:10px;"><strong>' . $basic_invoice['final_invoice']['name'] . '</strong></span></td>
-    <td width="16%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
+    <td width="19%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
     <td width="10%" align="left">' . $hsn_sac_code . '</td>
-    <td width="12%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
-    <td width="11%" align="right">' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name) . '</td>
-    <td width="11%" align="right">' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name) . '</td>
-    <td width="12%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
-    <td width="12%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
+    <td width="14%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
+    <td width="12%" align="right">' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name) . '</td>
+    <td width="12%" align="right">' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name) . '</td>
+    <td width="14%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
+    <td width="14%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
 </tr>';
 $tblfinvoicehtml .= '</tbody>';
 $tblfinvoicehtml .= '</table>';
@@ -286,7 +283,12 @@ $tblindexafinalhtml = '';
 $tblindexafinalhtml .= '<table cellpadding="6" style="font-size:14px">';
 $tblindexafinalhtml .= '
 <tr>
-    <td align="right" width="85%"><strong>' . _l('subtotal_without_tax') . '</strong></td>
+    <td align="right" width="85%"><strong>' . _l('subtotal_without_management_fees_and_tax') . '</strong></td>
+    <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['total_without_man_fees'], $invoice->currency_name) . '</td>
+</tr>';
+$tblindexafinalhtml .= '
+<tr>
+    <td align="right" width="85%"><strong>' . _l('grand_subtotal_without_tax') . '</strong></td>
     <td align="right" width="15%">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
 </tr>';
 // $tblindexafinalhtml .= '

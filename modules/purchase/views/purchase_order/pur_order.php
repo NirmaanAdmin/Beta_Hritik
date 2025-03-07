@@ -554,7 +554,8 @@
                 // echo '</div>';
                 echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                 ?>
-            <?php echo '</div></div>';
+            <?php if ($is_image) { echo '</div>'; } ?>
+            <?php echo '</div>';
               }
             } ?>
           </div>
@@ -750,7 +751,7 @@
                 <span class="vendor_address"></span><br>
                 <span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br><br>
 
-                <strong>P.O. Number:</strong> BI/JAMNAGAR/24-25/027<br>
+                <strong>P.O. Number:</strong> BI/JAMNAGAR/24-25/'.str_pad($next_number, 5, '0', STR_PAD_LEFT).'<br>
                 <strong>P.O. Date:</strong> <span class="order_full_date">'.date("d-M-y").'</span><br>
                 <strong>Rev. No.:</strong><br>
                 <strong>Rev. Date:</strong><br><br>

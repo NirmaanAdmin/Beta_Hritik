@@ -586,11 +586,7 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
-                                        aria-hidden="true" data-toggle="tooltip"
-                                        data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                        <?php echo _l('budget_head'); ?></th>
-                                        <th width="20%" align="left"><?php echo _l('description_of_services'); ?></th>
+                                        <th width="25%" align="left"><?php echo _l('description_of_services'); ?></th>
                                         <?php
                                         $custom_fields = get_custom_fields('items');
                                         foreach ($custom_fields as $cf) {
@@ -605,8 +601,8 @@
                                         ?>
                                         <?php /* <th width="10%" align="right" class="qty"><?php echo e($qty_heading); ?></th> */ ?>
                                         <th width="15%" align="right"><?php echo _l('rate_without_tax'); ?></th>
-                                        <th width="10%" align="right"><?php echo _l('cgst_tax'); ?></th>
-                                        <th width="10%" align="right"><?php echo _l('sgst_tax'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('cgst_tax'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('sgst_tax'); ?></th>
                                         <th width="15%" align="right"><?php echo _l('invoice_table_amount_heading'); ?></th>
                                         <th width="15%" align="right"><?php echo _l('remarks'); ?></th>
                                     </tr>
@@ -614,9 +610,6 @@
                                 <tbody>
                                     <tr class="main">
                                         <td></td>
-                                        <td align="left">
-                                            <?php echo $annexure_invoice['final_invoice']['name']; ?>
-                                        </td>
                                         <td align="left">
                                             <?php echo '<textarea name="final_inv_desc" class="form-control" rows="5"> ' . clear_textarea_breaks($annexure_invoice['final_invoice']['description']) . '</textarea>';
                                             ?>
@@ -830,7 +823,15 @@
                                 <tbody>
                                     <tr id="subtotal">
                                         <td>
-                                            <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_tax'); ?> :</span>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('subtotal_without_management_fees_and_tax'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php echo app_format_money($annexure_invoice['final_invoice']['total_without_man_fees'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                    <tr id="subtotal">
+                                        <td>
+                                            <span class="bold tw-text-neutral-700"><?php echo _l('grand_subtotal_without_tax'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php echo app_format_money($annexure_invoice['final_invoice']['subtotal'], $base_currency); ?>

@@ -28,6 +28,16 @@
   .labour_cess_class .bootstrap-select {
     width: 100px !important;
   }
+  .mobilization_advance_class .bootstrap-select {
+    width: 100px !important;
+  }
+  .mobilization_advance_class .form-group {
+    width: 100px !important;
+    display: inline-block;
+  }
+  .cgst_tax_class .bootstrap-select, .sgst_tax_class .bootstrap-select {
+    width: 100px !important;
+  }
 </style>
 <div id="wrapper">
   <div class="content">
@@ -102,6 +112,20 @@
                 echo render_date_input('bill_received_on', 'bill_received_on', $bill_received_on); ?>
               </div>
             </div>
+
+            <?php if($is_view == 1 && get_staff_user_id() == 2) { ?>
+              <div class="row">
+                <div class="col-md-12 form-group">
+                  <select name="status" id="status" class="selectpicker pull-right mright10" onchange="change_status_pay_cert(this,<?php echo ($payment_certificate_id); ?>); return false;" data-live-search="true" data-width="35%" data-none-selected-text="<?php echo _l('pur_change_status_to'); ?>">
+                       <option value=""></option>
+                       <option value="1"><?php echo _l('purchase_draft'); ?></option>
+                       <option value="2"><?php echo _l('purchase_approved'); ?></option>
+                       <option value="3"><?php echo _l('pur_rejected'); ?></option>
+                       <option value="4"><?php echo _l('pur_canceled'); ?></option>
+                    </select>
+                </div>
+              </div>
+            <?php } ?>
           </div>
 
           <div class="panel-body mtop15">
@@ -156,7 +180,18 @@
                       </tr>
                       <tr>
                         <td>C1</td>
-                        <td><?php echo _l('pay_cert_c1_title'); ?></td>
+                        <td class="mobilization_advance_class">
+                        Mobilization Advance payment 
+                        <select name="mobilization_advance" id="mobilization_advance" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                        <option value="0%" <?php if (isset($payment_certificate) && $payment_certificate->mobilization_advance == '0%') { echo 'selected';} ?>>0%</option>
+                        <option value="2.5%" <?php if (isset($payment_certificate) && $payment_certificate->mobilization_advance == '2.5%') { echo 'selected';} ?>>2.5%</option>
+                      </select>
+                        as per clause 
+                        <?php
+                        $payment_clause = (isset($payment_certificate) ? $payment_certificate->payment_clause  : '14.2'); 
+                        echo render_input('payment_clause', '', $payment_clause, 'number'); 
+                        ?>
+                        </td>
                         <td>
                           <?php 
                           $pay_cert_c1_1 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_1 : '');
@@ -372,7 +407,19 @@
                       </tr>
                       <tr>
                         <td>I1</td>
-                        <td><?php echo _l('cgst_on_a'); ?></td>
+                        <td class="cgst_tax_class">
+                        CGST @
+                        <select name="cgst_tax" id="cgst_tax" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                        <?php
+                        $taxes = get_taxes_list();
+                        if(!empty($taxes)) {
+                          foreach ($taxes as $key => $value) { ?>
+                            <option value="<?php echo $value['name']; ?>" <?php if (isset($payment_certificate) && $payment_certificate->cgst_tax == $value['name']) { echo 'selected';} ?>><?php echo $value['name']; ?></option>
+                          <?php } 
+                        } ?>
+                        </select>
+                        on A
+                        </td>
                         <td class="cgst_on_a1"></td>
                         <td class="cgst_on_a2"></td>
                         <td class="cgst_on_a3"></td>
@@ -380,7 +427,19 @@
                       </tr>
                       <tr>
                         <td>I2</td>
-                        <td><?php echo _l('sgst_on_a'); ?></td>
+                        <td class="sgst_tax_class">
+                        SGST @
+                        <select name="sgst_tax" id="sgst_tax" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                        <?php
+                        $taxes = get_taxes_list();
+                        if(!empty($taxes)) {
+                          foreach ($taxes as $key => $value) { ?>
+                            <option value="<?php echo $value['name']; ?>" <?php if (isset($payment_certificate) && $payment_certificate->sgst_tax == $value['name']) { echo 'selected';} ?>><?php echo $value['name']; ?></option>
+                          <?php } 
+                        } ?>
+                        </select>
+                        on A
+                        </td>
                         <td class="sgst_on_a1"></td>
                         <td class="sgst_on_a2"></td>
                         <td class="sgst_on_a3"></td>
@@ -438,16 +497,125 @@
             </div>
           </div>
 
-          <div class="btn-bottom-toolbar text-right">
-            <button type="button" class="btn-tr btn btn-info mleft10 pay-cert-submit">
-              <?php echo _l('submit'); ?>
-            </button>
-          </div>
+          <?php if($is_view == 0) { ?>
+            <div class="btn-bottom-toolbar text-right">
+              <button type="button" class="btn-tr btn btn-info mleft10 pay-cert-submit">
+                <?php echo _l('submit'); ?>
+              </button>
+            </div>
+          <?php } ?>
 
         </div>
       </div>
       <?php echo form_close(); ?>
     </div>
+
+    <?php if (count($list_approve_status) > 0 && $is_view == 1) { ?>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel_s">
+          <div class="panel-body">
+            <div class="project-overview-right">
+               <div class="row">
+                  <div class="col-md-12 project-overview-expenses-finance">
+                     <?php
+                     $this->load->model('staff_model');
+                     $enter_charge_code = 0;
+                     foreach ($list_approve_status as $value) {
+                        $value['staffid'] = explode(', ', $value['staffid'] ?? '');
+
+                        if ($value['action'] == 'sign') { ?>
+                          <div class="col-md-4 apr_div">
+                            <p class="text-uppercase text-muted no-mtop bold">
+                               <?php
+                               $staff_name = '';
+                               $st = _l('status_0');
+                               $color = 'warning';
+                               foreach ($value['staffid'] as $key => $val) {
+                                  if ($staff_name != '') {
+                                     $staff_name .= ' or ';
+                                  }
+                                  $staff_name .= $this->staff_model->get($val)->firstname;
+                               }
+                               echo pur_html_entity_decode($staff_name);
+                               ?>
+                             </p>
+                            <?php if ($value['approve'] == 2) {
+                            ?>
+                               <img src="<?php echo site_url(PURCHASE_PATH . 'pur_order/signature/' . $estimate->id . '/signature_' . $value['id'] . '.png'); ?>" class="img_style">
+                               <br><br>
+                               <p class="bold text-center text-success"><?php echo _l('signed') . ' ' . _dt($value['date']); ?></p>
+                            <?php } ?>
+                          </div>
+                        <?php } else { ?>
+                           <div class="col-md-4 apr_div">
+                              <p class="text-uppercase text-muted no-mtop bold">
+                               <?php
+                               $staff_name = '';
+                               foreach ($value['staffid'] as $key => $val) {
+                                  if ($staff_name != '') {
+                                     $staff_name .= ' or ';
+                                  }
+                                  $staff_name .= $this->staff_model->get($val)->firstname;
+                               }
+                               echo pur_html_entity_decode($staff_name);
+                               ?>
+                              </p>
+
+                              <?php if ($value['approve'] == 2) {
+                              ?>
+                              <?php if($value['approve_by_admin'] == 1) { ?>
+                                 <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved_by_admin.png'); ?>" class="img_style">
+                              <?php } else { ?>
+                                 <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved.png'); ?>" class="img_style">
+                              <?php } ?>
+                              <?php } elseif ($value['approve'] == 3) { ?>
+                                 <img src="<?php echo site_url(PURCHASE_PATH . 'approval/rejected.png'); ?>" class="img_style">
+                              <?php } ?>
+                              <br><br>
+                              <p><?php echo pur_html_entity_decode($value['note']) ?></p>
+                              <p class="bold text-center text-<?php if ($value['approve'] == 2) {
+                                  echo 'success';
+                               } elseif ($value['approve'] == 3) {
+                                  echo 'danger';
+                               } ?>"><?php echo _dt($value['date']); ?>
+                              </p>
+
+                              <?php
+                              if (isset($check_approve_status['staffid'])) {
+                                if (in_array(get_staff_user_id(), $check_approve_status['staffid']) && !in_array(get_staff_user_id(), $get_staff_sign) && $value['staffid'] == $check_approve_status['staffid']) { ?>
+                                  <div class="btn-group">
+                                    <a href="#" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo _l('approve'); ?><span class="caret"></span></a>
+
+                                    <ul class="dropdown-menu dropdown-menu-right ul_style" style="width: max-content;">
+                                      <li>
+                                         <div class="col-md-12">
+                                            <?php echo render_textarea('reason', 'reason'); ?>
+                                         </div>
+                                      </li>
+                                      <li>
+                                         <div class="row text-right col-md-12">
+                                            <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="approve_payment_certificate_request(<?php echo pur_html_entity_decode($payment_certificate_id); ?>); return false;" class="btn btn-success mright15"><?php echo _l('approve'); ?></a>
+                                            <a href="#" data-loading-text="<?php echo _l('wait_text'); ?>" onclick="deny_payment_certificate_request(<?php echo pur_html_entity_decode($payment_certificate_id); ?>); return false;" class="btn btn-warning"><?php echo _l('deny'); ?></a>
+                                         </div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                              <?php }
+                              } ?>
+                           </div>
+                        <?php }
+
+                     } ?>
+                  </div>
+               </div>
+           </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php } ?>
+
   </div>
 </div>
 </div>
@@ -461,5 +629,12 @@
 <script>
   $(document).ready(function() {
     "use strict";
+    var is_view = <?php echo $is_view; ?>;
+    if(is_view == 1) {
+      $('input, select').not('select[name="status"]').prop('disabled', true);
+      $('.selectpicker').selectpicker('refresh');
+    } else {
+      $('.selectpicker').selectpicker('refresh');
+    }
   });
 </script>
