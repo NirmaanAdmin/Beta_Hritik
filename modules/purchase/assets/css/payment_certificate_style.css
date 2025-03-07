@@ -210,11 +210,11 @@
 .font_td_cpn{
 	font-weight: 500;width: 40%;
 }
-img {
+/*img {
     width: auto;
     height: 34px;
     margin-top: 3px;
-}
+}*/
 .text_right{
 	text-align:right;
 }

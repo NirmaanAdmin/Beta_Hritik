@@ -17569,12 +17569,12 @@ class Purchase_model extends App_Model
         $logo = '';
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
-            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="160">';
         }
 
-        $html .= '<p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('payment_certificate')) . '</h2></p>';
+        $html .= '<div class="payment_certificate_main_title" style="font-size:22px; font-weight: bold; text-align: center;">' . mb_strtoupper(_l('payment_certificate')) . '</div>';
 
-        $html .= '<table class="table">
+        $html .= '<table class="table" style="font-size:13px">
             <tbody>
                 <tr>
                     <td>
@@ -17584,7 +17584,7 @@ class Purchase_model extends App_Model
                 </tr>
             </tbody>
         </table>
-        <br><br>';
+        <br>';
 
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
@@ -17626,7 +17626,7 @@ class Purchase_model extends App_Model
                 </tr>
             </tbody>
         </table>
-        <br><br>';
+        <br>';
 
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
@@ -17808,7 +17808,7 @@ class Purchase_model extends App_Model
                 </tr>
             </tbody>
         </table>
-        <br><br>';
+        <br>';
 
         $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
         if(!empty($list_approve_status)) {
