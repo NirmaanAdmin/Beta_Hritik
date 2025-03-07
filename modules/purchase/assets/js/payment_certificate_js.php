@@ -205,25 +205,55 @@ function calculate_payment_certificate() {
 	        var sub_fg_4 = parseFloat(sub_fg_2) + parseFloat(sub_fg_3);
 	        $('.sub_fg_4').html(format_money(sub_fg_4, true));
 
-	        var cgst_on_a1 = po_contract_amount * 0.09;
+	        var cgst_on_a1 = 0;
+        	var cgst_tax_1 = $('select[name="cgst_tax"]').val();
+	        if(cgst_tax_1) {
+	        	cgst_tax_1 = cgst_tax_1.replace('%', '');
+	        	cgst_on_a1 = po_contract_amount * (cgst_tax_1 / 100);
+	        }
 	        $('.cgst_on_a1').html(format_money(cgst_on_a1, true));
 
-	        var cgst_on_a2 = po_previous * 0.09;
+	        var cgst_on_a2 = 0;
+        	var cgst_tax_2 = $('select[name="cgst_tax"]').val();
+	        if(cgst_tax_2) {
+	        	cgst_tax_2 = cgst_tax_2.replace('%', '');
+	        	cgst_on_a2 = po_previous * (cgst_tax_2 / 100);
+	        }
 	        $('.cgst_on_a2').html(format_money(cgst_on_a2, true));
 
-	        var cgst_on_a3 = po_this_bill * 0.09;
+	        var cgst_on_a3 = 0;
+        	var cgst_tax_3 = $('select[name="cgst_tax"]').val();
+	        if(cgst_tax_3) {
+	        	cgst_tax_3 = cgst_tax_3.replace('%', '');
+	        	cgst_on_a3 = po_this_bill * (cgst_tax_3 / 100);
+	        }
 	        $('.cgst_on_a3').html(format_money(cgst_on_a3, true));
 
 	        var cgst_on_a4 = parseFloat(cgst_on_a2) + parseFloat(cgst_on_a3);
 	        $('.cgst_on_a4').html(format_money(cgst_on_a4, true));
 
-	        var sgst_on_a1 = po_contract_amount * 0.09;
+	        var sgst_on_a1 = 0;
+        	var sgst_tax_1 = $('select[name="sgst_tax"]').val();
+	        if(sgst_tax_1) {
+	        	sgst_tax_1 = sgst_tax_1.replace('%', '');
+	        	sgst_on_a1 = po_contract_amount * (sgst_tax_1 / 100);
+	        }
 	        $('.sgst_on_a1').html(format_money(sgst_on_a1, true));
 
-	        var sgst_on_a2 = po_previous * 0.09;
+	        var sgst_on_a2 = 0;
+        	var sgst_tax_2 = $('select[name="sgst_tax"]').val();
+	        if(sgst_tax_2) {
+	        	sgst_tax_2 = sgst_tax_2.replace('%', '');
+	        	sgst_on_a2 = po_previous * (sgst_tax_2 / 100);
+	        }
 	        $('.sgst_on_a2').html(format_money(sgst_on_a2, true));
 
-	        var sgst_on_a3 = po_this_bill * 0.09;
+	        var sgst_on_a3 = 0;
+        	var sgst_tax_3 = $('select[name="sgst_tax"]').val();
+	        if(sgst_tax_3) {
+	        	sgst_tax_3 = sgst_tax_3.replace('%', '');
+	        	sgst_on_a3 = po_this_bill * (sgst_tax_3 / 100);
+	        }
 	        $('.sgst_on_a3').html(format_money(sgst_on_a3, true));
 
 	        var sgst_on_a4 = parseFloat(sgst_on_a2) + parseFloat(sgst_on_a3);

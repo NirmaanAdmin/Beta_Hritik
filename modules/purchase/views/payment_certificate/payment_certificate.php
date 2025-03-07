@@ -35,6 +35,9 @@
     width: 100px !important;
     display: inline-block;
   }
+  .cgst_tax_class .bootstrap-select, .sgst_tax_class .bootstrap-select {
+    width: 100px !important;
+  }
 </style>
 <div id="wrapper">
   <div class="content">
@@ -404,7 +407,19 @@
                       </tr>
                       <tr>
                         <td>I1</td>
-                        <td><?php echo _l('cgst_on_a'); ?></td>
+                        <td class="cgst_tax_class">
+                        CGST @
+                        <select name="cgst_tax" id="cgst_tax" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                        <?php
+                        $taxes = get_taxes_list();
+                        if(!empty($taxes)) {
+                          foreach ($taxes as $key => $value) { ?>
+                            <option value="<?php echo $value['name']; ?>" <?php if (isset($payment_certificate) && $payment_certificate->cgst_tax == $value['name']) { echo 'selected';} ?>><?php echo $value['name']; ?></option>
+                          <?php } 
+                        } ?>
+                        </select>
+                        on A
+                        </td>
                         <td class="cgst_on_a1"></td>
                         <td class="cgst_on_a2"></td>
                         <td class="cgst_on_a3"></td>
@@ -412,7 +427,19 @@
                       </tr>
                       <tr>
                         <td>I2</td>
-                        <td><?php echo _l('sgst_on_a'); ?></td>
+                        <td class="sgst_tax_class">
+                        SGST @
+                        <select name="sgst_tax" id="sgst_tax" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                        <?php
+                        $taxes = get_taxes_list();
+                        if(!empty($taxes)) {
+                          foreach ($taxes as $key => $value) { ?>
+                            <option value="<?php echo $value['name']; ?>" <?php if (isset($payment_certificate) && $payment_certificate->sgst_tax == $value['name']) { echo 'selected';} ?>><?php echo $value['name']; ?></option>
+                          <?php } 
+                        } ?>
+                        </select>
+                        on A
+                        </td>
                         <td class="sgst_on_a1"></td>
                         <td class="sgst_on_a2"></td>
                         <td class="sgst_on_a3"></td>

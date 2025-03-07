@@ -17496,6 +17496,9 @@ class Purchase_model extends App_Model
         $po_contract_data = $this->get_po_contract_data($result['po_id']);
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
+        $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;
+        $sgst_tax = !empty($result['sgst_tax']) ? str_replace("%", "", $result['sgst_tax']) : 0;
+
         $result['po_contract_amount'] = $po_contract_amount;
         $result['po_comulative'] = $result['po_previous'] + $result['po_this_bill'];
         $result['pay_cert_c1_4'] = $result['pay_cert_c1_2'] + $result['pay_cert_c1_3'];
@@ -17530,13 +17533,13 @@ class Purchase_model extends App_Model
         $result['sub_fg_2'] = $result['sub_t_de_2'] + $result['less_ded_2'];
         $result['sub_fg_3'] = $result['sub_t_de_3'] + $result['less_ded_3'];
         $result['sub_fg_4'] = $result['sub_fg_2'] + $result['sub_fg_3'];
-        $result['cgst_on_a1'] = $po_contract_amount * 0.09;
-        $result['cgst_on_a2'] = $result['po_previous'] * 0.09;
-        $result['cgst_on_a3'] = $result['po_this_bill'] * 0.09;
+        $result['cgst_on_a1'] = $po_contract_amount * ($cgst_tax / 100);
+        $result['cgst_on_a2'] = $result['po_previous'] * ($cgst_tax / 100);
+        $result['cgst_on_a3'] = $result['po_this_bill'] * ($cgst_tax / 100);
         $result['cgst_on_a4'] = $result['cgst_on_a2'] + $result['cgst_on_a3'];
-        $result['sgst_on_a1'] = $po_contract_amount * 0.09;
-        $result['sgst_on_a2'] = $result['po_previous'] * 0.09;
-        $result['sgst_on_a3'] = $result['po_this_bill'] * 0.09;
+        $result['sgst_on_a1'] = $po_contract_amount * ($sgst_tax / 100);
+        $result['sgst_on_a2'] = $result['po_previous'] * ($sgst_tax / 100);
+        $result['sgst_on_a3'] = $result['po_this_bill'] * ($sgst_tax / 100);
         $result['sgst_on_a4'] = $result['sgst_on_a2'] + $result['sgst_on_a3'];
         $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
         $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['labour_cess_1'];
@@ -17557,6 +17560,10 @@ class Purchase_model extends App_Model
         $pur_order = $this->get_pur_order($payment_certificate->po_id);
         $pay_cert_data = $this->get_payment_certificate_calc($id);
         $pay_cert_data = (object) $pay_cert_data;
+        $mobilization_advance = !empty($pay_cert_data->mobilization_advance) ? $pay_cert_data->mobilization_advance : '0%';
+        $payment_clause = !empty($pay_cert_data->payment_clause) ? $pay_cert_data->payment_clause : '14.2';
+        $cgst_tax = !empty($pay_cert_data->cgst_tax) ? $pay_cert_data->cgst_tax : '0%';
+        $sgst_tax = !empty($pay_cert_data->sgst_tax) ? $pay_cert_data->sgst_tax : '0%';
 
         $logo = '';
         $company_logo = get_option('company_logo_dark');
@@ -17656,7 +17663,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>C1</td>
-                  <td>Mobilization Advance payment '.$pay_cert_data->mobilization_advance.' as per clause '.$pay_cert_data->payment_clause.'</td>
+                  <td>Mobilization Advance payment '.$mobilization_advance.' as per clause '.$payment_clause.'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_3, '').'</td>
@@ -17760,7 +17767,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I1</td>
-                  <td>'._l('cgst_on_a').'</td>
+                  <td>CGST @ '.$cgst_tax.' on A</td>
                   <td>'.app_format_money($pay_cert_data->cgst_on_a1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->cgst_on_a2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->cgst_on_a3, '').'</td>
@@ -17768,7 +17775,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I2</td>
-                  <td>'._l('sgst_on_a').'</td>
+                  <td>SGST @ '.$cgst_tax.' on A</td>
                   <td>'.app_format_money($pay_cert_data->sgst_on_a1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->sgst_on_a2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->sgst_on_a3, '').'</td>
@@ -17803,14 +17810,13 @@ class Purchase_model extends App_Model
         <br><br>';
 
         $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
-        $approved_by_admin_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px">';
-        $approved_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px">';
-        $rejected_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px">';
-
-        $html .= '<table class="table" style="width: 100%" style="font-size:13px">
-            <tbody>';
-
         if(!empty($list_approve_status)) {
+            $approved_by_admin_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px">';
+            $approved_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px">';
+            $rejected_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px">';
+
+            $html .= '<table class="table" style="width: 100%" style="font-size:13px">
+                <tbody>';
             $html .= '<tr class="footer_cert_title">';
             foreach($list_approve_status as $akey => $avalue) {
                 $html .= '
@@ -17841,9 +17847,9 @@ class Purchase_model extends App_Model
             }
 
             $html .= '</tr>';
+                
+            $html .= '</tbody></table><br><br>';
         }
-            
-        $html .= '</tbody></table><br><br>';
 
         $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/payment_certificate_style.css') . '"  rel="stylesheet" type="text/css" />';
 

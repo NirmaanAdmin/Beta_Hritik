@@ -3958,3 +3958,11 @@ function get_list_approval_details($rel_id, $rel_type)
     $CI->db->where('rel_type', $rel_type);
     return $CI->db->get(db_prefix() . 'payment_certificate_details')->result_array();
 }
+
+function get_taxes_list()
+{
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->order_by('taxrate', 'asc');
+    return $CI->db->get(db_prefix() . 'taxes')->result_array();
+}
