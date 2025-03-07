@@ -140,6 +140,16 @@
                            </select>
                         </div>
 
+                         <div class="col-md-3 form-group" style="padding-left: 0px;">
+                           <select name="order_type_filter" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('Order Type'); ?>" data-actions-box="true">
+                              <option value=""></option>
+                              <option value="None">None</option>
+                              <option value="fetched">Fetched</option>
+                              <option value="created">Created</option>
+
+                           </select>
+                        </div>
+
                         <div class="col-md-1 form-group">
                            <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
                               <?php echo _l('reset_filter'); ?>

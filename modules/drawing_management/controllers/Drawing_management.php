@@ -145,7 +145,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * delete section
-	 * @param  integer $id 
+	 * @param  integer $id
 	 */
 	public function delete_section($id, $parent_id = '')
 	{
@@ -183,7 +183,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * edit
-	 * @param  integer $id 
+	 * @param  integer $id
 	 */
 	public function settings()
 	{
@@ -204,7 +204,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * edit file
-	 * @return [type] 
+	 * @return [type]
 	 */
 	public function edit_file()
 	{
@@ -261,7 +261,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * custom_field_table
-	 * @return json 
+	 * @return json
 	 */
 	public function custom_field_table()
 	{
@@ -322,7 +322,7 @@ class drawing_management extends AdminController
 	}
 
 	/**
-	 * add custom field 
+	 * add custom field
 	 */
 	public function add_custom_field()
 	{
@@ -350,8 +350,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * delete custom field
-	 * @param  integer $fieldset_id 
-	 * @param  integer $id          
+	 * @param  integer $fieldset_id
+	 * @param  integer $id
 	 */
 	public function delete_custom_field($id)
 	{
@@ -369,8 +369,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * get custom field data
-	 * @param  integer $id 
-	 * @return integer     
+	 * @param  integer $id
+	 * @return integer
 	 */
 	public function get_custom_field_data($id)
 	{
@@ -381,8 +381,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * get custom field
-	 * @param  integer $id 
-	 * @return integer     
+	 * @param  integer $id
+	 * @return integer
 	 */
 	public function get_custom_field($id = '')
 	{
@@ -464,12 +464,12 @@ class drawing_management extends AdminController
 		$master_parent_id = '';
 		$id = $this->input->get('id');
 		$data['file'] = $this->drawing_management_model->get_item($id);
-		$this->load->view('file_managements/preview_file.php', $data);
+        $this->load->view('file_managements/preview_file.php', $data);
 	}
 
 	/**
 	 * download folder
-	 * @param  integer $id 
+	 * @param  integer $id
 	 */
 	public function download_folder($id)
 	{
@@ -545,7 +545,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * get folder list
-	 * @return string 
+	 * @return string
 	 */
 	public function get_folder_list()
 	{
@@ -568,7 +568,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * bulk duplicate item
-	 * @return string 
+	 * @return string
 	 */
 	public function bulk_duplicate_item()
 	{
@@ -597,7 +597,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * bulk move item
-	 * @return string 
+	 * @return string
 	 */
 	public function bulk_move_item()
 	{
@@ -689,7 +689,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * upload version file
-	 * @param  integer $id 
+	 * @param  integer $id
 	 */
 	public function upload_version_file($id)
 	{
@@ -708,7 +708,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * delete log
-	 * @param  integer $id 
+	 * @param  integer $id
 	 */
 	public function delete_log($id, $parent_id = '')
 	{
@@ -727,7 +727,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * restore item
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public function restore_item($id)
 	{
@@ -743,7 +743,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * create remider
-	 * @param  integer $file_id 
+	 * @param  integer $file_id
 	 */
 	public function create_remider($file_id)
 	{
@@ -780,8 +780,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * create remider
-	 * @param  integer $id 
-	 * @param  integer $file_id 
+	 * @param  integer $id
+	 * @param  integer $file_id
 	 */
 	public function delete_remider($id, $file_id)
 	{
@@ -796,7 +796,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * save document
-	 * @return string 
+	 * @return string
 	 */
 	public function save_document()
 	{
@@ -831,8 +831,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * lock unlock item
-	 * @param  integer $id   
-	 * @param  string $type 
+	 * @param  integer $id
+	 * @param  string $type
 	 */
 	public function lock_unlock_item($id, $type)
 	{
@@ -898,8 +898,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * create share
-	 * @param  integer $id 
-	 * @param  integer $file_id 
+	 * @param  integer $id
+	 * @param  integer $file_id
 	 */
 	public function delete_share($id, $file_id)
 	{
@@ -960,8 +960,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * delete approve setting
-	 * @param  integer $id 
-	 * @return integer     
+	 * @param  integer $id
+	 * @return integer
 	 */
 	public function delete_approve_setting($id)
 	{
@@ -979,7 +979,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * approval setting
-	 * @param  string $id 
+	 * @param  string $id
 	 * @return redirect
 	 */
 	public function approver_setting($id = '')
@@ -1010,8 +1010,8 @@ class drawing_management extends AdminController
 
 	/**
 	 * get approve setting
-	 * @param  integer $id 
-	 * @return json     
+	 * @param  integer $id
+	 * @return json
 	 */
 	public function get_approve_setting($id)
 	{
@@ -1120,7 +1120,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * detail approve
-	 * @param  string $hash 
+	 * @param  string $hash
 	 */
 	public function detail_approve($hash)
 	{
@@ -1155,7 +1155,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * change approve document
-	 * @return json 
+	 * @return json
 	 */
 	public function change_approve_document()
 	{
@@ -1182,7 +1182,7 @@ class drawing_management extends AdminController
 
 	/**
 	 * detail approve
-	 * @param  string $hash 
+	 * @param  string $hash
 	 */
 	public function detail_sign_approve($hash)
 	{
@@ -1270,7 +1270,7 @@ class drawing_management extends AdminController
 		$discipline = $this->input->get('discipline'); // Get discipline filter (array for multi-select)
 		$purpose = $this->input->get('purpose'); // Get purpose filter
 		$status  = $this->input->get('status'); // Get status filter
-		$controlled_document = $this->input->get('controlled_document'); // Get controlled document filter 
+		$controlled_document = $this->input->get('controlled_document'); // Get controlled document filter
 		// Fetch filtered results from the model
 		$results = $this->drawing_management_model->filterFilesAndFolders($design_stage, $discipline, $purpose, $status, $controlled_document);
 

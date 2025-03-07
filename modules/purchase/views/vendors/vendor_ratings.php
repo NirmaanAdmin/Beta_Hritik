@@ -3,16 +3,16 @@
     <div class="panel-body">
         <h4 class="no-margin">Vendor Ratings</h4>
         <hr>
-        <?php 
+        <?php
         if($ratings == null){ ?>
             <div class="clearfix">
-            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#rateVendorModal">
+            <button class="btn btn-primary pull-right" type="button" data-toggle="modal" data-target="#rateVendorModal">
                 Rate Vendor
             </button>
         </div>
         <?php  }
         ?>
-        
+
         <br>
         <table class="table dt-table">
             <thead>
@@ -58,7 +58,7 @@
 <div class="modal fade" id="rateVendorModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h5 class="modal-title">Rate Vendor</h5>
                 <button type="button" class="close" data-dismiss="modal">
@@ -97,7 +97,7 @@
                 <button type="submit" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -105,7 +105,7 @@
 <script>
     function edit_rating() {
         var ratingId = $('#rating_id').val();
-       
+
         url: "<?= admin_url('purchase/get_rating/'); ?>" + ratingId,
 
             // Fetch rating details using AJAX

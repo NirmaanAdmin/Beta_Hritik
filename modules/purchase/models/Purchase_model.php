@@ -250,7 +250,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $id              The identifier
      * @param      boolean  $client_request  The client request
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_vendor($data, $id, $client_request = false)
     {
@@ -335,7 +335,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>  $data   The data
      *
-     * @return     array  
+     * @return     array
      */
     private function check_zero_columns($data)
     {
@@ -383,7 +383,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $data   The data
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function assign_vendor_admins($data, $id)
     {
@@ -439,7 +439,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_vendor($id)
     {
@@ -591,7 +591,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $id              The identifier
      * @param      boolean  $client_request  The client request
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_contact($data, $id, $client_request = false)
     {
@@ -657,7 +657,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_contact($id)
     {
@@ -701,7 +701,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $data   The data
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function add_approval_setting($data)
     {
@@ -740,7 +740,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $id     The identifier
      * @param      <type>   $data   The data
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function edit_approval_setting($id, $data)
     {
@@ -779,7 +779,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean   
+     * @return     boolean
      */
     public function delete_approval_setting($id)
     {
@@ -820,7 +820,7 @@ class Purchase_model extends App_Model
      *
      * @param        $array_value  The array value
      *
-     * @return     array   
+     * @return     array
      */
     public function item_to_variation($array_value)
     {
@@ -1145,7 +1145,7 @@ class Purchase_model extends App_Model
      *
      * @param      <array>   $data   The data
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function add_pur_request($data)
     {
@@ -1316,7 +1316,7 @@ class Purchase_model extends App_Model
      * @param      <array>   $data   The data
      * @param      <int>   $id     The identifier
      *
-     * @return     boolean   
+     * @return     boolean
      */
     public function update_pur_request($data, $id)
     {
@@ -1539,7 +1539,7 @@ class Purchase_model extends App_Model
      *
      * @param      <int>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_pur_request($id)
     {
@@ -1579,7 +1579,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $status  The status
      * @param      <type>   $id      The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function change_status_pur_request($status, $id)
     {
@@ -1955,7 +1955,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $data   The data
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function update_estimate($data, $id)
     {
@@ -2303,7 +2303,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $status  The status
      * @param      <type>   $id      The identifier
      *
-     * @return     boolean   
+     * @return     boolean
      */
     public function change_status_pur_estimate($status, $id)
     {
@@ -2707,7 +2707,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $data   The data
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_pur_order($data, $id)
     {
@@ -2994,7 +2994,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function delete_pur_order($id)
     {
@@ -3143,7 +3143,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $data   The data
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_contract($data, $id)
     {
@@ -3185,7 +3185,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean   
+     * @return     boolean
      */
     public function delete_contract($id)
     {
@@ -3278,7 +3278,7 @@ class Purchase_model extends App_Model
      * @param      <type>   $contract  The contract
      * @param      <type>   $status    The status
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function sign_contract($contract, $status)
     {
@@ -3300,7 +3300,7 @@ class Purchase_model extends App_Model
      * @param      <type>          $rel_id    The relative identifier
      * @param      <type>          $rel_type  The relative type
      *
-     * @return     boolean|string 
+     * @return     boolean|string
      */
     public function check_approval_details($rel_id, $rel_type)
     {
@@ -3343,7 +3343,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $data   The data
      *
-     * @return     boolean   
+     * @return     boolean
      */
     public function send_request_approve($data)
     {
@@ -3869,7 +3869,7 @@ class Purchase_model extends App_Model
      * @param      <int>   $id     The identifier
      * @param      <type>   $data   The data
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_approval_details($id, $data)
     {
@@ -4358,7 +4358,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $data   The data
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_purchase_setting($data)
     {
@@ -4395,7 +4395,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $data   The data
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_pc_options_setting($data)
     {
@@ -4418,7 +4418,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $data   The data
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function update_po_number_setting($data)
     {
@@ -4732,7 +4732,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function delete_purorder_attachment($id)
     {
@@ -4794,7 +4794,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function delete_purrequest_attachment($id)
     {
@@ -5283,7 +5283,7 @@ class Purchase_model extends App_Model
     }
 
     /**
-     * get unit add item 
+     * get unit add item
      * @return array
      */
     public function get_unit_add_item()
@@ -5311,8 +5311,8 @@ class Purchase_model extends App_Model
 
     /**
      * get inventory commodity
-     * @param  integer $commodity_id 
-     * @return array            
+     * @param  integer $commodity_id
+     * @return array
      */
     public function get_inventory_item($commodity_id)
     {
@@ -5326,8 +5326,8 @@ class Purchase_model extends App_Model
 
     /**
      * get warehourse attachments
-     * @param  integer $commodity_id 
-     * @return array               
+     * @param  integer $commodity_id
+     * @return array
      */
     public function get_item_attachments($commodity_id)
     {
@@ -5342,7 +5342,7 @@ class Purchase_model extends App_Model
     /**
      * generate commodity barcode
      *
-     * @return     string 
+     * @return     string
      */
     public function generate_commodity_barcode()
     {
@@ -5366,7 +5366,7 @@ class Purchase_model extends App_Model
     /**
      * add commodity one item
      * @param array $data
-     * @return integer 
+     * @return integer
      */
     public function add_commodity_one_item($data)
     {
@@ -5414,9 +5414,9 @@ class Purchase_model extends App_Model
 
     /**
      * update commodity one item
-     * @param  array $data 
-     * @param  integer $id   
-     * @return boolean        
+     * @param  array $data
+     * @param  integer $id
+     * @return boolean
      */
     public function update_commodity_one_item($data, $id)
     {
@@ -5456,9 +5456,9 @@ class Purchase_model extends App_Model
     }
 
     /**
-     * create sku code 
-     * @param  int commodity_group 
-     * @param  int sub_group 
+     * create sku code
+     * @param  int commodity_group
+     * @param  int sub_group
      * @return string
      */
     public function  create_sku_code($commodity_group, $sub_group)
@@ -5531,11 +5531,11 @@ class Purchase_model extends App_Model
     }
 
 
-    //delete _commodity_file file for any 
+    //delete _commodity_file file for any
     /**
      * delete commodity file
-     * @param  integer $attachment_id 
-     * @return boolean                
+     * @param  integer $attachment_id
+     * @return boolean
      */
     public function delete_commodity_file($attachment_id)
     {
@@ -5582,8 +5582,8 @@ class Purchase_model extends App_Model
 
     /**
      * get commodity attachments delete
-     * @param  integer $id 
-     * @return object     
+     * @param  integer $id
+     * @return object
      */
     public function get_commodity_attachments_delete($id)
     {
@@ -5614,7 +5614,7 @@ class Purchase_model extends App_Model
     }
 
     /**
-     * add unit type 
+     * add unit type
      * @param array  $data
      * @param boolean $id
      * return boolean
@@ -5798,7 +5798,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_ic_attachment($id)
     {
@@ -5942,7 +5942,7 @@ class Purchase_model extends App_Model
      *
      * @param      $data   The data
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function add_vendor_items($data)
     {
@@ -5975,7 +5975,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_vendor_items($id)
     {
@@ -6223,7 +6223,7 @@ class Purchase_model extends App_Model
 
     /**
      * get item group
-     * @return array 
+     * @return array
      */
     public function get_item_group()
     {
@@ -6325,8 +6325,8 @@ class Purchase_model extends App_Model
 
     /**
      * list subgroup by group
-     * @param  integer $group 
-     * @return string        
+     * @param  integer $group
+     * @return string
      */
     public function list_subgroup_by_group($group)
     {
@@ -6346,7 +6346,7 @@ class Purchase_model extends App_Model
 
     /**
      * get item tag filter
-     * @return array 
+     * @return array
      */
     public function get_item_tag_filter()
     {
@@ -6395,7 +6395,7 @@ class Purchase_model extends App_Model
      *
      * @param         $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_pur_contract_attachment($id)
     {
@@ -6429,7 +6429,7 @@ class Purchase_model extends App_Model
      *
      * @param         $data   The data
      *
-     * @return     id inserted 
+     * @return     id inserted
      */
     public function add_vendor_category($data)
     {
@@ -6447,7 +6447,7 @@ class Purchase_model extends App_Model
      * @param         $data   The data
      * @param        $id     The identifier
      *
-     * @return     boolean   
+     * @return     boolean
      */
     public function update_vendor_category($data, $id)
     {
@@ -6464,7 +6464,7 @@ class Purchase_model extends App_Model
      *
      * @param         $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_vendor_category($id)
     {
@@ -6538,7 +6538,7 @@ class Purchase_model extends App_Model
      *
      * @param         $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function delete_estimate_attachment($id)
     {
@@ -7151,7 +7151,7 @@ class Purchase_model extends App_Model
      *
      * @param      <type>   $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function delete_pur_invoice($id)
     {
@@ -7230,7 +7230,7 @@ class Purchase_model extends App_Model
      * @param         $data       The data
      * @param         $invoice  The invoice id
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function add_invoice_payment($data, $invoice)
     {
@@ -7441,7 +7441,7 @@ class Purchase_model extends App_Model
      *
      * @param         $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function delete_purinv_attachment($id)
     {
@@ -7858,8 +7858,8 @@ class Purchase_model extends App_Model
 
     /**
      * check sku duplicate
-     * @param  [type] $data 
-     * @return [type]       
+     * @param  [type] $data
+     * @return [type]
      */
     public function check_sku_duplicate($data)
     {
@@ -7890,7 +7890,7 @@ class Purchase_model extends App_Model
     /**
      * Removes a po logo.
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function remove_po_logo()
     {
@@ -8275,7 +8275,7 @@ class Purchase_model extends App_Model
      * @param         $data   The data
      * @param         $id     The identifier
      *
-     * @return     boolean  
+     * @return     boolean
      */
     public function edit_comment($data, $id)
     {
@@ -8827,10 +8827,10 @@ class Purchase_model extends App_Model
 
     /**
      * commodity udpate profit rate
-     * @param  [type] $id      
-     * @param  [type] $percent 
-     * @param  [type] $type    
-     * @return [type]          
+     * @param  [type] $id
+     * @param  [type] $percent
+     * @param  [type] $type
+     * @return [type]
      */
     public function commodity_udpate_profit_rate($id, $percent, $type)
     {
@@ -9100,7 +9100,7 @@ class Purchase_model extends App_Model
     /**
      * { recurring purchase invoice }
      *
-     * 
+     *
      */
     public function recurring_purchase_invoice()
     {
@@ -9230,7 +9230,7 @@ class Purchase_model extends App_Model
      *
      * @param      int|string  $auto_operation_hour  The automatic operation hour
      *
-     * @return     bool        
+     * @return     bool
      */
     private function shouldRunAutomations($auto_operation_hour)
     {
@@ -9589,7 +9589,7 @@ class Purchase_model extends App_Model
      *
      * @param        $id     The identifier
      *
-     * @return      total 
+     * @return      total
      */
     private function total_debits_used_by_debit_note($id)
     {
@@ -9893,7 +9893,7 @@ class Purchase_model extends App_Model
      * @param        $id     The identifier
      * @param        $data   The data
      *
-     * @return     bool    
+     * @return     bool
      */
     public function apply_debits($id, $data)
     {
@@ -10037,7 +10037,7 @@ class Purchase_model extends App_Model
      * @param        $id     The identifier
      * @param        $data   The data
      *
-     * @return     bool    
+     * @return     bool
      */
     public function create_refund($id, $data)
     {
@@ -10072,7 +10072,7 @@ class Purchase_model extends App_Model
      * @param        $id     The identifier
      * @param        $data   The data
      *
-     * @return     bool    
+     * @return     bool
      */
     public function edit_refund($id, $data)
     {
@@ -10107,7 +10107,7 @@ class Purchase_model extends App_Model
      * @param        $refund_id       The refund identifier
      * @param        $debit_note_id  The debit note identifier
      *
-     * @return     bool    
+     * @return     bool
      */
     public function delete_refund($refund_id, $debit_note_id)
     {
@@ -10666,8 +10666,8 @@ class Purchase_model extends App_Model
 
     /**
      * delete purchase permission
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function delete_purchase_permission($id)
     {
@@ -10832,7 +10832,7 @@ class Purchase_model extends App_Model
 
     /**
      * wh get grouped
-     * @return [type] 
+     * @return [type]
      */
     public function pur_get_grouped($can_be = '', $search_all = false, $vendor = '')
     {
@@ -11022,8 +11022,8 @@ class Purchase_model extends App_Model
 
     /**
      * wh get tax rate
-     * @param  [type] $taxname 
-     * @return [type]          
+     * @param  [type] $taxname
+     * @return [type]
      */
     public function pur_get_tax_rate($taxname)
     {
@@ -11067,13 +11067,13 @@ class Purchase_model extends App_Model
 
     /**
      * get taxes dropdown template
-     * @param  [type]  $name     
-     * @param  [type]  $taxname  
-     * @param  string  $type     
-     * @param  string  $item_key 
-     * @param  boolean $is_edit  
-     * @param  boolean $manual   
-     * @return [type]            
+     * @param  [type]  $name
+     * @param  [type]  $taxname
+     * @param  string  $type
+     * @param  string  $item_key
+     * @param  boolean $is_edit
+     * @param  boolean $manual
+     * @return [type]
      */
     public function get_taxes_dropdown_template($name, $taxname, $type = '', $item_key = '', $is_edit = false, $manual = false)
     {
@@ -11194,9 +11194,9 @@ class Purchase_model extends App_Model
 
     /**
      * wh uniqueByKey
-     * @param  [type] $array 
-     * @param  [type] $key   
-     * @return [type]        
+     * @param  [type] $array
+     * @param  [type] $key
+     * @return [type]
      */
     public function pur_uniqueByKey($array, $key)
     {
@@ -11300,8 +11300,8 @@ class Purchase_model extends App_Model
 
     /**
      * row item to variation
-     * @param  [type] $item_value 
-     * @return [type]             
+     * @param  [type] $item_value
+     * @return [type]
      */
     public function row_item_to_variation($item_value)
     {
@@ -11340,7 +11340,7 @@ class Purchase_model extends App_Model
      * @param      string      $item_key        The item key
      * @param      bool        $is_edit         Indicates if edit
      *
-     * @return     string      
+     * @return     string
      */
     public function create_quotation_row_template($name = '', $item_name = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $quote_detail = array())
     {
@@ -11534,7 +11534,7 @@ class Purchase_model extends App_Model
      * @param      string      $item_key          The item key
      * @param      bool        $is_edit           Indicates if edit
      *
-     * @return     string      
+     * @return     string
      */
     public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '', $serial_no = '')
     {
@@ -11849,9 +11849,9 @@ class Purchase_model extends App_Model
 
 
     /**
-     * create sku code 
-     * @param  int commodity_group 
-     * @param  int sub_group 
+     * create sku code
+     * @param  int commodity_group
+     * @param  int sub_group
      * @return string
      */
     public function  create_vendor_item_sku_code($commodity_group, $sub_group)
@@ -12220,7 +12220,7 @@ class Purchase_model extends App_Model
      * currency generator
      * @param  $variants
      * @param  integer $i
-     * @return 
+     * @return
      */
     public function currency_generator($currencies)
     {
@@ -12370,7 +12370,7 @@ class Purchase_model extends App_Model
      * @param  string $from   Currency Code
      * @param  string $to     Currency Code
      * @param  float $amount
-     * @return float        
+     * @return float
      */
     public function currency_converter($from, $to, $amount = 1)
     {
@@ -12435,7 +12435,7 @@ class Purchase_model extends App_Model
      *
      * @param        $manually  The manually
      *
-     * @return     bool    
+     * @return     bool
      */
     public function cronjob_currency_rates($manually)
     {
@@ -12728,8 +12728,8 @@ class Purchase_model extends App_Model
 
     /**
      * omni sale detail order return
-     * @param  [type] $id 
-     * @return [type]              
+     * @param  [type] $id
+     * @return [type]
      */
     public function pur_order_detail_order_return($id, $return_type = 'fully')
     {
@@ -12815,9 +12815,9 @@ class Purchase_model extends App_Model
     }
 
     /**
-     *  get product   
-     * @param  int $id    
-     * @return  object or array object       
+     *  get product
+     * @param  int $id
+     * @return  object or array object
      */
     public function get_product($id = '')
     {
@@ -12833,7 +12833,7 @@ class Purchase_model extends App_Model
 
     /**
      * get tax info by product
-     * @return  object $tax           
+     * @return  object $tax
      */
     public function get_tax_info_by_product($id_product)
     {
@@ -12850,7 +12850,7 @@ class Purchase_model extends App_Model
 
     /**
      * create order return code
-     * @return [type] 
+     * @return [type]
      */
     public function create_order_return_code()
     {
@@ -12860,8 +12860,8 @@ class Purchase_model extends App_Model
 
     /**
      * [add add order return
-     * @param [type] $data     
-     * @param [type] $rel_type 
+     * @param [type] $data
+     * @param [type] $rel_type
      */
     public function add_order_return($data, $rel_type)
     {
@@ -13094,8 +13094,8 @@ class Purchase_model extends App_Model
 
     /**
      * update inventory setting
-     * @param  array $data 
-     * @return boolean       
+     * @param  array $data
+     * @return boolean
      */
     public function update_purchase_setting_v2($data)
     {
@@ -13121,8 +13121,8 @@ class Purchase_model extends App_Model
 
     /**
      * get order return
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function get_order_return($id)
     {
@@ -13146,8 +13146,8 @@ class Purchase_model extends App_Model
 
     /**
      * get order return detail
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function get_order_return_detail($id)
     {
@@ -13163,8 +13163,8 @@ class Purchase_model extends App_Model
 
     /**
      * get html tax order return
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function get_html_tax_order_return($id)
     {
@@ -13261,10 +13261,10 @@ class Purchase_model extends App_Model
 
     /**
      * update order return
-     * @param  [type]  $data     
-     * @param  [type]  $rel_type 
-     * @param  boolean $id       
-     * @return [type]            
+     * @param  [type]  $data
+     * @param  [type]  $rel_type
+     * @param  boolean $id
+     * @return [type]
      */
     public function update_order_return($data, $rel_type,  $id = false)
     {
@@ -13561,9 +13561,9 @@ class Purchase_model extends App_Model
 
     /**
      * wh get activity log
-     * @param  [type] $id   
-     * @param  [type] $type 
-     * @return [type]       
+     * @param  [type] $id
+     * @param  [type] $type
+     * @return [type]
      */
     public function pur_get_activity_log($id, $rel_type)
     {
@@ -13577,10 +13577,10 @@ class Purchase_model extends App_Model
 
     /**
      * log wh activity
-     * @param  [type] $id              
-     * @param  [type] $description     
-     * @param  string $additional_data 
-     * @return [type]                  
+     * @param  [type] $id
+     * @param  [type] $description
+     * @param  string $additional_data
+     * @return [type]
      */
     public function log_pur_activity($id, $rel_type, $description, $date = '')
     {
@@ -13606,8 +13606,8 @@ class Purchase_model extends App_Model
 
     /**
      * delete activitylog
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function delete_activitylog($id)
     {
@@ -13624,8 +13624,8 @@ class Purchase_model extends App_Model
 
     /**
      * delete order return
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function delete_order_return($id)
     {
@@ -13669,8 +13669,8 @@ class Purchase_model extends App_Model
 
     /**
      * order return pdf
-     * @param  [type] $order_return 
-     * @return [type]               
+     * @param  [type] $order_return
+     * @return [type]
      */
     public function order_return_pdf($order_return)
     {
@@ -13758,7 +13758,7 @@ class Purchase_model extends App_Model
      * @param      string      $item_key          The item key
      * @param      bool        $is_edit           Indicates if edit
      *
-     * @return     string      
+     * @return     string
      */
     public function create_purchase_invoice_row_template($name = '', $item_name = '', $item_description = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
     {
@@ -13988,7 +13988,7 @@ class Purchase_model extends App_Model
      * @param        $id     The identifier
      * @param        $data   The data
      *
-     * @return     bool    
+     * @return     bool
      */
     public function create_order_return_refund($id, $data)
     {
@@ -14034,7 +14034,7 @@ class Purchase_model extends App_Model
      * @param        $id     The identifier
      * @param        $data   The data
      *
-     * @return     bool    
+     * @return     bool
      */
     public function edit_order_return_refund($id, $data)
     {
@@ -14078,7 +14078,7 @@ class Purchase_model extends App_Model
      * @param        $refund_id       The refund identifier
      * @param        $debit_note_id  The debit note identifier
      *
-     * @return     bool    
+     * @return     bool
      */
     public function delete_order_return_refund($refund_id, $order_return_id)
     {
@@ -14121,13 +14121,13 @@ class Purchase_model extends App_Model
 
     /**
      * get taxes dropdown template
-     * @param  [type]  $name     
-     * @param  [type]  $taxname  
-     * @param  string  $type     
-     * @param  string  $item_key 
-     * @param  boolean $is_edit  
-     * @param  boolean $manual   
-     * @return [type]            
+     * @param  [type]  $name
+     * @param  [type]  $taxname
+     * @param  string  $type
+     * @param  string  $item_key
+     * @param  boolean $is_edit
+     * @param  boolean $manual
+     * @return [type]
      */
     public function get_taxes_dropdown_template_readonly($name, $taxname, $type = '', $item_key = '', $is_edit = false, $manual = false)
     {
@@ -14284,8 +14284,8 @@ class Purchase_model extends App_Model
 
     /**
      * delete hr profile permission
-     * @param  [type] $id 
-     * @return [type]     
+     * @param  [type] $id
+     * @return [type]
      */
     public function delete_hr_profile_permission($id)
     {
@@ -14418,8 +14418,8 @@ class Purchase_model extends App_Model
 
     /**
      * get job position training de
-     * @param  integer $id 
-     * @return object      
+     * @param  integer $id
+     * @return object
      */
     public function get_item_longdescriptions($id)
     {
@@ -14635,7 +14635,7 @@ class Purchase_model extends App_Model
      *
      * @param         $id     The identifier
      *
-     * @return     boolean 
+     * @return     boolean
      */
     public function delete_vendor_item_file($id)
     {
@@ -17184,7 +17184,7 @@ class Purchase_model extends App_Model
             $order_detail = $data['newitems'];
             unset($data['newitems']);
         }
-
+        $last_insert_id = [];
         if (count($order_detail) > 0) {
             foreach ($order_detail as $key => $rqd) {
                 $dt_data = [];
@@ -17204,8 +17204,9 @@ class Purchase_model extends App_Model
                 $dt_data['order_value'] = $rqd['order_value'];
 
                 $this->db->insert(db_prefix() . 'pur_order_tracker', $dt_data);
-                return $last_insert_id = $this->db->insert_id();
+                $last_insert_id[] = $this->db->insert_id();
             }
+            return $last_insert_id;
         }
         return false;
     }
@@ -17383,7 +17384,7 @@ class Purchase_model extends App_Model
 
 
                     $html .= '</div><br/>';
-                    
+
                 }
             }
         }
@@ -17391,7 +17392,7 @@ class Purchase_model extends App_Model
         return $html;
     }
 
-    public function get_multiple_pur_invoices($pur_ids) 
+    public function get_multiple_pur_invoices($pur_ids)
     {
         $this->db->where_in('id', $pur_ids);
         return $this->db->get(db_prefix() . 'pur_invoices')->result_array();

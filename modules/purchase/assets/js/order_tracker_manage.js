@@ -2,22 +2,23 @@ var hidden_columns = [2,3,4,5], table_rec_campaign;
 Dropzone.autoDiscover = false;
 var expenseDropzone;
 (function($) {
-"use strict"; 
+"use strict";
     table_rec_campaign = $('.table-table_order_tracker');
 
-    var Params = {        
+    var Params = {
         "type": "[name='type[]']",
         "rli_filter": "[name='rli_filter']",
         "vendors": "[name='vendors[]']",
         "kind": "[name='kind']",
         "budget_head": "[name='budget_head']",
+        "order_type_filter": "[name='order_type_filter']",
     };
 
     initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[3, 'desc']);
-	
+
     $.each(Params, function(i, obj) {
         console.log(obj);
-        $('select' + obj).on('change', function() {  
+        $('select' + obj).on('change', function() {
             table_rec_campaign.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
@@ -42,6 +43,10 @@ var expenseDropzone;
 
     $(document).on('change', 'select[name="budget_head"]', function () {
         $('select[name="budget_head"]').selectpicker('refresh');
+    });
+
+    $(document).on('change', 'select[name="order_type_filter"]', function () {
+        $('select[name="order_type_filter"]').selectpicker('refresh');
     });
 
     $(document).on('click', '.reset_all_ot_filters', function () {
@@ -83,6 +88,7 @@ function change_rli_filter(status, id, table_name) {
                         console.log('After:', $statusSpan.attr('class'));
 
                         // Display success message
+                        $(".table-table_order_tracker").DataTable().ajax.reload();
                         alert_float('success', response.mess);
                     } else {
                         // Display warning message if the operation fails
