@@ -31,22 +31,46 @@ function calculate_payment_certificate() {
 	        $('.po_comulative').html(format_money(po_comulative, true));
 
 	        var pay_cert_c1_1 = $('input[name="pay_cert_c1_1"]').val();
+        	var mobilization_advance = $('select[name="mobilization_advance"]').val();
+	        if(mobilization_advance) {
+	        	mobilization_advance = mobilization_advance.replace('%', '');
+	        	pay_cert_c1_1 = po_contract_amount * (mobilization_advance / 100);
+	        	$('input[name="pay_cert_c1_1"]').val(pay_cert_c1_1);
+	        } else {
+	        	pay_cert_c1_1 = 0;
+	        }
+
+	        var pay_cert_c1_2 = $('input[name="pay_cert_c1_2"]').val();
+        	var mobilization_advance = $('select[name="mobilization_advance"]').val();
+	        if(mobilization_advance) {
+	        	mobilization_advance = mobilization_advance.replace('%', '');
+	        	pay_cert_c1_2 = po_previous * (mobilization_advance / 100);
+	        	$('input[name="pay_cert_c1_2"]').val(pay_cert_c1_2);
+	        } else {
+	        	pay_cert_c1_2 = 0;
+	        }
+
+	        var pay_cert_c1_3 = $('input[name="pay_cert_c1_3"]').val();
+        	var mobilization_advance = $('select[name="mobilization_advance"]').val();
+	        if(mobilization_advance) {
+	        	mobilization_advance = mobilization_advance.replace('%', '');
+	        	pay_cert_c1_3 = po_this_bill * (mobilization_advance / 100);
+	        	$('input[name="pay_cert_c1_3"]').val(pay_cert_c1_3);
+	        } else {
+	        	pay_cert_c1_3 = 0;
+	        }
+
 	        var pay_cert_c2_1 = $('input[name="pay_cert_c2_1"]').val();
-	        pay_cert_c1_1 = pay_cert_c1_1.trim() != "" ? pay_cert_c1_1 : 0;
 	        pay_cert_c2_1 = pay_cert_c2_1.trim() != "" ? pay_cert_c2_1 : 0;
 	        var net_advance_1 = parseFloat(pay_cert_c1_1) + parseFloat(pay_cert_c2_1);
 	        $('.net_advance_1').html(format_money(net_advance_1, true));
 
-	        var pay_cert_c1_2 = $('input[name="pay_cert_c1_2"]').val();
 	        var pay_cert_c2_2 = $('input[name="pay_cert_c2_2"]').val();
-	        pay_cert_c1_2 = pay_cert_c1_2.trim() != "" ? pay_cert_c1_2 : 0;
 	        pay_cert_c2_2 = pay_cert_c2_2.trim() != "" ? pay_cert_c2_2 : 0;
 	        var net_advance_2 = parseFloat(pay_cert_c1_2) + parseFloat(pay_cert_c2_2);
 	        $('.net_advance_2').html(format_money(net_advance_2, true));
 
-	        var pay_cert_c1_3 = $('input[name="pay_cert_c1_3"]').val();
 	        var pay_cert_c2_3 = $('input[name="pay_cert_c2_3"]').val();
-	        pay_cert_c1_3 = pay_cert_c1_3.trim() != "" ? pay_cert_c1_3 : 0;
 	        pay_cert_c2_3 = pay_cert_c2_3.trim() != "" ? pay_cert_c2_3 : 0;
 	        var net_advance_3 = parseFloat(pay_cert_c1_3) + parseFloat(pay_cert_c2_3);
 	        $('.net_advance_3').html(format_money(net_advance_3, true));

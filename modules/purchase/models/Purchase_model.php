@@ -17647,7 +17647,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>C1</td>
-                  <td>'._l('pay_cert_c1_title').'</td>
+                  <td>Mobilization Advance payment '.$pay_cert_data->mobilization_advance.' as per clause '.$pay_cert_data->payment_clause.'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_1, '').'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_2, '').'</td>
                   <td>'.app_format_money($pay_cert_data->pay_cert_c1_3, '').'</td>
