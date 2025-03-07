@@ -17224,10 +17224,16 @@ class Purchase_model extends App_Model
             }
             $expenses = $this->db->get(db_prefix() . 'expenses')->row();
             if (!empty($expenses)) {
+                if (!empty($pur_invoices->group_pur)) {
+                    $expense_category = $this->find_budget_head_value($pur_invoices->group_pur);
+                }
                 $expenses_input = array();
                 $expenses_input['expense_name'] = $pur_invoices->description_services;
                 $expenses_input['vendor'] = $pur_invoices->vendor;
                 $expenses_input['amount'] = $pur_invoices->final_certified_amount;
+                if(isset($expense_category)) {
+                    $expenses_input['category'] = $expense_category;
+                }
                 $this->db->where('id', $expenses->id);
                 $this->db->update('tblexpenses', $expenses_input);
             }
@@ -17235,10 +17241,13 @@ class Purchase_model extends App_Model
             $this->db->where('vbt_id', $id);
             $itemable = $this->db->get(db_prefix() . 'itemable')->row();
             if (!empty($itemable)) {
+                $budget_head_data = $this->get_commodity_group_type($pur_invoices->group_pur);
                 $itemable_input = array();
+                $itemable_input['description'] = $budget_head_data->name;
                 $itemable_input['long_description'] = $pur_invoices->description_services;
                 $itemable_input['rate'] = $pur_invoices->vendor_submitted_amount_without_tax;
                 $itemable_input['tax'] = $pur_invoices->vendor_submitted_tax_amount;
+                $itemable_input['annexure'] = $pur_invoices->group_pur;
                 $this->db->where('id', $itemable->id);
                 $this->db->update('tblitemable', $itemable_input);
 

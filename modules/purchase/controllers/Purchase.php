@@ -11077,6 +11077,7 @@ class purchase extends AdminController
         $status_str = '';
         $class = '';
         if ($success == true) {
+            $this->purchase_model->update_vbt_expense_ril_data($invoice_id);
             $message = _l('change_budget_head_successfully');
         } else {
             $message = "Failed";
