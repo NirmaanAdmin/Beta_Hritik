@@ -5089,6 +5089,11 @@ class Purchase_model extends App_Model
         $html .=  '</tbody>
       </table><br><br>';
 
+        if($pur_order->discount_type == 'before_tax') {
+            $tax_per = ($pur_order->discount_total / $pur_order->subtotal) * 100;
+            $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
+        }
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
@@ -15703,6 +15708,11 @@ class Purchase_model extends App_Model
         $html .=  '</tbody>
       </table><br><br>';
 
+        if($pur_order->discount_type == 'before_tax') {
+            $tax_per = ($pur_order->discount_total / $pur_order->subtotal) * 100;
+            $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
+        }
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
@@ -15748,13 +15758,15 @@ class Purchase_model extends App_Model
 
         $html .= ' </tbody></table>';
 
-        $html .= '<div>&nbsp;</div>';
-        $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
-        $html .= '<div class="col-md-12 mtop15">
-            <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
-        $html .= '<div style="page-break-before:always"></div>';
-        $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
-            </div>';
+        if($pur_order->vendornote || $pur_order->terms) {
+            $html .= '<div>&nbsp;</div>';
+            $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
+            $html .= '<div class="col-md-12 mtop15">
+                <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
+            $html .= '<div style="page-break-before:always"></div>';
+            $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
+                </div>';
+        }
         $html .= '<br>
       <br>
       <br>
