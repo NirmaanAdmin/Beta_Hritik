@@ -2327,7 +2327,7 @@ class Invoices_model extends App_Model
                         if (!is_numeric($item['qty'])) {
                             $item['qty'] = 1;
                         }
-                        $amount = $item['rate'] * $item['qty'];
+                        $amount = ($item['rate'] * $item['qty']) + $item['tax'];
                         $total_tax = $item['tax'];
                         $annexure = $item['annexure'];
                         $itemid = $item['id'];
