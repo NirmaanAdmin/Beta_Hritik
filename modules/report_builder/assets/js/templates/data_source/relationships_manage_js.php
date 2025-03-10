@@ -114,7 +114,6 @@ var lastAddedDeliveryItemKey = null;
 
 
 	function table_onchange(table_name, type_of_join, query_string, main_table=''){
-		"use strict";
 
 
 		var array_type_of_join = [];

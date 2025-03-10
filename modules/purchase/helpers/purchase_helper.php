@@ -3934,15 +3934,23 @@ function get_ril_invoice_item($id)
     return $ril_invoice_item;
 }
 
-function get_payment_certificate_serial_no($po_id)
+function get_payment_certificate_serial_no($po_id, $type)
 {
     if (!empty($po_id)) {
         $CI = &get_instance();
-        $payment_certificate = $CI->db->select('*')
+        if($type == 'wo') {
+            $payment_certificate = $CI->db->select('*')
+            ->where('wo_id', $po_id)
+            ->from(db_prefix() . 'payment_certificate')
+            ->get()
+            ->result_array();
+        } else {
+            $payment_certificate = $CI->db->select('*')
             ->where('po_id', $po_id)
             ->from(db_prefix() . 'payment_certificate')
             ->get()
             ->result_array();
+        }
         if (!empty($payment_certificate)) {
             return count($payment_certificate) + 1;
         }
@@ -3966,3 +3974,14 @@ function get_taxes_list()
     $CI->db->order_by('taxrate', 'asc');
     return $CI->db->get(db_prefix() . 'taxes')->result_array();
 }
+
+function format_amount_cert($value) {
+    if (is_numeric($value)) {
+        $decimalPart = explode('.', (string) $value)[1] ?? '';
+        if (strlen($decimalPart) >= 3) {
+            return number_format((float) $value, 2, '.', '');
+        }
+    }
+    return ($value != 0) ? $value : '';
+}
+

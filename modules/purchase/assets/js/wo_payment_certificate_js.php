@@ -7,17 +7,17 @@ calculate_payment_certificate();
 
 function calculate_payment_certificate() {
 	"use strict";
-	var po_id = $('input[name="po_id"]').val();
+	var wo_id = $('input[name="wo_id"]').val();
 	var payment_certificate_id = $('input[name="payment_certificate_id"]').val();
 	
-	if(po_id != '') {
-		$.post(admin_url + 'purchase/get_po_contract_data/'+po_id+'/'+payment_certificate_id).done(function(response){
+	if(wo_id != '') {
+		$.post(admin_url + 'purchase/get_wo_contract_data/'+wo_id+'/'+payment_certificate_id).done(function(response){
 	        response = JSON.parse(response);
 	        $('.po_name').html(response.po_name);
 
-	        var po_contract_amount = response.po_contract_amount;
-	        po_contract_amount = po_contract_amount.trim() != "" ? po_contract_amount : 0;
-	        $('.po_contract_amount').html(format_money_cert(po_contract_amount, true));
+	        var wo_contract_amount = response.wo_contract_amount;
+	        wo_contract_amount = wo_contract_amount.trim() != "" ? wo_contract_amount : 0;
+	        $('.wo_contract_amount').html(format_money_cert(wo_contract_amount, true));
 
 	        var po_previous = $('input[name="po_previous"]').val();
 	        po_previous = po_previous.trim() != "" ? po_previous : 0;
@@ -34,7 +34,7 @@ function calculate_payment_certificate() {
         	var mobilization_advance = $('select[name="mobilization_advance"]').val();
 	        if(mobilization_advance) {
 	        	mobilization_advance = mobilization_advance.replace('%', '');
-	        	pay_cert_c1_1 = po_contract_amount * (mobilization_advance / 100);
+	        	pay_cert_c1_1 = wo_contract_amount * (mobilization_advance / 100);
 	        	$('input[name="pay_cert_c1_1"]').val(format_amount_cert(pay_cert_c1_1));
 	        } else {
 	        	pay_cert_c1_1 = 0;
@@ -82,7 +82,7 @@ function calculate_payment_certificate() {
 	        var net_advance_4 = parseFloat(pay_cert_c1_4) + parseFloat(pay_cert_c2_4);
 	        $('.net_advance_4').html(format_money_cert(net_advance_4, true));
 
-	        var sub_total_ac_1 = parseFloat(po_contract_amount) + parseFloat(net_advance_1);
+	        var sub_total_ac_1 = parseFloat(wo_contract_amount) + parseFloat(net_advance_1);
 	        $('.sub_total_ac_1').html(format_money_cert(sub_total_ac_1, true));
 
 	        var sub_total_ac_2 = parseFloat(po_previous) + parseFloat(net_advance_2);
@@ -209,7 +209,7 @@ function calculate_payment_certificate() {
         	var cgst_tax_1 = $('select[name="cgst_tax"]').val();
 	        if(cgst_tax_1) {
 	        	cgst_tax_1 = cgst_tax_1.replace('%', '');
-	        	cgst_on_a1 = po_contract_amount * (cgst_tax_1 / 100);
+	        	cgst_on_a1 = wo_contract_amount * (cgst_tax_1 / 100);
 	        }
 	        $('.cgst_on_a1').html(format_money_cert(cgst_on_a1, true));
 
@@ -236,7 +236,7 @@ function calculate_payment_certificate() {
         	var sgst_tax_1 = $('select[name="sgst_tax"]').val();
 	        if(sgst_tax_1) {
 	        	sgst_tax_1 = sgst_tax_1.replace('%', '');
-	        	sgst_on_a1 = po_contract_amount * (sgst_tax_1 / 100);
+	        	sgst_on_a1 = wo_contract_amount * (sgst_tax_1 / 100);
 	        }
 	        $('.sgst_on_a1').html(format_money_cert(sgst_on_a1, true));
 
@@ -263,7 +263,7 @@ function calculate_payment_certificate() {
         	var labour_cess = $('select[name="labour_cess"]').val();
 	        if(labour_cess) {
 	        	labour_cess = labour_cess.replace('%', '');
-	        	labour_cess_1 = po_contract_amount * (labour_cess / 100);
+	        	labour_cess_1 = wo_contract_amount * (labour_cess / 100);
 	        	$('input[name="labour_cess_1"]').val(format_amount_cert(labour_cess_1));
 	        } else {
 	        	labour_cess_1 = 0;

@@ -5089,6 +5089,11 @@ class Purchase_model extends App_Model
         $html .=  '</tbody>
       </table><br><br>';
 
+        if($pur_order->discount_type == 'before_tax') {
+            $tax_per = ($pur_order->discount_total / $pur_order->subtotal) * 100;
+            $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
+        }
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
@@ -5099,6 +5104,31 @@ class Purchase_model extends App_Model
             </td>
             </tr>';
         }
+        if ($pur_order->discount_total > 0) {
+            $html .= '<tr id="subtotal">
+              <td width="33%"></td>
+                 <td>' . _l('discount(%)') . '(%)' . '</td>
+                 <td class="subtotal">
+                    ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
+                 </td>
+              </tr>
+              <tr id="subtotal">
+              <td width="33%"></td>
+                 <td>' . _l('discount(amount)') . '</td>
+                 <td class="subtotal">
+                    ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
+                 </td>
+              </tr>';
+              $total_after_discount = 0;
+              $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
+              $html .= '<tr id="subtotal">
+              <td width="33%"></td>
+                 <td>' . _l('total_after_discount') . '</td>
+                 <td class="subtotal">
+                    ' . '₹ ' . app_format_money($total_after_discount, '') . '
+                 </td>
+              </tr>';
+        }
         if ($tax_total > 0) {
             $html .= '<tr id="tax">
             <td width="33%"></td>
@@ -5107,22 +5137,6 @@ class Purchase_model extends App_Model
             ' . '₹ ' . app_format_money($tax_total, '') . '
             </td>
             </tr>';
-        }
-        if ($pur_order->discount_total > 0) {
-            $html .= '<tr id="subtotal">
-                  <td width="33%"></td>
-                     <td>' . _l('discount(%)') . '(%)' . '</td>
-                     <td class="subtotal">
-                        ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
-                     </td>
-                  </tr>
-                  <tr id="subtotal">
-                  <td width="33%"></td>
-                     <td>' . _l('discount(money)') . '</td>
-                     <td class="subtotal">
-                        ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
-                     </td>
-                  </tr>';
         }
         $html .= '<tr id="subtotal">
                  <td width="33%"></td>
@@ -7608,7 +7622,7 @@ class Purchase_model extends App_Model
         if ($pur_estimate->discount_total > 0) {
             $html .= '<tr id="subtotal">
                   <td style="width: 33%"></td>
-                     <td>' . _l('discount(money)') . '</td>
+                     <td>' . _l('discount(amount)') . '</td>
                      <td class="subtotal">
                         ' . app_format_money($pur_estimate->discount_total, '') . '
                      </td>
@@ -15109,6 +15123,14 @@ class Purchase_model extends App_Model
                     $template = mail_template('work_order_to_approver', 'purchase', $data);
                     $template->send();
                 }
+
+                if ($rel_name == 'payment_certificate') {
+                    $data['mail_to'] = $value['email'];
+                    $data['pc_id'] = $id;
+                    $data = (object) $data;
+                    $template = mail_template('payment_certificate_to_approver', 'purchase', $data);
+                    $template->send();
+                }
             }
         }
 
@@ -15703,6 +15725,11 @@ class Purchase_model extends App_Model
         $html .=  '</tbody>
       </table><br><br>';
 
+        if($pur_order->discount_type == 'before_tax') {
+            $tax_per = ($pur_order->discount_total / $pur_order->subtotal) * 100;
+            $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
+        }
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
@@ -15713,6 +15740,31 @@ class Purchase_model extends App_Model
             </td>
             </tr>';
         }
+        if ($pur_order->discount_total > 0) {
+            $html .= '<tr id="subtotal">
+              <td width="33%"></td>
+                 <td>' . _l('discount(%)') . '(%)' . '</td>
+                 <td class="subtotal">
+                    ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
+                 </td>
+              </tr>
+              <tr id="subtotal">
+              <td width="33%"></td>
+                 <td>' . _l('discount(amount)') . '</td>
+                 <td class="subtotal">
+                    ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
+                 </td>
+              </tr>';
+              $total_after_discount = 0;
+              $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
+              $html .= '<tr id="subtotal">
+              <td width="33%"></td>
+                 <td>' . _l('total_after_discount') . '</td>
+                 <td class="subtotal">
+                    ' . '₹ ' . app_format_money($total_after_discount, '') . '
+                 </td>
+              </tr>';
+        }
         if ($tax_total > 0) {
             $html .= '<tr id="tax">
             <td width="33%"></td>
@@ -15721,22 +15773,6 @@ class Purchase_model extends App_Model
             ' . '₹ ' . app_format_money($tax_total, '') . '
             </td>
             </tr>';
-        }
-        if ($pur_order->discount_total > 0) {
-            $html .= '<tr id="subtotal">
-                  <td width="33%"></td>
-                     <td>' . _l('discount(%)') . '(%)' . '</td>
-                     <td class="subtotal">
-                        ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
-                     </td>
-                  </tr>
-                  <tr id="subtotal">
-                  <td width="33%"></td>
-                     <td>' . _l('discount(money)') . '</td>
-                     <td class="subtotal">
-                        ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
-                     </td>
-                  </tr>';
         }
         $html .= '<tr id="subtotal">
                  <td width="33%"></td>
@@ -15748,13 +15784,15 @@ class Purchase_model extends App_Model
 
         $html .= ' </tbody></table>';
 
-        $html .= '<div>&nbsp;</div>';
-        $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
-        $html .= '<div class="col-md-12 mtop15">
-            <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
-        $html .= '<div style="page-break-before:always"></div>';
-        $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
-            </div>';
+        if($pur_order->vendornote || $pur_order->terms) {
+            $html .= '<div>&nbsp;</div>';
+            $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
+            $html .= '<div class="col-md-12 mtop15">
+                <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
+            $html .= '<div style="page-break-before:always"></div>';
+            $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
+                </div>';
+        }
         $html .= '<br>
       <br>
       <br>
@@ -17452,6 +17490,26 @@ class Purchase_model extends App_Model
             $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
         }
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
+        $insert_id = $this->db->insert_id();
+
+        if(isset($data['wo_id'])) {
+            $pur_order = $this->get_wo_order($data['wo_id']);
+        } else {
+            $pur_order = $this->get_pur_order($data['po_id']);
+        }
+        $cron_email = array();
+        $cron_email_options = array();
+        $cron_email['type'] = "purchase";
+        $cron_email_options['rel_type'] = 'payment_certificate';
+        $cron_email_options['rel_name'] = 'payment_certificate';
+        $cron_email_options['insert_id'] = $insert_id;
+        $cron_email_options['user_id'] = get_staff_user_id();
+        $cron_email_options['status'] = 1;
+        $cron_email_options['approver'] = 'yes';
+        $cron_email_options['project'] = $pur_order->project;
+        $cron_email_options['requester'] = get_staff_user_id();
+        $cron_email['options'] = json_encode($cron_email_options, true);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         return true;
     }
 
@@ -17494,7 +17552,12 @@ class Purchase_model extends App_Model
         $pay_cert_data = $this->db->get(db_prefix() . 'payment_certificate')->result_array();
         $result = !empty($pay_cert_data) ? $pay_cert_data[0] : array();
 
-        $po_contract_data = $this->get_po_contract_data($result['po_id']);
+        if(!empty($result['wo_id'])) {
+            $po_contract_data = $this->get_wo_contract_data($result['wo_id']);
+            $po_contract_data['po_contract_amount'] = $po_contract_data['wo_contract_amount'];
+        } else {
+            $po_contract_data = $this->get_po_contract_data($result['po_id']);
+        }
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
         $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;
@@ -17558,7 +17621,13 @@ class Purchase_model extends App_Model
     {
         $html = '';
         $payment_certificate = $this->get_payment_certificate($id);
-        $pur_order = $this->get_pur_order($payment_certificate->po_id);
+        if(!empty($payment_certificate->wo_id)) {
+            $pur_order = $this->get_wo_order($payment_certificate->wo_id);
+            $pur_order->pur_order_number = $pur_order->wo_order_number;
+            $pur_order->pur_order_name = $pur_order->wo_order_name;
+        } else {
+            $pur_order = $this->get_pur_order($payment_certificate->po_id);
+        }
         $pay_cert_data = $this->get_payment_certificate_calc($id);
         $pay_cert_data = (object) $pay_cert_data;
         $mobilization_advance = !empty($pay_cert_data->mobilization_advance) ? $pay_cert_data->mobilization_advance : '0%';
@@ -17569,12 +17638,12 @@ class Purchase_model extends App_Model
         $logo = '';
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
-            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="160">';
         }
 
-        $html .= '<p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('payment_certificate')) . '</h2></p>';
+        $html .= '<div class="payment_certificate_main_title" style="font-size:22px; font-weight: bold; text-align: center;">' . mb_strtoupper(_l('payment_certificate')) . '</div>';
 
-        $html .= '<table class="table">
+        $html .= '<table class="table" style="font-size:13px">
             <tbody>
                 <tr>
                     <td>
@@ -17584,26 +17653,30 @@ class Purchase_model extends App_Model
                 </tr>
             </tbody>
         </table>
-        <br><br>';
+        <br>';
+
+        $po_no_title = !empty($payment_certificate->wo_id) ? _l('wo_no') : _l('po_no');
+        $wo_date_title = !empty($payment_certificate->wo_id) ? _l('wo_date') : _l('po_date');
+        $wo_description_title = !empty($payment_certificate->wo_id) ? _l('wo_description') : _l('po_description');
 
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
                 <tr>
-                  <td class="cert_title">'._l('serial_no').'</td>
+                  <td class="cert_title">'._l('payment_certificate_no').'</td>
                   <td>'.$pay_cert_data->serial_no.'</td>
-                  <td class="cert_title">'._l('pay_cert_options').'</td>
+                  <td class="cert_title">'._l('type').'</td>
                   <td>'.ucfirst($pay_cert_data->pay_cert_options).'</td>
                 </tr>
                 <tr>
                   <td class="cert_title">'._l('vendor').'</td>
                   <td>'.get_vendor_company_name($pur_order->vendor).'</td>
-                  <td class="cert_title">'._l('po_no').'</td>
+                  <td class="cert_title">'.$po_no_title.'</td>
                   <td>'.$pur_order->pur_order_number.'</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'._l('po_date').'</td>
+                  <td class="cert_title">'.$wo_date_title.'</td>
                   <td>'._d($pur_order->order_date).'</td>
-                  <td class="cert_title">'._l('po_description').'</td>
+                  <td class="cert_title">'.$wo_description_title.'</td>
                   <td>'.$pur_order->pur_order_name.'</td>
                 </tr>
                 <tr>
@@ -17626,7 +17699,7 @@ class Purchase_model extends App_Model
                 </tr>
             </tbody>
         </table>
-        <br><br>';
+        <br>';
 
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
@@ -17808,13 +17881,13 @@ class Purchase_model extends App_Model
                 </tr>
             </tbody>
         </table>
-        <br><br>';
+        <br>';
 
         $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
         if(!empty($list_approve_status)) {
-            $approved_by_admin_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px">';
-            $approved_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px">';
-            $rejected_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px">';
+            $approved_by_admin_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px"></div>';
+            $approved_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px"></div>';
+            $rejected_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px"></div>';
 
             $html .= '<table class="table" style="width: 100%" style="font-size:13px">
                 <tbody>';
@@ -17874,7 +17947,11 @@ class Purchase_model extends App_Model
         $project = 0;
         $rel_name = 'payment_certificate';
         $module = $this->get_payment_certificate($data['rel_id']);
-        $pur_order = $this->get_pur_order($module->po_id);
+        if(!empty($module->wo_id)) {
+            $pur_order = $this->get_wo_order($module->wo_id);
+        } else {
+            $pur_order = $this->get_pur_order($module->po_id);
+        }
         $project = $pur_order->project;
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
@@ -17982,5 +18059,32 @@ class Purchase_model extends App_Model
             return true;
         }
         return false;
+    }
+
+    public function get_all_wo_payment_certificate($id)
+    {
+        $this->db->where('wo_id', $id);
+        return $this->db->get(db_prefix() . 'payment_certificate')->result_array();
+    }
+
+    public function get_wo_contract_data($wo_id, $payment_certificate_id = '')
+    {
+        $result = array();
+        $payment_certificate = array();
+        $wo_order = $this->get_wo_order($wo_id);
+        $result['po_name'] = $wo_order->wo_order_name;
+        $result['po_contract_amount'] = 0;
+        $result['po_previous'] = 0;
+        $result['po_this_bill'] = 0;
+        $result['po_comulative'] = 0;
+
+        $this->db->select('subtotal');
+        $this->db->where('id', $wo_id);
+        $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
+        if(!empty($wo_orders)) {
+            $result['wo_contract_amount'] = $wo_orders->subtotal;
+        }
+
+        return $result;
     }
 }

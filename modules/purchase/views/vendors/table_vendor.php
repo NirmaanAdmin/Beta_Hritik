@@ -12,7 +12,7 @@ $aColumns = [
     db_prefix() . 'pur_vendor.userid as userid',
     'company',
     'firstname',
-    'email',
+    'com_email',
     db_prefix() . 'pur_vendor.phonenumber as phonenumber',
     db_prefix() . 'pur_vendor.active',
     db_prefix() . 'pur_vendor.category',
@@ -34,7 +34,7 @@ foreach ($custom_fields as $key => $field) {
     array_push($customFieldsColumns, $selectAs);
     array_push($aColumns, 'ctable_' . $key . '.value as ' . $selectAs);
     array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $key . ' ON ' . db_prefix() . 'pur_vendor.userid = ctable_' . $key . '.relid AND ctable_' . $key . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $key . '.fieldid=' . $field['id']);
-}
+} 
 
 // Filter by vendor category
 $groups   = $this->ci->purchase_model->get_vendor_category();
@@ -161,10 +161,10 @@ foreach ($rResult as $key => $aRow) {
     $row[] = $company;
 
     // Primary contact
-    $row[] = ($aRow['contact_id'] ? '<a href="' . admin_url('pur_vendor/client/' . $aRow['userid'] . '?contactid=' . $aRow['contact_id']) . '" target="_blank">' . $aRow['firstname'] . ' ' . $aRow['lastname'] . '</a>' : '');
+    // $row[] = ($aRow['contact_id'] ? '<a href="' . admin_url('pur_vendor/client/' . $aRow['userid'] . '?contactid=' . $aRow['contact_id']) . '" target="_blank">' . $aRow['firstname'] . ' ' . $aRow['lastname'] . '</a>' : '');
 
     // Primary contact email
-    $row[] = ($aRow['email'] ? '<a href="mailto:' . $aRow['email'] . '">' . $aRow['email'] . '</a>' : '');
+    $row[] = ($aRow['com_email'] ? '<a href="mailto:' . $aRow['com_email'] . '">' . $aRow['com_email'] . '</a>' : '');
 
     // Primary contact phone
     $row[] = ($aRow['phonenumber'] ? '<a href="tel:' . $aRow['phonenumber'] . '">' . $aRow['phonenumber'] . '</a>' : '');
