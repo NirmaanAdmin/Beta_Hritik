@@ -15123,6 +15123,14 @@ class Purchase_model extends App_Model
                     $template = mail_template('work_order_to_approver', 'purchase', $data);
                     $template->send();
                 }
+
+                if ($rel_name == 'payment_certificate') {
+                    $data['mail_to'] = $value['email'];
+                    $data['pc_id'] = $id;
+                    $data = (object) $data;
+                    $template = mail_template('payment_certificate_to_approver', 'purchase', $data);
+                    $template->send();
+                }
             }
         }
 
@@ -17482,6 +17490,22 @@ class Purchase_model extends App_Model
             $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
         }
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
+        $insert_id = $this->db->insert_id();
+
+        $pur_order = $this->get_pur_order($data['po_id']);
+        $cron_email = array();
+        $cron_email_options = array();
+        $cron_email['type'] = "purchase";
+        $cron_email_options['rel_type'] = 'payment_certificate';
+        $cron_email_options['rel_name'] = 'payment_certificate';
+        $cron_email_options['insert_id'] = $insert_id;
+        $cron_email_options['user_id'] = get_staff_user_id();
+        $cron_email_options['status'] = 1;
+        $cron_email_options['approver'] = 'yes';
+        $cron_email_options['project'] = $pur_order->project;
+        $cron_email_options['requester'] = get_staff_user_id();
+        $cron_email['options'] = json_encode($cron_email_options, true);
+        $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         return true;
     }
 
