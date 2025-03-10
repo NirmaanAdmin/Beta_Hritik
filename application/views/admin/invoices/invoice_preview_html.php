@@ -511,7 +511,7 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                                                     $invoice_no = $pur_invoices->vendor_invoice_number;
                                                 }
                                                 $table_row = '<tr class="sortable item">';
-                                                $amount = $item['rate'] * $item['qty'];
+                                                $amount = ($item['rate'] * $item['qty']) + $item['tax'];
                                                 $amount = app_format_money($amount, $base_currency);
                                                 $table_row .= '<td>' . clear_textarea_breaks($item['description']) . '</td>';
                                                 $table_row .= '<td>' . clear_textarea_breaks($item['long_description']) . '</td>';
