@@ -869,3 +869,6 @@ $lang['approval_status'] = 'Approval status';
 $lang['total_after_discount'] = 'Total after discount';
 $lang['discount(amount)'] = 'Discount(amount)';
 $lang['payment_certificate_no'] = 'Payment certificate no';
+$lang['payment_certificate_for_wo_order'] = 'Payment certificate for work order';
+$lang['wo_no'] = 'WO No.';
+$lang['wo_date'] = 'WO Date';

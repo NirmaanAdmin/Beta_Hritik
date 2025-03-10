@@ -17492,7 +17492,11 @@ class Purchase_model extends App_Model
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
         $insert_id = $this->db->insert_id();
 
-        $pur_order = $this->get_pur_order($data['po_id']);
+        if(isset($data['wo_id'])) {
+            $pur_order = $this->get_wo_order($data['wo_id']);
+        } else {
+            $pur_order = $this->get_pur_order($data['po_id']);
+        }
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "purchase";
@@ -17548,7 +17552,12 @@ class Purchase_model extends App_Model
         $pay_cert_data = $this->db->get(db_prefix() . 'payment_certificate')->result_array();
         $result = !empty($pay_cert_data) ? $pay_cert_data[0] : array();
 
-        $po_contract_data = $this->get_po_contract_data($result['po_id']);
+        if(!empty($result['wo_id'])) {
+            $po_contract_data = $this->get_wo_contract_data($result['wo_id']);
+            $po_contract_data['po_contract_amount'] = $po_contract_data['wo_contract_amount'];
+        } else {
+            $po_contract_data = $this->get_po_contract_data($result['po_id']);
+        }
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
         $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;
@@ -17612,7 +17621,13 @@ class Purchase_model extends App_Model
     {
         $html = '';
         $payment_certificate = $this->get_payment_certificate($id);
-        $pur_order = $this->get_pur_order($payment_certificate->po_id);
+        if(!empty($payment_certificate->wo_id)) {
+            $pur_order = $this->get_wo_order($payment_certificate->wo_id);
+            $pur_order->pur_order_number = $pur_order->wo_order_number;
+            $pur_order->pur_order_name = $pur_order->wo_order_name;
+        } else {
+            $pur_order = $this->get_pur_order($payment_certificate->po_id);
+        }
         $pay_cert_data = $this->get_payment_certificate_calc($id);
         $pay_cert_data = (object) $pay_cert_data;
         $mobilization_advance = !empty($pay_cert_data->mobilization_advance) ? $pay_cert_data->mobilization_advance : '0%';
@@ -17640,6 +17655,10 @@ class Purchase_model extends App_Model
         </table>
         <br>';
 
+        $po_no_title = !empty($payment_certificate->wo_id) ? _l('wo_no') : _l('po_no');
+        $wo_date_title = !empty($payment_certificate->wo_id) ? _l('wo_date') : _l('po_date');
+        $wo_description_title = !empty($payment_certificate->wo_id) ? _l('wo_description') : _l('po_description');
+
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
                 <tr>
@@ -17651,13 +17670,13 @@ class Purchase_model extends App_Model
                 <tr>
                   <td class="cert_title">'._l('vendor').'</td>
                   <td>'.get_vendor_company_name($pur_order->vendor).'</td>
-                  <td class="cert_title">'._l('po_no').'</td>
+                  <td class="cert_title">'.$po_no_title.'</td>
                   <td>'.$pur_order->pur_order_number.'</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'._l('po_date').'</td>
+                  <td class="cert_title">'.$wo_date_title.'</td>
                   <td>'._d($pur_order->order_date).'</td>
-                  <td class="cert_title">'._l('po_description').'</td>
+                  <td class="cert_title">'.$wo_description_title.'</td>
                   <td>'.$pur_order->pur_order_name.'</td>
                 </tr>
                 <tr>
@@ -17866,9 +17885,9 @@ class Purchase_model extends App_Model
 
         $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
         if(!empty($list_approve_status)) {
-            $approved_by_admin_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px">';
-            $approved_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px">';
-            $rejected_image = '<img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px">';
+            $approved_by_admin_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px"></div>';
+            $approved_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px"></div>';
+            $rejected_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px"></div>';
 
             $html .= '<table class="table" style="width: 100%" style="font-size:13px">
                 <tbody>';
@@ -17928,7 +17947,11 @@ class Purchase_model extends App_Model
         $project = 0;
         $rel_name = 'payment_certificate';
         $module = $this->get_payment_certificate($data['rel_id']);
-        $pur_order = $this->get_pur_order($module->po_id);
+        if(!empty($module->wo_id)) {
+            $pur_order = $this->get_wo_order($module->wo_id);
+        } else {
+            $pur_order = $this->get_pur_order($module->po_id);
+        }
         $project = $pur_order->project;
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
@@ -18036,5 +18059,32 @@ class Purchase_model extends App_Model
             return true;
         }
         return false;
+    }
+
+    public function get_all_wo_payment_certificate($id)
+    {
+        $this->db->where('wo_id', $id);
+        return $this->db->get(db_prefix() . 'payment_certificate')->result_array();
+    }
+
+    public function get_wo_contract_data($wo_id, $payment_certificate_id = '')
+    {
+        $result = array();
+        $payment_certificate = array();
+        $wo_order = $this->get_wo_order($wo_id);
+        $result['po_name'] = $wo_order->wo_order_name;
+        $result['po_contract_amount'] = 0;
+        $result['po_previous'] = 0;
+        $result['po_this_bill'] = 0;
+        $result['po_comulative'] = 0;
+
+        $this->db->select('subtotal');
+        $this->db->where('id', $wo_id);
+        $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
+        if(!empty($wo_orders)) {
+            $result['wo_contract_amount'] = $wo_orders->subtotal;
+        }
+
+        return $result;
     }
 }

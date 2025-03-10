@@ -3934,15 +3934,23 @@ function get_ril_invoice_item($id)
     return $ril_invoice_item;
 }
 
-function get_payment_certificate_serial_no($po_id)
+function get_payment_certificate_serial_no($po_id, $type)
 {
     if (!empty($po_id)) {
         $CI = &get_instance();
-        $payment_certificate = $CI->db->select('*')
+        if($type == 'wo') {
+            $payment_certificate = $CI->db->select('*')
+            ->where('wo_id', $po_id)
+            ->from(db_prefix() . 'payment_certificate')
+            ->get()
+            ->result_array();
+        } else {
+            $payment_certificate = $CI->db->select('*')
             ->where('po_id', $po_id)
             ->from(db_prefix() . 'payment_certificate')
             ->get()
             ->result_array();
+        }
         if (!empty($payment_certificate)) {
             return count($payment_certificate) + 1;
         }

@@ -52,10 +52,10 @@
         <div class="panel_s accounting-template estimate">
           <div class="panel-body">
             <div class="row">
-              <?php echo form_hidden('po_id', $po_id); ?>
+              <?php echo form_hidden('wo_id', $wo_id); ?>
               <?php echo form_hidden('payment_certificate_id', $payment_certificate_id); ?>
               <div class="col-md-3">
-                <?php $serial_no = (isset($payment_certificate) ? $payment_certificate->serial_no : get_payment_certificate_serial_no($po_id, 'po'));
+                <?php $serial_no = (isset($payment_certificate) ? $payment_certificate->serial_no : get_payment_certificate_serial_no($wo_id, 'wo'));
                 echo render_input('serial_no', 'payment_certificate_no', $serial_no); ?>
               </div>
               <div class="col-md-3">
@@ -70,26 +70,26 @@
                 </div>
               </div>
               <div class="col-md-3">
-                <?php $vendor_name = get_vendor_company_name($pur_order->vendor);
+                <?php $vendor_name = get_vendor_company_name($wo_order->vendor);
                 echo render_input('vendor', 'vendor', $vendor_name, 'text', ['disabled' => 'disabled']); ?>
               </div>
               <div class="col-md-3">
-                <?php $po_no = $pur_order->pur_order_number;
-                echo render_input('po_no', 'po_no', $po_no, 'text', ['disabled' => 'disabled']); ?>
+                <?php $po_no = $wo_order->wo_order_number;
+                echo render_input('po_no', 'wo_no', $po_no, 'text', ['disabled' => 'disabled']); ?>
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-3">
-                <?php $po_date = _d($pur_order->order_date);
-                echo render_date_input('po_date', 'po_date', $po_date, ['disabled' => 'disabled']); ?>
+                <?php $po_date = _d($wo_order->order_date);
+                echo render_date_input('po_date', 'wo_date', $po_date, ['disabled' => 'disabled']); ?>
               </div>
               <div class="col-md-3">
-                <?php $po_description = $pur_order->pur_order_name;
-                echo render_input('po_description', 'po_description', $po_description, 'text', ['disabled' => 'disabled']); ?>
+                <?php $po_description = $wo_order->wo_order_name;
+                echo render_input('po_description', 'wo_description', $po_description, 'text', ['disabled' => 'disabled']); ?>
               </div>
               <div class="col-md-3">
-                <?php $project = get_project_name_by_id($pur_order->project);
+                <?php $project = get_project_name_by_id($wo_order->project);
                 echo render_input('project', 'project', $project, 'text', ['disabled' => 'disabled']); ?>
               </div>
               <div class="col-md-3">
@@ -147,7 +147,7 @@
                       <tr>
                         <td>A1</td>
                         <td class="po_name"></td>
-                        <td class="po_contract_amount"></td>
+                        <td class="wo_contract_amount"></td>
                         <td>
                           <?php 
                           $po_previous = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_previous) : '');
@@ -165,7 +165,7 @@
                       <tr class="table_head">
                         <td>A</td>
                         <td><?php echo _l('total_value_of_works_executed'); ?></td>
-                        <td class="po_contract_amount"></td>
+                        <td class="wo_contract_amount"></td>
                         <td class="total_po_previous"></td>
                         <td class="total_po_this_bill"></td>
                         <td class="po_comulative"></td>
@@ -625,7 +625,7 @@
 
 <script type="text/javascript">
 </script>
-<?php require 'modules/purchase/assets/js/payment_certificate_js.php'; ?>
+<?php require 'modules/purchase/assets/js/wo_payment_certificate_js.php'; ?>
 <script>
   $(document).ready(function() {
     "use strict";

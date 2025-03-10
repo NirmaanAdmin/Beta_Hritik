@@ -9731,6 +9731,7 @@ class purchase extends AdminController
         $data['area'] = $this->purchase_model->get_area();
         $data['activity'] = $this->purchase_model->get_wo_activity($id);
         $data['changes'] = $this->purchase_model->get_change_wo_order($id);
+        $data['payment_certificate'] = $this->purchase_model->get_all_wo_payment_certificate($id);
         if ($to_return == false) {
             $this->load->view('work_order/wo_order_preview', $data);
         } else {
@@ -12014,9 +12015,6 @@ class purchase extends AdminController
 
     public function delete_payment_certificate($po_id, $id)
     {
-        if (!$id) {
-            redirect(admin_url('purchase/purchase_order/' . $po_id));
-        }
         $response = $this->purchase_model->delete_payment_certificate($id);
         redirect(admin_url('purchase/purchase_order/' . $po_id));
     }
@@ -12059,13 +12057,18 @@ class purchase extends AdminController
             redirect(admin_url('purchase/purchase_order'));
         }
 
-        $pur_order = $this->purchase_model->get_pur_order($payment_certificate->po_id);
+        if(!empty($payment_certificate->wo_id)) {
+            $pur_order = $this->purchase_model->get_wo_order($payment_certificate->wo_id);
+        } else {
+            $pur_order = $this->purchase_model->get_pur_order($payment_certificate->po_id);
+        }
         $pur_invoice = array();
         $input = array();
         $prefix = get_purchase_option('pur_inv_prefix');
         $next_number = get_purchase_option('next_inv_number');
         $invoice_number = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
-        $value_certified_amount = $payment_certificate->sub_fg_3 + $payment_certificate->tot_app_tax_3;
+        $payment_certificate_calc = $this->purchase_model->get_payment_certificate_calc($id);
+        $value_certified_amount = $payment_certificate_calc['sub_fg_3'] + $payment_certificate_calc['tot_app_tax_3'];
         if(!empty($payment_certificate->pur_invoice_id)) {
             $pur_invoice = $this->purchase_model->get_pur_invoice($payment_certificate->pur_invoice_id);
         }
@@ -12082,8 +12085,8 @@ class purchase extends AdminController
             $input['date_add'] = date('Y-m-d');
             $input['payment_status'] = 0;
             $input['project_id'] = isset($pur_order->project) ? $pur_order->project : 1;
-            $input['vendor_submitted_amount_without_tax'] = $payment_certificate->sub_fg_3;
-            $input['vendor_submitted_tax_amount'] = $payment_certificate->tot_app_tax_3;
+            $input['vendor_submitted_amount_without_tax'] = $payment_certificate_calc['sub_fg_3'];
+            $input['vendor_submitted_tax_amount'] = $payment_certificate_calc['tot_app_tax_3'];
             $input['vendor_submitted_amount'] = $value_certified_amount;
             $input['final_certified_amount'] = $value_certified_amount;
             $this->db->insert(db_prefix() . 'pur_invoices', $input);
@@ -12101,8 +12104,8 @@ class purchase extends AdminController
             $input['vendor'] = isset($pur_order->vendor) ? $pur_order->vendor : 0;
             $input['group_pur'] = isset($pur_order->group_pur) ? $pur_order->group_pur : 0;
             $input['project_id'] = isset($pur_order->project) ? $pur_order->project : 1;
-            $input['vendor_submitted_amount_without_tax'] = $payment_certificate->sub_fg_3;
-            $input['vendor_submitted_tax_amount'] = $payment_certificate->tot_app_tax_3;
+            $input['vendor_submitted_amount_without_tax'] = $payment_certificate_calc['sub_fg_3'];
+            $input['vendor_submitted_tax_amount'] = $payment_certificate_calc['tot_app_tax_3'];
             $input['vendor_submitted_amount'] = $value_certified_amount;
             $input['final_certified_amount'] = $value_certified_amount;
             // Update Vendor billing tracker
@@ -12189,5 +12192,51 @@ class purchase extends AdminController
                 'result' => $message,
             ]);
         }
+    }
+
+    public function wo_payment_certificate($wo_id, $payment_certificate_id = '', $view = 0)
+    {
+        if ($this->input->post()) {
+            $pur_cert_data = $this->input->post();
+            if ($payment_certificate_id == '') {
+                $this->purchase_model->add_payment_certificate($pur_cert_data);
+                set_alert('success', _l('added_successfully', _l('payment_certificate')));
+                redirect(admin_url('purchase/work_order/' . $wo_id));
+            } else {
+                $success = $this->purchase_model->update_payment_certificate($pur_cert_data, $payment_certificate_id);
+                if ($success) {
+                    set_alert('success', _l('updated_successfully', _l('payment_certificate')));
+                }
+                redirect(admin_url('purchase/work_order/' . $wo_id));
+            }
+        }
+
+        if ($payment_certificate_id == '') {
+            $title = _l('create_new_payment_certificate');
+            $is_edit = false;
+        } else {
+            $data['payment_certificate'] = $this->purchase_model->get_payment_certificate($payment_certificate_id);
+            $title = _l('pur_cert_detail');
+            $is_edit = true;
+        }
+
+        $this->load->model('currencies_model');
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
+        $data['wo_id'] = $wo_id;
+        $data['payment_certificate_id'] = $payment_certificate_id;
+        $data['wo_order'] = $this->purchase_model->get_wo_order($wo_id);
+        $data['title'] = $title;
+        $data['is_edit'] = $is_edit;
+        $data['is_view'] = $view;
+        $data['list_approve_status'] = $this->purchase_model->get_list_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
+        $data['check_approve_status'] = $this->purchase_model->check_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
+        $data['get_staff_sign'] = $this->purchase_model->get_pay_cert_staff_sign($payment_certificate_id, 'payment_certificate');
+        $this->load->view('payment_certificate/wo_payment_certificate', $data);
+    }
+
+    public function get_wo_contract_data($wo_id, $payment_certificate_id = '')
+    {
+        $wo_contract_data = $this->purchase_model->get_wo_contract_data($wo_id, $payment_certificate_id);
+        echo json_encode($wo_contract_data);
     }
 }

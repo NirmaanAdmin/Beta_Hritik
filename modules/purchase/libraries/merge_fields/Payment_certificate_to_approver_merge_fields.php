@@ -73,8 +73,13 @@ class Payment_certificate_to_approver_merge_fields extends App_merge_fields
 
         $fields['{contact_firstname}'] =  $data->contact_firstname;
         $fields['{contact_lastname}'] =  $data->contact_lastname;
-        $fields['{payment_certificate_title}'] = site_url('purchase/payment_certificate/' . $pc->po_id.'/'.$pc->id.'/1');
-        $fields['{payment_certificate_link}'] = site_url('purchase/payment_certificate/' . $pc->po_id.'/'.$pc->id.'/1');
+        if(!empty($pc->wo_id)) {
+            $fields['{payment_certificate_title}'] = site_url('purchase/payment_certificate/' . $pc->wo_id.'/'.$pc->id.'/1');
+            $fields['{payment_certificate_link}'] = site_url('purchase/payment_certificate/' . $pc->wo_id.'/'.$pc->id.'/1');
+        } else {
+            $fields['{payment_certificate_title}'] = site_url('purchase/payment_certificate/' . $pc->po_id.'/'.$pc->id.'/1');
+            $fields['{payment_certificate_link}'] = site_url('purchase/payment_certificate/' . $pc->po_id.'/'.$pc->id.'/1');
+        }
 
         return $fields;
     }
