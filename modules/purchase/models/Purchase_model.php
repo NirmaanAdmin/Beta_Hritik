@@ -17619,9 +17619,9 @@ class Purchase_model extends App_Model
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
                 <tr>
-                  <td class="cert_title">'._l('serial_no').'</td>
+                  <td class="cert_title">'._l('payment_certificate_no').'</td>
                   <td>'.$pay_cert_data->serial_no.'</td>
-                  <td class="cert_title">'._l('pay_cert_options').'</td>
+                  <td class="cert_title">'._l('type').'</td>
                   <td>'.ucfirst($pay_cert_data->pay_cert_options).'</td>
                 </tr>
                 <tr>

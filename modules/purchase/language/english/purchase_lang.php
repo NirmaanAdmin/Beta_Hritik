@@ -868,3 +868,4 @@ $lang['convert_to_vendor_bill'] = 'Convert to vendor bill';
 $lang['approval_status'] = 'Approval status';
 $lang['total_after_discount'] = 'Total after discount';
 $lang['discount(amount)'] = 'Discount(amount)';
+$lang['payment_certificate_no'] = 'Payment certificate no';

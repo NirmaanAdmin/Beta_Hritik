@@ -56,11 +56,11 @@
               <?php echo form_hidden('payment_certificate_id', $payment_certificate_id); ?>
               <div class="col-md-3">
                 <?php $serial_no = (isset($payment_certificate) ? $payment_certificate->serial_no : get_payment_certificate_serial_no($po_id));
-                echo render_input('serial_no', 'serial_no', $serial_no); ?>
+                echo render_input('serial_no', 'payment_certificate_no', $serial_no); ?>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
-                  <label for="pay_cert_options"><?php echo _l('pay_cert_options'); ?></label>
+                  <label for="type"><?php echo _l('type'); ?></label>
                   <select name="pay_cert_options" id="pay_cert_options" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                   <option value=""></option>
                   <option value="interim" <?php if (isset($payment_certificate) && $payment_certificate->pay_cert_options == 'interim') { echo 'selected';} ?>><?php echo _l('option_interim'); ?></option>
@@ -150,13 +150,13 @@
                         <td class="po_contract_amount"></td>
                         <td>
                           <?php 
-                          $po_previous = (isset($payment_certificate) ? $payment_certificate->po_previous : 0);
+                          $po_previous = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_previous) : '');
                           echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php 
-                          $po_this_bill = (isset($payment_certificate) ? $payment_certificate->po_this_bill : 0);
+                          $po_this_bill = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_this_bill) : '');
                           echo render_input('po_this_bill', '', $po_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
@@ -217,19 +217,19 @@
                         <td><?php echo _l('pay_cert_c2_title'); ?></td>
                         <td>
                           <?php 
-                          $pay_cert_c2_1 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c2_1 : ''); 
+                          $pay_cert_c2_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_1) : ''); 
                           echo render_input('pay_cert_c2_1', '', $pay_cert_c2_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php 
-                          $pay_cert_c2_2 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c2_2 : ''); 
+                          $pay_cert_c2_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_2) : ''); 
                           echo render_input('pay_cert_c2_2', '', $pay_cert_c2_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $pay_cert_c2_3 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c2_3 : '');  
+                          $pay_cert_c2_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_3) : '');  
                           echo render_input('pay_cert_c2_3', '', $pay_cert_c2_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
                         </td>
@@ -256,19 +256,19 @@
                         <td><?php echo _l('retention_fund'); ?></td>
                         <td>
                           <?php 
-                          $ret_fund_1 = (isset($payment_certificate) ? $payment_certificate->ret_fund_1 : ''); 
+                          $ret_fund_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_1) : ''); 
                           echo render_input('ret_fund_1', '', $ret_fund_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $ret_fund_2 = (isset($payment_certificate) ? $payment_certificate->ret_fund_2 : ''); 
+                          $ret_fund_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_2) : ''); 
                           echo render_input('ret_fund_2', '', $ret_fund_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $ret_fund_3 = (isset($payment_certificate) ? $payment_certificate->ret_fund_3 : '');  
+                          $ret_fund_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_3) : '');  
                           echo render_input('ret_fund_3', '', $ret_fund_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
                         </td>
@@ -325,19 +325,19 @@
                         <td><?php echo _l('less_title'); ?></td>
                         <td>
                           <?php
-                          $less_1 = (isset($payment_certificate) ? $payment_certificate->less_1 : '');
+                          $less_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_1) : '');
                           echo render_input('less_1', '', $less_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php 
-                          $less_2 = (isset($payment_certificate) ? $payment_certificate->less_2 : '');
+                          $less_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_2) : '');
                           echo render_input('less_2', '', $less_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $less_3 = (isset($payment_certificate) ? $payment_certificate->less_3 : '');
+                          $less_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_3) : '');
                           echo render_input('less_3', '', $less_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
                         </td>
@@ -348,19 +348,19 @@
                         <td><?php echo _l('less_amount_hold_for_quality_ncr'); ?></td>
                         <td>
                           <?php 
-                          $less_ah_1 = (isset($payment_certificate) ? $payment_certificate->less_ah_1 : '');
+                          $less_ah_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_1) : '');
                           echo render_input('less_ah_1', '', $less_ah_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php 
-                          $less_ah_2 = (isset($payment_certificate) ? $payment_certificate->less_ah_2 : '');
+                          $less_ah_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_2) : '');
                           echo render_input('less_ah_2', '', $less_ah_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $less_ah_3 = (isset($payment_certificate) ? $payment_certificate->less_ah_3 : ''); 
+                          $less_ah_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_3) : ''); 
                           echo render_input('less_ah_3', '', $less_ah_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
                         </td>
@@ -371,19 +371,19 @@
                         <td><?php echo _l('less_amount_hold_for_testing_and_comissioning'); ?></td>
                         <td>
                           <?php
-                          $less_aht_1 = (isset($payment_certificate) ? $payment_certificate->less_aht_1 : ''); 
+                          $less_aht_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_1) : ''); 
                           echo render_input('less_aht_1', '', $less_aht_1, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $less_aht_2 = (isset($payment_certificate) ? $payment_certificate->less_aht_2 : '');  
+                          $less_aht_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_2) : '');  
                           echo render_input('less_aht_2', '', $less_aht_2, 'number', ['oninput' => "calculate_payment_certificate()"]); 
                           ?>
                         </td>
                         <td>
                           <?php
-                          $less_aht_3 = (isset($payment_certificate) ? $payment_certificate->less_aht_3 : '');  
+                          $less_aht_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_3) : '');  
                           echo render_input('less_aht_3', '', $less_aht_3, 'number', ['oninput' => "calculate_payment_certificate()"]);  
                           ?>
                         </td>

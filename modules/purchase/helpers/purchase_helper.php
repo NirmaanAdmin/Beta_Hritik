@@ -3966,3 +3966,14 @@ function get_taxes_list()
     $CI->db->order_by('taxrate', 'asc');
     return $CI->db->get(db_prefix() . 'taxes')->result_array();
 }
+
+function format_amount_cert($value) {
+    if (is_numeric($value)) {
+        $decimalPart = explode('.', (string) $value)[1] ?? '';
+        if (strlen($decimalPart) >= 3) {
+            return number_format((float) $value, 2, '.', '');
+        }
+    }
+    return ($value != 0) ? $value : '';
+}
+
