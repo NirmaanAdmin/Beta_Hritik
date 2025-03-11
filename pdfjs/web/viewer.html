@@ -635,10 +635,118 @@ See https://github.com/adobe-type-tools/cmap-resources
     <div id="printContainer"></div>
 
   <script>
-      document.getElementById('downloadButton').addEventListener('click', function() {
-          const annotationData = JSON.stringify(annotations);
-          console.log(annotationData);
-      })
+      // Get all parameters
+      const params = getUrlParameters();
+      console.log('All Parameters:', params);
+
+      // Get the file parameter
+      const fileUrl = params.file;
+      const filename = params.name;
+      const fileparentId = params.parent_id;
+      const fileFolder = params.folder;
+      const backRoute = params.back_route;
+      console.log('File URL:', fileUrl);
+
+      // If you only need one specific parameter, you can use this shorter approach
+      const fileParam = new URLSearchParams(window.location.search).get('file');
+      console.log('File Parameter:', fileParam);
+      document.getElementById('downloadButton').addEventListener('click', async function () {
+          event.preventDefault();
+          let pdfViewer = PDFViewerApplication;
+
+          if (pdfViewer && pdfViewer.pdfDocument) {
+              try {
+                  // Get the current file parameter from the URL
+                  const fileUrl = new URLSearchParams(window.location.search).get('file');
+                  console.log("Current file URL:", fileUrl);
+
+                  // Get the file path without any URL or Base URL components
+                  // This extracts just the path portion from the full URL
+                  let filePath = '';
+                  if (fileUrl) {
+                      try {
+                          // Try to get just the path part, removing any domain or protocol
+                          const urlObj = new URL(fileUrl);
+                          filePath = urlObj.pathname;
+
+                          // Remove leading slash and decode any URL-encoded characters
+                          filePath = decodeURIComponent(filePath.replace(/^\//, ''));
+
+                          console.log("Extracted file path:", filePath);
+                      } catch (e) {
+                          // If it's not a valid URL, just use the string as is
+                          filePath = fileUrl;
+                          console.log("Using fileUrl directly as path:", filePath);
+                      }
+                  }
+
+                  // Create a PDF with annotations included
+                  console.log("Attempting to save document with annotations");
+                  const data = await pdfViewer.pdfDocument.saveDocument(pdfViewer.annotationStorage);
+
+                  // Convert the modified PDF data into a Blob
+                  const blob = new Blob([data], { type: "application/pdf" });
+
+                  console.log("PDF Blob created:", blob.size, "bytes");
+
+                  // Create form data and send to server
+                  let formData = new FormData();
+                  formData.append("file", blob, "updated_document.pdf");
+
+                  // Add the filepath where to save the file
+                  if (filePath) {
+                      formData.append("filepath", filePath);
+                      console.log("Adding filepath to request:", filePath);
+                  }
+                  formData.append("name", filename);
+                  formData.append("parentId", fileparentId);
+                  formData.append("folder", fileFolder);
+
+                  console.log("Sending FormData to server");
+
+                  fetch("/Beta2.0/save_pdf.php", {
+                      method: "POST",
+                      body: formData
+                  })
+                      .then(response => response.json())
+                      .then(data => {
+                          console.log("Server response:", data);
+                          if (data.status === 'success') {
+                              alert("PDF saved successfully!");
+                              window.location.href=backRoute;
+                          } else {
+                              alert("Error saving PDF: " + data.message);
+                              console.error("Server error details:", data.error);
+                          }
+                      })
+                      .catch(error => {
+                          console.error("Error saving file:", error);
+                          alert("Error communicating with server");
+                      });
+
+              } catch (error) {
+                  console.error("Error processing PDF:", error);
+                  alert("Error saving PDF: " + error.message);
+              }
+          } else {
+              console.error("PDF.js document not found.");
+              alert("PDF viewer not initialized properly.");
+          }
+      });
+
+      // Function to get URL parameters from the current page URL (for use inside viewer.html)
+      function getUrlParameters() {
+          // Get the current URL
+          const url = new URL(window.location.href);
+
+          // Get all query parameters as an object
+          const params = {};
+          url.searchParams.forEach((value, key) => {
+              params[key] = value;
+          });
+
+          return params;
+      }
   </script>
   </body>
 </html>

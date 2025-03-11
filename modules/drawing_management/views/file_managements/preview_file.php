@@ -7,7 +7,10 @@ if(is_image($path)){ ?>
    <img src="<?php echo optimize_dropbox_thumbnail($file->thumbnail_link); ?>" class="img img-responsive">
 <?php } else if(strpos($file->name,'.pdf') !== false && empty($file->external)){ ?>
 <!--   <iframe src="<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name); ?>" height="100%" width="100%" frameborder="0"></iframe>-->
-    <iframe src="<?= base_url('pdfjs/web/viewer.html?file=' . base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name)) ?>" width="100%" height="100%"></iframe>
+    <?php
+    $route = admin_url('drawing_management').'?id='.$file->id;
+    ?>
+    <iframe src="<?= base_url('pdfjs/web/viewer.html?file=' . base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name).'&name='.$file->name.'&folder='.$folder.'&parent_id='.$file->parent_id).'&back_route='.$route ?>" width="100%" height="100%"></iframe>
 <?php } else if(strpos($file->name,'.xls') !== false && empty($file->external)){ ?>
    <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name).'?v='.date('H.i.s'); ?>' width='100%' height='100%' frameborder='0'>
    </iframe>
