@@ -1,186 +1,217 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-$dimensions = $pdf->getPageDimensions();
+$tblinvoicehtml = '';
+$tblinvoicehtml .= '<table width="100%" cellspacing="0" cellpadding="5">';
+$tblinvoicehtml .= '<tbody>';
+$tblinvoicehtml .= '
+<tr>
+    <td width="50%;" align="right">'.pdf_logo_url().'</td>
+    <td width="50%" align="left">
+        <div style="font-size: 20px;">
+            <br><br>
+            <b style="color:black" class="company-name-formatted">
+                '.get_option('invoice_company_name').'
+            </b>
+        </div>
+    </td>
+</tr>';
+$tblinvoicehtml .= '</tbody>';
+$tblinvoicehtml .= '</table>';
 
-$info_right_column = '';
-$info_left_column  = '';
+$tblinvoicehtml .= '<table width="100%" cellspacing="0" cellpadding="2" border="1">';
+$tblinvoicehtml .= '<tbody>';
+$tblinvoicehtml .= '
+<tr>
+    <td colspan="3" width="100%;" align="center" style="font-weight:bold; font-size: 14px;">TAX INVOICE</td>
+</tr>';
+$tblinvoicehtml .= '
+<tr>
+    <td colspan="3" width="100%;" align="center" style="font-weight:bold; font-size: 14px;">ORIGNAL INVOICE FOR RECIPENT</td>
+</tr>';
 
-$info_right_column .= '<span style="font-weight:bold;font-size:27px;">' . _l('invoice_pdf_heading') . '</span><br />';
-$info_right_column .= '<b style="color:#4e4e4e;"># ' . $invoice_number . '</b>';
-
-if (get_option('show_status_on_pdf_ei') == 1) {
-    $info_right_column .= '<br /><span style="color:rgb(' . invoice_status_color_pdf($status) . ');text-transform:uppercase;">' . format_invoice_status($status, '', false) . '</span>';
-}
-
-if (
-    $status != Invoices_model::STATUS_PAID && $status != Invoices_model::STATUS_CANCELLED && get_option('show_pay_link_to_invoice_pdf') == 1
-    && found_invoice_mode($payment_modes, $invoice->id, false)
-) {
-    $info_right_column .= ' - <a style="color:#84c529;text-decoration:none;text-transform:uppercase;" href="' . site_url('invoice/' . $invoice->id . '/' . $invoice->hash) . '"><1b>' . _l('view_invoice_pdf_link_pay') . '</1b></a>';
-}
-
-// Add logo
-$info_left_column .= pdf_logo_url();
-
-// Write top left logo and right column info/text
-pdf_multi_row($info_left_column, $info_right_column, $pdf, ($dimensions['wk'] / 2) - $dimensions['lm']);
-
-$pdf->ln(10);
-
-$organization_info = '<div style="color:#424242;">';
-
-$organization_info .= format_organization_info();
+$bill_to = '<b>To:</b>';
+$bill_to .= '<div>';
+$bill_to .= format_customer_info($invoice, 'invoice', 'billing');
+$bill_to .= '</div>';
 
 $hsn_sac_value = '';
 $hsn_sac_code = '';
 if ($invoice->hsn_sac) {
-    $hsn_sac_value = get_hsn_sac_name_by_id($invoice->hsn_sac);
-    $organization_info .= '<br />'._l('hsn_sac') . ': ' . $hsn_sac_value . '<br />';
-    if(!empty($hsn_sac_value)) {
-        $parts = explode(' - ', $hsn_sac_value);
+    $hsn_sac_value = get_hsn_sac_full_name_by_id($invoice->hsn_sac);
+    $hsn_sac_value = str_replace("-", "", $hsn_sac_value->name);
+    $hsn_sac_code_only = get_hsn_sac_name_by_id($invoice->hsn_sac);
+    if(!empty($hsn_sac_code_only)) {
+        $parts = explode(' - ', $hsn_sac_code_only);
         $hsn_sac_code = $parts[0];
     }
 }
 
-// Bill to
-$invoice_info = '<b>' . _l('invoice_bill_to') . ':</b>';
-$invoice_info .= '<div style="color:#424242;">';
-$invoice_info .= format_customer_info($invoice, 'invoice', 'billing');
-$invoice_info .= '</div>';
-
-// ship to to
-if ($invoice->include_shipping == 1 && $invoice->show_shipping_on_invoice == 1) {
-    $invoice_info .= '<br /><b>' . _l('ship_to') . ':</b>';
-    $invoice_info .= '<div style="color:#424242;">';
-    $invoice_info .= format_customer_info($invoice, 'invoice', 'shipping');
-    $invoice_info .= '</div>';
-}
-
-$invoice_info .= '<br />' . _l('invoice_data_date') . ' ' . _d($invoice->date) . '<br />';
-
-$invoice_info = hooks()->apply_filters('invoice_pdf_header_after_date', $invoice_info, $invoice);
-
-if (!empty($invoice->duedate)) {
-    $invoice_info .= _l('invoice_data_duedate') . ' ' . _d($invoice->duedate) . '<br />';
-    $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_due_date', $invoice_info, $invoice);
-}
-
-if ($invoice->sale_agent && get_option('show_sale_agent_on_invoices') == 1) {
-    $invoice_info .= _l('sale_agent_string') . ': ' . get_staff_full_name($invoice->sale_agent) . '<br />';
-    $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_sale_agent', $invoice_info, $invoice);
-}
-
-if ($invoice->project_id && get_option('show_project_on_invoice') == 1) {
-    $invoice_info .= _l('project') . ': ' . get_project_name_by_id($invoice->project_id) . '<br />';
-    $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_project_name', $invoice_info, $invoice);
-}
-// if ($invoice->hsn_sac) {
-//     $invoice_info .= _l('hsn_sac') . ': ' . get_hsn_sac_name_by_id($invoice->hsn_sac) . '<br />';
-// }
-if ($invoice->deal_slip_no) {
-    $invoice_info .= _l('deal_slip_no') . ': ' . $invoice->deal_slip_no . '<br />';
-}
-$invoice_info .= '<span><b>'.$invoice->title.'</b></span></div>';
-$invoice_info = hooks()->apply_filters('invoice_pdf_header_before_custom_fields', $invoice_info, $invoice);
-
-foreach ($pdf_custom_fields as $field) {
-    $value = get_custom_field_value($invoice->id, $field['id'], 'invoice');
-    if ($value == '') {
-        continue;
-    }
-    $invoice_info .= $field['name'] . ': ' . $value . '<br />';
-}
-
-$invoice_info      = hooks()->apply_filters('invoice_pdf_header_after_custom_fields', $invoice_info, $invoice);
-$organization_info = hooks()->apply_filters('invoicepdf_organization_info', $organization_info, $invoice);
-$invoice_info      = hooks()->apply_filters('invoice_pdf_info', $invoice_info, $invoice);
-
-$left_info  = $swap == '1' ? $invoice_info : $organization_info;
-$right_info = $swap == '1' ? $organization_info : $invoice_info;
-
-pdf_multi_row($left_info, $right_info, $pdf, ($dimensions['wk'] / 2) - $dimensions['lm']);
-
-// The Table
-$pdf->Ln(hooks()->apply_filters('pdf_info_and_table_separator', 6));
-
-// The items table
-// $items = get_items_table_data($invoice, 'invoice', 'pdf');
-// $tblhtml = $items->table();
-
-$tblfinvoicehtml = '';
-$tblfinvoicehtml .= '<h3 style="text-align:center; ">Final invoice</h3>';
-$tblfinvoicehtml .= '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="5">';
-$tblfinvoicehtml .= '
-<thead>
-  <tr height="30" bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
-     <th width="5%;" align="center">' . _l('the_number_sign') . '</th>
-     <th width="19%" align="left">' . _l('description_of_services') . '</th>
-     <th width="10%" align="left">HSN/SAC</th>
-     <th width="14%" align="right">' . _l('rate_without_tax') . '</th>
-     <th width="12%" align="right">' . _l('cgst_tax') . '</th>
-     <th width="12%" align="right">' . _l('sgst_tax') . '</th>
-     <th width="14%" align="right">' . _l('invoice_table_amount_heading') . '</th>
-     <th width="14%" align="right">' . _l('remarks') . '</th>
-  </tr>
-</thead>';
-$amount = $basic_invoice['final_invoice']['amount']; // Get the original amount
-$rounded_amount = round($amount); // Round off the amount
-$tblfinvoicehtml .= '<tbody>';
-$tblfinvoicehtml .= '
-<tr style="font-size:11px;">
-    <td width="5%;" align="center">1</td>
-    <td width="19%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
-    <td width="10%" align="left">' . $hsn_sac_code . '</td>
-    <td width="14%" align="right">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
-    <td width="12%" align="right">' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name) . '</td>
-    <td width="12%" align="right">' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name) . '</td>
-    <td width="14%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
-    <td width="14%" align="right">' . clear_textarea_breaks($basic_invoice['final_invoice']['remarks']) . '</td>
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td rowspan="20">'.$bill_to.'</td>
+    <td>'._l('invoice_number').' :</td>
+    <td>'.$invoice->title.'</td>
 </tr>';
-$tblfinvoicehtml .= '</tbody>';
-$tblfinvoicehtml .= '</table>';
 
-$pdf->writeHTML($tblfinvoicehtml, true, false, false, false, '');
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('invoice_add_edit_date').' :</td>
+    <td>'._d($invoice->date).'</td>
+</tr>';
 
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('order_deal_loc_no').' :</td>
+    <td>2011A SPC</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('order_deal_loc_date').' :</td>
+    <td></td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('suppliers_vendors_gst').' :</td>
+    <td>'.get_option('company_vat').'</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('hsn_sac_sescription').' :</td>
+    <td>'.$hsn_sac_value.'</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('place_of_supply_of_services').' :</td>
+    <td>Jamnagar - Gujarat</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('delivery_date').' :</td>
+    <td>'._d(date('Y-m-d')).'</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('services_provided_location').' :</td>
+    <td>Jamnagar - Gujarat</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('state_name_code').' :</td>
+    <td>Gujarat - 24</td>
+</tr>';
+
+$tblinvoicehtml .= '
+<tr style="font-size:13px">
+    <td>'._l('suppliers_vendors_pan').' :</td>
+    <td>'.get_option('company_pan').'</td>
+</tr>';
+
+$tblinvoicehtml .= '</tbody>';
+$tblinvoicehtml .= '</table>';
+
+$amount = $basic_invoice['final_invoice']['amount'];
+$rounded_amount = round($amount);
 $amount_to_word = amount_to_word($rounded_amount);
-$tbltotalinvhtml = '';
-$tbltotalinvhtml .= '<table width="100%" cellspacing="0" cellpadding="0">';
-$tbltotalinvhtml .= '
+$decimal_part = $amount - $rounded_amount;
+$decimal_part = number_format(abs($decimal_part), 2);
+
+$tblinvoicehtml .= '<table width="100%" cellspacing="0" cellpadding="6" border="1">';
+$tblinvoicehtml .= '
 <thead>
-  <tr height="30" style="font-size:14px;">
-     <th width="100%;" align="left">
-        <strong>'.$amount_to_word.'.</strong>
-     </th>
+  <tr height="30" style="font-size:12px; font-weight: bold">
+     <th width="6%;" align="center">Sr No</th>
+     <th width="23%" align="center">Description of Material / Services</th>
+     <th width="12%" align="center">HSN / SAC Code</th>
+     <th width="16%" align="center">Taxable</th>
+     <th width="13%" align="center">CGST</th>
+     <th width="13%" align="center">SGST</th>
+     <th width="17%" align="right">Grand Total</th>
   </tr>
 </thead>';
-$tbltotalinvhtml .= '</table>';
-
-$pdf->writeHTML($tbltotalinvhtml, true, false, false, false, '');
+$tblinvoicehtml .= '<tbody>';
+$tblinvoicehtml .= '
+<tr style="font-size:12px;">
+    <td width="6%;"align="center" rowspan="5">1</td>
+    <td width="23%" align="left">' . $basic_invoice['final_invoice']['description'] . '</td>
+    <td width="12%" align="center">'.$hsn_sac_code.'</td>
+    <td width="16%" align="center">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
+    <td width="13%" align="center">' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name) . '</td>
+    <td width="13%" align="center">' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name) . '</td>
+    <td width="17%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
+</tr>';
+$tblinvoicehtml .= '
+<tr style="font-size:12px;">
+    <td width="23%" align="left">Total Invoice Value</td>
+    <td width="12%" align="center"></td>
+    <td width="16%" align="center">' . app_format_money($basic_invoice['final_invoice']['subtotal'], $invoice->currency_name) . '</td>
+    <td width="13%" align="center">' . app_format_money($basic_invoice['final_invoice']['cgst_tax'], $invoice->currency_name) . '</td>
+    <td width="13%" align="center">' . app_format_money($basic_invoice['final_invoice']['sgst_tax'], $invoice->currency_name) . '</td>
+    <td width="17%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
+</tr>';
+$tblinvoicehtml .= '
+<tr style="font-size:12px;">
+    <td colspan="5">Round Off</td>
+    <td align="right">' . $decimal_part . '</td>
+</tr>';
+$tblinvoicehtml .= '
+<tr style="font-size:12px;">
+    <td colspan="5">Total Amount with GST</td>
+    <td align="right">' . app_format_money($rounded_amount, $invoice->currency_name) . '</td>
+</tr>';
+$tblinvoicehtml .= '
+<tr style="font-size:12px;">
+    <td colspan="6">Total Invoice Value in words Rupees: '.$amount_to_word.'</td>
+</tr>';
+$tblinvoicehtml .= '</tbody>';
+$tblinvoicehtml .= '</table>';
 
 $bank_details = get_bank_details($invoice->clientid);
-$tblbanksignhtml = '';
-$tblbanksignhtml .= '<table width="100%" cellspacing="0" cellpadding="0">';
-$tblbanksignhtml .= '
+$tblinvoicehtml .= '<table width="100%" cellspacing="0" cellpadding="0" border="1">';
+$tblinvoicehtml .= '
 <tbody>
   <tr style="font-size:14px;">
      <td width="50%;" align="left">
-        <strong>' . _l('bank_detail') . '</strong>
-        <br>
-        '.$bank_details.'
+        <div style="padding-top:20px;">
+            <strong>' . _l('bank_detail') . '</strong>
+            <br>
+            '.$bank_details.'
+            <br><br><br>
+            <strong>Principles Place of Business :</strong> Vadodara Gujarat
+            <br><br><br>
+            <strong>Regd Address :</strong>
+            <br>
+            2601, 26th Floor, Beaumonde, C Wing,
+            <br>
+            Appasaheb Marathe Marg, Prabhadevi,
+            <br>
+            Mumbai - 400025, Maharashtra
+            <br>
+            Mobile No: 9820121234
+            <br>
+        </div>
      </td>
      <td width="50%;" align="right">
-        <strong>For BASILIUS INTERNATIONAL LLP</strong>
-        <br /><br /><br /><br /><br />
-        _________________________
-        <br />
-        Authorised Signatory
+        <div style="padding-top:20px;">
+            <strong>For BASILIUS INTERNATIONAL LLP</strong>
+            <br /><br /><br /><br /><br />
+            _________________________
+            <br />
+            Authorised Signatory
+        </div>
      </td>
   </tr>
-</thead>';
-$tblbanksignhtml .= '</table>';
+</tbody>';
+$tblinvoicehtml .= '</table>';
 
-$pdf->writeHTML($tblbanksignhtml, true, false, false, false, '');
+$pdf->writeHTML($tblinvoicehtml, true, false, false, false, '');
 $pdf->AddPage();
 
 $tblbudgetsummaryhtml = '';

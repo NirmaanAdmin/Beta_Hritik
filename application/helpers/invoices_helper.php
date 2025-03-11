@@ -738,3 +738,12 @@ function get_hsn_sac_name_by_id($id){
     }
     return '';
 }
+
+function get_hsn_sac_full_name_by_id($id){
+    $CI = & get_instance();
+    $CI->db->select('name');
+    $CI->db->from(db_prefix() . 'hsn_sac_code');
+    $CI->db->where('id', $id);
+    $row = $CI->db->get()->row();
+    return $row;
+}
