@@ -645,6 +645,8 @@ See https://github.com/adobe-type-tools/cmap-resources
       const fileparentId = params.parent_id;
       const fileFolder = params.folder;
       const backRoute = params.back_route;
+      const token_name = params.token_name;
+      const token = params.csrf_token;
       console.log('File URL:', fileUrl);
 
       // If you only need one specific parameter, you can use this shorter approach
@@ -701,12 +703,16 @@ See https://github.com/adobe-type-tools/cmap-resources
                   formData.append("name", filename);
                   formData.append("parentId", fileparentId);
                   formData.append("folder", fileFolder);
+                  formData.append(token_name, token);
 
                   console.log("Sending FormData to server");
 
                   fetch("/Beta2.0/save_pdf.php", {
                       method: "POST",
-                      body: formData
+                      body: formData,
+                      headers: {
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      },
                   })
                       .then(response => response.json())
                       .then(data => {
