@@ -2052,6 +2052,7 @@ class Invoices_model extends App_Model
         }
 
         $total_budget_summary = array();
+        $total_budget_summary['total_without_man_fees'] = 0;
         if(!empty($budgetsummary)) {
             foreach ($budgetsummary as $key => $value) {
                 $total_budget_summary['budgeted_amount'] += $value['budgeted_amount'];
@@ -2059,6 +2060,9 @@ class Invoices_model extends App_Model
                 $total_budget_summary['total_current_billing_amount'] += $value['total_current_billing_amount'];
                 $total_budget_summary['total_cumulative_billing'] += $value['total_cumulative_billing'];
                 $total_budget_summary['balance_available'] += $value['balance_available'];
+                if($value['annexure'] != 17) {
+                    $total_budget_summary['total_without_man_fees'] = $total_budget_summary['total_current_billing_amount'];
+                }
             }
         }
 
