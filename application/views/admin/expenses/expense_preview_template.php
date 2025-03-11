@@ -259,6 +259,15 @@
                             </a>
                         </p>
                         <?php } ?>
+                        <?php if ($expense->vendor) { ?>
+                        <p class="bold mbot5"><?php echo _l('vendor'); ?></p>
+                        <p class="mbot15">
+                            <a
+                                href="<?php echo admin_url('purchase/vendor/' . $expense->vendor); ?>">
+                                <?php echo get_vendor_company_name($expense->vendor); ?>
+                            </a>
+                        </p>
+                        <?php } ?>
                         <?php
                      $custom_fields = get_custom_fields('expenses');
                      foreach ($custom_fields as $field) { ?>

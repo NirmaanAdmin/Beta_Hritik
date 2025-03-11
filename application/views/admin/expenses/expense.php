@@ -49,11 +49,11 @@
                         <i class="fa-regular fa-circle-question pull-left tw-mt-0.5 tw-mr-1" data-toggle="tooltip"
                             data-title="<?php echo _l('expense_name_help'); ?> - <?php echo e(_l('expense_field_billable_help', _l('expense_name'))); ?>"></i>
                         <?php $value = (isset($expense) ? $expense->expense_name : ''); ?>
-                        <?php echo render_input('expense_name', 'expense_name', $value); ?>
+                        <?php echo render_input('expense_name', 'dt_expense_description', $value); ?>
                         <i class="fa-regular fa-circle-question pull-left tw-mt-0.5 tw-mr-1" data-toggle="tooltip"
                             data-title="<?php echo e(_l('expense_field_billable_help', _l('expense_add_edit_note'))); ?>"></i>
                         <?php $value = (isset($expense) ? $expense->note : ''); ?>
-                        <?php echo render_textarea('note', 'expense_add_edit_note', $value, ['rows' => 4], []); ?>
+                        <?php echo render_textarea('note', 'reason_for_expense', $value, ['rows' => 4], []); ?>
                         <?php
                      $selected = (isset($expense) ? $expense->category : '');
                      if (is_admin() || get_option('staff_members_create_inline_expense_categories') == '1') {
