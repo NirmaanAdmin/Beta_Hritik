@@ -224,18 +224,18 @@ function send_payment_certificate_approve(id){
     var data = {};
     data.rel_id = id;
     data.rel_type = 'payment_certificate';
-  $("body").append('<div class="dt-loader"></div>');
-    $.post(admin_url + 'purchase/send_payment_certificate_approve', data).done(function(response){
-        response = JSON.parse(response);
-        $("body").find('.dt-loader').remove();
-        if (response.success === true || response.success == 'true') {
-            alert_float('success', response.message);
-            window.location.reload();
-        }else{
-          alert_float('warning', response.message);
-            window.location.reload();
-        }
-    });
+    $("body").append('<div class="dt-loader"></div>');
+      $.post(admin_url + 'purchase/send_payment_certificate_approve', data).done(function(response){
+          response = JSON.parse(response);
+          $("body").find('.dt-loader').remove();
+          if (response.success === true || response.success == 'true') {
+              alert_float('success', response.message);
+              window.location.reload();
+          }else{
+            alert_float('warning', response.message);
+              window.location.reload();
+          }
+      });
 }
 
 $(function(){
