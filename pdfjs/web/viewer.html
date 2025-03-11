@@ -647,6 +647,7 @@ See https://github.com/adobe-type-tools/cmap-resources
       const backRoute = params.back_route;
       const token_name = params.token_name;
       const token = params.csrf_token;
+      const base_url = params.base_url;
       console.log('File URL:', fileUrl);
 
       // If you only need one specific parameter, you can use this shorter approach
@@ -707,7 +708,9 @@ See https://github.com/adobe-type-tools/cmap-resources
 
                   console.log("Sending FormData to server");
 
-                  fetch("/pdfjs/save_pdf.php", {
+                  var url = base_url+'save_pdf.php';
+
+                  fetch(url, {
                       method: "POST",
                       body: formData,
                   })

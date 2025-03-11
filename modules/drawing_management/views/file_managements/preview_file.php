@@ -12,7 +12,7 @@ if(is_image($path)){ ?>
     $tokenName = $this->security->get_csrf_token_name();
     $token = $this->security->get_csrf_hash();
     ?>
-    <iframe src="<?= base_url('pdfjs/web/viewer.html?file=' . base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name).'&name='.$file->name.'&folder='.$folder.'&parent_id='.$file->parent_id).'&back_route='.$route.'&token_name='.$tokenName.'&csrf_token='.$token ?>" width="100%" height="100%"></iframe>
+    <iframe src="<?= base_url('pdfjs/web/viewer.html?file=' . base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name).'&name='.$file->name.'&folder='.$folder.'&parent_id='.$file->parent_id).'&back_route='.$route.'&token_name='.$tokenName.'&csrf_token='.$token.'base_url='.base_url() ?>" width="100%" height="100%"></iframe>
 <?php } else if(strpos($file->name,'.xls') !== false && empty($file->external)){ ?>
    <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name).'?v='.date('H.i.s'); ?>' width='100%' height='100%' frameborder='0'>
    </iframe>
