@@ -138,36 +138,41 @@ if (!$CI->db->table_exists(db_prefix() . 'predix_documents')) {
 }
 
 
-$CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (3, 'Emails', 'Creative templates for email creation',1,'2023-06-18 01:47:26');");
-$CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (4, 'Social Media', 'Flash tools for social media content',1,'2023-06-18 01:47:26');");
-$CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (5, 'Contents', 'Tools for writing creatives for different moods and tasks',1,'2023-06-18 01:47:26');");
-$CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (6, 'Blog Posts', 'Content for the generating articles, blog post',1,'2023-06-18 01:47:26');");
-$CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (7, 'Video', 'Video creation tools from idea to script for millions of views',1,'2023-06-18 01:47:26');");
-$CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (8, 'Perfex', 'Templates for Perfex CRM',1,'2023-06-18 01:47:26');");
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (3, 'Emails', 'Creative templates for email creation',1,'2023-06-18 01:47:26');");
+// die('asd');
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (4, 'Social Media', 'Flash tools for social media content',1,'2023-06-18 01:47:26');");
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (5, 'Contents', 'Tools for writing creatives for different moods and tasks',1,'2023-06-18 01:47:26');");
+// die('asd');
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (6, 'Blog Posts', 'Content for the generating articles, blog post',1,'2023-06-18 01:47:26');");
+// die('asd');
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (7, 'Video', 'Video creation tools from idea to script for millions of views',1,'2023-06-18 01:47:26');");
 
-$customPrompt = '[{"input_name":"services","input_label":"Services Provided","input_field_type":"textarea"}]';
-$customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
-$CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Write Proposal', 0,'Crafting a Comprehensive Proposal for Your Exceptional Services',8,'far fa-file-alt','Write a proposal about these services {{services}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_template_categories` (`id`,`category_name`, `category_description`, `is_enabled`, `created_at`) VALUES (8, 'Perfex', 'Templates for Perfex CRM',1,'2023-06-18 01:47:26');");
+// die('asd');
+// $customPrompt = '[{"input_name":"services","input_label":"Services Provided","input_field_type":"textarea"}]';
+// $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Write Proposal', 0,'Crafting a Comprehensive Proposal for Your Exceptional Services',8,'far fa-file-alt','Write a proposal about these services {{services}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
 
-$customPrompt = '[{"input_name":"product","input_label":"Product\/Service","input_field_type":"text"}]';
-$customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
-$CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Facebook Ads', 0,4,'fab fa-facebook-square','Write facebook ads about this product or service {{product}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
+// $customPrompt = '[{"input_name":"product","input_label":"Product\/Service","input_field_type":"text"}]';
+// $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value\
+// die('asd');
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Facebook Ads', 0,4,'fab fa-facebook-square','Write facebook ads about this product or service {{product}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
+// die('asd');
+// $customPrompt = '[{"input_name":"short_contract_content","input_label":"Short Description Of Contract","input_field_type":"textarea"}]';
+// $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Write Contract', 0,'Prepare a Well-Crafted and Customized Contract Agreement to Safeguard Your Interests',8,'fa-solid fa-file-contract','Write a contract about this {{short_contract_content}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
 
-$customPrompt = '[{"input_name":"short_contract_content","input_label":"Short Description Of Contract","input_field_type":"textarea"}]';
-$customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
-$CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Write Contract', 0,'Prepare a Well-Crafted and Customized Contract Agreement to Safeguard Your Interests',8,'fa-solid fa-file-contract','Write a contract about this {{short_contract_content}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
+// $customPrompt = '[{"input_name":"subject","input_label":"Email Subject","input_field_type":"text"}]';
+// $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Cold Email', 0,'Create professional cold emails with the help of AI',3,'fa-solid fa-envelope','Write a cold email about this subject {{subject}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
 
-$customPrompt = '[{"input_name":"subject","input_label":"Email Subject","input_field_type":"text"}]';
-$customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
-$CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Cold Email', 0,'Create professional cold emails with the help of AI',3,'fa-solid fa-envelope','Write a cold email about this subject {{subject}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
+// $customPrompt = '[{"input_name":"subject","input_label":"Subject","input_field_type":"text"}]';
+// $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Welcome Email', 0,'Create welcome emails for your customers',3,'fa-solid fa-envelope-open-text','Write a welcome email about this subject {{subject}} ','".$customPrompt."', 1,'2023-06-18 03:11:16');");
 
-$customPrompt = '[{"input_name":"subject","input_label":"Subject","input_field_type":"text"}]';
-$customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
-$CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Welcome Email', 0,'Create welcome emails for your customers',3,'fa-solid fa-envelope-open-text','Write a welcome email about this subject {{subject}} ','".$customPrompt."', 1,'2023-06-18 03:11:16');");
-
-$customPrompt = '[{"input_name":"subject","input_label":"Subject","input_field_type":"text"}]';
-$customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
-$CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Follow-Up Email', 0,'Create professional email follow up with just few clicks',3,'fa-solid fa-reply-all','Write a follow up email about this subject {{subject}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
+// $customPrompt = '[{"input_name":"subject","input_label":"Subject","input_field_type":"text"}]';
+// $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
+// $CI->db->query("INSERT INTO `".db_prefix()."predix_templates` (`template_name`, `perfex_core`, `template_description`, `template_category_id`, `template_icon`, `custom_prompt`, `custom_inputs`, `is_enabled`, `created_at`) VALUES ('Follow-Up Email', 0,'Create professional email follow up with just few clicks',3,'fa-solid fa-reply-all','Write a follow up email about this subject {{subject}}','".$customPrompt."', 1,'2023-06-18 03:11:16');");
 
 $customPrompt = '[{"input_name":"article_title","input_label":"Article Title","input_field_type":"text"}]';
 $customPrompt = $CI->db->escape_str($customPrompt);  // Escape the value
