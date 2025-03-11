@@ -4195,3 +4195,4 @@ $lang['delivery_date'] = 'Delivery Date';
 $lang['services_provided_location'] = 'Services provided Location';
 $lang['state_name_code'] = 'State Name - State Code';
 $lang['suppliers_vendors_pan'] = 'Suppliers / Vendors PAN';
+$lang['subtotal_before_management_fees'] = 'Subtotal before management fees';

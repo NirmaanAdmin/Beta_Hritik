@@ -19,11 +19,16 @@ $tblinvoicehtml .= '
 $tblinvoicehtml .= '</tbody>';
 $tblinvoicehtml .= '</table>';
 
+$invoice_type = 'TAX INVOICE';
+if($invoice->sent == 0) {
+    $invoice_type = 'PROFORMA INVOICE';
+}
+
 $tblinvoicehtml .= '<table width="100%" cellspacing="0" cellpadding="2" border="1">';
 $tblinvoicehtml .= '<tbody>';
 $tblinvoicehtml .= '
 <tr>
-    <td colspan="3" width="100%;" align="center" style="font-weight:bold; font-size: 14px;">TAX INVOICE</td>
+    <td colspan="3" width="100%;" align="center" style="font-weight:bold; font-size: 14px;">'.$invoice_type.'</td>
 </tr>';
 $tblinvoicehtml .= '
 <tr>
@@ -253,6 +258,11 @@ $tblbudgetsummaryhtml = '';
 $tblbudgetsummaryhtml .= '<table cellpadding="6" style="font-size:14px">';
 $tblbudgetsummaryhtml .= '
 <tr>
+    <td align="right" width="75%"><strong>' . _l('subtotal_before_management_fees') . '</strong></td>
+    <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['total_without_man_fees'], $invoice->currency_name) . '</td>
+</tr>';
+$tblbudgetsummaryhtml .= '
+<tr>
     <td align="right" width="75%"><strong>' . _l('total').' '._l('budgeted_amount') . '</strong></td>
     <td align="right" width="25%">' . app_format_money($basic_invoice['total_budget_summary']['budgeted_amount'], $invoice->currency_name) . '</td>
 </tr>';
@@ -347,11 +357,11 @@ if (!empty($indexa)) {
                  <th width="12%" align="left">' . _l('budget_head') . '</th>
                  <th width="12%" align="left">' . _l('description_of_services') . '</th>
                  <th width="16%" align="left">' . _l('vendor') . '</th>
+                 <th width="10%" align="left">' . _l('invoice_add_edit_date') . '</th>
                  <th width="11%" align="left">' . _l('invoice_no') . '</th>
                  <th width="11%" align="right">' . _l('rate_without_tax') . '</th>
                  <th width="11%" align="right">' . _l('invoice_table_tax_heading') . '</th>
                  <th width="12%" align="right">' . _l('invoice_table_amount_heading') . '</th>
-                 <th width="10%" align="right">' . _l('remarks') . '</th>
               </tr>
             </thead>';
         $tblannexurehtml .= '<tbody>';
@@ -376,6 +386,7 @@ if (!empty($indexa)) {
                 // }
                 $vendor_name = '';
                 $invoice_no = '';
+                $invoice_date = '';
                 if (!empty($item['po_id'])) {
                     $pur_orders = get_pur_orders($item['po_id']);
                     $vendor = get_vendor_details($pur_orders->vendor);
@@ -393,6 +404,7 @@ if (!empty($indexa)) {
                     $vendor = get_vendor_details($pur_invoices->vendor);
                     $vendor_name = $vendor->company;
                     $invoice_no = $pur_invoices->vendor_invoice_number;
+                    $invoice_date = _d($pur_invoices->invoice_date);
                 }
                 $tblannexurehtml .= '
                 <tr style="font-size:11px;">
@@ -400,11 +412,11 @@ if (!empty($indexa)) {
                     <td width="12%" align="left;"><span style="font-size:11px;"><strong>' . clear_textarea_breaks($item['description']) . '</strong></span></td>
                     <td width="12%" align="left"><span style="color:#424242;">' . clear_textarea_breaks($item['long_description']) . '</span></td>
                     <td width="16%" align="left">' . $vendor_name . '</td>
+                    <td width="10%" align="left">'.$invoice_date.'</td>
                     <td width="11%" align="left">' . $invoice_no . '</td>
                     <td width="11%" align="right">' . app_format_money($item['rate'], $invoice->currency_name) . '</td>
                     <td width="11%" align="right">' . app_format_money($total_tax, $invoice->currency_name) . '</td>
                     <td width="12%" align="right">' . app_format_money($amount, $invoice->currency_name) . '</td>
-                    <td width="10%" align="right">' . clear_textarea_breaks($item['remarks']) . '</td>
                 </tr>';
                 $inv++;
             }
