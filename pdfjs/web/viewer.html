@@ -654,7 +654,6 @@ See https://github.com/adobe-type-tools/cmap-resources
       const fileParam = new URLSearchParams(window.location.search).get('file');
       console.log('File Parameter:', fileParam);
       document.getElementById('downloadButton').addEventListener('click', async function () {
-          event.preventDefault();
           let pdfViewer = PDFViewerApplication;
 
           if (pdfViewer && pdfViewer.pdfDocument) {
