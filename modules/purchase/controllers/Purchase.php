@@ -90,8 +90,10 @@ class purchase extends AdminController
                 $data['rating_date'] = date('Y-m-d H:i:s');
                 $data['rated_by'] = get_staff_user_id();
                 unset($data['rating_id']);
-
-                $success1 = $this->purchase_model->save_rating($data);
+                if($data['quality_rating'] > 0 || $data['delivery_rating'] > 0 || $data['service_rating'] > 0 || $data['pricing_rating'] > 0 || $data['compliance_rating'] > 0 ){
+                    $success1 = $this->purchase_model->save_rating($data);
+                }  
+                
 
                 $success = $this->purchase_model->update_vendor($this->input->post(), $id);
                 if ($success == true || $success1 == true) {
