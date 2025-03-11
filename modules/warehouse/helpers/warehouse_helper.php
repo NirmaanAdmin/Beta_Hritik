@@ -2084,16 +2084,40 @@ function handle_shipment_add_attachment($id)
     }
 
 }
-function get_vendor_list($name_vendor, $vendor){
+function get_vendor_list($name_vendor, $vendor, $item_key) {
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     $get_vendor = $CI->purchase_model->get_vendor();
-    $selected = !empty($vendor) ? $vendor : array();
+
+    $selected = !empty($vendor) ? $vendor : [];
     if (!is_array($selected)) {
         $selected = explode(",", $selected);
     }
-    return render_select($name_vendor, $get_vendor, array('userid', 'company'), '', $selected, array('multiple' => true), array(), '', 'vendor_list', false);
+
+    // HTML output
+    $output = '<div class="vendor-container" data-item-key="' . $item_key . '">';
+    $output .= render_select(
+        $name_vendor, 
+        $get_vendor, 
+        array('userid', 'company'), 
+        '', 
+        $selected, 
+        [
+            'multiple' => true, 
+            'onchange' => 'handleVendorSelection(this, ' . $item_key . ')', 
+            'data-item-key' => $item_key
+        ], 
+        [], 
+        '', 
+        'vendor_list vendor_select_' . $item_key, 
+        false
+    );
+    $output .= '</div>'; // Close wrapper div
+
+    return $output;
 }
+
+
 
 function get_vendor_name($id)
 {

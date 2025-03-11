@@ -64,13 +64,15 @@
                     <div class="form-group">
                       <label for="pr_order_id"><?php echo _l('reference_purchase_order'); ?></label>
                       <select onchange="pr_order_change(this); return false;" name="pr_order_id" id="pr_order_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>"
-                      <?php echo ($edit_approval == 'true') ? 'disabled' : ''; ?>>
+                        <?php echo ($edit_approval == 'true') ? 'disabled' : ''; ?>>
                         <option value=""></option>
                         <?php foreach ($pr_orders as $pr_order) { ?>
-                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_delivery) && ($goods_delivery->pr_order_id == $pr_order['id'])) { echo 'selected';} ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']. ' - ' . get_vendor_name($pr_order['vendor'])); ?>
+                          <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($goods_delivery) && ($goods_delivery->pr_order_id == $pr_order['id'])) {
+                                                                                                echo 'selected';
+                                                                                              } ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name'] . ' - ' . get_vendor_name($pr_order['vendor'])); ?>
                           </option>
                         <?php } ?>
-                        </select>
+                      </select>
                     </div>
                   </div>
 
@@ -95,7 +97,7 @@
                   </div>
                   */ ?>
 
-<!--                  <div class="col-md-3">
+                  <!--                  <div class="col-md-3">
 
                     <div class="form-group">
                       <label for="customer_code"><?php echo _l('customer_name'); ?></label>
@@ -114,7 +116,7 @@
                   </div>-->
 
 
-<!--                  <div class=" col-md-3">
+                  <!--                  <div class=" col-md-3">
                     <?php $to = (isset($goods_delivery) ? $goods_delivery->to_ : '');
                     echo render_input('to_', 'receiver', $to, '', $disabled) ?>
                   </div>
@@ -414,5 +416,48 @@
 <?php init_tail(); ?>
 <?php require 'modules/warehouse/assets/js/goods_delivery_js.php'; ?>
 </body>
+<script>
+  let userSelectedVendorOptions = {}; // Store user-selected vendor options per item key
+
+  function handleVendorSelection(selectElement, itemKey) {
+    let selectedValues = $(selectElement).val() || [];
+
+    // Store user-selected vendor options per dropdown
+    userSelectedVendorOptions[itemKey] = selectedValues;
+  }
+
+  $(document).ready(function() {
+    let selectedVendorOptions = {}; // Store user-selected vendors
+
+    // Capture vendor selection changes
+    $(document).on("change", ".vendor_list", function() {
+      let itemKey = $(this).data("item-key");
+      let selectedValues = $(this).val() || [];
+
+      // Store selection for the specific itemKey
+      selectedVendorOptions[itemKey] = selectedValues;
+    });
+
+    // Handle "Apply to All" button click
+    $(document).on("click", ".apply-to-all-btn", function() {
+      let itemKey = $(this).data("item-key");
+
+      if (!selectedVendorOptions[itemKey] || selectedVendorOptions[itemKey].length === 0) {
+        alert("Please select at least one vendor before applying.");
+        return;
+      }
+
+      let selectedVendors = selectedVendorOptions[itemKey];
+
+      // Apply to all vendor dropdowns
+      $(".vendor_list").each(function() {
+        $(this).val(selectedVendors).trigger("change"); // Ensure change event triggers
+      });
+
+      // Refresh all dropdowns (if using selectpicker or similar plugin)
+      $(".vendor_list").selectpicker("refresh");
+    });
+  });
+</script>
 
 </html>

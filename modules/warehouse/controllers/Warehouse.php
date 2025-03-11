@@ -15,7 +15,7 @@ class warehouse extends AdminController
 	}
 
 	/**
-	 * setting
+	 * setting 
 	 * @return view
 	 */
 	public function setting()
@@ -1814,7 +1814,7 @@ class warehouse extends AdminController
 
 		$data['title'] = _l('als_report');
 		$data['tab'][] = 'stock_summary_report';
-		$data['tab'][] = 'inventory_inside';
+		// $data['tab'][] = 'inventory_inside';
 		$data['tab'][] = 'inventory_valuation_report';
 		$data['tab'][] = 'warranty_period_report';
 		$data['tab'][] = 'vendor_allocation_report';
@@ -9197,6 +9197,7 @@ class warehouse extends AdminController
 	public function get_vendor_issued_data()
 	{
 		$data = $this->input->post();
+		
 		$this->warehouse_model->get_vendor_issued_data($data);
 		die();
 	}

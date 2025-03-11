@@ -2537,7 +2537,7 @@ class Warehouse_model extends App_Model
 		$data_update = [];
 
 		switch ($rel_type) {
-				//case 1: stock_import
+			//case 1: stock_import
 			case '1':
 				$data_update['approval'] = $status;
 				$this->db->where('id', $rel_id);
@@ -3336,7 +3336,7 @@ class Warehouse_model extends App_Model
 		$additional_data = $data['rel_type'];
 		$object_type = $data['rel_type'];
 		switch ($data['rel_type']) {
-				// case '1 : stock_import':
+			// case '1 : stock_import':
 			case '1':
 				$type = _l('stock_import');
 				$staff_addedfrom = $this->get_goods_receipt($data['rel_id'])->addedfrom;
@@ -3910,7 +3910,7 @@ class Warehouse_model extends App_Model
 		$organization_info = '<div  class="bill_to_color">';
 		$organization_info .= '<b>' . _l('project') . ': ' . get_project_name_by_id($goods_delivery->project) . '</b><br />';
 		$organization_info .= format_organization_info_name();
-		
+
 		$organization_info .= '</div>';
 
 
@@ -3971,7 +3971,7 @@ class Warehouse_model extends App_Model
 		// 	';
 
 
-		
+
 
 		$html .= '<table class="table" style="font-size: 14px">
 		<tbody>
@@ -15398,7 +15398,17 @@ class Warehouse_model extends App_Model
 			}
 			$row .= '<td class="issued_date">' . $issued_date_html . '</td>';
 		}
-		$row .= '<td class="vendor">' . get_vendor_list($name_vendor, $vendor_id) . '</td>';
+		// Vendor selection dropdown
+		$vendorDropdown = get_vendor_list($name_vendor, $vendor_id, $item_key);
+		if ($item_key == '') {
+			// "Apply to All" button
+			$applyButton = '<button type="button" class="btn btn-primary apply-to-all-btn" data-item-key="' . $item_key . '">Apply to All</button>';
+		} else {
+			$applyButton = '';
+		}
+
+
+		$row .= '<td class="vendor">' . $vendorDropdown . $applyButton . '</td>';
 		// $row .= '<td class="amount" align="right">' . $amount . '</td>';
 		$row .= '<td class="hide discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr) . '</td>';
 		$row .= '<td class="hide label_discount_money" align="right">' . $amount . '</td>';
@@ -19834,10 +19844,15 @@ class Warehouse_model extends App_Model
 	public function get_vendor_issued_data($data)
 	{
 		$response = array();
-		$quantities_html = $this->get_quantities_html($data);
-		$lot_number_html = $this->get_lot_number_html($data);
-		$issued_date_html = $this->get_issued_date_html($data);
-
+		$options = isset($data['options']) ? $data['options'] : array();
+		// / Generate quantities HTML for each vendor in options
+		$quantities_html = $lot_number_html = $issued_date_html ='' ;
+		foreach ($options as $vendor) {
+			$data['vendor'] = $vendor;
+			$quantities_html .= $this->get_quantities_html($data);
+			$lot_number_html .= $this->get_lot_number_html($data);
+			$issued_date_html .= $this->get_issued_date_html($data);
+		}
 		$response['quantities_html'] = $quantities_html;
 		$response['lot_number_html'] = $lot_number_html;
 		$response['issued_date_html'] = $issued_date_html;
@@ -20073,8 +20088,8 @@ class Warehouse_model extends App_Model
 	{
 		$result = $this->get_vendor_allocation_report_data($data);
 
-		if($is_pdf == false) {
-			if(!empty($result)) {
+		if ($is_pdf == false) {
+			if (!empty($result)) {
 				$html = '';
 				$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
 				<br>
@@ -20086,7 +20101,7 @@ class Warehouse_model extends App_Model
 					$html .= '
 						<tr>
 							<td colspan="7" class="vendor-name-title">
-								'.get_vendor_company_name($mkey).'
+								' . get_vendor_company_name($mkey) . '
 							</td>
 						</tr>
 						<tr>
@@ -20116,34 +20131,33 @@ class Warehouse_model extends App_Model
 						$html .= '
 							<tr>
 								<td>
-									'.$svalue['pur_order_number'].'
+									' . $svalue['pur_order_number'] . '
 								</td>
 								<td>
-									'.$svalue['item_name'].'
+									' . $svalue['item_name'] . '
 								</td>
 								<td>
-									'.$svalue['item_description'].'
+									' . $svalue['item_description'] . '
 								</td>
 								<td align="center">
-									'.$svalue['stock_issued'].'
+									' . $svalue['stock_issued'] . '
 								</td>
 								<td align="center">
-									'.$svalue['issued_date'].'
+									' . $svalue['issued_date'] . '
 								</td>
 								<td align="center">
-									'.$svalue['lot_number'].'
+									' . $svalue['lot_number'] . '
 								</td>
 								<td align="center">
-									'.$svalue['project_name'].'
+									' . $svalue['project_name'] . '
 								</td>
 							</tr>';
 					}
 				}
-				
+
 				$html .= '</tbody>
 				</table>
 				</div>';
-
 			} else {
 				$html = '';
 				$html .= ' <p><h3 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h3></p>
@@ -20186,15 +20200,15 @@ class Warehouse_model extends App_Model
 				</div>';
 			}
 		} else {
-			if(!empty($result)) {
+			if (!empty($result)) {
 				$logo = '';
 				$company_logo = get_option('company_logo_dark');
-		        if (!empty($company_logo)) {
-		            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
-		        }
-		        $from_date = $data['from_date'];
-		        $to_date = $data['to_date'];
-		        $from_date_html =  date('F', strtotime($from_date)) . ', ' . date('d', strtotime($from_date)) . ' ' . date('Y', strtotime($from_date));
+				if (!empty($company_logo)) {
+					$logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+				}
+				$from_date = $data['from_date'];
+				$to_date = $data['to_date'];
+				$from_date_html =  date('F', strtotime($from_date)) . ', ' . date('d', strtotime($from_date)) . ' ' . date('Y', strtotime($from_date));
 				$to_date_html = date('F', strtotime($to_date)) . ', ' . date('d', strtotime($to_date)) . ' ' . date('Y', strtotime($to_date));
 
 				$html = '';
@@ -20210,8 +20224,8 @@ class Warehouse_model extends App_Model
       			</table>
       			<br>';
 
-      			$html .= '<p class="align_cen">' . _l('from_date') . ' :  <span class="fstyle">'.$from_date_html.'</p>
-				<p class="align_cen">' . _l('to_date') . ' :  <span class="fstyle">'.$to_date_html.'</p>';
+				$html .= '<p class="align_cen">' . _l('from_date') . ' :  <span class="fstyle">' . $from_date_html . '</p>
+				<p class="align_cen">' . _l('to_date') . ' :  <span class="fstyle">' . $to_date_html . '</p>';
 
 				$html .= ' <p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h2></p>
 				<br>
@@ -20222,7 +20236,7 @@ class Warehouse_model extends App_Model
 					$html .= '
 						<tr>
 							<td colspan="7" class="vendor-name-title-pdf">
-								<h3>'.get_vendor_company_name($mkey).'</h3>
+								<h3>' . get_vendor_company_name($mkey) . '</h3>
 							</td>
 						</tr>
 						<tr>
@@ -20252,25 +20266,25 @@ class Warehouse_model extends App_Model
 						$html .= '
 							<tr>
 								<td>
-									'.$svalue['pur_order_number'].'
+									' . $svalue['pur_order_number'] . '
 								</td>
 								<td>
-									'.$svalue['item_name'].'
+									' . $svalue['item_name'] . '
 								</td>
 								<td>
-									'.$svalue['item_description'].'
+									' . $svalue['item_description'] . '
 								</td>
 								<td align="center">
-									'.$svalue['stock_issued'].'
+									' . $svalue['stock_issued'] . '
 								</td>
 								<td align="center">
-									'.$svalue['issued_date'].'
+									' . $svalue['issued_date'] . '
 								</td>
 								<td align="center">
-									'.$svalue['lot_number'].'
+									' . $svalue['lot_number'] . '
 								</td>
 								<td align="center">
-									'.$svalue['project_name'].'
+									' . $svalue['project_name'] . '
 								</td>
 							</tr>';
 					}
@@ -20280,12 +20294,12 @@ class Warehouse_model extends App_Model
 			} else {
 				$logo = '';
 				$company_logo = get_option('company_logo_dark');
-		        if (!empty($company_logo)) {
-		            $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
-		        }
-		        $from_date = $data['from_date'];
-		        $to_date = $data['to_date'];
-		        $from_date_html =  date('F', strtotime($from_date)) . ', ' . date('d', strtotime($from_date)) . ' ' . date('Y', strtotime($from_date));
+				if (!empty($company_logo)) {
+					$logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
+				}
+				$from_date = $data['from_date'];
+				$to_date = $data['to_date'];
+				$from_date_html =  date('F', strtotime($from_date)) . ', ' . date('d', strtotime($from_date)) . ' ' . date('Y', strtotime($from_date));
 				$to_date_html = date('F', strtotime($to_date)) . ', ' . date('d', strtotime($to_date)) . ' ' . date('Y', strtotime($to_date));
 
 				$html = '';
@@ -20301,8 +20315,8 @@ class Warehouse_model extends App_Model
       			</table>
       			<br>';
 
-      			$html .= '<p class="align_cen">' . _l('from_date') . ' :  <span class="fstyle">'.$from_date_html.'</p>
-				<p class="align_cen">' . _l('to_date') . ' :  <span class="fstyle">'.$to_date_html.'</p>';
+				$html .= '<p class="align_cen">' . _l('from_date') . ' :  <span class="fstyle">' . $from_date_html . '</p>
+				<p class="align_cen">' . _l('to_date') . ' :  <span class="fstyle">' . $to_date_html . '</p>';
 
 				$html .= ' <p><h2 class="bold align_cen text-center">' . mb_strtoupper(_l('vendor_allocation_report')) . '</h2></p>
 				<br>
@@ -20370,13 +20384,13 @@ class Warehouse_model extends App_Model
 		$goods_delivery_detail = $query->result_array();
 
 		$originalArray = array();
-		if(!empty($goods_delivery_detail)) {
+		if (!empty($goods_delivery_detail)) {
 			foreach ($goods_delivery_detail as $key => $value) {
 
 				// For quantities
-				if(!empty($value['quantities_json'])) {
+				if (!empty($value['quantities_json'])) {
 					$quantities_json = json_decode($value['quantities_json'], true);
-					if(!empty($quantities_json)) {
+					if (!empty($quantities_json)) {
 						foreach ($quantities_json as $qkey => $qvalue) {
 							$item_line = array();
 							$item_line['item_id'] = $value['item_id'];
@@ -20394,9 +20408,9 @@ class Warehouse_model extends App_Model
 				}
 
 				// For lot number
-				if(!empty($value['lot_number'])) {
+				if (!empty($value['lot_number'])) {
 					$lot_number = json_decode($value['lot_number'], true);
-					if(!empty($lot_number)) {
+					if (!empty($lot_number)) {
 						foreach ($lot_number as $lkey => $lvalue) {
 							$item_line = array();
 							$item_line['item_id'] = $value['item_id'];
@@ -20414,9 +20428,9 @@ class Warehouse_model extends App_Model
 				}
 
 				// For issued date
-				if(!empty($value['issued_date'])) {
+				if (!empty($value['issued_date'])) {
 					$issued_date = json_decode($value['issued_date'], true);
-					if(!empty($issued_date)) {
+					if (!empty($issued_date)) {
 						foreach ($issued_date as $ikey => $ivalue) {
 							$item_line = array();
 							$item_line['item_id'] = $value['item_id'];
@@ -20434,27 +20448,27 @@ class Warehouse_model extends App_Model
 				}
 			}
 		}
-		
+
 		$transformedArray = array();
-		if(!empty($originalArray)) {
+		if (!empty($originalArray)) {
 			foreach ($originalArray as $entry) {
-			    $vendorId = $entry['vendor_id'];
-			    $itemId = $entry['item_id'];
-			    if (!isset($transformedArray[$vendorId])) {
-			        $transformedArray[$vendorId] = [];
-			    }
-			    if (!isset($transformedArray[$vendorId][$itemId])) {
-			        $transformedArray[$vendorId][$itemId] = $entry;
-			    }
-			    if (!empty($entry['issued_date'])) {
-			        $transformedArray[$vendorId][$itemId]['issued_date'] = $entry['issued_date'];
-			    }
-			    if (!empty($entry['stock_issued'])) {
-			        $transformedArray[$vendorId][$itemId]['stock_issued'] = $entry['stock_issued'];
-			    }
-			    if (!empty($entry['lot_number'])) {
-			        $transformedArray[$vendorId][$itemId]['lot_number'] = $entry['lot_number'];
-			    }
+				$vendorId = $entry['vendor_id'];
+				$itemId = $entry['item_id'];
+				if (!isset($transformedArray[$vendorId])) {
+					$transformedArray[$vendorId] = [];
+				}
+				if (!isset($transformedArray[$vendorId][$itemId])) {
+					$transformedArray[$vendorId][$itemId] = $entry;
+				}
+				if (!empty($entry['issued_date'])) {
+					$transformedArray[$vendorId][$itemId]['issued_date'] = $entry['issued_date'];
+				}
+				if (!empty($entry['stock_issued'])) {
+					$transformedArray[$vendorId][$itemId]['stock_issued'] = $entry['stock_issued'];
+				}
+				if (!empty($entry['lot_number'])) {
+					$transformedArray[$vendorId][$itemId]['lot_number'] = $entry['lot_number'];
+				}
 			}
 		}
 
@@ -20471,32 +20485,32 @@ class Warehouse_model extends App_Model
 		return app_pdf('vendor_allocation_report', module_dir_path(WAREHOUSE_MODULE_NAME, 'libraries/pdf/Vendor_allocation_report_pdf.php'), $vendor_allocation);
 	}
 
-	public function fe_get_item_image_qrcode_pdf($item_id) 
+	public function fe_get_item_image_qrcode_pdf($item_id)
 	{
-	    $url = site_url('modules/warehouse/assets/images/no_image.jpg');
-	    $this->db->where('id', $item_id);
+		$url = site_url('modules/warehouse/assets/images/no_image.jpg');
+		$this->db->where('id', $item_id);
 		$data_items = $this->db->get(db_prefix() . 'items')->row();
-	    if($data_items){
-	        if($data_items->qr_code != ''){
-	            $url  = FCPATH. 'modules/warehouse/uploads/qrcodes/'.$data_items->qr_code.'.png';
-	        } else {
-	        	$tempDir = WAREHOUSE_PATH . 'qrcodes/';
-	        	$commodity_code = $data_items->commodity_code;
-	        	$qr_code = md5($commodity_code);
-	        	$html = '';
-	        	$html .= "\n" . _l('commodity_code') . ': ' . $commodity_code . "\n";
-	        	$codeContents = $html;
-	        	$fileName = $qr_code;
-	        	$pngAbsoluteFilePath = $tempDir . $fileName;
+		if ($data_items) {
+			if ($data_items->qr_code != '') {
+				$url  = FCPATH . 'modules/warehouse/uploads/qrcodes/' . $data_items->qr_code . '.png';
+			} else {
+				$tempDir = WAREHOUSE_PATH . 'qrcodes/';
+				$commodity_code = $data_items->commodity_code;
+				$qr_code = md5($commodity_code);
+				$html = '';
+				$html .= "\n" . _l('commodity_code') . ': ' . $commodity_code . "\n";
+				$codeContents = $html;
+				$fileName = $qr_code;
+				$pngAbsoluteFilePath = $tempDir . $fileName;
 				$urlRelativeFilePath = $tempDir . $fileName;
 				if (!file_exists($pngAbsoluteFilePath)) {
 					QRcode::png($codeContents, $pngAbsoluteFilePath . '.png', "L", 4, 4);
 					$this->db->where('id', $item_id);
 					$this->db->update(db_prefix() . 'items', ['qr_code' => $qr_code]);
-					$url  = FCPATH. 'modules/warehouse/uploads/qrcodes/'.$qr_code.'.png';
+					$url  = FCPATH . 'modules/warehouse/uploads/qrcodes/' . $qr_code . '.png';
 				}
-	        }
-	    }
-	    return $url;
+			}
+		}
+		return $url;
 	}
 }
