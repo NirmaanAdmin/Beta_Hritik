@@ -54,6 +54,8 @@ return App_table::find('expenses')
             array_push($where, 'AND ' . db_prefix() . 'expenses.addedfrom=' . get_staff_user_id());
         }
 
+        array_push($where, 'AND invoiceid IS NULL');
+
         $sIndexColumn = 'id';
         $sTable       = db_prefix() . 'expenses';
 
