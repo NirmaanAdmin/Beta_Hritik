@@ -1276,4 +1276,18 @@ class drawing_management extends AdminController
 
 		echo json_encode($results);  // Return results as JSON
 	}
+
+	// public function update_discipline($parent_id)
+	// {
+    //     $this->db->where('parent_id', $parent_id);
+    //     $rootFolder =  $this->db->get(db_prefix() . 'dms_items')->result_array();
+
+    //     if(!empty($rootFolder)) {
+    //     	foreach ($rootFolder as $key => $value) {
+    //     		$this->db->where('id', $value['id']);
+    //     		$this->db->update(db_prefix() . 'dms_items', ['discipline' => 2]);
+    //     		$this->update_discipline($value['id']);
+    //     	}
+    //     }
+	// }
 }
