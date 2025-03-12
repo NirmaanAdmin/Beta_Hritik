@@ -17703,18 +17703,18 @@ class Purchase_model extends App_Model
                 <tr class="pay_cert_value">
                   <td>A1</td>
                   <td>'.$pur_order->pur_order_name.'</td>
-                  <td>'.app_format_money($pay_cert_data->po_contract_amount, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_previous, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_this_bill, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_comulative, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_contract_amount).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_previous).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_this_bill).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_comulative).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>A</td>
                   <td>'._l('total_value_of_works_executed').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_contract_amount, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_previous, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_this_bill, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->po_comulative, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_contract_amount).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_previous).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_this_bill).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_comulative).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>B</td>
@@ -17727,146 +17727,146 @@ class Purchase_model extends App_Model
                 <tr class="pay_cert_value">
                   <td>C1</td>
                   <td>Mobilization Advance payment '.$mobilization_advance.' as per clause '.$payment_clause.'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c1_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>C2</td>
                   <td>'._l('pay_cert_c2_title').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->pay_cert_c2_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>C</td>
                   <td>'._l('net_advance').'</td>
-                  <td>'.app_format_money($pay_cert_data->net_advance_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->net_advance_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->net_advance_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->net_advance_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>D</td>
                   <td>'._l('sub_total_ac').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_total_ac_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_total_ac_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_total_ac_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_total_ac_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>E1</td>
                   <td>'._l('retention_fund').'</td>
-                  <td>'.app_format_money($pay_cert_data->ret_fund_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->ret_fund_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->ret_fund_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->ret_fund_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>E2</td>
                   <td>'._l('works_executed_5_of_A').' '.$pay_cert_data->works_executed_on_a.'</td>
-                  <td>'.app_format_money($pay_cert_data->works_exe_a_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->works_exe_a_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->works_exe_a_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->works_exe_a_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>E</td>
                   <td>'._l('less_total_retention').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ret_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ret_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ret_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ret_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>F</td>
                   <td>'._l('sub_total_de').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_t_de_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_t_de_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_t_de_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_t_de_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>G1</td>
                   <td>'._l('less_title').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>G2</td>
                   <td>'._l('less_amount_hold_for_quality_ncr').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ah_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ah_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ah_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ah_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>G2</td>
                   <td>'._l('less_amount_hold_for_testing_and_comissioning').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_aht_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_aht_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_aht_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_aht_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>G</td>
                   <td>'._l('less_deductions').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ded_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ded_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ded_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->less_ded_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>H</td>
                   <td>'._l('sub_total_exclusive_of_taxes').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_fg_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_fg_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_fg_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sub_fg_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I1</td>
                   <td>CGST @ '.$cgst_tax.' on A</td>
-                  <td>'.app_format_money($pay_cert_data->cgst_on_a1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->cgst_on_a2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->cgst_on_a3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->cgst_on_a4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I2</td>
                   <td>SGST @ '.$cgst_tax.' on A</td>
-                  <td>'.app_format_money($pay_cert_data->sgst_on_a1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sgst_on_a2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sgst_on_a3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->sgst_on_a4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a4).'</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I3</td>
                   <td>'._l('labour_cess').' '.$pay_cert_data->labour_cess.'</td>
-                  <td>'.app_format_money($pay_cert_data->labour_cess_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->labour_cess_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->labour_cess_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->labour_cess_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>I</td>
                   <td>'._l('total_applicable_taxes').'</td>
-                  <td>'.app_format_money($pay_cert_data->tot_app_tax_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->tot_app_tax_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->tot_app_tax_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->tot_app_tax_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_4).'</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>J</td>
                   <td>'._l('amount_recommended').'</td>
-                  <td>'.app_format_money($pay_cert_data->amount_rec_1, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->amount_rec_2, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->amount_rec_3, '').'</td>
-                  <td>'.app_format_money($pay_cert_data->amount_rec_4, '').'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_1).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_2).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_3).'</td>
+                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_4).'</td>
                 </tr>
             </tbody>
         </table>
