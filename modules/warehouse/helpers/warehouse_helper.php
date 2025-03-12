@@ -16,17 +16,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @param  integer $id
  * @return array or row
  */
-function get_taxes($id =''){
-    $CI           = & get_instance();
+function get_taxes($id = '')
+{
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
-        $CI->db->where('id',$id);
+        $CI->db->where('id', $id);
 
-        return $CI->db->get(db_prefix().'taxes')->row();
+        return $CI->db->get(db_prefix() . 'taxes')->row();
     }
     $CI->db->order_by('taxrate', 'ASC');
-    return $CI->db->get(db_prefix().'taxes')->result_array();
-
+    return $CI->db->get(db_prefix() . 'taxes')->result_array();
 }
 
 /**
@@ -36,7 +36,7 @@ function get_taxes($id =''){
  */
 function get_unit_type($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('unit_type_id', $id);
@@ -46,7 +46,6 @@ function get_unit_type($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblware_unit_type')->result_array();
     }
-
 }
 
 /**
@@ -56,7 +55,7 @@ function get_unit_type($id = false)
  */
 function get_tax_rate($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -66,7 +65,6 @@ function get_tax_rate($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tbltaxes')->result_array();
     }
-
 }
 
 
@@ -77,7 +75,7 @@ function get_tax_rate($id = false)
  */
 function get_wh_group_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -87,7 +85,6 @@ function get_wh_group_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblitems_groups')->result_array();
     }
-
 }
 
 
@@ -98,7 +95,7 @@ function get_wh_group_name($id = false)
  */
 function get_size_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('size_type_id', $id);
@@ -108,7 +105,6 @@ function get_size_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblware_size_type')->result_array();
     }
-
 }
 
 
@@ -119,7 +115,7 @@ function get_size_name($id = false)
  */
 function get_style_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('style_type_id', $id);
@@ -128,7 +124,6 @@ function get_style_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblware_style_type')->result_array();
     }
-
 }
 
 /**
@@ -138,7 +133,7 @@ function get_style_name($id = false)
  */
 function get_model_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('body_type_id', $id);
@@ -148,7 +143,6 @@ function get_model_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblware_body_type')->result_array();
     }
-
 }
 
 /**
@@ -159,7 +153,7 @@ function get_model_name($id = false)
  */
 function get_pr_order($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -168,7 +162,6 @@ function get_pr_order($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblpur_orders where approve_status = 2 AND status_goods = 0')->result_array();
     }
-
 }
 
 
@@ -180,7 +173,7 @@ function get_pr_order($id = false)
 function reformat_currency_j($value)
 {
 
-    $f_dot = str_replace(',','', $value);
+    $f_dot = str_replace(',', '', $value);
     return ((float)$f_dot + 0);
 }
 
@@ -192,7 +185,7 @@ function reformat_currency_j($value)
  */
 function get_pur_request_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -202,7 +195,6 @@ function get_pur_request_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblpur_request')->result_array();
     }
-
 }
 
 
@@ -213,7 +205,7 @@ function get_pur_request_name($id = false)
  */
 function get_warehouse_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if ($id != false) {
         $CI->db->where('warehouse_id', $id);
@@ -223,7 +215,6 @@ function get_warehouse_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblwarehouse')->result_array();
     }
-
 }
 
 
@@ -234,7 +225,7 @@ function get_warehouse_name($id = false)
  */
 function get_commodity_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -244,7 +235,6 @@ function get_commodity_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblitems')->result_array();
     }
-
 }
 
 
@@ -255,24 +245,23 @@ function get_commodity_name($id = false)
  */
 function get_status_inventory($commodity, $inventory)
 {
-    $CI           = & get_instance();
-    
-    $status=false;
-    $inventory_min=0;
+    $CI           = &get_instance();
+
+    $status = false;
+    $inventory_min = 0;
 
     $CI->db->where('commodity_id', $commodity);
     $result = $CI->db->get(db_prefix() . 'inventory_commodity_min')->row();
-    if($result){
+    if ($result) {
         $inventory_min = $result->inventory_number_min;
     }
 
-    if((float)$inventory < (float)$inventory_min){
+    if ((float)$inventory < (float)$inventory_min) {
         $status = false;
-    }else{
+    } else {
         $status = true;
     }
     return $status;
-
 }
 
 /**
@@ -282,7 +271,7 @@ function get_status_inventory($commodity, $inventory)
  */
 function get_goods_receipt_code($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -292,7 +281,6 @@ function get_goods_receipt_code($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblgoods_receipt')->result_array();
     }
-
 }
 
 
@@ -310,7 +298,7 @@ function warehouse_process_digital_signature_image($partBase64, $path, $image_na
     }
 
     _maybe_create_upload_path($path);
-    $filename = unique_filename($path, $image_name.'.png');
+    $filename = unique_filename($path, $image_name . '.png');
 
     $decoded_image = base64_decode($partBase64);
 
@@ -337,90 +325,89 @@ function warehouse_process_digital_signature_image($partBase64, $path, $image_na
  * @return string
  */
 function numberTowords($num)
-{ 
-    $ones = array( 
+{
+    $ones = array(
         0 => '',
-        1 => "One", 
-        2 => "Two", 
-        3 => "Three", 
-        4 => "Four", 
-        5 => "Five", 
-        6 => "Six", 
-        7 => "Seven", 
-        8 => "Eight", 
-        9 => "Nine", 
-        10 => "Ten", 
-        11 => "Eleven", 
-        12 => "Twelve", 
-        13 => "Thirteen", 
-        14 => "Fourteen", 
-        15 => "Fifteen", 
-        16 => "Sixteen", 
-        17 => "Seventeen", 
-        18 => "Eighteen", 
-        19 => "Nineteen" 
-    ); 
-    $tens = array( 
+        1 => "One",
+        2 => "Two",
+        3 => "Three",
+        4 => "Four",
+        5 => "Five",
+        6 => "Six",
+        7 => "Seven",
+        8 => "Eight",
+        9 => "Nine",
+        10 => "Ten",
+        11 => "Eleven",
+        12 => "Twelve",
+        13 => "Thirteen",
+        14 => "Fourteen",
+        15 => "Fifteen",
+        16 => "Sixteen",
+        17 => "Seventeen",
+        18 => "Eighteen",
+        19 => "Nineteen"
+    );
+    $tens = array(
         0 => '',
         1 => "Ten",
-        2 => "Twenty", 
-        3 => "Thirty", 
-        4 => "Fourty", 
-        5 => "Fifty", 
-        6 => "Sixty", 
-        7 => "Seventy", 
-        8 => "Eighty", 
-        9 => "Ninety" 
-    ); 
-    $hundreds = array( 
-        "Hundred", 
-        "Thousand", 
-        "Million", 
-        "Billion", 
-        "Thousands of billions", 
-        "Million billion" 
+        2 => "Twenty",
+        3 => "Thirty",
+        4 => "Fourty",
+        5 => "Fifty",
+        6 => "Sixty",
+        7 => "Seventy",
+        8 => "Eighty",
+        9 => "Ninety"
+    );
+    $hundreds = array(
+        "Hundred",
+        "Thousand",
+        "Million",
+        "Billion",
+        "Thousands of billions",
+        "Million billion"
     ); //limit t quadrillion 
-    $num = number_format($num,2,".",","); 
-    $num_arr = explode(".",$num); 
-    $wholenum = $num_arr[0]; 
-    
-    $decnum = $num_arr[1]; 
-    $whole_arr = array_reverse(explode(",",$wholenum)); 
-    krsort($whole_arr); 
-    $rettxt = ""; 
-    foreach($whole_arr as $key => $i){ 
+    $num = number_format($num, 2, ".", ",");
+    $num_arr = explode(".", $num);
+    $wholenum = $num_arr[0];
 
-        if($i == '0' || $i == '000' || $i == '00'){
+    $decnum = $num_arr[1];
+    $whole_arr = array_reverse(explode(",", $wholenum));
+    krsort($whole_arr);
+    $rettxt = "";
+    foreach ($whole_arr as $key => $i) {
+
+        if ($i == '0' || $i == '000' || $i == '00') {
             $rettxt .= $ones[0];
-        }elseif($i < 20){ 
+        } elseif ($i < 20) {
 
-            $rettxt .= $ones[$i]; 
-        }elseif($i < 100){ 
-            $rettxt .= $tens[substr($i,0,1)]; 
-            $rettxt .= " ".$ones[substr($i,1,1)]; 
-        }else{ 
-            $rettxt .= $ones[substr($i,0,1)]." ".$hundreds[0]; 
-            $rettxt .= " ".$tens[substr($i,1,1)]; 
-            $rettxt .= " ".$ones[substr($i,2,1)]; 
+            $rettxt .= $ones[$i];
+        } elseif ($i < 100) {
+            $rettxt .= $tens[substr($i, 0, 1)];
+            $rettxt .= " " . $ones[substr($i, 1, 1)];
+        } else {
+            $rettxt .= $ones[substr($i, 0, 1)] . " " . $hundreds[0];
+            $rettxt .= " " . $tens[substr($i, 1, 1)];
+            $rettxt .= " " . $ones[substr($i, 2, 1)];
         }
 
-        if($key > 0){ 
-            $rettxt .= " ".$hundreds[$key]." "; 
-        } 
+        if ($key > 0) {
+            $rettxt .= " " . $hundreds[$key] . " ";
+        }
+    }
+    if ($decnum > 0) {
+        $rettxt .= " and ";
+        if ($decnum < 20) {
+            $rettxt .= $ones[$decnum];
+        } elseif ($decnum < 100) {
+            $rettxt .= $tens[substr($decnum, 0, 1)];
+            $rettxt .= " " . $ones[substr($decnum, 1, 1)];
+        }
+    }
 
-    } 
-    if($decnum > 0){ 
-        $rettxt .= " and "; 
-        if($decnum < 20){ 
-            $rettxt .= $ones[$decnum]; 
-        }elseif($decnum < 100){ 
-            $rettxt .= $tens[substr($decnum,0,1)]; 
-            $rettxt .= " ".$ones[substr($decnum,1,1)]; 
-        } 
-    } 
-
-    return $rettxt; 
-} 
+    return $rettxt;
+}
 
 
 /**
@@ -428,14 +415,15 @@ function numberTowords($num)
  * @param  string $module_name 
  * @return boolean             
  */
-function get_status_modules_wh($module_name){
+function get_status_modules_wh($module_name)
+{
     $CI             = &get_instance();
 
-    $sql = 'select * from '.db_prefix().'modules where module_name = "'.$module_name.'" AND active =1 ';
+    $sql = 'select * from ' . db_prefix() . 'modules where module_name = "' . $module_name . '" AND active =1 ';
     $module = $CI->db->query($sql)->row();
-    if($module){
+    if ($module) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
@@ -448,7 +436,7 @@ function get_status_modules_wh($module_name){
  */
 function get_goods_delivery_code($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -458,7 +446,6 @@ function get_goods_delivery_code($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblgoods_delivery')->result_array();
     }
-
 }
 
 /**
@@ -466,12 +453,13 @@ function get_goods_delivery_code($id = false)
  * @param  integer $id
  * @return boolean
  */
-function handle_commodity_list_add_edit_file($id){
+function handle_commodity_list_add_edit_file($id)
+{
 
     if (isset($_FILES['cd_avar']['name']) && $_FILES['cd_avar']['name'] != '') {
 
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = WAREHOUSE_ITEM_UPLOAD. $id . '/';
+        $path = WAREHOUSE_ITEM_UPLOAD . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['cd_avar']['tmp_name'];
         // Make sure we have a filepath
@@ -481,7 +469,7 @@ function handle_commodity_list_add_edit_file($id){
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI           = & get_instance();
+                $CI           = &get_instance();
                 $attachment   = [];
                 $attachment[] = [
                     'file_name' => $filename,
@@ -512,7 +500,7 @@ function handle_commodity_attachments($id)
         die;
     }
     $path = WAREHOUSE_ITEM_UPLOAD . $id . '/';
-    $CI   = & get_instance();
+    $CI   = &get_instance();
 
     if (isset($_FILES['file']['name'])) {
 
@@ -538,7 +526,6 @@ function handle_commodity_attachments($id)
             }
         }
     }
-
 }
 
 
@@ -550,7 +537,7 @@ function handle_commodity_attachments($id)
  */
 function get_color_type($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('color_id', $id);
@@ -560,7 +547,6 @@ function get_color_type($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblware_color')->result_array();
     }
-
 }
 
 /**
@@ -568,16 +554,15 @@ function get_color_type($id = false)
  * @param  integer $commodity_id 
  * @return array               
  */
-function get_warehouse_by_commodity($commodity_id )
+function get_warehouse_by_commodity($commodity_id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($commodity_id)) {
-        $sql ='SELECT distinct warehouse_id FROM '.db_prefix().'inventory_manage where inventory_number >= 0 AND commodity_id = "'.$commodity_id.'"';
+        $sql = 'SELECT distinct warehouse_id FROM ' . db_prefix() . 'inventory_manage where inventory_number >= 0 AND commodity_id = "' . $commodity_id . '"';
 
         return $CI->db->query($sql)->result_array();
     }
-
 }
 
 
@@ -586,13 +571,14 @@ function get_warehouse_by_commodity($commodity_id )
  * @param  string $name 
  *        
  */
-function warehouse_row_options_exist($name){
-    $CI = & get_instance();
-    $i = count($CI->db->query('Select * from '.db_prefix().'options where name = '.$name)->result_array());
-    if($i == 0){
+function warehouse_row_options_exist($name)
+{
+    $CI = &get_instance();
+    $i = count($CI->db->query('Select * from ' . db_prefix() . 'options where name = ' . $name)->result_array());
+    if ($i == 0) {
         return 0;
     }
-    if($i > 0){
+    if ($i > 0) {
         return 1;
     }
 }
@@ -606,11 +592,11 @@ function warehouse_row_options_exist($name){
  */
 function get_warehouse_option($name)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $options = [];
     $val  = '';
     $name = trim($name);
-    
+
 
     if (!isset($options[$name])) {
         // is not auto loaded
@@ -633,33 +619,44 @@ function get_warehouse_option($name)
  * @return string     
  */
 function get_pur_order_name($id)
-{   
-    $name='';
-    $CI = & get_instance();
-    $CI->db->where('id',$id);
-    $pur_orders = $CI->db->get(db_prefix().'pur_orders')->row();
+{
+    $name = '';
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $pur_orders = $CI->db->get(db_prefix() . 'pur_orders')->row();
 
-    if($pur_orders){
-       $name .= $pur_orders->pur_order_number.' - '.$pur_orders->pur_order_name;
+    if ($pur_orders) {
+        $name .= $pur_orders->pur_order_number . ' - ' . $pur_orders->pur_order_name;
     }
 
-   return $name;
+    return $name;
+}
+function get_pur_order_project_id($id)
+{
+    $project = '';
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $pur_orders = $CI->db->get(db_prefix() . 'pur_orders')->row();
 
+    if ($pur_orders) {
+        $project .= $pur_orders->project;
+    }
+
+    return $project;
 }
 
 function get_pur_order_goods_status($id)
-{   
-    $status='';
-    $CI = & get_instance();
-    $CI->db->where('id',$id);
-    $pur_orders = $CI->db->get(db_prefix().'pur_orders')->row();
+{
+    $status = '';
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $pur_orders = $CI->db->get(db_prefix() . 'pur_orders')->row();
 
-    if($pur_orders){
-       $status = $pur_orders->goods_id;
+    if ($pur_orders) {
+        $status = $pur_orders->goods_id;
     }
 
-   return $status;
-
+    return $status;
 }
 
 
@@ -668,13 +665,12 @@ function get_pur_order_goods_status($id)
  * @param  integer $id
  * @return array or row
  */
-function wh_get_staff($id =''){
+function wh_get_staff($id = '')
+{
 
     $CI = &get_instance();
     $CI->load->model('warehouse/warehouse_model');
     return  $CI->warehouse_model->get_staff($invoice_id);
-
-
 }
 
 hooks()->add_action('after_email_templates', 'add_inventory_warning_email_templates');
@@ -701,7 +697,7 @@ if (!function_exists('add_inventory_warning_email_templates')) {
  */
 function get_internal_delivery_code($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -711,7 +707,6 @@ function get_internal_delivery_code($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblinternal_delivery_note')->result_array();
     }
-
 }
 
 /**
@@ -722,7 +717,7 @@ function get_internal_delivery_code($id = false)
  */
 function wh_get_pr_order_delivered($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -731,7 +726,6 @@ function wh_get_pr_order_delivered($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblpur_orders where approve_status = 2 AND delivery_status = 1')->result_array();
     }
-
 }
 
 
@@ -741,7 +735,7 @@ function wh_get_pr_order_delivered($id = false)
  * @return [type]       
  */
 function wh_check_approval_setting($type)
-{   
+{
     $CI = &get_instance();
     $CI->load->model('warehouse/warehouse_model');
 
@@ -760,7 +754,7 @@ function wh_handle_propsal_file($id)
 {
     if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
         hooks()->do_action('before_upload_contract_attachment', $id);
-        $path = WAREHOUSE_PROPOSAL_UPLOAD_FOLDER. $id . '/';
+        $path = WAREHOUSE_PROPOSAL_UPLOAD_FOLDER . $id . '/';
         // Get the temp file path
         $tmpFilePath = $_FILES['file']['tmp_name'];
         // Make sure we have a filepath
@@ -770,7 +764,7 @@ function wh_handle_propsal_file($id)
             $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI           = & get_instance();
+                $CI           = &get_instance();
                 $attachment   = [];
                 $attachment[] = [
                     'file_name' => $filename,
@@ -793,7 +787,7 @@ function wh_handle_propsal_file($id)
  */
 function get_brand_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -803,7 +797,6 @@ function get_brand_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblwh_brand')->result_array();
     }
-
 }
 
 /**
@@ -813,7 +806,7 @@ function get_brand_name($id = false)
  */
 function get_models_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -823,7 +816,6 @@ function get_models_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblwh_model')->result_array();
     }
-
 }
 
 /**
@@ -833,7 +825,7 @@ function get_models_name($id = false)
  */
 function get_series_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -843,7 +835,6 @@ function get_series_name($id = false)
     if ($id == false) {
         return $CI->db->query('select * from tblwh_series')->result_array();
     }
-
 }
 
 
@@ -873,7 +864,7 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
 
     $is_admin = is_admin();
 
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->db->where('active', 1);
     $CI->db->where('fieldto', $belongs_to);
 
@@ -886,24 +877,23 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
 
     $fields_html = '';
 
-    if($rel_id != false && $rel_id != 0){
+    if ($rel_id != false && $rel_id != 0) {
         $is_add = false;
 
-        $string_where = 'find_in_set('.$rel_id.', '.db_prefix().'wh_custom_fields.warehouse_id) ';
+        $string_where = 'find_in_set(' . $rel_id . ', ' . db_prefix() . 'wh_custom_fields.warehouse_id) ';
         $CI->db->where($string_where);
         $custom_fields_value = $CI->db->get(db_prefix() . 'wh_custom_fields')->result_array();
 
-        $array_custom_fields=[];
+        $array_custom_fields = [];
         foreach ($custom_fields_value as $value) {
             array_push($array_custom_fields, $value['custom_fields_id']);
         }
 
-        if(count($array_custom_fields) == 0){
+        if (count($array_custom_fields) == 0) {
 
             $is_add = true;
         }
-
-    }else{
+    } else {
         $is_add = true;
     }
 
@@ -927,16 +917,16 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
             }
 
 
-            $hidden ='';
-            if($is_add == true){
+            $hidden = '';
+            if ($is_add == true) {
                 $hidden = ' hidden';
-            }else{
-                if(!in_array($field['id'], $array_custom_fields)){
+            } else {
+                if (!in_array($field['id'], $array_custom_fields)) {
                     $hidden = ' hidden';
                 }
             }
 
-            $field['bs_column'] .= ' '.$field['fieldto'].$field['id'].$hidden;
+            $field['bs_column'] .= ' ' . $field['fieldto'] . $field['id'] . $hidden;
 
             if (!$items_add_edit_preview && !$items_applied) {
                 $fields_html .= '<div class="col-md-' . $field['bs_column'] . '">';
@@ -946,9 +936,11 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
                 $fields_html .= '<td class="custom_field">';
             }
 
-            if ($is_admin
+            if (
+                $is_admin
                 && ($items_add_edit_preview == false && $items_applied == false)
-                && (!defined('CLIENTS_AREA') || hooks()->apply_filters('show_custom_fields_edit_link_on_clients_area', false))) {
+                && (!defined('CLIENTS_AREA') || hooks()->apply_filters('show_custom_fields_edit_link_on_clients_area', false))
+            ) {
                 $fields_html .= '<a href="' . admin_url('custom_fields/field/' . $field['id']) . '" tabindex="-1" target="_blank" class="custom-field-inline-edit-link"><i class="fa fa-pencil-square"></i></a>';
             }
 
@@ -1044,7 +1036,7 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
 
                 $fields_html .= '<div class="form-group">';
                 $fields_html .= '<label for="' . $cf_name . '" class="control-label" style="margin-bottom:9px;">' . $field_name . '</label>';
-                $fields_html .= '<select ' . $select_attrs . ' name="' . $select_name . '" class="' . ($items_add_edit_preview == false ? 'select-placeholder ': '') . 'selectpicker form-control' . ($field['type'] == 'multiselect' ? ' custom-field-multi-select' : '') . '" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
+                $fields_html .= '<select ' . $select_attrs . ' name="' . $select_name . '" class="' . ($items_add_edit_preview == false ? 'select-placeholder ' : '') . 'selectpicker form-control' . ($field['type'] == 'multiselect' ? ' custom-field-multi-select' : '') . '" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
 
                 $fields_html .= '<option value=""' . ($field['type'] == 'multiselect' ? ' class="hidden"' : '') . '></option>';
 
@@ -1079,7 +1071,7 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
             } elseif ($field['type'] == 'checkbox') {
                 $fields_html .= '<div class="form-group chk">';
 
-                $fields_html .= '<br /><label class="control-label' . ($field['display_inline'] == 0 ? ' no-mbot': '') . '" for="' . $cf_name . '[]">' . $field_name . '</label>' . ($field['display_inline'] == 1 ? ' <br />': '');
+                $fields_html .= '<br /><label class="control-label' . ($field['display_inline'] == 0 ? ' no-mbot' : '') . '" for="' . $cf_name . '[]">' . $field_name . '</label>' . ($field['display_inline'] == 1 ? ' <br />' : '');
 
                 $options = explode(',', $field['options']);
 
@@ -1115,7 +1107,7 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
 
                     $input_id = 'cfc_' . $field['id'] . '_' . slug_it($option) . '_' . app_generate_hash();
 
-                    $fields_html .= '<div class="checkbox' . ($field['display_inline'] == 1 ? ' checkbox-inline': '') . '">';
+                    $fields_html .= '<div class="checkbox' . ($field['display_inline'] == 1 ? ' checkbox-inline' : '') . '">';
                     $fields_html .= '<input class="custom_field_checkbox" ' . $chk_attrs . ' ' . set_checkbox($cf_name . '[]', $option) . ' ' . $checked . ' value="' . $option . '" id="' . $input_id . '" type="checkbox" name="' . $cf_name . '[]">';
 
                     $fields_html .= '<label for="' . $input_id . '" class="cf-chk-label">' . $option . '</label>';
@@ -1192,7 +1184,7 @@ function wh_render_custom_fields($belongs_to, $rel_id = false, $where = [], $ite
  */
 function wh_get_custom_fields($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
@@ -1202,7 +1194,6 @@ function wh_get_custom_fields($id)
     if ($id == false) {
         return $CI->db->query('select * from tblcustomfields')->result_array();
     }
-
 }
 
 
@@ -1211,25 +1202,26 @@ function wh_get_custom_fields($id)
  * @param  [type] $id 
  * @return [type]     
  */
-function handle_send_delivery_note($id){
- if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
+function handle_send_delivery_note($id)
+{
+    if (isset($_FILES['attachment']['name']) && $_FILES['attachment']['name'] != '') {
 
-    $path = WAREHOUSE_MODULE_UPLOAD_FOLDER .'/send_delivery_note/'. $id . '/';
+        $path = WAREHOUSE_MODULE_UPLOAD_FOLDER . '/send_delivery_note/' . $id . '/';
         // Get the temp file path
-    $tmpFilePath = $_FILES['attachment']['tmp_name'];
+        $tmpFilePath = $_FILES['attachment']['tmp_name'];
         // Make sure we have a filepath
-    if (!empty($tmpFilePath) && $tmpFilePath != '') {
-        _maybe_create_upload_path($path);
-        $filename    = unique_filename($path, $_FILES['attachment']['name']);
-        $newFilePath = $path . $filename;
+        if (!empty($tmpFilePath) && $tmpFilePath != '') {
+            _maybe_create_upload_path($path);
+            $filename    = unique_filename($path, $_FILES['attachment']['name']);
+            $newFilePath = $path . $filename;
             // Upload the file into the company uploads dir
-        if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-            return true;
+            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                return true;
+            }
         }
     }
-}
 
-return false;
+    return false;
 }
 
 /**
@@ -1245,13 +1237,13 @@ function wh_get_vendor_company_name($userid, $prevent_empty_company = false)
     if ($userid !== '') {
         $_userid = $userid;
     }
-    $CI = & get_instance();
+    $CI = &get_instance();
 
     $client = $CI->db->select('company')
-    ->where('userid', $_userid)
-    ->from(db_prefix() . 'pur_vendor')
-    ->get()
-    ->row();
+        ->where('userid', $_userid)
+        ->from(db_prefix() . 'pur_vendor')
+        ->get()
+        ->row();
     if ($client) {
         return $client->company;
     }
@@ -1266,21 +1258,19 @@ function wh_get_vendor_company_name($userid, $prevent_empty_company = false)
  */
 function get_invoice_company_projecy($invoice_id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $invoice_info = '';
 
     if (is_numeric($invoice_id)) {
 
-        $invoices = $CI->db->query('select *, iv.id as id from '.db_prefix().'invoices as iv left join '.db_prefix().'projects as pj on pj.id = iv.project_id left join '.db_prefix().'clients as cl on cl.userid = iv.clientid  where iv.id ='.$invoice_id)->row();
+        $invoices = $CI->db->query('select *, iv.id as id from ' . db_prefix() . 'invoices as iv left join ' . db_prefix() . 'projects as pj on pj.id = iv.project_id left join ' . db_prefix() . 'clients as cl on cl.userid = iv.clientid  where iv.id =' . $invoice_id)->row();
 
-        if($invoices){
-            $invoice_info .= ' - '.$invoices->company.' - '.$invoices->name;
+        if ($invoices) {
+            $invoice_info .= ' - ' . $invoices->company . ' - ' . $invoices->name;
         }
-
     }
-    
-    return $invoice_info;
 
+    return $invoice_info;
 }
 
 /**
@@ -1290,14 +1280,14 @@ function get_invoice_company_projecy($invoice_id)
  */
 function wh_get_warehouse_address($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     $CI->db->where('warehouse_id', $id);
     $warehouse_value = $CI->db->get(db_prefix() . 'warehouse')->row();
 
-    $address='';
+    $address = '';
 
-    if($warehouse_value){
+    if ($warehouse_value) {
 
         $warehouse_address = [];
         $warehouse_address[0] =  $warehouse_value->warehouse_address;
@@ -1307,32 +1297,30 @@ function wh_get_warehouse_address($id)
         $warehouse_address[4] =  $warehouse_value->zip_code;
 
         foreach ($warehouse_address as $key => $add_value) {
-            if(isset($add_value) && $add_value !=''){
+            if (isset($add_value) && $add_value != '') {
                 switch ($key) {
                     case 0:
                         $address .= $add_value;
                         break;
                     case 1:
-                        $address .= ', '.$add_value;
+                        $address .= ', ' . $add_value;
                         break;
                     case 2:
-                        $address .= ', '.$add_value;
+                        $address .= ', ' . $add_value;
                         break;
                     case 3:
-                        $address .= ', '.get_country_name($add_value);
+                        $address .= ', ' . get_country_name($add_value);
                         break;
                     case 4:
-                        $address .= ', '.$add_value;
+                        $address .= ', ' . $add_value;
                         break;
                     default:
-                    break;
+                        break;
                 }
             }
         }
-
     }
     return $address;
-
 }
 
 /**
@@ -1342,17 +1330,17 @@ function wh_get_warehouse_address($id)
  */
 function wh_get_item_variatiom($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     $CI->db->where('id', $id);
     $item_value = $CI->db->get(db_prefix() . 'items')->row();
 
     $name = '';
-    if($item_value){
+    if ($item_value) {
         $CI->load->model('warehouse/warehouse_model');
         $new_item_value = $CI->warehouse_model->row_item_to_variation($item_value);
 
-        $name .= $item_value->commodity_code.'_'.$new_item_value->new_description;
+        $name .= $item_value->commodity_code . '_' . $new_item_value->new_description;
     }
 
     return $name;
@@ -1365,37 +1353,33 @@ function wh_get_item_variatiom($id)
  */
 function get_inventory_quantity_by_variation($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     //check have child item
     $CI->db->where('parent_id', $id);
     $child_item = $CI->db->get(db_prefix() . 'items')->result_array();
 
-    if(count($child_item) > 0){
+    if (count($child_item) > 0) {
         //get total child quantity
-        $sql_where = "SELECT sum(inventory_number) as inventory_number FROM ".db_prefix()."inventory_manage
-WHERE commodity_id IN ( select id FROM ".db_prefix()."items where parent_id = ".$id.")" ;
+        $sql_where = "SELECT sum(inventory_number) as inventory_number FROM " . db_prefix() . "inventory_manage
+WHERE commodity_id IN ( select id FROM " . db_prefix() . "items where parent_id = " . $id . ")";
 
-        $item_value = $CI->db->query($sql_where)->row(); 
+        $item_value = $CI->db->query($sql_where)->row();
 
         return (float)$item_value->inventory_number;
-        
-    }else{
+    } else {
         //get parent quantity
         $sql = 'SELECT sum(inventory_number) as inventory_number FROM ' . db_prefix() . 'inventory_manage
         where ' . db_prefix() . 'inventory_manage.commodity_id = ' . $id . ' group by ' . db_prefix() . 'inventory_manage.commodity_id';
 
-        $item_value = $CI->db->query($sql)->row(); 
+        $item_value = $CI->db->query($sql)->row();
 
-        if($item_value){
+        if ($item_value) {
             return (float)$item_value->inventory_number;
         }
 
         return 0;
-
     }
-
-
 }
 
 /**
@@ -1405,18 +1389,17 @@ WHERE commodity_id IN ( select id FROM ".db_prefix()."items where parent_id = ".
  */
 function check_item_have_variation($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     //check have child item
     $CI->db->where('parent_id', $id);
     $child_item = $CI->db->get(db_prefix() . 'items')->result_array();
 
-    if(count($child_item) > 0){
+    if (count($child_item) > 0) {
         return true;
-    }else{
+    } else {
         return false;
     }
-
 }
 
 /**
@@ -1426,13 +1409,13 @@ function check_item_have_variation($id)
  */
 function get_inventory_by_warehouse_variation($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     //get parent quantity
-    $sql_where = "SELECT sum(inventory_number) as inventory_number, warehouse_id FROM ".db_prefix()."inventory_manage
-WHERE commodity_id IN ( select id FROM ".db_prefix()."items where parent_id = ".$id.") group by warehouse_id" ;
+    $sql_where = "SELECT sum(inventory_number) as inventory_number, warehouse_id FROM " . db_prefix() . "inventory_manage
+WHERE commodity_id IN ( select id FROM " . db_prefix() . "items where parent_id = " . $id . ") group by warehouse_id";
 
-    $item_value = $CI->db->query($sql_where)->result_array(); 
+    $item_value = $CI->db->query($sql_where)->result_array();
 
     return $item_value;
 }
@@ -1444,7 +1427,8 @@ WHERE commodity_id IN ( select id FROM ".db_prefix()."items where parent_id = ".
  *
  * @return     integer  ( 1 or 0 )
  */
-function row_warehouse_tbl_options_exist($name) {
+function row_warehouse_tbl_options_exist($name)
+{
     $CI = &get_instance();
     $i = count($CI->db->query('Select * from ' . db_prefix() . 'options where name = ' . $name)->result_array());
     if ($i == 0) {
@@ -1477,30 +1461,29 @@ function wh_convert_item_taxes($tax, $tax_rate, $tax_name)
     5.00    TAX5
     id      rate        name
     2|1 ; 6.00|10.00 ; TAX5|TAX10%*/
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $taxes = [];
-    if($tax != null && strlen($tax) > 0){
+    if ($tax != null && strlen($tax) > 0) {
         $arr_tax_id = explode('|', $tax);
-        if($tax_name != null && strlen($tax_name) > 0){
+        if ($tax_name != null && strlen($tax_name) > 0) {
             $arr_tax_name = explode('|', $tax_name);
             $arr_tax_rate = explode('|', $tax_rate);
             foreach ($arr_tax_name as $key => $value) {
                 $taxes[]['taxname'] = $value . '|' .  $arr_tax_rate[$key];
             }
-        }elseif($tax_rate != null && strlen($tax_rate) > 0){
+        } elseif ($tax_rate != null && strlen($tax_rate) > 0) {
             $CI->load->model('warehouse/warehouse_model');
             $arr_tax_id = explode('|', $tax);
             $arr_tax_rate = explode('|', $tax_rate);
             foreach ($arr_tax_id as $key => $value) {
                 $_tax_name = $CI->warehouse_model->get_tax_name($value);
-                if(isset($arr_tax_rate[$key])){
+                if (isset($arr_tax_rate[$key])) {
                     $taxes[]['taxname'] = $_tax_name . '|' .  $arr_tax_rate[$key];
-                }else{
+                } else {
                     $taxes[]['taxname'] = $_tax_name . '|' .  $CI->warehouse_model->tax_rate_by_id($value);
-
                 }
             }
-        }else{
+        } else {
             $CI->load->model('warehouse/warehouse_model');
             $arr_tax_id = explode('|', $tax);
             $arr_tax_rate = explode('|', $tax_rate);
@@ -1508,9 +1491,8 @@ function wh_convert_item_taxes($tax, $tax_rate, $tax_name)
                 $_tax_name = $CI->warehouse_model->get_tax_name($value);
                 $_tax_rate = $CI->warehouse_model->tax_rate_by_id($value);
                 $taxes[]['taxname'] = $_tax_name . '|' .  $_tax_rate;
-            } 
+            }
         }
-
     }
 
     return $taxes;
@@ -1523,12 +1505,12 @@ function wh_convert_item_taxes($tax, $tax_rate, $tax_name)
  */
 function wh_get_unit_name($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     if (is_numeric($id)) {
         $CI->db->where('unit_type_id', $id);
 
         $unit = $CI->db->get(db_prefix() . 'ware_unit_type')->row();
-        if($unit){
+        if ($unit) {
             return $unit->unit_name;
         }
         return '';
@@ -1542,10 +1524,10 @@ function wh_get_unit_name($id = false)
  */
 function wh_get_unit_id($unit_name)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $CI->db->where('unit_name', $unit_name);
     $unit = $CI->db->get(db_prefix() . 'ware_unit_type')->row();
-    if($unit){
+    if ($unit) {
         return $unit->unit_type_id;
     }
     return null;
@@ -1558,12 +1540,12 @@ function wh_get_unit_id($unit_name)
  */
 function wh_get_delivery_code($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $goods_delivery_code = '';
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
         $goods_delivery = $CI->db->get(db_prefix() . 'goods_delivery')->row();
-        if($goods_delivery){
+        if ($goods_delivery) {
             $goods_delivery_code = $goods_delivery->goods_delivery_code;
         }
     }
@@ -1581,12 +1563,12 @@ function wh_render_taxes_html($item_tax, $width)
     $itemHTML = '';
     $itemHTML .= '<td align="right" width="' . $width . '%">';
 
-    if(is_array($item_tax) && isset($item_tax)){
+    if (is_array($item_tax) && isset($item_tax)) {
         if (count($item_tax) > 0) {
             foreach ($item_tax as $tax) {
 
                 $item_tax = '';
-                if ( get_option('remove_tax_name_from_item_table') == false || multiple_taxes_found_for_item($item_tax)) {
+                if (get_option('remove_tax_name_from_item_table') == false || multiple_taxes_found_for_item($item_tax)) {
                     $tmp      = explode('|', $tax['taxname']);
                     $item_tax = $tmp[0] . ' ' . app_format_number($tmp[1]) . '%<br />';
                 } else {
@@ -1608,11 +1590,11 @@ function wh_render_taxes_html($item_tax, $width)
  * @param  string $status 
  * @return [type]         
  */
-function delivery_list_status($status='')
+function delivery_list_status($status = '')
 {
 
     $statuses = [
-        
+
         [
             'id'             => 'ready_to_deliver',
             'color'          => '#03A9F4',
@@ -1669,7 +1651,7 @@ function delivery_list_status($status='')
  * @param  string $status 
  * @return [type]         
  */
-function packing_list_status($status='')
+function packing_list_status($status = '')
 {
 
     $statuses = [
@@ -1736,9 +1718,9 @@ function render_delivery_status_html($id, $type, $status_value = '', $ChangeStat
 {
     $status          = get_delivery_status_by_id($status_value, $type);
 
-    if($type == 'delivery'){
+    if ($type == 'delivery') {
         $task_statuses = delivery_list_status();
-    }else{
+    } else {
         $task_statuses = packing_list_status();
     }
     $outputStatus    = '';
@@ -1782,7 +1764,7 @@ function get_delivery_status_by_id($id, $type)
     $CI       = &get_instance();
     $statuses = delivery_list_status();
 
-    if($type == 'delivery'){
+    if ($type == 'delivery') {
         $status = [
             'id'         => 0,
             'color'   => '#989898',
@@ -1790,7 +1772,7 @@ function get_delivery_status_by_id($id, $type)
             'name'       => _l('wh_ready_for_packing'),
             'order'      => 1,
         ];
-    }else{
+    } else {
         $status = [
             'id'         => 0,
             'color'   => '#989898',
@@ -1817,37 +1799,37 @@ function get_delivery_status_by_id($id, $type)
  */
 function wh_shipment_status()
 {
-    $status=[];
-    $status[]=[
+    $status = [];
+    $status[] = [
         'name' => 'confirmed_order',
         'label' => 'confirmed_order',
         'order' => 1,
     ];
-    $status[]=[
+    $status[] = [
         'name' => 'processing_order',
         'label' => 'processing_order',
         'order' => 2,
 
     ];
-    $status[]=[
+    $status[] = [
         'name' => 'quality_check',
         'label' => 'quality_check',
         'order' => 3,
 
     ];
-    $status[]=[
+    $status[] = [
         'name' => 'product_dispatched',
         'label' => 'product_dispatched',
         'order' => 4,
 
     ];
-    $status[]=[
+    $status[] = [
         'name' => 'product_delivered',
         'label' => 'product_delivered',
         'order' => 5,
 
     ];
-    
+
     return $status;
 }
 
@@ -1863,12 +1845,12 @@ function wh_get_shipment_image_qrcode($id)
  */
 function wh_get_sales_order_code($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $sales_order_code = '';
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
         $sales_order = $CI->db->get(db_prefix() . 'cart')->row();
-        if($sales_order){
+        if ($sales_order) {
             $sales_order_code = $sales_order->order_number;
         }
     }
@@ -1882,12 +1864,12 @@ function wh_get_sales_order_code($id)
  */
 function wh_get_purchase_order_code($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $purchase_order_code = '';
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
         $purchase_order = $CI->db->get(db_prefix() . 'pur_orders')->row();
-        if($purchase_order){
+        if ($purchase_order) {
             $purchase_order_code = $purchase_order->pur_order_number;
         }
     }
@@ -1901,13 +1883,13 @@ function wh_get_purchase_order_code($id)
  */
 function wh_get_order_return_code($id)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $order_return_code = '';
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
         $order_return = $CI->db->get(db_prefix() . 'wh_order_returns')->row();
-        if($order_return){
-            $order_return_code = $order_return->order_return_number.' - '.$order_return->order_return_name;
+        if ($order_return) {
+            $order_return_code = $order_return->order_return_number . ' - ' . $order_return->order_return_name;
         }
     }
     return $order_return_code;
@@ -1920,12 +1902,12 @@ function wh_get_order_return_code($id)
  */
 function get_list_inventory_by_ids($ids)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     //get parent quantity
-    $sql_where = "SELECT * from ".db_prefix()."inventory_manage as iv
-            WHERE iv.commodity_id IN ( select id from ".db_prefix()."items as tem_items where tem_items.parent_id IN (".implode(',', $ids).") OR tem_items.id IN (".implode(',', $ids)."))" ;
-    $item_value = $CI->db->query($sql_where)->result_array(); 
+    $sql_where = "SELECT * from " . db_prefix() . "inventory_manage as iv
+            WHERE iv.commodity_id IN ( select id from " . db_prefix() . "items as tem_items where tem_items.parent_id IN (" . implode(',', $ids) . ") OR tem_items.id IN (" . implode(',', $ids) . "))";
+    $item_value = $CI->db->query($sql_where)->result_array();
     return $item_value;
 }
 
@@ -1936,12 +1918,12 @@ function get_list_inventory_by_ids($ids)
  */
 function get_list_serial_number_by_ids($ids)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     //get parent quantity
-    $sql_where = "SELECT * from ".db_prefix()."wh_inventory_serial_numbers as snm
-            WHERE snm.is_used = 'no' AND snm.commodity_id IN ( select id from ".db_prefix()."items as tem_items where tem_items.parent_id IN (".implode(',', $ids).") OR tem_items.id IN (".implode(',', $ids).") )" ;
-    $item_value = $CI->db->query($sql_where)->result_array(); 
+    $sql_where = "SELECT * from " . db_prefix() . "wh_inventory_serial_numbers as snm
+            WHERE snm.is_used = 'no' AND snm.commodity_id IN ( select id from " . db_prefix() . "items as tem_items where tem_items.parent_id IN (" . implode(',', $ids) . ") OR tem_items.id IN (" . implode(',', $ids) . ") )";
+    $item_value = $CI->db->query($sql_where)->result_array();
     return $item_value;
 }
 
@@ -1952,12 +1934,12 @@ function get_list_serial_number_by_ids($ids)
  */
 function get_list_items_by_parent_ids($ids)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
 
     //get parent quantity
-    $sql_where = "SELECT * from ".db_prefix()."items as iv
-            WHERE iv.id IN ( select id from ".db_prefix()."items as tem_items where tem_items.parent_id IN (".implode(',', $ids).") OR tem_items.id IN (".implode(',', $ids)."))" ;
-    $item_value = $CI->db->query($sql_where)->result_array(); 
+    $sql_where = "SELECT * from " . db_prefix() . "items as iv
+            WHERE iv.id IN ( select id from " . db_prefix() . "items as tem_items where tem_items.parent_id IN (" . implode(',', $ids) . ") OR tem_items.id IN (" . implode(',', $ids) . "))";
+    $item_value = $CI->db->query($sql_where)->result_array();
     return $item_value;
 }
 
@@ -1968,17 +1950,17 @@ function get_list_items_by_parent_ids($ids)
  */
 function get_item_description($id = false)
 {
-    $CI           = & get_instance();
+    $CI           = &get_instance();
     $item_name = '';
     if (is_numeric($id)) {
         $CI->db->where('id', $id);
 
         $item =  $CI->db->get(db_prefix() . 'items')->row();
-        if($item){
+        if ($item) {
             $item_name = $item->description;
         }
     }
-     return $item_name;
+    return $item_name;
 }
 
 /**
@@ -2040,8 +2022,8 @@ function get_shipment_status_label($status)
  */
 function wh_ajax_on_total_items()
 {
- $wh_on_total_items = get_option('wh_on_total_items');
- return (int)$wh_on_total_items;
+    $wh_on_total_items = get_option('wh_on_total_items');
+    return (int)$wh_on_total_items;
 }
 
 /**
@@ -2058,7 +2040,7 @@ function handle_shipment_add_attachment($id)
         die;
     }
     $path = WAREHOUSE_SHIPMENT_UPLOAD . $id . '/';
-    $CI   = & get_instance();
+    $CI   = &get_instance();
 
     if (isset($_FILES['file']['name'])) {
         // Get the temp file path
@@ -2082,9 +2064,9 @@ function handle_shipment_add_attachment($id)
             }
         }
     }
-
 }
-function get_vendor_list($name_vendor, $vendor, $item_key) {
+function get_vendor_list($name_vendor, $vendor, $item_key)
+{
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     $get_vendor = $CI->purchase_model->get_vendor();
@@ -2097,19 +2079,19 @@ function get_vendor_list($name_vendor, $vendor, $item_key) {
     // HTML output
     $output = '<div class="vendor-container" data-item-key="' . $item_key . '">';
     $output .= render_select(
-        $name_vendor, 
-        $get_vendor, 
-        array('userid', 'company'), 
-        '', 
-        $selected, 
+        $name_vendor,
+        $get_vendor,
+        array('userid', 'company'),
+        '',
+        $selected,
         [
-            'multiple' => true, 
-            'onchange' => 'handleVendorSelection(this, ' . $item_key . ')', 
+            'multiple' => true,
+            'onchange' => 'handleVendorSelection(this, ' . $item_key . ')',
             'data-item-key' => $item_key
-        ], 
-        [], 
-        '', 
-        'vendor_list vendor_select_' . $item_key, 
+        ],
+        [],
+        '',
+        'vendor_list vendor_select_' . $item_key,
         false
     );
     $output .= '</div>'; // Close wrapper div
@@ -2121,7 +2103,7 @@ function get_vendor_list($name_vendor, $vendor, $item_key) {
 
 function get_vendor_name($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->db->select('company');
     $CI->db->from(db_prefix() . 'pur_vendor');
     $CI->db->where('userid', $id);

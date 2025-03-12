@@ -675,7 +675,7 @@ class warehouse extends AdminController
 
 	/**
 	 * manage purchase
-	 * @param  integer $id
+	 * @param  integer $id 
 	 * @return view
 	 */
 	public function manage_purchase($id = '')
@@ -1376,11 +1376,11 @@ class warehouse extends AdminController
 					}
 					if ($signature != '') {
 						switch ($data['rel_type']) {
-								// case 'stock_import 1':
+							// case 'stock_import 1':
 							case 1:
 								$path = WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
 								break;
-								// case 'stock_export 2':
+							// case 'stock_export 2':
 							case 2:
 								$path = WAREHOUSE_STOCK_EXPORT_MODULE_UPLOAD_FOLDER . $data['rel_id'];
 								break;
@@ -9197,7 +9197,7 @@ class warehouse extends AdminController
 	public function get_vendor_issued_data()
 	{
 		$data = $this->input->post();
-		
+
 		$this->warehouse_model->get_vendor_issued_data($data);
 		die();
 	}
@@ -9290,5 +9290,64 @@ class warehouse extends AdminController
 		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/sign_document_pdf.css') . '"  rel="stylesheet" type="text/css" />';
 		$data['html'] = $html;
 		$this->load->view('print_commodity/preview_pdf', $data);
+	}
+
+
+
+	public function print_qrcodes_pdf($id_s)
+	{
+		$type = 'D';
+		if ($this->input->get('output_type')) {
+			$type = $this->input->get('output_type');
+		}
+
+		if ($this->input->get('print')) {
+			$type = 'I';
+		}
+
+		// Get vendor name safely from GET parameter
+		$vendor = $this->input->get('vendor');
+		$pur_order = $this->input->get('pur_order');
+		$project_name = $this->input->get('project_name');
+		$commodity_descriptions = $this->input->get('commodity_descriptions');
+		if ($vendor) {
+			$vendor = rawurldecode($vendor); // Safely decode vendor name
+		} else {
+			$vendor = "Unknown Vendor"; // Default if vendor name is missing
+		}
+		if ($pur_order) {
+			$pur_order = rawurldecode($pur_order); // Safely decode vendor name
+		} else {
+			$pur_order = "Unknown Purchase Order"; // Default if vendor name is missing
+		}
+		if($project_name){
+			$project_name = rawurldecode($project_name);
+		}else{
+			$project_name = "Unknown Project name";
+		}
+		if($commodity_descriptions){
+			$commodity_descriptions = rawurldecode($commodity_descriptions);
+		}else{
+			$commodity_descriptions = "Unknown Project name";
+		}
+		
+		// Assign values to the data array
+		$data['title'] = _l('fe_print_qrcode');
+		$data['type'] = $type;
+		$data['vendor'] = $vendor; // Send vendor name to the view
+		$data['pur_order'] = $pur_order;
+		$data['project_name'] = $project_name;
+		$data['commodity_descriptions'] = $commodity_descriptions;
+		$data['list_id'] = explode(',', urldecode($id_s));
+
+		// Load the HTML view and pass vendor name
+		$html = $this->load->view('print_commodity/print_commodity_qrcode_html_new', $data, true);
+		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/sign_document_pdf.css') . '" rel="stylesheet" type="text/css" />';
+
+		// Assign HTML content
+		$data['html'] = $html;
+
+		// Load the preview PDF view
+		$this->load->view('print_commodity/preview__new_pdf', $data);
 	}
 }
