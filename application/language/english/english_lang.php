@@ -1238,7 +1238,7 @@ $lang['als_expenses_vs_income'] = 'Expenses vs Income';
 
 # Invoices
 $lang['invoice_attach_file']           = 'Attach File';
-$lang['invoice_mark_as_sent']          = 'Mark as Sent';
+$lang['invoice_mark_as_sent']          = 'Sent to RIL';
 $lang['invoice_marked_as_sent']        = 'Invoice marked as sent successfully';
 $lang['invoice_marked_as_sent_failed'] = 'Failed to mark invoice as sent';
 
