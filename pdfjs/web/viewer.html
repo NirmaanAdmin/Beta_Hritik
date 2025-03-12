@@ -718,7 +718,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                           console.log("Server response:", data);
                           if (data.status === 'success') {
                               alert("PDF saved successfully!");
-                              window.location.href=backRoute;
+                              window.location.reload(true);
                           } else {
                               alert("Error saving PDF: " + data.message);
                               console.error("Server error details:", data.error);
