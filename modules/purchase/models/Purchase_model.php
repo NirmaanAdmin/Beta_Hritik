@@ -5669,7 +5669,7 @@ class Purchase_model extends App_Model
             } elseif ($key_name === 'order') {
                 $arr_temp[$key_name] = is_numeric($unit_type_value) ? $unit_type_value : null;
             } elseif ($key_name === 'unit_code' || $key_name === 'unit_symbol' || $key_name === 'note') {
-                $arr_temp[$key_name] = is_numeric($unit_type_value) ? $unit_type_value : null;
+                $arr_temp[$key_name] = !empty($unit_type_value) ? $unit_type_value : null;
             } else {
                 $arr_temp[$key_name] = str_replace('|/\|', ', ', $unit_type_value);
             }
