@@ -5635,76 +5635,63 @@ class Purchase_model extends App_Model
      */
     public function add_unit_type($data, $id = false)
     {
-
         $unit_type = str_replace(', ', '|/\|', $data['hot_unit_type']);
         $data_unit_type = explode(',', $unit_type);
         $results = 0;
-        $results_update = '';
+        $results_update = false;
         $flag_empty = 0;
 
+        $arr_temp = [];
+        $expected_fields = ['unit_code', 'unit_name', 'unit_symbol', 'order', 'display', 'note'];
 
-        foreach ($data_unit_type as  $unit_type_key => $unit_type_value) {
+        foreach ($data_unit_type as $unit_type_key => $unit_type_value) {
             if ($unit_type_value == '') {
-                $unit_type_value = 0;
+                $unit_type_value = null;
             }
-            if (($unit_type_key + 1) % 6 == 0) {
-                $arr_temp['note'] = str_replace('|/\|', ', ', $unit_type_value);
-
-                if ($id == false && $flag_empty == 1) {
+            $index = ($unit_type_key % 6);
+            if ($index == 0 && !empty($arr_temp)) {
+                if ($id === false && $flag_empty) {
                     $this->db->insert(db_prefix() . 'ware_unit_type', $arr_temp);
-                    $insert_id = $this->db->insert_id();
-                    if ($insert_id) {
+                    if ($this->db->insert_id()) {
                         $results++;
                     }
-                }
-                if (is_numeric($id) && $flag_empty == 1) {
+                } elseif (is_numeric($id) && $flag_empty) {
                     $this->db->where('unit_type_id', $id);
                     $this->db->update(db_prefix() . 'ware_unit_type', $arr_temp);
-                    if ($this->db->affected_rows() > 0) {
-                        $results_update = true;
-                    } else {
-                        $results_update = false;
-                    }
+                    $results_update = ($this->db->affected_rows() > 0);
                 }
                 $flag_empty = 0;
                 $arr_temp = [];
+            }
+            $key_name = $expected_fields[$index];
+            if ($key_name === 'display') {
+                $arr_temp[$key_name] = ($unit_type_value === 'yes') ? 1 : 0;
+            } elseif ($key_name === 'order') {
+                $arr_temp[$key_name] = is_numeric($unit_type_value) ? $unit_type_value : null;
             } else {
-
-                switch (($unit_type_key + 1) % 6) {
-                    case 1:
-                        $arr_temp['unit_code'] = str_replace('|/\|', ', ', $unit_type_value);
-
-                        if ($unit_type_value != '0') {
-                            $flag_empty = 1;
-                        }
-                        break;
-                    case 2:
-                        $arr_temp['unit_name'] = str_replace('|/\|', ', ', $unit_type_value);
-                        break;
-                    case 3:
-                        $arr_temp['unit_symbol'] = $unit_type_value;
-                        break;
-                    case 4:
-                        $arr_temp['order'] = $unit_type_value;
-                        break;
-                    case 5:
-                        if ($unit_type_value == 'yes') {
-                            $display_value = 1;
-                        } else {
-                            $display_value = 0;
-                        }
-                        $arr_temp['display'] = $display_value;
-                        break;
-                }
+                $arr_temp[$key_name] = str_replace('|/\|', ', ', $unit_type_value);
+            }
+            if (!empty($unit_type_value)) {
+                $flag_empty = 1;
             }
         }
 
-        if ($id == false) {
-            return $results > 0 ? true : false;
-        } else {
-            return $results_update;
+        if (!empty($arr_temp) && $flag_empty) {
+            if ($id === false) {
+                $this->db->insert(db_prefix() . 'ware_unit_type', $arr_temp);
+                if ($this->db->insert_id()) {
+                    $results++;
+                }
+            } else {
+                $this->db->where('unit_type_id', $id);
+                $this->db->update(db_prefix() . 'ware_unit_type', $arr_temp);
+                $results_update = ($this->db->affected_rows() > 0);
+            }
         }
+
+        return ($id === false) ? ($results > 0) : $results_update;
     }
+
 
     /**
      * delete unit type
