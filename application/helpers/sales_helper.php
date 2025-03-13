@@ -742,6 +742,7 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'wo_id'            => isset($item['wo_id']) ? $item['wo_id'] : NULL,
                     'vbt_id'           => isset($item['vbt_id']) ? $item['vbt_id'] : NULL,
                     'expense_id'       => isset($item['expense_id']) ? $item['expense_id'] : NULL,
+                    'remarks'          => isset($item['remarks']) ? $item['remarks'] : NULL,
                 ]);
 
     $id = $CI->db->insert_id();

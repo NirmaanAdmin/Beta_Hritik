@@ -515,6 +515,10 @@ class Estimates_model extends App_Model
         $data  = $hook['data'];
         $items = $hook['items'];
 
+        if (isset($data['remarks'])) {
+            unset($data['remarks']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -653,6 +657,10 @@ class Estimates_model extends App_Model
         }
 
         unset($data['removed_items']);
+
+        if (isset($data['remarks'])) {
+            unset($data['remarks']);
+        }
 
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', $data);

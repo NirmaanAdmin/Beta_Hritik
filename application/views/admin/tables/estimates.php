@@ -91,12 +91,12 @@ return App_table::find('estimates')
             if (is_numeric($clientid) || $project_id) {
                 $numberOutput = '<a href="' . admin_url('estimates/list_estimates/' . $aRow['id']) . '" target="_blank">' . e(format_estimate_number($aRow['id'])) . '</a>';
             } else {
-                $numberOutput = '<a href="' . admin_url('estimates/list_estimates/' . $aRow['id']) . '" onclick="init_estimate(' . $aRow['id'] . '); return false;">' . e(format_estimate_number($aRow['id'])) . '</a>';
+                $numberOutput = '<a href="' . admin_url('estimates/list_estimates/' . $aRow['id']) . '" onclick="init_estimate(' . $aRow['id'] . '); small_table_full_view(); return false;">' . e(format_estimate_number($aRow['id'])) . '</a>';
             }
 
             $numberOutput .= '<div class="row-options">';
 
-            $numberOutput .= '<a href="' . site_url('estimate/' . $aRow['id'] . '/' . $aRow['hash']) . '" target="_blank">' . _l('view') . '</a>';
+            $numberOutput .= '<a href="' . admin_url('estimates/list_estimates/' . $aRow['id']) . '" onclick="init_estimate(' . $aRow['id'] . '); small_table_full_view(); return false;">' . _l('view') . '</a>';
             if (staff_can('edit',  'estimates')) {
                 $numberOutput .= ' | <a href="' . admin_url('estimates/estimate/' . $aRow['id']) . '">' . _l('edit') . '</a>';
             }

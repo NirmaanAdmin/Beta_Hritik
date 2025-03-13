@@ -15,6 +15,11 @@
                             </a>
                         </li>
                         <li role="presentation">
+                            <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
+                            <?php echo _l('attachment'); ?>
+                            </a>
+                        </li>
+                        <li role="presentation">
                             <a href="#tab_tasks"
                                 onclick="init_rel_tasks_table(<?php echo e($estimate->id); ?>,'estimate'); return false;"
                                 aria-controls="tab_tasks" role="tab" data-toggle="tab">
@@ -59,6 +64,7 @@
                                 </span>
                             </a>
                         </li>
+                        <?php /*
                         <li role="presentation" data-toggle="tooltip" title="<?php echo _l('emails_tracking'); ?>"
                             class="tab-separator">
                             <a href="#tab_emails_tracking" aria-controls="tab_emails_tracking" role="tab"
@@ -80,6 +86,7 @@
                                 <?php } ?>
                             </a>
                         </li>
+                        */ ?>
                         <li role="presentation" data-toggle="tooltip" data-title="<?php echo _l('toggle_full_view'); ?>"
                             class="tab-separator toggle_view">
                             <a href="#" onclick="small_table_full_view(); return false;">
@@ -156,12 +163,14 @@
                                 <?php echo _l('more'); ?> <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-right">
+                                <?php /*
                                 <li>
                                     <a href="<?php echo site_url('estimate/' . $estimate->id . '/' . $estimate->hash) ?>"
                                         target="_blank">
                                         <?php echo _l('view_estimate_as_client'); ?>
                                     </a>
                                 </li>
+                                */ ?>
                                 <?php hooks()->do_action('after_estimate_view_as_client_link', $estimate); ?>
                                 <?php if ((!empty($estimate->expirydate) && date('Y-m-d') < $estimate->expirydate && ($estimate->status == 2 || $estimate->status == 5)) && is_estimates_expiry_reminders_enabled()) { ?>
                                 <li>
@@ -227,7 +236,7 @@
                         </div>
                         <?php if ($estimate->invoiceid == null) { ?>
                         <?php if (staff_can('create', 'invoices') && !empty($estimate->clientid)) { ?>
-                        <div class="btn-group pull-right mleft5">
+                        <div class="btn-group pull-right mleft5 hide">
                             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                                 <?php echo _l('estimate_convert_to_invoice'); ?> <span class="caret"></span>
@@ -451,47 +460,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <?php if (count($estimate->attachments) > 0) { ?>
-                            <div class="clearfix"></div>
-                            <hr />
-                            <div class="col-md-12">
-                                <p class="bold text-muted"><?php echo _l('estimate_files'); ?></p>
-                            </div>
-                            <?php foreach ($estimate->attachments as $attachment) {
-                                            $attachment_url = site_url('download/file/sales_attachment/' . $attachment['attachment_key']);
-                                            if (!empty($attachment['external'])) {
-                                                $attachment_url = $attachment['external_link'];
-                                            } ?>
-                            <div class="mbot15 row col-md-12" data-attachment-id="<?php echo e($attachment['id']); ?>">
-                                <div class="col-md-8">
-                                    <div class="pull-left"><i
-                                            class="<?php echo get_mime_class($attachment['filetype']); ?>"></i></div>
-                                    <a href="<?php echo e($attachment_url); ?>"
-                                        target="_blank"><?php echo e($attachment['file_name']); ?></a>
-                                    <br />
-                                    <small class="text-muted"> <?php echo e($attachment['filetype']); ?></small>
-                                </div>
-                                <div class="col-md-4 text-right tw-space-x-2">
-                                    <?php if ($attachment['visible_to_customer'] == 0) {
-                                                $icon    = 'fa fa-toggle-off';
-                                                $tooltip = _l('show_to_customer');
-                                            } else {
-                                                $icon    = 'fa fa-toggle-on';
-                                                $tooltip = _l('hide_from_customer');
-                                            } ?>
-                                    <a href="#" data-toggle="tooltip"
-                                        onclick="toggle_file_visibility(<?php echo e($attachment['id']); ?>,<?php echo e($estimate->id); ?>,this); return false;"
-                                        data-title="<?php echo e($tooltip); ?>"><i class="<?php echo e($icon); ?> fa-lg"
-                                            aria-hidden="true"></i></a>
-                                    <?php if ($attachment['staffid'] == get_staff_user_id() || is_admin()) { ?>
-                                    <a href="#" class="text-danger"
-                                        onclick="delete_estimate_attachment(<?php echo e($attachment['id']); ?>); return false;"><i
-                                            class="fa fa-times fa-lg"></i></a>
-                                    <?php } ?>
-                                </div>
-                            </div>
-                            <?php } ?>
-                            <?php } ?>
                             <?php if ($estimate->clientnote != '') { ?>
                             <div class="col-md-12 mtop15">
                                 <p class="bold text-muted"><?php echo _l('estimate_note'); ?></p>
@@ -507,6 +475,49 @@
                         </div>
                     </div>
                 </div>
+
+                <div role="tabpanel" class="tab-pane" id="attachment">
+                    <?php if (count($estimate->attachments) > 0) { ?>
+                    <div class="col-md-12">
+                        <p class="bold text-muted"><?php echo _l('estimate_files'); ?></p>
+                    </div>
+                    <?php foreach ($estimate->attachments as $attachment) {
+                        $attachment_url = site_url('download/file/sales_attachment/' . $attachment['attachment_key']);
+                        if (!empty($attachment['external'])) {
+                            $attachment_url = $attachment['external_link'];
+                        } ?>
+                    <div class="mbot15 row col-md-12" data-attachment-id="<?php echo e($attachment['id']); ?>">
+                        <div class="col-md-8">
+                            <div class="pull-left"><i
+                                    class="<?php echo get_mime_class($attachment['filetype']); ?>"></i></div>
+                            <a href="<?php echo e($attachment_url); ?>"
+                                target="_blank"><?php echo e($attachment['file_name']); ?></a>
+                            <br />
+                            <small class="text-muted"> <?php echo e($attachment['filetype']); ?></small>
+                        </div>
+                        <div class="col-md-4 text-right tw-space-x-2">
+                            <?php if ($attachment['visible_to_customer'] == 0) {
+                                $icon    = 'fa fa-toggle-off';
+                                $tooltip = _l('show_to_customer');
+                            } else {
+                                $icon    = 'fa fa-toggle-on';
+                                $tooltip = _l('hide_from_customer');
+                            } ?>
+                            <a href="#" data-toggle="tooltip"
+                                onclick="toggle_file_visibility(<?php echo e($attachment['id']); ?>,<?php echo e($estimate->id); ?>,this); return false;"
+                                data-title="<?php echo e($tooltip); ?>"><i class="<?php echo e($icon); ?> fa-lg"
+                                    aria-hidden="true"></i></a>
+                            <?php if ($attachment['staffid'] == get_staff_user_id() || is_admin()) { ?>
+                            <a href="#" class="text-danger"
+                                onclick="delete_estimate_attachment(<?php echo e($attachment['id']); ?>); return false;"><i
+                                    class="fa fa-times fa-lg"></i></a>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <?php } ?>
+                    <?php } ?>
+                </div>
+
                 <div role="tabpanel" class="tab-pane" id="tab_tasks">
                     <?php init_relation_tasks_table(['data-new-rel-id' => $estimate->id, 'data-new-rel-type' => 'estimate'], 'tasksFilters'); ?>
                 </div>

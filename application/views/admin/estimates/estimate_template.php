@@ -359,12 +359,7 @@
             <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
                 <li role="presentation" class="active">
                     <a href="#final_estimate" aria-controls="final_estimate" role="tab" id="tab_final_estimate" data-toggle="tab">
-                        Final estimate
-                    </a>
-                </li>
-                <li role="presentation">
-                    <a href="#summary" aria-controls="summary" role="tab" id="tab_summary" data-toggle="tab">
-                        Summary
+                        <?php echo _l('final_estimate'); ?>
                     </a>
                 </li>
 
@@ -372,7 +367,7 @@
                 $annexures = get_all_annexures(); ?>
                 <li role="presentation" class="dropdown">
                     <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Annexures
+                        <?php echo _l('budget_summary'); ?>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu estimate-annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
@@ -380,11 +375,35 @@
                         foreach ($annexures as $key => $annexure) { ?>
                             <li>
                                 <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
-                                    <?php echo $annexure['name']." (".$annexure['annexure_name'].")" ?>
+                                    <?php echo $annexure['name']; ?>
                                 </a>
                             </li>
                         <?php } ?>
                     </ul>
+                </li>
+
+                <li role="presentation">
+                    <a href="#area_summary" aria-controls="area_summary" role="tab" id="tab_final_estimate" data-toggle="tab">
+                        <?php echo _l('area_summary'); ?>
+                    </a>
+                </li>
+
+                <li role="presentation">
+                    <a href="#sum_of_values" aria-controls="sum_of_values" role="tab" id="tab_final_estimate" data-toggle="tab">
+                        <?php echo _l('sum_of_values'); ?>
+                    </a>
+                </li>
+
+                <li role="presentation">
+                    <a href="#budget_working" aria-controls="budget_working" role="tab" id="tab_final_estimate" data-toggle="tab">
+                        <?php echo _l('budget_working'); ?>
+                    </a>
+                </li>
+
+                <li role="presentation">
+                    <a href="#area_working" aria-controls="area_working" role="tab" id="tab_final_estimate" data-toggle="tab">
+                        <?php echo _l('area_working'); ?>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -464,102 +483,23 @@
                 </div>
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="summary">
-                <div class="table-responsive s_table">
-                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
-                                aria-hidden="true" data-toggle="tooltip"
-                                data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                <?php echo _l('estimate_table_item_heading'); ?></th>
-                                <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
-                                <th width="10%" align="right" class="qty"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
-                                <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
-                                <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
-                                <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            if(!empty($annexure_estimate['summary'])) {
-                                $summary = $annexure_estimate['summary'];
-                                foreach($summary as $ikey => $svalue) { ?>
-                                    <tr class="main">
-                                        <td></td>
-                                        <td align="left">
-                                            <?php echo $svalue['name']; ?>
-                                        </td>
-                                        <td align="left">
-                                            <?php echo $svalue['description']; ?>
-                                        </td>
-                                        <td align="right">
-                                            <?php echo $svalue['qty']; ?>
-                                        </td>
-                                        <td align="right">
-                                            <?php echo app_format_money($svalue['subtotal'], $base_currency); ?>
-                                        </td>
-                                        <td align="right">
-                                            <?php echo app_format_money($svalue['tax'], $base_currency); ?>
-                                        </td>
-                                        <td align="right">
-                                            <?php echo app_format_money($svalue['amount'], $base_currency); ?>
-                                        </td>
-                                    </tr>
-                                <?php } 
-                            } ?>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-8 col-md-offset-4">
-                    <table class="table text-right">
-                        <tbody>
-                            <tr id="subtotal">
-                                <td>
-                                    <span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <tr id="total_tax">
-                                <td>
-                                    <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <?php hooks()->do_action('after_admin_estimate_form_total_field', $estimate ?? null); ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
             <?php
             $annexures = get_all_annexures(); 
             $i = 1;
             foreach ($annexures as $key => $annexure) { ?>
                 <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
+                    <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
                     <div class="table-responsive s_table">
                         <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
-                                    <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                    <th width="1%"></th>
+                                    <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
+                                    <th width="23%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
                                     <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
-                                    <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
-                                    <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
-                                    <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                    <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                    <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                    <th width="17%" align="right"><?php echo _l('remarks'); ?></th>
                                     <th align="center"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
@@ -579,7 +519,7 @@
                                     <td>
                                         <input type="number" name="rate" class="form-control" placeholder="<?php echo _l('item_rate_placeholder'); ?>">
                                     </td>
-                                    <td>
+                                    <td class="hide">
                                         <?php
                                         $default_tax = unserialize(get_option('default_tax'));
                                         $select      = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="taxname" multiple data-none-selected-text="' . _l('no_tax') . '">';
@@ -597,6 +537,9 @@
                                         ?>
                                     </td>
                                     <td></td>
+                                    <td>
+                                        <textarea name="remarks" rows="4" class="form-control" placeholder="<?php echo _l('remarks'); ?>"></textarea>
+                                    </td>
                                     <td>
                                         <?php
                                         $new_item = 'undefined';
@@ -651,8 +594,9 @@
                                             $table_row .= '<input type="text" placeholder="' . $unit_placeholder . '" name="' . $items_indicator . '[' . $i . '][unit]" class="form-control input-transparent text-right" value="' . $item['unit'] . '">';
                                             $table_row .= '</td>';
                                             $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control"></td>';
-                                            $table_row .= '<td class="taxrate">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $estimate_item_taxes, (isset($is_proposal) ? 'proposal' : 'estimate'), $item['id'], true, $manual) . '</td>';
+                                            $table_row .= '<td class="taxrate hide">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $estimate_item_taxes, (isset($is_proposal) ? 'proposal' : 'estimate'), $item['id'], true, $manual) . '</td>';
                                             $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
+                                            $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][remarks]" class="form-control" rows="5">' . clear_textarea_breaks($item['remarks']) . '</textarea></td>';
                                             $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_estimate_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
                                             $table_row .= '</tr>';
                                             echo $table_row;
@@ -684,6 +628,18 @@
                     <div id="removed-items"></div>
                 </div>
             <?php } ?>
+
+            <div role="tabpanel" class="tab-pane active" id="area_summary">
+            </div>
+
+            <div role="tabpanel" class="tab-pane active" id="sum_of_values">
+            </div>
+
+            <div role="tabpanel" class="tab-pane active" id="budget_working">
+            </div>
+
+            <div role="tabpanel" class="tab-pane active" id="area_working">
+            </div>
         </div>
 
     </div>
