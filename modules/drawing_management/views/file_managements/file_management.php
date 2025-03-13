@@ -660,11 +660,12 @@
 							<input type="radio" id="staff" name="share_to" value="staff" checked>
 							<label for="staff"><i class="fa fa-user-circle"></i> <?php echo _l('dmg_staff') ?></label>
 
-							<input type="radio" id="customer" name="share_to" value="customer">
+							<?php /*<input type="radio" id="customer" name="share_to" value="customer">
 							<label for="customer"><i class="fa fa-user-o"></i> <?php echo _l('dmg_customer') ?></label>
 
 							<input type="radio" id="customer_group" name="share_to" value="customer_group">
 							<label for="customer_group"><i class="fa fa-users" aria-hidden="true"></i> <?php echo _l('dmg_customer_group') ?></label>
+							*/ ?>
 						</div>
 					</div>
 
@@ -698,6 +699,9 @@
 						$current_date = date('Y-m-d H:i');
 						echo render_datetime_input('expiration_date', 'dmg_expiration_date', '', ['data-date-min-date' => $current_date, 'disabled' => true]);
 						?>
+					</div>
+					<div class="col-md-12">
+						<?php echo render_textarea('message', 'dmg_message'); ?>
 					</div>
 				</div>
 			</div>

@@ -181,6 +181,7 @@
 		var expiration = btn_obj.data('expiration');
 		var expiration_date = btn_obj.data('expiration_date');
 		var permission = btn_obj.data('permission');
+		var message = btn_obj.data('message');
 
 		var modal_obj = $('#share_document');
 		modal_obj.modal('show');
@@ -217,6 +218,7 @@
 		}
 		modal_obj.find('select[name="permission"] option[value="upload_only"]').hide().selectpicker('refresh');
 		modal_obj.find('select[name="permission"]').val(permission).change().selectpicker('refresh');
+		modal_obj.find('#message').val(message);
 	}
 
 	function parse_string_to_array(string){

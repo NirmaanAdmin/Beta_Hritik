@@ -34,6 +34,7 @@ hooks()->add_action('pre_deactivate_module', DRAWING_MANAGEMENT_MODULE_NAME.'_pr
 hooks()->add_action('head_element_client','drawing_management_add_head_component_client');
 hooks()->add_action('client_pt_footer_js','drawing_management_load_js_client');
 register_merge_fields('drawing_management/merge_fields/reminder_merge_fields');
+register_merge_fields('drawing_management/merge_fields/share_merge_fields');
 
 
 

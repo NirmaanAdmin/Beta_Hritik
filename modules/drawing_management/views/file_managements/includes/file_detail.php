@@ -299,7 +299,8 @@
 									data-staff="<?php echo drawing_htmldecode($value['staff']); ?>" 
 									data-customer_group="<?php echo drawing_htmldecode($value['customer_group']); ?>" 
 									data-expiration="<?php echo drawing_htmldecode($value['expiration']); ?>" 
-									data-expiration_date="<?php echo drawing_htmldecode($value['expiration_date']); ?>" 
+									data-expiration_date="<?php echo drawing_htmldecode($value['expiration_date']); ?>"
+									data-message="<?php echo drawing_htmldecode($value['message']); ?>" 
 
 									onclick="edit_share(this, <?php echo drawing_htmldecode($value['id']); ?>)" >
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>

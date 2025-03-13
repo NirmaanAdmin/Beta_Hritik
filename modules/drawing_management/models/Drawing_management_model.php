@@ -1199,8 +1199,8 @@ class drawing_management_model extends app_model
 	 */
 	public function add_share_document($data)
 	{
-		if (isset($data['date']) && $data['date'] != '') {
-			$data['date'] = drawing_dmg_format_date_time($data['date']);
+		if (isset($data['expiration_date']) && $data['expiration_date'] != '') {
+			$data['expiration_date'] = drawing_dmg_format_date_time($data['expiration_date']);
 		}
 		if (!isset($data['expiration'])) {
 			$data['expiration'] = 0;
@@ -1215,6 +1215,20 @@ class drawing_management_model extends app_model
 			$data['customer_group'] = implode(',', $data['customer_group']);
 		}
 		$this->db->insert(db_prefix() . 'dms_share_logs', $data);
+		if(!empty($data['staff'])) {
+			$staff_list = $data['staff'];
+			$staff_list = explode(',', $staff_list);
+			$this->db->where_in('staffid', $staff_list);
+			$staff_list = $this->db->get(db_prefix() . 'staff')->result_array();
+			foreach ($staff_list as $key => $value) {
+				$data_send_mail = new stdClass();
+				$data_send_mail->email = trim($value['email']);
+				$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
+				$data_send_mail->message = $data['message'];
+				$template = mail_template('share', 'drawing_management', $data_send_mail);
+				$template->send();
+			}
+		}
 		return $this->db->insert_id();
 	}
 
@@ -1224,8 +1238,8 @@ class drawing_management_model extends app_model
 	 */
 	public function update_share_document($data)
 	{
-		if (isset($data['date']) && $data['date'] != '') {
-			$data['date'] = drawing_dmg_format_date_time($data['date']);
+		if (isset($data['expiration_date']) && $data['expiration_date'] != '') {
+			$data['expiration_date'] = drawing_dmg_format_date_time($data['expiration_date']);
 		}
 		if (!isset($data['expiration'])) {
 			$data['expiration'] = 0;
