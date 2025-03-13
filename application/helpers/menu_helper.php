@@ -28,6 +28,22 @@ function app_init_admin_sidebar_menu_items()
         ]);
     }
 
+    $CI->app_menu->add_sidebar_menu_item('cost_planning', [
+        'collapse' => true,
+        'name'     => _l('cost_planning'),
+        'position' => 9,
+        'icon'     => 'fa-solid fa-receipt',
+        'badge'    => [],
+    ]);
+
+    $CI->app_menu->add_sidebar_children_item('cost_planning', [
+        'slug'     => 'cost-planning-settings',
+        'name'     => _l('settings'),
+        'href'     => admin_url('costplanning/setting'),
+        'position' => 5,
+        'badge'    => [],
+    ]);
+
     $CI->app_menu->add_sidebar_menu_item('sales', [
         'collapse' => true,
         'name'     => _l('als_sales'),
@@ -53,7 +69,7 @@ function app_init_admin_sidebar_menu_items()
     ) {
         $CI->app_menu->add_sidebar_children_item('sales', [
             'slug'     => 'estimates',
-            'name'     => _l('estimates'),
+            'name'     => _l('project_budget'),
             'href'     => admin_url('estimates'),
             'position' => 10,
             'badge'    => [],
