@@ -1285,11 +1285,11 @@ class Warehouse_model extends App_Model
 					$inventory_receipt['expiry_date'] = null;
 				}
 
-				if ($inventory_receipt['delivery_date'] != '') {
-					$inventory_receipt['delivery_date'] = to_sql_date($inventory_receipt['delivery_date']);
-				} else {
-					$inventory_receipt['delivery_date'] = null;
-				}
+				// if (!$this->check_format_date($data['date_add'])) {
+					$inventory_receipt['delivery_date'] = $data['date_add'];
+				// } else {
+				// 	$inventory_receipt['delivery_date'] = null;
+				// }
 
 				if ($inventory_receipt['payment_date'] != '') {
 					$inventory_receipt['payment_date'] = to_sql_date($inventory_receipt['payment_date']);
@@ -1301,11 +1301,11 @@ class Warehouse_model extends App_Model
 				} else {
 					$inventory_receipt['est_delivery_date'] = null;
 				}
-				if ($inventory_receipt['production_status'] != '') {
-					$inventory_receipt['production_status'] = $inventory_receipt['production_status'];
-				} else {
-					$inventory_receipt['production_status'] = 1;
-				}
+				// if ($inventory_receipt['production_status'] != '') {
+				// 	$inventory_receipt['production_status'] = 4;
+				// } else {
+				$inventory_receipt['production_status'] = 4;
+				// }
 
 
 
@@ -19846,7 +19846,7 @@ class Warehouse_model extends App_Model
 		$response = array();
 		$options = isset($data['options']) ? $data['options'] : array();
 		// / Generate quantities HTML for each vendor in options
-		$quantities_html = $lot_number_html = $issued_date_html ='' ;
+		$quantities_html = $lot_number_html = $issued_date_html = '';
 		foreach ($options as $vendor) {
 			$data['vendor'] = $vendor;
 			$quantities_html .= $this->get_quantities_html($data);

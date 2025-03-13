@@ -128,11 +128,11 @@
                         </div></br>
                   </div>
 
-                  <div class="row">
+                  <!-- <div class="row">
                      <div id="scroll-slider">
                         <div id="scroll-thumb"></div>
                      </div>
-                  </div>
+                  </div> -->
                   </br>
 
                   <div class="btn-group show_hide_columns" id="show_hide_columns">
