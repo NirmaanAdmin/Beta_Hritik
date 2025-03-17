@@ -241,7 +241,13 @@ foreach ($rResult as $aRow) {
          } elseif ($aRow['source_table'] == "wo_orders") {
             $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
          } elseif ($aRow['source_table'] == "order_tracker") {
-            $_data = $aRow['order_name'];
+            $name = $aRow['order_name'];
+            $name .= '<div class="row-options">';
+            if ((has_permission('purchase-order', '', 'delete') || is_admin()) && ($aRow['source_table'] == "order_tracker")) {
+               $name .= '<a href="' . admin_url('purchase/delete_order_tracker/' . $aRow['id']) . '" class="text-danger _delete" >' . _l('delete') . '</a>';
+            }
+            $name .= '</div>';
+            $_data = $name;
          }
       } elseif ($column == 'vendor') {
          $_data = '<a href="#">' . $aRow['vendor'] . '</a>';

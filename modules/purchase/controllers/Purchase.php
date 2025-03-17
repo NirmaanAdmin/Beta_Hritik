@@ -12241,4 +12241,16 @@ class purchase extends AdminController
         $wo_contract_data = $this->purchase_model->get_wo_contract_data($wo_id, $payment_certificate_id);
         echo json_encode($wo_contract_data);
     }
+
+    public function delete_order_tracker($id){
+        
+        $response = $this->purchase_model->delete_order_tracker($id);
+
+		if ($response == true) {
+			set_alert('success', _l('deleted'));
+		} else {
+			set_alert('warning', _l('problem_deleting'));
+		}
+		redirect(admin_url('purchase/order_tracker'));
+    }
 }

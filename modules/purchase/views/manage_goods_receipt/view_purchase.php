@@ -218,7 +218,7 @@
                           1 => ['label' => 'danger', 'table' => 'not_started', 'text' => _l('not_started')],
                           2 => ['label' => 'success', 'table' => 'approved', 'text' => _l('approved')],
                           3 => ['label' => 'info', 'table' => 'on_going', 'text' => _l('on_going')],
-
+                          4 => ['label' => 'warning', 'table' => 'delivered', 'text' => _l('Delivered')],
                         ];
                         if ($receipt_value['production_status'] > 0) {
 
