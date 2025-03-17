@@ -541,10 +541,16 @@ if ($estimate->currency != 0) {
                                           $diff =  $es['unit_price'] - $es['original_unit_price'];
                                           $diff_unit = $es['quantity'] - $es['original_quantity'];
                                           $unit_name = changee_pur_get_unit_name($es['unit_id']);
+                                          $qty_after_incl_co = changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name;
+                                          $align = 'right';
+                                          if($diff_unit == 0) {
+                                             $align = 'center';
+                                             $qty_after_incl_co = '-';
+                                          }
                                           ?>
                                           <td align="right"><?php echo nl2br($es['description']); ?></td>
                                           <td align="right"><?php echo changee_pur_html_entity_decode($es['original_quantity']) . ' ' . $unit_name; ?></br><span>Amendment :<?php echo  $diff_unit; ?></span></td>
-                                          <td align="right"><?php echo changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
+                                          <td align="<?php echo $align; ?>"><?php echo $qty_after_incl_co; ?></td>
                                           <td align="right"><?php echo app_format_money($es['original_unit_price'], $base_currency->symbol); ?></br><span>Amendment :<?php echo  $diff; ?></span></td>
                                           <td align="right"><?php echo app_format_money($es['unit_price'], $base_currency->symbol); ?></td>
                                           <?php /*
