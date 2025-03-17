@@ -3412,33 +3412,38 @@ class Purchase_model extends App_Model
                 $row['sender'] = $sender;
                 $this->db->insert('tblpur_approval_details', $row);
             }
-            if (($data['rel_type'] == 'pur_order' || $data['rel_type'] == 'wo_order')) {
+            $this->db->where('rel_type', $data['rel_type']);
+            $this->db->where('rel_id', $module->id);
+            $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
 
-                // Build the task name depending on the type
-                if ($data['rel_type'] == 'pur_order') {
-                    $taskName = 'Review { ' . $module->pur_order_name . ' }{ ' . $module->pur_order_number . ' }';
-                } elseif ($data['rel_type'] == 'wo_order') {
-                    $taskName = 'Review { ' . $module->wo_order_name . ' }{ ' . $module->wo_order_number . ' }';
+            if (!$existing_task) {
+                if (($data['rel_type'] == 'pur_order' || $data['rel_type'] == 'wo_order')) {
+
+                    // Build the task name depending on the type
+                    if ($data['rel_type'] == 'pur_order') {
+                        $taskName = 'Review { ' . $module->pur_order_name . ' }{ ' . $module->pur_order_number . ' }';
+                    } elseif ($data['rel_type'] == 'wo_order') {
+                        $taskName = 'Review { ' . $module->wo_order_name . ' }{ ' . $module->wo_order_number . ' }';
+                    }
+
+                    $taskData = [
+                        'name'      => $taskName,
+                        'is_public' => 1,
+                        'startdate' => _d(date('Y-m-d')),
+                        'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
+                        'priority'  => 3,
+                        'rel_type'  => $data['rel_type'],
+                        'rel_id'    => $module->id,
+                        'category'  => $module->group_pur,
+                        'price'     => $module->total,
+                    ];
+                    $task_id =  $this->tasks_model->add($taskData);
+                    $assignss = [
+                        'staffid' => $value['id'],
+                        'taskid'  =>  $task_id
+                    ];
+                    $this->db->insert('tbltask_assigned', $assignss);
                 }
-
-                $taskData = [
-                    'name'      => $taskName,
-                    'is_public' => 1,
-                    'startdate' => _d(date('Y-m-d')),
-                    'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
-                    'priority'  => 3,
-                    'rel_type'  => $data['rel_type'],
-                    'rel_id'    => $module->id,
-                    'category'  => $module->group_pur,
-                    'price'     => $module->total,
-                ];
-                $task_id =  $this->tasks_model->add($taskData);
-
-                $assignss = [
-                    'staffid' => $value['id'], 
-                    'taskid'  =>  $task_id
-                ];
-                $this->db->insert('tbltask_assigned', $assignss);
             }
         }
         // Send an email to approver
