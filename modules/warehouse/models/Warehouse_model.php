@@ -1286,7 +1286,7 @@ class Warehouse_model extends App_Model
 				}
 
 				// if (!$this->check_format_date($data['date_add'])) {
-					$inventory_receipt['delivery_date'] = $data['date_add'];
+				$inventory_receipt['delivery_date'] = $data['date_add'];
 				// } else {
 				// 	$inventory_receipt['delivery_date'] = null;
 				// }
@@ -2386,7 +2386,9 @@ class Warehouse_model extends App_Model
 			$project = $module->project;
 		}
 		$data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
-
+		$this->load->model('purchase/purchase_model');
+		$pur_order_data = $this->purchase_model->get_pur_order($module->pr_order_id);
+		
 		foreach ($data_new as $key => $value) {
 			$row = [];
 			$row['action'] = 'approve';
@@ -2396,6 +2398,38 @@ class Warehouse_model extends App_Model
 			$row['rel_type'] = $data['rel_type'];
 			$row['sender'] = $sender;
 			$this->db->insert('tblwh_approval_details', $row);
+
+			$this->db->where('rel_type', 'stock_import');
+			$this->db->where('rel_id', $module->id);
+			$existing_task = $this->db->get(db_prefix() . 'tasks')->row();
+
+			if (!$existing_task) {
+				if (($data['rel_type'] == '1')) {
+
+					// Build the task name depending on the type
+					if ($data['rel_type'] == '1') {
+						$taskName = 'Review { ' . $module->goods_receipt_code . ' }';
+					} 
+
+					$taskData = [
+						'name'      => $taskName,
+						'is_public' => 1,
+						'startdate' => _d(date('Y-m-d')),
+						'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
+						'priority'  => 3,
+						'rel_type'  => 'stock_import',
+						'rel_id'    => $module->id,
+						'category'  => $pur_order_data->group_pur,
+						'price'     => $pur_order_data->total,
+					];
+					$task_id =  $this->tasks_model->add($taskData);
+					$assignss = [
+						'staffid' => $value['id'],
+						'taskid'  =>  $task_id
+					];
+					$this->db->insert('tbltask_assigned', $assignss);
+				}
+			}
 		}
 
 		// foreach ($data_new as $value) {
