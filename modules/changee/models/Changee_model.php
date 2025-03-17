@@ -4848,10 +4848,12 @@ class Changee_model extends App_Model
                 $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
             }
             $qty_after_incl_co = changee_pur_html_entity_decode($row['quantity']).' '.$units->unit_name;
+            $rate_after_incl_co = '₹'.app_format_money($row['unit_price'], '');
             $align = 'right';
             if($diff_unit == 0) {
                 $align = 'center';
                 $qty_after_incl_co = '-';
+                $rate_after_incl_co = '-';
             }
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 10%; font-size: 11px;'.$font_weight.'">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
@@ -4859,7 +4861,7 @@ class Changee_model extends App_Model
             <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff_unit . '</span></td>
             <td align="'.$align.'" style="width: 7%; font-size: 11px;'.$font_weight.'">' . $qty_after_incl_co . '</td>
             <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff . '</span></td>
-            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="'.$align.'" style="width: 7%; font-size: 11px;'.$font_weight.'">' . $rate_after_incl_co . '</td>
             <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['into_money_updated'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['tax_value'], '') . '</td>
             <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['total'], '') . '</td>
