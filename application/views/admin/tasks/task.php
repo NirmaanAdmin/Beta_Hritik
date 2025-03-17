@@ -400,6 +400,13 @@
                                                                     } ?>>
                                             <?php echo _l('proposal'); ?>
                                         </option>
+                                        <option value="payment_certificate" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                                                        if ($rel_type == 'payment_certificate') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
+                                            <?php echo _l('payment_certificate'); ?>
+                                        </option>
                                         <?php
                                         hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
                                         ?>

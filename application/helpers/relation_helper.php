@@ -11,7 +11,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 function get_relation_data($type, $rel_id = '', $extra = [])
 {
-    $CI = & get_instance();
+
+    $CI = &get_instance();
     $q  = '';
     if ($CI->input->post('q')) {
         $q = $CI->input->post('q');
@@ -33,7 +34,7 @@ function get_relation_data($type, $rel_id = '', $extra = [])
         } else {
             $where_contacts = db_prefix() . 'contacts.active=1';
             if (isset($extra['client_id']) && $extra['client_id'] != '') {
-                $where_contacts .= ' AND '. db_prefix() . 'contacts.userid='. $extra['client_id'];
+                $where_contacts .= ' AND ' . db_prefix() . 'contacts.userid=' . $extra['client_id'];
             }
 
             if ($CI->input->post('tickets_contacts')) {
@@ -104,7 +105,7 @@ function get_relation_data($type, $rel_id = '', $extra = [])
         } else {
             $search = $CI->misc_model->_search_leads($q, 0, [
                 'junk' => 0,
-                ]);
+            ]);
             $data = $search['result'];
         }
     } elseif ($type == 'proposal') {
@@ -140,57 +141,57 @@ function get_relation_data($type, $rel_id = '', $extra = [])
         if ($rel_id != '') {
             $data = $CI->tasks_model->get($rel_id);
         }
-    } elseif ($type == 'pur_order') {             
+    } elseif ($type == 'pur_order') {
         // if ($rel_id != '') {
         //     // $CI->load->model('purchase_model');
         //     // $data = $CI->purchase_model->get_pur_order($rel_id);
         // }else{
-            $search = $CI->misc_model->_search_purchase_orders($q);
-            $data   = $search['result'];
+        $search = $CI->misc_model->_search_purchase_orders($q);
+        $data   = $search['result'];
         // }
-    }elseif ($type == 'pur_quotation') {
+    } elseif ($type == 'pur_quotation') {
         if ($rel_id != '') {
-            
-        }else{
+        } else {
             $search = $CI->misc_model->_search_quotations($q);
             $data   = $search['result'];
         }
-    }elseif ($type == 'pur_contract') {
+    } elseif ($type == 'pur_contract') {
         if ($rel_id != '') {
-            
-        }else{
+        } else {
             $search = $CI->misc_model->_search_pur_contracts($q);
             $data   = $search['result'];
         }
     } elseif ($type == 'pur_invoice') {
         if ($rel_id != '') {
-            
-        }else{
+        } else {
             $search = $CI->misc_model->_search_pur_invoices($q);
             $data   = $search['result'];
         }
     } elseif ($type == 'stock_import') {
-        
+
         if ($rel_id != '') {
-            
-        }else{
+        } else {
             $search = $CI->misc_model->_search_stock_import($q);
             $data   = $search['result'];
         }
-    }elseif ($type == 'stock_export') {
-        
+    } elseif ($type == 'stock_export') {
+
         if ($rel_id != '') {
-            
-        }else{
+        } else {
             $search = $CI->misc_model->_search_goods_delivery($q);
             $data   = $search['result'];
         }
-    }elseif ($type == 'wo_order') {
-        
+    } elseif ($type == 'wo_order') {
         if ($rel_id != '') {
-            
-        }else{
+        } else {
             $search = $CI->misc_model->_search_wo_delivery($q);
+            $data   = $search['result'];
+        }
+    } elseif ($type == 'payment_certificate') {
+
+        if ($rel_id != '') {
+        } else {
+            $search = $CI->misc_model->_search_payment_certificate($q);
             $data   = $search['result'];
         }
     }
@@ -216,7 +217,7 @@ function get_relation_values($relation, $type)
             'link'      => '',
             'addedfrom' => 0,
             'subtext'   => '',
-            ];
+        ];
     }
 
     $addedfrom = 0;
@@ -379,8 +380,8 @@ function get_relation_values($relation, $type)
         $name = '#' . $id . ' - ' . $name . ' - ' . get_company_name($clientId);
 
         $link = admin_url('projects/view/' . $id);
-    }elseif ($type == 'pur_order') {   
-            
+    } elseif ($type == 'pur_order') {
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $name      = $relation['pur_order_name'];
@@ -388,10 +389,9 @@ function get_relation_values($relation, $type)
             $id        = $relation->id;
             $name      = $relation->pur_order_name;
         }
-       $link = admin_url('purchase/purchase_order/' . $id);
-      
-    }elseif ($type == 'pur_quotation') {   
-            
+        $link = admin_url('purchase/purchase_order/' . $id);
+    } elseif ($type == 'pur_quotation') {
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $addedfrom = $relation['addedfrom'];
@@ -401,9 +401,8 @@ function get_relation_values($relation, $type)
         }
         $name = format_invoice_number($id);
         $link = admin_url('purchase/quotations/' . $id);
-      
-    }elseif ($type == 'pur_contract') {
-              
+    } elseif ($type == 'pur_contract') {
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $name      = $relation['contract_name'];
@@ -411,9 +410,9 @@ function get_relation_values($relation, $type)
             $id        = $relation->id;
             $name      = $relation->contract_name;
         }
-       $link = admin_url('purchase/contract/' . $id);
+        $link = admin_url('purchase/contract/' . $id);
     } elseif ($type == 'pur_invoice') {
-              
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $name      = $relation['invoice_number'];
@@ -421,9 +420,9 @@ function get_relation_values($relation, $type)
             $id        = $relation->id;
             $name      = $relation->invoice_number;
         }
-       $link = admin_url('purchase/invoices/' . $id);
+        $link = admin_url('purchase/invoices/' . $id);
     } elseif ($type == 'stock_import') {
-        
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $name      = $relation['goods_receipt_code'];
@@ -431,9 +430,9 @@ function get_relation_values($relation, $type)
             $id        = $relation->id;
             $name      = $relation->goods_receipt_code;
         }
-       $link = admin_url('warehouse/manage_purchase/' . $id);
-    }elseif ($type == 'stock_export') {
-      
+        $link = admin_url('warehouse/manage_purchase/' . $id);
+    } elseif ($type == 'stock_export') {
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $name      = $relation['goods_delivery_code'];
@@ -441,9 +440,9 @@ function get_relation_values($relation, $type)
             $id        = $relation->id;
             $name      = $relation->goods_delivery_code;
         }
-       $link = admin_url('warehouse/manage_delivery/' . $id);
-    }elseif ($type == 'wo_order') {
-      
+        $link = admin_url('warehouse/manage_delivery/' . $id);
+    } elseif ($type == 'wo_order') {
+
         if (is_array($relation)) {
             $id        = $relation['id'];
             $name      = $relation['wo_order_name'];
@@ -451,10 +450,35 @@ function get_relation_values($relation, $type)
             $id        = $relation->id;
             $name      = $relation->wo_order_name;
         }
-       $link = admin_url('purchase/work_order/' . $id);
+        $link = admin_url('purchase/work_order/' . $id);
+    } elseif ($type == 'payment_certificate') {
+
+
+        if (is_array($relation)) {
+
+            if ($relation['po_id']) {
+                $id        = $relation['po_id'];
+                $name      = $relation['pur_order_name'] . '(PO)';
+                $link      = admin_url('purchase/purchase_order/' . $id);
+            } elseif ($relation['wo_id']) {
+                $id        = $relation['wo_id'];
+                $name      = $relation['wo_order_name'] . '(WO)';
+                $link      = admin_url('purchase/work_order/' . $id);
+            }
+        } else {
+            if ($relation->po_id) {
+                $id        = $relation->po_id;
+                $name      = $relation->pur_order_name . '(PO)';
+                $link      = admin_url('purchase/purchase_order/' . $id);
+            } elseif ($relation->wo_id) {
+                $id        = $relation->wo_id;
+                $name      = $relation->wo_order_name. '(WO)';
+                $link      = admin_url('purchase/work_order/' . $id);
+            }
+        }
     }
-    
-    if($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order'){
+
+    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate') {
         return [
             'id'        => $id,
             'name'      => $name,
@@ -464,7 +488,7 @@ function get_relation_values($relation, $type)
             'type'      => $type,
             'relation'  => $relation,
         ];
-    }else{
+    } else {
         return hooks()->apply_filters('relation_values', [
             'id'        => $id,
             'name'      => $name,
@@ -497,7 +521,7 @@ function init_relation_options($data, $type, $rel_id = '')
     $has_permission_expenses_view  = staff_can('view',  'expenses');
     $has_permission_proposals_view = staff_can('view',  'proposals');
     $is_admin                      = is_admin();
-    $CI                            = & get_instance();
+    $CI                            = &get_instance();
     $CI->load->model('projects_model');
 
     foreach ($data as $relation) {

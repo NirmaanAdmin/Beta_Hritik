@@ -46,6 +46,15 @@ hooks()->add_action('task_modal_rel_type_select', 'wo_task_modal_rel_type_select
 hooks()->add_filter('relation_values', 'wo_get_relation_values', 10, 2); // new
 hooks()->add_filter('get_relation_data', 'wo_get_relation_data', 10, 4); // new
 hooks()->add_filter('tasks_table_row_data', 'wo_add_table_row', 10, 3);
+
+//payment task
+// hooks()->add_action('task_related_to_select', 'pay_related_to_select'); // old
+// hooks()->add_filter('before_return_relation_data', 'pay_relation_data', 10, 4); // old
+// hooks()->add_action('task_modal_rel_type_select', 'pay_task_modal_rel_type_select'); // new
+// hooks()->add_filter('relation_values', 'pay_get_relation_values', 10, 2); // new
+hooks()->add_filter('get_relation_data', 'pay_get_relation_data', 10, 4); // new
+// hooks()->add_filter('tasks_table_row_data', 'pay_add_table_row', 10, 3);
+
 //Purchase quotation task
 hooks()->add_action('task_related_to_select', 'pq_related_to_select'); // old
 //hooks()->add_filter('before_return_relation_values', 'pq_relation_values', 10, 2); // old
@@ -977,6 +986,8 @@ function po_relation_data($data, $type, $rel_id, $q = '')
     if ($type == 'pur_order') {
         if ($rel_id != '') {
             $data = $CI->purchase_model->get_pur_order($rel_id);
+            
+
         } else {
             $data   = [];
         }
@@ -1565,6 +1576,7 @@ function po_get_relation_data($data, $obj, $q = '')
     }
     return $data;
 }
+
 /**
  * wo get relation data
  * @param  object $data
@@ -1590,6 +1602,28 @@ function wo_get_relation_data($data, $obj, $q = '')
     return $data;
 }
 
+
+function pay_get_relation_data($data, $obj, $q = '')
+{
+    $type = $obj['type'];
+    $rel_id = $obj['rel_id'];
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+
+    if ($type == 'payment_certificate' || $type == 'payment_certificate') {
+        if ($rel_id != '') {
+            $data = $CI->purchase_model->get_pur_order_new($rel_id);
+            if (empty($data)) {
+                $data = $CI->purchase_model->get_wo_order_new($rel_id);
+            }
+        } else {
+            if ($q != '') {
+                $data = $CI->purchase_model->get_wo_order_search($q);
+            }
+        }
+    }
+    return $data;
+}
 /**
  * PO relation values
  * @param  [type] $values   

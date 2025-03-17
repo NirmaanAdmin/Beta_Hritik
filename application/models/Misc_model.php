@@ -104,7 +104,7 @@ class Misc_model extends App_Model
         $taxes = Arr::uniqueByKey($taxes, 'name');
         $disable = $disable_dropdown ? 'disabled' : '';
 
-        $select = '<select class="selectpicker display-block tax" data-width="100%" name="' . $name . '" multiple data-none-selected-text="' . _l('no_tax') . '" '.$disable.'>';
+        $select = '<select class="selectpicker display-block tax" data-width="100%" name="' . $name . '" multiple data-none-selected-text="' . _l('no_tax') . '" ' . $disable . '>';
 
         foreach ($taxes as $tax) {
             $selected = '';
@@ -242,7 +242,7 @@ class Misc_model extends App_Model
                 $this->leads_model->log_lead_activity($data['rel_id'], 'not_activity_new_reminder_created', false, serialize([
                     get_staff_full_name($data['staff']),
                     _dt($data['date']),
-                    ]));
+                ]));
             }
             log_activity('New Reminder Added [' . ucfirst($data['rel_type']) . 'ID: ' . $data['rel_id'] . ' Description: ' . $data['description'] . ']');
 
@@ -1497,29 +1497,29 @@ class Misc_model extends App_Model
     }
     public function _search_purchase_orders($q, $limit = 0)
     {
-            $result = [
-                'result'         => [],
-                'type'           => 'pur_order',
-                'search_heading' => _l('purchase_orders'),
-            ];
-    
+        $result = [
+            'result'         => [],
+            'type'           => 'pur_order',
+            'search_heading' => _l('purchase_orders'),
+        ];
 
-            // Purchase Orders
-            $this->db->select();
-            $this->db->from(db_prefix() . 'pur_orders');
-    
-            $this->db->where('(pur_order_name LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
+
+        // Purchase Orders
+        $this->db->select();
+        $this->db->from(db_prefix() . 'pur_orders');
+
+        $this->db->where('(pur_order_name LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
                 OR pur_order_number LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
                 OR vendor LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\')');
-    
-            if ($limit != 0) {
-                $this->db->limit($limit);
-            }
-    
-            $this->db->order_by('pur_order_name', 'ASC');
-            $result['result'] = $this->db->get()->result_array();
-            
-    
+
+        if ($limit != 0) {
+            $this->db->limit($limit);
+        }
+
+        $this->db->order_by('pur_order_name', 'ASC');
+        $result['result'] = $this->db->get()->result_array();
+
+
         return $result;
     }
     public function _search_quotations($q, $limit = 0)
@@ -1529,23 +1529,23 @@ class Misc_model extends App_Model
             'type'           => 'quotation',
             'search_heading' => _l('quotations'),
         ];
-    
+
         // Quotations
         $this->db->select();
         $this->db->from(db_prefix() . 'pur_estimates'); // Table for quotations
-    
+
         // Search in the specified columns
         $this->db->where('(prefix LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\')');
         if ($limit != 0) {
             $this->db->limit($limit);
         }
-    
+
         $this->db->order_by('prefix', 'ASC');
         $result['result'] = $this->db->get()->result_array();
-    
+
         return $result;
     }
-    
+
     public function _search_pur_contracts($q, $limit = 0)
     {
         $result = [
@@ -1651,29 +1651,73 @@ class Misc_model extends App_Model
     }
     public function _search_wo_delivery($q, $limit = 0)
     {
-            $result = [
-                'result'         => [],
-                'type'           => 'wo_order',
-                'search_heading' => _l('work_orders'),
-            ];
-    
+        $result = [
+            'result'         => [],
+            'type'           => 'wo_order',
+            'search_heading' => _l('work_orders'),
+        ];
 
-            // Purchase Orders
-            $this->db->select();
-            $this->db->from(db_prefix() . 'wo_orders');
-    
-            $this->db->where('(wo_order_name LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
+
+        // Purchase Orders
+        $this->db->select();
+        $this->db->from(db_prefix() . 'wo_orders');
+
+        $this->db->where('(wo_order_name LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
                 OR wo_order_number LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\' 
                 OR vendor LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\')');
-    
-            if ($limit != 0) {
-                $this->db->limit($limit);
-            }
-    
-            $this->db->order_by('wo_order_name', 'ASC');
-            $result['result'] = $this->db->get()->result_array();
-            
-    
+
+        if ($limit != 0) {
+            $this->db->limit($limit);
+        }
+
+        $this->db->order_by('wo_order_name', 'ASC');
+        $result['result'] = $this->db->get()->result_array();
+
+
+        return $result;
+    }
+    public function _search_payment_certificate($q, $limit = 0)
+    {
+        $result = [
+            'result'         => [],
+            'type'           => 'payment_certificate',
+            'search_heading' => _l('payment_certificate'),
+        ];
+
+        // Select all fields from payment_certificate along with fields from pur_orders and wo_orders
+        $this->db->select(db_prefix() . 'payment_certificate.*, tblpur_orders.pur_order_name, tblpur_orders.pur_order_number, tblpur_orders.id as po_id, tblwo_orders.wo_order_name, tblwo_orders.wo_order_number, tblwo_orders.id as wo_id');
+        $this->db->from(db_prefix() . 'payment_certificate');
+
+        // Left join pur_orders table
+        $this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'payment_certificate.po_id', 'left');
+
+
+        $this->db->join(db_prefix() . 'wo_orders', db_prefix() . 'wo_orders.id = ' . db_prefix() . 'payment_certificate.wo_id', 'left');
+
+        // Group search conditions to include pur_orders and wo_orders fields
+        $this->db->group_start();
+        // Search conditions for pur_orders
+
+
+        $this->db->group_start();
+        $this->db->like(db_prefix() . 'pur_orders.pur_order_name', $q);
+        $this->db->or_like(db_prefix() . 'pur_orders.pur_order_number', $q);
+        $this->db->or_like(db_prefix() . 'pur_orders.id', $q);
+        $this->db->or_like(db_prefix() . 'payment_certificate.id', $q);
+        // Search conditions for wo_orders
+        $this->db->or_like(db_prefix() . 'wo_orders.wo_order_name', $q);
+        $this->db->or_like(db_prefix() . 'wo_orders.wo_order_number', $q);
+        $this->db->or_like(db_prefix() . 'wo_orders.id', $q);
+        $this->db->group_end();
+
+        $this->db->group_end();
+
+        if ($limit != 0) {
+            $this->db->limit($limit);
+        }
+
+        $result['result'] = $this->db->get()->result_array();
+
         return $result;
     }
 }
