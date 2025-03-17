@@ -25,11 +25,11 @@ $CI->load->helper(MEETING_MANAGEMENT_MODULE_NAME . '/meeting_management');
  */
 register_activation_hook(MEETING_MANAGEMENT_MODULE_NAME, 'meeting_management_module_activation_hook');
 
-// function meeting_management_module_activation_hook()
-// {
+function meeting_management_module_activation_hook()
+{
     $CI = &get_instance();
     require_once(__DIR__ . '/install.php');
-// }
+}
 
 /**
  * Register language files
