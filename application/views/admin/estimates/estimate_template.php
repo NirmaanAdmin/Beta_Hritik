@@ -629,16 +629,96 @@
                 </div>
             <?php } ?>
 
-            <div role="tabpanel" class="tab-pane active" id="area_summary">
+            <div role="tabpanel" class="tab-pane" id="area_summary">
             </div>
 
-            <div role="tabpanel" class="tab-pane active" id="sum_of_values">
+            <div role="tabpanel" class="tab-pane" id="sum_of_values">
             </div>
 
-            <div role="tabpanel" class="tab-pane active" id="budget_working">
+            <div role="tabpanel" class="tab-pane" id="budget_working">
             </div>
 
-            <div role="tabpanel" class="tab-pane active" id="area_working">
+            <div role="tabpanel" class="tab-pane" id="area_working">
+                <div class="table-responsive s_table">
+                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                        <thead>
+                            <tr>
+                                <th width="18%" align="left"><?php echo _l('master_area'); ?></th>
+                                <th width="18%" align="left"><?php echo _l('functionality_area'); ?></th>
+                                <th width="23%" align="left"><?php echo _l('area_description'); ?></th>
+                                <th width="18%" align="left"><?php echo _l('carpet_area'); ?></th>
+                                <th width="18%" align="left"><?php echo _l('surface_area'); ?></th>
+                                <th width="5%" align="center"><i class="fa fa-cog"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody class="area_working">
+                            <tr class="main">
+                                <td>
+                                    <?php
+                                    $select = '';
+                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="master_area" data-none-selected-text="' . _l('master_area') . '">';
+                                    $select .= '<option value=""></option>';
+                                    foreach ($master_area as $area) {
+                                        $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                    }
+                                    $select .= '</select>';
+                                    echo $select;
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $select = '';
+                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="functionality_area" data-none-selected-text="' . _l('functionality_area') . '">';
+                                    $select .= '<option value=""></option>';
+                                    foreach ($functionality_area as $area) {
+                                        $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                    }
+                                    $select .= '</select>';
+                                    echo $select;
+                                    ?>
+                                </td>
+                                <td>
+                                    <textarea name="area_description" rows="4" class="form-control" placeholder="<?php echo _l('area_description'); ?>"></textarea>
+                                </td>
+                                <td>
+                                    <input type="number" name="carpet_area" class="form-control" placeholder="<?php echo _l('carpet_area'); ?>">
+                                </td>
+                                <td>
+                                    <input type="number" name="surface_area" class="form-control" placeholder="<?php echo _l('surface_area'); ?>">
+                                </td>
+                                <td>
+                                    <?php
+                                    $new_area_working = 'undefined';
+                                    if (isset($estimate)) {
+                                        $new_area_working = true;
+                                    } ?>
+                                    <button type="button" onclick="add_area_working_item_to_table('undefined','undefined',<?php echo e($new_area_working); ?>); return false;"
+                                        class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-8 col-md-offset-4">
+                    <table class="table text-right">
+                        <tbody>
+                            <tr>
+                                <td><span class="bold tw-text-neutral-700"><?php echo _l('total_carpet_area'); ?> :</span>
+                                </td>
+                                <td class="total_carpet_area">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold tw-text-neutral-700"><?php echo _l('total_surface_area'); ?> :</span>
+                                </td>
+                                <td class="total_surface_area">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="removed-area-working-items"></div>
             </div>
         </div>
 

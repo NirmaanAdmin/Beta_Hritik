@@ -292,6 +292,36 @@ class Costplanning_model extends App_Model
         }
         return false;
     }
+
+    public function get_master_area_dropdown($name, $value)
+    {
+        $select = '';
+        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="'.$name.'" data-none-selected-text="' . _l('master_area') . '">';
+        $select .= '<option value=""></option>';
+        $master_area = $this->get_master_area();
+        foreach ($master_area as $area) {
+            $selected = ($area['id'] == $value) ? ' selected' : '';
+            $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+
+        }
+        $select .= '</select>';
+        return $select;
+    }
+
+    public function get_functionality_area_dropdown($name, $value)
+    {
+        $select = '';
+        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="'.$name.'" data-none-selected-text="' . _l('functionality_area') . '">';
+        $select .= '<option value=""></option>';
+        $functionality_area = $this->get_functionality_area();
+        foreach ($functionality_area as $area) {
+            $selected = ($area['id'] == $value) ? ' selected' : '';
+            $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+
+        }
+        $select .= '</select>';
+        return $select;
+    }
 }
 
 ?>

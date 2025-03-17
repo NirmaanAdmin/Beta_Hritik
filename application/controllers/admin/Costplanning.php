@@ -211,6 +211,20 @@ class Costplanning extends AdminController
         }
         redirect(admin_url('costplanning/setting?group=functionality_area'));
     }
+
+    public function get_master_area_dropdown()
+    {
+        $name    = $this->input->post('name');
+        $value = $this->input->post('value');
+        echo $this->costplanning_model->get_master_area_dropdown($name, $value);
+    }
+
+    public function get_functionality_area_dropdown()
+    {
+        $name    = $this->input->post('name');
+        $value = $this->input->post('value');
+        echo $this->costplanning_model->get_functionality_area_dropdown($name, $value);
+    }
 }
 
 ?>

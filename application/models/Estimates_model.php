@@ -662,6 +662,13 @@ class Estimates_model extends App_Model
             unset($data['remarks']);
         }
 
+        unset($data['master_area']);
+        unset($data['functionality_area']);
+        unset($data['area_description']);
+        unset($data['carpet_area']);
+        unset($data['surface_area']);
+        unset($data['newareaworkingitems']);
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', $data);
 

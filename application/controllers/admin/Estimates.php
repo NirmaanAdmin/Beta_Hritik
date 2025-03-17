@@ -150,6 +150,7 @@ class Estimates extends AdminController
 
         $this->load->model('invoice_items_model');
         $this->load->model('invoices_model');
+        $this->load->model('costplanning_model');
 
         $data['ajaxItems'] = false;
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
@@ -163,6 +164,8 @@ class Estimates extends AdminController
         $data['staff']             = $this->staff_model->get('', ['active' => 1]);
         $data['estimate_statuses'] = $this->estimates_model->get_statuses();
         $data['get_hsn_sac_code']  = $this->invoices_model->get_hsn_sac_code();
+        $data['master_area'] = $this->costplanning_model->get_master_area();
+        $data['functionality_area'] = $this->costplanning_model->get_functionality_area();
         $data['title']             = $title;
         $this->load->view('admin/estimates/estimate', $data);
     }
