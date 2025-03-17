@@ -141,13 +141,13 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $data = $CI->tasks_model->get($rel_id);
         }
     } elseif ($type == 'pur_order') {             
-        if ($rel_id != '') {
-            // $CI->load->model('purchase_model');
-            // $data = $CI->purchase_model->get_pur_order($rel_id);
-        }else{
+        // if ($rel_id != '') {
+        //     // $CI->load->model('purchase_model');
+        //     // $data = $CI->purchase_model->get_pur_order($rel_id);
+        // }else{
             $search = $CI->misc_model->_search_purchase_orders($q);
             $data   = $search['result'];
-        }
+        // }
     }elseif ($type == 'pur_quotation') {
         if ($rel_id != '') {
             
