@@ -212,6 +212,86 @@ class Costplanning_model extends App_Model
         }
         return false;
     }
+
+    public function get_master_area($id = '')
+    {
+        if ($id != '') {
+            $this->db->where('id', $id);
+            return $this->db->get(db_prefix() . 'master_area')->row();
+        } else {
+            return $this->db->get(db_prefix() . 'master_area')->result_array();
+        }
+    }
+
+    public function add_master_area($data)
+    {
+        $this->db->insert(db_prefix() . 'master_area', $data);
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+            return $insert_id;
+        }
+        return false;
+    }
+
+    public function update_master_area($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'master_area', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function delete_master_area($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'master_area');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function get_functionality_area($id = '')
+    {
+        if ($id != '') {
+            $this->db->where('id', $id);
+            return $this->db->get(db_prefix() . 'functionality_area')->row();
+        } else {
+            return $this->db->get(db_prefix() . 'functionality_area')->result_array();
+        }
+    }
+
+    public function add_functionality_area($data)
+    {
+        $this->db->insert(db_prefix() . 'functionality_area', $data);
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+            return $insert_id;
+        }
+        return false;
+    }
+
+    public function update_functionality_area($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'functionality_area', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function delete_functionality_area($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'functionality_area');
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
 }
 
 ?>
