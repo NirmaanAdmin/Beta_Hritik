@@ -600,7 +600,16 @@
                                     </td>
                                     <td>
                                         <input type="number" name="quantity" min="0" value="1" class="form-control" placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
-                                        <input type="text" placeholder="<?php echo _l('unit'); ?>" data-toggle="tooltip" 612 data-title="e.q kg, lots, packs" name="unit" class="form-control input-transparent text-right">
+                                        <?php
+                                        $select = '';
+                                        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="unit_id" data-none-selected-text="' . _l('unit') . '">';
+                                        $select .= '<option value=""></option>';
+                                        foreach ($units as $unit) {
+                                            $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
+                                        }
+                                        $select .= '</select>';
+                                        echo $select;
+                                        ?>
                                     </td>
                                     <td>
                                         <input type="number" name="rate" class="form-control" placeholder="<?php echo _l('item_rate_placeholder'); ?>">
@@ -672,12 +681,19 @@
                                             $table_row .= '<td class="bold description"><textarea name="' . $items_indicator . '[' . $i . '][description]" class="form-control" rows="5">' . clear_textarea_breaks($item['description']) . '</textarea></td>';
                                             $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
                                             $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
-                                            $unit_placeholder = '';
-                                            if (!$item['unit']) {
-                                                $unit_placeholder = _l('unit');
-                                                $item['unit']     = '';
+                                            
+                                            $select = '';
+                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][unit_id]" data-none-selected-text="' . _l('unit') . '">';
+                                            $select .= '<option value=""></option>';
+                                            foreach ($units as $unit) {
+                                                $selected = ($unit['unit_type_id'] == $item['unit_id']) ? ' selected' : '';
+                                                $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
+
                                             }
-                                            $table_row .= '<input type="text" placeholder="' . $unit_placeholder . '" name="' . $items_indicator . '[' . $i . '][unit]" class="form-control input-transparent text-right" value="' . $item['unit'] . '">';
+                                            $select .= '</select>';
+                                            $table_row .= $select;
+                                            $table_row .= '</td>';
+
                                             $table_row .= '</td>';
                                             $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control"></td>';
                                             $table_row .= '<td class="taxrate hide">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $estimate_item_taxes, (isset($is_proposal) ? 'proposal' : 'estimate'), $item['id'], true, $manual) . '</td>';

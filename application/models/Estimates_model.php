@@ -518,6 +518,7 @@ class Estimates_model extends App_Model
         if (isset($data['remarks'])) {
             unset($data['remarks']);
         }
+        unset($data['unit_id']);
 
         unset($data['master_area']);
         unset($data['functionality_area']);
@@ -687,6 +688,7 @@ class Estimates_model extends App_Model
         if (isset($data['remarks'])) {
             unset($data['remarks']);
         }
+        unset($data['unit_id']);
 
         unset($data['master_area']);
         unset($data['functionality_area']);
@@ -738,6 +740,10 @@ class Estimates_model extends App_Model
             }
 
             if (update_sales_item_post($item['itemid'], $item, 'unit')) {
+                $affectedRows++;
+            }
+
+            if (update_sales_item_post($item['itemid'], $item, 'unit_id')) {
                 $affectedRows++;
             }
 

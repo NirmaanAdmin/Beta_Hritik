@@ -737,6 +737,7 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'rel_type'         => $rel_type,
                     'item_order'       => $item['order'],
                     'unit'             => $item['unit'],
+                    'unit_id'          => isset($item['unit_id']) ? $item['unit_id'] : NULL,
                     'annexure'         => isset($item['annexure']) ? $item['annexure'] : NULL,
                     'po_id'            => isset($item['po_id']) ? $item['po_id'] : NULL,
                     'wo_id'            => isset($item['wo_id']) ? $item['wo_id'] : NULL,
@@ -782,6 +783,7 @@ function update_sales_item_post($item_id, $data, $field = '')
             'rate'             => number_format($data['rate'], get_decimal_places(), '.', ''),
             'qty'              => $data['qty'],
             'unit'             => $data['unit'],
+            'unit_id'          => isset($data['unit_id']) ? $data['unit_id'] : NULL,
         ];
     }
 
