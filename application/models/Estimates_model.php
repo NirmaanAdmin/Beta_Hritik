@@ -1471,7 +1471,7 @@ class Estimates_model extends App_Model
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
             $items_group = $this->get_items_groups($annexure);
-            $summary[$annexure]['name'] = $items_group->name." (".$items_group->annexure_name.")";
+            $summary[$annexure]['name'] = $items_group->name;
             $summary[$annexure]['description'] = '';
             $summary[$annexure]['qty'] = 1;
             $summary[$annexure]['subtotal'] += $value['qty'] * $value['rate'];

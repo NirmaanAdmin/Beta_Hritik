@@ -363,23 +363,10 @@
                     </a>
                 </li>
 
-                <?php
-                $annexures = get_all_annexures(); ?>
-                <li role="presentation" class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <li role="presentation">
+                    <a href="#budget_summary" aria-controls="budget_summary" role="tab" id="tab_budget_summary" data-toggle="tab">
                         <?php echo _l('budget_summary'); ?>
-                        <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu estimate-annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
-                        <?php
-                        foreach ($annexures as $key => $annexure) { ?>
-                            <li>
-                                <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
-                                    <?php echo $annexure['name']; ?>
-                                </a>
-                            </li>
-                        <?php } ?>
-                    </ul>
                 </li>
 
                 <li role="presentation">
@@ -394,10 +381,23 @@
                     </a>
                 </li>
 
-                <li role="presentation">
-                    <a href="#budget_working" aria-controls="budget_working" role="tab" id="tab_budget_working" data-toggle="tab">
+                <?php
+                $annexures = get_all_annexures(); ?>
+                <li role="presentation" class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <?php echo _l('budget_working'); ?>
+                        <span class="caret"></span>
                     </a>
+                    <ul class="dropdown-menu estimate-annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
+                        <?php
+                        foreach ($annexures as $key => $annexure) { ?>
+                            <li>
+                                <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
+                                    <?php echo $annexure['name']; ?>
+                                </a>
+                            </li>
+                        <?php } ?>
+                    </ul>
                 </li>
 
                 <li role="presentation">
@@ -481,6 +481,92 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="budget_summary">
+                <div class="table-responsive s_table">
+                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
+                                aria-hidden="true" data-toggle="tooltip"
+                                data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
+                                <?php echo _l('estimate_table_item_heading'); ?></th>
+                                <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                <th width="10%" align="right" class="qty"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
+                                <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if(!empty($annexure_estimate['summary'])) {
+                                $summary = $annexure_estimate['summary'];
+                                foreach($summary as $ikey => $svalue) { ?>
+                                    <tr class="main">
+                                        <td></td>
+                                        <td align="left">
+                                            <?php echo $svalue['name']; ?>
+                                        </td>
+                                        <td align="left">
+                                            <?php echo $svalue['description']; ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo $svalue['qty']; ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($svalue['subtotal'], $base_currency); ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($svalue['tax'], $base_currency); ?>
+                                        </td>
+                                        <td align="right">
+                                            <?php echo app_format_money($svalue['amount'], $base_currency); ?>
+                                        </td>
+                                    </tr>
+                                <?php } 
+                            } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-8 col-md-offset-4">
+                    <table class="table text-right">
+                        <tbody>
+                            <tr id="subtotal">
+                                <td>
+                                    <span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <tr id="total_tax">
+                                <td>
+                                    <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                </td>
+                                <td>
+                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
+                                </td>
+                            </tr>
+                            <?php hooks()->do_action('after_admin_estimate_form_total_field', $estimate ?? null); ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="area_summary">
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="sum_of_values">
             </div>
 
             <?php
@@ -628,15 +714,6 @@
                     <div id="removed-items"></div>
                 </div>
             <?php } ?>
-
-            <div role="tabpanel" class="tab-pane" id="area_summary">
-            </div>
-
-            <div role="tabpanel" class="tab-pane" id="sum_of_values">
-            </div>
-
-            <div role="tabpanel" class="tab-pane" id="budget_working">
-            </div>
 
             <div role="tabpanel" class="tab-pane" id="area_working">
                 <div class="table-responsive s_table">
