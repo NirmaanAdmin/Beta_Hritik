@@ -11910,6 +11910,11 @@ class purchase extends AdminController
     {
         $input = $this->input->post();
         if(!empty($input)) {
+            unset($data['convert_expense_name']);
+            unset($data['convert_category']);
+            unset($data['convert_date']);
+            unset($data['convert_select_invoice']);
+            unset($data['convert_applied_to_invoice']);
             $this->load->model('expenses_model');
             $input = $input['newitems'];
             foreach ($input as $ikey => $data) {

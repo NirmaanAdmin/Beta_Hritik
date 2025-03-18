@@ -211,6 +211,42 @@ var expenseDropzone;
     }
   });
 
+  $('body').on('change', '#convert_select_invoice', function (e) {
+    e.preventDefault();
+    var select_invoice = $(this).val();
+    if(select_invoice == 'applied_invoice') {
+      $('#convert_applied_to_invoice').closest('.convert-applied-to-invoice').removeClass('hide')
+    } else {
+      $('#convert_applied_to_invoice').closest('.convert-applied-to-invoice').addClass('hide');
+      $('#convert_applied_to_invoice').val('').selectpicker('refresh');
+    }
+  });
+
+  $('body').on('click', '.update_vbt_convert', function (e) {
+    e.preventDefault();
+    var convert_expense_name = $('#convert_expense_name').val();
+    var convert_category = $('#convert_category').val();
+    var convert_date = $('#convert_date').val();
+    var convert_select_invoice = $('#convert_select_invoice').val();
+    var convert_applied_to_invoice = $('#convert_applied_to_invoice').val();
+
+    if(convert_expense_name) {
+      $('.all_expense_name textarea').val(convert_expense_name);
+    }
+    if(convert_category) {
+      $('.all_budget_head select').val(convert_category).trigger('change');
+    }
+    if(convert_date) {
+      $('.all_invoice_date input').val(convert_date).trigger('change');
+    }
+    if(convert_select_invoice == 'create_invoice') {
+      $('select#bulk_select_invoice').val(convert_select_invoice).trigger('change');
+    } else {
+      $('select#bulk_select_invoice').val(convert_select_invoice).trigger('change');
+      $('select#bulk_applied_to_invoice').val(convert_applied_to_invoice).trigger('change');
+    }
+  });
+
   appValidateForm($('#pur_invoice-expense-form'), {
     expense_name: 'required',
     category: 'required',

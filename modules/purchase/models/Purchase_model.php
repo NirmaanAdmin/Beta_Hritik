@@ -17379,11 +17379,45 @@ class Purchase_model extends App_Model
             $final_ids = !empty($final_ids) ? explode(",", rtrim($final_ids, ",")) : '';
             if(!empty($final_ids)) {
                 $pur_invoices = $this->get_multiple_pur_invoices($final_ids);
+                $expense_categories = $this->expenses_model->get_category();
+                $invoices = get_all_applied_invoices();
+
+                $html .= '<div class="row">
+                        <div class="col-md-2 bulk-title"></div>
+                        <div class="col-md-2 bulk-title">'._l('description_of_services').'</div>
+                        <div class="col-md-2 bulk-title">'._l('group_pur').'</div>
+                        <div class="col-md-2 bulk-title">'._l('invoice_date').'</div>
+                        <div class="col-md-2 bulk-title">'._l('invoice').'</div>
+                        <div class="col-md-2"></div>
+                    </div><br/>';
+
+                $html .= '<div class="row">';
+                $html .= '<div class="col-md-2"></div>';
+                $html .= '<div class="col-md-2">' . render_textarea('convert_expense_name', '', '', ['rows' => 3]) . '</div>';
+                $html .= '<div class="col-md-2">'.render_select('convert_category', $expense_categories, array('id', 'name')).'</div>';
+                $html .= '<div class="col-md-2">'.render_date_input('convert_date').'</div>';
+                $html .= '<div class="col-md-2">
+                    <select class="selectpicker display-block" data-width="100%" name="convert_select_invoice" id="convert_select_invoice" data-none-selected-text="'._l('none').'">
+                        <option value="create_invoice">'._l('expense_convert_to_invoice').'</option>
+                        <option value="applied_invoice">'._l('applied_to_invoice').'</option>
+                    </select>';
+
+                $html .= '<br/>
+                <div class="convert-applied-to-invoice hide">
+                <select class="selectpicker display-block" data-width="100%" name="convert_applied_to_invoice" id="convert_applied_to_invoice" data-none-selected-text="'._l('applied_to_invoice').'">
+                <option value=""></option>';
+                foreach ($invoices as $i) {
+                    $html .= '<option value="'.$i['id'].'">' . format_invoice_number($i['id']) . " (" . $i['title'] . ')</option>';
+                }
+                $html .= '</select></div></div>';
+                $html .= '<div class="col-md-2"><button type="button" class="btn btn-info update_vbt_convert">'._l('update').'</button></div>';
+                $html .= '</div><br/><hr>';
+
                 $html .= '<div class="row">
                         <div class="col-md-2 bulk-title">'._l('invoice_code').'</div>
                         <div class="col-md-2 bulk-title">'._l('description_of_services').'</div>
-                        <div class="col-md-2 bulk-title">'._l('expense_category').'</div>
-                        <div class="col-md-2 bulk-title">'._l('pur_date').'</div>
+                        <div class="col-md-2 bulk-title">'._l('group_pur').'</div>
+                        <div class="col-md-2 bulk-title">'._l('invoice_date').'</div>
                         <div class="col-md-2 bulk-title">'._l('expense_add_edit_amount').'</div>
                         <div class="col-md-2 bulk-title">'._l('invoice').'</div>
                     </div><br/>';
@@ -17391,9 +17425,7 @@ class Purchase_model extends App_Model
                 foreach ($pur_invoices as $pkey => $pvalue) {
                     $project = $this->projects_model->get($pvalue['project_id']);
                     $customer = $project->clientid;
-                    $expense_categories = $this->expenses_model->get_category();
                     $budget_head = $this->find_budget_head_value($pvalue['group_pur']);
-                    $invoices = get_all_applied_invoices();
 
                     $vendor_name_attr = "newitems[$pkey][vendor]";
                     $note_name_attr = "newitems[$pkey][note]";
@@ -17426,11 +17458,11 @@ class Purchase_model extends App_Model
 
                     $html .= '<div class="col-md-2 bulk-title">'.$pvalue['invoice_number'].'</div>';
 
-                    $html .= '<div class="col-md-2">'.render_input($expense_name_attr, '', $pvalue['description_services']).'</div>';
+                    $html .= '<div class="col-md-2 all_expense_name">' . render_textarea($expense_name_attr, '', $pvalue['description_services'], ['rows' => 3]) . '</div>';
 
-                    $html .= '<div class="col-md-2">'.render_select($category_name_attr, $expense_categories, array('id', 'name'), '', $budget_head).'</div>';
+                    $html .= '<div class="col-md-2 all_budget_head">'.render_select($category_name_attr, $expense_categories, array('id', 'name'), '', $budget_head).'</div>';
 
-                    $html .= '<div class="col-md-2">'.render_date_input($date_name_attr, '', _d(date('Y-m-d'))).'</div>';
+                    $html .= '<div class="col-md-2 all_invoice_date">'.render_date_input($date_name_attr, '', _d($pvalue['invoice_date'])).'</div>';
 
                     $html .= '<div class="col-md-2">'.render_input($amount_name_attr, '', $pvalue['final_certified_amount'], 'number', ['readonly' => true]).'</div>';
 

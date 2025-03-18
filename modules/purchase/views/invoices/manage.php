@@ -176,7 +176,7 @@
                   </div>
 
                   <div class="row">
-                     <a onclick="bulk_convert_ril_bill(); return false;" data-toggle="modal" data-table=".table-table_pur_invoices" class=" hide bulk-actions-btn table-btn">Bulk Actions</a>
+                     <a onclick="bulk_convert_ril_bill(); return false;" data-toggle="modal" data-table=".table-table_pur_invoices" class=" hide bulk-actions-btn table-btn">Bulk Convert</a>
                   </div>
 
                   <?php
@@ -421,7 +421,7 @@
          <?php echo form_open(admin_url('purchase/add_bulk_convert_ril_bill'), array('id' => 'convert_ril_bill_form', 'class' => '')); ?>
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Bulk Actions</h4>
+            <h4 class="modal-title">Bulk Convert</h4>
          </div>
          <div class="modal-body convert-bulk-actions-body">
          </div>
