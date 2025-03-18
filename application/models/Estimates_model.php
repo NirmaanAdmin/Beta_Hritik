@@ -519,6 +519,19 @@ class Estimates_model extends App_Model
             unset($data['remarks']);
         }
 
+        unset($data['master_area']);
+        unset($data['functionality_area']);
+        unset($data['area_description']);
+        unset($data['carpet_area']);
+        unset($data['surface_area']);
+        unset($data['carpet_area_unit']);
+        unset($data['surface_area_unit']);
+        $newareaworkingitems = [];
+        if (isset($data['newareaworkingitems'])) {
+            $newareaworkingitems = $data['newareaworkingitems'];
+            unset($data['newareaworkingitems']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -546,6 +559,12 @@ class Estimates_model extends App_Model
             foreach ($items as $key => $item) {
                 if ($itemid = add_new_sales_item_post($item, $insert_id, 'estimate')) {
                     _maybe_insert_post_item_tax($itemid, $item, $insert_id, 'estimate');
+                }
+            }
+
+            if(!empty($newareaworkingitems)) {
+                foreach ($newareaworkingitems as $akey => $aitem) {
+                    $this->add_new_area_working_item_post($aitem, $insert_id);
                 }
             }
 
@@ -656,6 +675,13 @@ class Estimates_model extends App_Model
             }
         }
 
+        if(!empty($data['removed_area_working_items'])) {
+            foreach ($data['removed_area_working_items'] as $remove_item_id) {
+                $this->delete_area_working_item($remove_item_id);
+            }
+        }
+        unset($data['removed_area_working_items']);
+
         unset($data['removed_items']);
 
         if (isset($data['remarks'])) {
@@ -667,7 +693,18 @@ class Estimates_model extends App_Model
         unset($data['area_description']);
         unset($data['carpet_area']);
         unset($data['surface_area']);
-        unset($data['newareaworkingitems']);
+        unset($data['carpet_area_unit']);
+        unset($data['surface_area_unit']);
+        $newareaworkingitems = [];
+        if (isset($data['newareaworkingitems'])) {
+            $newareaworkingitems = $data['newareaworkingitems'];
+            unset($data['newareaworkingitems']);
+        }
+        $areaworkingitems = [];
+        if (isset($data['areaworkingitems'])) {
+            $areaworkingitems = $data['areaworkingitems'];
+            unset($data['areaworkingitems']);
+        }
 
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', $data);
@@ -778,6 +815,20 @@ class Estimates_model extends App_Model
                     $item['description'],
                 ]));
                 $affectedRows++;
+            }
+        }
+
+        if(!empty($newareaworkingitems)) {
+            foreach ($newareaworkingitems as $akey => $aitem) {
+                $this->add_new_area_working_item_post($aitem, $id);
+            }
+        }
+
+        if(!empty($areaworkingitems)) {
+            foreach ($areaworkingitems as $akey => $aitem) {
+                $id = $aitem['itemid'];
+                unset($aitem['itemid']);
+                $this->update_area_working_item_post($aitem, $id);
             }
         }
 
@@ -1474,6 +1525,33 @@ class Estimates_model extends App_Model
         $update_estimate['total'] = $annexure_estimate['final_estimate']['amount'];
         $this->db->where('id', $estimate_id);
         $this->db->update(db_prefix() . 'estimates', $update_estimate);
+        return true;
+    }
+
+    public function add_new_area_working_item_post($data, $id)
+    {
+        $data['estimate_id'] = $id;
+        $this->db->insert(db_prefix() . 'costarea_working', $data);
+        return true;
+    }
+
+    public function get_estimate_master_area($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'costarea_working')->result_array();
+    }
+
+    public function update_area_working_item_post($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'costarea_working', $data);
+        return true;
+    }
+
+    public function delete_area_working_item($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'costarea_working');
         return true;
     }
 }

@@ -322,6 +322,31 @@ class Costplanning_model extends App_Model
         $select .= '</select>';
         return $select;
     }
+
+    public function get_units($id = '')
+    {
+        if ($id != '') {
+            $this->db->where('unit_type_id', $id);
+            return $this->db->get(db_prefix() . 'ware_unit_type')->row();
+        } else {
+            return $this->db->get(db_prefix() . 'ware_unit_type')->result_array();
+        }
+    }
+
+    public function get_area_unit_dropdown($name, $value)
+    {
+        $select = '';
+        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="'.$name.'" data-none-selected-text="' . _l('unit') . '">';
+        $select .= '<option value=""></option>';
+        $units = $this->get_units();
+        foreach ($units as $unit) {
+            $selected = ($unit['unit_type_id'] == $value) ? ' selected' : '';
+            $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
+
+        }
+        $select .= '</select>';
+        return $select;
+    }
 }
 
 ?>

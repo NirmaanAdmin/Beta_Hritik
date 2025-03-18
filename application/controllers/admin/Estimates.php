@@ -130,6 +130,7 @@ class Estimates extends AdminController
             $data['estimate'] = $estimate;
             $data['edit']     = true;
             $data['annexure_estimate'] = $this->estimates_model->get_annexure_estimate_details($id);
+            $data['estimate_master_area'] = $this->estimates_model->get_estimate_master_area($id);
             $title            = _l('edit', _l('estimate_lowercase'));
         }
 
@@ -166,6 +167,7 @@ class Estimates extends AdminController
         $data['get_hsn_sac_code']  = $this->invoices_model->get_hsn_sac_code();
         $data['master_area'] = $this->costplanning_model->get_master_area();
         $data['functionality_area'] = $this->costplanning_model->get_functionality_area();
+        $data['units'] = $this->costplanning_model->get_units();
         $data['title']             = $title;
         $this->load->view('admin/estimates/estimate', $data);
     }

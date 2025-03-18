@@ -225,6 +225,13 @@ class Costplanning extends AdminController
         $value = $this->input->post('value');
         echo $this->costplanning_model->get_functionality_area_dropdown($name, $value);
     }
+
+    public function get_area_unit_dropdown()
+    {
+        $name    = $this->input->post('name');
+        $value = $this->input->post('value');
+        echo $this->costplanning_model->get_area_unit_dropdown($name, $value);
+    }
 }
 
 ?>
