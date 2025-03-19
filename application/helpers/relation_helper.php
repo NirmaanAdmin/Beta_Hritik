@@ -142,13 +142,13 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $data = $CI->tasks_model->get($rel_id);
         }
     } elseif ($type == 'pur_order') {
-        // if ($rel_id != '') {
-        //     // $CI->load->model('purchase_model');
-        //     // $data = $CI->purchase_model->get_pur_order($rel_id);
-        // }else{
-        $search = $CI->misc_model->_search_purchase_orders($q);
-        $data   = $search['result'];
-        // }
+        if ($rel_id != '') {
+            $CI->load->model('purchase_model');
+            $data = $CI->purchase_model->get_pur_order($rel_id);
+        } else {
+            $search = $CI->misc_model->_search_purchase_orders($q);
+            $data   = $search['result'];
+        }
     } elseif ($type == 'pur_quotation') {
         if ($rel_id != '') {
         } else {
@@ -195,8 +195,10 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $data   = $search['result'];
         }
     }
-
-    $data = hooks()->apply_filters('get_relation_data', $data, compact('type', 'rel_id', 'extra'));
+    if(empty($data)){
+        $data = hooks()->apply_filters('get_relation_data', $data, compact('type', 'rel_id', 'extra'));
+    }
+    
 
     return $data;
 }
@@ -472,7 +474,7 @@ function get_relation_values($relation, $type)
                 $link      = admin_url('purchase/purchase_order/' . $id);
             } elseif ($relation->wo_id) {
                 $id        = $relation->wo_id;
-                $name      = $relation->wo_order_name. '(WO)';
+                $name      = $relation->wo_order_name . '(WO)';
                 $link      = admin_url('purchase/work_order/' . $id);
             }
         }

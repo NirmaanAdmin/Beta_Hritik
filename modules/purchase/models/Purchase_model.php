@@ -1739,7 +1739,19 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->get(db_prefix() . 'pur_orders')->row();
     }
+    public function get_pur_order_new($id)
+    {
+        $this->db->where('id', $id);
+        $row = $this->db->get(db_prefix() . 'pur_orders')->row();
 
+        if ($row) {
+            $data = (array) $row;
+            $data['po_id'] = $row->id;
+            return $data;
+        }
+
+        return [];
+    }
 
     /**
      * Adds an estimate.
@@ -16507,6 +16519,20 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->get(db_prefix() . 'wo_orders')->row();
     }
+    public function get_wo_order_new($id)
+    {
+
+        $this->db->where('id', $id);
+        $row = $this->db->get(db_prefix() . 'wo_orders')->row();
+
+        if ($row) {
+            $data = (array) $row;
+            $data['wo_id'] = $row->id;
+            return $data;
+        }
+
+        return [];
+    }
     public function get_html_tax_wo_order($id)
     {
         $html = '';
@@ -18000,14 +18026,16 @@ class Purchase_model extends App_Model
         $project = 0;
         $rel_name = 'payment_certificate';
         $module = $this->get_payment_certificate($data['rel_id']);
-        if(!empty($module->wo_id)) {
+        
+        if (!empty($module->wo_id)) {
             $pur_order = $this->get_wo_order($module->wo_id);
+            $po_wo_id = $module->wo_id;
         } else {
             $pur_order = $this->get_pur_order($module->po_id);
+            $po_wo_id = $module->po_id;
         }
         $project = $pur_order->project;
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
-
         foreach ($data_new as $key => $value) {
             $row = [];
             $row['action'] = 'approve';
@@ -18017,7 +18045,42 @@ class Purchase_model extends App_Model
             $row['rel_type'] = $data['rel_type'];
             $row['sender'] = $sender;
             $this->db->insert('tblpayment_certificate_details', $row);
+
+            $this->db->where('rel_type', $data['rel_type']);
+            $this->db->where('rel_id', $data['rel_id']);
+            $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
+
+            if (!$existing_task) {
+                if (($data['rel_type'] == 'payment_certificate')) {
+
+                    // Build the task name depending on the type
+                    if (!empty($module->wo_id)) {
+                        $taskName = 'Review Payment certificate for { ' . $pur_order->wo_order_name . ' }{ ' . $pur_order->wo_order_number . ' }';
+                    } else{
+                        $taskName = 'Review Payment certificate for { ' . $pur_order->pur_order_name . ' }{ ' . $pur_order->pur_order_number . ' }';
+                    }
+                    
+                    $taskData = [
+                        'name'      => $taskName,
+                        'is_public' => 1,
+                        'startdate' => _d(date('Y-m-d')),
+                        'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
+                        'priority'  => 3,
+                        'rel_type'  => $data['rel_type'],
+                        'rel_id'    => $pur_order->id,
+                        'category'  => $pur_order->group_pur,
+                        'price'     => $pur_order->total,
+                    ];
+                    $task_id =  $this->tasks_model->add($taskData);
+                    $assignss = [
+                        'staffid' => $value['id'],
+                        'taskid'  =>  $task_id
+                    ];
+                    $this->db->insert('tbltask_assigned', $assignss);
+                }
+            }
         }
+
         return true;
     }
 
