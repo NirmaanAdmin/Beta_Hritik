@@ -1208,25 +1208,41 @@ class drawing_management_model extends app_model
 		if (isset($data['staff']) && $data['staff'] != '') {
 			$data['staff'] = implode(',', $data['staff']);
 		}
-		if (isset($data['customer']) && $data['customer'] != '') {
-			$data['customer'] = implode(',', $data['customer']);
+		if (isset($data['vendor']) && $data['vendor'] != '') {
+			$data['vendor'] = implode(',', $data['vendor']);
 		}
 		if (isset($data['customer_group']) && $data['customer_group'] != '') {
 			$data['customer_group'] = implode(',', $data['customer_group']);
 		}
 		$this->db->insert(db_prefix() . 'dms_share_logs', $data);
-		if(!empty($data['staff'])) {
-			$staff_list = $data['staff'];
-			$staff_list = explode(',', $staff_list);
-			$this->db->where_in('staffid', $staff_list);
-			$staff_list = $this->db->get(db_prefix() . 'staff')->result_array();
-			foreach ($staff_list as $key => $value) {
-				$data_send_mail = new stdClass();
-				$data_send_mail->email = trim($value['email']);
-				$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
-				$data_send_mail->message = $data['message'];
-				$template = mail_template('share', 'drawing_management', $data_send_mail);
-				$template->send();
+
+		if($data['share_to'] == 'staff') {
+			if(!empty($data['staff'])) {
+				$staff_list = $data['staff'];
+				$staff_list = explode(',', $staff_list);
+				$this->db->where_in('staffid', $staff_list);
+				$staff_list = $this->db->get(db_prefix() . 'staff')->result_array();
+				foreach ($staff_list as $key => $value) {
+					$data_send_mail = new stdClass();
+					$data_send_mail->email = trim($value['email']);
+					$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
+					$data_send_mail->message = $data['message'];
+					$template = mail_template('share', 'drawing_management', $data_send_mail);
+					$template->send();
+				}
+			}
+		}
+		if($data['share_to'] == 'vendor') {
+			if(!empty($data['vendor_email'])) {
+				$vendor_email = explode(',', $data['vendor_email']);
+				foreach ($vendor_email as $email) {
+					$data_send_mail = new stdClass();
+					$data_send_mail->email = trim($email);
+					$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
+					$data_send_mail->message = $data['message'];
+					$template = mail_template('share', 'drawing_management', $data_send_mail);
+					$template->send();
+				}
 			}
 		}
 		return $this->db->insert_id();
@@ -1247,8 +1263,8 @@ class drawing_management_model extends app_model
 		if (isset($data['staff']) && $data['staff'] != '') {
 			$data['staff'] = implode(',', $data['staff']);
 		}
-		if (isset($data['customer']) && $data['customer'] != '') {
-			$data['customer'] = implode(',', $data['customer']);
+		if (isset($data['vendor']) && $data['vendor'] != '') {
+			$data['vendor'] = implode(',', $data['vendor']);
 		}
 		if (isset($data['customer_group']) && $data['customer_group'] != '') {
 			$data['customer_group'] = implode(',', $data['customer_group']);
@@ -1316,6 +1332,15 @@ class drawing_management_model extends app_model
 			$staff_arr = explode(',', $data['customer']);
 			foreach ($staff_arr as $key => $id) {
 				$result .= get_company_name($id) . ', ';
+			}
+			if ($result != '') {
+				$result = '<i class="fa fa-user-o"></i> ' . rtrim($result, ', ');
+			}
+		}
+		if ($data['share_to'] == 'vendor') {
+			$staff_arr = explode(',', $data['vendor']);
+			foreach ($staff_arr as $key => $id) {
+				$result .= get_vendor_company_name($id) . ', ';
 			}
 			if ($result != '') {
 				$result = '<i class="fa fa-user-o"></i> ' . rtrim($result, ', ');
@@ -2084,5 +2109,17 @@ class drawing_management_model extends app_model
 		}
 
 		return array_reverse($breadcrumb);  // Reverse to show root first
+	}
+
+	public function get_primary_vendors($data)
+	{
+		$response = '';
+		$this->db->select('email');
+		$this->db->where_in('userid', $data);
+		$pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
+		if(!empty($pur_contacts)) {
+			$response = implode(',', array_column($pur_contacts, 'email'));
+		}
+		return $response;
 	}
 }

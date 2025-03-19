@@ -81,19 +81,23 @@
 	$('input[name="share_to"]').on('click', function(){
 		var val = $(this).val();
 		$('select[name="staff[]"]').removeAttr('required');
-		$('select[name="customer[]"]').removeAttr('required');
+		$('select[name="vendor[]"]').removeAttr('required');
 		$('select[name="customer_group[]"]').removeAttr('required');
 		$('.staff_fr').addClass('hide');
-		$('.customer_fr').addClass('hide');
+		$('.vendor_fr').addClass('hide');
+		$('.staff_pr').addClass('hide');
+		$('.vendor_pr').addClass('hide');
 		$('.customer_group_fr').addClass('hide');
 		switch(val){
 			case 'staff':
 			$('.staff_fr').removeClass('hide');
+			$('.staff_pr').removeClass('hide');
 			$('select[name="staff[]"]').attr('required', 'required');
 			break;
-			case 'customer':
-			$('.customer_fr').removeClass('hide');
-			$('select[name="customer[]"]').attr('required', 'required');
+			case 'vendor':
+			$('.vendor_fr').removeClass('hide');
+			$('.vendor_pr').removeClass('hide');
+			$('select[name="vendor[]"]').attr('required', 'required');
 			break;
 			case 'customer_group':
 			$('.customer_group_fr').removeClass('hide');
@@ -101,10 +105,26 @@
 			break;
 		}
 		$('select[name="staff[]"]').val('').change();
-		$('select[name="customer[]"]').val('').change();
+		$('select[name="vendor[]"]').val('').change();
 		$('select[name="customer_group[]"]').val('').change();
 	});
 
+	$('select[name="vendor[]"]').on('change', function(){
+		var vendor = $(this).val();
+		if(!empty(vendor)) {
+			$.ajax({ 
+				url: admin_url + 'drawing_management/get_primary_vendors', 
+				method: 'post', 
+      			data: {vendor: vendor},
+      		}).done(function(response) {
+      			if(!empty(response)) {
+      				$('#vendor_email').val(response);
+      			} else {
+      				$('#vendor_email').val('');
+      			}
+      		});
+		}
+	});
 
 })(jQuery);
 
@@ -115,8 +135,9 @@ function validate_share_form(){
 		case 'staff':
 		data.staff = 'required';
 		break;
-		case 'customer':
-		data.customer = 'required';
+		case 'vendor':
+		data.vendor = 'required';
+		data.vendor_email = 'required';
 		break;
 		case 'customer_group':
 		data.customer_group = 'required';

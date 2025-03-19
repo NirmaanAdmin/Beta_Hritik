@@ -175,7 +175,7 @@
 		var item_id = btn_obj.data('item_id');
 		var type = btn_obj.data('type');
 		var share_to = btn_obj.data('share_to');
-		var customer = btn_obj.data('customer');
+		var vendor = btn_obj.data('vendor');
 		var staff = btn_obj.data('staff');
 		var customer_group = btn_obj.data('customer_group');
 		var expiration = btn_obj.data('expiration');
@@ -199,9 +199,9 @@
 			modal_obj.find('#staff').click();
 			modal_obj.find('select[name="staff[]"]').val(parse_string_to_array(staff)).change();
 		}
-		if(share_to == 'customer'){
-			modal_obj.find('#customer').click();
-			modal_obj.find('select[name="customer[]"]').val(parse_string_to_array(customer)).change();
+		if(share_to == 'vendor'){
+			modal_obj.find('#vendor').click();
+			modal_obj.find('select[name="vendor[]"]').val(parse_string_to_array(vendor)).change();
 		}
 		if(share_to == 'customer_group'){
 			modal_obj.find('#customer_group').click();

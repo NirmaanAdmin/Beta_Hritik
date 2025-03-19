@@ -26,6 +26,10 @@
 		color: #999;
 		pointer-events: none;
 	}
+	.vendor_email {
+		padding-left: 0px;
+		padding-right: 1px;
+	}
 </style>
 <div id="wrapper">
 	<div class="content">
@@ -660,10 +664,10 @@
 							<input type="radio" id="staff" name="share_to" value="staff" checked>
 							<label for="staff"><i class="fa fa-user-circle"></i> <?php echo _l('dmg_staff') ?></label>
 
-							<?php /*<input type="radio" id="customer" name="share_to" value="customer">
-							<label for="customer"><i class="fa fa-user-o"></i> <?php echo _l('dmg_customer') ?></label>
+							<input type="radio" id="vendor" name="share_to" value="vendor">
+							<label for="vendor"><i class="fa fa-user-o"></i> <?php echo _l('dmg_vendor') ?></label>
 
-							<input type="radio" id="customer_group" name="share_to" value="customer_group">
+							<?php /* <input type="radio" id="customer_group" name="share_to" value="customer_group">
 							<label for="customer_group"><i class="fa fa-users" aria-hidden="true"></i> <?php echo _l('dmg_customer_group') ?></label>
 							*/ ?>
 						</div>
@@ -672,19 +676,33 @@
 					<div class="col-md-12 staff_fr">
 						<?php echo render_select('staff[]', $staffs, array('staffid', array('firstname', 'lastname')), '<small class="req text-danger">* </small>' . _l('dmg_staff'), '', ['multiple' => 1, 'required' => true, 'data-actions-box' => true], [], '', '', false); ?>
 					</div>
-					<div class="col-md-12 customer_fr hide">
-						<?php echo render_select('customer[]', $customers, array('userid', 'company'), '<small class="req text-danger">* </small>' . _l('dmg_customer'), '', ['multiple' => 1, 'data-actions-box' => true], [], '', '', false); ?>
+					<div class="col-md-12 vendor_fr hide">
+						<?php echo render_select('vendor[]', $vendors, array('userid', 'company'), '<small class="req text-danger">* </small>' . _l('dmg_vendor'), '', ['multiple' => 1, 'data-actions-box' => true], [], '', '', false); ?>
+						<div class="vendor_basic_details">
+						</div>
+						<div class="col-md-12 vendor_email">
+							<?php
+							echo render_input('vendor_email', 'vendor_email', '');
+							?>
+						</div>
 					</div>
 					<div class="col-md-12 customer_group_fr hide">
 						<?php echo render_select('customer_group[]', $customer_groups, array('id', 'name'), '<small class="req text-danger">* </small>' . _l('dmg_customer_group'), '', ['multiple' => 1, 'data-actions-box' => true], [], '', '', false); ?>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-12 staff_pr">
 						<?php
 						$permission_list = [
 							['id' => 'preview', 'name' => _l('dmg_preview')],
 							['id' => 'viewer', 'name' => _l('dmg_viewer')],
 							['id' => 'editor', 'name' => _l('dmg_editor')],
 							['id' => 'upload_only', 'name' =>  _l('dmg_upload_only')]
+						];
+						echo render_select('permission', $permission_list, array('id', 'name'), '<small class="req text-danger">* </small>' . _l('dmg_permission'), 'preview', ['required' => true, 'data-actions-box' => true], [], '', '', false); ?>
+					</div>
+					<div class="col-md-12 vendor_pr hide">
+						<?php
+						$permission_list = [
+							['id' => 'preview', 'name' => _l('dmg_preview')]
 						];
 						echo render_select('permission', $permission_list, array('id', 'name'), '<small class="req text-danger">* </small>' . _l('dmg_permission'), 'preview', ['required' => true, 'data-actions-box' => true], [], '', '', false); ?>
 					</div>

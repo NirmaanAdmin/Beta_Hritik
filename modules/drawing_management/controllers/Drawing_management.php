@@ -88,6 +88,8 @@ class drawing_management extends AdminController
 		$this->load->model('client_groups_model');
 		$data['customer_groups'] = $this->client_groups_model->get_groups();
 		$data['discipline'] = $this->drawing_management_model->get_discipline();
+		$this->load->model('purchase/purchase_model');
+		$data['vendors'] = $this->purchase_model->get_vendor();
 
 		$this->load->view('file_managements/file_management.php', $data);
 	}
@@ -1290,4 +1292,14 @@ class drawing_management extends AdminController
     //     	}
     //     }
 	// }
+
+	public function get_primary_vendors()
+	{
+		$response = '';
+		if (!empty($this->input->post('vendor'))) {
+			$data = $this->input->post('vendor');
+			$response = $this->drawing_management_model->get_primary_vendors($data);
+		}
+		echo $response;
+	}
 }

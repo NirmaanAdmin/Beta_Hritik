@@ -195,3 +195,7 @@ $lang['under_review'] = 'Under review';
 $lang['released'] = 'Released';
 $lang['released_with_comments'] = 'Released with comments';
 $lang['rejected'] = 'Rejected';
+$lang['dmg_vendor'] = 'Vendor';
+$lang['vendor_first_name'] = 'First name';
+$lang['vendor_last_name'] = 'Last name';
+$lang['vendor_email'] = 'Email';

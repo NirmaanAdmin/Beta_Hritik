@@ -295,7 +295,7 @@
 									data-item_id="<?php echo drawing_htmldecode($value['item_id']); ?>" 
 									data-share_to="<?php echo drawing_htmldecode($value['share_to']); ?>" 
 									data-permission="<?php echo drawing_htmldecode($value['permission']); ?>" 
-									data-customer="<?php echo drawing_htmldecode($value['customer']); ?>" 
+									data-vendor="<?php echo drawing_htmldecode($value['vendor']); ?>" 
 									data-staff="<?php echo drawing_htmldecode($value['staff']); ?>" 
 									data-customer_group="<?php echo drawing_htmldecode($value['customer_group']); ?>" 
 									data-expiration="<?php echo drawing_htmldecode($value['expiration']); ?>" 
