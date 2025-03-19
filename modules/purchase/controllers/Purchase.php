@@ -90,10 +90,10 @@ class purchase extends AdminController
                 $data['rating_date'] = date('Y-m-d H:i:s');
                 $data['rated_by'] = get_staff_user_id();
                 unset($data['rating_id']);
-                if($data['quality_rating'] > 0 || $data['delivery_rating'] > 0 || $data['service_rating'] > 0 || $data['pricing_rating'] > 0 || $data['compliance_rating'] > 0 ){
+                if ($data['quality_rating'] > 0 || $data['delivery_rating'] > 0 || $data['service_rating'] > 0 || $data['pricing_rating'] > 0 || $data['compliance_rating'] > 0) {
                     $success1 = $this->purchase_model->save_rating($data);
-                }  
-                
+                }
+
 
                 $success = $this->purchase_model->update_vendor($this->input->post(), $id);
                 if ($success == true || $success1 == true) {
@@ -561,6 +561,7 @@ class purchase extends AdminController
             }
 
             $data['title'] = _l('add_new');
+            $is_edit = false;
         } else {
             if ($this->input->post()) {
                 $edit_data = $this->input->post();
@@ -576,6 +577,7 @@ class purchase extends AdminController
             $data['taxes_data'] = $this->purchase_model->get_html_tax_pur_request($id);
             $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_request', $id);
             $data['title'] = _l('edit');
+            $is_edit = true;
         }
         $data['commodity_groups_pur_request'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur_request'] = $this->purchase_model->get_sub_group();
@@ -614,7 +616,7 @@ class purchase extends AdminController
         }
 
         $data['currencies'] = $this->currencies_model->get();
-
+        $data['is_edit'] = $is_edit;
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['purchase_request_row_template'] = $purchase_request_row_template;
         $data['invoices'] = $this->purchase_model->get_invoice_for_pr();
@@ -9999,7 +10001,7 @@ class purchase extends AdminController
 
                     // Setup our new file path
                     $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
-
+                   
                     if (move_uploaded_file($tmpFilePath, $newFilePath)) {
 
                         $import_result = true;
@@ -10039,6 +10041,7 @@ class purchase extends AdminController
                         $list_item = $this->purchase_model->create_purchase_order_row_template('', '', '', '', '', '', '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '', [], true);
                         //get data for compare
                         $index_quote = 0;
+                        
                         for ($row = 1; $row < count($data); $row++) {
                             $rd = array();
                             $flag = 0;
@@ -10087,18 +10090,19 @@ class purchase extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
-                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '', [], true);
+                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '', [], true,'','');
 
                                 $index_quote++;
                                 $total_rows_data++;
                                 $message = 'Import Item successfully';
                             }
                         }
+                        // die('sadad');
                         $total_rows = $total_rows;
                         $data['total_rows_post'] = count($rows);
                         $total_row_success = count($rows);
-                        $total_row_false = $total_rows - (int) count($rows);
-                        if (($total_rows_data_error > 0) || ($total_row_false != 0)) {
+                        // $total_row_false = '';
+                        if (($total_rows_data_error > 0)) {
 
                             $filename = 'FILE_ERROR_IMPORT_ITEMS_PURCHASE_ORDER' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
                             $writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename, $filename));
@@ -10106,6 +10110,7 @@ class purchase extends AdminController
                             $filename = PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename;
                         }
                         $list_item = $list_item;
+                        
                         @delete_dir($tmpDir);
                     }
                 } else {
@@ -10113,6 +10118,179 @@ class purchase extends AdminController
                 }
             }
         }
+        
+        echo json_encode([
+            'message' => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false' => $total_rows_data_error,
+            'total_rows' => $total_rows_data,
+            'site_url' => site_url(),
+            'staff_id' => get_staff_user_id(),
+            'total_rows_data_error' => $total_rows_data_error,
+            'filename' => $filename,
+            'list_item' => $list_item
+        ]);
+    }
+    public function import_file_xlsx_pur_request_items()
+    {
+        if (!is_admin() && !has_permission('purchase', '', 'create')) {
+            access_denied(_l('purchase'));
+        }
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if ($this->input->post()) {
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                //do_action('before_import_leads');
+
+                // Get the temp file path
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                // Make sure we have a filepath
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+
+                    // Setup our new file path
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+
+                        $import_result = true;
+                        $rows = [];
+
+                        //Writer file
+                        $writer_header = array(
+                            "(*)" . _l('item_description') => 'string',
+                            _l('quantity') => 'string',
+                            _l('unit_price')    => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+
+                        $col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+                        $style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
+
+                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
+
+                        //init file error end
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+
+                        // start row write 2
+                        $numRow = 2;
+                        $total_rows = 0;
+
+                        $total_rows_actualy = 0;
+                        $list_item = $this->purchase_model->create_purchase_request_row_template();
+                        //get data for compare
+                        $index_quote = 0;
+                        
+                        for ($row = 1; $row < count($data); $row++) {
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+                            $flag_mail = 0;
+                            $string_error = '';
+                            $flag_contract_form = 0;
+
+                            $flag_id_commodity_code;
+                            $flag_id_item_description;
+
+                            // $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_item_description = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_quantity = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_cell_unit_price = isset($data[$row][2]) ? $data[$row][2] : '';
+
+                            /*check null*/
+                            if (is_null($value_cell_item_description) == true) {
+                                $string_error .= _l('item_description') . _l('not_yet_entered');
+                                $flag = 1;
+                            }
+
+                            if (!is_numeric(trim($value_cell_quantity, " "))) {
+
+                                $string_error .= _l('quantity') . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+                            if (!is_numeric(trim($value_cell_unit_price, " "))) {
+
+                                $string_error .= _l('unit_price') . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+                            if (($flag == 1) || ($flag2 == 1)) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_cell_item_description,
+                                    $value_cell_quantity,
+                                    $value_cell_unit_price,
+                                    $string_error,
+                                ]);
+
+                                $numRow++;
+                                $total_rows_data_error++;
+                                $message = 'Import Error In Some Item';
+                            }
+                           
+                            
+                            if (($flag == 0) && ($flag2 == 0)) {
+
+                                $rows[] = $row;
+                                $list_item .= $this->purchase_model->create_purchase_request_row_template('newitems[' . $index_quote . ']', '', '', $value_cell_item_description, '', '', $value_cell_unit_price, $value_cell_quantity, '', '', '', $index_quote, '', '', '', '', '', true, 1, '', []);
+                                
+
+                                $index_quote++;
+                                $total_rows_data++;
+                                $message = 'Import Item successfully';
+                            }
+                        }
+                       
+                        $total_rows = $total_rows;
+                        $data['total_rows_post'] = count($rows);
+                        $total_row_success = count($rows);
+                        // $total_row_false = $total_rows - (int) count($rows);
+
+                        if (($total_rows_data_error > 0)) {
+                            
+                            $filename = 'FILE_ERROR_IMPORT_ITEMS_PURCHASE_REQUEST' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename, $filename));
+
+                            $filename = PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename;
+                        }
+                       
+                        @delete_dir($tmpDir);
+                    }
+                } else {
+                    set_alert('warning', 'Import Item failed');
+                }
+            }
+        }
+        
         echo json_encode([
             'message' => $message,
             'total_row_success' => $total_row_success,
@@ -11896,7 +12074,7 @@ class purchase extends AdminController
         $response = array();
         $data = $this->input->post();
         $bulk_html = $this->purchase_model->bulk_convert_ril_bill($data);
-        if(!empty($bulk_html)) {
+        if (!empty($bulk_html)) {
             $response['success'] = true;
             $response['bulk_html'] = $bulk_html;
         } else {
@@ -11909,7 +12087,7 @@ class purchase extends AdminController
     public function add_bulk_convert_ril_bill()
     {
         $input = $this->input->post();
-        if(!empty($input)) {
+        if (!empty($input)) {
             unset($data['convert_expense_name']);
             unset($data['convert_category']);
             unset($data['convert_date']);
@@ -11969,7 +12147,8 @@ class purchase extends AdminController
         }
     }
 
-    public function get_vendor_detail($vendor_id) {
+    public function get_vendor_detail($vendor_id)
+    {
         $vendor_detail = $this->purchase_model->get_vendor_detail($vendor_id);
         echo json_encode($vendor_detail);
     }
@@ -12050,21 +12229,21 @@ class purchase extends AdminController
         if ($this->input->get('print')) {
             $type = 'I';
         }
-        $pdf_name = _l('payment_certificate').'.pdf';
+        $pdf_name = _l('payment_certificate') . '.pdf';
         $pdf->Output($pdf_name, $type);
     }
 
-    public function convert_pur_invoice_from_po($id) 
+    public function convert_pur_invoice_from_po($id)
     {
         if (!$id) {
             redirect(admin_url('purchase/purchase_order'));
         }
         $payment_certificate = $this->purchase_model->get_payment_certificate($id);
-        if(empty($payment_certificate)) {
+        if (empty($payment_certificate)) {
             redirect(admin_url('purchase/purchase_order'));
         }
 
-        if(!empty($payment_certificate->wo_id)) {
+        if (!empty($payment_certificate->wo_id)) {
             $pur_order = $this->purchase_model->get_wo_order($payment_certificate->wo_id);
         } else {
             $pur_order = $this->purchase_model->get_pur_order($payment_certificate->po_id);
@@ -12076,11 +12255,11 @@ class purchase extends AdminController
         $invoice_number = $prefix . str_pad($next_number, 5, '0', STR_PAD_LEFT);
         $payment_certificate_calc = $this->purchase_model->get_payment_certificate_calc($id);
         $value_certified_amount = $payment_certificate_calc['sub_fg_3'] + $payment_certificate_calc['tot_app_tax_3'];
-        if(!empty($payment_certificate->pur_invoice_id)) {
+        if (!empty($payment_certificate->pur_invoice_id)) {
             $pur_invoice = $this->purchase_model->get_pur_invoice($payment_certificate->pur_invoice_id);
         }
-        
-        if(empty($pur_invoice)) {
+
+        if (empty($pur_invoice)) {
             $input['invoice_number'] = $invoice_number;
             $input['vendor_invoice_number'] = $invoice_number;
             $input['vendor'] = isset($pur_order->vendor) ? $pur_order->vendor : 0;
@@ -12105,7 +12284,7 @@ class purchase extends AdminController
             $this->db->where('id', $id);
             $this->db->update(db_prefix() . 'payment_certificate', ['pur_invoice_id' => $insert_id]);
             set_alert('success', _l('purchase_invoice') . ' ' . _l('added_successfully'));
-            redirect(admin_url('purchase/pur_invoice/'.$insert_id));
+            redirect(admin_url('purchase/pur_invoice/' . $insert_id));
         } else {
             $input['vendor_invoice_number'] = $invoice_number;
             $input['vendor'] = isset($pur_order->vendor) ? $pur_order->vendor : 0;
@@ -12120,7 +12299,7 @@ class purchase extends AdminController
             $this->db->update(db_prefix() . 'pur_invoices', $input);
             $this->purchase_model->update_vbt_expense_ril_data($pur_invoice->id);
             set_alert('success', _l('purchase_invoice') . ' ' . _l('updated_successfully'));
-            redirect(admin_url('purchase/pur_invoice/'.$pur_invoice->id));
+            redirect(admin_url('purchase/pur_invoice/' . $pur_invoice->id));
         }
     }
 
@@ -12155,7 +12334,7 @@ class purchase extends AdminController
         $success = false;
 
         $check_approve_status = $this->purchase_model->check_pay_cert_approval_details($data['rel_id'], $data['rel_type']);
-        if(isset($check_approve_status)) {
+        if (isset($check_approve_status)) {
             if (isset($data['approve']) && in_array(get_staff_user_id(), $check_approve_status['staffid'])) {
                 $success = $this->purchase_model->update_pay_cert_approval_details($check_approve_status['id'], $data);
                 $message = _l('approved_successfully');
@@ -12247,15 +12426,16 @@ class purchase extends AdminController
         echo json_encode($wo_contract_data);
     }
 
-    public function delete_order_tracker($id){
-        
+    public function delete_order_tracker($id)
+    {
+
         $response = $this->purchase_model->delete_order_tracker($id);
 
-		if ($response == true) {
-			set_alert('success', _l('deleted'));
-		} else {
-			set_alert('warning', _l('problem_deleting'));
-		}
-		redirect(admin_url('purchase/order_tracker'));
+        if ($response == true) {
+            set_alert('success', _l('deleted'));
+        } else {
+            set_alert('warning', _l('problem_deleting'));
+        }
+        redirect(admin_url('purchase/order_tracker'));
     }
 }

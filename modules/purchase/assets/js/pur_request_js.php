@@ -288,7 +288,7 @@ function pur_get_item_row_template(name, item_code, item_text, description, area
   });
   jQuery.ajaxSetup({
     async: true
-  });
+  }); 
   return d;
 }
 
@@ -297,10 +297,14 @@ function pur_add_item_to_table(data, itemid) {
 
   data = typeof (data) == 'undefined' || data == 'undefined' ? pur_get_item_preview_values() : data;
 
-  if (data.warehouse_id == "" || data.quantities == "" || data.commodity_code == "" ) {
-    if(data.warehouse_id == ""){
-      alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
-    }
+  // if (data.warehouse_id == "" || data.quantities == "" || data.commodity_code == "" ) {
+  //   if(data.warehouse_id == ""){
+  //     alert_float('warning', '<?php echo _l('please_select_a_warehouse') ?>');
+  //   }
+  //   return;
+  // }
+  if(data.item_name == "" || data.item_code == ""){
+    alert_float('warning', "Please select item");
     return;
   }
   var currency_rate = $('input[name="currency_rate"]').val();

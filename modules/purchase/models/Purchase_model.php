@@ -1149,6 +1149,7 @@ class Purchase_model extends App_Model
      */
     public function add_pur_request($data)
     {
+        
         $data['request_date'] = date('Y-m-d H:i:s');
         $check_appr = $this->check_approval_setting($data['project'], 'pur_request', 0);
         $data['status'] = ($check_appr == true) ? 2 : 1;
@@ -1167,7 +1168,7 @@ class Purchase_model extends App_Model
         }
 
         $data['to_currency'] = $data['currency'];
-
+        
         unset($data['item_text']);
         unset($data['description']);
         unset($data['area']);
@@ -1183,7 +1184,7 @@ class Purchase_model extends App_Model
         unset($data['unit_name']);
         unset($data['request_detail']);
         unset($data['unit_id']);
-
+        unset($data['leads_import']);
 
         if (isset($data['send_to_vendors']) && count($data['send_to_vendors']) > 0) {
             $data['send_to_vendors'] = implode(',', $data['send_to_vendors']);
@@ -1213,9 +1214,10 @@ class Purchase_model extends App_Model
         }
 
         $data['hash'] = app_generate_hash();
-
+        
         $this->db->insert(db_prefix() . 'pur_request', $data);
         $insert_id = $this->db->insert_id();
+        
         // $this->send_mail_to_approver($data, 'pur_request', 'purchase_request', $insert_id);
         // if ($data['status'] == 2) {
         //     $this->send_mail_to_sender('purchase_request', $data['status'], $insert_id);
@@ -1242,12 +1244,12 @@ class Purchase_model extends App_Model
             $next_number = $data['number'] + 1;
             $this->db->where('option_name', 'next_pr_number');
             $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
-
+            
             if (count($detail_data) > 0) {
                 foreach ($detail_data as $key => $rqd) {
                     $dt_data = [];
                     $dt_data['pur_request'] = $insert_id;
-                    $dt_data['item_code'] = $rqd['item_code'];
+                    $dt_data['item_code'] = $rqd['item_text'];
                     $dt_data['description'] = nl2br($rqd['item_description']);
                     $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
@@ -1255,7 +1257,7 @@ class Purchase_model extends App_Model
                     $dt_data['into_money'] = $rqd['into_money'];
                     $dt_data['total'] = $rqd['total'];
                     $dt_data['tax_value'] = $rqd['tax_value'];
-                    $dt_data['item_text'] = nl2br($rqd['item_text']);
+                    $dt_data['item_text'] = $rqd['item_text'];
 
                     $tax_money = 0;
                     $tax_rate_value = 0;
@@ -1277,19 +1279,19 @@ class Purchase_model extends App_Model
 
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
-                    if ($data['status'] == 2 && ($rqd['item_code'] == '' || $rqd['item_code'] == null)) {
-                        $item_data['description'] = $rqd['item_text'];
-                        $item_data['purchase_price'] = $rqd['unit_price'];
-                        $item_data['unit_id'] = $rqd['unit_id'];
-                        $item_data['rate'] = '';
-                        $item_data['sku_code'] = '';
-                        $item_data['commodity_barcode'] = $this->generate_commodity_barcode();
-                        $item_data['commodity_code'] = $this->generate_commodity_barcode();
-                        $item_id = $this->add_commodity_one_item($item_data);
-                        if ($item_id) {
-                            $dt_data['item_code'] = $item_id;
-                        }
-                    }
+                    // if ($data['status'] == 2 && ($rqd['item_code'] == '' || $rqd['item_code'] == null)) {
+                    //     $item_data['description'] = $rqd['item_text'];
+                    //     $item_data['purchase_price'] = $rqd['unit_price'];
+                    //     $item_data['unit_id'] = $rqd['unit_id'];
+                    //     $item_data['rate'] = '';
+                    //     $item_data['sku_code'] = '';
+                    //     $item_data['commodity_barcode'] = $this->generate_commodity_barcode();
+                    //     $item_data['commodity_code'] = $this->generate_commodity_barcode();
+                    //     $item_id = $this->add_commodity_one_item($item_data);
+                    //     if ($item_id) {
+                    //         $dt_data['item_code'] = $item_id;
+                    //     }
+                    // }
 
                     $this->db->insert(db_prefix() . 'pur_request_detail', $dt_data);
                     $last_insert_id = $this->db->insert_id();
@@ -5133,7 +5135,7 @@ class Purchase_model extends App_Model
         $html .=  '</tbody>
       </table><br><br>';
 
-        if($pur_order->discount_type == 'before_tax') {
+        if ($pur_order->discount_type == 'before_tax') {
             $tax_per = ($pur_order->discount_total / $pur_order->subtotal) * 100;
             $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
         }
@@ -5163,9 +5165,9 @@ class Purchase_model extends App_Model
                     ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                  </td>
               </tr>';
-              $total_after_discount = 0;
-              $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
-              $html .= '<tr id="subtotal">
+            $total_after_discount = 0;
+            $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
+            $html .= '<tr id="subtotal">
               <td width="33%"></td>
                  <td>' . _l('total_after_discount') . '</td>
                  <td class="subtotal">
@@ -10928,6 +10930,8 @@ class Purchase_model extends App_Model
      */
     public function create_purchase_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $area = '', $image = '', $unit_price = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $request_detail = array())
     {
+        
+        
         $this->load->model('invoice_items_model');
         $row = '';
 
@@ -11022,7 +11026,19 @@ class Purchase_model extends App_Model
             $item_base_url = base_url('uploads/purchase/pur_request/' . $request_detail['pur_request'] . '/' . $request_detail['prd_id'] . '/' . $request_detail['image']);
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $image . '" >';
         }
-        $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
+        // $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
+        $get_selected_item = pur_get_item_selcted_select($item_code, $name_item_text);
+        
+        if ($item_code == '') {
+            $row .= '<td class="">
+            <select id="' . $name_item_text . '" name="' . $name_item_text . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
+                <option value="">Type at least 3 letters...</option>
+            </select>
+         </td>';
+        } else {
+            $row .= '<td class="">' . $get_selected_item . '</td>';
+        }
+        
         $style_description = '';
         if ($is_edit) {
             $style_description = 'width: 290px; height: 200px';
@@ -11054,17 +11070,19 @@ class Purchase_model extends App_Model
         $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
         $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
-        $row .= '<td class="hide item_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
+        $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
         $row .= '<td class="_total">' . render_input($name_total, '', $total, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
-
+        
         if ($name == '') {
             $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
         } else {
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }
         $row .= '</tr>';
+       
         return $row;
+        
     }
 
     /**
@@ -15758,7 +15776,7 @@ class Purchase_model extends App_Model
         $html .=  '</tbody>
       </table><br><br>';
 
-        if($pur_order->discount_type == 'before_tax') {
+        if ($pur_order->discount_type == 'before_tax') {
             $tax_per = ($pur_order->discount_total / $pur_order->subtotal) * 100;
             $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
         }
@@ -15788,9 +15806,9 @@ class Purchase_model extends App_Model
                     ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                  </td>
               </tr>';
-              $total_after_discount = 0;
-              $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
-              $html .= '<tr id="subtotal">
+            $total_after_discount = 0;
+            $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
+            $html .= '<tr id="subtotal">
               <td width="33%"></td>
                  <td>' . _l('total_after_discount') . '</td>
                  <td class="subtotal">
@@ -15817,7 +15835,7 @@ class Purchase_model extends App_Model
 
         $html .= ' </tbody></table>';
 
-        if($pur_order->vendornote || $pur_order->terms) {
+        if ($pur_order->vendornote || $pur_order->terms) {
             $html .= '<div>&nbsp;</div>';
             $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
             $html .= '<div class="col-md-12 mtop15">
@@ -17317,7 +17335,7 @@ class Purchase_model extends App_Model
                 $expenses_input['expense_name'] = $pur_invoices->description_services;
                 $expenses_input['vendor'] = $pur_invoices->vendor;
                 $expenses_input['amount'] = $pur_invoices->final_certified_amount;
-                if(isset($expense_category)) {
+                if (isset($expense_category)) {
                     $expenses_input['category'] = $expense_category;
                 }
                 $this->db->where('id', $expenses->id);
@@ -17387,65 +17405,65 @@ class Purchase_model extends App_Model
         $this->load->model('projects_model');
         $this->load->model('expenses_model');
 
-        if(!empty($data)) {
+        if (!empty($data)) {
             $pur_ids = explode(",", $data['ids']);
             $pur_invoices = $this->get_multiple_pur_invoices($pur_ids);
-            if(!empty($pur_invoices)) {
+            if (!empty($pur_invoices)) {
                 foreach ($pur_invoices as $pkey => $pvalue) {
-                    if($pvalue['expense_convert'] == 0) {
-                        $final_ids .= $pvalue['id'].",";
+                    if ($pvalue['expense_convert'] == 0) {
+                        $final_ids .= $pvalue['id'] . ",";
                     } else {
                         $expense_convert_check = get_expense_data($pvalue['expense_convert']);
                         if (empty($expense_convert_check)) {
-                            $final_ids .= $pvalue['id'].",";
+                            $final_ids .= $pvalue['id'] . ",";
                         }
                     }
                 }
             }
             $final_ids = !empty($final_ids) ? explode(",", rtrim($final_ids, ",")) : '';
-            if(!empty($final_ids)) {
+            if (!empty($final_ids)) {
                 $pur_invoices = $this->get_multiple_pur_invoices($final_ids);
                 $expense_categories = $this->expenses_model->get_category();
                 $invoices = get_all_applied_invoices();
 
                 $html .= '<div class="row">
                         <div class="col-md-2 bulk-title"></div>
-                        <div class="col-md-2 bulk-title">'._l('description_of_services').'</div>
-                        <div class="col-md-2 bulk-title">'._l('group_pur').'</div>
-                        <div class="col-md-2 bulk-title">'._l('invoice_date').'</div>
-                        <div class="col-md-2 bulk-title">'._l('invoice').'</div>
+                        <div class="col-md-2 bulk-title">' . _l('description_of_services') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('group_pur') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('invoice_date') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('invoice') . '</div>
                         <div class="col-md-2"></div>
                     </div><br/>';
 
                 $html .= '<div class="row">';
                 $html .= '<div class="col-md-2"></div>';
                 $html .= '<div class="col-md-2">' . render_textarea('convert_expense_name', '', '', ['rows' => 3]) . '</div>';
-                $html .= '<div class="col-md-2">'.render_select('convert_category', $expense_categories, array('id', 'name')).'</div>';
-                $html .= '<div class="col-md-2">'.render_date_input('convert_date').'</div>';
+                $html .= '<div class="col-md-2">' . render_select('convert_category', $expense_categories, array('id', 'name')) . '</div>';
+                $html .= '<div class="col-md-2">' . render_date_input('convert_date') . '</div>';
                 $html .= '<div class="col-md-2">
-                    <select class="selectpicker display-block" data-width="100%" name="convert_select_invoice" id="convert_select_invoice" data-none-selected-text="'._l('none').'">
-                        <option value="create_invoice">'._l('expense_convert_to_invoice').'</option>
-                        <option value="applied_invoice">'._l('applied_to_invoice').'</option>
+                    <select class="selectpicker display-block" data-width="100%" name="convert_select_invoice" id="convert_select_invoice" data-none-selected-text="' . _l('none') . '">
+                        <option value="create_invoice">' . _l('expense_convert_to_invoice') . '</option>
+                        <option value="applied_invoice">' . _l('applied_to_invoice') . '</option>
                     </select>';
 
                 $html .= '<br/>
                 <div class="convert-applied-to-invoice hide">
-                <select class="selectpicker display-block" data-width="100%" name="convert_applied_to_invoice" id="convert_applied_to_invoice" data-none-selected-text="'._l('applied_to_invoice').'">
+                <select class="selectpicker display-block" data-width="100%" name="convert_applied_to_invoice" id="convert_applied_to_invoice" data-none-selected-text="' . _l('applied_to_invoice') . '">
                 <option value=""></option>';
                 foreach ($invoices as $i) {
-                    $html .= '<option value="'.$i['id'].'">' . format_invoice_number($i['id']) . " (" . $i['title'] . ')</option>';
+                    $html .= '<option value="' . $i['id'] . '">' . format_invoice_number($i['id']) . " (" . $i['title'] . ')</option>';
                 }
                 $html .= '</select></div></div>';
-                $html .= '<div class="col-md-2"><button type="button" class="btn btn-info update_vbt_convert">'._l('update').'</button></div>';
+                $html .= '<div class="col-md-2"><button type="button" class="btn btn-info update_vbt_convert">' . _l('update') . '</button></div>';
                 $html .= '</div><br/><hr>';
 
                 $html .= '<div class="row">
-                        <div class="col-md-2 bulk-title">'._l('invoice_code').'</div>
-                        <div class="col-md-2 bulk-title">'._l('description_of_services').'</div>
-                        <div class="col-md-2 bulk-title">'._l('group_pur').'</div>
-                        <div class="col-md-2 bulk-title">'._l('invoice_date').'</div>
-                        <div class="col-md-2 bulk-title">'._l('expense_add_edit_amount').'</div>
-                        <div class="col-md-2 bulk-title">'._l('invoice').'</div>
+                        <div class="col-md-2 bulk-title">' . _l('invoice_code') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('description_of_services') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('group_pur') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('invoice_date') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('expense_add_edit_amount') . '</div>
+                        <div class="col-md-2 bulk-title">' . _l('invoice') . '</div>
                     </div><br/>';
 
                 foreach ($pur_invoices as $pkey => $pvalue) {
@@ -17482,35 +17500,34 @@ class Purchase_model extends App_Model
                     $html .= form_hidden($paymentmode_name_attr, '');
                     $html .= form_hidden($pur_invoice_name_attr, $pvalue['id']);
 
-                    $html .= '<div class="col-md-2 bulk-title">'.$pvalue['invoice_number'].'</div>';
+                    $html .= '<div class="col-md-2 bulk-title">' . $pvalue['invoice_number'] . '</div>';
 
                     $html .= '<div class="col-md-2 all_expense_name">' . render_textarea($expense_name_attr, '', $pvalue['description_services'], ['rows' => 3]) . '</div>';
 
-                    $html .= '<div class="col-md-2 all_budget_head">'.render_select($category_name_attr, $expense_categories, array('id', 'name'), '', $budget_head).'</div>';
+                    $html .= '<div class="col-md-2 all_budget_head">' . render_select($category_name_attr, $expense_categories, array('id', 'name'), '', $budget_head) . '</div>';
 
-                    $html .= '<div class="col-md-2 all_invoice_date">'.render_date_input($date_name_attr, '', _d($pvalue['invoice_date'])).'</div>';
+                    $html .= '<div class="col-md-2 all_invoice_date">' . render_date_input($date_name_attr, '', _d($pvalue['invoice_date'])) . '</div>';
 
-                    $html .= '<div class="col-md-2">'.render_input($amount_name_attr, '', $pvalue['final_certified_amount'], 'number', ['readonly' => true]).'</div>';
+                    $html .= '<div class="col-md-2">' . render_input($amount_name_attr, '', $pvalue['final_certified_amount'], 'number', ['readonly' => true]) . '</div>';
 
                     $html .= '<div class="col-md-2">
-                        <select class="selectpicker display-block" data-width="100%" name="'.$select_invoice_name_attr.'" id="bulk_select_invoice" data-id="'.$pvalue['id'].'" data-none-selected-text="'._l('none').'">
-                            <option value="create_invoice">'._l('expense_convert_to_invoice').'</option>
-                            <option value="applied_invoice">'._l('applied_to_invoice').'</option>
+                        <select class="selectpicker display-block" data-width="100%" name="' . $select_invoice_name_attr . '" id="bulk_select_invoice" data-id="' . $pvalue['id'] . '" data-none-selected-text="' . _l('none') . '">
+                            <option value="create_invoice">' . _l('expense_convert_to_invoice') . '</option>
+                            <option value="applied_invoice">' . _l('applied_to_invoice') . '</option>
                         </select>
                     </div>';
 
                     $html .= '<div class="col-md-2 bulk-applied-to-invoice hide">
                     <br/>
-                    <select class="selectpicker display-block" data-width="100%" name="'.$applied_to_invoice_name_attr.'" id="bulk_applied_to_invoice" data-id="'.$pvalue['id'].'" data-none-selected-text="'._l('applied_to_invoice').'">
+                    <select class="selectpicker display-block" data-width="100%" name="' . $applied_to_invoice_name_attr . '" id="bulk_applied_to_invoice" data-id="' . $pvalue['id'] . '" data-none-selected-text="' . _l('applied_to_invoice') . '">
                     <option value=""></option>';
                     foreach ($invoices as $i) {
-                        $html .= '<option value="'.$i['id'].'">' . format_invoice_number($i['id']) . " (" . $i['title'] . ')</option>';
+                        $html .= '<option value="' . $i['id'] . '">' . format_invoice_number($i['id']) . " (" . $i['title'] . ')</option>';
                     }
                     $html .= '</select></div>';
 
 
                     $html .= '</div><br/>';
-
                 }
             }
         }
@@ -17554,7 +17571,7 @@ class Purchase_model extends App_Model
         $this->db->select('subtotal');
         $this->db->where('id', $po_id);
         $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->row();
-        if(!empty($pur_orders)) {
+        if (!empty($pur_orders)) {
             $result['po_contract_amount'] = $pur_orders->subtotal;
         }
 
@@ -17565,13 +17582,13 @@ class Purchase_model extends App_Model
     {
         unset($data['payment_certificate_id']);
         $data['bill_received_on'] = to_sql_date($data['bill_received_on']);
-        if(!empty($data['bill_period_upto'])) {
+        if (!empty($data['bill_period_upto'])) {
             $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
         }
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
         $insert_id = $this->db->insert_id();
 
-        if(isset($data['wo_id'])) {
+        if (isset($data['wo_id'])) {
             $pur_order = $this->get_wo_order($data['wo_id']);
         } else {
             $pur_order = $this->get_pur_order($data['po_id']);
@@ -17597,7 +17614,7 @@ class Purchase_model extends App_Model
         unset($data['isedit']);
         unset($data['payment_certificate_id']);
         $data['bill_received_on'] = to_sql_date($data['bill_received_on']);
-        if(!empty($data['bill_period_upto'])) {
+        if (!empty($data['bill_period_upto'])) {
             $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
         }
         $this->db->where('id', $id);
@@ -17631,7 +17648,7 @@ class Purchase_model extends App_Model
         $pay_cert_data = $this->db->get(db_prefix() . 'payment_certificate')->result_array();
         $result = !empty($pay_cert_data) ? $pay_cert_data[0] : array();
 
-        if(!empty($result['wo_id'])) {
+        if (!empty($result['wo_id'])) {
             $po_contract_data = $this->get_wo_contract_data($result['wo_id']);
             $po_contract_data['po_contract_amount'] = $po_contract_data['wo_contract_amount'];
         } else {
@@ -17700,7 +17717,7 @@ class Purchase_model extends App_Model
     {
         $html = '';
         $payment_certificate = $this->get_payment_certificate($id);
-        if(!empty($payment_certificate->wo_id)) {
+        if (!empty($payment_certificate->wo_id)) {
             $pur_order = $this->get_wo_order($payment_certificate->wo_id);
             $pur_order->pur_order_number = $pur_order->wo_order_number;
             $pur_order->pur_order_name = $pur_order->wo_order_name;
@@ -17741,38 +17758,38 @@ class Purchase_model extends App_Model
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
                 <tr>
-                  <td class="cert_title">'._l('payment_certificate_no').'</td>
-                  <td>'.$pay_cert_data->serial_no.'</td>
-                  <td class="cert_title">'._l('type').'</td>
-                  <td>'.ucfirst($pay_cert_data->pay_cert_options).'</td>
+                  <td class="cert_title">' . _l('payment_certificate_no') . '</td>
+                  <td>' . $pay_cert_data->serial_no . '</td>
+                  <td class="cert_title">' . _l('type') . '</td>
+                  <td>' . ucfirst($pay_cert_data->pay_cert_options) . '</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'._l('vendor').'</td>
-                  <td>'.get_vendor_company_name($pur_order->vendor).'</td>
-                  <td class="cert_title">'.$po_no_title.'</td>
-                  <td>'.$pur_order->pur_order_number.'</td>
+                  <td class="cert_title">' . _l('vendor') . '</td>
+                  <td>' . get_vendor_company_name($pur_order->vendor) . '</td>
+                  <td class="cert_title">' . $po_no_title . '</td>
+                  <td>' . $pur_order->pur_order_number . '</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'.$wo_date_title.'</td>
-                  <td>'._d($pur_order->order_date).'</td>
-                  <td class="cert_title">'.$wo_description_title.'</td>
-                  <td>'.$pur_order->pur_order_name.'</td>
+                  <td class="cert_title">' . $wo_date_title . '</td>
+                  <td>' . _d($pur_order->order_date) . '</td>
+                  <td class="cert_title">' . $wo_description_title . '</td>
+                  <td>' . $pur_order->pur_order_name . '</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'._l('project').'</td>
-                  <td>'.get_project_name_by_id($pur_order->project).'</td>
-                  <td class="cert_title">'._l('Location').'</td>
-                  <td>'.$pay_cert_data->location.'</td>
+                  <td class="cert_title">' . _l('project') . '</td>
+                  <td>' . get_project_name_by_id($pur_order->project) . '</td>
+                  <td class="cert_title">' . _l('Location') . '</td>
+                  <td>' . $pay_cert_data->location . '</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'._l('invoice_ref').'</td>
-                  <td>'.$pay_cert_data->invoice_ref.'</td>
-                  <td class="cert_title">'._l('bill_period_upto').'</td>
-                  <td>'._d($pay_cert_data->bill_period_upto).'</td>
+                  <td class="cert_title">' . _l('invoice_ref') . '</td>
+                  <td>' . $pay_cert_data->invoice_ref . '</td>
+                  <td class="cert_title">' . _l('bill_period_upto') . '</td>
+                  <td>' . _d($pay_cert_data->bill_period_upto) . '</td>
                 </tr>
                 <tr>
-                  <td class="cert_title">'._l('bill_received_on').'</td>
-                  <td>'._d($pay_cert_data->bill_received_on).'</td>
+                  <td class="cert_title">' . _l('bill_received_on') . '</td>
+                  <td>' . _d($pay_cert_data->bill_received_on) . '</td>
                   <td class="cert_title"></td>
                   <td></td>
                 </tr>
@@ -17783,32 +17800,32 @@ class Purchase_model extends App_Model
         $html .= '<table class="table" style="width: 100%" border="1" style="font-size:13px">
             <tbody>
                 <tr class="pay_cert_title">
-                  <td style="width:5%">'._l('serial_no').'</td>
-                  <td style="width:35%">'._l('decription').'</td>
-                  <td style="width:15%">'._l('contract_amount').'</td>
-                  <td style="width:15%">'._l('previous').'</td>
-                  <td style="width:15%">'._l('this_bill').'</td>
-                  <td style="width:15%">'._l('comulative').'</td>
+                  <td style="width:5%">' . _l('serial_no') . '</td>
+                  <td style="width:35%">' . _l('decription') . '</td>
+                  <td style="width:15%">' . _l('contract_amount') . '</td>
+                  <td style="width:15%">' . _l('previous') . '</td>
+                  <td style="width:15%">' . _l('this_bill') . '</td>
+                  <td style="width:15%">' . _l('comulative') . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>A1</td>
-                  <td>'.$pur_order->pur_order_name.'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_contract_amount).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_previous).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_this_bill).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_comulative).'</td>
+                  <td>' . $pur_order->pur_order_name . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_contract_amount) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_previous) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_this_bill) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_comulative) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>A</td>
-                  <td>'._l('total_value_of_works_executed').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_contract_amount).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_previous).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_this_bill).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->po_comulative).'</td>
+                  <td>' . _l('total_value_of_works_executed') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_contract_amount) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_previous) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_this_bill) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->po_comulative) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>B</td>
-                  <td>'._l('pay_cert_b_title').'</td>
+                  <td>' . _l('pay_cert_b_title') . '</td>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -17816,164 +17833,164 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>C1</td>
-                  <td>Mobilization Advance payment '.$mobilization_advance.' as per clause '.$payment_clause.'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_4).'</td>
+                  <td>Mobilization Advance payment ' . $mobilization_advance . ' as per clause ' . $payment_clause . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c1_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>C2</td>
-                  <td>'._l('pay_cert_c2_title').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_4).'</td>
+                  <td>' . _l('pay_cert_c2_title') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->pay_cert_c2_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>C</td>
-                  <td>'._l('net_advance').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->net_advance_4).'</td>
+                  <td>' . _l('net_advance') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->net_advance_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->net_advance_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->net_advance_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->net_advance_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>D</td>
-                  <td>'._l('sub_total_ac').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_4).'</td>
+                  <td>' . _l('sub_total_ac') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_total_ac_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>E1</td>
-                  <td>'._l('retention_fund').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->ret_fund_4).'</td>
+                  <td>' . _l('retention_fund') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->ret_fund_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->ret_fund_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->ret_fund_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->ret_fund_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>E2</td>
-                  <td>'._l('works_executed_5_of_A').' '.$pay_cert_data->works_executed_on_a.'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->works_exe_a_4).'</td>
+                  <td>' . _l('works_executed_5_of_A') . ' ' . $pay_cert_data->works_executed_on_a . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->works_exe_a_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->works_exe_a_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->works_exe_a_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->works_exe_a_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>E</td>
-                  <td>'._l('less_total_retention').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ret_4).'</td>
+                  <td>' . _l('less_total_retention') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ret_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ret_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ret_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ret_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>F</td>
-                  <td>'._l('sub_total_de').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_t_de_4).'</td>
+                  <td>' . _l('sub_total_de') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_t_de_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_t_de_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_t_de_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_t_de_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>G1</td>
-                  <td>'._l('less_title').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_4).'</td>
+                  <td>' . _l('less_title') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>G2</td>
-                  <td>'._l('less_amount_hold_for_quality_ncr').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ah_4).'</td>
+                  <td>' . _l('less_amount_hold_for_quality_ncr') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ah_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ah_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ah_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ah_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>G2</td>
-                  <td>'._l('less_amount_hold_for_testing_and_comissioning').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_aht_4).'</td>
+                  <td>' . _l('less_amount_hold_for_testing_and_comissioning') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_aht_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_aht_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_aht_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_aht_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>G</td>
-                  <td>'._l('less_deductions').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->less_ded_4).'</td>
+                  <td>' . _l('less_deductions') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ded_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ded_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ded_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ded_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>H</td>
-                  <td>'._l('sub_total_exclusive_of_taxes').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sub_fg_4).'</td>
+                  <td>' . _l('sub_total_exclusive_of_taxes') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_fg_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_fg_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_fg_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sub_fg_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I1</td>
-                  <td>CGST @ '.$cgst_tax.' on A</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->cgst_on_a4).'</td>
+                  <td>CGST @ ' . $cgst_tax . ' on A</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->cgst_on_a1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->cgst_on_a2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->cgst_on_a3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->cgst_on_a4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I2</td>
-                  <td>SGST @ '.$cgst_tax.' on A</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->sgst_on_a4).'</td>
+                  <td>SGST @ ' . $cgst_tax . ' on A</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I3</td>
-                  <td>'._l('labour_cess').' '.$pay_cert_data->labour_cess.'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->labour_cess_4).'</td>
+                  <td>' . _l('labour_cess') . ' ' . $pay_cert_data->labour_cess . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->labour_cess_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->labour_cess_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->labour_cess_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->labour_cess_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>I</td>
-                  <td>'._l('total_applicable_taxes').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_4).'</td>
+                  <td>' . _l('total_applicable_taxes') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->tot_app_tax_4) . '</td>
                 </tr>
                 <tr class="pay_cert_title">
                   <td>J</td>
-                  <td>'._l('amount_recommended').'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_1).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_2).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_3).'</td>
-                  <td>'.check_value_pay_cert_pdf($pay_cert_data->amount_rec_4).'</td>
+                  <td>' . _l('amount_recommended') . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->amount_rec_1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->amount_rec_2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->amount_rec_3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->amount_rec_4) . '</td>
                 </tr>
             </tbody>
         </table>
         <br>';
 
         $list_approve_status = $this->get_list_pay_cert_approval_details($id, 'payment_certificate');
-        if(!empty($list_approve_status)) {
-            $approved_by_admin_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/approved_by_admin.png').'" class="img_style" width="160px" height="90px"></div>';
-            $approved_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/approved.png').'" class="img_style" width="160px" height="90px"></div>';
-            $rejected_image = '<div style="text-align: center;"><img src="'.site_url(PURCHASE_PATH . 'approval/rejected.png').'" class="img_style" width="160px" height="90px"></div>';
+        if (!empty($list_approve_status)) {
+            $approved_by_admin_image = '<div style="text-align: center;"><img src="' . site_url(PURCHASE_PATH . 'approval/approved_by_admin.png') . '" class="img_style" width="160px" height="90px"></div>';
+            $approved_image = '<div style="text-align: center;"><img src="' . site_url(PURCHASE_PATH . 'approval/approved.png') . '" class="img_style" width="160px" height="90px"></div>';
+            $rejected_image = '<div style="text-align: center;"><img src="' . site_url(PURCHASE_PATH . 'approval/rejected.png') . '" class="img_style" width="160px" height="90px"></div>';
 
             $html .= '<table class="table" style="width: 100%" style="font-size:13px">
                 <tbody>';
             $html .= '<tr class="footer_cert_title">';
-            foreach($list_approve_status as $akey => $avalue) {
+            foreach ($list_approve_status as $akey => $avalue) {
                 $html .= '
-                  <td>'.get_staff_full_name($avalue['staffid']).'</td>
+                  <td>' . get_staff_full_name($avalue['staffid']) . '</td>
                 ';
             }
             $html .= '</tr>';
@@ -17990,7 +18007,7 @@ class Purchase_model extends App_Model
                 } elseif ($avalue['approve'] == 3) {
                     $html .= $rejected_image;
                 }
-                if($avalue['note']) {
+                if ($avalue['note']) {
                     $html .= '<br>';
                     $html .= $avalue['note'];
                 }
@@ -18000,7 +18017,7 @@ class Purchase_model extends App_Model
             }
 
             $html .= '</tr>';
-                
+
             $html .= '</tbody></table><br><br>';
         }
 
@@ -18026,7 +18043,7 @@ class Purchase_model extends App_Model
         $project = 0;
         $rel_name = 'payment_certificate';
         $module = $this->get_payment_certificate($data['rel_id']);
-        
+
         if (!empty($module->wo_id)) {
             $pur_order = $this->get_wo_order($module->wo_id);
             $po_wo_id = $module->wo_id;
@@ -18056,10 +18073,10 @@ class Purchase_model extends App_Model
                     // Build the task name depending on the type
                     if (!empty($module->wo_id)) {
                         $taskName = 'Review Payment certificate for { ' . $pur_order->wo_order_name . ' }{ ' . $pur_order->wo_order_number . ' }';
-                    } else{
+                    } else {
                         $taskName = 'Review Payment certificate for { ' . $pur_order->pur_order_name . ' }{ ' . $pur_order->pur_order_number . ' }';
                     }
-                    
+
                     $taskData = [
                         'name'      => $taskName,
                         'is_public' => 1,
@@ -18099,7 +18116,7 @@ class Purchase_model extends App_Model
         $approve_status = $this->db->get(db_prefix() . 'payment_certificate_details')->result_array();
         if (count($approve_status) > 0) {
             foreach ($approve_status as $value) {
-                if($value['staffid'] == get_staff_user_id()) {
+                if ($value['staffid'] == get_staff_user_id()) {
                     if ($value['approve'] == -1) {
                         return 'reject';
                     }
@@ -18145,19 +18162,19 @@ class Purchase_model extends App_Model
 
     public function update_pay_cert_approve_request($rel_id, $rel_type, $status)
     {
-        $all_approved = $this->db->query("SELECT COUNT(*) = SUM(approve = 2) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '".$rel_id."' AND rel_type = '".$rel_type."'")->result_array();
+        $all_approved = $this->db->query("SELECT COUNT(*) = SUM(approve = 2) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '" . $rel_id . "' AND rel_type = '" . $rel_type . "'")->result_array();
 
-        $all_rejected = $this->db->query("SELECT COUNT(*) = SUM(approve = 3) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '".$rel_id."' AND rel_type = '".$rel_type."'")->result_array();
+        $all_rejected = $this->db->query("SELECT COUNT(*) = SUM(approve = 3) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '" . $rel_id . "' AND rel_type = '" . $rel_type . "'")->result_array();
 
-        if(!empty($all_approved)) {
-            if($all_approved[0]['all_approved'] == 1) {
+        if (!empty($all_approved)) {
+            if ($all_approved[0]['all_approved'] == 1) {
                 $this->db->where('id', $rel_id);
                 $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => 2]);
             }
         }
 
-        if(!empty($all_rejected)) {
-            if($all_rejected[0]['all_rejected'] == 1) {
+        if (!empty($all_rejected)) {
+            if ($all_rejected[0]['all_rejected'] == 1) {
                 $this->db->where('id', $rel_id);
                 $this->db->update(db_prefix() . 'payment_certificate', ['approve_status' => 3]);
             }
@@ -18197,7 +18214,7 @@ class Purchase_model extends App_Model
         $this->db->select('subtotal');
         $this->db->where('id', $wo_id);
         $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
-        if(!empty($wo_orders)) {
+        if (!empty($wo_orders)) {
             $result['wo_contract_amount'] = $wo_orders->subtotal;
         }
 

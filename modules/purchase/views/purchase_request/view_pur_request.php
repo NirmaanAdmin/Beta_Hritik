@@ -73,7 +73,7 @@
               <p class="bold col-md-4 p_style"><?php echo _l('information'); ?></p>
               <div>
                 <?php if ($pur_request->status == 2) { ?>
-                  <a href="<?php echo admin_url('purchase/pur_order?pr=' . $pur_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_po'); ?></a>
+                  <!-- <a href="<?php echo admin_url('purchase/pur_order?pr=' . $pur_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_po'); ?></a> -->
                 <?php } ?>
               </div>
               <div class="col-md-3 pull-right">
