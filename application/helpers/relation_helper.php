@@ -143,7 +143,7 @@ function get_relation_data($type, $rel_id = '', $extra = [])
         }
     } elseif ($type == 'pur_order') {
         if ($rel_id != '') {
-            $CI->load->model('purchase_model');
+            $CI->load->model('purchase/purchase_model');
             $data = $CI->purchase_model->get_pur_order($rel_id);
         } else {
             $search = $CI->misc_model->_search_purchase_orders($q);
