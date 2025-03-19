@@ -836,7 +836,8 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 				fetchFilteredData();
 			});
 			$(".reset_vbt_all_filters").click(function() {
-				$('#design_stage_filter, #discipline_filter, #purpose_filter, #status_filter, #controlled_document_filter').val('');
+				$('#design_stage_filter, #purpose_filter, #status_filter, #controlled_document_filter').val('');
+				$('#discipline_filter').val([]);
 				$('#append_fillter_data').html(initialTableContent); // Restore the original table content
 				$('select').selectpicker('refresh');
 				fetchFilteredData();

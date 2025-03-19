@@ -1988,8 +1988,8 @@ class drawing_management_model extends app_model
 		$design_stage = !empty($design_stage) ? $design_stage : NULL;
 		update_module_filter($module_name, $ds, $design_stage);
 		$d = 'discipline';	
-		$discipline = !empty($discipline) ? implode(',', $discipline) : NULL;		
-		update_module_filter($module_name, $d, $discipline);
+		$discipline_string = !empty($discipline) ? implode(',', $discipline) : NULL;		
+		update_module_filter($module_name, $d, $discipline_string);
 		$p = 'purpose';
 		$purpose = !empty($purpose) ? $purpose : NULL;
 		update_module_filter($module_name, $p, $purpose);
@@ -2004,41 +2004,40 @@ class drawing_management_model extends app_model
 
 		// Group conditions so that at least one filter matches
 		if (!empty($design_stage) || (!empty($discipline) && is_array($discipline)) || !empty($purpose) || !empty($status) || !empty($controlled_document)) {
-			$this->db->group_start();
 
 			// Apply design stage filter if provided
 			if (!empty($design_stage)) {
-				$this->db->or_where('design_stage', $design_stage);
+				$this->db->where('design_stage', $design_stage);
 			}
 
 			// Apply discipline filter if provided (handling multiple values)
 			if (!empty($discipline) && is_array($discipline)) {
+				$this->db->group_start();
 				foreach ($discipline as $d) {
 					$this->db->or_where("FIND_IN_SET(" . $this->db->escape($d) . ", discipline) >", 0);
 				}
+				$this->db->group_end();
 			}
 
 			// Apply purpose stage filter if provided
 			if (!empty($purpose)) {
-				$this->db->or_where('purpose', $purpose);
+				$this->db->where('purpose', $purpose);
 			}
 			// Apply status stage filter if provided
 			if (!empty($status)) {
-				$this->db->or_where('status', $status);
+				$this->db->where('status', $status);
 			}
 
 			// Apply controlled document filter if provided
 			if (!empty($controlled_document)) {
 				if ($controlled_document == 1) {
-					$this->db->or_where('controlled_document', $controlled_document);
+					$this->db->where('controlled_document', $controlled_document);
 				}
 			}
 
-			$this->db->group_end();
 			$query = $this->db->get();
 			$results = $query->result();
 		}
-
 
 		if ($results) {
 			// Fetch root folder (folder without a parent_id)
