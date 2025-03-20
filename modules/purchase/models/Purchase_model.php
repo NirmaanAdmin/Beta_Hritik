@@ -3435,13 +3435,16 @@ class Purchase_model extends App_Model
             $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
 
             if (!$existing_task) {
-                if (($data['rel_type'] == 'pur_order' || $data['rel_type'] == 'wo_order')) {
+                if (($data['rel_type'] == 'pur_order' || $data['rel_type'] == 'wo_order' || $data['rel_type'] == 'pur_request')) {
 
                     // Build the task name depending on the type
                     if ($data['rel_type'] == 'pur_order') {
                         $taskName = 'Review { ' . $module->pur_order_name . ' }{ ' . $module->pur_order_number . ' }';
                     } elseif ($data['rel_type'] == 'wo_order') {
                         $taskName = 'Review { ' . $module->wo_order_name . ' }{ ' . $module->wo_order_number . ' }';
+                    } elseif($data['rel_type'] == 'pur_request'){
+                        $taskName = 'Review { ' . $module->pur_rq_name . ' }{ ' . $module->pur_rq_code . ' }';
+                        $data['rel_type'] = 'purchase_request';
                     }
 
                     $taskData = [
