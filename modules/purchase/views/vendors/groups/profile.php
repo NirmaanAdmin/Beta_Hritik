@@ -185,8 +185,8 @@
                   ?>
                   <?php $bank_detail = (isset($client) ? $client->bank_detail : ''); ?>
                   <?php echo render_textarea('bank_detail', 'bank_detail', $bank_detail); ?>
-                  <!-- <?php $payment_terms = (isset($client) ? $client->payment_terms : ''); ?>
-                  <?php echo render_textarea('payment_terms', 'payment_terms', $payment_terms); ?> -->
+                  <?php $preferred_location = (isset($client) ? $client->preferred_location : ''); ?>
+                  <?php echo render_textarea('preferred_location', 'Preferred Location', $preferred_location); ?>
                </div>
             </div>
          </div>
