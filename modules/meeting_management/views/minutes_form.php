@@ -1,6 +1,4 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<!-- Set the page title -->
-<title><?php echo _l('meeting_minutes'); ?></title>
 <?php init_head(); ?>
 <style type="text/css">
    .cke_notification {
@@ -9,7 +7,6 @@
 </style>
 
 <!-- Add CKEditor and SweetAlert -->
-<script src="<?php echo base_url('modules/meeting_management/assets/ckeditor/ckeditor.js'); ?>"></script>
 <script src="<?php echo base_url('modules/meeting_management/assets/js/sweetalert2@11.js'); ?>"></script>
 
 <div id="wrapper">
@@ -32,7 +29,7 @@
                         $minutes_val = isset($minutes) ? nl2br($minutes->agenda) : '';
                      }
                      ?>
-                     <textarea id="minutes" name="minutes" class="form-control" required><?php echo $minutes_val; ?></textarea>
+                     <?php echo render_textarea('minutes', '', $minutes_val, array(), array(), 'mtop15', 'tinymce'); ?>
                   </div>
 
                   <!-- Participants Selection -->
@@ -126,19 +123,6 @@
 </div>
 
 <?php init_tail(); ?>
-
-<!-- Initialize CKEditor on the 'minutes' textarea -->
-<script>
-   $(function(){
-      // Check if CKEditor is available and initialize it
-      if (typeof CKEDITOR !== 'undefined') {
-         CKEDITOR.replace('minutes', {
-            toolbar: 'Basic',  // You can configure the toolbar as per your needs
-            height: 200
-         });
-      }
-   });
-</script>
 
 <script>
     $(document).ready(function() {

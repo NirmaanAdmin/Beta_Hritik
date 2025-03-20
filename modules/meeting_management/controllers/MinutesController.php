@@ -120,6 +120,7 @@ class MinutesController extends AdminController
             set_alert('success', _l('meeting_task_created_success'));
             redirect(admin_url('meeting_management/minutesController/index/' . $agenda_id));
         }
+        $data['title'] = _l('meeting_minutes');
     
         // Load the view
         $this->load->view('meeting_management/minutes_form', $data);
