@@ -2,7 +2,7 @@
 
 # Version 1.0.0
 
-$lang['predix'] = 'PrediX';
+$lang['predix'] = '360 AI';
 $lang['predix_chat'] = 'Chat';
 $lang['predix_image_gen'] = 'Image Generator';
 $lang['predix_transcription'] = 'Audio Transcription';
