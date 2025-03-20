@@ -86,7 +86,7 @@
 											<?php } else {
 											if (isset($item) && $edit != 1) {
 											?>
-												<button class="btn btn-default pull-right mright10 display-flex bulk-action-btn" onclick="remider(<?php echo drawing_htmldecode($parent_id); ?>)">
+												<!-- <button class="btn btn-default pull-right mright10 display-flex bulk-action-btn" onclick="remider(<?php echo drawing_htmldecode($parent_id); ?>)">
 													<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell">
 														<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
 														<path d="M13.73 21a2 2 0 0 1-3.46 0" />
@@ -94,7 +94,7 @@
 													<span class="mleft5 mtop2">
 														<?php echo _l('dmg_remind'); ?>
 													</span>
-												</button>
+												</button> -->
 										<?php
 											}
 										}
