@@ -407,6 +407,13 @@
                                                                     } ?>>
                                             <?php echo _l('payment_certificate'); ?>
                                         </option>
+                                        <option value="purchase_request" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                                                        if ($rel_type == 'purchase_request') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
+                                            <?php echo _l('purchase_request'); ?>
+                                        </option>
                                         <?php
                                         hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
                                         ?>

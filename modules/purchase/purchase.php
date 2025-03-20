@@ -34,7 +34,7 @@ hooks()->add_action('after_custom_profile_tab_content', 'init_content_pur_order'
 hooks()->add_action('task_related_to_select', 'po_related_to_select'); // old
 //hooks()->add_filter('before_return_relation_values', 'po_relation_values', 10, 2); // old
 hooks()->add_filter('before_return_relation_data', 'po_relation_data', 10, 4); // old
-hooks()->add_action('task_modal_rel_type_select', 'po_task_modal_rel_type_select'); // new
+// hooks()->add_action('task_modal_rel_type_select', 'po_task_modal_rel_type_select'); // new
 hooks()->add_filter('relation_values', 'po_get_relation_values', 10, 2); // new
 hooks()->add_filter('get_relation_data', 'po_get_relation_data', 10, 4); // new
 hooks()->add_filter('tasks_table_row_data', 'po_add_table_row', 10, 3);
@@ -54,7 +54,7 @@ hooks()->add_filter('tasks_table_row_data', 'wo_add_table_row', 10, 3);
 // hooks()->add_filter('relation_values', 'pay_get_relation_values', 10, 2); // new
 hooks()->add_filter('get_relation_data', 'pay_get_relation_data', 10, 4); // new
 // hooks()->add_filter('tasks_table_row_data', 'pay_add_table_row', 10, 3);
-
+hooks()->add_filter('get_relation_data', 'pr_get_relation_data', 10, 4); // new
 //Purchase quotation task
 hooks()->add_action('task_related_to_select', 'pq_related_to_select'); // old
 //hooks()->add_filter('before_return_relation_values', 'pq_relation_values', 10, 2); // old
@@ -1619,6 +1619,25 @@ function pay_get_relation_data($data, $obj, $q = '')
         } else {
             if ($q != '') {
                 $data = $CI->purchase_model->get_wo_order_search($q);
+            }
+        }
+    }
+    return $data;
+}
+
+function pr_get_relation_data($data, $obj, $q = ''){
+    $type = $obj['type'];
+    $rel_id = $obj['rel_id'];
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+
+    if ($type == 'purchase_request' || $type == 'purchase_request') {
+        if ($rel_id != '') {
+            $data = $CI->purchase_model->get_purchase_request($rel_id);
+
+        }else{
+            if ($q != '') {
+                $data = $CI->purchase_model->get_purchase_request_search($q);
             }
         }
     }

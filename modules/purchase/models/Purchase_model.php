@@ -978,7 +978,11 @@ class Purchase_model extends App_Model
             return $this->db->get(db_prefix() . 'pur_request')->row();
         }
     }
-
+    public function get_purchase_request_search($q)
+    {
+        $this->db->where('1=1 AND (pur_rq_name LIKE "%' . $this->db->escape_like_str($q) . '%")');
+        return $this->db->get(db_prefix() . 'pur_request')->result_array();
+    }
     /**
      * Gets the pur request detail.
      *
