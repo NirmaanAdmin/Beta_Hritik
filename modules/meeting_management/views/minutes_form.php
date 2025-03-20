@@ -2,6 +2,11 @@
 <!-- Set the page title -->
 <title><?php echo _l('meeting_minutes'); ?></title>
 <?php init_head(); ?>
+<style type="text/css">
+   .cke_notification {
+      display: none !important;
+   }
+</style>
 
 <!-- Add CKEditor and SweetAlert -->
 <script src="<?php echo base_url('modules/meeting_management/assets/ckeditor/ckeditor.js'); ?>"></script>
@@ -20,7 +25,14 @@
                   <input type="hidden" name="agenda_id" value="<?php echo $agenda_id; ?>">
                   <div class="form-group">
                      <label for="minutes"><?php echo _l('meeting_minutes'); ?></label>
-                     <textarea id="minutes" name="minutes" class="form-control" required><?php echo isset($minutes) ? $minutes->minutes : ''; ?></textarea>
+                     <?php
+                     $minutes_val = '';
+                     $minutes_val = isset($minutes) ? $minutes->minutes : '';
+                     if(empty($minutes_val)) {
+                        $minutes_val = isset($minutes) ? nl2br($minutes->agenda) : '';
+                     }
+                     ?>
+                     <textarea id="minutes" name="minutes" class="form-control" required><?php echo $minutes_val; ?></textarea>
                   </div>
 
                   <!-- Participants Selection -->
