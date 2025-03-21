@@ -236,7 +236,7 @@ class Meeting_model extends App_Model
         // Get meeting details for a given agenda
         public function get_meeting_details($agenda_id)
     {
-        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date'); // Make sure 'id' is included as 'meeting_id'
+        $this->db->select('*'); // Make sure 'id' is included as 'meeting_id'
         $this->db->from(db_prefix() . 'meeting_management'); // Replace with your actual table name
         $this->db->where('id', $agenda_id); // Assuming 'id' is the primary key of the meeting table
         $query = $this->db->get();
