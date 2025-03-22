@@ -44,9 +44,10 @@
                     <?php render_datatable(array(
                         _l('id'),
                         _l('goods_delivery_code_new'),
+                        _l('reference_purchase_order'),
                         _l('day_vouchers'),
-                        _l('invoices'),
-                        _l('staff_id'),
+                        // _l('invoices'),
+                        // _l('staff_id'),
                         _l('status_label'),
                         _l('delivery_status_new'),
                         _l('options'),

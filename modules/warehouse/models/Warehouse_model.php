@@ -2388,7 +2388,7 @@ class Warehouse_model extends App_Model
 		$data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 		$this->load->model('purchase/purchase_model');
 		$pur_order_data = $this->purchase_model->get_pur_order($module->pr_order_id);
-		
+
 		foreach ($data_new as $key => $value) {
 			$row = [];
 			$row['action'] = 'approve';
@@ -2409,7 +2409,7 @@ class Warehouse_model extends App_Model
 					// Build the task name depending on the type
 					if ($data['rel_type'] == '1') {
 						$taskName = 'Review { ' . $module->goods_receipt_code . ' }';
-					} 
+					}
 
 					$taskData = [
 						'name'      => $taskName,
@@ -7256,7 +7256,16 @@ class Warehouse_model extends App_Model
 		hooks()->do_action('before_goods_receipt_deleted', $id);
 
 		$affected_rows = 0;
-
+		
+		$arr_goods_receipt_detail = $this->get_goods_receipt_detail($id);
+		$arr_goods_receipt = $this->get_goods_receipt($id);
+		// echo '<pre>';
+		// print_r($arr_goods_receipt);
+		// die;
+		foreach ($arr_goods_receipt_detail as $goods_delivery_detail_value) {
+			$this->revert_po_detail_quantity($arr_goods_receipt->pr_order_id, $goods_delivery_detail_value);
+		}
+		// die('pk');
 		$this->db->where('goods_receipt_id', $id);
 		$this->db->delete(db_prefix() . 'goods_receipt_detail');
 		if ($this->db->affected_rows() > 0) {
@@ -9129,7 +9138,7 @@ class Warehouse_model extends App_Model
 		if ($re_delete_goods_receipt) {
 			$count_result++;
 		}
-
+		// die('asdasd');
 		if ($count_result > 0) {
 			return true;
 		} else {
@@ -9158,6 +9167,7 @@ class Warehouse_model extends App_Model
 
 		$arr_goods_delivery_detail = $this->get_goods_delivery_detail($goods_delivery);
 		if (count($arr_goods_delivery_detail) > 0) {
+
 			foreach ($arr_goods_delivery_detail as $goods_delivery_detail_value) {
 
 				$re_revert_inventory_manage = $this->revert_inventory_manage($goods_delivery_detail_value, 2, $invoice);
@@ -10319,6 +10329,43 @@ class Warehouse_model extends App_Model
 			} else {
 				$results_update = false;
 				$flag_update_status =  false;
+			}
+		}
+
+		$results = [];
+		$results['flag_update_status'] = $flag_update_status;
+		return $results;
+	}
+	public function revert_po_detail_quantity($po_id, $goods_receipt_detail)
+	{
+		
+		$flag_update_status = true;
+
+		$this->db->where('pur_order', $po_id);
+		$this->db->where('item_code', $goods_receipt_detail['commodity_code']);
+
+		$pur_order_detail = $this->db->get(db_prefix() . 'pur_order_detail')->row();
+
+		if ($pur_order_detail) {
+			// Decrease the received quantity
+			$wh_quantity_received = (float)($pur_order_detail->wh_quantity_received) - (float)$goods_receipt_detail['quantities'];
+			
+			// Prevent negative quantity
+			if ($wh_quantity_received < 0) {
+				$wh_quantity_received = 0;
+				$flag_update_status = false;
+			}
+
+			// Update the database
+			$this->db->where('pur_order', $po_id);
+			$this->db->where('item_code', $goods_receipt_detail['commodity_code']);
+			$this->db->update(db_prefix() . 'pur_order_detail', ['wh_quantity_received' => $wh_quantity_received]);
+
+			if ($this->db->affected_rows() > 0) {
+				$results_update = true;
+			} else {
+				$results_update = false;
+				$flag_update_status = false;
 			}
 		}
 

@@ -5,9 +5,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $aColumns = [
     'id',
     'goods_delivery_code',
+    'pr_order_id',
     'date_add',
-    'invoice_id',
-    'staff_id',
+    // 'invoice_id',
+    // 'staff_id',
     'approval',
     'delivery_status',
     'id as pdf'
@@ -136,7 +137,7 @@ foreach ($rResult as $aRow) {
                 $_data = '<span class="label label-tag tag-id-1 label-tab2"><span class="tag">'._l('not_yet_approve').'</span><span class="hide">, </span></span>&nbsp';
              }elseif($aRow['approval'] == -1){
                 $_data = '<span class="label label-tag tag-id-1 label-tab3"><span class="tag">'._l('reject').'</span><span class="hide">, </span></span>&nbsp';
-             }
+             } 
         }elseif($aColumns[$i] == 'delivery_status'){
             $_data = render_delivery_status_html($aRow['id'], 'delivery', $aRow['delivery_status']);
         }elseif ($aColumns[$i] == 'id as pdf') {
@@ -158,6 +159,15 @@ foreach ($rResult as $aRow) {
             $pdf .= '</div>';
 
             $_data .= $pdf;
+        }elseif ($aColumns[$i] == 'pr_order_id') {
+            $get_pur_order_name = '';
+            if (get_status_modules_wh('purchase')) {
+                if (($aRow['pr_order_id'] != '') && ($aRow['pr_order_id'] != 0)) {
+                    $get_pur_order_name .= '<a href="' . admin_url('purchase/purchase_order/' . $aRow['pr_order_id']) . '" >' . get_pur_order_name($aRow['pr_order_id']) . '</a>';
+                }
+            }
+
+            $_data = $get_pur_order_name;
         }
 
 
