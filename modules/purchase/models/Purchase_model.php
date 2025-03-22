@@ -11071,14 +11071,14 @@ class Purchase_model extends App_Model
         $row .= '<td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
-            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_id, ['id']) .
+            render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_name, ['id']) .
             '</td>';
 
         $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
         $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
-        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
+        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_name, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
         $row .= '<td class="_total">' . render_input($name_total, '', $total, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         
         if ($name == '') {
@@ -11796,7 +11796,7 @@ class Purchase_model extends App_Model
         $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
 
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
-        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
+        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_name, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
 
         $row .= '<td class="hide _total_after_tax">' . render_input($name_total, '', $total, 'number', []) . '</td>';
 

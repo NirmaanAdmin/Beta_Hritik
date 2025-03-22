@@ -602,13 +602,13 @@ class purchase extends AdminController
                 $index_request = 0;
                 foreach ($data['pur_request_detail'] as $request_detail) {
                     $index_request++;
-                    $unit_name = pur_get_unit_name($request_detail['unit_id']);
+                    $unit_name = $request_detail['unit_id'];
                     $taxname = '';
                     $item_text = $request_detail['item_text'];
 
                     if (strlen($item_text) == 0) {
                         $item_text = pur_get_item_variatiom($request_detail['item_code']);
-                    }
+                    } 
 
                     $purchase_request_row_template .= $this->purchase_model->create_purchase_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['area'], $request_detail['image'], $request_detail['unit_price'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency, $request_detail);
                 }
