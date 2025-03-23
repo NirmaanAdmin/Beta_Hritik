@@ -19,6 +19,9 @@ function calculate_payment_certificate() {
 	        po_contract_amount = po_contract_amount.trim() != "" ? po_contract_amount : 0;
 	        $('.po_contract_amount').html(format_money_cert(po_contract_amount, true));
 
+	        if(response.po_previous) {
+	        	$('input[name="po_previous"]').val(format_amount_cert(response.po_previous));
+	        }
 	        var po_previous = $('input[name="po_previous"]').val();
 	        po_previous = po_previous.trim() != "" ? po_previous : 0;
 	        $('.total_po_previous').html(format_money_cert(po_previous, true));

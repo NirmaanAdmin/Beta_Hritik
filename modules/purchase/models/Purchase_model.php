@@ -17582,6 +17582,16 @@ class Purchase_model extends App_Model
             $result['po_contract_amount'] = $pur_orders->subtotal;
         }
 
+        if($result['po_previous'] == 0) {
+            $this->db->select_sum('po_previous');
+            $this->db->where('po_id', $po_id);
+            $this->db->where('approve_status', 2);
+            $po_previous = $this->db->get(db_prefix() . 'payment_certificate')->row();
+            if(!empty($po_previous)) {
+                $result['po_previous'] = $po_previous->po_previous;
+            }
+        }
+
         return $result;
     }
 
@@ -18223,6 +18233,16 @@ class Purchase_model extends App_Model
         $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
         if (!empty($wo_orders)) {
             $result['wo_contract_amount'] = $wo_orders->subtotal;
+        }
+
+        if($result['po_previous'] == 0) {
+            $this->db->select_sum('po_previous');
+            $this->db->where('wo_id', $wo_id);
+            $this->db->where('approve_status', 2);
+            $po_previous = $this->db->get(db_prefix() . 'payment_certificate')->row();
+            if(!empty($po_previous)) {
+                $result['po_previous'] = $po_previous->po_previous;
+            }
         }
 
         return $result;
