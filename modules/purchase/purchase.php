@@ -349,6 +349,14 @@ function purchase_module_init_menu_items()
         ]);
     }
 
+    $CI->app_menu->add_sidebar_children_item('purchase', [
+        'slug' => 'payment-certificate',
+        'name' => _l('payment_certificate'),
+        'icon' => 'fa fa-check',
+        'href' => admin_url('purchase/list_payment_certificate'),
+        'position' => 21,
+    ]);
+
     if (has_permission('order_tracker', '', 'view')) {
         
         $CI->app_menu->add_sidebar_children_item('purchase', [

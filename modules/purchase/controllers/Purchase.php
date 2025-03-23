@@ -12438,4 +12438,15 @@ class purchase extends AdminController
         }
         redirect(admin_url('purchase/order_tracker'));
     }
+
+    public function list_payment_certificate()
+    {
+        $data['title'] = _l('payment_certificate');
+        $this->load->view('payment_certificate/list_payment_certificate', $data);
+    }
+
+    public function table_payment_certificate()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'payment_certificate/table_payment_certificate'));
+    }
 }

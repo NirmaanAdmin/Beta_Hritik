@@ -873,3 +873,4 @@ $lang['payment_certificate_for_wo_order'] = 'Payment certificate for work order'
 $lang['wo_no'] = 'WO No.';
 $lang['wo_date'] = 'WO Date';
 $lang['update']  = 'Update';
+$lang['applied_to_vendor_bill'] = 'Applied to vendor bill';
