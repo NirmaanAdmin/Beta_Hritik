@@ -15,14 +15,14 @@
       <div class="collapse navbar-collapse" id="theme-navbar-collapse">
          <ul class="nav navbar-nav navbar-right">
           <?php  if (is_vendor_logged_in()) { ?>
-               <li class="customers-nav-item-items">
+               <?php /* <li class="customers-nav-item-items">
                   <a href="<?php echo site_url('purchase/vendors_portal/items'); ?>">
                      <?php
                      
                      echo _l('items');
                     ?>
                   </a>
-               </li>
+               </li> */ ?>
                
                <li class="customers-nav-item-items">
                   <a href="<?php echo site_url('purchase/vendors_portal/purchase_request'); ?>">
@@ -48,14 +48,14 @@
                     ?>
                   </a>
                </li>
-               <li class="customers-nav-item-items">
+               <?php /* <li class="customers-nav-item-items">
                   <a href="<?php echo site_url('purchase/vendors_portal/contracts'); ?>">
                      <?php
                      
                      echo _l('contracts');
                     ?>
                   </a>
-               </li>
+               </li> */ ?>
                <li class="customers-nav-item-items">
                   <a href="<?php echo site_url('purchase/vendors_portal/invoices'); ?>">
                      <?php
@@ -65,14 +65,14 @@
                   </a>
                </li>
 
-               <li class="customers-nav-item-items">
+               <?php /* <li class="customers-nav-item-items">
                   <a href="<?php echo site_url('purchase/vendors_portal/order_returns'); ?>">
                      <?php
                      
                      echo _l('pur_order_returns');
                     ?>
                   </a>
-               </li> 
+               </li> */ ?>
         <?php } ?>
         
           
