@@ -116,7 +116,10 @@
         </tr>
         <tr>
             <td>
-                <?php echo !empty($meeting_notes) ? nl2br($meeting_notes) : 'No meeting notes available.'; ?>
+                <?php
+                $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
+                
+                echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
             </td>
         </tr>
     </table>
