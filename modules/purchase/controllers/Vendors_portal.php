@@ -2043,4 +2043,82 @@ class Vendors_portal extends App_Controller
             'currency_name' => $currency_name,
         ]);
     }
+
+    public function drawing_management()
+    {
+        $this->load->model('drawing_management/drawing_management_model');
+        $data['title'] = _l('dms_file_management');
+        init_drawing_fist_item();
+        $user_id = get_staff_user_id();
+        $master_parent_id = '';
+        $id = $this->input->get('id') ?? 3;
+        $edit = $this->input->get('edit');
+        $share_to_me = $this->input->get('share_to_me');
+        $my_approval = $this->input->get('my_approval');
+        $electronic_signing = $this->input->get('electronic_signing');
+        $data['edit'] = ($edit == null ? 0 : $edit);
+        $data['share_to_me'] = ($share_to_me == null ? 0 : $share_to_me);
+        $data['my_approval'] = ($my_approval == null ? 0 : $my_approval);
+        $data['electronic_signing'] = ($electronic_signing == null ? 0 : $electronic_signing);
+        $query = 'approve = -1 and id in (SELECT rel_id FROM ' . db_prefix() . 'dms_approval_details where staffid = ' . $user_id . ' and approve is null and rel_type = \'document\')';
+        $data['approve_items'] = $this->drawing_management_model->get_item('', $query, 'name, id, dateadded, filetype, hash');
+        $query = 'sign_approve = -1 and id in (SELECT rel_id FROM ' . db_prefix() . 'dms_approval_detail_eids where staffid = ' . $user_id . ' and approve is null and rel_type = \'document\')';
+        $data['approve_item_eids'] = $this->drawing_management_model->get_item('', $query, 'name, id, dateadded, filetype, hash');
+        $data_root_folder = $this->drawing_management_model->get_root_item($user_id);
+        if (!empty($data_root_folder)) {
+            foreach ($data_root_folder as $key => $value) {
+                if ($value['project_id'] != 0 && !is_admin()) {
+                    $project_member = $this->drawing_management_model->check_project_member_exist($value['project_id']);
+                    if (empty($project_member)) {
+                        unset($data_root_folder[$key]);
+                    }
+                }
+            }
+            $data_root_folder = array_values($data_root_folder);
+        }
+        if ($id == null) {
+            $id = '';
+            foreach ($data_root_folder as $key => $value) {
+                if ($id == '') {
+                    if ($key == 0) {
+                        $id = $value['id'];
+                        $master_parent_id = $id;
+                    }
+                }
+            }
+        } else {
+            $master_parent_id = $this->drawing_management_model->get_master_id($id);
+        }
+        $file_locked = false;
+        $data_root_folder = array_filter($data_root_folder, function($item) {
+            return $item['project_id'] != 0;
+        });
+        $data['root_folder'] = $data_root_folder;
+        $data['parent_id'] = $id;
+        $data['master_parent_id'] = $master_parent_id;
+        if (is_numeric($id) && $id > 0) {
+            $file_locked = drawing_check_file_locked($id);
+            if ($data['edit'] == 1 && $file_locked) {
+                access_denied('vendors_portal/drawing_management');
+            }
+            $data['item'] = $this->drawing_management_model->get_item($id);
+            if ($data['item'] == null) {
+                redirect(admin_url('vendors_portal/drawing_management'));
+            }
+        }
+        $data['share_id'] = $this->drawing_management_model->get_item_share_to_me(true);
+        $data['file_locked'] = $file_locked;
+        $data['staffs'] = $this->staff_model->get();
+        $this->load->model('clients_model');
+        $data['customers'] = $this->clients_model->get();
+        $this->load->model('client_groups_model');
+        $data['customer_groups'] = $this->client_groups_model->get_groups();
+        $data['discipline'] = $this->drawing_management_model->get_discipline();
+        $this->load->model('purchase/purchase_model');
+        $data['vendors'] = $this->purchase_model->get_vendor();
+
+        $this->data($data);
+        $this->view('vendor_portal/file_managements/file_management');
+        $this->layout();
+    }
 }
