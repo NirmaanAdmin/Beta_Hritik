@@ -49,30 +49,33 @@
                      <!-- <textarea id="agenda" name="agenda" class="form-control" required></textarea>  -->
                      <?php
                      $deafult_val = '
-<table border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse: collapse;">
-    <thead>
+
+
+<table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 14px;">
+    <thead style="background-color: #f2f2f2;">
         <tr>
-            <th>Sr. No.</th>
-            <th>Area</th>
-            <th>Description</th>
-            <th>Decision</th>
-            <th>Action</th>
-            <th>Action By</th>
-            <th>Target Date</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Sr. No.</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Area</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Description</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Decision</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Action</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Action By</th>
+            <th style="border: 1px solid #ccc; text-align: center;">Target Date</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td style="border: 1px solid #ccc;text-align: center;">1</td>
+            <td style="border: 1px solid #ccc;text-align: center;"></td>
+            <td style="border: 1px solid #ccc;text-align: center;"></td>
+            <td style="border: 1px solid #ccc;text-align: center;"></td>
+            <td style="border: 1px solid #ccc;text-align: center;"></td>
+            <td style="border: 1px solid #ccc;text-align: center;"></td>
+            <td style="border: 1px solid #ccc;text-align: center;"></td>
         </tr>
     </tbody>
-</table><br>';
+</table><br>
+';
                      ?>
 
                      <?php echo render_textarea('agenda', '', $deafult_val, array(), array(), 'mtop15', 'tinymce'); ?>

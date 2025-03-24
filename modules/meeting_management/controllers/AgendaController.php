@@ -32,7 +32,7 @@ class AgendaController extends AdminController
             $agenda_data = [
                 'meeting_title' => $this->input->post('meeting_title'),
                 'project_id' => $this->input->post('project_id'),
-                'agenda' => $this->input->post('agenda'),
+                'agenda' => $this->input->post('agenda',false),
                 'meeting_date' => $this->input->post('meeting_date'),
                 'created_by' => get_staff_user_id(),
             ];
