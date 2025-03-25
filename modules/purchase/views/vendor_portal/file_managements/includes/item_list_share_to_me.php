@@ -3,7 +3,9 @@
 			<tr>
 				<th scope="col"><?php echo _l('dmg_name'); ?></th>
 				<th scope="col"><?php echo _l('dms_date'); ?></th>
+				<?php /* 
 				<th scope="col"><?php echo _l('dmg_option'); ?></th>
+				*/ ?>
 			</tr>
 		</thead>
 		<tbody>
@@ -16,8 +18,17 @@
 				else{
 					$item_icon = '<i class="fa fa-file text-primary fs-14"></i> ';
 				}
-				$a1 = '<a href="'.admin_url('drawing_management?share_to_me=1&id='.$value['id']).'" >';
-				$a2 = '</a>';
+
+				if($value['filetype'] == 'folder') {
+					$a1 = '<a href="'.admin_url('purchase/vendors_portal/drawing_management?share_to_me=1&id='.$value['id']).'" >';
+					$a2 = '</a>';
+				} else if($value['filetype'] == 'application/pdf') {
+					$a1 = '<a class="preview-vendor-pdf" data-id="'.$value['id'].'" href="javascript:void(0);">';
+					$a2 = '</a>';
+				} else {
+					$a1 = '<a>';
+					$a2 = '</a>';
+				}
 				?>
 				<tr>
 					<td>
@@ -26,13 +37,12 @@
 					<td>
 						<?php echo drawing_htmldecode($a1._dt($value['dateadded']).$a2); ?>											
 					</td>
+					<?php /* 
 					<td>
 
 						<?php 
 
-						$editor_permit = drawing_check_share_permission($value['id'], 'editor');
-						$viewer_permit = drawing_check_share_permission($value['id'], 'viewer');
-						if($editor_permit || $viewer_permit){ ?>
+						if(true){ ?>
 							<div class="dropdown pull-right">
 								<button class="btn btn-tool pull-right dropdown-toggle" role="button" id="dropdown_menu_<?php echo drawing_htmldecode($value['id']); ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
@@ -66,7 +76,7 @@
 											<a href="#" onclick="duplicate_item('<?php echo drawing_htmldecode($value['id']); ?>')"><?php echo _l('dmg_duplicate') ?></a>
 										</li>
 									<?php } 
-									if($editor_permit || $viewer_permit){ ?>
+									if(true){ ?>
 										<li class="no-padding">
 											<?php echo drawing_htmldecode($download); ?>
 										</li>
@@ -77,7 +87,27 @@
 						<?php } ?>
 
 					</td>
+					*/ ?>
 				</tr>
 			<?php } ?>
 		</tbody>
 	</table>
+
+	<div id="view_vendor_pdf"></div>
+
+<script>
+	$(document).on('click', '.preview-vendor-pdf', function(e) {
+	    var id = $(this).data('id');
+	    view_vendor_pdf(id);
+	});
+
+	function view_vendor_pdf(id) {
+	  "use strict"; 
+	      $('#view_vendor_pdf').empty();
+	      $("#view_vendor_pdf").load(site_url + 'purchase/vendors_portal/view_vendor_pdf/' + id, function(response, status, xhr) {
+	          if (status == "error") {
+	              alert_float('danger', xhr.statusText);
+	          }
+	      });
+	}
+</script>

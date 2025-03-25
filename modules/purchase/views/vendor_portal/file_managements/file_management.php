@@ -141,11 +141,7 @@
 								*/ ?>
 								<!-- For bulk select -->
 							</div>
-							<?php } else {
-							if (($share_to_me == 1 && $parent_id == 0) || (isset($item) && $item->filetype == 'folder' && !drawing_check_share_permission($parent_id, 'upload_only'))) { ?>
-								<?php echo render_input('search', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?>
 							<?php } ?>
-						<?php } ?>
 						<div class="col-md-12">
 							<hr>
 						</div>
@@ -205,19 +201,19 @@
 						</ul>
 						<hr>
 						<ul class="list-group list-group-flush list-group-custom" role="tablist">
-							<?php /* <li class="list-group-item list-group-item-action display-flex<?php echo ($share_to_me == 1 ? ' active' : ''); ?>" data-toggle="list" role="tab">
-								<a href="<?php echo site_url('drawing_management?share_to_me=1&id=0'); ?>" class="w100 display-flex">
+							<li class="list-group-item list-group-item-action display-flex<?php echo ($share_to_me == 1 ? ' active' : ''); ?>" data-toggle="list" role="tab">
+								<a href="<?php echo site_url('purchase/vendors_portal/drawing_management?share_to_me=1&id=0'); ?>" class="w100 display-flex">
 									<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>  
 									<span class="mtop2 mleft5">
 										<?php echo _l('dmg_share_to_me'); ?>
 										<?php 
-										$share_items = $this->drawing_management_model->get_item('','id IN ('.$share_id.')', 'name, id, dateadded, filetype');											
+										$share_items = $this->purchase_model->get_dms_item('','id IN ('.$share_id.')', 'name, id, dateadded, filetype');											
 										if($share_items && is_array($share_items) && count($share_items) > 0){ ?>
-											<span class="label bg-warning mleft10"><strong><?php echo count($share_items); ?></strong></span>
+											<span class="label bg-warning mleft10 hide"><strong><?php echo count($share_items); ?></strong></span>
 										<?php } ?>
 									</span>
 								</a>
-							</li> */ ?>
+							</li>
 
 							<?php /* 
 							<li class="list-group-item list-group-item-action display-flex<?php echo ($my_approval == 1 ? ' active' : ''); ?>" data-toggle="list" role="tab">
@@ -454,7 +450,7 @@
 												<div class="col-md-12">
 													<?php
 													$html_breadcrumb = '';
-													$data_breadcrumb = $this->drawing_management_model->breadcrum_array2($parent_id);
+													$data_breadcrumb = $this->purchase_model->breadcrum_array2($parent_id);
 													foreach ($data_breadcrumb as $key => $value) {
 														$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . site_url('drawing_management?share_to_me=1&id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
 													}
@@ -468,117 +464,36 @@
 											</div>
 										<?php
 										}
-										if (drawing_check_share_permission($parent_id, 'upload_only')) { ?>
-											<div class="file-form-group file-form">
-												<?php echo form_open_multipart(site_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
-												<input type="file" id="files" name="file[]" multiple="">
-												<div class="file-form-preview hide">
-													<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
-													<hr>
-													<button class="btn btn-primary pull-right mright10 display-flex">
-														<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
-															<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-															<polyline points="17 8 12 3 7 8" />
-															<line x1="12" y1="3" x2="12" y2="15" />
-														</svg>
-														<span class="mleft5 mtop2">
-															<?php echo _l('dmg_upload_all'); ?>
-														</span>
-													</button>
-												</div>
-												<?php echo form_close(); ?>
-											</div>
-											<?php
+										$child_items = [];
+										if ($parent_id == 0) {
+											$child_items = $this->purchase_model->get_dms_item('', 'id IN (' . $share_id . ')', 'name, id, dateadded, filetype, parent_id');
 										} else {
-											$child_items = [];
-											if ($parent_id == 0) {
-												$child_items = $this->drawing_management_model->get_item('', 'id IN (' . $share_id . ')', 'name, id, dateadded, filetype, parent_id');
-											} else {
-												$child_items = $this->drawing_management_model->get_item('', 'parent_id = ' . $parent_id, 'name, id, dateadded, filetype, parent_id');
-											}
-											if ($parent_id == 0 || (is_numeric($parent_id) && $parent_id > 0 && drawing_dmg_get_file_type($parent_id) == 'folder')) {
-												if (count($child_items)) {
-													$this->load->view('file_managements/includes/item_list_share_to_me.php', ['child_items' => $child_items]);
-												} else { ?>
-													<div class="row mbot20">
-														<div class="col-md-12">
-															<h5 class="text-muted display-flex">
-																<span class="text-warning">
-																	<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
-																		<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-																	</svg>
-																</span>
-																<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_files_or_folders_shared') . '.'; ?></span>
-															</h5>
-														</div>
-													</div>
-												<?php
-												}
-												if (drawing_check_share_permission($parent_id, 'editor')) { ?>
-													<div class="file-form-group file-form">
-														<?php echo form_open_multipart(site_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
-														<input type="file" id="files" name="file[]" multiple="">
-														<div class="file-form-preview hide">
-															<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
-															<hr>
-															<button class="btn btn-primary pull-right mright10 display-flex">
-																<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload">
-																	<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-																	<polyline points="17 8 12 3 7 8" />
-																	<line x1="12" y1="3" x2="12" y2="15" />
+											$child_items = $this->purchase_model->get_dms_item('', 'parent_id = ' . $parent_id, 'name, id, dateadded, filetype, parent_id');
+										}
+										if ($parent_id == 0 || (is_numeric($parent_id) && $parent_id > 0 && drawing_dmg_get_file_type($parent_id) == 'folder')) {
+											if (count($child_items)) {
+												$this->load->view('vendor_portal/file_managements/includes/item_list_share_to_me.php', ['child_items' => $child_items]);
+											} else { ?>
+												<div class="row mbot20">
+													<div class="col-md-12">
+														<h5 class="text-muted display-flex">
+															<span class="text-warning">
+																<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
+																	<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
 																</svg>
-																<span class="mleft5 mtop2">
-																	<?php echo _l('dmg_upload_all'); ?>
-																</span>
-															</button>
-														</div>
-														<?php echo form_close(); ?>
+															</span>
+															<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_files_or_folders_shared') . '.'; ?></span>
+														</h5>
 													</div>
+												</div>
 											<?php
-												}
-											} else {
-												if ($edit == 1) {
-													$this->load->view('file_managements/includes/file_edit.php');
-												} else {
-													$this->load->view('file_managements/includes/file_share_detail.php');
-												}
 											}
-										}
-									} elseif ($my_approval == 1) {
-										if (count($approve_items)) {
-											$this->load->view('file_managements/includes/item_list_approval.php', ['child_items' => $approve_items]);
-										} else { ?>
-											<div class="row mbot20">
-												<div class="col-md-12">
-													<h5 class="text-muted display-flex">
-														<span class="text-warning">
-															<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
-																<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-															</svg>
-														</span>
-														<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_approval_requests') . '.'; ?></span>
-													</h5>
-												</div>
-											</div>
-										<?php
-										}
-									} elseif ($electronic_signing == 1) {
-										if (count($approve_item_eids)) {
-											$this->load->view('file_managements/includes/item_list_sign_approval.php', ['child_items' => $approve_item_eids]);
-										} else { ?>
-											<div class="row mbot20">
-												<div class="col-md-12">
-													<h5 class="text-muted display-flex">
-														<span class="text-warning">
-															<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
-																<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-															</svg>
-														</span>
-														<span class="mtop3 mleft5"><?php echo _l('dmg_you_dont_have_any_approval_requests') . '.'; ?></span>
-													</h5>
-												</div>
-											</div>
-								<?php
+										} else {
+											if ($edit == 1) {
+												$this->load->view('file_managements/includes/file_edit.php');
+											} else {
+												$this->load->view('file_managements/includes/file_share_detail.php');
+											}
 										}
 									}
 								}

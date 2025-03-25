@@ -18297,4 +18297,29 @@ class Purchase_model extends App_Model
             return $this->db->get(db_prefix() . 'dms_items')->result_array();
         }
     }
+
+    public function breadcrum_array2($id, $creator_type = 'staff')
+    {     
+        $array = [];
+        $share_id = $this->get_item_share_to_me(false, $creator_type);
+        if(is_array($share_id) && count($share_id) > 0){
+            $array = $this->breadcrum_array_for_share($id, $share_id);
+        }
+        return $array;
+    }
+
+    public function breadcrum_array_for_share($id, $share_id, $array = [])
+    {     
+        $data_item = $this->get_dms_item($id, '', 'master_id, parent_id, name, id');
+        if($data_item && is_object($data_item)){
+            $array[] = ['id' => $id, 'parent_id' => $data_item->parent_id, 'name' => $data_item->name];
+            if(is_numeric($data_item->parent_id) && $data_item->parent_id > 0 && $id = $data_item->parent_id){
+                if(!in_array($data_item->parent_id, $share_id)){
+                    return $array;
+                }
+                $array = $this->breadcrum_array_for_share($id, $share_id, $array);
+            }
+        }
+        return $array;
+    }
 }
