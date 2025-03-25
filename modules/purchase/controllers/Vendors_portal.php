@@ -2046,10 +2046,13 @@ class Vendors_portal extends App_Controller
 
     public function drawing_management()
     {
+        if (!is_vendor_logged_in() && !is_staff_logged_in()) {
+            redirect(site_url('purchase/authentication_vendor/login'));
+        }
         $this->load->model('drawing_management/drawing_management_model');
         $data['title'] = _l('dms_file_management');
         init_drawing_fist_item();
-        $user_id = get_staff_user_id();
+        $user_id = 1;
         $master_parent_id = '';
         $id = $this->input->get('id') ?? 3;
         $edit = $this->input->get('edit');
@@ -2065,17 +2068,6 @@ class Vendors_portal extends App_Controller
         $query = 'sign_approve = -1 and id in (SELECT rel_id FROM ' . db_prefix() . 'dms_approval_detail_eids where staffid = ' . $user_id . ' and approve is null and rel_type = \'document\')';
         $data['approve_item_eids'] = $this->drawing_management_model->get_item('', $query, 'name, id, dateadded, filetype, hash');
         $data_root_folder = $this->drawing_management_model->get_root_item($user_id);
-        if (!empty($data_root_folder)) {
-            foreach ($data_root_folder as $key => $value) {
-                if ($value['project_id'] != 0 && !is_admin()) {
-                    $project_member = $this->drawing_management_model->check_project_member_exist($value['project_id']);
-                    if (empty($project_member)) {
-                        unset($data_root_folder[$key]);
-                    }
-                }
-            }
-            $data_root_folder = array_values($data_root_folder);
-        }
         if ($id == null) {
             $id = '';
             foreach ($data_root_folder as $key => $value) {
@@ -2106,7 +2098,7 @@ class Vendors_portal extends App_Controller
                 redirect(admin_url('vendors_portal/drawing_management'));
             }
         }
-        $data['share_id'] = $this->drawing_management_model->get_item_share_to_me(true);
+        $data['share_id'] = $this->purchase_model->get_item_share_to_me(true);
         $data['file_locked'] = $file_locked;
         $data['staffs'] = $this->staff_model->get();
         $this->load->model('clients_model');
@@ -2120,5 +2112,40 @@ class Vendors_portal extends App_Controller
         $this->data($data);
         $this->view('vendor_portal/file_managements/file_management');
         $this->layout();
+    }
+
+    public function view_vendor_pdf($id)
+    {
+        $this->load->model('drawing_management/drawing_management_model');
+        $data['file'] = $this->drawing_management_model->get_item($id);
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('vendor_portal/file_managements/view_vendor_pdf', $data);
+    }
+
+    public function bulk_download_item()
+    {
+        $this->load->model('drawing_management/drawing_management_model');
+        $parent_id = $this->input->get('parent_id');
+        $id = $this->input->get('id');
+        $success = false;
+        if ($id != '') {
+            $root_path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/temps/bulk_downloads/';
+
+
+            $current_timest = strtotime(date('Y-m-d H:i:s'));
+
+
+            // Create folder and download
+            $folder_name = 'Document-Management-' . $current_timest;
+            $save_path = $root_path . $folder_name . '/';
+            $this->drawing_management_model->create_folder_bulk_download($id, $folder_name);
+            $this->load->library('zip');
+            $this->zip->read_dir($save_path, false);
+            $this->zip->download($folder_name . '.zip');
+            $this->zip->clear_data();
+        }
     }
 }

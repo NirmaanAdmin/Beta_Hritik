@@ -813,7 +813,7 @@ $lang['clients_ticket_single_add_reply_btn']       = 'Add Reply';
 $lang['clients_ticket_single_add_reply_heading']   = 'Add reply to this RFI';
 
 # Login
-$lang['clients_login_heading_no_register'] = 'Client login';
+$lang['clients_login_heading_no_register'] = 'Vendor login';
 $lang['clients_login_heading_register']    = 'Please login or register';
 $lang['clients_login_email']               = 'Email Address';
 $lang['clients_login_password']            = 'Password';

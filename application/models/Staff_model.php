@@ -371,6 +371,9 @@ class Staff_model extends App_Model
      */
     public function get_staff_permissions($id)
     {
+        if(empty($id)) {
+            return [];
+        }
         // Fix for version 2.3.1 tables upgrade
         if (defined('DOING_DATABASE_UPGRADE')) {
             return [];

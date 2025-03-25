@@ -18260,4 +18260,41 @@ class Purchase_model extends App_Model
 
         return false;
     }
+
+    public function get_item_share_to_me($parse_string = false, $type = 'staff')
+    {
+        $current_date = date('Y-m-d H:i:s');
+        $list = [];
+        $userid = get_vendor_contact_user_id();
+        $data = $this->db->query('select distinct(item_id) as id from ' . db_prefix() . 'dms_share_logs where share_to = "vendor" AND find_in_set(' . $userid . ', vendor_contact)')->result_array();
+        foreach ($data as $key => $value) {
+            $list[] = $value['id'];
+        }
+
+        if ($parse_string == false) {
+            return $list;
+        } else {
+            if (count($list) > 0) {
+                return implode(',', $list);
+            } else {
+                return '0';
+            }
+        }
+    }
+
+    public function get_dms_item($id, $where = '', $select = '')
+    {
+        if ($select != '') {
+            $this->db->select($select);
+        }
+        if ($id != '') {
+            $this->db->where('id', $id);
+            return $this->db->get(db_prefix() . 'dms_items')->row();
+        } else {
+            if ($where != '') {
+                $this->db->where($where);
+            }
+            return $this->db->get(db_prefix() . 'dms_items')->result_array();
+        }
+    }
 }

@@ -22,6 +22,9 @@
 				if($value['filetype'] == 'folder') {
 					$a1 = '<a href="'.admin_url('purchase/vendors_portal/drawing_management?id='.$value['id']).'" >';
 					$a2 = '</a>';
+				} else if($value['filetype'] == 'application/pdf') {
+					$a1 = '<a class="preview-vendor-pdf" data-id="'.$value['id'].'" href="javascript:void(0);">';
+					$a2 = '</a>';
 				} else {
 					$a1 = '<a>';
 					$a2 = '</a>';
@@ -88,3 +91,22 @@
 			<?php } ?>
 		</tbody>
 	</table>
+
+	<div id="view_vendor_pdf"></div>
+
+<script>
+	$(document).on('click', '.preview-vendor-pdf', function(e) {
+	    var id = $(this).data('id');
+	    view_vendor_pdf(id);
+	});
+
+	function view_vendor_pdf(id) {
+	  "use strict"; 
+	      $('#view_vendor_pdf').empty();
+	      $("#view_vendor_pdf").load(site_url + 'purchase/vendors_portal/view_vendor_pdf/' + id, function(response, status, xhr) {
+	          if (status == "error") {
+	              alert_float('danger', xhr.statusText);
+	          }
+	      });
+	}
+</script>

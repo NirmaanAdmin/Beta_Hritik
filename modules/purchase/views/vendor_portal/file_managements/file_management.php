@@ -106,7 +106,7 @@
 								</button>
 								*/ ?>
 
-								<a href="<?php echo admin_url('drawing_management/bulk_download_item?parent_id=' . $parent_id . '&id='); ?>" class="btn btn-default pull-right mright10 display-flex bulk-action-btn bulk-download-btn hide">
+								<a href="<?php echo site_url('purchase/vendors_portal/bulk_download_item?parent_id=' . $parent_id . '&id='); ?>" class="btn btn-default pull-right mright10 display-flex bulk-action-btn bulk-download-btn hide">
 									<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
 										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
 										<polyline points="7 10 12 15 17 10" />
@@ -163,7 +163,7 @@
 								}
 							?>
 								<li class="list-group-item list-group-item-action display-flex<?php echo drawing_htmldecode($active); ?>" data-toggle="list" role="tab">
-									<a href="<?php echo admin_url('purchase/vendors_portal/drawing_management?id=' . $value['id']); ?>" class="w100">
+									<a href="<?php echo site_url('purchase/vendors_portal/drawing_management?id=' . $value['id']); ?>" class="w100">
 										<?php echo drawing_htmldecode($value['name']); ?>
 									</a>
 
@@ -184,11 +184,11 @@
 												<a href="#" data-type="<?php echo drawing_htmldecode($value['filetype']); ?>" onclick="share_document(this, '<?php echo drawing_htmldecode($value['id']); ?>')"><?php echo _l('dmg_share') ?></a>
 											</li>
 											<li class="no-padding">
-												<a href="<?php echo admin_url('drawing_management/download_folder/' . $value['id']); ?>"><?php echo _l('dmg_dowload') ?></a>
+												<a href="<?php echo site_url('drawing_management/download_folder/' . $value['id']); ?>"><?php echo _l('dmg_dowload') ?></a>
 											</li>
 											<?php if ($value['is_primary'] == 0) { ?>
 												<li class="no-padding">
-													<a class="_swaldelete" href="<?php echo admin_url('drawing_management/delete_section/' . $value['id'] . '/' . $parent_id) ?>"><?php echo _l('dmg_delete') ?></a>
+													<a class="_swaldelete" href="<?php echo site_url('drawing_management/delete_section/' . $value['id'] . '/' . $parent_id) ?>"><?php echo _l('dmg_delete') ?></a>
 												</li>
 											<?php } ?>
 										</ul>
@@ -206,7 +206,7 @@
 						<hr>
 						<ul class="list-group list-group-flush list-group-custom" role="tablist">
 							<?php /* <li class="list-group-item list-group-item-action display-flex<?php echo ($share_to_me == 1 ? ' active' : ''); ?>" data-toggle="list" role="tab">
-								<a href="<?php echo admin_url('drawing_management?share_to_me=1&id=0'); ?>" class="w100 display-flex">
+								<a href="<?php echo site_url('drawing_management?share_to_me=1&id=0'); ?>" class="w100 display-flex">
 									<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>  
 									<span class="mtop2 mleft5">
 										<?php echo _l('dmg_share_to_me'); ?>
@@ -221,7 +221,7 @@
 
 							<?php /* 
 							<li class="list-group-item list-group-item-action display-flex<?php echo ($my_approval == 1 ? ' active' : ''); ?>" data-toggle="list" role="tab">
-								<a href="<?php echo admin_url('drawing_management?my_approval=1&id=0'); ?>" class="w100 display-flex">
+								<a href="<?php echo site_url('drawing_management?my_approval=1&id=0'); ?>" class="w100 display-flex">
 									<svg viewBox="0 0 24 24" width="23" height="23" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
 										<polyline points="9 11 12 14 22 4"></polyline>
 										<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
@@ -235,7 +235,7 @@
 								</a>
 							</li>
 							<li class="list-group-item list-group-item-action display-flex<?php echo ($electronic_signing == 1 ? ' active' : ''); ?>" data-toggle="list" role="tab">
-								<a href="<?php echo admin_url('drawing_management?electronic_signing=1&id=0'); ?>" class="w100 display-flex">
+								<a href="<?php echo site_url('drawing_management?electronic_signing=1&id=0'); ?>" class="w100 display-flex">
 									<svg viewBox="0 0 24 24" width="23" height="23" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
 										<polyline points="9 11 12 14 22 4"></polyline>
 										<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
@@ -358,7 +358,7 @@
 											$html_breadcrumb = '';
 											$data_breadcrumb = $this->drawing_management_model->breadcrum_array($parent_id);
 											foreach ($data_breadcrumb as $key => $value) {
-												$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . admin_url('purchase/vendors_portal/drawing_management?id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
+												$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . site_url('purchase/vendors_portal/drawing_management?id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
 											}
 											$col_class = '';
 											?>
@@ -418,7 +418,7 @@
 
 											<?php /*
 											<div class="file-form-group file-form">
-												<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id), array('id' => 'form_upload_file')); ?>
+												<?php echo form_open_multipart(site_url('drawing_management/upload_file/' . $parent_id), array('id' => 'form_upload_file')); ?>
 												<input type="file" id="files" name="file[]" multiple="">
 												<div class="file-form-preview hide">
 													<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
@@ -456,7 +456,7 @@
 													$html_breadcrumb = '';
 													$data_breadcrumb = $this->drawing_management_model->breadcrum_array2($parent_id);
 													foreach ($data_breadcrumb as $key => $value) {
-														$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . admin_url('drawing_management?share_to_me=1&id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
+														$html_breadcrumb = '<li class="breadcrumb-item"><a href="' . site_url('drawing_management?share_to_me=1&id=' . $value['id']) . '">' . $value['name'] . '</a></li>' . $html_breadcrumb;
 													}
 													?>
 													<nav aria-label="breadcrumb">
@@ -470,7 +470,7 @@
 										}
 										if (drawing_check_share_permission($parent_id, 'upload_only')) { ?>
 											<div class="file-form-group file-form">
-												<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
+												<?php echo form_open_multipart(site_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
 												<input type="file" id="files" name="file[]" multiple="">
 												<div class="file-form-preview hide">
 													<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
@@ -516,7 +516,7 @@
 												}
 												if (drawing_check_share_permission($parent_id, 'editor')) { ?>
 													<div class="file-form-group file-form">
-														<?php echo form_open_multipart(admin_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
+														<?php echo form_open_multipart(site_url('drawing_management/upload_file/' . $parent_id . '/share_to_me'), array('id' => 'form_upload_file')); ?>
 														<input type="file" id="files" name="file[]" multiple="">
 														<div class="file-form-preview hide">
 															<ul class="selectedFiles list-group list-group-flush mtop15" id="selectedFiles"></ul>
@@ -593,5 +593,10 @@
 		</div>
 	</div>
 </div>
+
+<input type="hidden" name="check" value="">
+<?php
+require 'modules/purchase/assets/js/file_managements/file_management_js.php';
+?>
 		
 <?php hooks()->do_action('app_admin_footer'); ?>
