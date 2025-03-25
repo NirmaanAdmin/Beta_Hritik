@@ -11,7 +11,7 @@ use PhpOffice\PhpWord\Shared\Html;
 class document_management extends AdminController
 {
 	public function __construct()
-	{
+	{ 
 		parent::__construct();
 		$this->load->model('document_management_model');
 		$this->load->model('departments_model');
@@ -28,7 +28,7 @@ class document_management extends AdminController
 		init_fist_item();
 		$user_id = get_staff_user_id();
 		$master_parent_id = '';
-		$id = $this->input->get('id');
+		$id = $this->input->get('id') ?? 2;
 		$edit = $this->input->get('edit');
 		$share_to_me = $this->input->get('share_to_me');
 		$my_approval = $this->input->get('my_approval');
