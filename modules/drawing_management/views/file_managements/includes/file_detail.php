@@ -320,6 +320,7 @@
 											data-share_to="<?php echo drawing_htmldecode($value['share_to']); ?>"
 											data-permission="<?php echo drawing_htmldecode($value['permission']); ?>"
 											data-vendor="<?php echo drawing_htmldecode($value['vendor']); ?>"
+											data-vendor_contact="<?php echo drawing_htmldecode($value['vendor_contact']); ?>"
 											data-staff="<?php echo drawing_htmldecode($value['staff']); ?>"
 											data-customer_group="<?php echo drawing_htmldecode($value['customer_group']); ?>"
 											data-expiration="<?php echo drawing_htmldecode($value['expiration']); ?>"

@@ -1211,6 +1211,10 @@ class drawing_management_model extends app_model
 		if (isset($data['vendor']) && $data['vendor'] != '') {
 			$data['vendor'] = implode(',', $data['vendor']);
 		}
+		if (isset($data['vendor_contact']) && $data['vendor_contact'] != '') {
+			$vendor_contact = $data['vendor_contact'];
+			$data['vendor_contact'] = implode(',', $data['vendor_contact']);
+		}
 		if (isset($data['customer_group']) && $data['customer_group'] != '') {
 			$data['customer_group'] = implode(',', $data['customer_group']);
 		}
@@ -1233,15 +1237,19 @@ class drawing_management_model extends app_model
 			}
 		}
 		if($data['share_to'] == 'vendor') {
-			if(!empty($data['vendor_email'])) {
-				$vendor_email = explode(',', $data['vendor_email']);
-				foreach ($vendor_email as $email) {
-					$data_send_mail = new stdClass();
-					$data_send_mail->email = trim($email);
-					$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
-					$data_send_mail->message = $data['message'];
-					$template = mail_template('share', 'drawing_management', $data_send_mail);
-					$template->send();
+			if(isset($vendor_contact) && !empty($vendor_contact)) {
+				$this->db->select('email');
+				$this->db->where_in('id', $vendor_contact);
+				$pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
+				if(!empty($pur_contacts)) {
+					foreach ($pur_contacts as $key => $con) {
+						$data_send_mail = new stdClass();
+						$data_send_mail->email = trim($con['email']);
+						$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
+						$data_send_mail->message = $data['message'];
+						$template = mail_template('share', 'drawing_management', $data_send_mail);
+						$template->send();
+					}
 				}
 			}
 		}
@@ -1265,6 +1273,9 @@ class drawing_management_model extends app_model
 		}
 		if (isset($data['vendor']) && $data['vendor'] != '') {
 			$data['vendor'] = implode(',', $data['vendor']);
+		}
+		if (isset($data['vendor_contact']) && $data['vendor_contact'] != '') {
+			$data['vendor_contact'] = implode(',', $data['vendor_contact']);
 		}
 		if (isset($data['customer_group']) && $data['customer_group'] != '') {
 			$data['customer_group'] = implode(',', $data['customer_group']);
@@ -2114,11 +2125,12 @@ class drawing_management_model extends app_model
 	public function get_primary_vendors($data)
 	{
 		$response = '';
-		$this->db->select('email');
+		$this->db->select('id, email');
 		$this->db->where_in('userid', $data);
 		$pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
 		if(!empty($pur_contacts)) {
-			$response = implode(',', array_column($pur_contacts, 'email'));
+			$selected_contacts = array_column($pur_contacts, 'id');
+			$response = render_select('vendor_contact[]', $pur_contacts, array('id', 'email'), '' . _l('vendor_contact'), $selected_contacts, ['multiple' => 1, 'data-actions-box' => true], [], '', '', false);
 		}
 		return $response;
 	}

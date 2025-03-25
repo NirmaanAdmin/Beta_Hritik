@@ -176,6 +176,7 @@
 		var type = btn_obj.data('type');
 		var share_to = btn_obj.data('share_to');
 		var vendor = btn_obj.data('vendor');
+		var vendor_contact = btn_obj.data('vendor_contact');
 		var staff = btn_obj.data('staff');
 		var customer_group = btn_obj.data('customer_group');
 		var expiration = btn_obj.data('expiration');
@@ -202,6 +203,17 @@
 		if(share_to == 'vendor'){
 			modal_obj.find('#vendor').click();
 			modal_obj.find('select[name="vendor[]"]').val(parse_string_to_array(vendor)).change();
+			if(!empty(vendor_contact)) {
+				setTimeout(function () {
+	    			var $select = modal_obj.find('select[name="vendor_contact[]"]');
+				    if ($select.length > 0) {
+				        var selectedValues = parse_string_to_array(vendor_contact);
+				        $select.val(selectedValues);
+				        $select.selectpicker('refresh');
+				        $select.trigger('change');
+				    }
+				}, 300);
+			}
 		}
 		if(share_to == 'customer_group'){
 			modal_obj.find('#customer_group').click();

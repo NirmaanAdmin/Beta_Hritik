@@ -26,7 +26,7 @@
 
                <li class="customers-nav-item-items">
                   <a href="<?php echo site_url('purchase/vendors_portal/drawing_management'); ?>">
-                     <?php echo _l('dms_file_management'); ?>
+                     <?php echo _l('dms_documents'); ?>
                   </a>
                </li>
                

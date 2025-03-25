@@ -26,7 +26,7 @@
 		color: #999;
 		pointer-events: none;
 	}
-	.vendor_email {
+	.vendor_contact {
 		padding-left: 0px;
 		padding-right: 1px;
 	}
@@ -680,10 +680,8 @@
 						<?php echo render_select('vendor[]', $vendors, array('userid', 'company'), '<small class="req text-danger">* </small>' . _l('dmg_vendor'), '', ['multiple' => 1, 'data-actions-box' => true], [], '', '', false); ?>
 						<div class="vendor_basic_details">
 						</div>
-						<div class="col-md-12 vendor_email">
-							<?php
-							echo render_input('vendor_email', 'vendor_email', '');
-							?>
+						<div class="col-md-12 vendor_contact">
+							
 						</div>
 					</div>
 					<div class="col-md-12 customer_group_fr hide">

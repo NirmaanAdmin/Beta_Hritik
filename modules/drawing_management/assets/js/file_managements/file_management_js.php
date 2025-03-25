@@ -118,9 +118,11 @@
       			data: {vendor: vendor},
       		}).done(function(response) {
       			if(!empty(response)) {
-      				$('#vendor_email').val(response);
+      				$('.vendor_contact').html('');
+      				$('.vendor_contact').html(response);
+      				init_selectpicker();
       			} else {
-      				$('#vendor_email').val('');
+      				$('.vendor_contact').html('');
       			}
       		});
 		}
@@ -137,7 +139,7 @@ function validate_share_form(){
 		break;
 		case 'vendor':
 		data.vendor = 'required';
-		data.vendor_email = 'required';
+		data.vendor_contact = 'required';
 		break;
 		case 'customer_group':
 		data.customer_group = 'required';

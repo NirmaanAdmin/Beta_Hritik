@@ -199,3 +199,4 @@ $lang['dmg_vendor'] = 'Vendor';
 $lang['vendor_first_name'] = 'First name';
 $lang['vendor_last_name'] = 'Last name';
 $lang['vendor_email'] = 'Email';
+$lang['vendor_contact'] = 'Contacts';
