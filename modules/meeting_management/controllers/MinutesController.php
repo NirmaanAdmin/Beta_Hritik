@@ -345,4 +345,18 @@ class MinutesController extends AdminController
         $this->Meeting_model->delete_meeting_attachment($id);
         redirect($_SERVER['HTTP_REFERER']);
     }
+    public function file_meeting_preview($id, $rel_id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->Meeting_model->get_meeting_attachments_with_id($id);
+        // echo '<pre>';
+        // print_r($data);
+        // die;
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('meeting_management/_file', $data);
+    }
 }

@@ -57,7 +57,7 @@
                   <h4><?php echo _l('Other Participants'); ?></h4>
 
                   <?php
-                  $other_participants = $other_participants[0]['other_participants'] ?? ''; 
+                  $other_participants = $other_participants[0]['other_participants'] ?? '';
                   ?>
 
                   <table class="table table-bordered">
@@ -102,32 +102,59 @@
                         <?php endif; ?>
                      </tbody>
                   </table>
-                  <?php
-                  if (isset($attachments) && count($attachments) > 0) {
-                     foreach ($attachments as $value) {
-                        echo '<div class="col-md-3">';
-                        $path = get_upload_path_by_type('meeting_management') . 'agenda_meeting/' . $value['rel_id'] . '/' . $value['file_name'];
-                        $is_image = is_image($path);
-                        if ($is_image) {
-                           echo '<div class="preview_image">';
+                  <div class="col-md-12" id="meeting_attachments">
+                     <?php
+                     $file_html = '';
+                     if (isset($attachments) && count($attachments) > 0) {
+                        $file_html .= '<hr /><p class="bold text-muted">' . _l('Meeting Attachments') . '</p>';
+
+                        foreach ($attachments as $value) {
+                           $path = get_upload_path_by_type('meeting_management') . 'agenda_meeting/' . $value['rel_id'] . '/' . $value['file_name'];
+                           $is_image = is_image($path);
+
+                           $download_url = site_url('download/file/meeting_management/' . $value['id']);
+
+                           $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="' . $value['id'] . '">
+                <div class="col-md-8">';
+
+                           // Preview button for images
+                           if ($value['filetype'] != 'application/vnd.openxmlformats-officedoc  ') {
+                              $file_html .= '<a name="preview-meeting-btn" 
+                    onclick="preview_meeting_attachment(this); return false;" 
+                    rel_id="' . $value['rel_id'] . '" 
+                    id="' . $value['id'] . '" 
+                    href="javascript:void(0);" 
+                    class="mbot10 mright5 btn btn-success pull-left" 
+                    data-toggle="tooltip" 
+                    title="' . _l('preview_file') . '">
+                    <i class="fa fa-eye"></i>
+                </a>';
+                           }
+
+                           $file_html .= '<div class="pull-left"><i class="' . get_mime_class($value['filetype']) . '"></i></div>
+                <a href="' . $download_url . '" target="_blank" download>
+                    ' . $value['file_name'] . '
+                </a>
+                <br />
+                <small class="text-muted">' . $value['filetype'] . '</small>
+                </div>
+                <div class="col-md-4 text-right">';
+
+                           // Delete button with permission check
+                           if ($value['staffid'] == get_staff_user_id() || is_admin()) {
+                              $file_html .= '<a href="' . admin_url('meeting_management/minutesController/delete_attachment/' . $value['id']) . '" class="text-danger _delete"><i class="fa fa-times"></i></a>';
+                           }
+
+                           $file_html .= '</div></div>';
                         }
-                  ?>
-                        <a href="<?php echo site_url('download/file/meeting_management/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
-                           <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
-                           <?php if ($is_image) { ?>
-                              <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
-                           <?php } ?>
-                        </a>
-                        <?php
-                        // echo '</div>';
-                        // echo '<a href="' . admin_url('meeting_management/minutesController/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
-                        ?>
-                        <?php if ($is_image) {
-                           echo '</div>';
-                        } ?>
-                  <?php echo '</div>';
+
+                        $file_html .= '<hr />';
+                        echo pur_html_entity_decode($file_html);
                      }
-                  } ?>
+                     ?>
+                  </div>
+
+                  <div id="meeting_file_data"></div>
 
                   <!-- Export as PDF Button -->
                   <div class="btn-bottom-toolbar text-right">
@@ -144,6 +171,29 @@
 </div>
 
 <?php init_tail(); ?>
+<script>
+   function preview_meeting_attachment(invoker) {
+      "use strict";
+      var id = $(invoker).attr('id');
+      var rel_id = $(invoker).attr('rel_id');
+      view_preview_meeting_attachment(id, rel_id);
+   }
+
+   function view_preview_meeting_attachment(id, rel_id) {
+      "use strict";
+      $('#meeting_file_data').empty();
+      $("#meeting_file_data").load(admin_url + 'meeting_management/minutesController/file_meeting_preview/' + id + '/' + rel_id, function(response, status, xhr) {
+         if (status == "error") {
+            alert_float('danger', xhr.statusText);
+         }
+      });
+   }
+
+   function close_modal_preview() {
+      "use strict";
+      $('._project_file').modal('hide');
+   }
+</script>
 </body>
 
 </html>
