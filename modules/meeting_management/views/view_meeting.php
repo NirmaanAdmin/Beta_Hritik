@@ -23,38 +23,55 @@
                         <td><strong><?php echo _l('agenda'); ?>:</strong></td>
                         <td><?php echo isset($meeting['agenda']) ? $meeting['agenda'] : 'N/A'; ?></td>
                      </tr>
-                                    <!-- New Row for Meeting Notes -->
-                                    <tr>
-                                       <td><strong><?php echo _l('meeting_notes'); ?></strong></td>
-                                       <td><?php echo !empty($meeting_notes) ? $meeting_notes : 'N/A'; ?></td>
-                                    </tr>
+                     <!-- New Row for Meeting Notes -->
+                     <tr>
+                        <td><strong><?php echo _l('meeting_notes'); ?></strong></td>
+                        <td><?php echo !empty($meeting_notes) ? $meeting_notes : 'N/A'; ?></td>
+                     </tr>
                   </table>
 
-         <!-- Participants Table -->
-<h4><?php echo _l('participants'); ?></h4>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th><?php echo _l('Participant Name'); ?></th>
-            <th><?php echo _l('Email'); ?></th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (!empty($participants)) : ?>
-            <?php foreach ($participants as $participant) : ?>
-                <tr>
-                    <td><?php echo isset($participant['firstname']) ? $participant['firstname'] . ' ' . $participant['lastname'] : 'N/A'; ?></td>
-                    <td><?php echo isset($participant['email']) ? $participant['email'] : 'N/A'; ?></td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else : ?>
-            <tr>
-                <td colspan="2" class="text-center"><?php echo _l('No Participants Found'); ?></td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+                  <!-- Participants Table -->
+                  <h4><?php echo _l('participants'); ?></h4>
+                  <table class="table table-bordered">
+                     <thead>
+                        <tr>
+                           <th><?php echo _l('Participant Name'); ?></th>
+                           <th><?php echo _l('Email'); ?></th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <?php if (!empty($participants)) : ?>
+                           <?php foreach ($participants as $participant) : ?>
+                              <tr>
+                                 <td><?php echo isset($participant['firstname']) ? $participant['firstname'] . ' ' . $participant['lastname'] : 'N/A'; ?></td>
+                                 <td><?php echo isset($participant['email']) ? $participant['email'] : 'N/A'; ?></td>
+                              </tr>
+                           <?php endforeach; ?>
+                        <?php else : ?>
+                           <tr>
+                              <td colspan="2" class="text-center"><?php echo _l('No Participants Found'); ?></td>
+                           </tr>
+                        <?php endif; ?>
+                     </tbody>
+                  </table>
+                  <h4><?php echo _l('Other Participants'); ?></h4>
 
+                  <?php
+                  $other_participants = $other_participants[0]['other_participants'] ?? ''; 
+                  ?>
+
+                  <table class="table table-bordered">
+                     <thead>
+                        <tr>
+                           <th><?php echo _l('Name'); ?></th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td><?php echo $other_participants; ?></td>
+                        </tr>
+                     </tbody>
+                  </table>
 
 
                   <!-- Tasks Section -->
@@ -85,6 +102,32 @@
                         <?php endif; ?>
                      </tbody>
                   </table>
+                  <?php
+                  if (isset($attachments) && count($attachments) > 0) {
+                     foreach ($attachments as $value) {
+                        echo '<div class="col-md-3">';
+                        $path = get_upload_path_by_type('meeting_management') . 'agenda_meeting/' . $value['rel_id'] . '/' . $value['file_name'];
+                        $is_image = is_image($path);
+                        if ($is_image) {
+                           echo '<div class="preview_image">';
+                        }
+                  ?>
+                        <a href="<?php echo site_url('download/file/meeting_management/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                           <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                           <?php if ($is_image) { ?>
+                              <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                           <?php } ?>
+                        </a>
+                        <?php
+                        // echo '</div>';
+                        // echo '<a href="' . admin_url('meeting_management/minutesController/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                        ?>
+                        <?php if ($is_image) {
+                           echo '</div>';
+                        } ?>
+                  <?php echo '</div>';
+                     }
+                  } ?>
 
                   <!-- Export as PDF Button -->
                   <div class="btn-bottom-toolbar text-right">
@@ -102,4 +145,5 @@
 
 <?php init_tail(); ?>
 </body>
+
 </html>

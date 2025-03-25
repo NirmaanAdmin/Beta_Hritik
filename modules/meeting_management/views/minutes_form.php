@@ -12,20 +12,21 @@
 <div id="wrapper">
    <div class="content">
       <div class="row">
+         <?php echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form')); ?>
          <div class="col-md-12">
             <div class="panel_s">
                <div class="panel-body">
                   <h4><?php echo _l('meeting_minutes'); ?></h4>
 
                   <!-- Minutes of Meeting Form -->
-                  <?php echo form_open(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form')); ?>
+
                   <input type="hidden" name="agenda_id" value="<?php echo $agenda_id; ?>">
                   <div class="form-group">
                      <label for="minutes"><?php echo _l('meeting_minutes'); ?></label>
                      <?php
                      $minutes_val = '';
                      $minutes_val = isset($minutes) ? $minutes->minutes : '';
-                     if(empty($minutes_val)) {
+                     if (empty($minutes_val)) {
                         $minutes_val .= isset($minutes) ? nl2br($minutes->agenda) : '';
                         // $minutes_val .= '<p><strong>Decision -<br>Action -</strong></p>';
                      }
@@ -51,11 +52,17 @@
                         <?php endif; ?>
                      </select>
                   </div>
-
+                  <div class="form-group">
+                     <?php 
+                     $other_participants = $other_participants[0]['other_participants'] ;
+                     ?>
+                     <label for="other_participants"><?php echo _l('Other Participants'); ?></label>
+                     <input type="text" name="other_participants" id="other_participants" class="form-control" value="<?php  echo $other_participants ?>">
+                  </div>            
                   <!-- Share Meeting Button -->
                   <div class="text-right">
                      <a href="<?php echo admin_url('meeting_management/minutesController/share_meeting/' . $agenda_id); ?>" class="btn btn-success">
-                         <?php echo _l('share_meeting'); ?>
+                        <?php echo _l('share_meeting'); ?>
                      </a>
                   </div>
                   <hr>
@@ -93,7 +100,7 @@
                                  </td>
                                  <td>
                                     <button type="button" class="btn btn-danger btn-sm delete-existing-task" data-task-id="<?php echo $task['id']; ?>">
-                                        <?php echo _l('delete_task'); ?>
+                                       <?php echo _l('delete_task'); ?>
                                     </button>
                                  </td>
                               </tr>
@@ -110,15 +117,66 @@
                   <button type="button" id="add-task" class="btn btn-primary"><?php echo _l('add_another_task'); ?></button>
 
                   <hr>
-                  
+
                   <div class="btn-bottom-toolbar text-right">
+                     <button
+                        type="button"
+                        id="back"
+                        class="btn btn-default"
+                        onclick="window.location.href='<?php echo site_url('admin/meeting_management/agendaController/index'); ?>'">
+                        <?php echo _l('Back'); ?>
+                     </button>
                      <button type="submit" id="save-all" class="btn btn-info"><?php echo _l('save_all'); ?></button>
                   </div>
 
-                  <?php echo form_close(); ?>
+
                </div>
             </div>
+            <div class="panel-body" style="margin-bottom: 10px;">
+               <label for="attachment"><?php echo _l('attachment'); ?></label>
+               <div class="attachments" style="margin-bottom: 10px;">
+                  <div class="attachment">
+                     <div class="col-md-5 form-group" style="padding-left: 0px;">
+                        <div class="input-group">
+                           <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                           <span class="input-group-btn">
+                              <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <br /> <br />
+
+               <?php
+               if (isset($attachments) && count($attachments) > 0) {
+                  foreach ($attachments as $value) {
+                     echo '<div class="col-md-3">';
+                     $path = get_upload_path_by_type('meeting_management') . 'agenda_meeting/' . $value['rel_id'] . '/' . $value['file_name'];
+                     $is_image = is_image($path);
+                     if ($is_image) {
+                        echo '<div class="preview_image">';
+                     }
+               ?>
+                     <a href="<?php echo site_url('download/file/meeting_management/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                        <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                        <?php if ($is_image) { ?>
+                           <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                        <?php } ?>
+                     </a>
+                     <?php
+                     // echo '</div>';
+                     echo '<a href="' . admin_url('meeting_management/minutesController/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                     ?>
+                     <?php if ($is_image) {
+                        echo '</div>';
+                     } ?>
+               <?php echo '</div>';
+                  }
+               } ?>
+            </div>
          </div>
+         <?php echo form_close(); ?>
       </div>
    </div>
 </div>
@@ -126,22 +184,22 @@
 <?php init_tail(); ?>
 
 <script>
-    $(document).ready(function() {
-        var taskCount = <?php echo !empty($tasks) ? count($tasks) : 0; ?>;
+   $(document).ready(function() {
+      var taskCount = <?php echo !empty($tasks) ? count($tasks) : 0; ?>;
 
-        // Use Perfex's default validation method
-        $('#minutes-tasks-form').validate({
-            submitHandler: function(form) {
-                form.submit();  // Submit the form only if validation passes
-            }
-        });
+      // Use Perfex's default validation method
+      $('#minutes-tasks-form').validate({
+         submitHandler: function(form) {
+            form.submit(); // Submit the form only if validation passes
+         }
+      });
 
-        // Add new task row
-        $('#add-task').on('click', function() {
-            taskCount++;
-            const newTaskId = `new_${taskCount}`;
-            
-            $('#task-overview').append(`
+      // Add new task row
+      $('#add-task').on('click', function() {
+         taskCount++;
+         const newTaskId = `new_${taskCount}`;
+
+         $('#task-overview').append(`
                 <tr data-task-id="${newTaskId}">
                     <td>
                         <input type="text" name="new_tasks[${taskCount}][title]" class="form-control" required>
@@ -161,48 +219,51 @@
                     </td>
                 </tr>
             `);
-        });
+      });
 
-        // Remove existing task row and delete from database using SweetAlert for confirmation
-        $(document).on('click', '.delete-existing-task', function() {
-            const taskId = $(this).data('task-id');
-            const row = $(this).closest('tr');
+      // Remove existing task row and delete from database using SweetAlert for confirmation
+      $(document).on('click', '.delete-existing-task', function() {
+         const taskId = $(this).data('task-id');
+         const row = $(this).closest('tr');
 
-            Swal.fire({
-                title: '<?php echo _l('confirm_delete_task'); ?>',
-                text: "<?php echo _l('confirm_delete_task_message'); ?>",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '<?php echo _l('yes_delete_it'); ?>',
-                cancelButtonText: '<?php echo _l('cancel'); ?>'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '<?php echo admin_url('meeting_management/minutesController/delete_task'); ?>',
-                        type: 'POST',
-                        data: { task_id: taskId },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                row.remove();  // Remove task row from front-end if deleted successfully
-                                alert_float('success', '<?php echo _l('task_deleted_successfully'); ?>');
-                            } else {
-                                alert_float('danger', '<?php echo _l('task_deletion_failed'); ?>');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            alert_float('danger', '<?php echo _l('task_deletion_failed'); ?>');
-                        }
-                    });
-                }
-            });
-        });
-    });
+         Swal.fire({
+            title: '<?php echo _l('confirm_delete_task'); ?>',
+            text: "<?php echo _l('confirm_delete_task_message'); ?>",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '<?php echo _l('yes_delete_it'); ?>',
+            cancelButtonText: '<?php echo _l('cancel'); ?>'
+         }).then((result) => {
+            if (result.isConfirmed) {
+               $.ajax({
+                  url: '<?php echo admin_url('meeting_management/minutesController/delete_task'); ?>',
+                  type: 'POST',
+                  data: {
+                     task_id: taskId
+                  },
+                  dataType: 'json',
+                  success: function(response) {
+                     if (response.success) {
+                        row.remove(); // Remove task row from front-end if deleted successfully
+                        alert_float('success', '<?php echo _l('task_deleted_successfully'); ?>');
+                     } else {
+                        alert_float('danger', '<?php echo _l('task_deletion_failed'); ?>');
+                     }
+                  },
+                  error: function(xhr, status, error) {
+                     alert_float('danger', '<?php echo _l('task_deletion_failed'); ?>');
+                  }
+               });
+            }
+         });
+      });
+   });
 
-    $('#participants').selectpicker();
+   $('#participants').selectpicker();
 </script>
 
 </body>
+
 </html>

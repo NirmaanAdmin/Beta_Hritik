@@ -133,6 +133,18 @@ class Download extends App_Controller
                 }
                 $path = get_upload_path_by_type('purchase') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
             }
+        }  elseif ($folder_indicator == 'meeting_management') {
+            if (is_staff_logged_in()) {
+                if (!$attachmentid) {
+                    show_404();
+                }
+                $this->db->where('id', $attachmentid);
+                $attachment = $this->db->get(db_prefix() . 'purchase_files')->row();
+                if (!$attachment) {
+                    show_404();
+                }
+                $path = get_upload_path_by_type('meeting_management') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
+            }
         } elseif ($folder_indicator == 'inventory') {
             if (is_staff_logged_in()) {
                 if (!$attachmentid) {

@@ -1,41 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Meeting Details</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            font-size: 14px; 
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
             margin: 0;
             padding: 0;
         }
-        h2 { 
+
+        h2 {
             text-align: left;
         }
-        .details-table, .description-table {
+
+        .details-table,
+        .description-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        .details-table, .details-table th, .details-table td, .description-table td {
+
+        .details-table,
+        .details-table th,
+        .details-table td,
+        .description-table td {
             border: 1px solid #ddd;
         }
-        .details-table th, .details-table td {
+
+        .details-table th,
+        .details-table td {
             padding: 6px;
             text-align: center;
             font-size: 13px;
         }
-        .description-table th, .description-table td {
+
+        .description-table th,
+        .description-table td {
             padding: 6px;
             font-size: 13px;
         }
+
         .section-title {
             font-size: 16px;
             font-weight: bold;
             color: #333;
             margin-top: 30px;
         }
+
         .footer {
             position: fixed;
             bottom: 0;
@@ -47,6 +61,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <?php
@@ -101,12 +116,27 @@
             if (!empty($participants)) {
                 $all_participant = '';
                 foreach ($participants as $participant) {
-                    $all_participant .= $participant['firstname'] . ' ' . $participant['lastname'].', ';
+                    $all_participant .= $participant['firstname'] . ' ' . $participant['lastname'] . ', ';
                 }
                 $all_participant = rtrim($all_participant, ", ");
             }
             ?>
             <td style="width: 70%; text-align: left;"><?php echo $all_participant; ?></td>
+        </tr>
+    </table>
+    <table class="details-table">
+        <tr>
+            <th style="width: 10%;"></th>
+            <td style="width: 20%; font-weight: bold;">Company</td>
+            <td style="width: 70%; font-weight: bold;">Ohter Participant’sName</td>
+        </tr>
+        <tr>
+            <td style="width: 10%;">1</td>
+            <td style="width: 20%; text-align: left;">BIL</td>
+            <?php
+            $other_participants = $other_participants[0]['other_participants'] ?? '';
+            ?>
+            <td style="width: 70%; text-align: left;"><?php echo $other_participants; ?></td>
         </tr>
     </table>
 
@@ -118,7 +148,7 @@
             <td>
                 <?php
                 $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
-                
+
                 echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
             </td>
         </tr>
@@ -166,4 +196,5 @@
     </div>
 
 </body>
+
 </html>

@@ -5,10 +5,11 @@
 <div id="wrapper">
    <div class="content">
       <div class="row">
+         <?php echo form_open_multipart(admin_url('meeting_management/agendaController/create'), array('id' => 'agenda-submit-form')); ?>
          <div class="col-md-12 left-column">
             <div class="panel_s">
                <div class="panel-body">
-                  <?php echo form_open(admin_url('meeting_management/agendaController/create'), array('id' => 'agenda-submit-form')); ?>
+
 
                   <!-- Client Dropdown -->
                   <div class="form-group">
@@ -51,31 +52,31 @@
                      $deafult_val = '
 
 
-<table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 14px;">
-    <thead style="background-color: #f2f2f2;">
-        <tr>
-            <th style="border: 1px solid #ccc; text-align: center;">Sr. No.</th>
-            <th style="border: 1px solid #ccc; text-align: center;">Area</th>
-            <th style="border: 1px solid #ccc; text-align: center;">Description</th>
-            <th style="border: 1px solid #ccc; text-align: center;">Decision</th>
-            <th style="border: 1px solid #ccc; text-align: center;">Action</th>
-            <th style="border: 1px solid #ccc; text-align: center;">Action By</th>
-            <th style="border: 1px solid #ccc; text-align: center;">Target Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="border: 1px solid #ccc;text-align: center;">1</td>
-            <td style="border: 1px solid #ccc;text-align: center;"></td>
-            <td style="border: 1px solid #ccc;text-align: center;"></td>
-            <td style="border: 1px solid #ccc;text-align: center;"></td>
-            <td style="border: 1px solid #ccc;text-align: center;"></td>
-            <td style="border: 1px solid #ccc;text-align: center;"></td>
-            <td style="border: 1px solid #ccc;text-align: center;"></td>
-        </tr>
-    </tbody>
-</table><br>
-';
+                           <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 14px;">
+                              <thead style="background-color: #f2f2f2;">
+                                 <tr>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Sr. No.</th>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Area</th>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Description</th>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Decision</th>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Action</th>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Action By</th>
+                                       <th style="border: 1px solid #ccc; text-align: center;">Target Date</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 <tr>
+                                       <td style="border: 1px solid #ccc;text-align: center;">1</td>
+                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                 </tr>
+                              </tbody>
+                           </table><br>
+                           ';
                      ?>
 
                      <?php echo render_textarea('agenda', '', $deafult_val, array(), array(), 'mtop15', 'tinymce'); ?>
@@ -87,10 +88,28 @@
                      <button type="submit" class="btn btn-info"><?php echo _l('submit'); ?></button>
                   </div>
 
-                  <?php echo form_close(); ?>
+
                </div>
             </div>
+            <div class="panel-body">
+               <label for="attachment"><?php echo _l('attachment'); ?></label>
+               <div class="attachments">
+                  <div class="attachment">
+                     <div class="col-md-5 form-group" style="padding-left: 0px;">
+                        <div class="input-group">
+                           <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                           <span class="input-group-btn">
+                              <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <br /> <br />
+            </div>
+            
          </div>
+         <?php echo form_close(); ?>
       </div>
    </div>
 

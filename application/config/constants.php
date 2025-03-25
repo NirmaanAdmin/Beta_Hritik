@@ -156,6 +156,10 @@ define('CONTACT_PROFILE_IMAGES_FOLDER', FCPATH . 'uploads/client_profile_images'
  */
 define('NEWSFEED_FOLDER', FCPATH . 'uploads/newsfeed' . '/');
 /**
+ * meetings attachments
+ */
+define('MEETING_FOLDER', FCPATH . 'uploads/meetings' . '/');
+/**
  * Contracts attachments
  */
 define('CONTRACTS_UPLOADS_FOLDER', FCPATH . 'uploads/contracts' . '/');

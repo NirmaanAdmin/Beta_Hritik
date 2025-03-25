@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+
 use Dompdf\Dompdf;
+
 class AgendaController extends AdminController
 {
     public function __construct()
@@ -11,7 +13,7 @@ class AgendaController extends AdminController
         $this->load->model('Meeting_model');
         $this->load->model('Projects_model'); // Built-in Perfex CRM Projects model
         $this->load->model('Clients_model'); // Built-in Perfex CRM Clients model
-      
+
     }
 
     // View the list of all agendas
@@ -29,17 +31,20 @@ class AgendaController extends AdminController
         $data['clients'] = $this->Clients_model->get();
 
         if ($this->input->post()) {
+
             $agenda_data = [
                 'meeting_title' => $this->input->post('meeting_title'),
                 'project_id' => $this->input->post('project_id'),
-                'agenda' => $this->input->post('agenda',false),
+                'agenda' => $this->input->post('agenda', false),
                 'meeting_date' => $this->input->post('meeting_date'),
                 'created_by' => get_staff_user_id(),
             ];
-
+            $agenda_data_new = $this->input->post();
+            $agenda_data_new['agenda'] = $this->input->post('agenda', false);
+            $agenda_data_new['created_by'] = get_staff_user_id();
             if ($id == '') {
                 // Insert new agenda
-                $this->Meeting_model->create_agenda($agenda_data);
+                $this->Meeting_model->create_agenda($agenda_data_new);
                 set_alert('success', _l('meeting_agenda_created_success'));
             } else {
                 // Update existing agenda
@@ -76,17 +81,18 @@ class AgendaController extends AdminController
     {
         // Fetch meeting details
         $data['meeting'] = $this->Meeting_model->get_meeting_details($agenda_id);
-    
+
         // Fetch participants using the detailed participant function
         $data['participants'] = $this->Meeting_model->get_detailed_participants($agenda_id);
         $data['meeting_notes'] = $this->Meeting_model->get_meeting_notes($agenda_id);  // Assuming the method fetches notes
 
-    
+
         // Fetch tasks
         $data['tasks'] = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
         $data['title'] = _l('view_meeting');
         // Load the view
-       
+        $data['attachments'] = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
+        $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
         $this->load->view('meeting_management/view_meeting', $data);
     }
 
@@ -94,15 +100,15 @@ class AgendaController extends AdminController
     {
         // Initialize Dompdf
         $pdf = new Dompdf();
-    
+
         // Fetch meeting details and other data
         $meeting_details = $this->Meeting_model->get_meeting_details($agenda_id);
         $participants = $this->Meeting_model->get_detailed_participants($agenda_id);
         $tasks = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
-        
+
         // Fetch the meeting notes
         $meeting_notes = $this->Meeting_model->get_meeting_notes($agenda_id);
-    
+
         // Load your HTML view for the PDF content
         $data = [
             'meeting' => $meeting_details,
@@ -110,22 +116,17 @@ class AgendaController extends AdminController
             'tasks' => $tasks,
             'meeting_notes' => $meeting_notes  // Add meeting notes here
         ];
-    
+        $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
         $html_content = $this->load->view('meeting_management/pdf_template', $data, true);
-    
+
         // Set the PDF content
         $pdf->loadHtml($html_content);
         $pdf->setPaper('A4', 'portrait');
-    
+
         // Render the PDF
         $pdf->render();
-    
+
         // Output the PDF to the browser
         $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => 1));  // Download the PDF
     }
-    
-
-    
-    
-
 }
