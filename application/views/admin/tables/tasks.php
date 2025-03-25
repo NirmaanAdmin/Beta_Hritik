@@ -80,13 +80,13 @@ return App_table::find('tasks')
 
         $output  = $result['output'];
         $rResult = $result['rResult'];
-
+        $sr = 1;
         foreach ($rResult as $aRow) {
             $row = [];
 
             $row[] = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';
 
-            $row[] = '<a href="' . admin_url('tasks/view/' . $aRow['id']) . '" onclick="init_task_modal(' . $aRow['id'] . '); return false;">' . $aRow['id'] . '</a>';
+            $row[] = '<a href="' . admin_url('tasks/view/' . $aRow['id']) . '" onclick="init_task_modal(' . $aRow['id'] . '); return false;">' . $sr++ . '</a>';
 
             $outputName = '';
 
