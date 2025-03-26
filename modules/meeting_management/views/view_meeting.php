@@ -67,7 +67,13 @@
                   <h4><?php echo _l('Other Participants'); ?></h4>
 
                   <?php
-                  $other_participants = $other_participants[0]['other_participants'] ?? '';
+                  // Extract all 'other_participants' values into a single array
+                  $all_other_participants = [];
+                  foreach ($other_participants as $participant) {
+                     if (!empty($participant['other_participants'])) {
+                        $all_other_participants[] = $participant['other_participants'];
+                     }
+                  }
                   ?>
 
                   <table class="table table-bordered">
@@ -77,12 +83,19 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <tr>
-                           <td><?php echo $other_participants; ?></td>
-                        </tr>
+                        <?php if (!empty($all_other_participants)) : ?>
+                           <?php foreach ($all_other_participants as $participant) : ?>
+                              <tr>
+                                 <td><?php echo htmlspecialchars($participant); ?></td>
+                              </tr>
+                           <?php endforeach; ?>
+                        <?php else : ?>
+                           <tr>
+                              <td>No participants found</td>
+                           </tr>
+                        <?php endif; ?>
                      </tbody>
                   </table>
-
 
                   <!-- Tasks Section -->
                   <h4><?php echo _l('tasks'); ?></h4>

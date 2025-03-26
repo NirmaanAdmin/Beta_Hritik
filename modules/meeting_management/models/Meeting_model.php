@@ -230,7 +230,7 @@ class Meeting_model extends App_Model
     }
 
     // Save participants for a given agenda
-    public function save_participants($agenda_id, $participants, $other_participants)
+    public function save_participants($agenda_id, $participants, $other_participants, $company_name)
     {
         // First, ensure the meeting ID exists in the database
         $this->db->where('id', $agenda_id);
@@ -257,13 +257,23 @@ class Meeting_model extends App_Model
             }
         }
         if (!empty($other_participants)) {
-            $data = [
-                'meeting_id'        => $agenda_id,
-                'other_participants' => $other_participants, // Make sure this column exists in the table
-            ];
+            foreach ($other_participants as $index => $participant) {
+                // Trim and validate the participant name
+                $participant_name = trim($participant);
+                if (!empty($participant_name)) {
+                    // Get the corresponding company name (or an empty string if not set)
+                    $company = isset($company_name[$index]) ? trim($company_name[$index]) : '';
 
-            // Insert other participant
-            $this->db->insert(db_prefix() . 'meeting_participants', $data);
+                    $data = [
+                        'meeting_id'        => $agenda_id,
+                        'other_participants' => $participant_name, // Store participant name
+                        'company_names'       => $company,          // Store company name
+                    ];
+
+                    // Insert participant into the database
+                    $this->db->insert(db_prefix() . 'meeting_participants', $data);
+                }
+            }
         }
     }
 

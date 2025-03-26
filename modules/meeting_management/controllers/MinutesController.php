@@ -141,7 +141,7 @@ class MinutesController extends AdminController
         $minutes_data = [
             'minutes' => $this->input->post('minutes',false)
         ];
-
+ 
         // Update the minutes for this meeting
         $this->Meeting_model->update_minutes($agenda_id, $minutes_data);
 
@@ -154,10 +154,12 @@ class MinutesController extends AdminController
         // Save the participants
         $participants = $this->input->post('participants');
         $other_participants = $this->input->post('other_participants');
+        $company_name = $this->input->post('company_names');
+       
         if ($participants) {
-            $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants);
+            $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants,$company_name);
         }
-        $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants);
+        $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants,$company_name);
         // Handle new tasks if any
         $new_tasks = $this->input->post('new_tasks');  // Corrected
         if (!empty($new_tasks)) {

@@ -4,6 +4,9 @@
    .cke_notification {
       display: none !important;
    }
+   .margin_add_class{
+      margin-top: 14px;
+   }
 </style>
 
 <!-- Add CKEditor and SweetAlert -->
@@ -53,11 +56,54 @@
                      </select>
                   </div>
                   <div class="form-group">
-                     <?php
-                     $other_participants = $other_participants[0]['other_participants'];
-                     ?>
-                     <label for="other_participants"><?php echo _l('Other Participants'); ?></label>
-                     <input type="text" name="other_participants" id="other_participants" class="form-control" value="<?php echo $other_participants ?>">
+                     <label for="other_participants"><?php echo _l('Participants'); ?></label>
+                     <div id="other-participants-container">
+                        <?php
+                        // Initialize an empty array to store all other_participants values
+                        $all_other_participants = [];
+
+                        // Extract all 'other_participants' values into a single array
+                        foreach ($other_participants as $participant) {
+                           if (!empty($participant['other_participants'])) {
+                              $all_other_participants[] = [
+                                 'name' => $participant['other_participants'],
+                                 'company_name' => $participant['company_names'] ?? '', // Add company name if available
+                              ];
+                           }
+                        }
+
+                        // Display input fields for each participant
+                        if (!empty($all_other_participants)) {
+                           foreach ($all_other_participants as $index => $participant) {
+                              echo '<div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px;">';
+
+                              // Participant Name Input (50% width)
+                              echo '<input type="text" name="other_participants[]" class="form-control" value="' . htmlspecialchars($participant['name']) . '" style="flex: 1;" placeholder="Participant Name">';
+
+                              // Company Name Input (50% width)
+                              echo '<input type="text" name="company_names[]" class="form-control" value="' . htmlspecialchars($participant['company_name']) . '" style="flex: 1;" placeholder="Company Name">';
+
+                              // Add "Remove" button only if there is more than one participant
+                              if (count($all_other_participants) > 1) {
+                                 echo '<button type="button" class="btn btn-danger remove-participant" style="margin-top: 0px; margin-bottom: 10px;">Remove</button>';
+                              }
+                              echo '</div>';
+                           }
+                        } else {
+                           // Default input fields without a "Remove" button
+                           echo '<div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px; margin-bottom: 14px;">';
+
+                           // Participant Name Input (50% width)
+                           echo '<input type="text" name="other_participants[]" class="form-control" style="flex: 1;" placeholder="Participant Name">';
+
+                           // Company Name Input (50% width)
+                           echo '<input type="text" name="company_names[]" class="form-control" style="flex: 1;" placeholder="Company Name">';
+
+                           echo '</div>';
+                        }
+                        ?>
+                     </div>
+                     <button type="button" id="add-participant" class="btn btn-primary mt-2 pull-right " style="margin-left: 10px;">Add Participant</button>
                   </div>
                   <!-- Share Meeting Button -->
                   <div class="text-right">
@@ -165,7 +211,7 @@
 
                         // Preview button for images
                         if ($value['filetype'] != 'application/vnd.openxmlformats-officedoc  ') {
-                        $file_html .= '<a name="preview-meeting-btn" 
+                           $file_html .= '<a name="preview-meeting-btn" 
                     onclick="preview_meeting_attachment(this); return false;" 
                     rel_id="' . $value['rel_id'] . '" 
                     id="' . $value['id'] . '" 
@@ -311,6 +357,48 @@
       "use strict";
       $('._project_file').modal('hide');
    }
+
+   $(document).ready(function() {
+      // Function to check if "Remove" buttons should be shown
+      function updateRemoveButtons() {
+          
+         const inputs = $('#other-participants-container .input-group');
+         if (inputs.length > 1) {
+            // Show "Remove" buttons for all input fields
+            inputs.find('.remove-participant').show();
+            
+         } else {
+            // Hide "Remove" buttons if there's only one input field
+            inputs.find('.remove-participant').hide();
+            $('#add-participant').removeClass('margin_add_class');
+         }
+      }
+
+      // Add new participant input field
+      $('#add-participant').on('click', function() {
+         $('#add-participant').addClass('margin_add_class'); 
+         const newInput = `
+            <div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px;">
+                <!-- Participant Name Input -->
+                <input type="text" name="other_participants[]" class="form-control" style="flex: 1;" placeholder="Participant Name">
+                
+                <!-- Company Name Input -->
+                <input type="text" name="company_names[]" class="form-control" style="flex: 1;" placeholder="Company Name">
+                
+                <!-- Remove Button -->
+                <button type="button" class="btn btn-danger remove-participant" style="margin-top: 0px; margin-bottom: 10px; display: none;">Remove</button>
+            </div>
+        `;
+         $('#other-participants-container').append(newInput);
+         updateRemoveButtons(); // Update visibility of "Remove" buttons
+      });
+
+      // Remove participant input field
+      $(document).on('click', '.remove-participant', function() {
+         $(this).closest('.input-group').remove();
+         updateRemoveButtons(); // Update visibility of "Remove" buttons
+      });
+   });
 </script>
 
 </body>

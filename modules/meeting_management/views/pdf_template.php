@@ -107,7 +107,7 @@
         <tr>
             <th style="width: 10%;"></th>
             <td style="width: 20%; font-weight: bold;">Company</td>
-            <td style="width: 70%; font-weight: bold;">Participant’sName</td>
+            <td style="width: 70%; font-weight: bold;">Participant’s Name</td>
         </tr>
         <tr>
             <td style="width: 10%;">1</td>
@@ -130,16 +130,37 @@
         <tr>
             <th style="width: 10%;"></th>
             <td style="width: 20%; font-weight: bold;">Company</td>
-            <td style="width: 70%; font-weight: bold;">Other Participant’sName</td>
+            <td style="width: 70%; font-weight: bold;">Participant’s Name</td>
         </tr>
-        <tr>
-            <td style="width: 10%;">1</td>
-            <td style="width: 20%; text-align: left;">BIL</td>
+        <?php
+        // Ensure $other_participants is an array
+        $other_participants = is_array($other_participants) ? $other_participants : [];
+
+        if (!empty($other_participants)) {
+            foreach ($other_participants as $index => $participant) {
+                // Extract participant name and company name
+                $participant_name = isset($participant['other_participants']) ? htmlspecialchars($participant['other_participants']) : '';
+                $company_name = isset($participant['company_name']) ? htmlspecialchars($participant['company_name']) : '';
+        ?>
+                <tr>
+                    <td style="width: 10%;"><?php echo $index + 1; ?></td>
+                    <td style="width: 20%; text-align: left;"><?php echo $company_name; ?></td>
+                    <td style="width: 70%; text-align: left;"><?php echo $participant_name; ?></td>
+                </tr>
             <?php
-            $other_participants = $other_participants[0]['other_participants'] ?? '';
-            ?>
-            <td style="width: 70%; text-align: left;"><?php echo $other_participants; ?></td>
-        </tr>
+            }
+        } 
+        // else {
+        //     // Display a default row if no participants exist
+        //     ?>
+        //     <tr>
+        //         <td style="width: 10%;">1</td>
+        //         <td style="width: 20%; text-align: left;">No company</td>
+        //         <td style="width: 70%; text-align: left;">No participants found</td>
+        //     </tr>
+        // <?php
+        // }
+        // ?>
     </table>
 
     <table class="description-table">
