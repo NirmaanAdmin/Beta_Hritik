@@ -5707,10 +5707,12 @@ public function check_in_ts() {
 			}
 
 			$list = $this->timesheets_model->get_data_attendance_export($month_filter, $department_filter, $role_filter, $staff_filter);
-			$month = date('m');
-			$month_year = date('Y');
+			$get_month_year = explode('-', $month_filter);	
+			$month = $get_month_year[1]; 
+			$month_year = $get_month_year[0];
+			
 			$days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, $month_year);
-
+			
 			$set_col_tk = [];
 			$set_col_tk[_l('staff_id')] = 'string';
 			$set_col_tk[_l('staff')] = 'string';
@@ -5725,7 +5727,6 @@ public function check_in_ts() {
 				}
 			}
 			$writer_header = $set_col_tk;
-
 			$writer = new XLSXWriter();
 			$writer->writeSheetHeader('Sheet1', $writer_header, $col_options = ['widths' => $widthst, 'fill' => '#C65911', 'font-style' => 'bold', 'color' => '#FFFFFF', 'border' => 'left,right,top,bottom', 'height' => 25, 'border-color' => '#FFFFFF', 'font-size' => 13, 'font' => 'Calibri']);
 			$style1 = array('fill' => '#F8CBAD', 'height' => 25, 'border' => 'left,right,top,bottom', 'border-color' => '#FFFFFF', 'font-size' => 12, 'font' => 'Calibri', 'color' => '#000000');
