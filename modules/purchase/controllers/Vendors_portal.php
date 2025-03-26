@@ -1056,6 +1056,7 @@ class Vendors_portal extends App_Controller
 
         $data['payment'] = $this->purchase_model->get_payment_invoice($id);
         $data['comments'] = $this->purchase_model->get_comments($id, 'pur_invoice');
+        $data['pur_invoice_attachments'] = $this->purchase_model->get_purchase_invoice_attachments($id);
         $data['title'] = $invoice->invoice_number;
         $this->data($data);
         $this->view('vendor_portal/invoices/invoice');

@@ -7,21 +7,25 @@
 			<div class="panel-body">
 				<h4><?php echo pur_html_entity_decode($title) ?></h4>
 				<hr class="mtop5">
-				<a href="<?php echo site_url('purchase/vendors_portal/add_update_invoice'); ?>" class="btn btn-info"><?php echo _l('add_new'); ?></a>
+				<?php /* 
+				<a href="<?php echo site_url('purchase/vendors_portal/add_update_invoice'); ?>" class="btn btn-info"><?php echo _l('add_new'); ?></a> 
 				<br><br>
+				*/ ?>
 
 				<table class="table dt-table">
 			       <thead>
-			       	<th><?php echo _l('invoice_code'); ?></th>
-			       	<th><?php echo _l('invoice_no'); ?></th>
-			         <th><?php echo _l('contract'); ?></th>
-			          <th><?php echo _l('pur_order'); ?></th>
-			          <th><?php echo _l('invoice_date'); ?></th>
-			          <th><?php echo _l('invoice_amount'); ?></th>
-			          <th><?php echo _l('tax_value'); ?></th>
-			          <th><?php echo _l('total_included_tax'); ?></th>
-			          <th><?php echo _l('payment_status'); ?></th>
-			          <th><?php echo _l('options'); ?></th>
+			       	  <th><?php echo _l('invoice_code'); ?></th>
+                      <th><?php echo _l('invoice_number'); ?></th>
+                      <th><?php echo _l('vendor'); ?></th>
+                      <th><?php echo _l('group_pur'); ?></th>
+                      <th><?php echo _l('description_of_services'); ?></th>
+                      <th><?php echo _l('invoice_date'); ?></th>
+                      <th><?php echo _l('billing_status'); ?></th>
+                      <th><?php echo _l('ril_invoice'); ?></th>
+                      <th><?php echo _l('amount_without_tax'); ?></th>
+                      <th><?php echo _l('vendor_submitted_tax_amount'); ?></th>
+                      <th><?php echo _l('final_certified_amount'); ?></th>
+                      <th><?php echo _l('adminnote'); ?></th>
 			       </thead>
 			      <tbody>
 			         <?php foreach($invoices as $inv) { ?>
@@ -32,34 +36,83 @@
 			         		}
 			         	?>
 			         <tr class="inv_tr">
-			         	<td class="inv_tr"><a href="<?php echo site_url('purchase/vendors_portal/invoice/'.$inv['id']); ?>"><?php echo pur_html_entity_decode($inv['invoice_number']); ?></a></td>
-			         	<td class="inv_tr"><?php 
+			         	<td class="inv_tr">
+			         		<a href="<?php echo site_url('purchase/vendors_portal/invoice/'.$inv['id']); ?>"><?php echo pur_html_entity_decode($inv['invoice_number']); ?>
+			         		</a>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php 
 			         		$vendor_invoice_number = ($inv['vendor_invoice_number'] != '' ? $inv['vendor_invoice_number'] : $inv['invoice_number']);
 			         		echo pur_html_entity_decode($vendor_invoice_number); 
-			         	?></td>
-			         	<td class="inv_tr"><?php echo get_pur_contract_number($inv['contract'],''); ?></td>
-			         	<td class="inv_tr"><?php echo get_pur_order_subject($inv['pur_order']); ?></td>
-			         	<td class="inv_tr"><?php echo '<span class="label label-info">'._d($inv['invoice_date']).'</span>'; ?></td>
-			         	<td class="inv_tr"><?php echo app_format_money($inv['subtotal'],$base_currency->symbol); ?></td>
-			         	<td class="inv_tr"><?php echo app_format_money($inv['tax'],$base_currency->symbol); ?></td>
-			         	<td class="inv_tr"><?php echo app_format_money($inv['total'],$base_currency->symbol); ?></td>
-			         	<td class="inv_tr"><?php 
-			         	$class = '';
-			            if($inv['payment_status'] == 'unpaid'){
-			                $class = 'danger';
-			            }elseif($inv['payment_status'] == 'paid'){
-			                $class = 'success';
-			            }elseif ($inv['payment_status'] == 'partially_paid') {
-			                $class = 'warning';
-			            }
-
-			            echo  '<span class="label label-'.$class.' s-status invoice-status-3">'._l($inv['payment_status']).'</span>';
-
-			         	?>
+			         		?>
 			         	</td>
-			         	<td>
-			         		<a href="<?php echo site_url('purchase/vendors_portal/add_update_invoice/'.$inv['id']); ?>" class="btn btn-warning btn-icon"><i class="fa fa-pencil"></i></a>
-			         		<a href="<?php echo site_url('purchase/vendors_portal/delete_invoice/'.$inv['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
+			         	<td class="inv_tr">
+			         		<?php echo get_vendor_company_name($inv['vendor'],''); ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php 
+			         		$budget_head = get_group_name_item($inv['group_pur']);
+			         		echo $budget_head->name; ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php echo $inv['description_services']; ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php echo _d($inv['invoice_date']); ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php 
+			         		$delivery_status = ''; 
+			         		if ($inv['payment_status'] == 1) {
+				                $delivery_status = '<span class="inline-block label label-danger" id="status_span_' . $inv['id'] . '" task-status-table="rejected">' . _l('rejected');
+				            } else if ($inv['payment_status'] == 2) {
+				                $delivery_status = '<span class="inline-block label label-info" id="status_span_' . $inv['id'] . '" task-status-table="recevied_with_comments">' . _l('recevied_with_comments');
+				            } else if ($inv['payment_status'] == 3) {
+				                $delivery_status = '<span class="inline-block label label-warning" id="status_span_' . $inv['id'] . '" task-status-table="bill_verification_in_process">' . _l('bill_verification_in_process');
+				            } else if ($inv['payment_status'] == 4) {
+				                $delivery_status = '<span class="inline-block label label-primary" id="status_span_' . $inv['id'] . '" task-status-table="bill_verification_on_hold">' . _l('bill_verification_on_hold');
+				            } else if ($inv['payment_status'] == 5) {
+				                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $inv['id'] . '" task-status-table="bill_verified_by_ril">' . _l('bill_verified_by_ril');
+				            } else if ($inv['payment_status'] == 6) {
+				                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $inv['id'] . '" task-status-table="payment_certifiate_issued">' . _l('payment_certifiate_issued');
+				            } else if ($inv['payment_status'] == 7) {
+				                $delivery_status = '<span class="inline-block label label-success" id="status_span_' . $inv['id'] . '" task-status-table="payment_processed">' . _l('payment_processed');
+				            } else if ($inv['payment_status'] == 0) {
+				                $delivery_status = '<span class="inline-block label label-danger" id="status_span_' . $inv['id'] . '" task-status-table="unpaid">' . _l('unpaid');
+				            }
+				            echo $delivery_status;
+			         		?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php 
+			         		$expense_convert = '';
+				            if ($inv['expense_convert'] == 0) {
+				                $expense_convert = '';
+				            } else {
+				                $expense_convert_check = get_expense_data($inv['expense_convert']);
+				                if (!empty($expense_convert_check)) {
+				                    if (!empty($expense_convert_check->invoiceid)) {
+				                        $invoice_data = get_invoice_data($expense_convert_check->invoiceid);
+				                        if (!empty($invoice_data)) {
+				                            $expense_convert = $invoice_data->title;
+				                        }
+				                    }
+				                }
+				            }
+				            echo $expense_convert;
+			         		?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php echo app_format_money($inv['vendor_submitted_amount_without_tax'], $base_currency->symbol); ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php echo app_format_money($inv['vendor_submitted_tax_amount'], $base_currency->symbol); ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php echo app_format_money($inv['final_certified_amount'], $base_currency->symbol); ?>
+			         	</td>
+			         	<td class="inv_tr">
+			         		<?php echo $inv['adminnote']; ?>
 			         	</td>
 			         </tr>
 			         <?php } ?>

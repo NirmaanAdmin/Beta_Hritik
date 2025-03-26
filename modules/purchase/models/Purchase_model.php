@@ -8376,23 +8376,23 @@ class Purchase_model extends App_Model
                         $data_rs[] = $inv;
                     }
                 } else {
-                    if ($inv['pur_order'] != null && is_numeric($inv['pur_order'])) {
-                        $pur_order = $this->get_pur_order($inv['pur_order']);
-                        if (isset($pur_order->vendor)) {
-                            if ($pur_order->vendor == $vendor) {
-                                $data_rs[] = $inv;
-                            }
-                        }
-                    }
+                    // if ($inv['pur_order'] != null && is_numeric($inv['pur_order'])) {
+                    //     $pur_order = $this->get_pur_order($inv['pur_order']);
+                    //     if (isset($pur_order->vendor)) {
+                    //         if ($pur_order->vendor == $vendor) {
+                    //             $data_rs[] = $inv;
+                    //         }
+                    //     }
+                    // }
 
-                    if ($inv['contract'] != null && is_numeric($inv['contract'])) {
-                        $contract = $this->get_contract($inv['contract']);
-                        if (isset($contract->vendor)) {
-                            if ($contract->vendor == $vendor) {
-                                $data_rs[] = $inv;
-                            }
-                        }
-                    }
+                    // if ($inv['contract'] != null && is_numeric($inv['contract'])) {
+                    //     $contract = $this->get_contract($inv['contract']);
+                    //     if (isset($contract->vendor)) {
+                    //         if ($contract->vendor == $vendor) {
+                    //             $data_rs[] = $inv;
+                    //         }
+                    //     }
+                    // }
                 }
             }
         }

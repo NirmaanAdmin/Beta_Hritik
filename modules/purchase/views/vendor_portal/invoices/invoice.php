@@ -37,67 +37,143 @@
 		                     <?php echo _l('pur_discuss'); ?>
 		                      <span class="badge comments-indicator<?php echo $totalComments == 0 ? ' hide' : ''; ?>"><?php echo $totalComments; ?></span>
 		                     </a>
-		                  </li> 
+		                  </li>
+
+		                  <li role="presentation">
+		                     <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
+		                     <?php echo _l('attachment'); ?>
+		                     </a>
+		                  </li>
+
 		                </ul>
 		            </div>
 		        </div>
 		        <div class="tab-content">
              		<div role="tabpanel" class="tab-pane ptop10 <?php if($this->input->get('tab') != 'discussion'){echo 'active';} ?>" id="general_infor">
-						<div class="col-md-12 pad_left_0">
-							<div class="col-md-6 pad_left_0 border-right align_div">
-								<p><?php echo _l('invoice_code').':'; ?><span class="pull-right bold"><?php echo pur_html_entity_decode($pur_invoice->invoice_number); ?></span></p>
+						<div class="col-md-7 pad_left_0">
+	         				<div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('invoice_code').':'; ?><span class="pull-right bold"><?php echo pur_html_entity_decode($pur_invoice->invoice_number); ?></span></p>
+	         				</div>
+	         				<div class="col-md-6 pad_right_0">
+	         					<p><?php echo _l('invoice_number').':'; ?><span class="pull-right bold">
+	         						<?php $vendor_invoice_number = $pur_invoice->vendor_invoice_number != '' ?  $pur_invoice->vendor_invoice_number : $pur_invoice->invoice_number;
+	         							echo pur_html_entity_decode($vendor_invoice_number); 
+	         					?></span></p>
+	         				</div>
+
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+
+	         				<div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('invoice_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->invoice_date); ?></span></p>
+	         				</div>
+
+	         				<div class="col-md-6 pad_right_0">
+	         					<p><?php echo _l('pur_vendor').':'; ?>
+		         					<span class="pull-right bold">
+		         						<a href="<?php echo admin_url('purchase/vendor/'.$pur_invoice->vendor); ?>" >
+		         							<?php 
+		         							echo wh_get_vendor_company_name($pur_invoice->vendor); 
+		         							?>
+		         						</a>
+		         					</span>
+	         					</p>
+	         				</div>
+
+	         				
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+
+	         				<div class="col-md-6  pad_left_0  border-right  ">
+	         					<p><?php echo _l('pur_due_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->duedate); ?></span></p>
+	         				</div>
+	         				<div class="col-md-6 pad_right_0">
+	         					<p><?php echo _l('purchase_order').':'; ?><span class="pull-right bold"><a href="<?php echo admin_url('purchase/purchase_order/'.$pur_invoice->pur_order); ?>" ><?php echo get_pur_order_subject($pur_invoice->pur_order); ?></a></span></p>
+	         					
+	         				</div>
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+	         				<!-- <div class="col-md-6 pad_left_0  border-right">
+	         					<p><?php echo _l('invoice_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->total,$base_currency->symbol); ?></span></p>
+	         				</div> -->
+							 <div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('amount_without_tax').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->vendor_submitted_amount_without_tax,$base_currency->symbol); ?></span></p>
+	         				</div>
+							<div class="col-md-6 pad_right_0 ">
+	         					<p><?php echo _l('vendor_submitted_tax_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->vendor_submitted_tax_amount,$base_currency->symbol); ?></span></p>
+	         				</div>
+							 <div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							<div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('vendor_submitted_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->vendor_submitted_amount,$base_currency->symbol); ?></span></p>
+	         				</div>
+							<div class="col-md-6 pad_right_0 ">
+	         					<p><?php echo _l('final_certified_amount').':'; ?><span class="pull-right bold"><?php echo app_format_money($pur_invoice->final_certified_amount,$base_currency->symbol); ?></span></p>
+	         				</div>
+							 <div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							<div class="col-md-6 pad_left_0 border-right">
+							 <p><?php echo _l('bill_accept_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->bill_accept_date); ?></span></p>
+	         				</div>
+							<div class="col-md-6 pad_right_0 ">
+							<p><?php echo _l('certified_bill_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->certified_bill_date); ?></span></p>
+	         				</div>
+							 <div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							 <div class="col-md-6 pad_left_0 border-right">
+							 <p><?php echo _l('payment_date_reliance').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date); ?></span></p>
+	         				</div>
+	         				<div class="col-md-6 pad_right_0 ">
+							<p><?php echo _l('group_pur').':'; ?><span class="pull-right bold"><?php echo get_group_name_by_id($pur_invoice->group_pur) ?></span></p>
 							</div>
-							<div class="col-md-6 pad_right_0 align_div">
-								<p><?php echo _l('invoice_date').':'; ?><span class="label label-info pull-right bold"><?php echo _d($pur_invoice->invoice_date); ?></span></p>
-							</div>
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<hr class="mtop5 mbot5">
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+							 <div class="col-md-6 pad_left_0 border-right">
+							 <p><?php echo _l('payment_date_basilius').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->payment_date_basilius); ?></span></p>
+	         				</div>
 							</div>
 
-							<div class="col-md-6 pad_left_0 border-right align_div">
-								<p><?php echo _l('invoice_number').':'; ?><span class="pull-right bold">
-									<?php $vendor_invoice_number = $pur_invoice->vendor_invoice_number != '' ? $pur_invoice->vendor_invoice_number : $pur_invoice->invoice_number;
-									echo pur_html_entity_decode($vendor_invoice_number); ?>
-									</span></p>
-							</div>
+	         			<div class="col-md-5">
 
-							<div class="col-md-6 pad_right_0 align_div">
-								<p><?php echo _l('pur_due_date').':'; ?><span class="label label-warning pull-right bold"><?php echo _d($pur_invoice->duedate); ?></span></p>
-							</div>
-							
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<hr class="mtop5 mbot5">
-							</div>
-						</div>
+	         				<div class="col-md-12 pad_left_0 pad_right_0 ">
+	         					<div id="inputTagsWrapper">
+			                       <label for="tags" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i> <?php echo _l('tags'); ?></label>
+			                       <input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo (isset($pur_invoice) ? prep_tags_input(get_tags_in($pur_invoice->id,'pur_invoice')) : ''); ?>" data-role="tagsinput">
+			                    </div>
+	         				</div>
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
 
-						<div class="col-md-12 pad_left_0">
-							<div class="col-md-6 pad_left_0 border-right align_div">
-								<p><?php echo _l('transaction_id').':'; ?><span class="pull-right bold"><?php echo pur_html_entity_decode($pur_invoice->transactionid); ?></span></p>
-							</div>
-							<div class="col-md-6 pad_right_0 align_div">
-								<p><?php echo _l('transaction_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->transaction_date); ?></span></p>
-							</div>
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<hr class="mtop5 mbot5">
-							</div>
+	         				<div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('transaction_id').':'; ?><span class="pull-right bold"><?php echo pur_html_entity_decode($pur_invoice->transactionid); ?></span></p>
+	         				</div>
+	         				<div class="col-md-6 pad_right_0">
+	         					<p><?php echo _l('transaction_date').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->transaction_date); ?></span></p>
+	         				</div>
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
+	         				<div class="col-md-6 pad_left_0 border-right">
+	         					<p><?php echo _l('add_from').':'; ?><span class="pull-right bold"><a href="<?php echo admin_url('staff/profile/'.$pur_invoice->add_from); ?>" ><?php echo get_staff_full_name($pur_invoice->add_from); ?></a></span></p>
+	         				</div>
+	         				<div class="col-md-6 pad_right_0">
+	         					<p><?php echo _l('date_add').':'; ?><span class="pull-right bold"><?php echo _d($pur_invoice->date_add); ?></span></p>
+	         				</div>
+	         				<div class="col-md-12 pad_left_0 pad_right_0">
+	         					<hr class="mtop5 mbot5">
+	         				</div>
 
-							<div class="col-md-6 pad_left_0 border-right align_div">
-								<?php if($pur_invoice->contract != ''){ ?>
-								<p><?php echo _l('contract').':'; ?><span class="pull-right bold"><a href="<?php echo site_url('purchase/vendors_portal/view_contract/'.$pur_invoice->contract); ?>" ><?php echo get_pur_contract_number($pur_invoice->contract); ?></a></span></p>
-								<?php }else{ ?>
-								<p><?php echo _l('pur_order').':'; ?><span class="pull-right bold"><a href="<?php echo site_url('purchase/vendors_portal/pur_order/'.$pur_invoice->pur_order); ?>" ><?php echo get_pur_order_subject($pur_invoice->pur_order); ?></a></span></p>	
-								<?php } ?>
-							</div>
+	         			</div>
 
-							<div class="col-md-6 pad_right_0 align_div">
-								<p><?php echo _l('date_add').':'; ?><span class="label label-info pull-right bold"><?php echo _d($pur_invoice->date_add); ?></span></p>
-							</div>
-							<div class="col-md-12 pad_left_0 pad_right_0">
-								<hr class="mtop5 mbot5">
-							</div>
-						</div>
-
-
+						<?php /*
 						<div class="col-md-12 pad_left_0 pad_right_0">
 		         			<div class="table-responsive">
 	                           <table class="table items items-preview estimate-items-preview" data-type="estimate">
@@ -203,7 +279,8 @@
 	                              </tr>
 	                           </tbody>
 	                        </table>
-	                     </div>
+	                    </div>
+	                    */ ?>
 
 
 						<div class="col-md-12 pad_left_0 pad_right_0 align_div">
@@ -287,6 +364,40 @@
 		                  $comment_html .= '<hr />';
 		                  }
 		                  echo $comment_html; ?>
+		            </div>
+
+		            <div role="tabpanel" class="tab-pane" id="attachment">
+		            	<div class="col-md-12" id="purinv_pv_file">
+                            <?php
+                            $file_html = '';
+                            if(count($pur_invoice_attachments) > 0){
+                                $file_html .= '<hr />
+                                        <p class="bold text-muted">'._l('customer_attachments').'</p>';
+                                foreach ($pur_invoice_attachments as $f) {
+                                    $href_url = site_url(PURCHASE_PATH.'pur_invoice/'.$f['rel_id'].'/'.$f['file_name']).'" download';
+                                                    if(!empty($f['external'])){
+                                                      $href_url = $f['external_link'];
+                                                    }
+                                   $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="'. $f['id'].'">
+                                  <div class="col-md-8">
+                                     <a name="preview-purinv-btn" onclick="preview_purinv_btn(this); return false;" rel_id = "'. $f['rel_id']. '" id = "'.$f['id'].'" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="'. _l('preview_file').'"><i class="fa fa-eye"></i></a>
+                                     <div class="pull-left"><i class="'. get_mime_class($f['filetype']).'"></i></div>
+                                     <a href=" '. $href_url.'" target="_blank" download>'.$f['file_name'].'</a>
+                                     <br />
+                                     <small class="text-muted">'.$f['filetype'].'</small>
+                                  </div>
+                                  <div class="col-md-4 text-right">';
+                                    if($f['staffid'] == get_staff_user_id() || is_admin()){
+                                    $file_html .= '<a href="#" class="text-danger" onclick="delete_purinv_attachment('. $f['id'].'); return false;"><i class="fa fa-times"></i></a>';
+                                    } 
+                                   $file_html .= '</div></div>';
+                                }
+                                $file_html .= '<hr />';
+                                echo pur_html_entity_decode($file_html);
+                            }
+                            ?>
+                        </div>
+		                <div id="purinv_file_data"></div>
 		            </div>
 				</div>
 			</div>
