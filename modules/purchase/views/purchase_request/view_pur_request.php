@@ -128,6 +128,7 @@
                   </div>
 
                   <div class=" col-md-12">
+
                     <table class="table border table-striped martop0">
                       <tbody>
                         <!-- Row 1 -->
@@ -250,24 +251,44 @@
 
 
 
-
-
                   <div class="col-md-12">
-                    <p class=" p_style"><?php echo _l('pur_detail'); ?></p>
+                    <div class="row">
+                      <div class="col-md-10 pull-right" style="z-index: 99999; display: flex; justify-content: end;">
+                        <span style="margin-right: 10px;">
+                          <button class="btn btn-primary" id="settings-toggle">Columns</button>
+                          <div id="settings-dropdown" style="display: none; position: absolute; background: #fff; border: 1px solid #ccc; padding: 10px; width: 130px;">
+                            <label><input type="checkbox" class="column-toggle" data-column="1" checked style="width: 20px;"> <?php echo _l('debit_note_table_item_heading'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="2" checked style="width: 20px;"> <?php echo _l('decription'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="3" checked style="width: 20px;"> <?php echo _l('area'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="4" checked style="width: 20px;"> <?php echo _l('Image'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="5" checked style="width: 20px;"> <?php echo _l('purchase_quantity'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="6" checked style="width: 20px;"> <?php echo _l('unit_price'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="7" checked style="width: 20px;"> <?php echo _l('subtotal_before_tax'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="8" checked style="width: 20px;"> <?php echo _l('debit_note_table_tax_heading'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="9" checked style="width: 20px;"> <?php echo _l('tax_value'); ?></label><br>
+                            <label><input type="checkbox" class="column-toggle" data-column="10" checked style="width: 20px;"> <?php echo _l('debit_note_total'); ?></label>
+                          </div>
+                        </span>
+                        <span style="padding: 0px;">
+                          <button id="export-csv" class="btn btn-primary pull-right">Export to CSV</button>
+                        </span>
+                      </div>
+                    </div>
+
+                    <p class="p_style"><?php echo _l('pur_detail'); ?></p>
                     <hr class="hr_style" />
 
                     <div class="table-responsive">
                       <table class="table items items-preview estimate-items-preview" data-type="estimate">
                         <thead>
                           <tr>
-
+                            <th width="20%" align="left" class="hide"><?php echo _l('debit_note_table_item_heading'); ?></th>
                             <th width="20%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
                             <th width="15%" align="right" class="qty"><?php echo _l('decription'); ?></th>
                             <th width="20%" align="right"><?php echo _l('area'); ?></th>
                             <th width="20%" align="right"><?php echo _l('Image'); ?></th>
                             <th width="10%" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
                             <th width="10%" align="right"><?php echo _l('unit_price'); ?></th>
-
                             <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?></th>
                             <th width="15%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
                             <th width="10%" align="right"><?php echo _l('tax_value'); ?></th>
@@ -275,76 +296,70 @@
                           </tr>
                         </thead>
                         <tbody class="ui-sortable">
-
-                          <?php $_subtotal = 0;
+                          <?php
+                          $_subtotal = 0;
                           $_total = 0;
                           if (count($pur_request_detail) > 0) {
-                            $count = 1;
-                            $t_mn = 0;
                             foreach ($pur_request_detail as $es) {
                               $_subtotal += $es['into_money'];
                               $_total += $es['total'];
                           ?>
                               <tr nobr="true" class="sortable">
-
-                                <td class="description" align="left;"><span><strong><?php
-                                                                                    $item = get_item_hp($es['item_code']);
-                                                                                    if (isset($item) && isset($item->commodity_code) && isset($item->description)) {
-                                                                                      echo pur_html_entity_decode($item->commodity_code . ' - ' . $item->description);
-                                                                                    } else {
-                                                                                      echo pur_html_entity_decode($es['item_text']);
-                                                                                    }
-                                                                                    ?></strong></td>
-                                <?php
-                                $unit_name = pur_get_unit_name($es['unit_id']);
-                                ?>
+                              <td class="description hide" align="left"><strong>
+                                    <?php
+                                    $item = get_item_hp($es['item_code']);
+                                    echo isset($item) && isset($item->commodity_code) && isset($item->description)
+                                      ? pur_html_entity_decode($item->commodity_code . ' - ' . $item->description)
+                                      : pur_html_entity_decode($es['item_text']);
+                                    ?>
+                                  </strong></td>
+                                <td class="description" align="left"><strong>
+                                    <?php
+                                    $item = get_item_hp($es['item_code']);
+                                    echo isset($item) && isset($item->commodity_code) && isset($item->description)
+                                      ? pur_html_entity_decode($item->commodity_code . ' - ' . $item->description)
+                                      : pur_html_entity_decode($es['item_text']);
+                                    ?>
+                                  </strong></td>
                                 <td align="right"><?php echo nl2br($es['description']); ?></td>
                                 <td align="right"><?php echo get_area_name_by_id($es['area']); ?></td>
-                                <?php
-                                $full_item_image = '';
-                                if (!empty($es['image'])) {
-                                  $item_base_url = base_url('uploads/purchase/pur_request/' . $es['pur_request'] . '/' . $es['prd_id'] . '/' . $es['image']);
-                                  $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $es['image'] . '" >';
-                                } ?>
-                                <td align="right"><?php echo $full_item_image; ?></td>
-                                <td align="right" width="12%"><?php echo pur_html_entity_decode($es['quantity']) . ' ' . $unit_name; ?></td>
+                                <td align="right">
+                                  <?php
+                                  if (!empty($es['image'])) {
+                                    $img_url = base_url('uploads/purchase/pur_request/' . $es['pur_request'] . '/' . $es['prd_id'] . '/' . $es['image']);
+                                    echo '<img class="images_w_table" src="' . $img_url . '" alt="' . $es['image'] . '">';
+                                  }
+                                  ?>
+                                </td>
+                                <td align="right"><?php echo pur_html_entity_decode($es['quantity']) . ' ' . pur_get_unit_name($es['unit_id']); ?></td>
                                 <td align="right"><?php echo app_format_money($es['unit_price'], $base_currency->symbol); ?></td>
                                 <td align="right"><?php echo app_format_money($es['into_money'], $base_currency->symbol); ?></td>
-                                <td align="right"><?php
-                                                  if ($es['tax_name'] != '') {
-                                                    echo pur_html_entity_decode($es['tax_name']);
-                                                  } else {
-                                                    $this->load->model('purchase/purchase_model');
-                                                    if ($es['tax'] != '') {
-                                                      $tax_arr =  $es['tax'] != '' ? explode('|', $es['tax'] ?? '') : [];
-                                                      $tax_str = '';
-                                                      if (count($tax_arr) > 0) {
-                                                        foreach ($tax_arr as $key => $tax_id) {
-                                                          if (($key + 1) < count($tax_arr)) {
-                                                            $tax_str .= $this->purchase_model->get_tax_name($tax_id) . '|';
-                                                          } else {
-                                                            $tax_str .= $this->purchase_model->get_tax_name($tax_id);
-                                                          }
-                                                        }
-                                                      }
-
-                                                      echo pur_html_entity_decode($tax_str);
-                                                    }
-                                                  }
-                                                  ?></td>
+                                <td align="right">
+                                  <?php
+                                  if ($es['tax_name'] != '') {
+                                    echo pur_html_entity_decode($es['tax_name']);
+                                  } else {
+                                    $this->load->model('purchase/purchase_model');
+                                    $tax_str = '';
+                                    $tax_arr = $es['tax'] != '' ? explode('|', $es['tax']) : [];
+                                    foreach ($tax_arr as $index => $tax_id) {
+                                      $tax_str .= $this->purchase_model->get_tax_name($tax_id);
+                                      if ($index < count($tax_arr) - 1) {
+                                        $tax_str .= '|';
+                                      }
+                                    }
+                                    echo pur_html_entity_decode($tax_str);
+                                  }
+                                  ?>
+                                </td>
                                 <td align="right"><?php echo app_format_money($es['tax_value'], $base_currency->symbol); ?></td>
-
                                 <td class="amount" align="right"><?php echo app_format_money($es['total'], $base_currency->symbol); ?></td>
                               </tr>
-                          <?php
-
-                            }
+                          <?php }
                           } ?>
                         </tbody>
                       </table>
                     </div>
-
-
                   </div>
                   <div class="col-md-6 col-md-offset-6">
                     <table class="table text-right mbot0">
@@ -795,6 +810,63 @@
 </div><!-- /.modal -->
 
 <?php init_tail(); ?>
+<script>
+  // Toggle dropdown
+  document.getElementById('settings-toggle').addEventListener('click', function() {
+    const dropdown = document.getElementById('settings-dropdown');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Column toggle
+  document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      const columnIndex = parseInt(this.getAttribute('data-column'));
+      const table = document.querySelector('.items-preview');
+      table.querySelectorAll('tr').forEach(function(row) {
+        const cells = row.querySelectorAll('th, td');
+        if (cells[columnIndex]) {
+          cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
+        }
+      });
+    });
+  });
+</script>
+<script>
+  document.getElementById('export-csv').addEventListener('click', function() {
+    // Select the table
+    const table = document.querySelector('.items-preview');
+    const rows = Array.from(table.querySelectorAll('tr'));
+
+    // Initialize CSV content
+    let csvContent = '';
+
+    // Loop through each row
+    rows.forEach(row => {
+      const cells = Array.from(row.querySelectorAll('th, td'));
+      const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
+      csvContent += rowContent + '\n';
+    });
+
+    // Add UTF-8 BOM
+    const bom = '\uFEFF';
+
+    // Create a Blob and downloadable link
+    const blob = new Blob([bom + csvContent], {
+      type: 'text/csv;charset=utf-8;'
+    });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'items_export.csv');
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+</script>
+
 </body>
 
 </html>

@@ -35,7 +35,7 @@
   #scroll-thumb {
     width: 15px;
     height: 15px;
-    background-color: #ad729f;
+    background-color: #bca455;
     border-radius: 15px;
     position: relative;
     top: -6px;
