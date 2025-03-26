@@ -70,10 +70,10 @@
                   // Extract all 'other_participants' and 'company_name' values into a single array
                   $all_other_participants = [];
                   foreach ($other_participants as $participant) {
-                     if (!empty($participant['other_participants']) || !empty($participant['company_name'])) {
+                     if (!empty($participant['other_participants']) || !empty($participant['company_names'])) {
                         $all_other_participants[] = [
                            'name' => $participant['other_participants'] ?? '',
-                           'company_name' => $participant['company_name'] ?? '',
+                           'company_name' => $participant['company_names'] ?? '',
                         ];
                      }
                   }
