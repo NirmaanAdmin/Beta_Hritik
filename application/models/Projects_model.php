@@ -120,9 +120,9 @@ class Projects_model extends App_Model
     public function pin_action($id)
     {
         if (total_rows(db_prefix() . 'pinned_projects', [
-                'staff_id' => get_staff_user_id(),
-                'project_id' => $id,
-            ]) == 0) {
+            'staff_id' => get_staff_user_id(),
+            'project_id' => $id,
+        ]) == 0) {
             $this->db->insert(db_prefix() . 'pinned_projects', [
                 'staff_id' => get_staff_user_id(),
                 'project_id' => $id,
@@ -2246,6 +2246,56 @@ class Projects_model extends App_Model
         return false;
     }
 
+    // public function get_activity($id = '', $limit = '', $only_project_members_activity = false)
+    // {
+    //     if (!is_client_logged_in()) {
+    //         $has_permission = staff_can('view',  'projects');
+    //         if (!$has_permission) {
+    //             $this->db->where('project_id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . ')');
+    //         }
+    //     }
+    //     if (is_client_logged_in()) {
+    //         $this->db->where('visible_to_customer', 1);
+    //     }
+    //     if (is_numeric($id)) {
+    //         $this->db->where('project_id', $id);
+    //     }
+    //     if (is_numeric($limit)) {
+    //         $this->db->limit($limit); 
+    //     }
+    //     $this->db->order_by('dateadded', 'desc');
+    //     $activities = $this->db->get(db_prefix() . 'project_activity')->result_array();
+    //     $i = 0;
+    //     foreach ($activities as $activity) {
+    //         $seconds = get_string_between($activity['additional_data'], '<seconds>', '</seconds>');
+    //         $other_lang_keys = get_string_between($activity['additional_data'], '<lang>', '</lang>');
+    //         $_additional_data = $activity['additional_data'];
+
+    //         if ($seconds != '') {
+    //             $_additional_data = str_replace('<seconds>' . $seconds . '</seconds>', seconds_to_time_format($seconds), $_additional_data);
+    //         }
+
+    //         if ($other_lang_keys != '') {
+    //             $_additional_data = str_replace('<lang>' . $other_lang_keys . '</lang>', _l($other_lang_keys), $_additional_data);
+    //         }
+
+    //         if (strpos($_additional_data, 'project_status_') !== false) {
+    //             $_additional_data = get_project_status_by_id(strafter($_additional_data, 'project_status_'));
+
+    //             if (isset($_additional_data['name'])) {
+    //                 $_additional_data = $_additional_data['name'];
+    //             }
+    //         }
+
+    //         $activities[$i]['description'] = _l($activities[$i]['description_key']);
+    //         $activities[$i]['additional_data'] = $_additional_data;
+    //         $activities[$i]['project_name'] = get_project_name_by_id($activity['project_id']);
+    //         unset($activities[$i]['description_key']);
+    //         $i++;
+    //     }
+
+    //     return $activities;
+    // }
     public function get_activity($id = '', $limit = '', $only_project_members_activity = false)
     {
         if (!is_client_logged_in()) {
@@ -2254,17 +2304,22 @@ class Projects_model extends App_Model
                 $this->db->where('project_id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . ')');
             }
         }
+
         if (is_client_logged_in()) {
             $this->db->where('visible_to_customer', 1);
         }
+
         if (is_numeric($id)) {
             $this->db->where('project_id', $id);
         }
+
         if (is_numeric($limit)) {
             $this->db->limit($limit);
         }
+
         $this->db->order_by('dateadded', 'desc');
         $activities = $this->db->get(db_prefix() . 'project_activity')->result_array();
+
         $i = 0;
         foreach ($activities as $activity) {
             $seconds = get_string_between($activity['additional_data'], '<seconds>', '</seconds>');
@@ -2281,7 +2336,6 @@ class Projects_model extends App_Model
 
             if (strpos($_additional_data, 'project_status_') !== false) {
                 $_additional_data = get_project_status_by_id(strafter($_additional_data, 'project_status_'));
-
                 if (isset($_additional_data['name'])) {
                     $_additional_data = $_additional_data['name'];
                 }
@@ -2291,11 +2345,35 @@ class Projects_model extends App_Model
             $activities[$i]['additional_data'] = $_additional_data;
             $activities[$i]['project_name'] = get_project_name_by_id($activity['project_id']);
             unset($activities[$i]['description_key']);
+            $activities[$i]['source'] = 'project'; // Optional: source label
             $i++;
         }
 
+        // --- Fetch and normalize tblpurchase_activity ---
+        $this->db->order_by('date', 'desc');
+        $purchase_activities = $this->db->get('tblpurchase_activity')->result_array();
+
+        foreach ($purchase_activities as $purchase) {
+            $activities[] = [
+                'description'     => $purchase['description'],
+                'additional_data' => $purchase['additional_data'],
+                'project_name'    => null, // You can map this if rel_type = 'project' and rel_id maps to a project
+                'dateadded'       => $purchase['date'],
+                'staff_id'         => $purchase['staffid'],
+                'fullname'       => $purchase['full_name'],
+                'rel_id'          => $purchase['rel_id'],
+                'source'        => $purchase['rel_type'],
+            ];
+        }
+
+        // --- Sort the merged array by 'dateadded' descending ---
+        usort($activities, function ($a, $b) {
+            return strtotime($b['dateadded']) - strtotime($a['dateadded']);
+        });
+
         return $activities;
     }
+
 
     public function log_activity($project_id, $description_key, $additional_data = '', $visible_to_customer = 1)
     {
@@ -2658,16 +2736,16 @@ class Projects_model extends App_Model
      */
     public function get_items()
     {
-       $result = array();
-       $projects = $this->db->query('select id, name, (SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'projects.id) as member_list from '.db_prefix().'projects')->result_array();
+        $result = array();
+        $projects = $this->db->query('select id, name, (SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'projects.id) as member_list from ' . db_prefix() . 'projects')->result_array();
 
-       if(!empty($projects)) {
+        if (!empty($projects)) {
             foreach ($projects as $key => $value) {
-                if(is_admin()) {
+                if (is_admin()) {
                     $result[] = $value;
                 } else {
                     $member_list = $value['member_list'];
-                    if(!empty($member_list)) {
+                    if (!empty($member_list)) {
                         $member_list = explode(",", $member_list);
                         if (in_array(get_staff_user_id(), $member_list)) {
                             $result[] = $value;
@@ -2675,11 +2753,11 @@ class Projects_model extends App_Model
                     }
                 }
             }
-            if(!empty($result)) {
+            if (!empty($result)) {
                 $result = array_values($result);
             }
-       }
+        }
 
-       return $result;
+        return $result;
     }
 }

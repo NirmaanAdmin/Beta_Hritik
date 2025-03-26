@@ -1293,3 +1293,11 @@ function get_required_fields_for_registration()
         ],
     ];
 }
+function get_pur_order_by_id($id){
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'pur_orders');
+    $CI->db->where('id', $id);
+    $query = $CI->db->get();
+    return $query->row();
+}

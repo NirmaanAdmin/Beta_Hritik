@@ -17,7 +17,7 @@
                     <?php echo _l('home_project_activity'); ?>
                 </span>
             </p>
-
+ 
             <hr class="-tw-mx-3 tw-mt-3 tw-mb-6">
 
             <div class="activity-feed">
@@ -48,10 +48,19 @@
                             } ?>
                             <?php echo e($activity['description']); ?>
                         </p>
-                        <?php echo _l('project_name'); ?>: <a
+                        <?php if($activity['source'] == 'project'){   ?>
+                            <?php echo _l('project_name'); ?>: <a
                             href="<?php echo admin_url('projects/view/' . $activity['project_id']); ?>">
                             <?php echo e($activity['project_name']); ?>
                         </a>
+                       <?php }elseif ($activity['source'] == 'purchase') { 
+                            $get_po_by_id = get_pur_order_by_id($activity['rel_id']);
+                        ?>
+                            <?php echo _l('purchase_order'); ?>: <a
+                            href="<?php echo admin_url('purchase/purchase_order/' . $get_po_by_id->id); ?>">
+                            <?php echo e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name); ?>
+                       <?php } ?>
+                        
                     </div>
                     <?php if (!empty($activity['additional_data'])) { ?>
                         <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
