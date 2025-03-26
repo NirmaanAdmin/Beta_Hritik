@@ -634,6 +634,13 @@ class Vendors_portal extends App_Controller
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
         $data['area_pur'] = $this->purchase_model->get_area();
+        $purchase_request = isset($_GET['purchase_request']) ? $_GET['purchase_request'] : null;
+        if(!empty($purchase_request)) {
+            $purchase_request_detail = $this->purchase_model->get_purchase_request($purchase_request);
+            if(!empty($purchase_request_detail)) {
+                $data['pur_request_total'] = $purchase_request_detail->total;
+            }
+        }
 
         $data['title']             = $title;
 
@@ -750,7 +757,7 @@ class Vendors_portal extends App_Controller
                 $estimate_data['project'] = !empty($pur_request) ? $pur_request->project : '';
             }
             if ($id == '') {
-
+                $estimate_data['subtotal'] = $estimate_data['total'];
                 $id = $this->purchase_model->add_estimate($estimate_data);
                 if ($id) {
                     set_alert('success', _l('added_successfully', _l('estimate')));

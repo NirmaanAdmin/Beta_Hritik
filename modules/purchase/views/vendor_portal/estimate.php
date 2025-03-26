@@ -278,11 +278,19 @@
                           </select>
                         </div>
                       </div>
-                      <div class="col-md-6" style="clear: both;">
-                        <div class="form-group select-placeholder">
-                          
-                        </div>
+                      
+                      <div class="col-md-6">
+                        <?php
+                        $total = '';
+                        if(isset($pur_request_total)) {
+                          $total = $pur_request_total;
+                        } else {
+                          $total = isset($estimate) ? $estimate->total : '';
+                        }
+                        echo render_input('total','Quote Value ( ₹ )', $total, 'number', array(), array(), '','');
+                        ?>
                       </div>
+
                     </div>
 
                   </div>
@@ -332,6 +340,8 @@
               <?php } ?>
             </div>
           </div>
+
+          <?php /*
           <div class="panel-body mtop10 invoice-item">
             <div class="row">
               <div class="col-md-4" data-toggle="tooltip" data-placement="top" title="<?php echo _l('vendor_item_select_note'); ?>">
@@ -451,6 +461,7 @@
               </div>
             </div>
           </div>
+          */ ?>
 
           <div class="">
             <div class="panel-body bottom-transaction">
