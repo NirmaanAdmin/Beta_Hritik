@@ -40,12 +40,22 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <?php if (!empty($participants)) : ?>
+                        <?php
+                        if (!empty($participants)) : ?>
                            <?php foreach ($participants as $participant) : ?>
-                              <tr>
-                                 <td><?php echo isset($participant['firstname']) ? $participant['firstname'] . ' ' . $participant['lastname'] : 'N/A'; ?></td>
-                                 <td><?php echo isset($participant['email']) ? $participant['email'] : 'N/A'; ?></td>
-                              </tr>
+                              <?php
+                              // Check if the participant has at least one valid field (non-empty firstname, lastname, or email)
+                              if (!empty($participant['firstname']) || !empty($participant['lastname']) || !empty($participant['email'])) :
+                              ?>
+                                 <tr>
+                                    <td><?php echo isset($participant['firstname']) || isset($participant['lastname'])
+                                             ? trim($participant['firstname'] . ' ' . $participant['lastname'])
+                                             : 'N/A'; ?></td>
+                                    <td><?php echo isset($participant['email']) && !empty($participant['email'])
+                                             ? $participant['email']
+                                             : 'N/A'; ?></td>
+                                 </tr>
+                              <?php endif; ?>
                            <?php endforeach; ?>
                         <?php else : ?>
                            <tr>

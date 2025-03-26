@@ -116,7 +116,9 @@
             if (!empty($participants)) {
                 $all_participant = '';
                 foreach ($participants as $participant) {
-                    $all_participant .= $participant['firstname'] . ' ' . $participant['lastname'] . ', ';
+                    if (!empty($participant['firstname']) || !empty($participant['lastname']) || !empty($participant['email'])) :
+                        $all_participant .= $participant['firstname'] . ' ' . $participant['lastname'] . ', ';
+                    endif;
                 }
                 $all_participant = rtrim($all_participant, ", ");
             }
@@ -128,7 +130,7 @@
         <tr>
             <th style="width: 10%;"></th>
             <td style="width: 20%; font-weight: bold;">Company</td>
-            <td style="width: 70%; font-weight: bold;">Ohter Participant’sName</td>
+            <td style="width: 70%; font-weight: bold;">Other Participant’sName</td>
         </tr>
         <tr>
             <td style="width: 10%;">1</td>
