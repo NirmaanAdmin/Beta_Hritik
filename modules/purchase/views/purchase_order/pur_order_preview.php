@@ -895,22 +895,6 @@ if ($estimate->currency != 0) {
                   <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id); ?>" target="_blank" class="btn btn-success pull-right"><i class="fa fa-plus"></i><?php echo ' ' . _l('payment_certificate'); ?></a>
                </div>
                <div class="clearfix"></div>
-               <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
-
-                  <span style="margin-right: 10px;">
-                     <button class="btn btn-primary" id="settings-toggle-payment-certificate">Columns</button>
-                     <div id="settings-dropdown-payment-certificate" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:130px;">
-
-                        <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('po_no'); ?></label><br>
-                        <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('convert'); ?></label><br>
-                        <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('options'); ?></label><br>
-                        <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('approval_status'); ?></label><br>
-                     </div>
-                  </span>
-                  <span style="padding: 0px;">
-                     <button id="export-csv-payment" class="btn btn-primary pull-right">Export to CSV</button>
-                  </span>
-               </div>
                <table class="table dt-table payment-certificate-table">
                   <thead>
                      <th><?php echo _l('serial_no'); ?></th>
@@ -1144,27 +1128,7 @@ if ($estimate->currency != 0) {
       });
    });
 
-   // Toggle settings dropdown visibility
-   document.getElementById('settings-toggle-payment-certificate').addEventListener('click', function() {
-      const dropdown = document.getElementById('settings-dropdown-payment-certificate');
-      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-   });
-
-   // Add event listener to toggle column visibility
-   document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
-      checkbox.addEventListener('change', function() {
-         const columnIndex = this.getAttribute('data-column');
-         const table = document.querySelector('.payment-certificate-table');
-
-         // Iterate through all rows and toggle column visibility
-         table.querySelectorAll('tr').forEach(function(row) {
-            const cells = row.querySelectorAll('th, td');
-            if (cells[columnIndex]) {
-               cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
-            }
-         });
-      });
-   });
+  
 </script>
 <script>
    document.getElementById('export-csv').addEventListener('click', function() {
@@ -1200,48 +1164,7 @@ if ($estimate->currency != 0) {
       link.click();
       document.body.removeChild(link);
    });
-   document.getElementById('export-csv-payment').addEventListener('click', function () {
-  const table = document.querySelector('.payment-certificate-table');
-  const rows = Array.from(table.querySelectorAll('tr'));
-
-  let csvContent = '';
-  let excludeColumnIndex = -1;
-
-  // First, determine the index of the "Options" column
-  const headerCells = Array.from(rows[0].querySelectorAll('th'));
-  headerCells.forEach((th, index) => {
-    if (th.textContent.trim().toLowerCase() === "<?php echo strtolower(_l('options')); ?>") {
-      excludeColumnIndex = index;
-    }
-  });
-
-  // Loop through each row and build CSV excluding the "Options" column
-  rows.forEach(row => {
-    const cells = Array.from(row.querySelectorAll('th, td'));
-    const rowContent = cells
-      .filter((_, index) => index !== excludeColumnIndex)
-      .map(cell => `"${cell.textContent.trim()}"`)
-      .join(',');
-    csvContent += rowContent + '\n';
-  });
-
-  // Add UTF-8 BOM
-  const bom = '\uFEFF';
-
-  const blob = new Blob([bom + csvContent], {
-    type: 'text/csv;charset=utf-8;'
-  });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'payment_certificate_export.csv');
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
-
+   
 </script>
 <script>
    $(document).ready(function() {
