@@ -149,18 +149,8 @@
                 </tr>
             <?php
             }
-        } 
-        // else {
-        //     // Display a default row if no participants exist
-        //     ?>
-        //     <tr>
-        //         <td style="width: 10%;">1</td>
-        //         <td style="width: 20%; text-align: left;">No company</td>
-        //         <td style="width: 70%; text-align: left;">No participants found</td>
-        //     </tr>
-        // <?php
-        // }
-        // ?>
+        }  ?>
+        
     </table>
 
     <table class="description-table">
