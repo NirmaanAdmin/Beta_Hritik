@@ -67,11 +67,14 @@
                   <h4><?php echo _l('Other Participants'); ?></h4>
 
                   <?php
-                  // Extract all 'other_participants' values into a single array
+                  // Extract all 'other_participants' and 'company_name' values into a single array
                   $all_other_participants = [];
                   foreach ($other_participants as $participant) {
-                     if (!empty($participant['other_participants'])) {
-                        $all_other_participants[] = $participant['other_participants'];
+                     if (!empty($participant['other_participants']) || !empty($participant['company_name'])) {
+                        $all_other_participants[] = [
+                           'name' => $participant['other_participants'] ?? '',
+                           'company_name' => $participant['company_name'] ?? '',
+                        ];
                      }
                   }
                   ?>
@@ -80,18 +83,20 @@
                      <thead>
                         <tr>
                            <th><?php echo _l('Name'); ?></th>
+                           <th><?php echo _l('Company'); ?></th>
                         </tr>
                      </thead>
                      <tbody>
                         <?php if (!empty($all_other_participants)) : ?>
                            <?php foreach ($all_other_participants as $participant) : ?>
                               <tr>
-                                 <td><?php echo htmlspecialchars($participant); ?></td>
+                                 <td><?php echo htmlspecialchars($participant['name']); ?></td>
+                                 <td><?php echo htmlspecialchars($participant['company_name']); ?></td>
                               </tr>
                            <?php endforeach; ?>
                         <?php else : ?>
                            <tr>
-                              <td>No participants found</td>
+                              <td colspan="2">No participants found</td>
                            </tr>
                         <?php endif; ?>
                      </tbody>
