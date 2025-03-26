@@ -146,15 +146,15 @@ if ($estimate->currency != 0) {
                   <p class="bold p_mar"><?php echo _l('order_status') . ': '; ?><span class="label <?php echo pur_html_entity_decode($order_status_class); ?>"><?php echo pur_html_entity_decode($order_status_text); ?></span></p>
                <?php } ?>
 
-               <?php /*$clients_ids = explode(',', $estimate->clients ?? ''); */?><!--
-               <?php /*if (count($clients_ids) > 0) { */?>
+               <?php /*$clients_ids = explode(',', $estimate->clients ?? ''); */ ?><!--
+               <?php /*if (count($clients_ids) > 0) { */ ?>
 
-                  <p class="bold p_mar"><?php /*echo _l('clients') . ': ' */?></p>
+                  <p class="bold p_mar"><?php /*echo _l('clients') . ': ' */ ?></p>
                   <?php /*foreach ($clients_ids as $ids) {
-                  */?>
-                     <a href="<?php /*echo admin_url('clients/client/' . $ids); */?>"><span class="label label-tag"><?php /*echo get_company_name($ids); */?></span></a>
-                  <?php /*} */?>
-               --><?php /*} */?>
+                  */ ?>
+                     <a href="<?php /*echo admin_url('clients/client/' . $ids); */ ?>"><span class="label label-tag"><?php /*echo get_company_name($ids); */ ?></span></a>
+                  <?php /*} */ ?>
+               --><?php /*} */ ?>
 
                <p class="bold p_mar"><?php echo _l('cat') . ': ' ?>
                   <?php
@@ -168,11 +168,11 @@ if ($estimate->currency != 0) {
                                                                                  echo $group['name'];
                                                                               }
                                                                            } ?> </p>
-<!--               <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
-                                                                                    if ($group['id'] == $pur_order->sub_groups_pur) {
-                                                                                       echo $group['sub_group_name'];
-                                                                                    }
-                                                                                 } ?> </p>-->
+               <!--               <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
+                                                                                                      if ($group['id'] == $pur_order->sub_groups_pur) {
+                                                                                                         echo $group['sub_group_name'];
+                                                                                                      }
+                                                                                                   } ?> </p>-->
                <p class="bold p_mar"><?php echo _l('hsn_sac') . ': ' ?> <?php echo get_hsn_sac_name_by_id($pur_order->hsn_sac); ?></p>
                <p class="bold p_mar"><?php echo _l('purchase_requestor') . ': ' ?> <?php echo get_staff_full_name($pur_order->addedfrom); ?></p>
 
@@ -415,11 +415,11 @@ if ($estimate->currency != 0) {
                                              ?></p>
                                           <?php if ($value['approve'] == 2) {
                                           ?>
-                                          <?php if($value['approve_by_admin'] == 1) { ?>
-                                             <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved_by_admin.png'); ?>" class="img_style">
-                                          <?php } else { ?>
-                                             <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved.png'); ?>" class="img_style">
-                                          <?php } ?>
+                                             <?php if ($value['approve_by_admin'] == 1) { ?>
+                                                <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved_by_admin.png'); ?>" class="img_style">
+                                             <?php } else { ?>
+                                                <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved.png'); ?>" class="img_style">
+                                             <?php } ?>
                                           <?php } elseif ($value['approve'] == 3) { ?>
                                              <img src="<?php echo site_url(PURCHASE_PATH . 'approval/rejected.png'); ?>" class="img_style">
                                           <?php } ?>
@@ -722,9 +722,11 @@ if ($estimate->currency != 0) {
                      </a>
                      <?php
 
-                        echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
-                  ?>
-               <?php if ($is_image) { echo '</div>'; } ?>
+                     echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                     ?>
+                     <?php if ($is_image) {
+                        echo '</div>';
+                     } ?>
                <?php echo '</div>';
                   }
                } ?>
@@ -893,7 +895,23 @@ if ($estimate->currency != 0) {
                   <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id); ?>" target="_blank" class="btn btn-success pull-right"><i class="fa fa-plus"></i><?php echo ' ' . _l('payment_certificate'); ?></a>
                </div>
                <div class="clearfix"></div>
-               <table class="table dt-table">
+               <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
+
+                  <span style="margin-right: 10px;">
+                     <button class="btn btn-primary" id="settings-toggle-payment-certificate">Columns</button>
+                     <div id="settings-dropdown-payment-certificate" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:130px;">
+
+                        <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('po_no'); ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('convert'); ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('options'); ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('approval_status'); ?></label><br>
+                     </div>
+                  </span>
+                  <span style="padding: 0px;">
+                     <button id="export-csv-payment" class="btn btn-primary pull-right">Export to CSV</button>
+                  </span>
+               </div>
+               <table class="table dt-table payment-certificate-table">
                   <thead>
                      <th><?php echo _l('serial_no'); ?></th>
                      <th><?php echo _l('po_no'); ?></th>
@@ -907,44 +925,44 @@ if ($estimate->currency != 0) {
                            <td><?php echo $pay['serial_no']; ?></td>
                            <td><?php echo $estimate->pur_order_number; ?></td>
                            <td>
-                              <?php if($pay['approve_status'] == 2) { ?>
+                              <?php if ($pay['approve_status'] == 2) { ?>
                                  <a href="<?php echo admin_url('purchase/convert_pur_invoice_from_po/' . $pay['id']); ?>" class="btn btn-info convert-pur-invoice" target="_blank"><?php echo _l('convert_to_vendor_bill'); ?></a>
                               <?php } ?>
                            </td>
                            <td>
-                           <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id'] .'/1'); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
-                           <?php if($pay['approve_status'] == 1) { ?>
-                              <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('edit'); ?>"><i class="fa fa-pencil-square "></i></a>
-                           <?php } ?>
-                           <a href="<?php echo admin_url('purchase/delete_payment_certificate/' . $estimate->id . '/'. $pay['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
-                           <div class="btn-group">
-                              <a href="javascript:void(0)" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
-                              <ul class="dropdown-menu dropdown-menu-right">
-                                 <li class="hidden-xs"><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
-                                 <li class="hidden-xs"><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
-                                 <li><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id']); ?>"><?php echo _l('download'); ?></a></li>
-                                 <li>
-                                    <a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?print=true'); ?>" target="_blank">
-                                       <?php echo _l('print'); ?>
-                                    </a>
-                                 </li>
-                              </ul>
-                           </div>
+                              <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/' . $pay['id'] . '/1'); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('view'); ?>"><i class="fa fa-eye "></i></a>
+                              <?php if ($pay['approve_status'] == 1) { ?>
+                                 <a href="<?php echo admin_url('purchase/payment_certificate/' . $estimate->id . '/' . $pay['id']); ?>" class="btn btn-default btn-icon" data-toggle="tooltip" data-placement="top" title="<?php echo _l('edit'); ?>"><i class="fa fa-pencil-square "></i></a>
+                              <?php } ?>
+                              <a href="<?php echo admin_url('purchase/delete_payment_certificate/' . $estimate->id . '/' . $pay['id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
+                              <div class="btn-group">
+                                 <a href="javascript:void(0)" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
+                                 <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="hidden-xs"><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
+                                    <li class="hidden-xs"><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                                    <li><a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id']); ?>"><?php echo _l('download'); ?></a></li>
+                                    <li>
+                                       <a href="<?php echo admin_url('purchase/payment_certificate_pdf/' . $pay['id'] . '?print=true'); ?>" target="_blank">
+                                          <?php echo _l('print'); ?>
+                                       </a>
+                                    </li>
+                                 </ul>
+                              </div>
                            </td>
                            <td>
-                              <?php 
+                              <?php
                               $list_approval_details = get_list_approval_details($pay['id'], 'payment_certificate');
-                              if(empty($list_approval_details)) { ?>
-                                 <?php if($pay['approve_status'] == 2) { ?>
+                              if (empty($list_approval_details)) { ?>
+                                 <?php if ($pay['approve_status'] == 2) { ?>
                                     <span class="label label-primary"><?php echo _l('approved'); ?></span>
                                  <?php } else { ?>
                                     <a data-toggle="tooltip" data-loading-text="<?php echo _l('wait_text'); ?>" class="btn btn-success lead-top-btn lead-view" data-placement="top" href="#" onclick="send_payment_certificate_approve(<?php echo pur_html_entity_decode($pay['id']); ?>); return false;"><?php echo _l('send_request_approve_pur'); ?></a>
                                  <?php } ?>
-                              <?php } else if($pay['approve_status'] == 1) { ?>
+                              <?php } else if ($pay['approve_status'] == 1) { ?>
                                  <span class="label label-primary"><?php echo _l('pur_draft'); ?></span>
-                              <?php } else if($pay['approve_status'] == 2) { ?>
+                              <?php } else if ($pay['approve_status'] == 2) { ?>
                                  <span class="label label-primary"><?php echo _l('approved'); ?></span>
-                              <?php } else if($pay['approve_status'] == 3) { ?>
+                              <?php } else if ($pay['approve_status'] == 3) { ?>
                                  <span class="label label-danger"><?php echo _l('rejected'); ?></span>
                               <?php } else { ?>
                               <?php } ?>
@@ -1125,6 +1143,28 @@ if ($estimate->currency != 0) {
          });
       });
    });
+
+   // Toggle settings dropdown visibility
+   document.getElementById('settings-toggle-payment-certificate').addEventListener('click', function() {
+      const dropdown = document.getElementById('settings-dropdown-payment-certificate');
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+   });
+
+   // Add event listener to toggle column visibility
+   document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+      checkbox.addEventListener('change', function() {
+         const columnIndex = this.getAttribute('data-column');
+         const table = document.querySelector('.payment-certificate-table');
+
+         // Iterate through all rows and toggle column visibility
+         table.querySelectorAll('tr').forEach(function(row) {
+            const cells = row.querySelectorAll('th, td');
+            if (cells[columnIndex]) {
+               cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
+            }
+         });
+      });
+   });
 </script>
 <script>
    document.getElementById('export-csv').addEventListener('click', function() {
@@ -1160,15 +1200,57 @@ if ($estimate->currency != 0) {
       link.click();
       document.body.removeChild(link);
    });
+   document.getElementById('export-csv-payment').addEventListener('click', function () {
+  const table = document.querySelector('.payment-certificate-table');
+  const rows = Array.from(table.querySelectorAll('tr'));
+
+  let csvContent = '';
+  let excludeColumnIndex = -1;
+
+  // First, determine the index of the "Options" column
+  const headerCells = Array.from(rows[0].querySelectorAll('th'));
+  headerCells.forEach((th, index) => {
+    if (th.textContent.trim().toLowerCase() === "<?php echo strtolower(_l('options')); ?>") {
+      excludeColumnIndex = index;
+    }
+  });
+
+  // Loop through each row and build CSV excluding the "Options" column
+  rows.forEach(row => {
+    const cells = Array.from(row.querySelectorAll('th, td'));
+    const rowContent = cells
+      .filter((_, index) => index !== excludeColumnIndex)
+      .map(cell => `"${cell.textContent.trim()}"`)
+      .join(',');
+    csvContent += rowContent + '\n';
+  });
+
+  // Add UTF-8 BOM
+  const bom = '\uFEFF';
+
+  const blob = new Blob([bom + csvContent], {
+    type: 'text/csv;charset=utf-8;'
+  });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'payment_certificate_export.csv');
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
 </script>
 <script>
-$(document).ready(function() {
-    $('.convert-pur-invoice').click(function(e) {
-      e.preventDefault();
-      var url = $(this).attr('href');
-      if (confirm("Are you sure you want to convert this to a vendor bill?")) {
-         window.open(url, '_blank');
-      }
-    });
-});
+   $(document).ready(function() {
+      $('.convert-pur-invoice').click(function(e) {
+         e.preventDefault();
+         var url = $(this).attr('href');
+         if (confirm("Are you sure you want to convert this to a vendor bill?")) {
+            window.open(url, '_blank');
+         }
+      });
+   });
 </script>
