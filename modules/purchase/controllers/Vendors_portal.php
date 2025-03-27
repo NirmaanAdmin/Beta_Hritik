@@ -321,6 +321,30 @@ class Vendors_portal extends App_Controller
                 $data['address']     = $this->input->post('address');
                 $data['zip']         = $this->input->post('zip');
                 $data['state']       = $this->input->post('state');
+                $data['newworkcompleteditems'] = array();
+                if($this->input->post('newworkcompleteditems')) {
+                    $data['newworkcompleteditems'] = $this->input->post('newworkcompleteditems');
+                }
+                $data['workcompleteditems'] = array();
+                if($this->input->post('workcompleteditems')) {
+                    $data['workcompleteditems'] = $this->input->post('workcompleteditems');
+                }
+                $data['rworkcompleteditems'] = array();
+                if($this->input->post('rworkcompleteditems')) {
+                    $data['rworkcompleteditems'] = $this->input->post('rworkcompleteditems');
+                }
+                $data['newworkprogressitems'] = array();
+                if($this->input->post('newworkprogressitems')) {
+                    $data['newworkprogressitems'] = $this->input->post('newworkprogressitems');
+                }
+                $data['workprogressitems'] = array();
+                if($this->input->post('workprogressitems')) {
+                    $data['workprogressitems'] = $this->input->post('workprogressitems');
+                }
+                $data['rworkprogressitems'] = array();
+                if($this->input->post('rworkprogressitems')) {
+                    $data['rworkprogressitems'] = $this->input->post('rworkprogressitems');
+                }
 
                 if (
                     get_option('allow_primary_contact_to_view_edit_billing_and_shipping') == 1
@@ -346,6 +370,8 @@ class Vendors_portal extends App_Controller
         }
 
         $data['client'] = $this->purchase_model->get_vendor(get_vendor_user_id());
+        $data['vendor_work_completed'] = $this->purchase_model->get_vendor_work_completed(get_vendor_user_id());
+        $data['vendor_work_progress'] = $this->purchase_model->get_vendor_work_progress(get_vendor_user_id());
         $data['title'] = _l('client_company_info');
         $this->data($data);
         $this->view('vendor_portal/vendors/company_profile');

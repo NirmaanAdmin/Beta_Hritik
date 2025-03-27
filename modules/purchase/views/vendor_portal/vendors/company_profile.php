@@ -173,6 +173,180 @@
                 </div>
             </div>
         <?php } ?>
+
+        <div class="col-md-12">
+            <h4 class="mbot15 mtop20 company-profile-shipping-address-heading"><?php echo _l('details_of_work_completed'); ?></h4>
+            <div class="table-responsive s_table">
+                <table class="table items no-mtop" style="font-size: 15px;">
+                    <thead>
+                        <tr>
+                            <th align="center"><?php echo _l('client'); ?></th>
+                            <th align="center"><?php echo _l('type_of_project'); ?></th>
+                            <th align="center"><?php echo _l('location'); ?></th>
+                            <th align="center"><?php echo _l('mini_contractor'); ?></th>
+                            <th align="center"><?php echo _l('scope_of_works'); ?></th>
+                            <th align="center"><?php echo _l('contract_prices'); ?></th>
+                            <th align="center"><?php echo _l('start_date'); ?></th>
+                            <th align="center"><?php echo _l('end_date'); ?></th>
+                            <th align="center"><?php echo _l('size_of_project'); ?></th>
+                            <th align="center"><i class="fa fa-cog"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody class="work_completed_main">
+                        <tr class="item">
+                            <td>
+                                <input type="text" name="client" class="form-control" placeholder="<?php echo _l('client'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="type_of_project" class="form-control" placeholder="<?php echo _l('type_of_project'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="location" class="form-control" placeholder="<?php echo _l('location'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="mini_contractor" class="form-control" placeholder="<?php echo _l('mini_contractor'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="scope_of_works" class="form-control" placeholder="<?php echo _l('scope_of_works'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="contract_prices" class="form-control" placeholder="<?php echo _l('contract_prices'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="start_date" class="form-control" placeholder="<?php echo _l('start_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="end_date" class="form-control" placeholder="<?php echo _l('end_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="size_of_project" class="form-control" placeholder="<?php echo _l('size_of_project'); ?>">
+                            </td>
+                            <td>
+                                <?php
+                                $new_item = true;
+                                ?>
+                                <button type="button" onclick="add_vendor_work_completed_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                    class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <?php
+                        if(!empty($vendor_work_completed)) {
+                            $items_indicator = 'workcompleteditems';
+                                $i = 1;
+                                foreach ($vendor_work_completed as $item) {
+                                    $table_row = '<tr class="item">';
+                                    $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][id]', $item['id']);
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][client]" value="' . $item['client'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][type_of_project]" value="' . $item['type_of_project'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][location]" value="' . $item['location'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][mini_contractor]" value="' . $item['mini_contractor'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][scope_of_works]" value="' . $item['scope_of_works'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][contract_prices]" value="' . $item['contract_prices'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][start_date]" value="' . $item['start_date'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][end_date]" value="' . $item['end_date'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][size_of_project]" value="' . $item['size_of_project'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_work_completed(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                    $table_row .= '</tr>';
+                                    echo $table_row;
+                                    $i++;
+                                }
+                            }
+                        ?>
+                    </tbody>
+                </table>
+                <div id="removed-work-completed"></div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <h4 class="mbot15 mtop20 company-profile-shipping-address-heading"><?php echo _l('details_of_current_work'); ?></h4>
+            <div class="table-responsive s_table">
+                <table class="table items no-mtop" style="font-size: 15px;">
+                    <thead>
+                        <tr>
+                            <th align="center"><?php echo _l('client'); ?></th>
+                            <th align="center"><?php echo _l('type_of_project'); ?></th>
+                            <th align="center"><?php echo _l('location'); ?></th>
+                            <th align="center"><?php echo _l('mini_contractor'); ?></th>
+                            <th align="center"><?php echo _l('scope_of_works'); ?></th>
+                            <th align="center"><?php echo _l('contract_prices'); ?></th>
+                            <th align="center"><?php echo _l('start_date'); ?></th>
+                            <th align="center"><?php echo _l('proposed_end_date'); ?></th>
+                            <th align="center"><?php echo _l('building_height'); ?></th>
+                            <th align="center"><i class="fa fa-cog"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody class="work_progress_main">
+                        <tr class="item">
+                            <td>
+                                <input type="text" name="client" class="form-control" placeholder="<?php echo _l('client'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="type_of_project" class="form-control" placeholder="<?php echo _l('type_of_project'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="location" class="form-control" placeholder="<?php echo _l('location'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="mini_contractor" class="form-control" placeholder="<?php echo _l('mini_contractor'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="scope_of_works" class="form-control" placeholder="<?php echo _l('scope_of_works'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="contract_prices" class="form-control" placeholder="<?php echo _l('contract_prices'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="start_date" class="form-control" placeholder="<?php echo _l('start_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="end_date" class="form-control" placeholder="<?php echo _l('end_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="size_of_project" class="form-control" placeholder="<?php echo _l('size_of_project'); ?>">
+                            </td>
+                            <td>
+                                <?php
+                                $new_item = true;
+                                ?>
+                                <button type="button" onclick="add_vendor_work_progress_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                    class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <?php
+                        if(!empty($vendor_work_progress)) {
+                            $items_indicator = 'workprogressitems';
+                                $i = 1;
+                                foreach ($vendor_work_progress as $item) {
+                                    $table_row = '<tr class="item">';
+                                    $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][id]', $item['id']);
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][client]" value="' . $item['client'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][type_of_project]" value="' . $item['type_of_project'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][location]" value="' . $item['location'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][mini_contractor]" value="' . $item['mini_contractor'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][scope_of_works]" value="' . $item['scope_of_works'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][contract_prices]" value="' . $item['contract_prices'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][start_date]" value="' . $item['start_date'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][end_date]" value="' . $item['end_date'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><input type="text" name="' . $items_indicator . '[' . $i . '][size_of_project]" value="' . $item['size_of_project'] . '" class="form-control"></td>';
+                                    $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_work_progress(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                    $table_row .= '</tr>';
+                                    echo $table_row;
+                                    $i++;
+                                }
+                            }
+                        ?>
+                    </tbody>
+                </table>
+                <div id="removed-work-progress"></div>
+            </div>
+        </div>
+
+
         <?php if($contact->is_primary == 1){ ?>
             <div class="row p15 company-profile-save-section">
                 <div class="col-md-12 text-right mtop20">
@@ -190,3 +364,5 @@
 <?php echo form_close(); ?>
 </div>
 </div>
+
+<?php require 'modules/purchase/assets/js/file_managements/vendor_additional_work_js.php'; ?>

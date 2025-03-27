@@ -312,6 +312,42 @@ class Purchase_model extends App_Model
 
         $data = hooks()->apply_filters('before_pur_vendor_updated', $data, $id);
 
+        if (isset($data['newworkcompleteditems'])) {
+            $newworkcompleteditems = $data['newworkcompleteditems'];
+            $this->add_vendor_completed_items($newworkcompleteditems);
+            unset($data['newworkcompleteditems']);
+        }
+
+        if (isset($data['workcompleteditems'])) {
+            $workcompleteditems = $data['workcompleteditems'];
+            $this->update_vendor_completed_items($workcompleteditems);
+            unset($data['workcompleteditems']);
+        }
+
+        if (isset($data['rworkcompleteditems'])) {
+            $rworkcompleteditems = $data['rworkcompleteditems'];
+            $this->delete_vendor_completed_items($rworkcompleteditems);
+            unset($data['rworkcompleteditems']);
+        }
+
+        if (isset($data['newworkprogressitems'])) {
+            $newworkprogressitems = $data['newworkprogressitems'];
+            $this->add_vendor_progress_items($newworkprogressitems);
+            unset($data['newworkprogressitems']);
+        }
+
+        if (isset($data['workprogressitems'])) {
+            $workprogressitems = $data['workprogressitems'];
+            $this->update_vendor_progress_items($workprogressitems);
+            unset($data['workprogressitems']);
+        }
+
+        if (isset($data['rworkprogressitems'])) {
+            $rworkprogressitems = $data['rworkprogressitems'];
+            $this->delete_vendor_progress_items($rworkprogressitems);
+            unset($data['rworkprogressitems']);
+        }
+
         $this->db->where('userid', $id);
         $this->db->update(db_prefix() . 'pur_vendor', $data);
 
@@ -18434,5 +18470,79 @@ class Purchase_model extends App_Model
             }
         }
         return true;
+    }
+
+    public function add_vendor_completed_items($data)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $value['vendorid'] = get_vendor_user_id();
+                $this->db->insert(db_prefix() . 'vendor_work_completed', $value);
+            }
+        }
+        return true;
+    }
+
+    public function get_vendor_work_completed($id) 
+    {
+        $this->db->where('vendorid', $id);
+        return $this->db->get(db_prefix() . 'vendor_work_completed')->result_array();
+    }
+
+    public function update_vendor_completed_items($data)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $this->db->where('id', $value['id']);
+                $this->db->update(db_prefix() . 'vendor_work_completed', $value);
+            }
+        }
+        return true;
+    }
+
+    public function delete_vendor_completed_items($data) 
+    {
+       if(!empty($data)) {
+            $this->db->where_in('id', $data);
+            $this->db->delete(db_prefix() . 'vendor_work_completed');
+       }
+       return true;
+    }
+
+    public function add_vendor_progress_items($data)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $value['vendorid'] = get_vendor_user_id();
+                $this->db->insert(db_prefix() . 'vendor_work_progress', $value);
+            }
+        }
+        return true;
+    }
+
+    public function get_vendor_work_progress($id) 
+    {
+        $this->db->where('vendorid', $id);
+        return $this->db->get(db_prefix() . 'vendor_work_progress')->result_array();
+    }
+
+    public function update_vendor_progress_items($data)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $this->db->where('id', $value['id']);
+                $this->db->update(db_prefix() . 'vendor_work_progress', $value);
+            }
+        }
+        return true;
+    }
+
+    public function delete_vendor_progress_items($data) 
+    {
+       if(!empty($data)) {
+            $this->db->where_in('id', $data);
+            $this->db->delete(db_prefix() . 'vendor_work_progress');
+       }
+       return true;
     }
 }
