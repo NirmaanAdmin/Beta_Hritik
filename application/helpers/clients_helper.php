@@ -1312,3 +1312,22 @@ function get_wo_order_by_id($id)
     $query = $CI->db->get();
     return $query->row();
 }
+
+function get_pr_order_by_id($id)
+{
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'pur_request');
+    $CI->db->where('id', $id);
+    $query = $CI->db->get();
+    return $query->row();
+}
+
+function get_payment_certificate_by_id($id){
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'payment_certificate');
+    $CI->db->where('id', $id);
+    $query = $CI->db->get();
+    return $query->row();
+}

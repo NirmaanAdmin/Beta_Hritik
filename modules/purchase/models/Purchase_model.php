@@ -1153,7 +1153,7 @@ class Purchase_model extends App_Model
      */
     public function add_pur_request($data)
     {
-        
+
         $data['request_date'] = date('Y-m-d H:i:s');
         $check_appr = $this->check_approval_setting($data['project'], 'pur_request', 0);
         $data['status'] = ($check_appr == true) ? 2 : 1;
@@ -1172,7 +1172,7 @@ class Purchase_model extends App_Model
         }
 
         $data['to_currency'] = $data['currency'];
-        
+
         unset($data['item_text']);
         unset($data['description']);
         unset($data['area']);
@@ -1218,10 +1218,10 @@ class Purchase_model extends App_Model
         }
 
         $data['hash'] = app_generate_hash();
-        
+
         $this->db->insert(db_prefix() . 'pur_request', $data);
         $insert_id = $this->db->insert_id();
-        
+
         // $this->send_mail_to_approver($data, 'pur_request', 'purchase_request', $insert_id);
         // if ($data['status'] == 2) {
         //     $this->send_mail_to_sender('purchase_request', $data['status'], $insert_id);
@@ -1248,7 +1248,7 @@ class Purchase_model extends App_Model
             $next_number = $data['number'] + 1;
             $this->db->where('option_name', 'next_pr_number');
             $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
-            
+
             if (count($detail_data) > 0) {
                 foreach ($detail_data as $key => $rqd) {
                     $dt_data = [];
@@ -1310,7 +1310,7 @@ class Purchase_model extends App_Model
                     }
                 }
             }
-
+            $this->log_pr_activity($insert_id, 'pr_activity_created');
             return $insert_id;
         }
         return false;
@@ -1445,6 +1445,9 @@ class Purchase_model extends App_Model
                 $_new_detail_id = $this->db->insert(db_prefix() . 'pur_request_detail', $dt_data);
                 if ($_new_detail_id) {
                     $affectedRows++;
+                    $this->log_pr_activity($id, 'purchase_request_activity_added_item', false, serialize([
+                        $this->get_items_by_id($rqd['item_code'])->description,
+                    ]));
                 }
                 $last_insert_id = $this->db->insert_id();
                 $iuploadedFiles = handle_purchase_item_attachment_array('pur_request', $id, $last_insert_id, 'newitems', $key);
@@ -1527,11 +1530,18 @@ class Purchase_model extends App_Model
         if (count($remove_purchase_request) > 0) {
             foreach ($remove_purchase_request as $remove_id) {
                 $this->db->where('prd_id', $remove_id);
+                $pur_request_id = $this->db->get(db_prefix() . 'pur_request_detail')->row();
+                $item_detail = $this->get_items_by_id($pur_request_id->item_code);
+                $this->db->where('prd_id', $remove_id);
                 if ($this->db->delete(db_prefix() . 'pur_request_detail')) {
                     $affectedRows++;
+                    $this->log_pr_activity($id, 'purchase_request_activity_removed_item', false, serialize([
+                        $item_detail->description,
+                    ]));
                 }
             }
         }
+
 
 
         if ($affectedRows > 0) {
@@ -1589,6 +1599,7 @@ class Purchase_model extends App_Model
      */
     public function change_status_pur_request($status, $id)
     {
+        $original_pr = $this->get_purchase_request($id);
         if ($status == 2) {
             $this->update_item_pur_request($id);
         }
@@ -1611,7 +1622,25 @@ class Purchase_model extends App_Model
                 $this->db->insert(db_prefix() . 'cron_email', $cron_email);
             }
         }
+        $from_status = '';
+        if ($original_pr->status == 1) {
+            $from_status = 'Draft';
+        } else if ($original_pr->status == 2) {
+            $from_status = 'Approved';
+        } else if ($original_pr->status == 3) {
+            $from_status = 'Rejected';
+        }
 
+        $to_status = '';
+        if ($status == 1) {
+            $to_status = 'Draft';
+        } else if ($status == 2) {
+            $to_status = 'Approved';
+        } else if ($status == 3) {
+            $to_status = 'Rejected';
+        }
+
+        $this->log_pr_activity($id, "Purchase request status updated from " . $from_status . " to " . $to_status . "");
         if ($status == 2) {
             $this->db->where('rel_id', $id);
             $this->db->where('rel_type', 'pur_request');
@@ -1862,7 +1891,7 @@ class Purchase_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
-        
+
         $this->db->insert(db_prefix() . 'pur_estimates', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_quotation', 'quotation', $insert_id);
@@ -3442,7 +3471,7 @@ class Purchase_model extends App_Model
                         $taskName = 'Review { ' . $module->pur_order_name . ' }{ ' . $module->pur_order_number . ' }';
                     } elseif ($data['rel_type'] == 'wo_order') {
                         $taskName = 'Review { ' . $module->wo_order_name . ' }{ ' . $module->wo_order_number . ' }';
-                    } elseif($data['rel_type'] == 'pur_request'){
+                    } elseif ($data['rel_type'] == 'pur_request') {
                         $taskName = 'Review { ' . $module->pur_rq_name . ' }{ ' . $module->pur_rq_code . ' }';
                         $data['rel_type'] = 'purchase_request';
                     }
@@ -10937,8 +10966,8 @@ class Purchase_model extends App_Model
      */
     public function create_purchase_request_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $area = '', $image = '', $unit_price = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $request_detail = array())
     {
-        
-        
+
+
         $this->load->model('invoice_items_model');
         $row = '';
 
@@ -11035,7 +11064,7 @@ class Purchase_model extends App_Model
         }
         // $row .= '<td class="">' . render_textarea($name_item_text, '', $item_text, ['rows' => 2, 'placeholder' => 'Product code name']) . '</td>';
         $get_selected_item = pur_get_item_selcted_select($item_code, $name_item_text);
-        
+
         if ($item_code == '') {
             $row .= '<td class="">
             <select id="' . $name_item_text . '" name="' . $name_item_text . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
@@ -11045,7 +11074,7 @@ class Purchase_model extends App_Model
         } else {
             $row .= '<td class="">' . $get_selected_item . '</td>';
         }
-        
+
         $style_description = '';
         if ($is_edit) {
             $style_description = 'width: 290px; height: 200px';
@@ -11080,16 +11109,15 @@ class Purchase_model extends App_Model
         $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('item_code')]) . '</td>';
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_name, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
         $row .= '<td class="_total">' . render_input($name_total, '', $total, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
-        
+
         if ($name == '') {
             $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
         } else {
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }
         $row .= '</tr>';
-       
+
         return $row;
-        
     }
 
     /**
@@ -15498,6 +15526,56 @@ class Purchase_model extends App_Model
             'additional_data' => $additional_data,
         ]);
     }
+    public function log_pr_activity($id, $description = '', $client = false, $additional_data = '')
+    {
+        if (DEFINED('CRON')) {
+            $staffid   = '[CRON]';
+            $full_name = '[CRON]';
+        } elseif (defined('STRIPE_SUBSCRIPTION_INVOICE')) {
+            $staffid   = null;
+            $full_name = '[Stripe]';
+        } elseif ($client == true) {
+            $staffid   = null;
+            $full_name = '';
+        } else {
+            $staffid   = get_staff_user_id();
+            $full_name = get_staff_full_name(get_staff_user_id());
+        }
+        $this->db->insert(db_prefix() . 'purchase_request_activity', [
+            'description'     => $description,
+            'date'            => date('Y-m-d H:i:s'),
+            'rel_id'          => $id,
+            'rel_type'        => 'purchase_request',
+            'staffid'         => $staffid,
+            'full_name'       => $full_name,
+            'additional_data' => $additional_data,
+        ]);
+    }
+    public function log_pay_cer_activity($id, $description = '', $client = false, $additional_data = '')
+    {
+        if (DEFINED('CRON')) {
+            $staffid   = '[CRON]';
+            $full_name = '[CRON]';
+        } elseif (defined('STRIPE_SUBSCRIPTION_INVOICE')) {
+            $staffid   = null;
+            $full_name = '[Stripe]';
+        } elseif ($client == true) {
+            $staffid   = null;
+            $full_name = '';
+        } else {
+            $staffid   = get_staff_user_id();
+            $full_name = get_staff_full_name(get_staff_user_id());
+        }
+        $this->db->insert(db_prefix() . 'payment_certificate_activity', [
+            'description'     => $description,
+            'date'            => date('Y-m-d H:i:s'),
+            'rel_id'          => $id,
+            'rel_type'        => 'payment_certificate',
+            'staffid'         => $staffid,
+            'full_name'       => $full_name,
+            'additional_data' => $additional_data,
+        ]);
+    }
     public function log_wo_activity($id, $description = '', $client = false, $additional_data = '')
     {
         if (DEFINED('CRON')) {
@@ -17582,12 +17660,12 @@ class Purchase_model extends App_Model
             $result['po_contract_amount'] = $pur_orders->subtotal;
         }
 
-        if($result['po_previous'] == 0) {
+        if ($result['po_previous'] == 0) {
             $this->db->select_sum('po_previous');
             $this->db->where('po_id', $po_id);
             $this->db->where('approve_status', 2);
             $po_previous = $this->db->get(db_prefix() . 'payment_certificate')->row();
-            if(!empty($po_previous)) {
+            if (!empty($po_previous)) {
                 $result['po_previous'] = $po_previous->po_previous;
             }
         }
@@ -17604,7 +17682,7 @@ class Purchase_model extends App_Model
         }
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
         $insert_id = $this->db->insert_id();
-
+        $this->log_pay_cer_activity($insert_id, 'pay_cert_activity_created');
         if (isset($data['wo_id'])) {
             $pur_order = $this->get_wo_order($data['wo_id']);
         } else {
@@ -17636,6 +17714,7 @@ class Purchase_model extends App_Model
         }
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'payment_certificate', $data);
+        $this->log_pay_cer_activity($id, 'pay_cert_activity_updated');
         return true;
     }
 
@@ -18235,12 +18314,12 @@ class Purchase_model extends App_Model
             $result['wo_contract_amount'] = $wo_orders->subtotal;
         }
 
-        if($result['po_previous'] == 0) {
+        if ($result['po_previous'] == 0) {
             $this->db->select_sum('po_previous');
             $this->db->where('wo_id', $wo_id);
             $this->db->where('approve_status', 2);
             $po_previous = $this->db->get(db_prefix() . 'payment_certificate')->row();
-            if(!empty($po_previous)) {
+            if (!empty($po_previous)) {
                 $result['po_previous'] = $po_previous->po_previous;
             }
         }
@@ -18299,22 +18378,22 @@ class Purchase_model extends App_Model
     }
 
     public function breadcrum_array2($id, $creator_type = 'staff')
-    {     
+    {
         $array = [];
         $share_id = $this->get_item_share_to_me(false, $creator_type);
-        if(is_array($share_id) && count($share_id) > 0){
+        if (is_array($share_id) && count($share_id) > 0) {
             $array = $this->breadcrum_array_for_share($id, $share_id);
         }
         return $array;
     }
 
     public function breadcrum_array_for_share($id, $share_id, $array = [])
-    {     
+    {
         $data_item = $this->get_dms_item($id, '', 'master_id, parent_id, name, id');
-        if($data_item && is_object($data_item)){
+        if ($data_item && is_object($data_item)) {
             $array[] = ['id' => $id, 'parent_id' => $data_item->parent_id, 'name' => $data_item->name];
-            if(is_numeric($data_item->parent_id) && $data_item->parent_id > 0 && $id = $data_item->parent_id){
-                if(!in_array($data_item->parent_id, $share_id)){
+            if (is_numeric($data_item->parent_id) && $data_item->parent_id > 0 && $id = $data_item->parent_id) {
+                if (!in_array($data_item->parent_id, $share_id)) {
                     return $array;
                 }
                 $array = $this->breadcrum_array_for_share($id, $share_id, $array);

@@ -2359,14 +2359,14 @@ class Projects_model extends App_Model
                 'additional_data' => $purchase['additional_data'],
                 'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
                 'dateadded'       => $purchase['date'],
-                'staff_id'         => $purchase['staffid'],
-                'fullname'       => $purchase['full_name'],
+                'staff_id'        => $purchase['staffid'],
+                'fullname'        => $purchase['full_name'],
                 'rel_id'          => $purchase['rel_id'],
-                'source'        => $purchase['rel_type'],
+                'source'          => $purchase['rel_type'],
             ];
         }
 
-        // --- Fetch and normalize tblpurchase_activity ---
+        // --- Fetch and normalize tblworkorder_activity ---
         $this->db->order_by('date', 'desc');
         $wo_order_activities = $this->db->get('tblworkorder_activity')->result_array();
 
@@ -2376,12 +2376,45 @@ class Projects_model extends App_Model
                 'additional_data' => $wo_order['additional_data'],
                 'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
                 'dateadded'       => $wo_order['date'],
-                'staff_id'         => $wo_order['staffid'],
-                'fullname'       => $wo_order['full_name'],
+                'staff_id'        => $wo_order['staffid'],
+                'fullname'        => $wo_order['full_name'],
                 'rel_id'          => $wo_order['rel_id'],
-                'source'        => $wo_order['rel_type'],
+                'source'          => $wo_order['rel_type'],
             ];
         }
+        // --- Fetch and normalize tblpurchase_request_activity ---
+        $this->db->order_by('date', 'desc');
+        $pr_order_activities = $this->db->get('purchase_request_activity')->result_array();
+
+        foreach ($pr_order_activities as $pur_request) {
+            $activities[] = [
+                'description'     => $pur_request['description'],
+                'additional_data' => $pur_request['additional_data'],
+                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
+                'dateadded'       => $pur_request['date'],
+                'staff_id'        => $pur_request['staffid'],
+                'fullname'        => $pur_request['full_name'],
+                'rel_id'          => $pur_request['rel_id'],
+                'source'          => $pur_request['rel_type'],
+            ];
+        }
+        // --- Fetch and normalize tblpayment_certificate_activity ---
+        $this->db->order_by('date', 'desc');
+        $payment_certificate_activities = $this->db->get('tblpayment_certificate_activity')->result_array();
+
+        foreach ($payment_certificate_activities as $payment_certificate) {
+            $activities[] = [
+                'description'     => $payment_certificate['description'],
+                'additional_data' => $payment_certificate['additional_data'],
+                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
+                'dateadded'       => $payment_certificate['date'],
+                'staff_id'        => $payment_certificate['staffid'],
+                'fullname'        => $payment_certificate['full_name'],
+                'rel_id'          => $payment_certificate['rel_id'],
+                'source'          => $payment_certificate['rel_type'],
+            ];
+        }
+
         // --- Sort the merged array by 'dateadded' descending ---
         usort($activities, function ($a, $b) {
             return strtotime($b['dateadded']) - strtotime($a['dateadded']);

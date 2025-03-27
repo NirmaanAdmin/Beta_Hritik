@@ -46,7 +46,7 @@
                                 <?php } else {
                                     echo $name;
                                 } ?>
-                                <?php if ($activity['source'] == 'purchase' || $activity['source'] == 'workorder') {
+                                <?php if ($activity['source'] == 'purchase' || $activity['source'] == 'workorder' || $activity['source'] == 'purchase_request' || $activity['source'] == 'payment_certificate') {
                                     echo _l($activity['description']);
                                 } else {
                                     echo e($activity['description']);
@@ -63,19 +63,43 @@
                             ?>
                                 <?php echo _l('purchase_order'); ?>: <a
                                     href="<?php echo admin_url('purchase/purchase_order/' . $get_po_by_id->id); ?>">
-                                    <?php echo e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name); ?>
-                                <?php } elseif ($activity['source'] == 'workorder') {
+                                    <?php echo e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name); ?></a>
+                            <?php } elseif ($activity['source'] == 'workorder') {
                                 $get_wo_by_id = get_wo_order_by_id($activity['rel_id']);
-                                ?>
-                                    <?php echo _l('wo_order'); ?>: <a
-                                        href="<?php echo admin_url('purchase/work_order/' . $get_wo_by_id->id); ?>">
-                                        <?php echo e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name); ?>
-                                    <?php } ?>
+                            ?>
+                                <?php echo _l('wo_order'); ?>: <a
+                                    href="<?php echo admin_url('purchase/work_order/' . $get_wo_by_id->id); ?>">
+                                    <?php echo e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name); ?></a>
+                            <?php } elseif ($activity['source'] == 'purchase_request') {
+                                $get_pr_by_id = get_pr_order_by_id($activity['rel_id']);
+                            ?>
+                                <?php echo _l('pur_request'); ?>: <a
+                                    href="<?php echo admin_url('purchase/view_pur_request/' . $get_pr_by_id->id); ?>">
+                                    <?php echo e($get_pr_by_id->pur_rq_code . ' - ' . $get_pr_by_id->pur_rq_name); ?></a>
+                            <?php } elseif ($activity['source'] == 'payment_certificate') {
+                                $get_payment_certificate_by_id = get_payment_certificate_by_id($activity['rel_id']);
+
+                                if (!empty($get_payment_certificate_by_id->po_id)) {
+                                    $get_po_by_id = get_pur_order_by_id($get_payment_certificate_by_id->po_id);
+                                    $_data = '<a href="' . admin_url('purchase/payment_certificate/' . $get_payment_certificate_by_id->po_id . '/' . $get_payment_certificate_by_id->id . '/1') . '" target="_blank">' . e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name) . '</a>';
+                                }
+                                if (!empty($get_payment_certificate_by_id->wo_id)) {
+                                    $get_wo_by_id = get_wo_order_by_id($get_payment_certificate_by_id->wo_id);
+                                    $_data = '<a href="' . admin_url('purchase/wo_payment_certificate/' . $get_payment_certificate_by_id->wo_id . '/' . $get_payment_certificate_by_id->id . '/1') . '" target="_blank">' . e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name) . '</a>';
+                                }
+                            ?>
+                                <?php echo _l('payment_certificate'); ?>: <?= $_data ?>
+                            <?php } ?>
+
 
                         </div>
-                        <?php if (!empty($activity['additional_data'])) { ?>
-                            <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
-                        <?php } ?>
+                        <?php
+                        if ($activity['source'] == 'project') {
+                            if (!empty($activity['additional_data'])) { ?>
+                                <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
+                        <?php }
+                        } elseif ($activity['source'] == 'purchase' || $activity['source'] == 'workorder' || $activity['source'] == 'purchase_request') {
+                        } ?>
                     </div>
                 <?php } ?>
             </div>

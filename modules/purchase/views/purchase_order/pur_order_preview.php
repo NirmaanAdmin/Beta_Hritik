@@ -897,7 +897,7 @@ if ($estimate->currency != 0) {
                <div class="clearfix"></div>
                <table class="table dt-table payment-certificate-table">
                   <thead>
-                     <th><?php echo _l('serial_no'); ?></th>
+                     <th><?php echo _l('serial_no'); ?></th> 
                      <th><?php echo _l('po_no'); ?></th>
                      <th><?php echo _l('convert'); ?></th>
                      <th><?php echo _l('options'); ?></th>

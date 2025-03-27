@@ -708,6 +708,7 @@ class purchase extends AdminController
         $data['commodity_groups_request'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups_request'] = $this->purchase_model->get_sub_group();
         $data['area_request'] = $this->purchase_model->get_area();
+        $data['activity'] = $this->purchase_model->get_pr_activity($id);
         $this->load->view('purchase_request/view_pur_request', $data);
     }
 
@@ -12190,6 +12191,8 @@ class purchase extends AdminController
         $data['list_approve_status'] = $this->purchase_model->get_list_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
         $data['check_approve_status'] = $this->purchase_model->check_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
         $data['get_staff_sign'] = $this->purchase_model->get_pay_cert_staff_sign($payment_certificate_id, 'payment_certificate');
+        
+        $data['activity'] = $this->purchase_model->get_pay_cert_activity($payment_certificate_id);
         $this->load->view('payment_certificate/payment_certificate', $data);
     }
 
@@ -12417,6 +12420,7 @@ class purchase extends AdminController
         $data['list_approve_status'] = $this->purchase_model->get_list_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
         $data['check_approve_status'] = $this->purchase_model->check_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
         $data['get_staff_sign'] = $this->purchase_model->get_pay_cert_staff_sign($payment_certificate_id, 'payment_certificate');
+        $data['activity'] = $this->purchase_model->get_pay_cert_activity($payment_certificate_id);
         $this->load->view('payment_certificate/wo_payment_certificate', $data);
     }
 

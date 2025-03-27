@@ -58,6 +58,11 @@
                       </a>
 
                     </li>
+                    <li role="presentation">
+                      <a href="#tab_activity" aria-controls="tab_activity" role="tab" data-toggle="tab">
+                        <?php echo _l('invoice_view_activity_tooltip'); ?>
+                      </a>
+                    </li>
 
                     <?php $quotations = get_quotations_by_pur_request($pur_request->id); ?>
                     <li role="presentation" class="">
@@ -305,7 +310,7 @@
                               $_total += $es['total'];
                           ?>
                               <tr nobr="true" class="sortable">
-                              <td class="description hide" align="left"><strong>
+                                <td class="description hide" align="left"><strong>
                                     <?php
                                     $item = get_item_hp($es['item_code']);
                                     echo isset($item) && isset($item->commodity_code) && isset($item->description)
@@ -554,6 +559,69 @@
                                                       } ?>" id="task_tab">
                   <?php init_relation_tasks_table(array('data-new-rel-id' => $pur_request->id, 'data-new-rel-type' => 'purchase_request')); ?>
                 </div>
+                <div role="tabpanel" class="tab-pane ptop10" id="tab_activity">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="activity-feed">
+                        <?php foreach ($activity as $activity) {
+                          $_custom_data = false; ?>
+                          <div class="feed-item" data-sale-activity-id="<?php echo e($activity['id']); ?>">
+                            <div class="date">
+                              <span class="text-has-action" data-toggle="tooltip"
+                                data-title="<?php echo e(_dt($activity['date'])); ?>">
+                                <?php echo e(time_ago($activity['date'])); ?>
+                              </span>
+                            </div>
+                            <div class="text">
+                              <?php if (is_numeric($activity['staffid']) && $activity['staffid'] != 0) { ?>
+                                <a href="<?php echo admin_url('profile/' . $activity['staffid']); ?>">
+                                  <?php echo staff_profile_image($activity['staffid'], ['staff-profile-xs-image pull-left mright5']);
+                                  ?>
+                                </a>
+                              <?php } ?>
+                              <?php
+                              $additional_data = '';
+                              if (!empty($activity['additional_data']) && $additional_data = unserialize($activity['additional_data'])) {
+                                $i               = 0;
+                                foreach ($additional_data as $data) {
+                                  if (strpos($data, '<original_status>') !== false) {
+                                    $original_status     = get_string_between($data, '<original_status>', '</original_status>');
+                                    $additional_data[$i] = format_invoice_status($original_status, '', false);
+                                  } elseif (strpos($data, '<new_status>') !== false) {
+                                    $new_status          = get_string_between($data, '<new_status>', '</new_status>');
+                                    $additional_data[$i] = format_invoice_status($new_status, '', false);
+                                  } elseif (strpos($data, '<custom_data>') !== false) {
+                                    $_custom_data = get_string_between($data, '<custom_data>', '</custom_data>');
+                                    unset($additional_data[$i]);
+                                  }
+                                  $i++;
+                                }
+                              }
+
+                              $_formatted_activity = _l($activity['description'], $additional_data);
+
+                              if ($_custom_data !== false) {
+                                $_formatted_activity .= ' - ' . $_custom_data;
+                              }
+
+                              if (!empty($activity['full_name'])) {
+                                $_formatted_activity = e($activity['full_name']) . ' - ' . $_formatted_activity;
+                              }
+
+                              echo $_formatted_activity;
+
+                              // if (is_admin()) {
+                              //   echo '<a href="#" class="pull-right text-danger" onclick="delete_sale_activity(' . $activity['id'] . '); return false;"><i class="fa fa-remove"></i></a>';
+                              // } 
+                              ?>
+                            </div>
+                          </div>
+                        <?php } ?>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div role="tabpanel" class="tab-pane ptop10 " id="compare_quotes">
                   <?php if (total_rows(db_prefix() . 'pur_estimates', ['pur_request' => $pur_request->id]) > 0) { ?>
 
