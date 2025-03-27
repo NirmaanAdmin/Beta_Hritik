@@ -10,7 +10,7 @@ get_template_part_pur($navigationEnabled ? 'navigation' : '');
          </div>
       </div>
   
-      <div class="container">
+      <div class="container" style="width: 1704px;">
          
          <div class="row">
            
