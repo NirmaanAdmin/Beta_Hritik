@@ -194,13 +194,24 @@ class Purchase_model extends App_Model
         }
 
         // New filter action
-
+        $newworkcompleteditems = array();
+        $newworkprogressitems = array();
+        if (isset($data['newworkcompleteditems'])) {
+            $newworkcompleteditems = $data['newworkcompleteditems'];
+            unset($data['newworkcompleteditems']);
+        }
+        if (isset($data['newworkprogressitems'])) {
+            $newworkprogressitems = $data['newworkprogressitems'];
+            unset($data['newworkprogressitems']);
+        }
 
         if (isset($client_id) && $client_id > 0) {
             $userid = $client_id;
         } else {
             $this->db->insert(db_prefix() . 'pur_vendor', $data);
             $userid = $this->db->insert_id();
+            $this->add_fresh_vendor_completed_items($newworkcompleteditems, $userid);
+            $this->add_fresh_vendor_progress_items($newworkprogressitems, $userid);
 
             hooks()->do_action('after_pur_vendor_created', [
                 'id'            => $userid,
@@ -18544,5 +18555,27 @@ class Purchase_model extends App_Model
             $this->db->delete(db_prefix() . 'vendor_work_progress');
        }
        return true;
+    }
+
+    public function add_fresh_vendor_completed_items($data, $id)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $value['vendorid'] = $id;
+                $this->db->insert(db_prefix() . 'vendor_work_completed', $value);
+            }
+        }
+        return true;
+    }
+
+    public function add_fresh_vendor_progress_items($data, $id)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $value['vendorid'] = $id;
+                $this->db->insert(db_prefix() . 'vendor_work_progress', $value);
+            }
+        }
+        return true;
     }
 }

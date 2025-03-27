@@ -161,7 +161,9 @@ class Authentication_vendor extends App_Controller
                       'zip'                 => $data['zip'],
                       'state'               => $data['state'],
                       'custom_fields'       => isset($data['custom_fields']) && is_array($data['custom_fields']) ? $data['custom_fields'] : [],
-                      'is_primary'          => 1
+                      'is_primary'          => 1,
+                      'newworkcompleteditems' => $this->input->post('newworkcompleteditems') ? $this->input->post('newworkcompleteditems') : array(),
+                      'newworkprogressitems' => $this->input->post('newworkprogressitems') ? $this->input->post('newworkprogressitems') : array(),
                 ],'', true);
 
                 if ($clientid) {

@@ -117,6 +117,130 @@
           
        </div>
 
+        <div class="col-md-12">
+            <h4 class="mbot15 mtop20 company-profile-shipping-address-heading"><?php echo _l('details_of_work_completed'); ?></h4>
+            <div class="table-responsive s_table">
+                <table class="table items no-mtop" style="font-size: 15px;">
+                    <thead>
+                        <tr>
+                            <th align="center"><?php echo _l('client'); ?></th>
+                            <th align="center"><?php echo _l('type_of_project'); ?></th>
+                            <th align="center"><?php echo _l('location'); ?></th>
+                            <th align="center"><?php echo _l('mini_contractor'); ?></th>
+                            <th align="center"><?php echo _l('scope_of_works'); ?></th>
+                            <th align="center"><?php echo _l('contract_prices'); ?></th>
+                            <th align="center"><?php echo _l('start_date'); ?></th>
+                            <th align="center"><?php echo _l('end_date'); ?></th>
+                            <th align="center"><?php echo _l('size_of_project'); ?></th>
+                            <th align="center"><i class="fa fa-cog"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody class="work_completed_main">
+                        <tr class="item">
+                            <td>
+                                <input type="text" name="client" class="form-control" placeholder="<?php echo _l('client'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="type_of_project" class="form-control" placeholder="<?php echo _l('type_of_project'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="location" class="form-control" placeholder="<?php echo _l('location'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="mini_contractor" class="form-control" placeholder="<?php echo _l('mini_contractor'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="scope_of_works" class="form-control" placeholder="<?php echo _l('scope_of_works'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="contract_prices" class="form-control" placeholder="<?php echo _l('contract_prices'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="start_date" class="form-control" placeholder="<?php echo _l('start_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="end_date" class="form-control" placeholder="<?php echo _l('end_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="size_of_project" class="form-control" placeholder="<?php echo _l('size_of_project'); ?>">
+                            </td>
+                            <td>
+                                <?php
+                                $new_item = true;
+                                ?>
+                                <button type="button" onclick="add_vendor_work_completed_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                    class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="removed-work-completed"></div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <h4 class="mbot15 mtop20 company-profile-shipping-address-heading"><?php echo _l('details_of_current_work'); ?></h4>
+            <div class="table-responsive s_table">
+                <table class="table items no-mtop" style="font-size: 15px;">
+                    <thead>
+                        <tr>
+                            <th align="center"><?php echo _l('client'); ?></th>
+                            <th align="center"><?php echo _l('type_of_project'); ?></th>
+                            <th align="center"><?php echo _l('location'); ?></th>
+                            <th align="center"><?php echo _l('mini_contractor'); ?></th>
+                            <th align="center"><?php echo _l('scope_of_works'); ?></th>
+                            <th align="center"><?php echo _l('contract_prices'); ?></th>
+                            <th align="center"><?php echo _l('start_date'); ?></th>
+                            <th align="center"><?php echo _l('proposed_end_date'); ?></th>
+                            <th align="center"><?php echo _l('building_height'); ?></th>
+                            <th align="center"><i class="fa fa-cog"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody class="work_progress_main">
+                        <tr class="item">
+                            <td>
+                                <input type="text" name="client" class="form-control" placeholder="<?php echo _l('client'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="type_of_project" class="form-control" placeholder="<?php echo _l('type_of_project'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="location" class="form-control" placeholder="<?php echo _l('location'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="mini_contractor" class="form-control" placeholder="<?php echo _l('mini_contractor'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="scope_of_works" class="form-control" placeholder="<?php echo _l('scope_of_works'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="contract_prices" class="form-control" placeholder="<?php echo _l('contract_prices'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="start_date" class="form-control" placeholder="<?php echo _l('start_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="end_date" class="form-control" placeholder="<?php echo _l('end_date'); ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="size_of_project" class="form-control" placeholder="<?php echo _l('size_of_project'); ?>">
+                            </td>
+                            <td>
+                                <?php
+                                $new_item = true;
+                                ?>
+                                <button type="button" onclick="add_vendor_work_progress_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                    class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="removed-work-progress"></div>
+            </div>
+        </div>
+
        <div class="row">
             <div class="col-md-12 text-center">
                 <div class="form-group">
@@ -129,3 +253,5 @@
 
 <?php echo form_close(); ?>
 </div>
+
+<?php require 'modules/purchase/assets/js/file_managements/vendor_additional_work_js.php'; ?>
