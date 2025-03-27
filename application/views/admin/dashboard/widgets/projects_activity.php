@@ -46,7 +46,12 @@
                                 <?php } else {
                                     echo $name;
                                 } ?>
-                                <?php echo e($activity['description']); ?>
+                                <?php if ($activity['source'] == 'purchase' || $activity['source'] == 'workorder') {
+                                    echo _l($activity['description']);
+                                } else {
+                                    echo e($activity['description']);
+                                } ?>
+
                             </p>
                             <?php if ($activity['source'] == 'project') {   ?>
                                 <?php echo _l('project_name'); ?>: <a
