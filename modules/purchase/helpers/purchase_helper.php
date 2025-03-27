@@ -2946,8 +2946,15 @@ function pur_format_approve_status($status, $text = false, $clean = false)
  */
 function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $purorder = '')
 {
-    $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_request/' . $purorder . '/';
-    $CI            = &get_instance();
+    $related = 'pur_request';
+    if (!is_dir(get_upload_path_by_type('purchase'))) {
+        mkdir(get_upload_path_by_type('purchase'), 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('purchase') . $related)) {
+        mkdir(get_upload_path_by_type('purchase') . $related, 0755);
+    }
+    $path           = get_upload_path_by_type('purchase') . $related . '/' . $purorder . '/';
+    $CI             = &get_instance();
     $totalUploaded = 0;
 
     if (
@@ -2988,7 +2995,7 @@ function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $pur
                     ];
 
                     if (is_image($newFilePath)) {
-                        create_img_thumb($newFilePath, $filename);
+                        // create_img_thumb($newFilePath, $filename);
                     }
 
                     if ($customer_upload == true) {
@@ -2997,11 +3004,15 @@ function handle_vendor_pr_attachments_upload($id, $customer_upload = false, $pur
                         $attachment['visible_to_customer'] = 1;
                     }
 
-                    $CI->misc_model->add_attachment_to_database($purorder, 'pur_request', $attachment);
+                    // $CI->misc_model->add_attachment_to_database($purorder, 'pur_request', $attachment);
                     $totalUploaded++;
                 }
             }
         }
+    }
+
+    if (count($attachment) > 0) {
+        return $attachment;
     }
 
     return (bool) $totalUploaded;

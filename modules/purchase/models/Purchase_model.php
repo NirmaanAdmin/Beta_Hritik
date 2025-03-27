@@ -18322,4 +18322,23 @@ class Purchase_model extends App_Model
         }
         return $array;
     }
+
+    public function add_vendor_attachments_upload($uploadedFiles, $related, $id)
+    {
+        if ($uploadedFiles && is_array($uploadedFiles)) {
+            foreach ($uploadedFiles as $file) {
+                $data = array();
+                $data['dateadded'] = date('Y-m-d H:i:s');
+                $data['rel_type'] = $related;
+                $data['rel_id'] = $id;
+                $data['staffid'] = 1;
+                $data['vendorid'] = get_vendor_contact_user_id();
+                $data['attachment_key'] = app_generate_hash();
+                $data['file_name'] = $file['file_name'];
+                $data['filetype']  = $file['filetype'];
+                $this->db->insert(db_prefix() . 'purchase_files', $data);
+            }
+        }
+        return true;
+    }
 }

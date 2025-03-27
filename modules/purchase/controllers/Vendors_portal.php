@@ -936,6 +936,7 @@ class Vendors_portal extends App_Controller
 
         $files = $this->purchase_model->get_pur_request_files($id);
         $data['files'] = $files;
+        $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_request', $id);
 
         $this->data($data);
         $this->view('vendor_portal/pur_request');
@@ -1940,8 +1941,8 @@ class Vendors_portal extends App_Controller
     {
         $success = false;
 
-        $success = handle_vendor_pr_attachments_upload(get_vendor_user_id(), true, $pur_request);
-
+        $data = handle_vendor_pr_attachments_upload(get_vendor_user_id(), true, $pur_request);
+        $success = $this->purchase_model->add_vendor_attachments_upload($data, 'pur_request', $pur_request);
 
         if ($success) {
 

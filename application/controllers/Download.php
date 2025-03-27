@@ -122,7 +122,7 @@ class Download extends App_Controller
                 $path = get_upload_path_by_type('newsfeed') . $attachment->rel_id . '/' . $attachment->file_name;
             }
         } elseif ($folder_indicator == 'purchase') {
-            if (is_staff_logged_in()) {
+            if (is_staff_logged_in() || is_vendor_logged_in()) {
                 if (!$attachmentid) {
                     show_404();
                 }
