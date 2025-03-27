@@ -2357,7 +2357,7 @@ class Projects_model extends App_Model
             $activities[] = [
                 'description'     => $purchase['description'],
                 'additional_data' => $purchase['additional_data'],
-                'project_name'    => null, // You can map this if rel_type = 'project' and rel_id maps to a project
+                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
                 'dateadded'       => $purchase['date'],
                 'staff_id'         => $purchase['staffid'],
                 'fullname'       => $purchase['full_name'],
@@ -2366,6 +2366,22 @@ class Projects_model extends App_Model
             ];
         }
 
+        // --- Fetch and normalize tblpurchase_activity ---
+        $this->db->order_by('date', 'desc');
+        $wo_order_activities = $this->db->get('tblworkorder_activity')->result_array();
+
+        foreach ($wo_order_activities as $wo_order) {
+            $activities[] = [
+                'description'     => $wo_order['description'],
+                'additional_data' => $wo_order['additional_data'],
+                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
+                'dateadded'       => $wo_order['date'],
+                'staff_id'         => $wo_order['staffid'],
+                'fullname'       => $wo_order['full_name'],
+                'rel_id'          => $wo_order['rel_id'],
+                'source'        => $wo_order['rel_type'],
+            ];
+        }
         // --- Sort the merged array by 'dateadded' descending ---
         usort($activities, function ($a, $b) {
             return strtotime($b['dateadded']) - strtotime($a['dateadded']);

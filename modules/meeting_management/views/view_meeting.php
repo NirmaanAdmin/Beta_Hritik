@@ -64,7 +64,7 @@
                         <?php endif; ?>
                      </tbody>
                   </table>
-                  <h4><?php echo _l('Other Participants'); ?></h4>
+                  <h4><?php echo _l('Participants'); ?></h4>
 
                   <?php
                   // Extract all 'other_participants' and 'company_name' values into a single array

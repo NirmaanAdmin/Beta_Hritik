@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="widget<?php if (count($projects_activity) == 0) {
-    echo ' hide';
-} ?>" id="widget-<?php echo create_widget_id(); ?>" data-name="<?php echo _l('home_project_activity'); ?>">
+                        echo ' hide';
+                    } ?>" id="widget-<?php echo create_widget_id(); ?>" data-name="<?php echo _l('home_project_activity'); ?>">
     <div class="panel_s projects-activity">
         <div class="panel-body padding-10">
             <div class="widget-dragger"></div>
@@ -17,55 +17,61 @@
                     <?php echo _l('home_project_activity'); ?>
                 </span>
             </p>
- 
+
             <hr class="-tw-mx-3 tw-mt-3 tw-mb-6">
 
             <div class="activity-feed">
                 <?php
-                    foreach ($projects_activity as $activity) {
-                        $name = e($activity['fullname']);
-                        if ($activity['staff_id'] != 0) {
-                            $href = admin_url('profile/' . $activity['staff_id']);
-                        } elseif ($activity['contact_id'] != 0) {
-                            $name = '<span class="label label-info inline-block mright5">' . _l('is_customer_indicator') . '</span> - ' . $name;
-                            $href = admin_url('clients/client/' . get_user_id_by_contact_id($activity['contact_id']) . '?contactid=' . $activity['contact_id']);
-                        } else {
-                            $href = '';
-                            $name = '[CRON]';
-                        } ?>
-                <div class="feed-item">
-                    <div class="date"><span class="text-has-action" data-toggle="tooltip"
-                            data-title="<?php echo e(_dt($activity['dateadded'])); ?>">
-                            <?php echo e(time_ago($activity['dateadded'])); ?>
-                        </span>
+                foreach ($projects_activity as $activity) {
+                    $name = e($activity['fullname']);
+                    if ($activity['staff_id'] != 0) {
+                        $href = admin_url('profile/' . $activity['staff_id']);
+                    } elseif ($activity['contact_id'] != 0) {
+                        $name = '<span class="label label-info inline-block mright5">' . _l('is_customer_indicator') . '</span> - ' . $name;
+                        $href = admin_url('clients/client/' . get_user_id_by_contact_id($activity['contact_id']) . '?contactid=' . $activity['contact_id']);
+                    } else {
+                        $href = '';
+                        $name = '[CRON]';
+                    } ?>
+                    <div class="feed-item">
+                        <div class="date"><span class="text-has-action" data-toggle="tooltip"
+                                data-title="<?php echo e(_dt($activity['dateadded'])); ?>">
+                                <?php echo e(time_ago($activity['dateadded'])); ?>
+                            </span>
+                        </div>
+                        <div class="text">
+                            <p class="bold no-mbot">
+                                <?php if ($href != '') { ?>
+                                    <a href="<?php echo e($href); ?>"><?php echo $name; ?></a> -
+                                <?php } else {
+                                    echo $name;
+                                } ?>
+                                <?php echo e($activity['description']); ?>
+                            </p>
+                            <?php if ($activity['source'] == 'project') {   ?>
+                                <?php echo _l('project_name'); ?>: <a
+                                    href="<?php echo admin_url('projects/view/' . $activity['project_id']); ?>">
+                                    <?php echo e($activity['project_name']); ?>
+                                </a>
+                            <?php } elseif ($activity['source'] == 'purchase') {
+                                $get_po_by_id = get_pur_order_by_id($activity['rel_id']);
+                            ?>
+                                <?php echo _l('purchase_order'); ?>: <a
+                                    href="<?php echo admin_url('purchase/purchase_order/' . $get_po_by_id->id); ?>">
+                                    <?php echo e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name); ?>
+                                <?php } elseif ($activity['source'] == 'workorder') {
+                                $get_wo_by_id = get_wo_order_by_id($activity['rel_id']);
+                                ?>
+                                    <?php echo _l('wo_order'); ?>: <a
+                                        href="<?php echo admin_url('purchase/work_order/' . $get_wo_by_id->id); ?>">
+                                        <?php echo e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name); ?>
+                                    <?php } ?>
+
+                        </div>
+                        <?php if (!empty($activity['additional_data'])) { ?>
+                            <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
+                        <?php } ?>
                     </div>
-                    <div class="text">
-                        <p class="bold no-mbot">
-                            <?php if ($href != '') { ?>
-                            <a href="<?php echo e($href); ?>"><?php echo $name; ?></a> -
-                            <?php } else {
-                                echo $name;
-                            } ?>
-                            <?php echo e($activity['description']); ?>
-                        </p>
-                        <?php if($activity['source'] == 'project'){   ?>
-                            <?php echo _l('project_name'); ?>: <a
-                            href="<?php echo admin_url('projects/view/' . $activity['project_id']); ?>">
-                            <?php echo e($activity['project_name']); ?>
-                        </a>
-                       <?php }elseif ($activity['source'] == 'purchase') { 
-                            $get_po_by_id = get_pur_order_by_id($activity['rel_id']);
-                        ?>
-                            <?php echo _l('purchase_order'); ?>: <a
-                            href="<?php echo admin_url('purchase/purchase_order/' . $get_po_by_id->id); ?>">
-                            <?php echo e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name); ?>
-                       <?php } ?>
-                        
-                    </div>
-                    <?php if (!empty($activity['additional_data'])) { ?>
-                        <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
-                    <?php } ?>
-                </div>
                 <?php } ?>
             </div>
         </div>
