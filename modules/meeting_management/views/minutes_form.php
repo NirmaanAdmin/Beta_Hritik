@@ -75,7 +75,7 @@
                         // Display input fields for each participant
                         if (!empty($all_other_participants)) {
                            foreach ($all_other_participants as $index => $participant) {
-                              echo '<div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px;">';
+                              echo '<div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px;margin-bottom: 14px;">';
 
                               // Participant Name Input (50% width)
                               echo '<input type="text" name="other_participants[]" class="form-control" value="' . htmlspecialchars($participant['name']) . '" style="flex: 1;" placeholder="Participant Name">';
@@ -85,7 +85,7 @@
 
                               // Add "Remove" button only if there is more than one participant
                               if (count($all_other_participants) > 1) {
-                                 echo '<button type="button" class="btn btn-danger remove-participant" style="margin-top: 0px; margin-bottom: 10px;">Remove</button>';
+                                 echo '<button type="button" class="btn btn-danger remove-participant" style="margin-top: 0px;">Remove</button>';
                               }
                               echo '</div>';
                            }
@@ -370,15 +370,15 @@
          } else {
             // Hide "Remove" buttons if there's only one input field
             inputs.find('.remove-participant').hide();
-            $('#add-participant').removeClass('margin_add_class');
+            // $('#add-participant').removeClass('margin_add_class');
          }
       }
 
       // Add new participant input field
       $('#add-participant').on('click', function() {
-         $('#add-participant').addClass('margin_add_class'); 
+         // $('#add-participant').addClass('margin_add_class'); 
          const newInput = `
-            <div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px;">
+            <div class="input-group mb-2" style="width: 100%; display: flex; gap: 10px;margin-bottom: 14px;">
                 <!-- Participant Name Input -->
                 <input type="text" name="other_participants[]" class="form-control" style="flex: 1;" placeholder="Participant Name">
                 
@@ -386,7 +386,7 @@
                 <input type="text" name="company_names[]" class="form-control" style="flex: 1;" placeholder="Company Name">
                 
                 <!-- Remove Button -->
-                <button type="button" class="btn btn-danger remove-participant" style="margin-top: 0px; margin-bottom: 10px; display: none;">Remove</button>
+                <button type="button" class="btn btn-danger remove-participant" style="margin-top: 0px; display: none;">Remove</button>
             </div>
         `;
          $('#other-participants-container').append(newInput);

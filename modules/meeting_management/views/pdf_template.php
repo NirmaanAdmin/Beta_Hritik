@@ -109,29 +109,28 @@
             <td style="width: 20%; font-weight: bold;">Company</td>
             <td style="width: 70%; font-weight: bold;">Participant’s Name</td>
         </tr>
+
+        <!-- Row for BIL Company -->
         <tr>
             <td style="width: 10%;">1</td>
             <td style="width: 20%; text-align: left;">BIL</td>
-            <?php
-            if (!empty($participants)) {
-                $all_participant = '';
-                foreach ($participants as $participant) {
-                    if (!empty($participant['firstname']) || !empty($participant['lastname']) || !empty($participant['email'])) :
-                        $all_participant .= $participant['firstname'] . ' ' . $participant['lastname'] . ', ';
-                    endif;
+            <td style="width: 70%; text-align: left;">
+                <?php
+                if (!empty($participants)) {
+                    $all_participant = '';
+                    foreach ($participants as $participant) {
+                        if (!empty($participant['firstname']) || !empty($participant['lastname']) || !empty($participant['email'])) :
+                            $all_participant .= $participant['firstname'] . ' ' . $participant['lastname'] . ', ';
+                        endif;
+                    }
+                    $all_participant = rtrim($all_participant, ", ");
+                    echo $all_participant;
                 }
-                $all_participant = rtrim($all_participant, ", ");
-            }
-            ?>
-            <td style="width: 70%; text-align: left;"><?php echo $all_participant; ?></td>
+                ?>
+            </td>
         </tr>
-    </table>
-    <table class="details-table">
-        <tr>
-            <th style="width: 10%;"></th>
-            <td style="width: 20%; font-weight: bold;">Company</td>
-            <td style="width: 70%; font-weight: bold;">Participant’s Name</td>
-        </tr>
+
+        <!-- Rows for Other Participants -->
         <?php
         // Ensure $other_participants is an array
         $other_participants = is_array($other_participants) ? $other_participants : [];
@@ -143,14 +142,14 @@
                 $company_name = isset($participant['company_names']) ? htmlspecialchars($participant['company_names']) : '';
         ?>
                 <tr>
-                    <td style="width: 10%;"><?php echo $index + 1; ?></td>
+                    <td style="width: 10%;"><?php echo $index + 2; ?></td> <!-- Increment index by 2 to account for the BIL row -->
                     <td style="width: 20%; text-align: left;"><?php echo $company_name; ?></td>
                     <td style="width: 70%; text-align: left;"><?php echo $participant_name; ?></td>
                 </tr>
-            <?php
+        <?php
             }
-        }  ?>
-        
+        }
+        ?>
     </table>
 
     <table class="description-table">
