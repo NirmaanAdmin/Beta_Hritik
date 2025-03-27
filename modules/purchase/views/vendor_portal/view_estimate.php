@@ -145,78 +145,57 @@
                   <?php } ?>
               </div>
 
-              <?php if(count($files) == 0){ ?>
-                  <hr class="hr-panel-heading" />
-                  <div class="text-center">
-                      <h4 class="no-margin"><?php echo _l('no_files_found'); ?></h4>
-                  </div>
-              <?php } else { ?>
-                  <table class="table dt-table mtop15 table-files" data-order-col="1" data-order-type="desc">
-                     <thead>
-                      <tr>
-                          <th class="th-files-file"><?php echo _l('customer_attachments_file'); ?></th>
-                          <th class="th-files-date-uploaded"><?php echo _l('file_date_uploaded'); ?></th>
-                         
-                          <th class="th-files-option"><?php echo _l('options'); ?></th>
-                          
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <?php foreach($files as $file){ ?>
-                          <tr>
-                              <td>
-                                <?php
-                                $url = site_url() .'download/file/client/';
-                                $path = get_upload_path_by_type('customer') . $file['rel_id'] . '/' . $file['file_name'];
-                                $is_image = false;
-                                if(!isset($file['external'])) {
-                                  $attachment_url = $url . $file['attachment_key'];
-                                  $is_image = is_image($path);
-                                  $img_url = site_url('download/preview_image?path='.protected_file_url_by_path($path,true).'&type='.$file['filetype']);
-                              } else if(isset($file['external']) && !empty($file['external'])){
-                                  if(!empty($file['thumbnail_link'])){
-                                      $is_image = true;
-                                      $img_url = optimize_dropbox_thumbnail($file['thumbnail_link']);
-                                  }
-                                  $attachment_url = $file['external_link'];
-                              }
+              <div class="col-md-12">
+                <?php
+                if (isset($attachments) && count($attachments) > 0) {
+                  foreach ($attachments as $value) {
+                    echo '<div class="col-md-3">';
+                    $path = get_upload_path_by_type('purchase') . 'pur_quotation/' . $value['rel_id'] . '/' . $value['file_name'];
+                    $is_image = is_image($path);
+                    if ($is_image) {
+                      echo '<div class="preview_image">';
+                    }
+                ?>
+                    <a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                      <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                      <?php if ($is_image) { ?>
+                        <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                      <?php } ?>
+                    </a>
+                    <?php if ($is_image) {
+                      echo '</div>';
+                      // echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                    } ?>
+                <?php echo '</div>';
+                  }
+                } ?>
+              </div>
 
-                              $href_url = site_url(PURCHASE_PATH.'pur_estimate/'.$file['rel_id'].'/'.$file['file_name']).'" download';
-                                                                if(!empty($file['external'])){
-                                                                  $href_url = $file['external_link'];
-                                                                }
-
-                              if($is_image){
-                                  echo '<div class="preview_image">';
-                              }
-                              ?>
-                              <a href="<?php echo $href_url; ?>"<?php echo (isset($file['external']) && !empty($file['external']) ? ' target="_blank"' : ''); ?>
-                              class="display-block mbot5">
-                              <?php if($is_image){ ?>
-                                  <div class="table-image">
-                                    <div class="text-center"><i class="fa fa-spinner fa-spin mtop30"></i></div>
-                                    <img src="#" class="img-table-loading" data-orig="<?php echo $href_url; ?>">
-                                </div>
-                            <?php } else { ?>
-                              <i class="<?php echo get_mime_class($file['filetype']); ?>"></i> <?php echo $file['file_name']; ?>
-                          <?php } ?>
-                      </a>
-                      <?php if($is_image){ echo '</div>'; } ?>
-                  </td>
-                  <td data-order="<?php echo $file['dateadded']; ?>"><?php echo _dt($file['dateadded']); ?></td>
-                  
-                      <td>
-                          <?php if($file['contact_id'] == get_vendor_contact_user_id()){ ?>
-                              <a href="<?php echo site_url('purchase/vendors_portal/delete_estimate_file/'.$file['id'].'/'.$estimate->id); ?>"
-                                  class="btn btn-danger btn-icon _delete file-delete"><i class="fa fa-remove"></i></a>
-                              <?php } ?>
-                          </td>
-                      
-                  </tr>
-              <?php } ?>
-          </tbody>
-          </table>
-          <?php } ?>
+              <div class="col-md-12">
+                <?php
+                if (isset($pur_request_attachments) && count($pur_request_attachments) > 0) {
+                  foreach ($pur_request_attachments as $value) {
+                    echo '<div class="col-md-3">';
+                    $path = get_upload_path_by_type('purchase') . 'pur_request/' . $value['rel_id'] . '/' . $value['file_name'];
+                    $is_image = is_image($path);
+                    if ($is_image) {
+                      echo '<div class="preview_image">';
+                    }
+                ?>
+                    <a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                      <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                      <?php if ($is_image) { ?>
+                        <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                      <?php } ?>
+                    </a>
+                    <?php if ($is_image) {
+                      echo '</div>';
+                      // echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                    } ?>
+                <?php echo '</div>';
+                  }
+                } ?>
+              </div>
 
             </div>
 

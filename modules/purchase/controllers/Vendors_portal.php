@@ -639,6 +639,7 @@ class Vendors_portal extends App_Controller
             $purchase_request_detail = $this->purchase_model->get_purchase_request($purchase_request);
             if(!empty($purchase_request_detail)) {
                 $data['pur_request_total'] = $purchase_request_detail->total;
+                $data['pur_request_attachments'] = $this->purchase_model->get_purchase_attachments('pur_request', $purchase_request);
             }
         }
 
@@ -695,6 +696,17 @@ class Vendors_portal extends App_Controller
                     redirect($this->uri->uri_string() . '?tab=discussion');
 
                     break;
+            }
+        }
+        $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_quotation', $id);
+        if(isset($estimate->pur_request)) {
+            if(!empty($estimate->pur_request)) {
+                $purchase_request = $estimate->pur_request->id;
+                $purchase_request_detail = $this->purchase_model->get_purchase_request($purchase_request);
+                if(!empty($purchase_request_detail)) {
+                    $data['pur_request_total'] = $purchase_request_detail->total;
+                    $data['pur_request_attachments'] = $this->purchase_model->get_purchase_attachments('pur_request', $purchase_request);
+                }
             }
         }
 
@@ -1754,8 +1766,8 @@ class Vendors_portal extends App_Controller
     {
         $success = false;
 
-        $success = handle_vendor_estimate_attachments_upload(get_vendor_user_id(), true, $pur_estimate);
-
+        $data = handle_vendor_estimate_attachments_upload(get_vendor_user_id(), true, $pur_estimate);
+        $success = $this->purchase_model->add_vendor_attachments_upload($data, 'pur_quotation', $pur_estimate);
 
         if ($success) {
 
