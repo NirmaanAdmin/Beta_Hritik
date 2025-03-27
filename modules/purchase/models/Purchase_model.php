@@ -15488,6 +15488,21 @@ class Purchase_model extends App_Model
         $this->db->order_by('date', 'asc');
         return $this->db->get(db_prefix() . 'purchase_activity')->result_array();
     }
+    public function get_pr_activity($id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'purchase_request');
+        $this->db->order_by('date', 'asc');
+        return $this->db->get(db_prefix() . 'purchase_request_activity')->result_array();
+    }
+    public function get_pay_cert_activity($id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'payment_certificate');
+        $this->db->order_by('date', 'asc');
+        return $this->db->get(db_prefix() . 'payment_certificate_activity')->result_array();
+    }
+    
     public function get_wo_activity($id)
     {
         $this->db->where('rel_id', $id);
