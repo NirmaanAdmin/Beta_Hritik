@@ -608,7 +608,7 @@ class purchase extends AdminController
 
                     if (strlen($item_text) == 0) {
                         $item_text = pur_get_item_variatiom($request_detail['item_code']);
-                    } 
+                    }
 
                     $purchase_request_row_template .= $this->purchase_model->create_purchase_request_row_template('items[' . $index_request . ']', $request_detail['item_code'], $item_text, $request_detail['description'], $request_detail['area'], $request_detail['image'], $request_detail['unit_price'], $request_detail['quantity'], $unit_name, $request_detail['unit_id'], $request_detail['into_money'], $request_detail['prd_id'], $request_detail['tax_value'], $request_detail['total'], $request_detail['tax_name'], $request_detail['tax_rate'], $request_detail['tax'], true, $currency_rate, $to_currency, $request_detail);
                 }
@@ -10002,7 +10002,7 @@ class purchase extends AdminController
 
                     // Setup our new file path
                     $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
-                   
+
                     if (move_uploaded_file($tmpFilePath, $newFilePath)) {
 
                         $import_result = true;
@@ -10042,7 +10042,7 @@ class purchase extends AdminController
                         $list_item = $this->purchase_model->create_purchase_order_row_template('', '', '', '', '', '', '', '', '', '', '', '',  '', '', '', '', '', '', '', '', '', '', '', [], true);
                         //get data for compare
                         $index_quote = 0;
-                        
+
                         for ($row = 1; $row < count($data); $row++) {
                             $rd = array();
                             $flag = 0;
@@ -10091,7 +10091,7 @@ class purchase extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
-                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '', [], true,'','');
+                                $list_item .= $this->purchase_model->create_purchase_order_row_template('newitems[' . $index_quote . ']', '', $value_cell_item_description, '', '', $value_cell_quantity, '', $value_cell_unit_price, '', $item_value->id, '', '',  '', '', '', '', '', '', '', $index_quote, '', 1, '', [], true, '', '');
 
                                 $index_quote++;
                                 $total_rows_data++;
@@ -10111,7 +10111,7 @@ class purchase extends AdminController
                             $filename = PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename;
                         }
                         $list_item = $list_item;
-                        
+
                         @delete_dir($tmpDir);
                     }
                 } else {
@@ -10119,7 +10119,7 @@ class purchase extends AdminController
                 }
             }
         }
-        
+
         echo json_encode([
             'message' => $message,
             'total_row_success' => $total_row_success,
@@ -10211,7 +10211,7 @@ class purchase extends AdminController
                         $list_item = $this->purchase_model->create_purchase_request_row_template();
                         //get data for compare
                         $index_quote = 0;
-                        
+
                         for ($row = 1; $row < count($data); $row++) {
                             $rd = array();
                             $flag = 0;
@@ -10257,33 +10257,33 @@ class purchase extends AdminController
                                 $total_rows_data_error++;
                                 $message = 'Import Error In Some Item';
                             }
-                           
-                            
+
+
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
                                 $list_item .= $this->purchase_model->create_purchase_request_row_template('newitems[' . $index_quote . ']', '', '', $value_cell_item_description, '', '', $value_cell_unit_price, $value_cell_quantity, '', '', '', $index_quote, '', '', '', '', '', true, 1, '', []);
-                                
+
 
                                 $index_quote++;
                                 $total_rows_data++;
                                 $message = 'Import Item successfully';
                             }
                         }
-                       
+
                         $total_rows = $total_rows;
                         $data['total_rows_post'] = count($rows);
                         $total_row_success = count($rows);
                         // $total_row_false = $total_rows - (int) count($rows);
 
                         if (($total_rows_data_error > 0)) {
-                            
+
                             $filename = 'FILE_ERROR_IMPORT_ITEMS_PURCHASE_REQUEST' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
                             $writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename, $filename));
 
                             $filename = PURCHASE_ORDER_IMPORT_ITEMS_ERROR . $filename;
                         }
-                       
+
                         @delete_dir($tmpDir);
                     }
                 } else {
@@ -10291,7 +10291,7 @@ class purchase extends AdminController
                 }
             }
         }
-        
+
         echo json_encode([
             'message' => $message,
             'total_row_success' => $total_row_success,
@@ -11019,7 +11019,13 @@ class purchase extends AdminController
             if ($purOrdersReturn1) {
                 array_push($where, 'AND ' . db_prefix() . 'goods_receipt.pr_order_id IN (' . implode(',', $purOrdersReturn1) . ')');
             }
-            $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
+
+            if (!empty($purOrdersReturn0) && !empty($purOrdersReturn1)) {
+                $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
+            } else {
+                $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
+            }
+
 
             $select1 = [
                 db_prefix() . 'pur_order_detail.id as id',
@@ -11040,28 +11046,31 @@ class purchase extends AdminController
             $sTable1       = db_prefix() . 'pur_order_detail';
             $join1         = [];
             $join1         = [
-                'INNER JOIN ' . db_prefix() . 'pur_orders ON ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order where ' . db_prefix() . 'pur_orders.goods_id = 0',
+                'INNER JOIN ' . db_prefix() . 'pur_orders ON ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order',
             ];
-
+            $where1[] = 'AND ' . db_prefix() . 'pur_orders.goods_id = 0';
             if ($purOrdersReturn0) {
                 array_push($where1, 'AND ' . db_prefix() . 'pur_orders.id IN (' . implode(',', $purOrdersReturn0) . ')');
             }
+
             $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
 
             $output  = $result['output'];
 
 
-            if ($purOrdersReturn1) {
-                $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+            $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+            $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
+
+            if (!empty($purOrdersReturn0) && !empty($purOrdersReturn1)) {
+                $rResult = array_merge($rResult0, $rResult1);
+            } elseif ($purOrdersReturn1) {
                 $rResult = $rResult0;
-            } else if (!empty($purOrdersReturn0)) {
-                $rResult1 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
+            } elseif ($purOrdersReturn0) {
                 $rResult = $rResult1;
             } else {
-                $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
-                $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
-                $rResult = array_merge($rResult0, $rResult1);
+                $rResult = array_merge($rResult0, $rResult1); // Or [] if you want empty in fallback
             }
+
 
             $tracker = [];
 
@@ -12191,7 +12200,7 @@ class purchase extends AdminController
         $data['list_approve_status'] = $this->purchase_model->get_list_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
         $data['check_approve_status'] = $this->purchase_model->check_pay_cert_approval_details($payment_certificate_id, 'payment_certificate');
         $data['get_staff_sign'] = $this->purchase_model->get_pay_cert_staff_sign($payment_certificate_id, 'payment_certificate');
-        
+
         $data['activity'] = $this->purchase_model->get_pay_cert_activity($payment_certificate_id);
         $this->load->view('payment_certificate/payment_certificate', $data);
     }

@@ -32,8 +32,16 @@
                                     <!-- Correct Edit and Delete URLs with module name -->
                                     <a href="<?php echo admin_url('meeting_management/agendaController/create/' . $agenda['id']); ?>" class="btn btn-info"><?php echo _l('edit'); ?></a>
                                     <a href="<?php echo admin_url('meeting_management/agendaController/delete/' . $agenda['id']); ?>" class="btn btn-danger"><?php echo _l('delete'); ?></a>
-                                    <a href="<?php echo admin_url('meeting_management/minutesController/convert_to_minutes/' . $agenda['id']); ?>" class="btn btn-primary"><?php echo _l('meeting_convert_to_minutes'); ?></a>
-                                    
+
+                                    <?php
+                                    if ($agenda['flag'] == 1) { ?>
+                                       <a href="<?php echo admin_url('meeting_management/minutesController/index/' . $agenda['id']); ?>" class="btn btn-primary"><?php echo _l('edit_converted_metting'); ?></a>
+                                    <?php } else { ?>
+                                       <a href="<?php echo admin_url('meeting_management/minutesController/convert_to_minutes/' . $agenda['id']); ?>" class="btn btn-primary"><?php echo _l('meeting_convert_to_minutes'); ?></a>
+                                    <?php }
+                                    ?>
+
+
                                     <!-- View Meeting Button -->
                                     <a href="<?php echo admin_url('meeting_management/agendaController/view_meeting/' . $agenda['id']); ?>" class="btn btn-secondary"><?php echo _l('view_meeting'); ?></a>
                                  </td>
@@ -55,4 +63,5 @@
 
 <?php init_tail(); ?>
 </body>
+
 </html>

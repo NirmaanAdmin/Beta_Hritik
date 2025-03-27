@@ -139,9 +139,9 @@ class MinutesController extends AdminController
 
         // Get minutes data from POST
         $minutes_data = [
-            'minutes' => $this->input->post('minutes',false)
+            'minutes' => $this->input->post('minutes',false),
         ];
- 
+  
         // Update the minutes for this meeting
         $this->Meeting_model->update_minutes($agenda_id, $minutes_data);
 

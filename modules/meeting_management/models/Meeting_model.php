@@ -225,6 +225,10 @@ class Meeting_model extends App_Model
     {
 
         $this->save_agends_files('agenda_meeting', $agenda_id);
+
+        $this->db->where('id', $agenda_id);
+        $this->db->update(db_prefix() . 'agendas', ['flag' => 1]);
+
         $this->db->where('id', $agenda_id);
         return $this->db->update(db_prefix() . 'meeting_management', $minutes_data);
     }

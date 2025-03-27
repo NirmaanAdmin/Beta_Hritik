@@ -20,6 +20,7 @@ $lang['meeting_create_agenda'] = 'Create New Agenda';
 $lang['meeting_assign_task'] = 'Assign Task';
 $lang['meeting_reminders'] = 'Reminders';
 $lang['meeting_convert_to_minutes'] = 'Convert to Minutes';
+$lang['edit_converted_metting'] = 'Edit Minutes';
 $lang['meeting_attendance'] = 'Attendance';
 $lang['meeting_agenda_shared'] = 'Agenda has been shared with participants';
 $lang['meeting_minutes_shared'] = 'Minutes of meeting shared';

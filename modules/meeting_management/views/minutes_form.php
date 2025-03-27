@@ -30,11 +30,11 @@
                      $minutes_val = '';
                      $minutes_val = isset($minutes) ? $minutes->minutes : '';
                      if (empty($minutes_val)) {
-                        $minutes_val .= isset($minutes) ? nl2br($minutes->agenda) : '';
+                        $minutes_val .= isset($minutes) ? nl2br($minutes->minutes) : '';
                         // $minutes_val .= '<p><strong>Decision -<br>Action -</strong></p>';
                      }
                      ?>
-                     <?php echo render_textarea('minutes', '', html_entity_decode($minutes->agenda, ENT_QUOTES, 'UTF-8'), array(), array(), 'mtop15', 'tinymce'); ?>
+                     <?php echo render_textarea('minutes', '', html_entity_decode($minutes->minutes, ENT_QUOTES, 'UTF-8'), array(), array(), 'mtop15', 'tinymce'); ?>
                   </div>
 
                   <!-- Participants Selection -->
