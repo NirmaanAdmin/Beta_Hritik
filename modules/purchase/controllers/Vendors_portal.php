@@ -849,6 +849,7 @@ class Vendors_portal extends App_Controller
         $data['units'] = $this->purchase_model->get_units();
         $data['items'] = $this->purchase_model->get_items();
         $data['title'] = $title;
+        $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_order', $id);
 
         $this->data($data);
         $this->view('vendor_portal/pur_order');
@@ -1733,8 +1734,8 @@ class Vendors_portal extends App_Controller
     {
         $success = false;
 
-        $success = handle_vendor_po_attachments_upload(get_vendor_user_id(), true, $pur_order);
-
+        $data = handle_vendor_po_attachments_upload(get_vendor_user_id(), true, $pur_order);
+        $success = $this->purchase_model->add_vendor_attachments_upload($data, 'pur_order', $pur_order);
 
         if ($success) {
 

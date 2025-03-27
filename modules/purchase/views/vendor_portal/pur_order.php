@@ -163,12 +163,13 @@
                   <?php } ?>
               </div>
 
-              <?php if(count($files) == 0){ ?>
+              <?php if(count($attachments) == 0){ ?>
                   <hr class="hr-panel-heading" />
                   <div class="text-center">
                       <h4 class="no-margin"><?php echo _l('no_files_found'); ?></h4>
                   </div>
               <?php } else { ?>
+                  <?php /*
                   <table class="table dt-table mtop15 table-files" data-order-col="1" data-order-type="desc">
                      <thead>
                       <tr>
@@ -231,9 +232,35 @@
                           </td>
                       
                   </tr>
-              <?php } ?>
-          </tbody>
-          </table>
+                  <?php } ?>
+                  </tbody>
+                  </table>
+                  */ ?>
+                  <div class="col-md-12">
+                    <?php
+                    if (isset($attachments) && count($attachments) > 0) {
+                      foreach ($attachments as $value) {
+                        echo '<div class="col-md-3">';
+                        $path = get_upload_path_by_type('purchase') . 'pur_order/' . $value['rel_id'] . '/' . $value['file_name'];
+                        $is_image = is_image($path);
+                        if ($is_image) {
+                          echo '<div class="preview_image">';
+                        }
+                    ?>
+                        <a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                          <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                          <?php if ($is_image) { ?>
+                            <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
+                          <?php } ?>
+                        </a>
+                        <?php if ($is_image) {
+                          echo '</div>';
+                          // echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+                        } ?>
+                    <?php echo '</div>';
+                      }
+                    } ?>
+                  </div>
           <?php } ?>
 
             </div>
