@@ -2345,7 +2345,7 @@ class Projects_model extends App_Model
                 'project_name'    => get_project_name_by_id($activity['project_id']),
                 'dateadded'       => $activity['dateadded'],
                 'staff_id'        => $activity['staff_id'],
-                'fullname'        => $activity['full_name'],
+                'fullname'        => $activity['fullname'],
                 'rel_id'          => $activity['project_id'],
                 'source'          => 'project',
             ];
