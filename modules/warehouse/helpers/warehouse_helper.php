@@ -618,19 +618,63 @@ function get_warehouse_option($name)
  * @param  integer $id 
  * @return string     
  */
+// function get_pur_order_name($id)
+// {
+//     $name = '';
+//     $CI = &get_instance();
+
+//     $CI->db->select('po.pur_order_number, po.pur_order_name, v.company as vendor_name');
+//     $CI->db->from(db_prefix() . 'pur_orders AS po');
+//     $CI->db->join(db_prefix() . 'pur_vendor AS v', 'v.userid = po.vendor', 'left');
+//     $CI->db->where('po.id', $id);
+
+//     $pur_order = $CI->db->get()->row();
+
+//     if ($pur_order) {
+//         $name .= $pur_order->pur_order_number . ' - ' . $pur_order->pur_order_name;
+
+//         // Optional: include vendor name
+//         if (!empty($pur_order->vendor_name)) {
+//             $name .= ' (' . $pur_order->vendor_name . ')';
+//         }
+//     }
+
+//     return $name;
+// }
 function get_pur_order_name($id)
 {
     $name = '';
     $CI = &get_instance();
-    $CI->db->where('id', $id);
-    $pur_orders = $CI->db->get(db_prefix() . 'pur_orders')->row();
 
-    if ($pur_orders) {
-        $name .= $pur_orders->pur_order_number . ' - ' . $pur_orders->pur_order_name;
+    $CI->db->select('po.pur_order_number, po.pur_order_name, v.company as vendor_name');
+    $CI->db->from(db_prefix() . 'pur_orders AS po');
+    $CI->db->join(db_prefix() . 'pur_vendor AS v', 'v.userid = po.vendor', 'left');
+    $CI->db->where('po.id', $id);
+
+    $pur_order = $CI->db->get()->row();
+
+    if ($pur_order) {
+        // Extract only up to the 3rd dash (remove trailing -CONT-XXXX)
+        $parts = explode('-', $pur_order->pur_order_number);
+
+        // Combine first 3 parts only if they exist
+        if (count($parts) >= 3) {
+            $trimmed_order_number = implode('-', array_slice($parts, 0, 3));
+        } else {
+            $trimmed_order_number = $pur_order->pur_order_number;
+        }
+
+        // Final output format: #PO-00001-Nov-2024 (Vendor Name)
+        $name .= $trimmed_order_number;
+
+        if (!empty($pur_order->vendor_name)) {
+            $name .= '-' . $pur_order->vendor_name . ' - '. $pur_order->pur_order_name;
+        }
     }
 
     return $name;
 }
+
 function get_pur_order_project_id($id)
 {
     $project = '';
@@ -658,7 +702,19 @@ function get_pur_order_goods_status($id)
 
     return $status;
 }
+function get_vendor_goods_status($id)
+{
+    $status = '';
+    $CI = &get_instance();
+    $CI->db->where('vendor', $id);
+    $pur_orders = $CI->db->get(db_prefix() . 'pur_orders')->row();
 
+    if ($pur_orders) {
+        $status = $pur_orders->goods_id;
+    }
+
+    return $status;
+}
 
 /**
  * get staff
@@ -672,7 +728,8 @@ function wh_get_staff($id = '')
     $CI->load->model('warehouse/warehouse_model');
     return  $CI->warehouse_model->get_staff($invoice_id);
 }
-function get_staff_by_id($id){
+function get_staff_by_id($id)
+{
     if (is_numeric($id)) {
         $CI = &get_instance();
         $CI->db->where('staffid', $id);

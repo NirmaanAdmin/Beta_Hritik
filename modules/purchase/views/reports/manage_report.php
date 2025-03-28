@@ -17,7 +17,7 @@
 	                      <p><a href="#" class="font-medium" onclick="init_report(this,'po_report'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('po_report'); ?></a></p>
 
 	                      <hr class="hr-10" />
-	                      <p><a href="#" class="font-medium" onclick="init_report(this,'purchase_invoice_rp'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('purchase_invoice_rp'); ?></a></p>
+	                      <!-- <p><a href="#" class="font-medium" onclick="init_report(this,'purchase_invoice_rp'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('purchase_invoice_rp'); ?></a></p> -->
 
 	                      <hr class="hr-10" />
 	                      <p><a href="#" class="font-medium" onclick="init_report(this,'item_tracker_report'); return false;"><i class="fa fa-caret-down" aria-hidden="true"></i> <?php echo _l('item_tracker_report'); ?></a></p>

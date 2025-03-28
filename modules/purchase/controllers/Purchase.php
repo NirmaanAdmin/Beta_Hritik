@@ -11000,6 +11000,24 @@ class purchase extends AdminController
             $join         = [
                 'INNER JOIN ' . db_prefix() . 'goods_receipt ON ' . db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id',
             ];
+
+            if ($this->input->post('vendor')) {
+                $vendor_ids_filters = $this->input->post('vendor');
+
+                $purOrdersVendor1 = [];
+                $purOrdersVendor2 = [];
+
+                foreach ($vendor_ids_filters as $vendor_id) {
+                    $status = get_vendor_goods_status($vendor_id);
+
+                    if ($status == 1) {
+                        $purOrdersVendor1[] = $vendor_id;
+                    } elseif ($status == 0) {
+                        $purOrdersVendor2[] = $vendor_id;
+                    }
+                }
+            }
+
             if ($this->input->post('pur_order')) {
                 $pur_order_ids_filters = $this->input->post('pur_order');
 
@@ -11015,6 +11033,10 @@ class purchase extends AdminController
                         $purOrdersReturn0[] = $pur_order_id;
                     }
                 }
+            }
+            // Handle Vendor Filter
+            if ($purOrdersVendor1) {
+                array_push($where, 'AND ' . db_prefix() . 'goods_receipt.supplier_code IN (' . implode(',', $purOrdersVendor1) . ')');
             }
 
 
@@ -11054,8 +11076,16 @@ class purchase extends AdminController
             if ($purOrdersReturn0) {
                 array_push($where1, 'AND ' . db_prefix() . 'pur_orders.id IN (' . implode(',', $purOrdersReturn0) . ')');
             }
+            if ($purOrdersVendor2) {
+                array_push($where1, 'AND ' . db_prefix() . 'pur_orders.vendor IN (' . implode(',', $purOrdersVendor1) . ')');
+            }
+            if (!empty($purOrdersVendor1) && empty($purOrdersVendor2)) {
+            } elseif (empty($purOrdersVendor1) && !empty($purOrdersVendor2)) {
+                $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
+            } else {
+                $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
+            }
 
-            $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
 
             $output  = $result['output'];
 
@@ -12477,29 +12507,29 @@ class purchase extends AdminController
 
         switch ($data['group']) {
             case 'purchase_order':
-            $data['title'] = _l('purchase_order');
-            break;
+                $data['title'] = _l('purchase_order');
+                break;
 
             case 'work_order':
-            $data['title'] = _l('work_order');
-            break;
+                $data['title'] = _l('work_order');
+                break;
 
             case 'payment_certificate':
-            $data['title'] = _l('payment_certificate');
-            break;
+                $data['title'] = _l('payment_certificate');
+                break;
 
             case 'order_tracker':
-            $data['title'] = _l('order_tracker');
-            break;
+                $data['title'] = _l('order_tracker');
+                break;
 
             case 'purchase_tracker':
-            $data['title'] = _l('purchase_tracker');
-            break;
+                $data['title'] = _l('purchase_tracker');
+                break;
 
             default:
-            $data['title'] = _l('purchase_order');
-            $data['group'] = 'purchase_order';
-            break;
+                $data['title'] = _l('purchase_order');
+                $data['group'] = 'purchase_order';
+                break;
         }
         $data['tabs']['view'] = 'purchase_dashboard/report/' . $data['group'];
 
@@ -12516,21 +12546,21 @@ class purchase extends AdminController
 
         switch ($data['group']) {
             case 'ril_invoices':
-            $data['title'] = _l('ril_invoices');
-            break;
+                $data['title'] = _l('ril_invoices');
+                break;
 
             case 'vendor_bills':
-            $data['title'] = _l('vendor_bills');
-            break;
+                $data['title'] = _l('vendor_bills');
+                break;
 
             case 'vendor_payment_tracker':
-            $data['title'] = _l('vendor_payment_tracker');
-            break;
+                $data['title'] = _l('vendor_payment_tracker');
+                break;
 
             default:
-            $data['title'] = _l('ril_invoices');
-            $data['group'] = 'ril_invoices';
-            break;
+                $data['title'] = _l('ril_invoices');
+                $data['group'] = 'ril_invoices';
+                break;
         }
         $data['tabs']['view'] = 'sales_dashboard/report/' . $data['group'];
 

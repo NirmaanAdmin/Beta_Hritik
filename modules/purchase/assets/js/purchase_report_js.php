@@ -25,6 +25,7 @@
       "year_requisition": "[name='year_requisition']",
       "report_currency": '[name="currency"]',
       "pur_order": '[name="pur_order[]"]',
+      "vendor": '[name="vendor[]"]',
     }
 
     $('select[name="products_services"]').on('change', function() {

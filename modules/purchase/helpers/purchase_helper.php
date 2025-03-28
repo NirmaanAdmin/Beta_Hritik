@@ -3946,6 +3946,10 @@ function get_pur_all_orders(){
     return $pur_order;
 }
 
+function get_pur_vendor_list(){
+    $CI = &get_instance();
+    return $CI->db->get(db_prefix() . 'pur_vendor')->result_array();
+}
 function get_bil_payment_details($id)
 {
     $CI = &get_instance();
