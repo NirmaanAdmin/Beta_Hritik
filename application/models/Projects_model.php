@@ -2298,14 +2298,14 @@ class Projects_model extends App_Model
     // }
     public function get_activity($id = '', $limit = '', $only_project_members_activity = false)
     {
+        $activities = [];
+
+        // Get project activity
         if (!is_client_logged_in()) {
-            $has_permission = staff_can('view',  'projects');
-            if (!$has_permission) {
+            if (!staff_can('view', 'projects')) {
                 $this->db->where('project_id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . ')');
             }
-        }
-
-        if (is_client_logged_in()) {
+        } else {
             $this->db->where('visible_to_customer', 1);
         }
 
@@ -2318,110 +2318,77 @@ class Projects_model extends App_Model
         }
 
         $this->db->order_by('dateadded', 'desc');
-        $activities = $this->db->get(db_prefix() . 'project_activity')->result_array();
+        $project_activities = $this->db->get(db_prefix() . 'project_activity')->result_array();
 
-        $i = 0;
-        foreach ($activities as $activity) {
+        foreach ($project_activities as $activity) {
             $seconds = get_string_between($activity['additional_data'], '<seconds>', '</seconds>');
-            $other_lang_keys = get_string_between($activity['additional_data'], '<lang>', '</lang>');
+            $lang_key = get_string_between($activity['additional_data'], '<lang>', '</lang>');
             $_additional_data = $activity['additional_data'];
 
             if ($seconds != '') {
                 $_additional_data = str_replace('<seconds>' . $seconds . '</seconds>', seconds_to_time_format($seconds), $_additional_data);
             }
 
-            if ($other_lang_keys != '') {
-                $_additional_data = str_replace('<lang>' . $other_lang_keys . '</lang>', _l($other_lang_keys), $_additional_data);
+            if ($lang_key != '') {
+                $_additional_data = str_replace('<lang>' . $lang_key . '</lang>', _l($lang_key), $_additional_data);
             }
 
             if (strpos($_additional_data, 'project_status_') !== false) {
-                $_additional_data = get_project_status_by_id(strafter($_additional_data, 'project_status_'));
-                if (isset($_additional_data['name'])) {
-                    $_additional_data = $_additional_data['name'];
-                }
+                $status_id = strafter($_additional_data, 'project_status_');
+                $status = get_project_status_by_id($status_id);
+                $_additional_data = isset($status['name']) ? $status['name'] : $_additional_data;
             }
 
-            $activities[$i]['description'] = _l($activities[$i]['description_key']);
-            $activities[$i]['additional_data'] = $_additional_data;
-            $activities[$i]['project_name'] = get_project_name_by_id($activity['project_id']);
-            unset($activities[$i]['description_key']);
-            $activities[$i]['source'] = 'project'; // Optional: source label
-            $i++;
-        }
-
-        // --- Fetch and normalize tblpurchase_activity ---
-        $this->db->order_by('date', 'desc');
-        $purchase_activities = $this->db->get('tblpurchase_activity')->result_array();
-
-        foreach ($purchase_activities as $purchase) {
             $activities[] = [
-                'description'     => $purchase['description'],
-                'additional_data' => $purchase['additional_data'],
-                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
-                'dateadded'       => $purchase['date'],
-                'staff_id'        => $purchase['staffid'],
-                'fullname'        => $purchase['full_name'],
-                'rel_id'          => $purchase['rel_id'],
-                'source'          => $purchase['rel_type'],
+                'description'     => _l($activity['description_key']),
+                'additional_data' => $_additional_data,
+                'project_name'    => get_project_name_by_id($activity['project_id']),
+                'dateadded'       => $activity['dateadded'],
+                'staff_id'        => $activity['staff_id'],
+                'fullname'        => $activity['full_name'],
+                'rel_id'          => $activity['project_id'],
+                'source'          => 'project',
             ];
         }
 
-        // --- Fetch and normalize tblworkorder_activity ---
-        $this->db->order_by('date', 'desc');
-        $wo_order_activities = $this->db->get('tblworkorder_activity')->result_array();
+        // Other activity tables
+        $activity_sources = [
+            ['table' => 'tblpurchase_activity', 'description' => 'description'],
+            ['table' => 'tblworkorder_activity', 'description' => 'description'],
+            ['table' => 'purchase_request_activity', 'description' => 'description'],
+            ['table' => 'tblpayment_certificate_activity', 'description' => 'description'],
+            ['table' => 'tblwh_activity_log', 'description' => 'note'],
+            ['table' => 'tblwh_goods_delivery_activity_log', 'description' => 'description'],
+        ];
 
-        foreach ($wo_order_activities as $wo_order) {
-            $activities[] = [
-                'description'     => $wo_order['description'],
-                'additional_data' => $wo_order['additional_data'],
-                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
-                'dateadded'       => $wo_order['date'],
-                'staff_id'        => $wo_order['staffid'],
-                'fullname'        => $wo_order['full_name'],
-                'rel_id'          => $wo_order['rel_id'],
-                'source'          => $wo_order['rel_type'],
-            ];
-        }
-        // --- Fetch and normalize tblpurchase_request_activity ---
-        $this->db->order_by('date', 'desc');
-        $pr_order_activities = $this->db->get('purchase_request_activity')->result_array();
+        foreach ($activity_sources as $source) {
+            $this->db->order_by('date', 'desc');
+            $rows = $this->db->get($source['table'])->result_array();
 
-        foreach ($pr_order_activities as $pur_request) {
-            $activities[] = [
-                'description'     => $pur_request['description'],
-                'additional_data' => $pur_request['additional_data'],
-                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
-                'dateadded'       => $pur_request['date'],
-                'staff_id'        => $pur_request['staffid'],
-                'fullname'        => $pur_request['full_name'],
-                'rel_id'          => $pur_request['rel_id'],
-                'source'          => $pur_request['rel_type'],
-            ];
-        }
-        // --- Fetch and normalize tblpayment_certificate_activity ---
-        $this->db->order_by('date', 'desc');
-        $payment_certificate_activities = $this->db->get('tblpayment_certificate_activity')->result_array();
-
-        foreach ($payment_certificate_activities as $payment_certificate) {
-            $activities[] = [
-                'description'     => $payment_certificate['description'],
-                'additional_data' => $payment_certificate['additional_data'],
-                'project_name'    => null,  // You can map this if rel_type = 'project' and rel_id maps to a project
-                'dateadded'       => $payment_certificate['date'],
-                'staff_id'        => $payment_certificate['staffid'],
-                'fullname'        => $payment_certificate['full_name'],
-                'rel_id'          => $payment_certificate['rel_id'],
-                'source'          => $payment_certificate['rel_type'],
-            ];
+            foreach ($rows as $row) {
+                $activities[] = [
+                    'description'     => $row[$source['description']],
+                    'additional_data' => $row['additional_data'] ?? null,
+                    'project_name'    => null,
+                    'dateadded'       => $row['date'],
+                    'staff_id'        => $row['staffid'] ?? null,
+                    'fullname'        => $row['full_name'] ?? null,
+                    'rel_id'          => $row['rel_id'] ?? null,
+                    'source'          => $row['rel_type'] ?? $source['table'],
+                ];
+            }
         }
 
-        // --- Sort the merged array by 'dateadded' descending ---
+        // Final sort by dateadded descending
         usort($activities, function ($a, $b) {
             return strtotime($b['dateadded']) - strtotime($a['dateadded']);
         });
-
+        // echo '<pre>';
+        // print_r($activities);
+        // die;
         return $activities;
     }
+
 
 
     public function log_activity($project_id, $description_key, $additional_data = '', $visible_to_customer = 1)

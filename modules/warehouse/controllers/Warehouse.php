@@ -930,7 +930,7 @@ class warehouse extends AdminController
 		$data['check_approve_status'] = $this->warehouse_model->check_approval_details($id, 1);
 		$data['list_approve_status'] = $this->warehouse_model->get_list_approval_details($id, 1);
 		$data['payslip_log'] = $this->warehouse_model->get_activity_log($id, 1);
-
+		$data['activity'] = $this->warehouse_model->get_activity_log($id,'stock_import');
 		//get vaule render dropdown select
 		$data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
 		$data['units_code_name'] = $this->warehouse_model->get_units_code_name();
@@ -7085,7 +7085,7 @@ class warehouse extends AdminController
 		$success = $this->warehouse_model->delivery_status_mark_as($status, $id, $type);
 		$message = '';
 
-		if ($success) {
+		if ($success) { 
 			$message = _l('wh_change_delivery_status_successfully');
 		}
 		echo json_encode([

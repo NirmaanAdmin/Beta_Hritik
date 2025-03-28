@@ -672,7 +672,14 @@ function wh_get_staff($id = '')
     $CI->load->model('warehouse/warehouse_model');
     return  $CI->warehouse_model->get_staff($invoice_id);
 }
-
+function get_staff_by_id($id){
+    if (is_numeric($id)) {
+        $CI = &get_instance();
+        $CI->db->where('staffid', $id);
+        $staff = $CI->db->get(db_prefix() . 'staff')->row();
+        return $staff;
+    }
+}
 hooks()->add_action('after_email_templates', 'add_inventory_warning_email_templates');
 
 if (!function_exists('add_inventory_warning_email_templates')) {

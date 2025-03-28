@@ -587,7 +587,7 @@
                       </span>
                       <?php if($log['staffid'] == get_staff_user_id() || is_admin() || has_permission('warehouse','','delete()')){ ?>
                         <a href="#" class="pull-right text-danger" onclick="delete_wh_activitylog(this,<?php echo html_entity_decode($log['id']); ?>);return false;"><i class="fa fa fa-times"></i></a>
-                      <?php } ?>
+                      <?php } ?> 
                     </div>
                     <div class="text">
                      <?php if($log['staffid'] != 0){ ?>

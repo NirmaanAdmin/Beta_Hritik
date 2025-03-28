@@ -22,8 +22,17 @@
 
             <div class="activity-feed">
                 <?php
+
                 foreach ($projects_activity as $activity) {
-                    $name = e($activity['fullname']);
+
+                    if ($activity['source'] == 'stock_import') {
+                        $get_staff_full_name = get_staff_by_id_for_dashbord($activity['staff_id']);
+                        $name = $get_staff_full_name->firstname . ' ' . $get_staff_full_name->firstname;
+                    } elseif ($activity['source'] == '1') {
+                    } else {
+                        $name = e($activity['fullname']);
+                    }
+
                     if ($activity['staff_id'] != 0) {
                         $href = admin_url('profile/' . $activity['staff_id']);
                     } elseif ($activity['contact_id'] != 0) {
@@ -46,9 +55,11 @@
                                 <?php } else {
                                     echo $name;
                                 } ?>
-                                <?php if ($activity['source'] == 'purchase' || $activity['source'] == 'workorder' || $activity['source'] == 'purchase_request' || $activity['source'] == 'payment_certificate') {
+                                <?php if ($activity['source'] == 'purchase' || $activity['source'] == 'workorder' || $activity['source'] == 'purchase_request' || $activity['source'] == 'payment_certificate' || $activity['source'] == 'stock_import') {
                                     echo _l($activity['description']);
-                                } else {
+                                } elseif ($activity['source'] == '1') {
+                                    
+                                }else {
                                     echo e($activity['description']);
                                 } ?>
 
@@ -89,11 +100,24 @@
                                 }
                             ?>
                                 <?php echo _l('payment_certificate'); ?>: <?= $_data ?>
-                            <?php } ?>
-
+                            <?php } elseif ($activity['source'] == 'stock_import') {
+                                $get_good_recipt = get_goods_receipt_by_id($activity['rel_id']);
+                            ?>
+                                <?php echo _l('stock_import_new'); ?>: <a
+                                    href="<?php echo admin_url('warehouse/manage_purchase/' . $get_good_recipt->id); ?>">
+                                    <?php echo e($get_good_recipt->goods_receipt_code); ?></a>
+                            <?php } elseif ($activity['source'] == 'delivery') {
+                                $get_good_delivery = get_goods_delivery_by_id($activity['rel_id']);
+                            ?>
+                                <?php echo _l('stock_export_new'); ?>: <a
+                                    href="<?php echo admin_url('warehouse/manage_delivery/' . $get_good_delivery->id); ?>">
+                                    <?php echo e($get_good_delivery->goods_delivery_code); ?></a>
+                            <?php } elseif ($activity['source'] == '1') {
+                            } ?>
 
                         </div>
                         <?php
+
                         if ($activity['source'] == 'project') {
                             if (!empty($activity['additional_data'])) { ?>
                                 <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>

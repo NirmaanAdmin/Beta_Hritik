@@ -2329,6 +2329,7 @@ class Warehouse_model extends App_Model
 	 */
 	public function get_activity_log($rel_id, $rel_type)
 	{
+		
 		$this->db->where('rel_id', $rel_id);
 		$this->db->where('rel_type', $rel_type);
 		return $this->db->get(db_prefix() . 'wh_activity_log')->result_array();
@@ -17881,7 +17882,7 @@ class Warehouse_model extends App_Model
 
 		//create stock import
 		$result = $this->add_goods_receipt($data);
-		if ($result) {
+		if ($result) { 
 			//update order return
 			$this->db->where('id', $order_return_id);
 			$this->db->update(db_prefix() . 'wh_order_returns', ['receipt_delivery_id' => $result]);

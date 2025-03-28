@@ -52,7 +52,7 @@ class Dashboard extends AdminController
         $data['total_undismissed_announcements'] = $this->announcements_model->get_total_undismissed_announcements();
 
         $this->load->model('projects_model');
-        $data['projects_activity'] = $this->projects_model->get_activity('', hooks()->apply_filters('projects_activity_dashboard_limit', 20));
+        $data['projects_activity'] = $this->projects_model->get_activity('', hooks()->apply_filters('projects_activity_dashboard_limit', 5));
         add_calendar_assets();
         $this->load->model('utilities_model');
         $this->load->model('estimates_model');
@@ -78,7 +78,7 @@ class Dashboard extends AdminController
         }
         $data['user_dashboard_visibility'] = json_encode($data['user_dashboard_visibility']);
 
-        $data['tickets_report'] = [];
+        $data['tickets_report'] = []; 
         if (is_admin()) {
             $data['tickets_report'] = (new app\services\TicketsReportByStaff())->filterBy('this_month');
         }

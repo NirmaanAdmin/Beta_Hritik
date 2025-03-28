@@ -1323,11 +1323,41 @@ function get_pr_order_by_id($id)
     return $query->row();
 }
 
-function get_payment_certificate_by_id($id){
+function get_payment_certificate_by_id($id)
+{
     $CI = &get_instance();
     $CI->db->select('*');
     $CI->db->from(db_prefix() . 'payment_certificate');
     $CI->db->where('id', $id);
     $query = $CI->db->get();
     return $query->row();
+}
+function get_goods_receipt_by_id($id)
+{
+    if (is_numeric($id)) {
+        $CI = &get_instance();
+        $CI->db->where('id', $id);
+
+        return  $CI->db->get(db_prefix() . 'goods_receipt')->row();
+    }
+}
+
+function get_goods_delivery_by_id($id)
+{
+    if (is_numeric($id)) {
+        $CI = &get_instance();
+        $CI->db->where('id', $id);
+
+        return  $CI->db->get(db_prefix() . 'goods_delivery')->row();
+    }
+}
+
+
+function get_staff_by_id_for_dashbord($id){
+    if (is_numeric($id)) {
+        $CI = &get_instance();
+        $CI->db->where('staffid', $id);
+        $staff = $CI->db->get(db_prefix() . 'staff')->row();
+        return $staff;
+    }
 }
