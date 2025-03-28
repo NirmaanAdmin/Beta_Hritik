@@ -206,6 +206,14 @@ function purchase_module_init_menu_items()
     $CI->db->where('module_name', 'warehouse');
     $module = $CI->db->get(db_prefix() . 'modules')->row();
 
+    $CI->app_menu->add_sidebar_children_item('purchase', [
+        'slug' => 'purchase-dashboard',
+        'name' => _l('dashboard'),
+        'icon' => 'fa fa-home menu-icon',
+        'href' => admin_url('purchase/purchase_dashboard'),
+        'position' => 1,
+    ]);
+
     if (has_permission('purchase_items', '', 'view')) {
         $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'purchase-items',

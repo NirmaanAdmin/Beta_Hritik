@@ -2131,7 +2131,7 @@ class Vendors_portal extends App_Controller
         }
         $file_locked = false;
         $data_root_folder = array_filter($data_root_folder, function($item) {
-            return $item['project_id'] != 0;
+            return ($item['project_id'] != 0 && $item['name'] != 'Annux Building');
         });
         $data['root_folder'] = $data_root_folder;
         $data['parent_id'] = $id;

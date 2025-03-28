@@ -12464,4 +12464,16 @@ class purchase extends AdminController
     {
         $this->app->get_table_data(module_views_path('purchase', 'payment_certificate/table_payment_certificate'));
     }
+
+    public function purchase_dashboard()
+    {
+        $data['title'] = _l('dashboard');
+        $this->load->view('purchase_dashboard/purchase_dashboard', $data);
+    }
+
+    public function sales_dashboard()
+    {
+        $data['title'] = _l('dashboard');
+        $this->load->view('sales_dashboard/sales_dashboard', $data);
+    }
 }

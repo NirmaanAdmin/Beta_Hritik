@@ -9351,4 +9351,10 @@ class warehouse extends AdminController
 		// Load the preview PDF view
 		$this->load->view('print_commodity/preview__new_pdf', $data);
 	}
+
+	public function warehouse_dashboard()
+    {
+        $data['title'] = _l('dashboard');
+        $this->load->view('warehouse_dashboard/warehouse_dashboard', $data);
+    }
 }

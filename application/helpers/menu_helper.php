@@ -52,6 +52,14 @@ function app_init_admin_sidebar_menu_items()
         'badge'    => [],
     ]);
 
+    $CI->app_menu->add_sidebar_children_item('sales', [
+        'slug'     => 'sales-dashboard',
+        'name'     => _l('dashboard'),
+        'href'     => admin_url('purchase/sales_dashboard'),
+        'position' => 4,
+        'badge'    => [],
+    ]);
+
     if ((staff_can('view',  'proposals') || staff_can('view_own',  'proposals'))
         || (staff_has_assigned_proposals() && get_option('allow_staff_view_proposals_assigned') == 1)
     ) {

@@ -198,6 +198,13 @@ function warehouse_module_init_menu_items()
             'position' => 30,
         ]);
         
+        $CI->app_menu->add_sidebar_children_item('warehouse', [
+            'slug' => 'warehouse-dashboard',
+            'name' => _l('dashboard'),
+            'icon' => 'fa fa-home menu-icon',
+            'href' => admin_url('warehouse/warehouse_dashboard'),
+            'position' => 1,
+        ]);
 
         $CI->app_menu->add_sidebar_children_item('warehouse', [
             'slug'     => 'wa_commodity_list',
