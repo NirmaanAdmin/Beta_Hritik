@@ -70,7 +70,7 @@
 											</button>
 											<div class="input-group">
 												<!-- <input type="text" class="form-control" id="searchBox" placeholder="Type to search files or folders" autocomplete="off"> -->
-												<?php echo render_input('searchBox', '', '', 'text', ['placeholder' => 'Type to search files or folders'], [], 'pull-right default-tool'); ?>
+											 	<?php echo render_input('searchBox', '', '', 'text', ['placeholder' => 'Type to search files or folders', 'style' => 'width: 700px;'], [], 'pull-right default-tool'); ?>
 												<div id="dropdown" class="dropdown-menu" style="display: none; position: absolute; z-index: 1000;"></div>
 											</div>
 

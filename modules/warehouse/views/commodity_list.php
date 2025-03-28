@@ -3,7 +3,7 @@
   .show_hide_columns {
     position: absolute;
     z-index: 99999;
-    left: 551px
+    left: 453px
   }
 </style>
 
@@ -312,7 +312,7 @@
 
               <?php /* <a href="#" onclick="print_barcode_bulk_actions(); return false;" data-toggle="modal" data-table=".table-table_commodity_list" data-target="#print_barcode_item" class="hide print_barcode-bulk-actions-btn table-btn"><?php echo _l('print_barcode'); ?></a> */ ?>
 
-              <a href="#" onclick="print_qrcode_item(); return false;" data-toggle="modal" data-table=".table-table_commodity_list" data-target="#print_qrcode_item" class=" hide bulk-actions-btn table-btn"><?php echo _l('fe_print_qrcode'); ?></a>
+              <!-- <a href="#" onclick="print_qrcode_item(); return false;" data-toggle="modal" data-table=".table-table_commodity_list" data-target="#print_qrcode_item" class=" hide bulk-actions-btn table-btn"><?php echo _l('fe_print_qrcode'); ?></a> -->
               <!-- search all simple product and variation product -->
               <div class="row">
                 <div class="col-md-12">

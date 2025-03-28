@@ -79,14 +79,14 @@
                            $invoice_func = 'pre_invoice_project';
                            ?>
                             <?php if (staff_can('create',  'invoices')) { ?>
-                            <a href="#"
+                            <!-- <a href="#"
                                 onclick="<?php echo e($invoice_func); ?>(<?php echo e($project->id); ?>); return false;"
                                 class="invoice-project btn btn-primary<?php if ($project->client_data->active == 0) {
                                echo ' disabled';
                            } ?>">
                                 <i class="fa-solid fa-file-invoice tw-mr-1"></i>
                                 <?php echo _l('invoice_project'); ?>
-                            </a>
+                            </a> -->
                             <?php } ?>
                             <?php
                            $project_pin_tooltip = _l('pin_project');
