@@ -160,6 +160,8 @@ class purchase extends AdminController
             // Fetch data based on groups
             if ($data['group'] == 'profile') {
                 $data['customer_admins'] = $this->purchase_model->get_vendor_admins($id);
+                $data['vendor_work_completed'] = $this->purchase_model->get_vendor_work_completed($id);
+                $data['vendor_work_progress'] = $this->purchase_model->get_vendor_work_progress($id);
             } elseif ($group == 'estimates') {
                 $this->load->model('estimates_model');
                 $data['estimate_statuses'] = $this->estimates_model->get_statuses();

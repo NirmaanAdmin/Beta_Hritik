@@ -54,6 +54,11 @@
                         <?php echo _l('vendor_ratings'); ?>
                      </a>
                   </li>
+                  <li role="presentation">
+                     <a href="#vendor_information" aria-controls="vendor_information" role="tab" data-toggle="tab">
+                        <?php echo _l('vendor_information'); ?>
+                     </a>
+                  </li>
 
                <?php } ?>
             </ul>
@@ -231,6 +236,14 @@
             <?php //load view 
             if ($is_edit) {
                $this->load->view('vendor_ratings');
+            }
+
+            ?>
+         </div>
+         <div role="tabpanel" class="tab-pane" id="vendor_information">
+            <?php //load view 
+            if ($is_edit) {
+               $this->load->view('vendor_information');
             }
 
             ?>
