@@ -34,7 +34,15 @@ if(is_image($path)){ ?>
 } else if(strpos($file->name,'.dwg') !== false && empty($file->external)) {
     $rand = substr(uniqid('', true), -8);
     ?>
-   <iframe src="https://sharecad.org/cadframe/load?url=<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name); ?>?v=<?php echo $rand; ?>" style="width: 100%; height: 600px; border: none;"></iframe>
+   <div style="position: relative; height: 100vh;">
+      <iframe id="cadViewer"
+           src="https://sharecad.org/cadframe/load?url=<?php echo base_url(DRAWING_MANAGEMENT_PATH.$folder.'/'.$file->parent_id.'/'.$file->name); ?>?v=<?php echo $rand; ?>"
+           style="width: 100%; height: 100%; border: none;"
+           allowfullscreen
+           webkitallowfullscreen
+           mozallowfullscreen>
+      </iframe>
+   </div>
 <?php } else if(strpos($file->name,'.dxf') !== false && empty($file->external)) {
     $rand = substr(uniqid('', true), -8);
     ?>
