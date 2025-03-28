@@ -4216,3 +4216,5 @@ $lang['carpet_area'] = 'Carpet area';
 $lang['surface_area'] = 'Surface area';
 $lang['total_carpet_area'] = 'Total carpet area';
 $lang['total_surface_area'] = 'Total surface area';
+$lang['ril_invoices'] = 'RIL invoices';
+$lang['vendor_bills'] = 'Vendor Bills';

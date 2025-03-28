@@ -12468,12 +12468,72 @@ class purchase extends AdminController
     public function purchase_dashboard()
     {
         $data['title'] = _l('dashboard');
+        $data['group'] = $this->input->get('group');
+        $data['tab'][] = 'purchase_order';
+        $data['tab'][] = 'work_order';
+        $data['tab'][] = 'payment_certificate';
+        $data['tab'][] = 'order_tracker';
+        $data['tab'][] = 'purchase_tracker';
+
+        switch ($data['group']) {
+            case 'purchase_order':
+            $data['title'] = _l('purchase_order');
+            break;
+
+            case 'work_order':
+            $data['title'] = _l('work_order');
+            break;
+
+            case 'payment_certificate':
+            $data['title'] = _l('payment_certificate');
+            break;
+
+            case 'order_tracker':
+            $data['title'] = _l('order_tracker');
+            break;
+
+            case 'purchase_tracker':
+            $data['title'] = _l('purchase_tracker');
+            break;
+
+            default:
+            $data['title'] = _l('purchase_order');
+            $data['group'] = 'purchase_order';
+            break;
+        }
+        $data['tabs']['view'] = 'purchase_dashboard/report/' . $data['group'];
+
         $this->load->view('purchase_dashboard/purchase_dashboard', $data);
     }
 
     public function sales_dashboard()
     {
         $data['title'] = _l('dashboard');
+        $data['group'] = $this->input->get('group');
+        $data['tab'][] = 'ril_invoices';
+        $data['tab'][] = 'vendor_bills';
+        $data['tab'][] = 'vendor_payment_tracker';
+
+        switch ($data['group']) {
+            case 'ril_invoices':
+            $data['title'] = _l('ril_invoices');
+            break;
+
+            case 'vendor_bills':
+            $data['title'] = _l('vendor_bills');
+            break;
+
+            case 'vendor_payment_tracker':
+            $data['title'] = _l('vendor_payment_tracker');
+            break;
+
+            default:
+            $data['title'] = _l('ril_invoices');
+            $data['group'] = 'ril_invoices';
+            break;
+        }
+        $data['tabs']['view'] = 'sales_dashboard/report/' . $data['group'];
+
         $this->load->view('sales_dashboard/sales_dashboard', $data);
     }
 }

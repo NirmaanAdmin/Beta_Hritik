@@ -9355,6 +9355,31 @@ class warehouse extends AdminController
 	public function warehouse_dashboard()
     {
         $data['title'] = _l('dashboard');
+        $data['group'] = $this->input->get('group');
+        $data['tab'][] = 'goods_receipt';
+        $data['tab'][] = 'stock_export';
+        $data['tab'][] = 'inventory_inside';
+
+        switch ($data['group']) {
+            case 'goods_receipt':
+            $data['title'] = _l('goods_receipt');
+            break;
+
+            case 'stock_export':
+            $data['title'] = _l('stock_export');
+            break;
+
+            case 'inventory_inside':
+            $data['title'] = _l('inventory_inside');
+            break;
+
+            default:
+            $data['title'] = _l('goods_receipt');
+            $data['group'] = 'goods_receipt';
+            break;
+        }
+        $data['tabs']['view'] = 'warehouse_dashboard/report/' . $data['group'];
+        
         $this->load->view('warehouse_dashboard/warehouse_dashboard', $data);
     }
 }

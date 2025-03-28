@@ -2,22 +2,31 @@
 <?php init_head(); ?>
 <div id="wrapper">
   <div class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="panel_s">
-          <div class="panel-body">
-            <div class="row">
-
-             <div class="col-md-12">
-              <h4 class="no-margin font-bold"><i class="fa fa-home menu-icon" aria-hidden="true"></i> <?php echo _l($title); ?></h4>
-              <hr />
-             </div>
-             
-            </div>
-          </div>
+    <div class="panel_s">
+      <div class="panel-body">
+        <div class="horizontal-scrollable-tabs">
+          <nav>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <?php
+              $i = 0;
+              foreach($tab as $val) {
+                ?>
+                <li<?php if($i == 0){echo " class='active'"; } ?>>
+                <a href="<?php echo admin_url('warehouse/warehouse_dashboard?group='.$val); ?>" data-group="<?php echo html_entity_decode($val); ?>">
+                  <?php echo _l($val); ?></a>
+                </li>
+                <?php $i++; 
+              } ?>
+            </ul>
+          </nav>
+        </div>
         </div>
       </div>
-    </div>
+      <div class="panel_s">
+        <div class="panel-body">
+          
+        </div>
+      </div>
   </div>
 </div>
 <?php init_tail(); ?>
