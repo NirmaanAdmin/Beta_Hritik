@@ -104,6 +104,7 @@ function update_meta($for, $user_id, $meta_key, $meta_value)
     } else {
         return false;
     }
+    
     $CI->db->where('meta_key', $meta_key);
     $CI->db->update(db_prefix() . 'user_meta', ['meta_value' => $meta_value]);
 

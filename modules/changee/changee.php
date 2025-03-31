@@ -78,7 +78,7 @@ hooks()->add_action('after_cron_run', 'recurring_changee_invoice');
 hooks()->add_action('after_cron_run', 'changee_pur_cronjob_currency_rates');
 
 // Changee dashboard widget
-hooks()->add_filter('get_dashboard_widgets', 'changee_add_dashboard_widget');
+// hooks()->add_filter('get_dashboard_widgets', 'changee_add_dashboard_widget');
 hooks()->add_action('app_admin_footer', 'changee_load_js');
 
 //Filter sale upload path debit note
@@ -314,17 +314,17 @@ function changee_module_init_menu_items() {
  *
  * @return       ( description_of_the_return_value )
  */
-function changee_add_dashboard_widget($widgets)
-{
-    if (has_permission('changee', '', 'view') || is_admin()) {
-        $widgets[] = [
-                'path'      => 'changee/changee_widget',
-                'container' => 'top-12',
-            ];
-    }
+// function changee_add_dashboard_widget($widgets)
+// {
+//     if (has_permission('changee', '', 'view') || is_admin()) {
+//         $widgets[] = [
+//                 'path'      => 'changee/changee_widget',
+//                 'container' => 'top-12',
+//             ];
+//     }
 
-    return $widgets;
-}
+//     return $widgets;
+// }
 
 function changee_load_js($dashboard_js){
         $CI = &get_instance();

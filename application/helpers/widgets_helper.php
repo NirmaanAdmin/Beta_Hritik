@@ -12,6 +12,10 @@ function get_dashboard_widgets()
 {
     $widgets = [
         [
+            'path'      => 'admin/dashboard/widgets/user_data',
+            'container' => 'left-8',
+        ],
+        [
             'path'      => 'admin/dashboard/widgets/top_stats',
             'container' => 'top-12',
         ],
@@ -19,10 +23,7 @@ function get_dashboard_widgets()
             'path'      => 'admin/dashboard/widgets/finance_overview',
             'container' => 'left-8',
         ],
-        [
-            'path'      => 'admin/dashboard/widgets/user_data',
-            'container' => 'left-8',
-        ],
+        
         [
             'path'      => 'admin/dashboard/widgets/upcoming_events',
             'container' => 'left-8',
@@ -92,6 +93,7 @@ function render_dashboard_widgets($container)
 
         foreach ($widgets as $key => $widget) {
             $html = str_get_html($CI->load->view($widget['path'], [], true));
+            
             if ($html) {
                 $widgetContainer = $html->firstChild();
                 if ($widgetContainer) {

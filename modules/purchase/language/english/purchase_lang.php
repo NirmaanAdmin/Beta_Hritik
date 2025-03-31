@@ -893,3 +893,4 @@ $lang['details_of_current_work'] = 'Details of Current Work in Progress (attach 
 $lang['proposed_end_date'] = 'Proposed End Date';
 $lang['building_height'] = 'Building Height / Total Levels (above ground)';
 $lang['vendor_information'] = 'Vendor information';
+$lang['purchase_widget'] = 'Purchase Order';
