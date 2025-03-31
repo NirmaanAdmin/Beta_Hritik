@@ -17,7 +17,7 @@ var expenseDropzone;
     initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[3, 'desc']);
 
     $.each(Params, function(i, obj) {
-        console.log(obj);
+        // console.log(obj);
         $('select' + obj).on('change', function() {
             table_rec_campaign.DataTable().ajax.reload()
                 .columns.adjust()
@@ -71,7 +71,7 @@ function change_rli_filter(status, id, table_name) {
                         var $statusSpan = $('#status_span_' + id);
 
                         // Debugging
-                        console.log('Before:', $statusSpan.attr('class'));
+                        // console.log('Before:', $statusSpan.attr('class'));
 
                         // Remove all status-related classes
                         $statusSpan.removeClass('label-danger label-success label-info label-warning label-primary label-purple label-teal label-orange label-green label-defaul label-secondaryt');
@@ -85,10 +85,10 @@ function change_rli_filter(status, id, table_name) {
                         }
 
                         // Debugging
-                        console.log('After:', $statusSpan.attr('class'));
+                        // console.log('After:', $statusSpan.attr('class'));
 
                         // Display success message
-                        $(".table-table_order_tracker").DataTable().ajax.reload();
+                        // $(".table-table_order_tracker").DataTable().ajax.reload();
                         alert_float('success', response.mess);
                     } else {
                         // Display warning message if the operation fails
