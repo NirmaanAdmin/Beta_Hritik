@@ -7,9 +7,9 @@ $aColumns = [
     'goods_receipt_code',
     'pr_order_id',
     'supplier_name',
-    // 'buyer_id',
     'kind',
     'date_add',
+    'buyer_id',
     'delivery_status',
 ];
 $join = [];
@@ -65,12 +65,7 @@ foreach ($rResult as $aRow) {
         if ($aColumns[$i] == 'supplier_name') {
             $_data = wh_get_vendor_company_name($aRow['supplier_name']);
         }
-        //  elseif ($aColumns[$i] == 'buyer_id') {
-        //     $_data = '<a href="' . admin_url('staff/profile/' . $aRow['buyer_id']) . '">' . staff_profile_image($aRow['buyer_id'], [
-        //         'staff-profile-image-small',
-        //     ]) . '</a>';
-        //     $_data .= ' <a href="' . admin_url('staff/profile/' . $aRow['buyer_id']) . '">' . get_staff_full_name($aRow['buyer_id']) . '</a>';
-        // } 
+         
         elseif ($aColumns[$i] == 'date_add') {
             $_data = date('d M, Y', strtotime($aRow['date_add']));
         } elseif($aColumns[$i] == 'goods_receipt_code') {
@@ -96,7 +91,10 @@ foreach ($rResult as $aRow) {
                 }
             }
             $_data = $name;
-        } elseif ($aColumns[$i] == 'delivery_status') {
+        }elseif ($aColumns[$i] == 'buyer_id') {
+            $get_production_status = get_production_status($aRow['id']);
+            $_data = $get_production_status;
+        }  elseif ($aColumns[$i] == 'delivery_status') {
             $delivery_status = '';
             if($aRow['delivery_status'] == 0) {
                 $delivery_status = '<span class="inline-block label label-danger" task-status-table="undelivered">'._l('undelivered');

@@ -3536,7 +3536,6 @@ function get_sub_head_list($name_sub_head, $sub_head)
                 $selected = $sub_group['id'];
             }
         }
-        
     }
     return render_select($name_sub_head, $get_sub_group, array('id', 'sub_group_name'), '', $selected);
 }
@@ -3612,7 +3611,7 @@ function get_by_deafult_order_summary()
     $val = '<p class="p1"></p>
 <p class="p2" style="text-align: center;"><span class="s1"><b>WORK ORDER</b></span></p>
 <p class="p1"><b><span class="Apple-converted-space">                                                                                                            </span></b></p>
-<p class="p3">Ref: Bl/JAMNAGR/24-25/'.str_pad($next_number, 5, '0', STR_PAD_LEFT).' <strong><br>Dated: <span class="order_full_date">'.date("d-M-Y").'</span></strong></p>
+<p class="p3">Ref: Bl/JAMNAGR/24-25/' . str_pad($next_number, 5, '0', STR_PAD_LEFT) . ' <strong><br>Dated: <span class="order_full_date">' . date("d-M-Y") . '</span></strong></p>
 <p class="p5">To,<b></b></p>
 <p class="p6"><b>M/s. <span class="vendor_name"></span><br></b><span class="vendor_address"></span><br><span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br>Email:<span class="s2"> </span><span class="s1"><span class="vendor_contact_email"></span></span> <br>Contact - <span class="vendor_contact_phone"><br>GST Registration no- <span class="vendor_gst"></span><br>Bank Details:<span class="vendor_bank_details"></span></p>
 <p class="p5">Dear Mr. <span class="vendor_name"></span>,</p>
@@ -3914,7 +3913,7 @@ function get_expenses_data_by_pur_invoices($invoiceid = '')
         ->group_by('invoiceid')
         ->get()
         ->row();
-    
+
     if ($invoice) {
         return $invoice;
     }
@@ -3938,7 +3937,8 @@ function get_pur_invoice_subtotal($invoiceid = '')
     return 0;
 }
 
-function get_pur_all_orders(){
+function get_pur_all_orders()
+{
     $CI = &get_instance();
     $CI->db->select('id, pur_order_name, pur_order_number');
     $CI->db->from(db_prefix() . 'pur_orders');
@@ -3946,7 +3946,8 @@ function get_pur_all_orders(){
     return $pur_order;
 }
 
-function get_pur_vendor_list(){
+function get_pur_vendor_list()
+{
     $CI = &get_instance();
     return $CI->db->get(db_prefix() . 'pur_vendor')->result_array();
 }
@@ -3975,18 +3976,18 @@ function get_payment_certificate_serial_no($po_id, $type)
 {
     if (!empty($po_id)) {
         $CI = &get_instance();
-        if($type == 'wo') {
+        if ($type == 'wo') {
             $payment_certificate = $CI->db->select('*')
-            ->where('wo_id', $po_id)
-            ->from(db_prefix() . 'payment_certificate')
-            ->get()
-            ->result_array();
+                ->where('wo_id', $po_id)
+                ->from(db_prefix() . 'payment_certificate')
+                ->get()
+                ->result_array();
         } else {
             $payment_certificate = $CI->db->select('*')
-            ->where('po_id', $po_id)
-            ->from(db_prefix() . 'payment_certificate')
-            ->get()
-            ->result_array();
+                ->where('po_id', $po_id)
+                ->from(db_prefix() . 'payment_certificate')
+                ->get()
+                ->result_array();
         }
         if (!empty($payment_certificate)) {
             return count($payment_certificate) + 1;
@@ -4012,7 +4013,8 @@ function get_taxes_list()
     return $CI->db->get(db_prefix() . 'taxes')->result_array();
 }
 
-function format_amount_cert($value) {
+function format_amount_cert($value)
+{
     if (is_numeric($value)) {
         $decimalPart = explode('.', (string) $value)[1] ?? '';
         if (strlen($decimalPart) >= 3) {
@@ -4022,10 +4024,35 @@ function format_amount_cert($value) {
     return ($value != 0) ? $value : '';
 }
 
-function check_value_pay_cert_pdf($value) {
-    if(empty($value) || $value == 0) {
+function check_value_pay_cert_pdf($value)
+{
+    if (empty($value) || $value == 0) {
         return '';
     }
     return app_format_money($value, '');
 }
 
+function get_production_status($id)
+{
+    $CI = &get_instance();
+
+    // Get all related detail records
+    $CI->db->select('production_status');
+    $CI->db->from(db_prefix() . 'goods_receipt_detail');
+    $CI->db->where('goods_receipt_id', $id);
+    $details = $CI->db->get()->result();
+    
+    // Handle empty case
+    if (empty($details)) {
+        return '<span class="inline-block label label-danger">Not Strarted</span>';
+    }
+
+    // Check all statuses
+    foreach ($details as $detail) {
+        if ($detail->production_status != 4 && $detail->production_status != 2) {
+            return '<span class="inline-block label label-info">On Going </span>'; // Early exit if any item is not completed
+        }
+    }
+
+    return '<span class="inline-block label label-warning" id="status_span_10" task-status-table="approved">Delivered </span>'; // All items completed
+}

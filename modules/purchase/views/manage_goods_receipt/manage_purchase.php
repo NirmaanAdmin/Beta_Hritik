@@ -83,6 +83,7 @@
                                     // _l('Buyer'),
                                     _l('category'),
                                     _l('day_vouchers'),
+                                    _l('production_status'),
                                     _l('status_label'),
                                 ];
                                 ?>
@@ -100,9 +101,9 @@
                             _l('stock_received_docket_code'),
                             _l('reference_purchase_order'),
                             _l('supplier_name'),
-                            // _l('Buyer'),
                             _l('category'),
                             _l('day_vouchers'),
+                            _l('production_status'),
                             _l('status_label'),
                         ), 'table_manage_goods_receipt', ['purchase_sm' => 'purchase_sm']); ?>
 
