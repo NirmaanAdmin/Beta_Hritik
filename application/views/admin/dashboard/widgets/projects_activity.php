@@ -21,111 +21,111 @@
             <hr class="-tw-mx-3 tw-mt-3 tw-mb-6">
 
             <div class="activity-feed">
-                <?php
+                <?php foreach ($projects_activity as $activity): ?>
+                    <?php
+                    // Skip processing if source is '1'
+                    if ($activity['source'] == '1') {
+                        continue;
+                    }
 
-                foreach ($projects_activity as $activity) {
+                    // Initialize variables
+                    $name = '';
+                    $href = '';
 
+                    // Determine name based on source
                     if ($activity['source'] == 'stock_import') {
                         $get_staff_full_name = get_staff_by_id_for_dashbord($activity['staff_id']);
-                        $name = $get_staff_full_name->firstname . ' ' . $get_staff_full_name->firstname;
-                    } elseif ($activity['source'] == '1') {
+                        $name = $get_staff_full_name->firstname . ' ' . $get_staff_full_name->lastname;
                     } else {
                         $name = e($activity['fullname']);
                     }
 
+                    // Determine href based on staff/contact
                     if ($activity['staff_id'] != 0) {
                         $href = admin_url('profile/' . $activity['staff_id']);
                     } elseif ($activity['contact_id'] != 0) {
                         $name = '<span class="label label-info inline-block mright5">' . _l('is_customer_indicator') . '</span> - ' . $name;
                         $href = admin_url('clients/client/' . get_user_id_by_contact_id($activity['contact_id']) . '?contactid=' . $activity['contact_id']);
                     } else {
-                        $href = '';
                         $name = '[CRON]';
-                    } ?>
+                    }
+                    ?>
+
                     <div class="feed-item">
-                        <div class="date"><span class="text-has-action" data-toggle="tooltip"
-                                data-title="<?php echo e(_dt($activity['dateadded'])); ?>">
+                        <!-- Date section (always shown for non-system activities) -->
+                        <div class="date">
+                            <span class="text-has-action" data-toggle="tooltip" data-title="<?php echo e(_dt($activity['dateadded'])); ?>">
                                 <?php echo e(time_ago($activity['dateadded'])); ?>
                             </span>
                         </div>
+
                         <div class="text">
                             <p class="bold no-mbot">
-                                <?php if ($href != '') { ?>
+                                <?php if (!empty($href)): ?>
                                     <a href="<?php echo e($href); ?>"><?php echo $name; ?></a> -
-                                <?php } else {
-                                    echo $name;
-                                } ?>
-                                <?php if ($activity['source'] == 'purchase' || $activity['source'] == 'workorder' || $activity['source'] == 'purchase_request' || $activity['source'] == 'payment_certificate' || $activity['source'] == 'stock_import') {
+                                <?php else: ?>
+                                    <?php echo $name; ?>
+                                <?php endif; ?>
+
+                                <?php
+                                // Handle description
+                                if (in_array($activity['source'], ['purchase', 'workorder', 'purchase_request', 'payment_certificate', 'stock_import'])) {
                                     echo _l($activity['description']);
-                                } elseif ($activity['source'] == '1') {
-                                    
-                                }else {
+                                } else {
                                     echo e($activity['description']);
-                                } ?>
-
+                                }
+                                ?>
                             </p>
-                            <?php if ($activity['source'] == 'project') {   ?>
-                                <?php echo _l('project_name'); ?>: <a
-                                    href="<?php echo admin_url('projects/view/' . $activity['project_id']); ?>">
-                                    <?php echo e($activity['project_name']); ?>
-                                </a>
-                            <?php } elseif ($activity['source'] == 'purchase') {
-                                $get_po_by_id = get_pur_order_by_id($activity['rel_id']);
-                            ?>
-                                <?php echo _l('purchase_order'); ?>: <a
-                                    href="<?php echo admin_url('purchase/purchase_order/' . $get_po_by_id->id); ?>">
-                                    <?php echo e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name); ?></a>
-                            <?php } elseif ($activity['source'] == 'workorder') {
-                                $get_wo_by_id = get_wo_order_by_id($activity['rel_id']);
-                            ?>
-                                <?php echo _l('wo_order'); ?>: <a
-                                    href="<?php echo admin_url('purchase/work_order/' . $get_wo_by_id->id); ?>">
-                                    <?php echo e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name); ?></a>
-                            <?php } elseif ($activity['source'] == 'purchase_request') {
-                                $get_pr_by_id = get_pr_order_by_id($activity['rel_id']);
-                            ?>
-                                <?php echo _l('pur_request'); ?>: <a
-                                    href="<?php echo admin_url('purchase/view_pur_request/' . $get_pr_by_id->id); ?>">
-                                    <?php echo e($get_pr_by_id->pur_rq_code . ' - ' . $get_pr_by_id->pur_rq_name); ?></a>
-                            <?php } elseif ($activity['source'] == 'payment_certificate') {
-                                $get_payment_certificate_by_id = get_payment_certificate_by_id($activity['rel_id']);
 
-                                if (!empty($get_payment_certificate_by_id->po_id)) {
-                                    $get_po_by_id = get_pur_order_by_id($get_payment_certificate_by_id->po_id);
-                                    $_data = '<a href="' . admin_url('purchase/payment_certificate/' . $get_payment_certificate_by_id->po_id . '/' . $get_payment_certificate_by_id->id . '/1') . '" target="_blank">' . e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name) . '</a>';
-                                }
-                                if (!empty($get_payment_certificate_by_id->wo_id)) {
-                                    $get_wo_by_id = get_wo_order_by_id($get_payment_certificate_by_id->wo_id);
-                                    $_data = '<a href="' . admin_url('purchase/wo_payment_certificate/' . $get_payment_certificate_by_id->wo_id . '/' . $get_payment_certificate_by_id->id . '/1') . '" target="_blank">' . e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name) . '</a>';
-                                }
-                            ?>
-                                <?php echo _l('payment_certificate'); ?>: <?= $_data ?>
-                            <?php } elseif ($activity['source'] == 'stock_import') {
-                                $get_good_recipt = get_goods_receipt_by_id($activity['rel_id']);
-                            ?>
-                                <?php echo _l('stock_import_new'); ?>: <a
-                                    href="<?php echo admin_url('warehouse/manage_purchase/' . $get_good_recipt->id); ?>">
-                                    <?php echo e($get_good_recipt->goods_receipt_code); ?></a>
-                            <?php } elseif ($activity['source'] == 'delivery') {
-                                $get_good_delivery = get_goods_delivery_by_id($activity['rel_id']);
-                            ?>
-                                <?php echo _l('stock_export_new'); ?>: <a
-                                    href="<?php echo admin_url('warehouse/manage_delivery/' . $get_good_delivery->id); ?>">
-                                    <?php echo e($get_good_delivery->goods_delivery_code); ?></a>
-                            <?php } elseif ($activity['source'] == '1') {
-                            } ?>
+                            <?php
+                            // Source-specific content
+                            switch ($activity['source']) {
+                                case 'project':
+                                    echo _l('project_name') . ': <a href="' . admin_url('projects/view/' . $activity['project_id']) . '">' . e($activity['project_name']) . '</a>';
+                                    break;
+                                case 'purchase':
+                                    $get_po_by_id = get_pur_order_by_id($activity['rel_id']);
+                                    echo _l('purchase_order') . ': <a href="' . admin_url('purchase/purchase_order/' . $get_po_by_id->id) . '">' . e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name) . '</a>';
+                                    break;
+                                case 'workorder':
+                                    $get_wo_by_id = get_wo_order_by_id($activity['rel_id']);
+                                    echo _l('wo_order') . ': <a href="' . admin_url('purchase/work_order/' . $get_wo_by_id->id) . '">' . e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name) . '</a>';
+                                    break;
+                                case 'purchase_request':
+                                    $get_pr_by_id = get_pr_order_by_id($activity['rel_id']);
+                                    echo _l('pur_request') . ': <a href="' . admin_url('purchase/view_pur_request/' . $get_pr_by_id->id) . '">' . e($get_pr_by_id->pur_rq_code . ' - ' . $get_pr_by_id->pur_rq_name) . '</a>';
+                                    break;
+                                case 'payment_certificate':
+                                    $get_payment_certificate_by_id = get_payment_certificate_by_id($activity['rel_id']);
+                                    $_data = '';
 
+                                    if (!empty($get_payment_certificate_by_id->po_id)) {
+                                        $get_po_by_id = get_pur_order_by_id($get_payment_certificate_by_id->po_id);
+                                        $_data = '<a href="' . admin_url('purchase/payment_certificate/' . $get_payment_certificate_by_id->po_id . '/' . $get_payment_certificate_by_id->id . '/1') . '" target="_blank">' . e($get_po_by_id->pur_order_number . ' - ' . $get_po_by_id->pur_order_name) . '</a>';
+                                    } elseif (!empty($get_payment_certificate_by_id->wo_id)) {
+                                        $get_wo_by_id = get_wo_order_by_id($get_payment_certificate_by_id->wo_id);
+                                        $_data = '<a href="' . admin_url('purchase/wo_payment_certificate/' . $get_payment_certificate_by_id->wo_id . '/' . $get_payment_certificate_by_id->id . '/1') . '" target="_blank">' . e($get_wo_by_id->wo_order_number . ' - ' . $get_wo_by_id->wo_order_name) . '</a>';
+                                    }
+
+                                    echo _l('payment_certificate') . ': ' . $_data;
+                                    break;
+                                case 'stock_import':
+                                    $get_good_recipt = get_goods_receipt_by_id($activity['rel_id']);
+                                    echo _l('stock_import_new') . ': <a href="' . admin_url('warehouse/manage_purchase/' . $get_good_recipt->id) . '">' . e($get_good_recipt->goods_receipt_code) . '</a>';
+                                    break;
+                                case 'delivery':
+                                    $get_good_delivery = get_goods_delivery_by_id($activity['rel_id']);
+                                    echo _l('stock_export_new') . ': <a href="' . admin_url('warehouse/manage_delivery/' . $get_good_delivery->id) . '">' . e($get_good_delivery->goods_delivery_code) . '</a>';
+                                    break;
+                            }
+                            ?>
                         </div>
-                        <?php
 
-                        if ($activity['source'] == 'project') {
-                            if (!empty($activity['additional_data'])) { ?>
-                                <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
-                        <?php }
-                        } elseif ($activity['source'] == 'purchase' || $activity['source'] == 'workorder' || $activity['source'] == 'purchase_request') {
-                        } ?>
+                        <?php if ($activity['source'] == 'project' && !empty($activity['additional_data'])): ?>
+                            <p class="text-muted mtop5"><?php echo $activity['additional_data']; ?></p>
+                        <?php endif; ?>
                     </div>
-                <?php } ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
