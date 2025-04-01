@@ -96,7 +96,9 @@
 	  	<div class="row">
 	  		<div class="col-md-4">
 	  			<p class="mbot15">Pie Chart for PO Approval Status</p>
-	  			<canvas id="pieChartForPOApprovalStatus" width="400" height="400"></canvas>
+	  			<div style="width: 100%; height: 400px;">
+	  				<canvas id="pieChartForPOApprovalStatus"></canvas>
+	  			</div>
 	  		</div>
 	  		<div class="col-md-6">
 	  		</div>
@@ -136,7 +138,7 @@
 	  	<div class="row">
 	  		<div class="col-md-12">
 	  			<p class="mbot15">Pie Chart for PO Value Share by Vendor</p>
-	  			<div style="width: 100%; height: 400px;">
+	  			<div style="width: 100%; height: 530px;">
 				  <canvas id="pieChartTopVendors"></canvas>
 				</div>
 	  		</div>
@@ -165,7 +167,9 @@
 	  	<div class="row">
 	  		<div class="col-md-4">
 	  			<p class="mbot15">Pie Chart for Tax Contribution per Budget Head</p>
-	  			<canvas id="pieChartForTaxByBudget" width="400" height="400"></canvas>
+	  			<div style="width: 100%; height: 550px;">
+	  				<canvas id="pieChartForTaxByBudget"></canvas>
+	  			</div>
 	  		</div>
 	  		<div class="col-md-6">
 	  		</div>
