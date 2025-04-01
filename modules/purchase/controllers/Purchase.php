@@ -12607,33 +12607,22 @@ class purchase extends AdminController
         $data['tab'][] = 'order_tracker';
         $data['tab'][] = 'purchase_tracker';
 
-        switch ($data['group']) {
-            case 'purchase_order':
-                $data['title'] = _l('purchase_order');
-                break;
-
-            case 'work_order':
-                $data['title'] = _l('work_order');
-                break;
-
-            case 'payment_certificate':
-                $data['title'] = _l('payment_certificate');
-                break;
-
-            case 'order_tracker':
-                $data['title'] = _l('order_tracker');
-                break;
-
-            case 'purchase_tracker':
-                $data['title'] = _l('purchase_tracker');
-                break;
-
-            default:
-                $data['title'] = _l('purchase_order');
-                $data['group'] = 'purchase_order';
-                break;
+        if($data['group'] == 'work_order') {
+            $data['title'] = _l('work_order');
+        } else if($data['group'] == 'payment_certificate') {
+            $data['title'] = _l('payment_certificate');
+        } else if($data['group'] == 'order_tracker') {
+            $data['title'] = _l('order_tracker');
+        } else if($data['group'] == 'purchase_tracker') {
+            $data['title'] = _l('purchase_tracker');
+        } else {
+            $data['title'] = _l('purchase_order');
+            $data['group'] = 'purchase_order';
         }
-        $data['tabs']['view'] = 'purchase_dashboard/report/' . $data['group'];
+
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['tabs']['view'] = 'purchase_dashboard/module/' . $data['group'];
 
         $this->load->view('purchase_dashboard/purchase_dashboard', $data);
     }
@@ -12646,26 +12635,25 @@ class purchase extends AdminController
         $data['tab'][] = 'vendor_bills';
         $data['tab'][] = 'vendor_payment_tracker';
 
-        switch ($data['group']) {
-            case 'ril_invoices':
-                $data['title'] = _l('ril_invoices');
-                break;
+        if($data['group'] == 'vendor_bills') {
+            $data['title'] = _l('vendor_bills');
+        } else if($data['group'] == 'vendor_payment_tracker') {
+            $data['title'] = _l('vendor_payment_tracker');
+        } else {
+            $data['title'] = _l('ril_invoices');
+            $data['group'] = 'ril_invoices';
+        } 
 
-            case 'vendor_bills':
-                $data['title'] = _l('vendor_bills');
-                break;
-
-            case 'vendor_payment_tracker':
-                $data['title'] = _l('vendor_payment_tracker');
-                break;
-
-            default:
-                $data['title'] = _l('ril_invoices');
-                $data['group'] = 'ril_invoices';
-                break;
-        }
         $data['tabs']['view'] = 'sales_dashboard/report/' . $data['group'];
 
         $this->load->view('sales_dashboard/sales_dashboard', $data);
+    }
+
+    public function get_purchase_order_dashboard()
+    {
+        $data = $this->input->post();
+        $result = $this->purchase_model->get_purchase_order_dashboard($data);
+        echo json_encode($result);
+        die;
     }
 }

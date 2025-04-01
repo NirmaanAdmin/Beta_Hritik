@@ -22,13 +22,16 @@
         </div>
         </div>
       </div>
-      <div class="panel_s">
-        <div class="panel-body">
-          
-        </div>
-      </div>
+      
+      <?php $this->load->view($tabs['view']); ?>
+      
   </div>
 </div>
 <?php init_tail(); ?>
 </body>
 </html>
+
+<?php if($group == 'purchase_order') { ?>
+<?php require 'modules/purchase/assets/js/purchase_dashboard/purchase_order_js.php'; ?>
+<?php } ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

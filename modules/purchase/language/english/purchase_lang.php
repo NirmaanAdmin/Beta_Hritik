@@ -895,3 +895,7 @@ $lang['proposed_end_date'] = 'Proposed End Date';
 $lang['building_height'] = 'Building Height / Total Levels (above ground)';
 $lang['vendor_information'] = 'Vendor information';
 $lang['purchase_widget'] = 'Purchase Order';
+$lang['purchase_order_summary_report'] = 'Purchase Order Summary Report';
+$lang['vendor_performance_analysis'] = 'Vendor Performance & Analysis';
+$lang['purchase_order_tax_analysis'] = 'Purchase Order Tax Analysis';
+$lang['delivery_payment_status_dashboard'] = 'Delivery & Payment Status Dashboard';
