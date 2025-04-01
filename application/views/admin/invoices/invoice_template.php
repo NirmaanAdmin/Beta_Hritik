@@ -2,7 +2,7 @@
 <div class="<?php if (!isset($invoice) || (isset($invoice) && count($invoices_to_merge) == 0 && (isset($invoice) && !isset($invoice_from_project) && count($expenses_to_bill) == 0 || $invoice->status == Invoices_model::STATUS_CANCELLED))) {
     echo ' hide';
 } ?>" id="invoice_top_info">
-<div class="alert alert-info">
+<div class="alert alert-info hide">
     <div class="row">
         <div id="merge" class="col-md-6">
             <?php
