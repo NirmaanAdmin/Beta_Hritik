@@ -4835,7 +4835,6 @@ class purchase extends AdminController
                 'total_tax'       => 0,
                 'total_value'     => 0,
             ];
-
             foreach ($rResult as $aRow) {
                 $row = [];
 
@@ -4872,6 +4871,109 @@ class purchase extends AdminController
         }
     }
 
+     /**
+     *  wo report
+     *  
+     *  @return json
+     */
+    public function wo_report()
+    {
+        if ($this->input->is_ajax_request()) {
+            $this->load->model('currencies_model');
+
+            $select = [
+                'wo_order_number',
+                'order_date',
+                'department',
+                'vendor',
+                'approve_status',
+                'subtotal',
+                'total_tax',
+                'total',
+            ];
+            $where = [];
+            $custom_date_select = $this->get_where_report_period(db_prefix() . 'wo_orders.order_date');
+            if ($custom_date_select != '') {
+                array_push($where, $custom_date_select);
+            }
+
+
+
+            $currency = $this->currencies_model->get_base_currency();
+
+            if ($this->input->post('report_currency')) {
+                $report_currency = $this->input->post('report_currency');
+                $base_currency = get_base_currency_pur();
+
+                if ($report_currency == $base_currency->id) {
+                    array_push($where, 'AND ' . db_prefix() . 'wo_orders.currency IN (0, ' . $report_currency . ')');
+                } else {
+                    array_push($where, 'AND ' . db_prefix() . 'wo_orders.currency = ' . $report_currency);
+                }
+
+                $currency = pur_get_currency_by_id($report_currency);
+            }
+
+            $aColumns     = $select;
+            $sIndexColumn = 'id';
+            $sTable       = db_prefix() . 'wo_orders';
+            $join         = [
+                'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'wo_orders.department',
+                'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'projects.id = ' . db_prefix() . 'wo_orders.project',
+                'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'wo_orders.vendor',
+            ];
+
+            $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
+                db_prefix() . 'wo_orders.id as id',
+                db_prefix() . 'departments.name as department_name',
+                db_prefix() . 'projects.name as project_name',
+                db_prefix() . 'pur_vendor.company as vendor_name',
+                'total',
+            ]);
+
+            $output  = $result['output'];
+            $rResult = $result['rResult'];
+
+            $footer_data = [
+                'total'           => 0,
+                'total_tax'       => 0,
+                'total_value'     => 0,
+            ];
+            foreach ($rResult as $aRow) {
+                $row = [];
+
+                $row[] = '<a href="' . admin_url('purchase/work_order/' . $aRow['id']) . '" target="_blank">' . $aRow['wo_order_number'] . '</a>';
+
+                $row[] = _d($aRow['order_date']);
+
+                $row[] = $aRow['department_name'];
+
+                $row[] = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor']) . '" target="_blank">' . $aRow['vendor_name'] . '</a>';
+
+                $row[] = get_status_approve($aRow['approve_status']);
+
+                $row[] = app_format_money($aRow['subtotal'], $currency->name);
+
+                $row[] = app_format_money($aRow['total_tax'], $currency->name);
+
+                $row[] = app_format_money($aRow['total'], $currency->name);
+
+                $footer_data['total'] += $aRow['total'];
+                $footer_data['total_tax'] += $aRow['total_tax'];
+                $footer_data['total_value'] += $aRow['subtotal'];
+
+                $output['aaData'][] = $row;
+            }
+
+            foreach ($footer_data as $key => $total) {
+                $footer_data[$key] = app_format_money($total, $currency->name);
+            }
+
+            $output['sums'] = $footer_data;
+            echo json_encode($output);
+            die();
+        }
+    }
     /**
      *  purchase inv report
      *  

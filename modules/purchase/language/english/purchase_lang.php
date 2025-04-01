@@ -799,6 +799,7 @@ $lang['anticipate_variation'] = 'Anticipate Variation';
 $lang['cost_to_complete'] = 'Cost to Complete';
 $lang['final_certified_amount'] = 'Total Certified Amount';
 $lang['item_tracker_report'] = 'Purchase Tracker Report';
+$lang['work_order_reort'] = 'Work Order Report';
 $lang['po_quantity'] = 'PO quantity';
 $lang['received_quantity'] = 'Received quantity';
 $lang['remaining']  = 'Remaining';

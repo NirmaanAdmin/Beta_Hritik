@@ -7,29 +7,29 @@
       /* Optional, for better visibility */
    }
 </style>
-
-<div class="col-md-3 form-group">
-   <!-- <label for="type"><?php echo _l('type'); ?></label> -->
-   <select name="pur_order[]" id="pur_order" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('pur_order'); ?>">
-      <option value=""></option>
-      <?php
-      $pur_order = get_pur_all_orders();
-      foreach ($pur_order as $order) { ?>
-         <option value="<?php echo $order['id']; ?>"><?php echo  $order['pur_order_number'] . '-' . $order['pur_order_name']; ?></option>
-      <?php  } ?>
-   </select>
-</div>
-<div class="col-md-3 form-group">
-   <select name="vendor[]" id="vendor" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('vendor'); ?>">
-      <option value=""></option>
-      <?php
-      $vendor = get_pur_vendor_list();
-      foreach ($vendor as $vendors) { ?>
-         <option value="<?php echo $vendors['userid']; ?>"><?php echo  $vendors['company']; ?></option>
-      <?php  } ?>
-   </select>
-</div>
 <div id="list_item_tracker_report" class="hide">
+   <div class="col-md-3 form-group">
+      <!-- <label for="type"><?php echo _l('type'); ?></label> -->
+      <select name="pur_order[]" id="pur_order" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('pur_order'); ?>">
+         <option value=""></option>
+         <?php
+         $pur_order = get_pur_all_orders();
+         foreach ($pur_order as $order) { ?>
+            <option value="<?php echo $order['id']; ?>"><?php echo  $order['pur_order_number'] . '-' . $order['pur_order_name']; ?></option>
+         <?php  } ?>
+      </select>
+   </div>
+   <div class="col-md-3 form-group">
+      <select name="vendor[]" id="vendor" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('vendor'); ?>">
+         <option value=""></option>
+         <?php
+         $vendor = get_pur_vendor_list();
+         foreach ($vendor as $vendors) { ?>
+            <option value="<?php echo $vendors['userid']; ?>"><?php echo  $vendors['company']; ?></option>
+         <?php  } ?>
+      </select>
+   </div>
+
    <div class="row">
       <div class="col-md-4">
          <div class="form-group">

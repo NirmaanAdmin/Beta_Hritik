@@ -1,6 +1,6 @@
 <script>
   var report_import_goods, report_po_voucher,
-    report_from_choose, report_po, report_pur_inv,
+    report_from_choose, report_po, report_pur_inv,report_wo,
     fnServerParams,
     statistics_number_of_purchase_orders,
     statistics_cost_of_purchase_orders, report_item_tracker;
@@ -11,6 +11,7 @@
     "use strict";
     report_pur_inv = $('#list_purchase_inv_report');
     report_po = $('#list_po_report');
+    report_wo = $('#list_wo_report');
     report_po_voucher = $('#list_po_voucher');
     report_import_goods = $('#list_import_goods');
     statistics_number_of_purchase_orders = $('#number-purchase-orders-report');
@@ -84,6 +85,15 @@
       $(this).find('tfoot td.total_tax').html(sums.total_tax);
       $(this).find('tfoot td.total_value').html(sums.total_value);
     });
+    $('.table-wo-report').on('draw.dt', function() {
+      var poReportsTable = $(this).DataTable();
+      var sums = poReportsTable.ajax.json().sums;
+      $(this).find('tfoot').addClass('bold');
+      $(this).find('tfoot td').eq(0).html("<?php echo _l('invoice_total'); ?> (<?php echo _l('per_page'); ?>)");
+      $(this).find('tfoot td.total').html(sums.total);
+      $(this).find('tfoot td.total_tax').html(sums.total_tax);
+      $(this).find('tfoot td.total_value').html(sums.total_value);
+    });
 
     $('.table-purchase-inv-report').on('draw.dt', function() {
       var poReportsTable = $(this).DataTable();
@@ -134,6 +144,7 @@
     $('#year_requisition').addClass('hide');
 
     report_po.addClass('hide');
+    report_wo.addClass('hide');
     report_po_voucher.addClass('hide');
     report_pur_inv.addClass('hide');
     report_import_goods.addClass('hide');
@@ -162,6 +173,8 @@
       report_po_voucher.removeClass('hide');
     } else if (type == 'po_report') {
       report_po.removeClass('hide');
+    } else if (type == 'wo_report') {
+      report_wo.removeClass('hide');
     } else if (type == 'purchase_invoice_rp') {
       report_pur_inv.removeClass('hide');
     } else if (type == 'item_tracker_report') {
@@ -197,6 +210,14 @@
       $('.table-po-report').DataTable().destroy();
     }
     initDataTable('.table-po-report', admin_url + 'purchase/po_report', false, false, fnServerParams);
+  } 
+  function wo_report() {
+    "use strict";
+
+    if ($.fn.DataTable.isDataTable('.table-wo-report')) {
+      $('.table-wo-report').DataTable().destroy();
+    }
+    initDataTable('.table-wo-report', admin_url + 'purchase/wo_report', false, false, fnServerParams);
   }
 
   function purchase_inv_report() {
@@ -396,6 +417,8 @@
       po_voucher_report();
     } else if (!report_po.hasClass('hide')) {
       po_report();
+    } else if (!report_wo.hasClass('hide')) {
+      wo_report();
     } else if (!report_pur_inv.hasClass('hide')) {
       purchase_inv_report();
     } else if (!report_item_tracker.hasClass('hide')) {
