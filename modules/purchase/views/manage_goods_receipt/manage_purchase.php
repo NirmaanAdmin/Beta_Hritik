@@ -41,6 +41,7 @@
 
                                 echo render_date_input('date_add', '', '', $input_attr_e); ?>
                             </div>
+
                             <div class="col-md-3">
                                 <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
                                     <option value=""></option>
@@ -48,6 +49,7 @@
                                     <option value="Bought out items"><?php echo _l('bought_out_items'); ?></option>
                                 </select>
                             </div>
+                            
                             <div class="col-md-3">
                                 <select name="delivery" id="delivery" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('delivery_status'); ?>">
                                     <option value=""></option>
@@ -56,6 +58,7 @@
                                     <option value="completely_delivered"><?php echo _l('completely_delivered'); ?></option>
                                 </select>
                             </div>
+                            
                         </div>
                         <br />
                         <div class="btn-group show_hide_columns" id="show_hide_columns">

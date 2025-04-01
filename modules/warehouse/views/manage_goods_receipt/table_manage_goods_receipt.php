@@ -32,6 +32,14 @@ if ($this->ci->input->post('kind')) {
     $kind = $this->ci->input->post('kind');
 }
 
+if($this->ci->input->post('vendor')){
+    $vendor = $this->ci->input->post('vendor');
+}
+
+if($this->ci->input->post('status')){
+    $status = $this->ci->input->post('status');
+}
+
 // if ($this->ci->input->post('toggle-filter')) {
 $toggle_filter = $this->ci->input->post('toggle-filter');
 
@@ -60,6 +68,18 @@ if (isset($day_vouchers)) {
 
 if (isset($kind)) {
     $where[] = 'AND tblgoods_receipt.kind = "' . $kind . '"';
+}
+
+if(!empty($vendor)){
+    $where[] = 'AND tblgoods_receipt.supplier_code IN(' . implode(',', $vendor) . ')';
+}
+// $status = $this->ci->input->post('status');
+if (isset($status)) {
+    if($status == 'approved'){
+        $where[] = 'AND tblgoods_receipt.approval = 1';
+    }elseif ($status == 'not_yet_approve') {
+        $where[] = 'AND tblgoods_receipt.approval = 0';
+    }
 }
 
 if ($toggle_filter == 1) {
