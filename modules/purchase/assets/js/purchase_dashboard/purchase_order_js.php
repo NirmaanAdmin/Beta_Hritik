@@ -397,14 +397,14 @@ function get_purchase_order_dashboard() {
               },
               title: {
                 display: true,
-                text: 'Vendors'
+                text: 'Actual Delivery Dates'
               }
             },
             y: {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'PO Value'
+                text: 'Value'
               }
             }
           }
