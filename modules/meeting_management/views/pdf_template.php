@@ -84,8 +84,8 @@
 
     <table class="details-table">
         <tr>
-            <th style="width: 15%;">Project</th>
-            <td style="width: 40%;">BGJ 2 Acre <?php echo get_project_name_by_id($meeting['project_id']); ?>-Annex Building</td>
+            <!-- <th style="width: 15%;">Project</th>
+            <td style="width: 40%;">BGJ 2 Acre <?php echo get_project_name_by_id($meeting['project_id']); ?>-Annex Building</td> -->
             <td style="width: 15%;">Subject</td>
             <td style="width: 30%;"><?php echo $meeting['meeting_title']; ?></td>
         </tr>
