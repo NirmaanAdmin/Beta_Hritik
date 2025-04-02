@@ -31,7 +31,9 @@
 </body>
 </html>
 
-<?php if($group == 'purchase_order') { ?>
-<?php require 'modules/purchase/assets/js/purchase_dashboard/purchase_order_js.php'; ?>
-<?php } ?>
+<?php if($group == 'purchase_order') {
+  require 'modules/purchase/assets/js/purchase_dashboard/purchase_order_js.php';
+} else if($group == 'work_order') {
+  require 'modules/purchase/assets/js/purchase_dashboard/work_order_js.php';
+} ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

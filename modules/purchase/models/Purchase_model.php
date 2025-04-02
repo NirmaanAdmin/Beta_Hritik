@@ -18745,4 +18745,137 @@ class Purchase_model extends App_Model
 
         return $response;
     }
+
+    public function get_work_order_dashboard($data)
+    {
+        $response = array();
+        $vendors = $data['vendors'];
+        $group_pur = $data['group_pur'];
+        $kind = $data['kind'];
+        $from_date = $data['from_date'];
+        $to_date = $data['to_date'];
+        $this->load->model('currencies_model');
+        $base_currency = $this->currencies_model->get_base_currency();
+        if ($request->currency != 0 && $request->currency != null) {
+            $base_currency = pur_get_currency_by_id($request->currency);
+        }
+
+        $response['total_po_value'] = $response['approved_po_value'] = $response['approved_po_value'] = $response['draft_po_value'] = $response['draft_po_count'] = $response['approved_po_count'] = $response['rejected_po_count'] = 0;
+        $response['line_order_date'] = $response['line_order_total'] = $response['column_po_labels'] = $response['column_po_value'] = $response['column_po_tax'] = $response['pie_budget_name'] = $response['pie_tax_value'] = $response['bar_top_vendor_name'] = $response['bar_top_vendor_value'] = array();
+
+        $this->db->select('id, wo_order_number, approve_status, total, order_date, total_tax, group_pur, vendor');
+        if(!empty($vendors)) {
+            $this->db->where('vendor', $vendors);
+        }
+        if(!empty($group_pur)) {
+            $this->db->where('group_pur', $group_pur);
+        }
+        if(!empty($kind)) {
+            $this->db->where('kind', $kind);
+        }
+        if (!empty($from_date)) {
+            $from_date = date('Y-m-d', strtotime($from_date));
+            $this->db->where('order_date >=', $from_date);
+        }
+        if (!empty($to_date)) {
+            $to_date = date('Y-m-d', strtotime($to_date));
+            $this->db->where('order_date <=', $to_date);
+        }
+        $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->result_array();
+
+        if(!empty($wo_orders)) {
+            $draft_po_value = 0;
+            $approved_po_value = 0;
+            $draft_po_array = array_filter($wo_orders, function($item) {
+                return in_array($item['approve_status'], [1]);
+            });
+
+            if(!empty($draft_po_array)) {
+                $draft_po_value = array_reduce($draft_po_array, function($carry, $item) {
+                    return $carry + (float)$item['total'];
+                }, 0);
+                $response['draft_po_value'] = app_format_money($draft_po_value, $base_currency->symbol);
+            }
+
+            $approved_po_array = array_filter($wo_orders, function($item) {
+                return in_array($item['approve_status'], [2]);
+            });
+
+            if(!empty($approved_po_array)) {
+                $approved_po_value = array_reduce($approved_po_array, function($carry, $item) {
+                    return $carry + (float)$item['total'];
+                }, 0);
+                $response['approved_po_value'] = app_format_money($approved_po_value, $base_currency->symbol);
+            }
+
+            $total_po_value = $draft_po_value + $approved_po_value;
+            $response['total_po_value'] = app_format_money($total_po_value, $base_currency->symbol);
+
+            $response['draft_po_count'] = count(array_filter($wo_orders, function($item) {
+                return isset($item['approve_status']) && $item['approve_status'] == 1;
+            }));
+            $response['approved_po_count'] = count(array_filter($wo_orders, function($item) {
+                return isset($item['approve_status']) && $item['approve_status'] == 2;
+            }));
+            $response['rejected_po_count'] = count(array_filter($wo_orders, function($item) {
+                return isset($item['approve_status']) && $item['approve_status'] == 3;
+            }));
+
+            $line_order_date = $line_order_total = array();
+            foreach ($wo_orders as $key => $value) {
+                $date = $value['order_date'];
+                if (!isset($line_order_date[$date])) {
+                    $line_order_date[$date] = $date;
+                }
+                if (!isset($line_order_total[$date])) {
+                    $line_order_total[$date] = 0;
+                }
+                $line_order_total[$date] += (float) $value['total'];
+            }
+
+            if(!empty($line_order_date) && !empty($line_order_total)) {
+                $response['line_order_date'] = array_keys($line_order_date);
+                $response['line_order_total'] = array_values($line_order_total);
+            }
+
+            foreach ($wo_orders as $key => $value) {
+                $parts = explode('-', $value['wo_order_number']);
+                $response['column_po_labels'][] = $parts[0] . '-' . $parts[1];
+                $response['column_po_value'][] = $value['total'];
+                $response['column_po_tax'][] = $value['total_tax'];
+            }
+
+            $grouped = array_reduce($wo_orders, function($carry, $item) {
+                $items_group = get_group_name_item($item['group_pur']);
+                $group = $items_group->name;
+                $carry[$group] = ($carry[$group] ?? 0) + (float) $item['total_tax'];
+                return $carry;
+            }, []);
+
+            if(!empty($grouped)) {
+                $response['pie_budget_name'] = array_keys($grouped);
+                $response['pie_tax_value'] = array_values($grouped);
+            }
+
+            $bar_top_vendors = array();
+            foreach ($wo_orders as $item) {
+                $vendor_id = $item['vendor'];
+                if (!isset($bar_top_vendors[$vendor_id])) {
+                    $bar_top_vendors[$vendor_id]['name'] = get_vendor_company_name($vendor_id);
+                    $bar_top_vendors[$vendor_id]['value'] = 0;
+                }
+                $bar_top_vendors[$vendor_id]['value'] += (float) $item['total'];
+            }
+            if(!empty($bar_top_vendors)) {
+                usort($bar_top_vendors, function($a, $b) {
+                    return $b['value'] <=> $a['value'];
+                });
+                $bar_top_vendors = array_slice($bar_top_vendors, 0, 10);
+                $response['bar_top_vendor_name'] = array_column($bar_top_vendors, 'name');
+                $response['bar_top_vendor_value'] = array_column($bar_top_vendors, 'value');
+            }
+        }
+
+        return $response;
+    }
 }

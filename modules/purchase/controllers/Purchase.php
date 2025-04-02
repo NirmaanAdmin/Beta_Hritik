@@ -12609,6 +12609,8 @@ class purchase extends AdminController
 
         if($data['group'] == 'work_order') {
             $data['title'] = _l('work_order');
+            $data['vendors'] = $this->purchase_model->get_vendor();
+            $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         } else if($data['group'] == 'payment_certificate') {
             $data['title'] = _l('payment_certificate');
         } else if($data['group'] == 'order_tracker') {
@@ -12618,10 +12620,10 @@ class purchase extends AdminController
         } else {
             $data['title'] = _l('purchase_order');
             $data['group'] = 'purchase_order';
+            $data['vendors'] = $this->purchase_model->get_vendor();
+            $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         }
 
-        $data['vendors'] = $this->purchase_model->get_vendor();
-        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['tabs']['view'] = 'purchase_dashboard/module/' . $data['group'];
 
         $this->load->view('purchase_dashboard/purchase_dashboard', $data);
@@ -12653,6 +12655,14 @@ class purchase extends AdminController
     {
         $data = $this->input->post();
         $result = $this->purchase_model->get_purchase_order_dashboard($data);
+        echo json_encode($result);
+        die;
+    }
+
+    public function get_work_order_dashboard()
+    {
+        $data = $this->input->post();
+        $result = $this->purchase_model->get_work_order_dashboard($data);
         echo json_encode($result);
         die;
     }
