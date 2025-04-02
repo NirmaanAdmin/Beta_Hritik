@@ -13,6 +13,7 @@
       left: 204px
    }
 </style>
+<?php $module_name = 'purchase_order'; ?>
 <div id="wrapper">
    <div class="content">
       <div class="row">
@@ -39,12 +40,16 @@
                         </ul>
                      </div>
                   </div>
-
+                  <div class="col-md-1 form-group pull-right">
+                     <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
+                        <?php echo _l('reset_filter'); ?>
+                     </a>
+                  </div>
                   <div class="_buttons col-md-1 pull-right">
                      <a href="#" class="btn btn-default btn-with-tooltip toggle-small-view hidden-xs pull-right" onclick="toggle_small_pur_order_view('.table-table_pur_order','#pur_order'); return false;" data-toggle="tooltip" title="<?php echo _l('estimates_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
                   </div>
                </div>
-               <div class="row">
+               <div class="row all_ot_filters">
                   <hr>
                   <div class="col-md-2">
                      <?php echo render_date_input('from_date', _l('from_date'), ''); ?>
@@ -52,20 +57,31 @@
                   <div class="col-md-2">
                      <?php echo render_date_input('to_date', _l('to_date'), ''); ?>
                   </div>
+                  <?php
+                  // Retrieve the filter values for purchase request type
+                  $purchase_request_type_filter = get_module_filter($module_name, 'purchase_request');
+                  $purchase_request_type_filter_val = !empty($purchase_request_type_filter) ? explode(",", $purchase_request_type_filter->filter_value) : [];
 
-                  <div class=" col-md-2 form-group">
+                  ?>
+                  <div class="col-md-2 form-group">
                      <label for="pur_request"><?php echo _l('pur_request'); ?></label>
                      <select name="pur_request[]" id="pur_request" class="selectpicker" onchange="coppy_pur_request(); return false;" data-live-search="true" multiple="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                         <?php foreach ($pur_request as $s) { ?>
-                           <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $pur_order->pur_request != '' && $pur_order->pur_request == $s['id']) {
-                                                                                                echo 'selected';
-                                                                                             } ?>><?php echo pur_html_entity_decode($s['pur_rq_code'] . ' - ' . $s['pur_rq_name']); ?></option>
+                           <option value="<?php echo pur_html_entity_decode($s['id']); ?>"
+                              <?php if (in_array($s['id'], $purchase_request_type_filter_val)) {
+                                 echo 'selected';
+                              } ?>>
+                              <?php echo pur_html_entity_decode($s['pur_rq_code'] . ' - ' . $s['pur_rq_name']); ?>
+                           </option>
                         <?php } ?>
                      </select>
                   </div>
 
                   <div class="col-md-3 form-group">
+
                      <?php
+                     $approval_status_type_filter = get_module_filter($module_name, 'pur_approval_status');
+                     $approval_status_type_filter_val = !empty($approval_status_type_filter) ? explode(",", $approval_status_type_filter->filter_value) : [];
                      $statuses = [
                         0 => ['id' => '1', 'name' => _l('purchase_not_yet_approve')],
                         1 => ['id' => '2', 'name' => _l('purchase_approved')],
@@ -73,7 +89,7 @@
                         3 => ['id' => '4', 'name' => _l('cancelled')],
                      ];
 
-                     echo render_select('status[]', $statuses, array('id', 'name'), 'approval_status', '', array('data-width' => '100%', 'data-none-selected-text' => _l('leads_all'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
+                     echo render_select('status[]', $statuses, array('id', 'name'), 'approval_status', $approval_status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('leads_all'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
                   </div>
                   <div class="col-md-3 form-group">
                      <?php echo render_select('vendor_ft[]', $vendors, array('userid', 'company'), 'vendor', '', array('data-width' => '100%', 'data-none-selected-text' => _l('leads_all'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
@@ -178,7 +194,7 @@
                         _l('po_description'),
                         _l('order_date'),
                         _l('group_pur'),
-//                        _l('sub_groups_pur'),
+                        //                        _l('sub_groups_pur'),
                         // _l('area_pur'),
                         _l('cat'),
                         _l('project'),

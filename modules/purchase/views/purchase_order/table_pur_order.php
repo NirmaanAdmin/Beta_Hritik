@@ -1,7 +1,9 @@
 <?php
 
 defined('BASEPATH') or exit('No direct script access allowed');
-
+$module_name = 'purchase_order';
+$purchase_request_filter_name = 'purchase_request';
+$status_filter_name = 'pur_approval_status';
 $custom_fields = get_custom_fields('pur_order', [
     'show_on_table' => 1,
     ]);
@@ -163,6 +165,11 @@ $having = '';
 if(!is_admin()) {
     $having = "FIND_IN_SET('".get_staff_user_id()."', member_list) != 0";
 }
+$purchase_request_filter_name_value = !empty($this->ci->input->post('purchase_request')) ? implode(',', $this->ci->input->post('purchase_request')) : NULL;
+update_module_filter($module_name, $purchase_request_filter_name, $purchase_request_filter_name_value);
+
+$status_filter_name_value = !empty($this->ci->input->post('status')) ? implode(',', $this->ci->input->post('status')) : NULL;
+update_module_filter($module_name, $status_filter_name, $status_filter_name_value);
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'pur_orders.id as id','company','pur_order_number','expense_convert',db_prefix().'projects.name as project_name',db_prefix().'departments.name as department_name', 'currency', '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_orders.project) as member_list'], '', [], $having);
 

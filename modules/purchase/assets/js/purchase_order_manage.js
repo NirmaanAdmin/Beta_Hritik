@@ -1,8 +1,8 @@
-var hidden_columns = [2,3,4,5], table_rec_campaign;
+var hidden_columns = [2, 3, 4, 5], table_rec_campaign;
 Dropzone.autoDiscover = false;
 var expenseDropzone;
-(function($) {
-"use strict"; 
+(function ($) {
+    "use strict";
     table_rec_campaign = $('.table-table_pur_order');
 
     var Params = {
@@ -18,50 +18,56 @@ var expenseDropzone;
         "purchase_request": "[name='pur_request[]']"
     };
 
-    initDataTable('.table-table_pur_order', admin_url+'purchase/table_pur_order', [], [], Params,[3, 'desc']);
-	init_pur_order();
-    $.each(Params, function(i, obj) {
-        $('select' + obj).on('change', function() {  
+    initDataTable('.table-table_pur_order', admin_url + 'purchase/table_pur_order', [], [], Params, [3, 'desc']);
+    init_pur_order();
+    $.each(Params, function (i, obj) {
+        $('select' + obj).on('change', function () {
             table_rec_campaign.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
         });
     });
 
-    $('input[name="from_date"]').on('change', function() {
+    $('input[name="from_date"]').on('change', function () {
         table_rec_campaign.DataTable().ajax.reload()
-                .columns.adjust()
-                .responsive.recalc();
+            .columns.adjust()
+            .responsive.recalc();
     });
-    $('input[name="to_date"]').on('change', function() {
+    $('input[name="to_date"]').on('change', function () {
         table_rec_campaign.DataTable().ajax.reload()
-                .columns.adjust()
-                .responsive.recalc();
+            .columns.adjust()
+            .responsive.recalc();
     });
 
-    
+
     if ($('#pur_order-expense-form').length > 0) {
-          expenseDropzone = new Dropzone("#pur_order-expense-form", appCreateDropzoneOptions({
-              autoProcessQueue: false,
-              clickable: '#dropzoneDragArea',
-              previewsContainer: '.dropzone-previews',
-              addRemoveLinks: true,
-              maxFiles: 1,
-              success: function(file, response) {
-                  if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                      window.location.reload();
-                  }
-              }
+        expenseDropzone = new Dropzone("#pur_order-expense-form", appCreateDropzoneOptions({
+            autoProcessQueue: false,
+            clickable: '#dropzoneDragArea',
+            previewsContainer: '.dropzone-previews',
+            addRemoveLinks: true,
+            maxFiles: 1,
+            success: function (file, response) {
+                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                    window.location.reload();
+                }
+            }
         }));
     }
 
     appValidateForm($('#pur_order-expense-form'), {
-          expense_name: 'required',
-          category: 'required',
-          date: 'required',
-          amount: 'required'
+        expense_name: 'required',
+        category: 'required',
+        date: 'required',
+        amount: 'required'
     }, projectExpenseSubmitHandler);
 
+    $(document).on('click', '.reset_all_ot_filters', function () {
+        var filterArea = $('.all_ot_filters');
+        filterArea.find('input').val("");
+        filterArea.find('select').selectpicker("val", "");
+        table_rec_campaign.DataTable().ajax.reload().columns.adjust().responsive.recalc();
+    });
 
 })(jQuery);
 function init_pur_order(id) {
@@ -82,7 +88,7 @@ function load_small_pur_order_table_item(id, selector, input_name, url, table) {
             id = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
         }
     }
-    if (typeof(id) == 'undefined' || id === '') { return; }
+    if (typeof (id) == 'undefined' || id === '') { return; }
     destroy_dynamic_scripts_in_element($(selector))
     if (!$("body").hasClass('small-table')) { toggle_small_pur_order_view(table, selector); }
     $('input[name="' + input_name + '"]').val(id);
@@ -96,108 +102,108 @@ function load_small_pur_order_table_item(id, selector, input_name, url, table) {
 }
 
 function toggle_small_pur_order_view(table, main_data) {
-        "use strict";
-        $("body").toggleClass('small-table');
-        var tablewrap = $('#small-table');
-        var show_hide_columns = $('#show_hide_columns');
-      
-        if (tablewrap.length === 0) { return; }
-        var _visible = false;
-        if(show_hide_columns.hasClass('show_hide_columns')){
-            show_hide_columns.removeClass('show_hide_columns');
-            show_hide_columns.addClass('show_hide_columns1');
-        }else{
-            show_hide_columns.addClass('show_hide_columns');
-            show_hide_columns.removeClass('show_hide_columns1');
-        }
-        if (tablewrap.hasClass('col-md-5')) {
-            tablewrap.removeClass('col-md-5').addClass('col-md-12');
-            _visible = true;
-            $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-right').addClass('fa fa-angle-double-left');
-        } else {
-            tablewrap.addClass('col-md-5').removeClass('col-md-12');
-            $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-left').addClass('fa fa-angle-double-right');
-        }
+    "use strict";
+    $("body").toggleClass('small-table');
+    var tablewrap = $('#small-table');
+    var show_hide_columns = $('#show_hide_columns');
 
-        var _table = $(table).DataTable();
-        // Show hide hidden columns
-        _table.columns(hidden_columns).visible(_visible, false);
-        _table.columns.adjust();
-        $(main_data).toggleClass('hide');
-        $(window).trigger('resize');
+    if (tablewrap.length === 0) { return; }
+    var _visible = false;
+    if (show_hide_columns.hasClass('show_hide_columns')) {
+        show_hide_columns.removeClass('show_hide_columns');
+        show_hide_columns.addClass('show_hide_columns1');
+    } else {
+        show_hide_columns.addClass('show_hide_columns');
+        show_hide_columns.removeClass('show_hide_columns1');
+    }
+    if (tablewrap.hasClass('col-md-5')) {
+        tablewrap.removeClass('col-md-5').addClass('col-md-12');
+        _visible = true;
+        $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-right').addClass('fa fa-angle-double-left');
+    } else {
+        tablewrap.addClass('col-md-5').removeClass('col-md-12');
+        $('.toggle-small-view').find('i').removeClass('fa fa-angle-double-left').addClass('fa fa-angle-double-right');
+    }
+
+    var _table = $(table).DataTable();
+    // Show hide hidden columns
+    _table.columns(hidden_columns).visible(_visible, false);
+    _table.columns.adjust();
+    $(main_data).toggleClass('hide');
+    $(window).trigger('resize');
 }
 
-function convert_expense(pur_order,total){
+function convert_expense(pur_order, total) {
     "use strict";
 
-    $.post(admin_url + 'purchase/get_project_info/'+pur_order).done(function(response){
-      response = JSON.parse(response);
-      $('select[name="project_id"]').val(response.project_id).change();
-      $('select[name="clientid"]').val(response.customer).change();
-      $('select[name="currency"]').val(response.currency).change();
-      $('input[name="vendor"]').val(response.vendor);
-      if(response.budget_head) {
-        $('#category').val(response.budget_head).change();
-      } else {
-        $('#category').val('').change();
-      }
+    $.post(admin_url + 'purchase/get_project_info/' + pur_order).done(function (response) {
+        response = JSON.parse(response);
+        $('select[name="project_id"]').val(response.project_id).change();
+        $('select[name="clientid"]').val(response.customer).change();
+        $('select[name="currency"]').val(response.currency).change();
+        $('input[name="vendor"]').val(response.vendor);
+        if (response.budget_head) {
+            $('#category').val(response.budget_head).change();
+        } else {
+            $('#category').val('').change();
+        }
     });
 
     $('#pur_order_expense').modal('show');
     $('input[id="amount"]').val(total);
     $('#pur_order_additional').html('');
-    $('#pur_order_additional').append(hidden_input('pur_order',pur_order));
+    $('#pur_order_additional').append(hidden_input('pur_order', pur_order));
 }
 
 function projectExpenseSubmitHandler(form) {
     "use strict";
-      $.post(form.action, $(form).serialize()).done(function(response) {
-          response = JSON.parse(response);
-          if (response.expenseid) {
-              if (typeof(expenseDropzone) !== 'undefined') {
-                  if (expenseDropzone.getQueuedFiles().length > 0) {
-                      expenseDropzone.options.url = admin_url + 'expenses/add_expense_attachment/' + response.expenseid;
-                      expenseDropzone.processQueue();
-                  } else {
-                      window.location.assign(response.url);
-                  }
-              } else {
-                  window.location.assign(response.url);
-              }
-          } else {
-              window.location.assign(response.url);
-          }
-      });
-      return false;
+    $.post(form.action, $(form).serialize()).done(function (response) {
+        response = JSON.parse(response);
+        if (response.expenseid) {
+            if (typeof (expenseDropzone) !== 'undefined') {
+                if (expenseDropzone.getQueuedFiles().length > 0) {
+                    expenseDropzone.options.url = admin_url + 'expenses/add_expense_attachment/' + response.expenseid;
+                    expenseDropzone.processQueue();
+                } else {
+                    window.location.assign(response.url);
+                }
+            } else {
+                window.location.assign(response.url);
+            }
+        } else {
+            window.location.assign(response.url);
+        }
+    });
+    return false;
 }
 
-function change_delivery_status(status, id){
-  "use strict";
-  if(id > 0){
-    $.post(admin_url + 'purchase/change_delivery_status/'+status+'/'+id).done(function(response){
-      response = JSON.parse(response);
-      if(response.success == true){
-        if($('#status_span_'+id).hasClass('label-danger')){
-          $('#status_span_'+id).removeClass('label-danger');
-          $('#status_span_'+id).addClass(response.class);
-          $('#status_span_'+id).html(response.status_str+' '+response.html);
-        }else if($('#status_span_'+id).hasClass('label-success')){
-          $('#status_span_'+id).removeClass('label-success');
-          $('#status_span_'+id).addClass(response.class);
-          $('#status_span_'+id).html(response.status_str+' '+response.html);
-        }else if($('#status_span_'+id).hasClass('label-info')){
-          $('#status_span_'+id).removeClass('label-info');
-          $('#status_span_'+id).addClass(response.class);
-          $('#status_span_'+id).html(response.status_str+' '+response.html);
-        }else if($('#status_span_'+id).hasClass('label-warning')){
-          $('#status_span_'+id).removeClass('label-warning');
-          $('#status_span_'+id).addClass(response.class);
-          $('#status_span_'+id).html(response.status_str+' '+response.html);
-        }
-        alert_float('success', response.mess);
-      }else{
-        alert_float('warning', response.mess);
-      }
-    });
-  }
+function change_delivery_status(status, id) {
+    "use strict";
+    if (id > 0) {
+        $.post(admin_url + 'purchase/change_delivery_status/' + status + '/' + id).done(function (response) {
+            response = JSON.parse(response);
+            if (response.success == true) {
+                if ($('#status_span_' + id).hasClass('label-danger')) {
+                    $('#status_span_' + id).removeClass('label-danger');
+                    $('#status_span_' + id).addClass(response.class);
+                    $('#status_span_' + id).html(response.status_str + ' ' + response.html);
+                } else if ($('#status_span_' + id).hasClass('label-success')) {
+                    $('#status_span_' + id).removeClass('label-success');
+                    $('#status_span_' + id).addClass(response.class);
+                    $('#status_span_' + id).html(response.status_str + ' ' + response.html);
+                } else if ($('#status_span_' + id).hasClass('label-info')) {
+                    $('#status_span_' + id).removeClass('label-info');
+                    $('#status_span_' + id).addClass(response.class);
+                    $('#status_span_' + id).html(response.status_str + ' ' + response.html);
+                } else if ($('#status_span_' + id).hasClass('label-warning')) {
+                    $('#status_span_' + id).removeClass('label-warning');
+                    $('#status_span_' + id).addClass(response.class);
+                    $('#status_span_' + id).html(response.status_str + ' ' + response.html);
+                }
+                alert_float('success', response.mess);
+            } else {
+                alert_float('warning', response.mess);
+            }
+        });
+    }
 }
