@@ -26,7 +26,7 @@ class Meeting_model extends App_Model
         // Insert into the agendas table
         $this->db->insert(db_prefix() . 'agendas', $data);
         $agenda_id = $this->db->insert_id();
-
+ 
         // Insert into the meeting_management table as well
         $meeting_data = [
             'meeting_title' => $data['meeting_title'],

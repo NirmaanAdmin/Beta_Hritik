@@ -17,7 +17,7 @@
                         <tr>
                            <th><?php echo _l('meeting_title'); ?></th>
                            <th><?php echo _l('meeting_date'); ?></th>
-                           <th><?php echo _l('project'); ?></th>
+                           <!-- <th><?php echo _l('project'); ?></th> -->
                            <th><?php echo _l('options'); ?></th>
                         </tr>
                      </thead>
@@ -27,7 +27,7 @@
                               <tr>
                                  <td><?php echo $agenda['meeting_title']; ?></td>
                                  <td><?php echo $agenda['meeting_date']; ?></td>
-                                 <td><?php echo isset($agenda['project_name']) ? $agenda['project_name'] : 'N/A'; ?></td>
+                                 <!-- <td><?php echo isset($agenda['project_name']) ? $agenda['project_name'] : 'N/A'; ?></td> -->
                                  <td>
                                     <!-- Correct Edit and Delete URLs with module name -->
                                     <a href="<?php echo admin_url('meeting_management/agendaController/create/' . $agenda['id']); ?>" class="btn btn-info"><?php echo _l('edit'); ?></a>

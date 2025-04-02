@@ -1,7 +1,7 @@
 <?php
 
 $lang['meeting_management'] = 'Meeting Management';
-$lang['meeting_agenda'] = 'Meeting Agenda';
+$lang['meeting_agenda'] = 'MOM List';
 $lang['create_new_agenda'] = 'Create New Agenda';
 $lang['meeting_minutes'] = 'Minutes of Meeting';
 $lang['meeting_title'] = 'Meeting Title';
@@ -16,7 +16,7 @@ $lang['meeting_task_assigned_to'] = 'Assigned To';
 $lang['meeting_task_status'] = 'Task Status';
 $lang['meeting_send_agenda'] = 'Send Agenda';
 $lang['meeting_send_minutes'] = 'Send Minutes of Meeting';
-$lang['meeting_create_agenda'] = 'Create New Agenda';
+$lang['meeting_create_agenda'] = 'Create New';
 $lang['meeting_assign_task'] = 'Assign Task';
 $lang['meeting_reminders'] = 'Reminders';
 $lang['meeting_convert_to_minutes'] = 'Convert to Minutes';

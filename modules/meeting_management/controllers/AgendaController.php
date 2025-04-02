@@ -42,13 +42,14 @@ class AgendaController extends AdminController
             $agenda_data_new = $this->input->post();
             $agenda_data_new['agenda'] = $this->input->post('agenda', false);
             $agenda_data_new['created_by'] = get_staff_user_id();
+            
             if ($id == '') {
                 // Insert new agenda
                 $this->Meeting_model->create_agenda($agenda_data_new);
                 set_alert('success', _l('meeting_agenda_created_success'));
             } else {
                 // Update existing agenda
-                $this->Meeting_model->update_agenda($id, $agenda_data);
+                $this->Meeting_model->update_agenda($id, $agenda_data_new);
                 set_alert('success', _l('meeting_agenda_updated_success'));
             }
 

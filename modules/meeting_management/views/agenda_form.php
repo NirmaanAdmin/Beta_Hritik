@@ -5,14 +5,21 @@
 <div id="wrapper">
    <div class="content">
       <div class="row">
-         <?php echo form_open_multipart(admin_url('meeting_management/agendaController/create'), array('id' => 'agenda-submit-form')); ?>
+         <?php 
+         if(!empty($agenda->id)){
+           echo  form_open_multipart(admin_url('meeting_management/agendaController/create/'.$agenda->id.''), array('id' => 'agenda-submit-form')); 
+         }else{
+           echo form_open_multipart(admin_url('meeting_management/agendaController/create'), array('id' => 'agenda-submit-form')); 
+         }
+         ?>
+         
          <div class="col-md-12 left-column">
             <div class="panel_s">
                <div class="panel-body">
 
 
                   <!-- Client Dropdown -->
-                  <div class="form-group">
+                  <!-- <div class="form-group">
                      <label for="client_id"><?php echo _l('select_client'); ?></label>
                      <select id="client_id" name="client_id" class="form-control" required>
                         <option value=""><?php echo _l('select_client'); ?></option>
@@ -22,61 +29,68 @@
                            </option>
                         <?php endforeach; ?>
                      </select>
-                  </div>
+                  </div> -->
 
                   <!-- Project Dropdown (Initially empty, populated via Ajax) -->
-                  <div class="form-group">
+                  <!-- <div class="form-group">
                      <label for="project_id"><?php echo _l('select_project'); ?></label>
                      <select id="project_id" name="project_id" class="form-control" required>
                         <option value=""><?php echo _l('select_project'); ?></option>
                      </select>
-                  </div>
+                  </div> -->
 
                   <!-- Meeting Title -->
                   <div class="form-group">
                      <label for="meeting_title"><?php echo _l('meeting_title'); ?></label>
-                     <input type="text" id="meeting_title" name="meeting_title" class="form-control" required>
+                     <input type="text" id="meeting_title" name="meeting_title" class="form-control" value="<?php echo isset($agenda) && isset($agenda->meeting_title) ? htmlspecialchars($agenda->meeting_title) : ''; ?>" required>
                   </div>
 
                   <!-- Meeting Date -->
                   <div class="form-group">
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
-                     <input type="datetime-local" id="meeting_date" name="meeting_date" class="form-control" required>
+                     <input type="datetime-local" id="meeting_date" name="meeting_date"  value="<?php echo isset($agenda) && isset($agenda->meeting_date) ? htmlspecialchars($agenda->meeting_date) : ''; ?>" class="form-control" required>
                   </div>
 
                   <!-- Agenda -->
                   <div class="form-group">
                      <label for="agenda"><?php echo _l('meeting_agenda'); ?></label>
                      <!-- <textarea id="agenda" name="agenda" class="form-control" required></textarea>  -->
+
                      <?php
-                     $deafult_val = '
+                     if($agenda->agenda != '' && $agenda->agenda != null){
+                       $deafult_val = $agenda->agenda;
+                     }else{
 
+                        $deafult_val = '
+   
+   
+                              <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 14px;">
+                                 <thead style="background-color: #f2f2f2;">
+                                    <tr>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Sr. No.</th>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Area</th>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Description</th>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Decision</th>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Action</th>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Action By</th>
+                                          <th style="border: 1px solid #ccc; text-align: center;">Target Date</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr>
+                                          <td style="border: 1px solid #ccc;text-align: center;">1</td>
+                                          <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                          <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                          <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                          <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                          <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                          <td style="border: 1px solid #ccc;text-align: center;"></td>
+                                    </tr>
+                                 </tbody>
+                              </table><br>
+                              ';
+                     }
 
-                           <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 14px;">
-                              <thead style="background-color: #f2f2f2;">
-                                 <tr>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Sr. No.</th>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Area</th>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Description</th>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Decision</th>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Action</th>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Action By</th>
-                                       <th style="border: 1px solid #ccc; text-align: center;">Target Date</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 <tr>
-                                       <td style="border: 1px solid #ccc;text-align: center;">1</td>
-                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
-                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
-                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
-                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
-                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
-                                       <td style="border: 1px solid #ccc;text-align: center;"></td>
-                                 </tr>
-                              </tbody>
-                           </table><br>
-                           ';
                      ?>
 
                      <?php echo render_textarea('agenda', '', $deafult_val, array(), array(), 'mtop15', 'tinymce'); ?>
