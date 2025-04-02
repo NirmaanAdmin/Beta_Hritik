@@ -4044,7 +4044,7 @@ function get_production_status($id)
     
     // Handle empty case
     if (empty($details)) {
-        return '<span class="inline-block label label-danger">Not Strarted</span>';
+        return '<span class="inline-block label label-danger">Not Started</span>';
     }
 
     // Check all statuses
