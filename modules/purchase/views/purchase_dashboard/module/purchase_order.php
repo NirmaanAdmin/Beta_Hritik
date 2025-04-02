@@ -187,5 +187,28 @@
 <div class="panel_s">
 	<div class="panel-body">
 		<p class="dash-main-title">4. <?php echo _l('delivery_payment_status_dashboard'); ?>:</p>
+
+		<div class="col-md-12 mtop20">
+		  	<div class="row">
+		  		<div class="col-md-12">
+		  			<p class="mbot15 dash-sub-title">Doughnut Chart for Delivery Status (Completely Delivered, Partially Delivered, Undelivered)</p>
+		  			<div style="width: 100%; height: 450px; display: flex; justify-content: center;">
+		  				<canvas id="doughnutChartDeliveryStatus"></canvas>
+		  			</div>
+		  		</div>
+		  	</div>
+	  	</div>
+
+	  	<div class="col-md-12 mtop20">
+		  	<div class="row">
+		  		<div class="col-md-12">
+		  			<p class="mbot15 dash-sub-title">Timeline Chart for Estimated Delivery vs. Actual Delivery Dates</p>
+		  			<div style="width: 100%; height: 400px;">
+					  <canvas id="timelineChartforDelivery"></canvas>
+					</div>
+		  		</div>
+		  	</div>
+		</div>
+
 	</div>
 </div>

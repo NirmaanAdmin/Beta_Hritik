@@ -18594,8 +18594,8 @@ class Purchase_model extends App_Model
             $base_currency = pur_get_currency_by_id($request->currency);
         }
 
-        $response['total_po_value'] = $response['approved_po_value'] = $response['approved_po_value'] = $response['draft_po_value'] = $response['draft_po_count'] = $response['approved_po_count'] = $response['rejected_po_count'] = 0;
-        $response['line_order_date'] = $response['line_order_total'] = $response['column_po_labels'] = $response['column_po_value'] = $response['column_po_tax'] = $response['pie_budget_name'] = $response['pie_tax_value'] = $response['bar_top_vendor_name'] = $response['bar_top_vendor_value'] = array();
+        $response['total_po_value'] = $response['approved_po_value'] = $response['approved_po_value'] = $response['draft_po_value'] = $response['draft_po_count'] = $response['approved_po_count'] = $response['rejected_po_count'] = $response['completely_delivered_status'] = $response['partially_delivered_status'] = $response['undelivered_status'] = 0;
+        $response['line_order_date'] = $response['line_order_total'] = $response['column_po_labels'] = $response['column_po_value'] = $response['column_po_tax'] = $response['pie_budget_name'] = $response['pie_tax_value'] = $response['bar_top_vendor_name'] = $response['bar_top_vendor_value'] = $response['timeline_estimated_delivery'] = $response['timeline_actual_delivery_dates'] = array();
 
         $this->db->select('id, pur_order_number, approve_status, total, order_date, total_tax, group_pur, vendor');
         if(!empty($vendors)) {
@@ -18707,6 +18707,39 @@ class Purchase_model extends App_Model
                 $bar_top_vendors = array_slice($bar_top_vendors, 0, 10);
                 $response['bar_top_vendor_name'] = array_column($bar_top_vendors, 'name');
                 $response['bar_top_vendor_value'] = array_column($bar_top_vendors, 'value');
+            }
+
+            foreach ($pur_orders as $item) {
+                $po_id = $item['id'];
+                $this->db->select('id');
+                $this->db->where('pr_order_id', $po_id);
+                $goods_receipt = $this->db->get(db_prefix() . 'goods_receipt')->result_array();
+                if (!empty($goods_receipt)) {
+                    $gr_ids = array_column($goods_receipt, 'id');
+                    $this->db->select('po_quantities, quantities, est_delivery_date, delivery_date');
+                    $this->db->where_in('goods_receipt_id', $gr_ids);
+                    $goods_receipt_detail = $this->db->get(db_prefix() . 'goods_receipt_detail')->result_array();
+                    if(!empty($goods_receipt_detail)) {
+                        $po_qty = array_sum(array_column($goods_receipt_detail, 'po_quantities'));
+                        $rec_qty = array_sum(array_column($goods_receipt_detail, 'quantities'));
+                        if ($rec_qty == 0) {
+                            $response['undelivered_status']++;
+                        } elseif ($rec_qty > 0 && $rec_qty < $po_qty) {
+                            $response['partially_delivered_status']++;
+                        } elseif ($rec_qty >= $po_qty) {
+                            $response['completely_delivered_status']++;
+                        }
+
+                        foreach ($goods_receipt_detail as $gkey => $gvalue) {
+                            if(!empty($gvalue['delivery_date'])) {
+                                $response['timeline_estimated_delivery'][] = !empty($gvalue['est_delivery_date']) ? 1 : 0;
+                                $response['timeline_actual_delivery_dates'][] = $gvalue['delivery_date'] ?? '';
+                            }
+                        }
+                    }
+                } else {
+                    $response['undelivered_status']++;
+                }
             }
         }
 

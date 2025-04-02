@@ -239,6 +239,7 @@ function get_purchase_order_dashboard() {
           }]
         },
         options: {
+          indexAxis: 'y',
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
@@ -248,21 +249,19 @@ function get_purchase_order_dashboard() {
           },
           scales: {
             x: {
-              ticks: {
-                autoSkip: false,
-                maxRotation: 45,
-                minRotation: 45
-              },
-              title: {
-                display: true,
-                text: 'Vendors'
-              }
-            },
-            y: {
               beginAtZero: true,
               title: {
                 display: true,
                 text: 'PO Value'
+              }
+            },
+            y: {
+              ticks: {
+                autoSkip: false
+              },
+              title: {
+                display: true,
+                text: 'Vendors'
               }
             }
           }
@@ -302,6 +301,110 @@ function get_purchase_order_dashboard() {
                 label: function(context) {
                   return context.label + ': ' + context.formattedValue;
                 }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // DOUGHNUT CHART - Delivery Status
+    var deliveryCtx = document.getElementById('doughnutChartDeliveryStatus').getContext('2d');
+    var deliveryLabels = ['Completely Delivered', 'Partially Delivered', 'Undelivered'];
+    var deliveryData = [
+      response.completely_delivered_status, 
+      response.partially_delivered_status, 
+      response.undelivered_status
+    ];
+
+    if (window.deliveryStatusChart) {
+      deliveryStatusChart.data.datasets[0].data = deliveryData;
+      deliveryStatusChart.update();
+    } else {
+      window.deliveryStatusChart = new Chart(deliveryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: deliveryLabels,
+          datasets: [{
+            data: deliveryData,
+            backgroundColor: [
+              'rgba(40, 167, 69, 0.7)',    // Green - Complete
+              'rgba(255, 193, 7, 0.7)',    // Yellow - Partial
+              'rgba(220, 53, 69, 0.7)'     // Red - None
+            ],
+            borderColor: [
+              'rgba(40, 167, 69, 1)',
+              'rgba(255, 193, 7, 1)',
+              'rgba(220, 53, 69, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.formattedValue;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // BAR CHART - Timeline Chart for Estimated Delivery vs. Actual Delivery Dates
+    var timelineChartforDeliveryCtx = document.getElementById('timelineChartforDelivery').getContext('2d');
+    var timelineActualDeliveryDates = response.timeline_actual_delivery_dates;
+    var timelineEstimatedDelivery = response.timeline_estimated_delivery;
+
+    if (window.timelineDeliveryChart) {
+      timelineDeliveryChart.data.labels = timelineActualDeliveryDates;
+      timelineDeliveryChart.data.datasets[0].data = timelineEstimatedDelivery;
+      timelineDeliveryChart.update();
+    } else {
+      window.timelineDeliveryChart = new Chart(timelineChartforDeliveryCtx, {
+        type: 'bar',
+        data: {
+          labels: timelineActualDeliveryDates,
+          datasets: [{
+            label: 'PO Value',
+            data: timelineEstimatedDelivery,
+            backgroundColor: 'rgba(153, 102, 255, 0.7)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                autoSkip: false,
+                maxRotation: 45,
+                minRotation: 45
+              },
+              title: {
+                display: true,
+                text: 'Vendors'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'PO Value'
               }
             }
           }
