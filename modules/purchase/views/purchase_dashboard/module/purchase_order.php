@@ -1,3 +1,12 @@
+<style type="text/css">
+	.dash-main-title {
+		font-weight: bold;
+		font-size: 17px;
+	}
+	.dash-sub-title {
+		font-weight: bold;
+	}
+</style>
 <div class="panel_s">
     <div class="panel-body">
     	<div class="col-md-12">
@@ -32,7 +41,7 @@
 
 <div class="panel_s">
 	<div class="panel-body">
-	  1. <?php echo _l('purchase_order_summary_report'); ?>: 
+	  <p class="dash-main-title">1. <?php echo _l('purchase_order_summary_report'); ?>:</p>
 
 	  <div class="col-md-12 mtop20">
 		<div class="row">
@@ -94,13 +103,11 @@
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
-	  		<div class="col-md-4">
-	  			<p class="mbot15">Pie Chart for PO Approval Status</p>
-	  			<div style="width: 100%; height: 400px;">
+	  		<div class="col-md-12">
+	  			<p class="mbot15 dash-sub-title">Pie Chart for PO Approval Status</p>
+	  			<div style="width: 100%; height: 430px; display: flex; justify-content: center;">
 	  				<canvas id="pieChartForPOApprovalStatus"></canvas>
 	  			</div>
-	  		</div>
-	  		<div class="col-md-6">
 	  		</div>
 	  	</div>
 	  </div>
@@ -108,7 +115,7 @@
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
 	  		<div class="col-md-12">
-	  			<p class="mbot15">Line Chart showing PO trends over time</p>
+	  			<p class="mbot15 dash-sub-title">Line Chart showing PO trends over time</p>
 	  			<div style="width: 100%; height: 400px;">
 				  <canvas id="lineChartPOTrendsOverTime"></canvas>
 				</div>
@@ -121,12 +128,12 @@
 
 <div class="panel_s">
 	<div class="panel-body">
-	  2. <?php echo _l('vendor_performance_analysis'); ?>:
+		<p class="dash-main-title">2. <?php echo _l('vendor_performance_analysis'); ?>:</p>
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
 	  		<div class="col-md-12">
-	  			<p class="mbot15">Bar Chart for Top 10 Vendors by PO Value</p>
+	  			<p class="mbot15 dash-sub-title">Bar Chart for Top 10 Vendors by PO Value</p>
 	  			<div style="width: 100%; height: 400px;">
 				  <canvas id="barChartTopVendors"></canvas>
 				</div>
@@ -137,8 +144,8 @@
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
 	  		<div class="col-md-12">
-	  			<p class="mbot15">Pie Chart for PO Value Share by Vendor</p>
-	  			<div style="width: 100%; height: 530px;">
+	  			<p class="mbot15 dash-sub-title">Pie Chart for PO Value Share by Vendor</p>
+	  			<div style="width: 100%; height: 520px; display: flex; justify-content: center;">
 				  <canvas id="pieChartTopVendors"></canvas>
 				</div>
 	  		</div>
@@ -150,12 +157,12 @@
 
 <div class="panel_s">
 	<div class="panel-body">
-	  3. <?php echo _l('purchase_order_tax_analysis'); ?>: 
+	  <p class="dash-main-title">3. <?php echo _l('purchase_order_tax_analysis'); ?>:</p>
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
 	  		<div class="col-md-12">
-	  			<p class="mbot15">Column Chart for PO Value vs. Tax Value</p>
+	  			<p class="mbot15 dash-sub-title">Column Chart for PO Value vs. Tax Value</p>
 				<div style="width: 100%; height: 400px;">
 			      <canvas id="barChartPOVsTax"></canvas>
 			    </div>
@@ -165,13 +172,11 @@
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
-	  		<div class="col-md-4">
-	  			<p class="mbot15">Pie Chart for Tax Contribution per Budget Head</p>
-	  			<div style="width: 100%; height: 550px;">
+	  		<div class="col-md-12">
+	  			<p class="mbot15 dash-sub-title">Pie Chart for Tax Contribution per Budget Head</p>
+	  			<div style="width: 100%; height: 490px; display: flex; justify-content: center;">
 	  				<canvas id="pieChartForTaxByBudget"></canvas>
 	  			</div>
-	  		</div>
-	  		<div class="col-md-6">
 	  		</div>
 	  	</div>
 	  </div>
@@ -181,6 +186,6 @@
 
 <div class="panel_s">
 	<div class="panel-body">
-	  4. <?php echo _l('delivery_payment_status_dashboard'); ?>:
+		<p class="dash-main-title">4. <?php echo _l('delivery_payment_status_dashboard'); ?>:</p>
 	</div>
 </div>
