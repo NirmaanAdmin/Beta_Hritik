@@ -84,20 +84,21 @@
 
     <table class="details-table">
         <tr>
-            <!-- <th style="width: 15%;">Project</th>
-            <td style="width: 40%;">BGJ 2 Acre <?php echo get_project_name_by_id($meeting['project_id']); ?>-Annex Building</td> -->
-            <td style="width: 15%;">Subject</td>
-            <td style="width: 30%;"><?php echo $meeting['meeting_title']; ?></td>
-        </tr>
-        <tr>
+            <th style="width: 15%;">Subject</th>
+            <td style="width: 40%;"><?php echo $meeting['meeting_title']; ?></td>
             <th style="width: 15%;">Meeting Date & Time</th>
             <td style="width: 40%;"><?php echo date('d-M-y h:i A', strtotime($meeting['meeting_date'])); ?></td>
-            <td style="width: 15%;">Minutes by</td>
-            <td style="width: 30%;"><?php echo get_staff_full_name($meeting['created_by']); ?></td>
+            <!-- <td style="width: 15%;">Subject</td>
+            <td style="width: 30%;"><?php echo $meeting['meeting_title']; ?></td> -->
         </tr>
         <tr>
+            <td style="width: 15%;">Minutes by</td>
+            <td style="width: 30%;"><?php echo get_staff_full_name($meeting['created_by']); ?></td>
             <th style="width: 15%;">Venue</th>
             <td style="width: 40%;">BGJ site office</td>
+        </tr>
+        <tr>
+            
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
         </tr>
