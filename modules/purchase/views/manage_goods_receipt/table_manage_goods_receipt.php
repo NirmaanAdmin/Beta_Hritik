@@ -94,7 +94,7 @@ foreach ($rResult as $aRow) {
                 $get_production_status = get_production_status($aRow['id']);
                 $_data = $get_production_status;
             }else{
-                $_data = '<span class="inline-block label label-danger">Not Strarted</span>';
+                $_data = '<span class="inline-block label label-danger">Not Started</span>';
             }
         } elseif ($aColumns[$i] == 'delivery_status') {
             $delivery_status = '';
