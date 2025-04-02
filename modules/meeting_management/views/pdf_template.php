@@ -101,6 +101,8 @@
             
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
+            <td style="width: 15%;"></td>
+            <td style="width: 30%;"></td>
         </tr>
     </table>
 
