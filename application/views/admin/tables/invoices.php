@@ -81,6 +81,11 @@ return App_table::find('invoices')
         $output  = $result['output'];
         $rResult = $result['rResult'];
         $sr = 1 + $this->ci->input->post('start');
+
+        $footer_data = [
+            'total_invoice_amount' => 0,
+            'total_invoice_amount_due' => 0,
+        ];
         foreach ($rResult as $aRow) {
             $row = [];
 
@@ -140,8 +145,15 @@ return App_table::find('invoices')
 
             $row = hooks()->apply_filters('invoices_table_row_data', $row, $aRow);
 
+            $footer_data['total_invoice_amount'] += $aRow['total'];
+            $footer_data['total_invoice_amount_due'] += $total_left_to_pay;
             $output['aaData'][] = $row;
         }
+
+        foreach ($footer_data as $key => $total) {
+            $footer_data[$key] = app_format_money($total, $aRow['currency_name']);
+        }
+        $output['sums'] = $footer_data;
         return $output;
     })->setRules([
         App_table_filter::new('number', 'NumberRule')->label(_l('invoice_add_edit_number')),
