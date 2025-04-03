@@ -163,6 +163,12 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db
 $output  = $result['output'];
 $rResult = $result['rResult'];
 
+$footer_data = [
+    'total_co_value' => 0,
+    'total_tax_value' => 0,
+    'total_co_value_included_tax' => 0,
+];
+
 $this->ci->load->model('changee/changee_model');
 
 foreach ($rResult as $aRow) {
@@ -364,6 +370,15 @@ foreach ($rResult as $aRow) {
 
         $row[] = $_data;
     }
+
+    $footer_data['total_co_value'] += $aRow['subtotal'];
+    $footer_data['total_tax_value'] += $total_tax;
+    $footer_data['total_co_value_included_tax'] += $aRow['total'];
     $output['aaData'][] = $row;
 
 }
+
+foreach ($footer_data as $key => $total) {
+    $footer_data[$key] = app_format_money($total, $base_currency->symbol);
+}
+$output['sums'] = $footer_data;

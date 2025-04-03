@@ -108,34 +108,54 @@
 					<div class="panel_s">
 						<div class="panel-body">
 	                    <?php echo form_hidden('pur_orderid',$pur_orderid); ?>
-	                    <?php $table_data = array(
-                           _l('changee_order'),
-                           _l('vendor'),
-                           _l('order_date'),
-                           _l('group_pur'),
-                           _l('sub_groups_pur'),
-                           _l('area_pur'),
-                           _l('type'),
-                           _l('project'),
-                           _l('department'),
-                           _l('co_description'),
-                           _l('co_value'),
-                           _l('tax_value'),
-                           _l('co_value_included_tax'),
-                           _l('tags'),
-                           _l('approval_status'),
-                           // _l('delivery_date'),
-                           // _l('delivery_status'),
-                           _l('payment_status'),
-                           _l('convert_expense'),
-                           );
-                       $custom_fields = get_custom_fields('pur_order',array('show_on_table'=>1));
-                    
-                        foreach($custom_fields as $field){
-                         array_push($table_data,$field['name']);
-                        }
-                       render_datatable($table_data,'table_pur_order');
-                        ?>
+	                    
+                        <div class="">
+                           <table class="dt-table-loading table table-table_pur_order">
+                              <thead>
+                                 <tr>
+                                    <th><?php echo _l('changee_order'); ?></th>
+                                    <th><?php echo _l('vendor'); ?></th>
+                                    <th><?php echo _l('order_date'); ?></th>
+                                    <th><?php echo _l('group_pur'); ?></th>
+                                    <th><?php echo _l('sub_groups_pur'); ?></th>
+                                    <th><?php echo _l('area_pur'); ?></th>
+                                    <th><?php echo _l('type'); ?></th>
+                                    <th><?php echo _l('project'); ?></th>
+                                    <th><?php echo _l('department'); ?></th>
+                                    <th><?php echo _l('co_description'); ?></th>
+                                    <th><?php echo _l('co_value'); ?></th>
+                                    <th><?php echo _l('tax_value'); ?></th>
+                                    <th><?php echo _l('co_value_included_tax'); ?></th>
+                                    <th><?php echo _l('tags'); ?></th>
+                                    <th><?php echo _l('approval_status'); ?></th>
+                                    <th><?php echo _l('payment_status'); ?></th>
+                                    <th><?php echo _l('convert_expense'); ?></th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                              </tbody>
+                              <tfoot>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td class="total_co_value"></td>
+                                 <td class="total_tax_value"></td>
+                                 <td class="total_co_value_included_tax"></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                              </tfoot>
+                           </table>
+                        </div>                    
+
 							
 						</div>
 					</div>
