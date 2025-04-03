@@ -308,8 +308,8 @@ foreach ($rResult as $aRow) {
     $footer_data['total_vendor_submitted_amount_without_tax'] += $aRow['vendor_submitted_amount_without_tax'];
     $footer_data['total_vendor_submitted_tax_amount'] += $aRow['vendor_submitted_tax_amount'];
     $footer_data['total_final_certified_amount'] += $aRow['final_certified_amount'];
-    $footer_data['total_payment_made'] += $all_payment_made;
-    $footer_data['total_bil_tds'] += $all_bil_tds;
+    $footer_data['total_payment_made'] = $all_payment_made;
+    $footer_data['total_bil_tds'] = $all_bil_tds;
     $footer_data['total_bil_total'] += $aRow['bil_total'];
     $footer_data['total_ril_previous'] += $aRow['ril_previous'];
     $footer_data['total_ril_this_bill'] += $aRow['ril_this_bill'];
