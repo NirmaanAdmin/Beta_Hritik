@@ -16,6 +16,15 @@ var hidden_columns = [2,4,5,6];
                 .responsive.recalc();
         });
     });
+
+    $('.table-pur_estimates').on('draw.dt', function () {
+        var reportsTable = $(this).DataTable();
+        var sums = reportsTable.ajax.json().sums;
+        $(this).find('tfoot').addClass('bold');
+        $(this).find('tfoot td').eq(0).html("Total (Per Page)");
+        $(this).find('tfoot td.total_estimate_amount').html(sums.total_estimate_amount);
+        $(this).find('tfoot td.total_estimate_tax').html(sums.total_estimate_tax);
+    });
 })(jQuery);
 
 function init_pur_estimate(id) {

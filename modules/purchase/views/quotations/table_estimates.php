@@ -104,6 +104,11 @@ $rResult = $result['rResult'];
 // print_r($rResult);
 // die;
 
+$footer_data = [
+    'total_estimate_amount' => 0,
+    'total_estimate_tax' => 0,
+];
+
 foreach ($rResult as $aRow) {
     $row = [];
 
@@ -171,8 +176,15 @@ foreach ($rResult as $aRow) {
 
     $row = hooks()->apply_filters('estimates_table_row_data', $row, $aRow);
 
+    $footer_data['total_estimate_amount'] += $aRow[db_prefix() . 'pur_estimates.total'];
+    $footer_data['total_estimate_tax'] += $aRow[db_prefix() . 'pur_estimates.total_tax'];
     $output['aaData'][] = $row;
 }
+
+foreach ($footer_data as $key => $total) {
+    $footer_data[$key] = app_format_money($total, $base_currency->symbol);
+}
+$output['sums'] = $footer_data;
 
 echo json_encode($output);
 die();
