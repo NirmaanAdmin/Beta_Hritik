@@ -50,6 +50,7 @@
     $(this).find('tfoot td.total_vendor_submitted_amount_without_tax').html(sums.total_vendor_submitted_amount_without_tax);
     $(this).find('tfoot td.total_vendor_submitted_tax_amount').html(sums.total_vendor_submitted_tax_amount);
     $(this).find('tfoot td.total_final_certified_amount').html(sums.total_final_certified_amount);
+    $(this).find('tfoot td.total_payment_made').html(sums.total_payment_made);
     $(this).find('tfoot td.total_bil_tds').html(sums.total_bil_tds);
     $(this).find('tfoot td.total_bil_total').html(sums.total_bil_total);
     $(this).find('tfoot td.total_ril_previous').html(sums.total_ril_previous);

@@ -120,10 +120,13 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
 $output  = $result['output'];
 $rResult = $result['rResult'];
 
+$all_bil_tds = 0;
+$all_payment_made = 0;
 $footer_data = [
     'total_vendor_submitted_amount_without_tax' => 0,
     'total_vendor_submitted_tax_amount' => 0,
     'total_final_certified_amount' => 0,
+    'total_payment_made' => 0,
     'total_bil_tds' => 0,
     'total_bil_total' => 0,
     'total_ril_previous' => 0,
@@ -247,6 +250,7 @@ foreach ($rResult as $aRow) {
             if(!empty($bil_payment_details)) {
                 $_data = '';
                 foreach ($bil_payment_details as $bkey => $bvalue) {
+                    $all_payment_made = $all_payment_made + $bvalue['amount'];
                     $_data .= '<div class="input-group all_payment_made" data-id="' . $aRow['id'] . '">
                         <input type="number" class="form-control payment-made-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['amount'] . '" style="width: 138px">
                         <div class="input-group-addon">
@@ -267,6 +271,7 @@ foreach ($rResult as $aRow) {
             if(!empty($bil_payment_details)) {
                 $_data = '';
                 foreach ($bil_payment_details as $bkey => $bvalue) {
+                    $all_bil_tds = $all_bil_tds + $bvalue['tds'];
                     $_data .= '<div class="input-group all_payment_tds" data-id="' . $aRow['id'] . '">
                         <input type="number" class="form-control payment-tds-input" data-payment-id="' . $bvalue['id'] . '" data-id="' . $aRow['id'] . '" value="' . $bvalue['tds'] . '" style="width: 138px">
                         <div class="input-group-addon">
@@ -303,7 +308,8 @@ foreach ($rResult as $aRow) {
     $footer_data['total_vendor_submitted_amount_without_tax'] += $aRow['vendor_submitted_amount_without_tax'];
     $footer_data['total_vendor_submitted_tax_amount'] += $aRow['vendor_submitted_tax_amount'];
     $footer_data['total_final_certified_amount'] += $aRow['final_certified_amount'];
-    $footer_data['total_bil_tds'] += $aRow['bil_tds'];
+    $footer_data['total_payment_made'] += $all_payment_made;
+    $footer_data['total_bil_tds'] += $all_bil_tds;
     $footer_data['total_bil_total'] += $aRow['bil_total'];
     $footer_data['total_ril_previous'] += $aRow['ril_previous'];
     $footer_data['total_ril_this_bill'] += $aRow['ril_this_bill'];
