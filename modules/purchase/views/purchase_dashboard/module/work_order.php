@@ -103,18 +103,13 @@
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
-	  		<div class="col-md-12">
+	  		<div class="col-md-3">
 	  			<p class="mbot15 dash-sub-title">Pie Chart for WO Approval Status</p>
 	  			<div style="width: 100%; height: 430px; display: flex; justify-content: center;">
 	  				<canvas id="pieChartForPOApprovalStatus"></canvas>
 	  			</div>
 	  		</div>
-	  	</div>
-	  </div>
-
-	  <div class="col-md-12 mtop20">
-	  	<div class="row">
-	  		<div class="col-md-12">
+	  		<div class="col-md-9">
 	  			<p class="mbot15 dash-sub-title">Line Chart showing WO trends over time</p>
 	  			<div style="width: 100%; height: 400px;">
 				  <canvas id="lineChartPOTrendsOverTime"></canvas>
@@ -132,21 +127,16 @@
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
-	  		<div class="col-md-12">
-	  			<p class="mbot15 dash-sub-title">Bar Chart for Top 10 Vendors by WO Value</p>
-	  			<div style="width: 100%; height: 400px;">
-				  <canvas id="barChartTopVendors"></canvas>
-				</div>
-	  		</div>
-	  	</div>
-	  </div>
-
-	  <div class="col-md-12 mtop20">
-	  	<div class="row">
-	  		<div class="col-md-12">
+	  		<div class="col-md-4">
 	  			<p class="mbot15 dash-sub-title">Pie Chart for WO Value Share by Vendor</p>
 	  			<div style="width: 100%; height: 520px; display: flex; justify-content: center;">
 				  <canvas id="pieChartTopVendors"></canvas>
+				</div>
+	  		</div>
+	  		<div class="col-md-8">
+	  			<p class="mbot15 dash-sub-title">Bar Chart for Top 10 Vendors by WO Value</p>
+	  			<div style="width: 100%; height: 400px;">
+				  <canvas id="barChartTopVendors"></canvas>
 				</div>
 	  		</div>
 	  	</div>
@@ -161,22 +151,17 @@
 
 	  <div class="col-md-12 mtop20">
 	  	<div class="row">
-	  		<div class="col-md-12">
-	  			<p class="mbot15 dash-sub-title">Column Chart for WO Value vs. Tax Value</p>
-				<div style="width: 100%; height: 400px;">
-			      <canvas id="barChartPOVsTax"></canvas>
-			    </div>
-	  		</div>
-	  	</div>
-	  </div>
-
-	  <div class="col-md-12 mtop20">
-	  	<div class="row">
-	  		<div class="col-md-12">
+	  		<div class="col-md-3">
 	  			<p class="mbot15 dash-sub-title">Pie Chart for Tax Contribution per Budget Head</p>
 	  			<div style="width: 100%; height: 490px; display: flex; justify-content: center;">
 	  				<canvas id="pieChartForTaxByBudget"></canvas>
 	  			</div>
+	  		</div>
+	  		<div class="col-md-9">
+	  			<p class="mbot15 dash-sub-title">Column Chart for WO Value vs. Tax Value</p>
+				<div style="width: 100%; height: 400px;">
+			      <canvas id="barChartPOVsTax"></canvas>
+			    </div>
 	  		</div>
 	  	</div>
 	  </div>
