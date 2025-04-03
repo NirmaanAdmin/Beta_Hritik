@@ -55,6 +55,16 @@ var expenseDropzone;
         }));
     }
 
+    $('.table-table_pur_order').on('draw.dt', function () {
+        var reportsTable = $(this).DataTable();
+        var sums = reportsTable.ajax.json().sums;
+        $(this).find('tfoot').addClass('bold');
+        $(this).find('tfoot td').eq(0).html("Total (Per Page)");
+        $(this).find('tfoot td.total_po_value').html(sums.total_po_value);
+        $(this).find('tfoot td.total_tax_value').html(sums.total_tax_value);
+        $(this).find('tfoot td.total_po_value_included_tax').html(sums.total_po_value_included_tax);
+    });
+
     appValidateForm($('#pur_order-expense-form'), {
         expense_name: 'required',
         category: 'required',
