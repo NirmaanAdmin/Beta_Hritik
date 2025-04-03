@@ -207,28 +207,52 @@
 
                         </div>
                      </div>
-                     <?php
-                     // Updated table headers to include "Completion Date"
-                     $table_data = array(
-                        _l('order_scope'),
-                        _l('rli_filter'),
-                        _l('contractor'),
-                        _l('order_date'),
-                        _l('completion_date'),
-                        _l('budget_ro_projection'),
-                        _l('order_value'),
-                        _l('committed_contract_amount'),
-                        _l('change_order_amount'),
-                        _l('total_rev_contract_value'),
-                        _l('anticipate_variation'),
-                        _l('cost_to_complete'),
-                        _l('final_certified_amount'),
-                        _l('category'),
-                        _l('group_pur'),
-                        _l('remarks')
-                     );
-                     render_datatable($table_data, 'table_order_tracker');
-                     ?>
+                     
+                     <div class="">
+                        <table class="dt-table-loading table table-table_order_tracker">
+                           <thead>
+                              <tr>
+                                 <th><?php echo _l('order_scope'); ?></th>
+                                 <th><?php echo _l('rli_filter'); ?></th>
+                                 <th><?php echo _l('contractor'); ?></th>
+                                 <th><?php echo _l('order_date'); ?></th>
+                                 <th><?php echo _l('completion_date'); ?></th>
+                                 <th><?php echo _l('budget_ro_projection'); ?></th>
+                                 <th><?php echo _l('order_value'); ?></th>
+                                 <th><?php echo _l('committed_contract_amount'); ?></th>
+                                 <th><?php echo _l('change_order_amount'); ?></th>
+                                 <th><?php echo _l('total_rev_contract_value'); ?></th>
+                                 <th><?php echo _l('anticipate_variation'); ?></th>
+                                 <th><?php echo _l('cost_to_complete'); ?></th>
+                                 <th><?php echo _l('final_certified_amount'); ?></th>
+                                 <th><?php echo _l('category'); ?></th>
+                                 <th><?php echo _l('group_pur'); ?></th>
+                                 <th><?php echo _l('remarks'); ?></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                           </tbody>
+                           <tfoot>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td class="total_budget_ro_projection"></td>
+                              <td class="total_order_value"></td>
+                              <td class="total_committed_contract_amount"></td>
+                              <td class="total_change_order_amount"></td>
+                              <td class="total_rev_contract_value"></td>
+                              <td class="total_anticipate_variation"></td>
+                              <td class="total_cost_to_complete"></td>
+                              <td class="total_final_certified_amount"></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                           </tfoot>
+                        </table>
+                     </div>
+
                   </div>
                </div>
             </div>

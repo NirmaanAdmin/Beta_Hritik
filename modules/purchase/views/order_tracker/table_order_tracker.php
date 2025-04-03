@@ -225,6 +225,17 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
 $output  = $result['output'];
 $rResult = $result['rResult'];
 
+$footer_data = [
+    'total_budget_ro_projection' => 0,
+    'total_order_value' => 0,
+    'total_committed_contract_amount' => 0,
+    'total_change_order_amount' => 0,
+    'total_rev_contract_value' => 0,
+    'total_anticipate_variation' => 0,
+    'total_cost_to_complete' => 0,
+    'total_final_certified_amount' => 0,
+];
+
 $sr = 1;
 foreach ($rResult as $aRow) {
    $row = [];
@@ -388,6 +399,19 @@ foreach ($rResult as $aRow) {
       $row[] = $_data;
    }
 
+   $footer_data['total_budget_ro_projection'] += $aRow['budget'];
+   $footer_data['total_order_value'] += $aRow['order_value'];
+   $footer_data['total_committed_contract_amount'] += $aRow['total'];
+   $footer_data['total_change_order_amount'] += $aRow['co_total'];
+   $footer_data['total_rev_contract_value'] += $aRow['total_rev_contract_value'];
+   $footer_data['total_anticipate_variation'] += $aRow['anticipate_variation'];
+   $footer_data['total_cost_to_complete'] += $aRow['cost_to_complete'];
+   $footer_data['total_final_certified_amount'] += $aRow['final_certified_amount'];
    $output['aaData'][] = $row;
    $sr++;
 }
+
+foreach ($footer_data as $key => $total) {
+    $footer_data[$key] = app_format_money($total, $base_currency->symbol);
+}
+$output['sums'] = $footer_data;
