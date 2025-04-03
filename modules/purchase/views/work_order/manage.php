@@ -162,31 +162,47 @@
                         </div>
                      </div>
                      <?php echo form_hidden('work_orderid', $work_orderid); ?>
-                     <?php $table_data = array(
-                        _l('work_order'),
-                        _l('vendor'),
-                        _l('wo_description'),
-                        _l('order_date'),
-                        _l('group_pur'),
-                        //_l('sub_groups_pur'),
-                        _l('type'),
-                        _l('project'),
-                        _l('department'),
-                        _l('approval_status'),
-                        // _l('convert_expense'),
-                        _l('wo_value'),
-                        _l('tax_value'),
-                        _l('wo_value_included_tax'),
-                        _l('tags'),
-                        _l('payment_status'),
-                     );
-                     $custom_fields = get_custom_fields('pur_order', array('show_on_table' => 1));
-
-                     foreach ($custom_fields as $field) {
-                        array_push($table_data, $field['name']);
-                     }
-                     render_datatable($table_data, 'table_wo_order');
-                     ?>
+                     
+                     <div class="">
+                        <table class="dt-table-loading table table-table_wo_order">
+                           <thead>
+                              <tr>
+                                 <th><?php echo _l('work_order'); ?></th>
+                                 <th><?php echo _l('vendor'); ?></th>
+                                 <th><?php echo _l('wo_description'); ?></th>
+                                 <th><?php echo _l('order_date'); ?></th>
+                                 <th><?php echo _l('group_pur'); ?></th>
+                                 <th><?php echo _l('type'); ?></th>
+                                 <th><?php echo _l('project'); ?></th>
+                                 <th><?php echo _l('department'); ?></th>
+                                 <th><?php echo _l('approval_status'); ?></th>
+                                 <th><?php echo _l('wo_value'); ?></th>
+                                 <th><?php echo _l('tax_value'); ?></th>
+                                 <th><?php echo _l('wo_value_included_tax'); ?></th>
+                                 <th><?php echo _l('tags'); ?></th>
+                                 <th><?php echo _l('payment_status'); ?></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                           </tbody>
+                           <tfoot>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td class="total_wo_value"></td>
+                              <td class="total_tax_value"></td>
+                              <td class="total_wo_value_included_tax"></td>
+                              <td></td>
+                              <td></td>
+                           </tfoot>
+                        </table>
+                     </div>
 
                   </div>
                </div>

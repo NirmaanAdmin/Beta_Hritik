@@ -163,6 +163,13 @@ $rResult = $result['rResult'];
 // echo '<pre>';
 // print_r($rResult);
 // die;
+
+$footer_data = [
+    'total_wo_value' => 0,
+    'total_tax_value' => 0,
+    'total_wo_value_included_tax' => 0,
+];
+
 $this->ci->load->model('purchase/purchase_model');
 $sr = 1;
 foreach ($rResult as $aRow) {
@@ -272,6 +279,15 @@ foreach ($rResult as $aRow) {
 
         $row[] = $_data;
     }
+
+    $footer_data['total_wo_value'] += $aRow['subtotal'];
+    $footer_data['total_tax_value'] += $total_tax;
+    $footer_data['total_wo_value_included_tax'] += $aRow['total'];
     $output['aaData'][] = $row;
     $sr++;
 }
+
+foreach ($footer_data as $key => $total) {
+    $footer_data[$key] = app_format_money($total, $base_currency->symbol);
+}
+$output['sums'] = $footer_data;
