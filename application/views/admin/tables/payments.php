@@ -50,6 +50,10 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
 $output  = $result['output'];
 $rResult = $result['rResult'];
 
+$footer_data = [
+    'total_payments_amount' => 0,
+];
+
 $this->ci->load->model('payment_modes_model');
 $payment_gateways = $this->ci->payment_modes_model->get_payment_gateways(true);
 
@@ -103,5 +107,11 @@ foreach ($rResult as $aRow) {
 
     $row['DT_RowClass'] = 'has-row-options';
 
+    $footer_data['total_payments_amount'] += $aRow['amount'];
     $output['aaData'][] = $row;
 }
+
+foreach ($footer_data as $key => $total) {
+    $footer_data[$key] = app_format_money($total, $aRow['currency_name']);
+}
+$output['sums'] = $footer_data;
