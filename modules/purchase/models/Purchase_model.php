@@ -18886,4 +18886,14 @@ class Purchase_model extends App_Model
         $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
         return $attachments;
     }
+    
+    public function get_work_attachments_with_id($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->order_by('dateadded', 'desc');
+        $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
+        return $attachments;
+    }
+    
 }
+

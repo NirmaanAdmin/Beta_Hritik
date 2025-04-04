@@ -12679,4 +12679,18 @@ class purchase extends AdminController
         }
         $this->load->view('purchase_order/_file_new', $data);
     }
+
+    public function file_work_preview($id, $rel_id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->purchase_model->get_work_attachments_with_id($id);
+    
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('work_order/_file_new', $data);
+    }
+    
 }
