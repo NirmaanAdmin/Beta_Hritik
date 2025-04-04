@@ -14,7 +14,8 @@ return App_table::find('invoices')
             'number',
             'title',
             'total',
-            'YEAR(date) as year',
+            // 'YEAR(date) as year',
+            'total_left_to_pay',
             'date',
             get_sql_select_client_company(),
             db_prefix() . 'projects.name as project_name',
@@ -77,6 +78,16 @@ return App_table::find('invoices')
             'recurring',
             'deleted_customer_name',
             'title',
+            '(
+                SELECT 
+                    ROUND(
+                        inv.total
+                        - IFNULL((SELECT SUM(p.amount) FROM ' . db_prefix() . 'invoicepaymentrecords p WHERE p.invoiceid = inv.id), 0)
+                        - IFNULL((SELECT SUM(c.amount) FROM ' . db_prefix() . 'credits c WHERE c.invoice_id = inv.id), 0),
+                    2)
+                FROM ' . db_prefix() . 'invoices inv
+                WHERE inv.id = ' . db_prefix() . 'invoices.id
+            ) AS total_left_to_pay',
         ]);
         $output  = $result['output'];
         $rResult = $result['rResult'];
@@ -116,7 +127,7 @@ return App_table::find('invoices')
 
             $row[] = e(app_format_money($aRow['total'], $aRow['currency_name']));
 
-            $row[] = e(app_format_money($total_left_to_pay, $aRow['currency_name']));
+            $row[] = e(app_format_money($aRow['total_left_to_pay'], $aRow['currency_name']));
 
             // $row[] = e($aRow['year']);
 
