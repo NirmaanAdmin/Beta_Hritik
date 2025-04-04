@@ -412,7 +412,7 @@
 </div>
 <div id="modal_wrapper"></div>
 <div id="change_serial_modal_wrapper"></div>
-
+<input type="hidden" id="apply_to_all_value" value="">
 <?php init_tail(); ?>
 <?php require 'modules/warehouse/assets/js/goods_delivery_js.php'; ?>
 </body>
@@ -426,7 +426,7 @@
     userSelectedVendorOptions[itemKey] = selectedValues;
   }
 
-  $(document).ready(function() {
+  $(document).ready(function() { 
     let selectedVendorOptions = {}; // Store user-selected vendors
 
     // Capture vendor selection changes
@@ -436,12 +436,13 @@
 
       // Store selection for the specific itemKey
       selectedVendorOptions[itemKey] = selectedValues;
+      
     });
 
     // Handle "Apply to All" button click
     $(document).on("click", ".apply-to-all-btn", function() {
       let itemKey = $(this).data("item-key");
-
+      $('#apply_to_all_value').val('1');
       if (!selectedVendorOptions[itemKey] || selectedVendorOptions[itemKey].length === 0) {
         alert("Please select at least one vendor before applying.");
         return;
@@ -456,6 +457,7 @@
 
       // Refresh all dropdowns (if using selectpicker or similar plugin)
       $(".vendor_list").selectpicker("refresh");
+      $('#apply_to_all_value').val('0');
     });
   });
 </script>

@@ -125,6 +125,7 @@
           vendor: vendor,
           item_key: row.find("input.ids").attr("data-id"),
           options: currentValues,
+          apply_to_all: $('#apply_to_all_value').val(),
         };
 
         $.post(admin_url + "warehouse/get_vendor_issued_data", data)

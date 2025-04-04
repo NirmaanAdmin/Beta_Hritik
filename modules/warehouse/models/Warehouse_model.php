@@ -19926,15 +19926,25 @@ class Warehouse_model extends App_Model
 
 	public function get_vendor_issued_data($data)
 	{
+		
 		$response = array();
 		$options = isset($data['options']) ? $data['options'] : array();
 		// / Generate quantities HTML for each vendor in options
 		$quantities_html = $lot_number_html = $issued_date_html = '';
 		foreach ($options as $vendor) {
-			$data['vendor'] = $vendor;
-			$quantities_html .= $this->get_quantities_html($data);
-			$lot_number_html .= $this->get_lot_number_html($data);
-			$issued_date_html .= $this->get_issued_date_html($data);
+			
+			if($data['vendor'] == $vendor && $data['apply_to_all'] == 0){
+				$data['vendor'] = $vendor;
+				$quantities_html .= $this->get_quantities_html($data);
+				$lot_number_html .= $this->get_lot_number_html($data);
+				$issued_date_html .= $this->get_issued_date_html($data);
+			}elseif($data['apply_to_all'] == 1){
+				$data['vendor'] = $vendor;
+				$quantities_html .= $this->get_quantities_html($data);
+				$lot_number_html .= $this->get_lot_number_html($data);
+				$issued_date_html .= $this->get_issued_date_html($data);
+			}
+			
 		}
 		$response['quantities_html'] = $quantities_html;
 		$response['lot_number_html'] = $lot_number_html;

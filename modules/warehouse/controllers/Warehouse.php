@@ -1592,7 +1592,7 @@ class warehouse extends AdminController
 		$goods_delivery_row_template = '';
 		if (is_numeric($id)) {
 			$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
-			if ($goods_delivery->approval == 0) {
+			if ($goods_delivery->approval == 0) { 
 				$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
 			}
 		} else {
@@ -9188,7 +9188,7 @@ class warehouse extends AdminController
 			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
 		}
 	}
-
+ 
 	public function delete_attachment($id)
 	{
 		$this->warehouse_model->delete_inventory_attachment($id);
