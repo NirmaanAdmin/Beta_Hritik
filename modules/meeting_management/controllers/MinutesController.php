@@ -361,4 +361,12 @@ class MinutesController extends AdminController
         }
         $this->load->view('meeting_management/_file', $data);
     }
+
+    public function update_minutes_of_meeting()
+    {
+        $data = $this->input->post();
+        $this->Meeting_model->update_minutes_of_meeting($data);
+        echo json_encode(['success' => true]);
+        die();
+    }
 }

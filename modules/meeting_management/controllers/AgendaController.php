@@ -130,4 +130,12 @@ class AgendaController extends AdminController
         // Output the PDF to the browser
         $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => 1));  // Download the PDF
     }
+
+    public function update_mom_list()
+    {
+        $data = $this->input->post();
+        $this->Meeting_model->update_mom_list($data);
+        echo json_encode(['success' => true]);
+        die();
+    }
 }

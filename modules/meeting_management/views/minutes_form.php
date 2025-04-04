@@ -404,6 +404,18 @@
          $(this).closest('.input-group').remove();
          updateRemoveButtons(); // Update visibility of "Remove" buttons
       });
+
+      setInterval(function() {
+        update_minutes_of_meeting();
+      }, 5000);
+
+      function update_minutes_of_meeting() {
+         var data = {};
+         data.id = <?php echo $agenda_id; ?>;
+         data.minutes = tinymce.get('minutes').getContent();
+         $.post(admin_url + 'meeting_management/minutesController/update_minutes_of_meeting', data).done(function(response){
+         });
+      }
    });
 </script>
 

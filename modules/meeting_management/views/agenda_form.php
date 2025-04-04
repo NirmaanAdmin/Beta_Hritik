@@ -155,6 +155,18 @@
                $('#project_id').append('<option value=""><?php echo _l("select_project"); ?></option>');
             }
          });
+
+         setInterval(function() {
+           update_mom_list();
+         }, 5000);
+
+         function update_mom_list() {
+            var data = {};
+            data.id = <?php echo $agenda->id; ?>;
+            data.agenda = tinymce.get('agenda').getContent();
+            $.post(admin_url + 'meeting_management/agendaController/update_mom_list', data).done(function(response){
+            });
+         }
       });
    </script>
 

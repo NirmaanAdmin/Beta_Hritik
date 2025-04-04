@@ -381,4 +381,22 @@ class Meeting_model extends App_Model
         $participants = $this->db->get(db_prefix() . 'meeting_participants')->result_array();
         return $participants;
     }
+
+    public function update_mom_list($data)
+    {
+        $id = $data['id'];
+        $agenda = $data['agenda'];
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'agendas', ['agenda' => $agenda]);
+        return true;
+    }
+
+    public function update_minutes_of_meeting($data)
+    {
+        $id = $data['id'];
+        $minutes = $data['minutes'];
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'meeting_management', ['agenda' => $minutes]);
+        return true;
+    }
 }
