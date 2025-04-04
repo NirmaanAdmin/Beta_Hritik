@@ -4871,7 +4871,7 @@ class purchase extends AdminController
         }
     }
 
-     /**
+    /**
      *  wo report
      *  
      *  @return json
@@ -12607,15 +12607,15 @@ class purchase extends AdminController
         $data['tab'][] = 'order_tracker';
         $data['tab'][] = 'purchase_tracker';
 
-        if($data['group'] == 'work_order') {
+        if ($data['group'] == 'work_order') {
             $data['title'] = _l('work_order');
             $data['vendors'] = $this->purchase_model->get_vendor();
             $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
-        } else if($data['group'] == 'payment_certificate') {
+        } else if ($data['group'] == 'payment_certificate') {
             $data['title'] = _l('payment_certificate');
-        } else if($data['group'] == 'order_tracker') {
+        } else if ($data['group'] == 'order_tracker') {
             $data['title'] = _l('order_tracker');
-        } else if($data['group'] == 'purchase_tracker') {
+        } else if ($data['group'] == 'purchase_tracker') {
             $data['title'] = _l('purchase_tracker');
         } else {
             $data['title'] = _l('purchase_order');
@@ -12637,14 +12637,14 @@ class purchase extends AdminController
         $data['tab'][] = 'vendor_bills';
         $data['tab'][] = 'vendor_payment_tracker';
 
-        if($data['group'] == 'vendor_bills') {
+        if ($data['group'] == 'vendor_bills') {
             $data['title'] = _l('vendor_bills');
-        } else if($data['group'] == 'vendor_payment_tracker') {
+        } else if ($data['group'] == 'vendor_payment_tracker') {
             $data['title'] = _l('vendor_payment_tracker');
         } else {
             $data['title'] = _l('ril_invoices');
             $data['group'] = 'ril_invoices';
-        } 
+        }
 
         $data['tabs']['view'] = 'sales_dashboard/report/' . $data['group'];
 
@@ -12665,5 +12665,18 @@ class purchase extends AdminController
         $result = $this->purchase_model->get_work_order_dashboard($data);
         echo json_encode($result);
         die;
+    }
+
+    public function file_purchase_preview($id, $rel_id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->purchase_model->get_purchase_attachments_with_id($id);
+    
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('purchase_order/_file_new', $data);
     }
 }

@@ -705,32 +705,56 @@ if ($estimate->currency != 0) {
 
             <div role="tabpanel" class="tab-pane" id="attachment">
                <?php
+               $file_html = '';
                if (isset($attachments) && count($attachments) > 0) {
+                  $file_html .= '<hr /><p class="bold text-muted">' . _l('Purchase Attachments') . '</p>';
+
                   foreach ($attachments as $value) {
-                     echo '<div class="col-md-6" style="padding-bottom: 10px">';
                      $path = get_upload_path_by_type('purchase') . 'pur_order/' . $value['rel_id'] . '/' . $value['file_name'];
                      $is_image = is_image($path);
-                     if ($is_image) {
-                        echo '<div class="preview_image">';
-                     }
-               ?>
-                     <a href="<?php echo site_url('download/file/purchase/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
-                        <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
-                        <?php if ($is_image) { ?>
-                           <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
-                        <?php } ?>
-                     </a>
-                     <?php
 
-                     echo '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
-                     ?>
-                     <?php if ($is_image) {
-                        echo '</div>';
-                     } ?>
-               <?php echo '</div>';
-                  }
-               } ?>
+                     $download_url = site_url('download/file/purchase/' . $value['id']);
+
+                     $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="' . $value['id'] . '">
+            <div class="col-md-8">';
+
+                     // Preview button for images
+                     // if ($is_image) {
+                        $file_html .= '<a name="preview-purchase-btn" 
+                onclick="preview_purchase_attachment(this); return false;" 
+                rel_id="' . $value['rel_id'] . '" 
+                id="' . $value['id'] . '" 
+                href="javascript:void(0);" 
+                class="mbot10 mright5 btn btn-success pull-left" 
+                data-toggle="tooltip" 
+                title="' . _l('preview_file') . '">
+                <i class="fa fa-eye"></i>
+            </a>';
+                     // }
+
+                     $file_html .= '<div class="pull-left"><i class="' . get_mime_class($value['filetype']) . '"></i></div>
+            <a href="' . $download_url . '" target="_blank" download>
+                ' . $value['file_name'] . '
+            </a>
+            <br />
+            <small class="text-muted">' . $value['filetype'] . '</small>
             </div>
+            <div class="col-md-4 text-right">';
+
+                     // Delete button with permission check
+                     if ($value['staffid'] == get_staff_user_id() || is_admin()) {
+                        $file_html .= '<a href="' . admin_url('purchase/delete_attachment/' . $value['id']) . '" class="text-danger _delete"><i class="fa fa-times"></i></a>';
+                     }
+
+                     $file_html .= '</div></div>';
+                  }
+
+                  $file_html .= '<hr />';
+                  echo pur_html_entity_decode($file_html);
+               }
+               ?>
+            </div>
+            <div id="purchase_file_data"></div>
             <div role="tabpanel" class="tab-pane ptop10" id="changes">
                <div class="row">
                   <div class="col-md-12">
@@ -897,7 +921,7 @@ if ($estimate->currency != 0) {
                <div class="clearfix"></div>
                <table class="table dt-table payment-certificate-table">
                   <thead>
-                     <th><?php echo _l('serial_no'); ?></th> 
+                     <th><?php echo _l('serial_no'); ?></th>
                      <th><?php echo _l('po_no'); ?></th>
                      <th><?php echo _l('convert'); ?></th>
                      <th><?php echo _l('options'); ?></th>
@@ -1127,8 +1151,6 @@ if ($estimate->currency != 0) {
          });
       });
    });
-
-  
 </script>
 <script>
    document.getElementById('export-csv').addEventListener('click', function() {
@@ -1164,7 +1186,6 @@ if ($estimate->currency != 0) {
       link.click();
       document.body.removeChild(link);
    });
-   
 </script>
 <script>
    $(document).ready(function() {
@@ -1176,4 +1197,27 @@ if ($estimate->currency != 0) {
          }
       });
    });
+</script>
+<script>
+   function preview_purchase_attachment(invoker) {
+      "use strict";
+      var id = $(invoker).attr('id');
+      var rel_id = $(invoker).attr('rel_id');
+      view_preview_purchase_attachment(id, rel_id);
+   }
+
+   function view_preview_purchase_attachment(id, rel_id) {
+      "use strict";
+      $('#purchase_file_data').empty();
+      $("#purchase_file_data").load(admin_url + 'purchase/file_purchase_preview/' + id + '/' + rel_id, function(response, status, xhr) {
+         if (status == "error") {
+            alert_float('danger', xhr.statusText);
+         }
+      });
+   }
+
+   function close_modal_preview() {
+      "use strict";
+      $('._project_file').modal('hide');
+   }
 </script>
