@@ -55,14 +55,14 @@
                      <?php
 
                      $from_date_type_filter = get_module_filter($module_name, 'from_date');
-                     $from_date_type_filter_val = !empty($from_date_type_filter) ?  $from_date_type_filter->filter_value : [];
+                     $from_date_type_filter_val = !empty($from_date_type_filter) ?  $from_date_type_filter->filter_value : '';
 
                      echo render_date_input('from_date', _l('from_date'), $from_date_type_filter_val); ?>
                   </div>
                   <div class="col-md-2">
                      <?php 
                      $to_date_type_filter = get_module_filter($module_name, 'to_date');
-                     $to_date_type_filter_val = !empty($to_date_type_filter) ?  $to_date_type_filter->filter_value : [];
+                     $to_date_type_filter_val = !empty($to_date_type_filter) ?  $to_date_type_filter->filter_value : '';
                      echo render_date_input('to_date', _l('to_date'), $to_date_type_filter_val); ?>
                   </div>
                   <?php
