@@ -78,6 +78,10 @@ return App_table::find('expenses')
         $output  = $result['output'];
         $rResult = $result['rResult'];
 
+        $footer_data = [
+            'total_expense_amount' => 0,
+        ];
+
         $this->ci->load->model('payment_modes_model');
 
         foreach ($rResult as $aRow) {
@@ -188,8 +192,14 @@ return App_table::find('expenses')
 
             $row = hooks()->apply_filters('expenses_table_row_data', $row, $aRow);
 
+            $footer_data['total_expense_amount'] += $total;
             $output['aaData'][] = $row;
         }
+
+        foreach ($footer_data as $key => $exp_total) {
+            $footer_data[$key] = app_format_money($exp_total, $aRow['currency_name']);
+        }
+        $output['sums'] = $footer_data;
         return $output;
     })->setRules([
         App_table_filter::new('expense_name', 'TextRule')->label(_l('expense_name')),

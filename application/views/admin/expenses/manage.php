@@ -133,6 +133,14 @@ $(function() {
 
     init_expense();
 
+    $('.table-expenses').on('draw.dt', function () {
+        var reportsTable = $(this).DataTable();
+        var sums = reportsTable.ajax.json().sums;
+        $(this).find('tfoot').addClass('bold');
+        $(this).find('tfoot td').eq(1).html("Total (Per Page)");
+        $(this).find('tfoot td.total_expense_amount').html(sums.total_expense_amount);
+    });
+
     $('#expense_convert_helper_modal').on('show.bs.modal', function() {
         var emptyNote = $('#tab_expense').attr('data-empty-note');
         var emptyName = $('#tab_expense').attr('data-empty-name');
