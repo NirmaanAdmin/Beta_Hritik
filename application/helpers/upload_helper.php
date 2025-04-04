@@ -657,20 +657,24 @@ function handle_purchase_item_attachment_array($related, $id, $item_path, $index
  */
 function handle_changee_attachments_array($related, $id, $index_name = 'attachments')
 {
+    // Ensure the upload directory for "changee" exists
     if (!is_dir(get_upload_path_by_type('changee'))) {
         mkdir(get_upload_path_by_type('changee'), 0755);
     }
     if (!is_dir(get_upload_path_by_type('changee') . $related)) {
         mkdir(get_upload_path_by_type('changee') . $related, 0755);
     }
+
     $uploaded_files = [];
     $path           = get_upload_path_by_type('changee') . $related . '/' . $id . '/';
     $CI             = &get_instance();
 
+    // Check if files are uploaded and process them
     if (
-        isset($_FILES['items[1][attachments_new][2]']['name'])
+        isset($_FILES[$index_name]['name'])
         && ($_FILES[$index_name]['name'] != '' || is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
     ) {
+        // Ensure $_FILES[$index_name] is treated as an array
         if (!is_array($_FILES[$index_name]['name'])) {
             $_FILES[$index_name]['name']     = [$_FILES[$index_name]['name']];
             $_FILES[$index_name]['type']     = [$_FILES[$index_name]['type']];
@@ -680,11 +684,12 @@ function handle_changee_attachments_array($related, $id, $index_name = 'attachme
         }
 
         _file_attachments_index_fix($index_name);
+
+        // Process each uploaded file
         for ($i = 0; $i < count($_FILES[$index_name]['name']); $i++) {
-            // Get the temp file path
             $tmpFilePath = $_FILES[$index_name]['tmp_name'][$i];
 
-            // Make sure we have a filepath
+            // Skip if the file path is empty
             if (!empty($tmpFilePath) && $tmpFilePath != '') {
                 if (
                     _perfex_upload_error($_FILES[$index_name]['error'][$i])
@@ -693,17 +698,20 @@ function handle_changee_attachments_array($related, $id, $index_name = 'attachme
                     continue;
                 }
 
+                // Ensure the upload path exists
                 _maybe_create_upload_path($path);
+
+                // Generate a unique filename and move the file
                 $filename    = unique_filename($path, $_FILES[$index_name]['name'][$i]);
                 $newFilePath = $path . $filename;
 
-                // Upload the file into the temp dir
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                     array_push($uploaded_files, [
                         'file_name' => $filename,
                         'filetype'  => $_FILES[$index_name]['type'][$i],
                     ]);
 
+                    // Handle image thumbnails (optional)
                     if (is_image($newFilePath)) {
                         // create_img_thumb($path, $filename);
                     }
@@ -712,6 +720,7 @@ function handle_changee_attachments_array($related, $id, $index_name = 'attachme
         }
     }
 
+    // Return the list of uploaded files, or false if none were uploaded
     if (count($uploaded_files) > 0) {
         return $uploaded_files;
     }
@@ -1804,7 +1813,7 @@ function handle_agends_attachments_array($related, $id, $index_name = 'attachmen
             $_FILES[$index_name]['error']    = [$_FILES[$index_name]['error']];
             $_FILES[$index_name]['size']     = [$_FILES[$index_name]['size']];
         }
-       
+
         _file_attachments_index_fix($index_name);
         for ($i = 0; $i < count($_FILES[$index_name]['name']); $i++) {
             // Get the temp file path

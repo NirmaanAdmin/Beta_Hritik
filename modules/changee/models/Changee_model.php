@@ -14639,7 +14639,10 @@ class Changee_model extends App_Model
 
     public function save_changee_files($related, $id)
     {
+        // echo $related;
+        // die;
         $uploadedFiles = handle_changee_attachments_array($related, $id);
+        
         if ($uploadedFiles && is_array($uploadedFiles)) {
             foreach ($uploadedFiles as $file) {
                 $data = array();
@@ -14863,5 +14866,13 @@ class Changee_model extends App_Model
             $this->db->where('id', $id);
             return $this->db->get(db_prefix() . 'wo_orders')->row();
         }
+    }
+
+    public function get_changee_attachments_with_id($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->order_by('dateadded', 'desc');
+        $attachments = $this->db->get(db_prefix() . 'changee_files')->row();
+        return $attachments;
     }
 }

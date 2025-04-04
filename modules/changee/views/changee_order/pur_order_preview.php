@@ -150,31 +150,31 @@ if ($estimate->currency != 0) {
                <?php
                if ($pur_order->group_pur > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('group_pur') . ': ' ?> <?php foreach ($commodity_groups as $group) {
-                                                                              if ($group['id'] == $pur_order->group_pur) {
-                                                                                 echo $group['name'];
-                                                                              }
-                                                                           } ?> </p>
+                                                                                 if ($group['id'] == $pur_order->group_pur) {
+                                                                                    echo $group['name'];
+                                                                                 }
+                                                                              } ?> </p>
                <?php }
                if ($pur_order->sub_groups_pur > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('sub_groups_pur') . ': ' ?> <?php foreach ($sub_groups as $group) {
-                                                                                    if ($group['id'] == $pur_order->sub_groups_pur) {
-                                                                                       echo $group['sub_group_name'];
-                                                                                    }
-                                                                                 } ?> </p>
+                                                                                       if ($group['id'] == $pur_order->sub_groups_pur) {
+                                                                                          echo $group['sub_group_name'];
+                                                                                       }
+                                                                                    } ?> </p>
                <?php }
                if ($pur_order->area_pur > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('area_pur') . ': ' ?> <?php foreach ($area as $area) {
-                                                                              if ($area['id'] == $pur_order->area_pur) {
-                                                                                 echo $area['area_name'];
-                                                                              }
-                                                                           } ?> </p>
+                                                                                 if ($area['id'] == $pur_order->area_pur) {
+                                                                                    echo $area['area_name'];
+                                                                                 }
+                                                                              } ?> </p>
                <?php }
                if ($pur_order->po_order_id > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/purchase_order/' . $pur_order->po_order_id); ?>"><?php echo get_pur_name_by_id($pur_order->po_order_id); ?></a></p>
                <?php }
                if ($pur_order->wo_order_id > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/wo_order/' . $pur_order->wo_order_id); ?>"><?php echo get_wo_order_name_by_id($pur_order->wo_order_id); ?></a></p>
-               <?php } ?> 
+               <?php } ?>
                <?php
                if ($pur_order->kind > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('kind') . ': ' ?> <?php echo $pur_order->kind ?> </p>
@@ -420,11 +420,11 @@ if ($estimate->currency != 0) {
                                              ?></p>
                                           <?php if ($value['approve'] == 2) {
                                           ?>
-                                          <?php if($value['approve_by_admin'] == 1) { ?>
-                                             <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved_by_admin.png'); ?>" class="img_style">
-                                          <?php } else { ?>
-                                             <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved.png'); ?>" class="img_style">
-                                          <?php } ?>
+                                             <?php if ($value['approve_by_admin'] == 1) { ?>
+                                                <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved_by_admin.png'); ?>" class="img_style">
+                                             <?php } else { ?>
+                                                <img src="<?php echo site_url(PURCHASE_PATH . 'approval/approved.png'); ?>" class="img_style">
+                                             <?php } ?>
                                           <?php } elseif ($value['approve'] == 3) { ?>
                                              <img src="<?php echo site_url(PURCHASE_PATH . 'approval/rejected.png'); ?>" class="img_style">
                                           <?php } ?>
@@ -523,10 +523,10 @@ if ($estimate->currency != 0) {
                                        $_total += $es['total']; ?>
                                        <tr nobr="true" class="sortable">
                                           <td align="center">
-                                             <?php if(!empty($es['serial_no'])) {
+                                             <?php if (!empty($es['serial_no'])) {
                                                 echo $es['serial_no'];
                                              } else {
-                                                echo pur_html_entity_decode($count); 
+                                                echo pur_html_entity_decode($count);
                                              } ?>
                                           </td>
                                           <td class="description" align="left;"><span><strong><?php
@@ -544,7 +544,7 @@ if ($estimate->currency != 0) {
                                           $qty_after_incl_co = changee_pur_html_entity_decode($es['quantity']) . ' ' . $unit_name;
                                           $rate_after_incl_co = app_format_money($es['unit_price'], $base_currency->symbol);
                                           $align = 'right';
-                                          if($diff_unit == 0) {
+                                          if ($diff_unit == 0) {
                                              $align = 'center';
                                              $qty_after_incl_co = '-';
                                              $rate_after_incl_co = '-';
@@ -708,30 +708,57 @@ if ($estimate->currency != 0) {
             <div role="tabpanel" class="tab-pane" id="attachment">
                <div class="col-md-12">
                   <?php
+                  $file_html = '';
                   if (isset($attachments) && count($attachments) > 0) {
+                     $file_html .= '<hr /><p class="bold text-muted">' . _l('Changee Attachments') . '</p>';
+
                      foreach ($attachments as $value) {
-                        echo '<div class="col-md-6" style="padding-bottom: 10px">';
                         $path = get_upload_path_by_type('changee') . 'pur_order/' . $value['rel_id'] . '/' . $value['file_name'];
                         $is_image = is_image($path);
-                        if ($is_image) {
-                           echo '<div class="preview_image">';
+
+                        $download_url = site_url('download/file/changee/' . $value['id']);
+
+                        $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="' . $value['id'] . '">
+            <div class="col-md-8">';
+
+                        // Preview button for images
+                        // if ($is_image) {
+                           $file_html .= '<a name="preview-changee-btn" 
+                onclick="preview_changee_attachment(this); return false;" 
+                rel_id="' . $value['rel_id'] . '" 
+                id="' . $value['id'] . '" 
+                href="javascript:void(0);" 
+                class="mbot10 mright5 btn btn-success pull-left" 
+                data-toggle="tooltip" 
+                title="' . _l('preview_file') . '">
+                <i class="fa fa-eye"></i>
+            </a>';
+                        // }
+
+                        $file_html .= '<div class="pull-left"><i class="' . get_mime_class($value['filetype']) . '"></i></div>
+            <a href="' . $download_url . '" target="_blank" download>
+                ' . $value['file_name'] . '
+            </a>
+            <br />
+            <small class="text-muted">' . $value['filetype'] . '</small>
+            </div>
+            <div class="col-md-4 text-right">';
+
+                        // Delete button with permission check
+                        if ($value['staffid'] == get_staff_user_id() || is_admin()) {
+                           $file_html .= '<a href="' . admin_url('changee/delete_attachment/' . $value['id']) . '" class="text-danger _delete"><i class="fa fa-times"></i></a>';
                         }
-                  ?>
-                        <a href="<?php echo site_url('download/file/changee/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-changee-<?php echo $value['rel_id']; ?>" <?php } ?>>
-                           <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
-                           <?php if ($is_image) { ?>
-                              <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
-                           <?php } ?>
-                        </a>
-                        <?php if ($is_image) {
-                           echo '</div>';
-                        } ?>
-                  <?php echo '</div>';
+
+                        $file_html .= '</div></div>';
                      }
-                  } ?>
+
+                     $file_html .= '<hr />';
+                     echo pur_html_entity_decode($file_html);
+                  }
+                  ?>
                </div>
             </div>
-
+            <div id="changee_file_data"></div>
             <div role="tabpanel" class="tab-pane ptop10" id="tab_activity">
                <div class="row">
                   <div class="col-md-12">
@@ -1005,3 +1032,27 @@ if ($estimate->currency != 0) {
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php require 'modules/changee/assets/js/pur_order_preview_js.php'; ?>
+
+<script>
+   function preview_changee_attachment(invoker) {
+      "use strict";
+      var id = $(invoker).attr('id');
+      var rel_id = $(invoker).attr('rel_id');
+      view_preview_changee_attachment(id, rel_id);
+   }
+
+   function view_preview_changee_attachment(id, rel_id) {
+      "use strict";
+      $('#changee_file_data').empty();
+      $("#changee_file_data").load(admin_url + 'changee/file_changee_preview/' + id + '/' + rel_id, function(response, status, xhr) {
+         if (status == "error") {
+            alert_float('danger', xhr.statusText);
+         }
+      });
+   }
+
+   function close_modal_preview() {
+      "use strict";
+      $('._project_file').modal('hide');
+   }
+</script>

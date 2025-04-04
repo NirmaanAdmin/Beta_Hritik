@@ -1469,7 +1469,7 @@ class changee extends AdminController
             $pur_order_data['vendornote'] = $this->input->post('vendornote', false);
             $pur_order_data['order_summary'] = $this->input->post('order_summary', false);
 
-            if ($id == '') {
+            if ($id == '') { 
                 if (!has_permission('changee_orders', '', 'create')) {
                     access_denied('changee_order');
                 }
@@ -9185,4 +9185,18 @@ class changee extends AdminController
             'history_tabel_data' => $history_tabel
         ]);
     }
+
+    public function file_changee_preview($id, $rel_id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->changee_model->get_changee_attachments_with_id($id);
+    
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('changee_order/_file_new', $data);
+    }
+    
 }
