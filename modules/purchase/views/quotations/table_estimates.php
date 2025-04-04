@@ -121,20 +121,20 @@ foreach ($rResult as $aRow) {
     $numberOutput = '';
     // If is from client area table or projects area request
     
-    $numberOutput = '<a href="' . admin_url('purchase/quotations/' . $aRow['id']) . '" onclick="init_pur_estimate(' . $aRow['id'] . '); return false;">' . format_pur_estimate_number($aRow['id']) . '</a>';
+    $numberOutput = '<a href="' . admin_url('purchase/quotations/' . $aRow['id']) . '" onclick="init_pur_estimate(' . $aRow['id'] . '); small_table_full_view();  return false;">' . format_pur_estimate_number($aRow['id']) . '</a>';
 
     
-
+ 
     $numberOutput .= '<div class="row-options">';
 
     if (has_permission('purchase_quotations', '', 'view') || has_permission('purchase_quotations', '', 'view_own')) {
-        $numberOutput .= ' <a href="' . admin_url('purchase/quotations/' . $aRow['id']) . '" onclick="init_pur_estimate(' . $aRow['id'] . '); return false;">' . _l('view') . '</a>';
+        $numberOutput .= ' <a href="' . admin_url('purchase/quotations/' . $aRow['id']) . '" onclick="init_pur_estimate(' . $aRow['id'] . '); small_table_full_view();  return false;">' . _l('view') . '</a>';
     }
     if ( (has_permission('purchase_quotations', '', 'edit') || is_admin()) && $aRow[db_prefix() . 'pur_estimates.status'] != 2) {
         $numberOutput .= ' | <a href="' . admin_url('purchase/estimate/' . $aRow['id']) . '">' . _l('edit') . '</a>';
     }
     if (has_permission('purchase_quotations', '', 'delete') || is_admin()) {
-        $numberOutput .= ' | <a href="' . admin_url('purchase/delete_estimate/' . $aRow['id']) . '" class="text-danger">' . _l('delete') . '</a>';
+        $numberOutput .= ' | <a href="' . admin_url('purchase/delete_estimate/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
     }
     $numberOutput .= '</div>';
 
@@ -164,7 +164,7 @@ foreach ($rResult as $aRow) {
 
     $row[] = $aRow['sub_group_name'];
     
-    $row[] = $aRow['area_name'];
+    // $row[] = $aRow['area_name'];
 
     $row[] = _d($aRow['date']);
 

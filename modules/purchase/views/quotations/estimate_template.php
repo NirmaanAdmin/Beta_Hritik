@@ -274,7 +274,8 @@
               echo render_input('total','<small class="req text-danger">* </small>Quote Value ( ₹ )', (isset($estimate) ? $estimate->total : ''), 'number', array(), array(), '','');
               ?>
             </div>
-            <?php /* <div class="col-md-6 ">
+            
+            <div class="col-md-6 ">
 
               <?php
 
@@ -293,7 +294,8 @@
               }
               echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
               ?>
-            </div> */ ?>
+            </div> 
+            
           
         </div>
       </div>

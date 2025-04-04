@@ -1774,7 +1774,7 @@ class Purchase_model extends App_Model
      *
      * @return     <row , array>  The estimate, list estimate.
      */
-    public function get_estimate($id = '', $where = [])
+    public function get_estimate($id = '', $where = []) 
     {
         $this->db->select('*,' . db_prefix() . 'currencies.id as currencyid, ' . db_prefix() . 'pur_estimates.id as id, ' . db_prefix() . 'pur_estimates.currency as currency , ' . db_prefix() . 'currencies.name as currency_name');
         $this->db->from(db_prefix() . 'pur_estimates');
@@ -18894,6 +18894,15 @@ class Purchase_model extends App_Model
         $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
         return $attachments;
     }
+
+    public function get_estimate_attachments_with_id($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->order_by('dateadded', 'desc');
+        $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
+        return $attachments;
+    }
+    
     
 }
 

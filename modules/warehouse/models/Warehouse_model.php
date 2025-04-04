@@ -2422,6 +2422,7 @@ class Warehouse_model extends App_Model
 						'rel_id'    => $module->id,
 						'category'  => $pur_order_data->group_pur,
 						'price'     => $pur_order_data->total,
+						'project_id'=> $project,
 					];
 					$task_id =  $this->tasks_model->add($taskData);
 					$assignss = [
