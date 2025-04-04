@@ -20139,6 +20139,12 @@ class Warehouse_model extends App_Model
 									$quantities = (float)$temporaty_quantity;
 									$temporaty_quantity = 0;
 								}
+								$non_break_description = str_replace("<br />", "", $description);
+								$this->db->like('description', $non_break_description);
+								$description_results = $this->db->get(db_prefix() . 'goods_receipt_detail')->row();
+								if(!empty($description_results)) {
+									$available_quantity = $description_results->quantities;
+								}
 								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
 								$item_index++;
 							}
