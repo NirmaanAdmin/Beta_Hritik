@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meeting Details</title>
-    
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -111,7 +111,7 @@
         .description-table {
             page-break-inside: avoid;
         }
-        
+
         .footer {
             position: fixed;
             bottom: 0;
@@ -248,23 +248,22 @@
         ?>
     </table>
 
-    <div class="page-break"></div>
+
     <table class="description-table">
         <tr>
             <td style="font-weight: bold;">Description</td>
         </tr>
         <tr>
             <td>
-                <!-- Simplified table structure -->
-                <table class="meeting-notes-table">
-                    <?=  $meeting_notes ?>
-                </table>
+
+                <?= $meeting_notes ?>
+
             </td>
         </tr>
     </table>
     <div class="page-break"></div>
     <?php if (!empty($tasks)) : ?>
-        
+
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
             <thead>
