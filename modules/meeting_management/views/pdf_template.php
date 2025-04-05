@@ -49,6 +49,24 @@
             color: #333;
             margin-top: 30px;
         }
+        .meeting-notes-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 10px 0;
+        }
+        
+        .meeting-notes-table td,
+        .meeting-notes-table th {
+            border: 1px solid #000 !important;
+            padding: 5px !important;
+            font-size: 9pt !important;
+            vertical-align: top !important;
+        }
+
+        /* Add page break protection */
+        .description-table {
+            page-break-inside: avoid;
+        }
 
         .footer {
             position: fixed;
@@ -155,7 +173,7 @@
         ?>
     </table>
 
-    <table class="description-table table table-bordered">
+    <table class="description-table ">
         <tr>
             <td style="font-weight: bold;">Description</td>
         </tr>
