@@ -75,12 +75,12 @@
 
         .meeting-notes-table th:nth-child(2),
         .meeting-notes-table td:nth-child(2) {
-            width: 12% !important; /* Area */
+            width: 15% !important; /* Area */
         }
 
         .meeting-notes-table th:nth-child(3),
         .meeting-notes-table td:nth-child(3) {
-            width: 15% !important; /* Description */
+            width: 17% !important; /* Description */
         }
 
         .meeting-notes-table th:nth-child(4),
@@ -94,7 +94,7 @@
 
         .meeting-notes-table th:nth-child(6),
         .meeting-notes-table td:nth-child(6) {
-            width: 10% !important; /* Target Date */
+            width: 5% !important; /* Target Date */
         }
 
         /* Prevent page breaks inside tables */
