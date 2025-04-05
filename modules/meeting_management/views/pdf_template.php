@@ -162,7 +162,7 @@
         <tr>
             <td style="width: 100%;">
                 <?php
-                $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
+                $meeting_notes_html = $meeting_notes;
 
                 echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
             </td>
