@@ -99,9 +99,9 @@
         }
 
         /* Prevent page breaks inside tables */
-        /* .description-table {
+        .description-table {
             page-break-inside: avoid;
-        } */
+        }
 
         .footer {
             position: fixed;
