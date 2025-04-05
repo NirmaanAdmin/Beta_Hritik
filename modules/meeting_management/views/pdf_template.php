@@ -59,6 +59,9 @@
             color: #666;
             padding: 10px 0;
         }
+        .meeting-notes-table  {
+            page-break-inside: avoid;
+        }
     </style>
 </head>
 
