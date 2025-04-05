@@ -185,9 +185,12 @@
         </tr>
         <tr>
             <td>
-
+                
                 <div style="overflow-x: auto">
-                    <?= $meeting_notes ?>
+                <?php
+                $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
+
+                echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
                 </div>
 
             </td>
