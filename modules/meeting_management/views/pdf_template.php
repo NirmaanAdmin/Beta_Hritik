@@ -156,7 +156,7 @@
     </table>
 
     <h2 class="section-title">Description</h2>
-    <?= html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8') ?>
+    <?= $meeting_notes ?>
     <!-- <table class="description-table">
         <tr>
             <td style="font-weight: bold;">Description</td>
