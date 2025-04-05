@@ -2,10 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
     <title>Meeting Details</title>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,66 +50,6 @@
             margin-top: 30px;
         }
 
-        .meeting-notes-table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            word-wrap: break-word;
-            margin: 10px 0;
-        }
-
-        .meeting-notes-table td,
-        .meeting-notes-table th {
-            border: 1px solid #000 !important;
-            padding: 5px !important;
-            font-size: 8pt !important;
-            /* Reduced font size */
-            line-height: 1.2 !important;
-            vertical-align: top !important;
-        }
-
-        /* Column width adjustments */
-        .meeting-notes-table th:nth-child(1),
-        .meeting-notes-table td:nth-child(1) {
-            width: 10% !important;
-            /* Sr.No */
-        }
-
-        .meeting-notes-table th:nth-child(2),
-        .meeting-notes-table td:nth-child(2) {
-            width: 15% !important;
-            /* Area */
-        }
-
-        .meeting-notes-table th:nth-child(3),
-        .meeting-notes-table td:nth-child(3) {
-            width: 17% !important;
-            /* Description */
-        }
-
-        .meeting-notes-table th:nth-child(4),
-        .meeting-notes-table td:nth-child(4) {
-            width: 40% !important;
-            /* Decision */
-        }
-
-        .meeting-notes-table th:nth-child(5),
-        .meeting-notes-table td:nth-child(5) {
-            width: 13% !important;
-            /* Action By */
-        }
-
-        .meeting-notes-table th:nth-child(6),
-        .meeting-notes-table td:nth-child(6) {
-            width: 5% !important;
-            /* Target Date */
-        }
-
-        /* Prevent page breaks inside tables */
-        .meeting-notes-table  {
-            page-break-inside: avoid;
-        }
-
         .footer {
             position: fixed;
             bottom: 0;
@@ -120,24 +58,6 @@
             font-size: 12px;
             color: #666;
             padding: 10px 0;
-        }
-
-        /* Add to your PDF template's CSS */
-        @media print {
-            body {
-                margin: 0.5cm;
-                padding: 0;
-                font-size: 10pt;
-            }
-
-            table {
-                page-break-inside: auto;
-            }
-
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
         }
     </style>
 </head>
@@ -178,7 +98,7 @@
             <td style="width: 40%;">BGJ site office</td>
         </tr>
         <tr>
-
+            
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
             <td style="width: 15%;"></td>
@@ -243,15 +163,15 @@
         </tr>
         <tr>
             <td>
+                <?php
+                $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
 
-                <?= $meeting_notes ?>
-
+                echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
             </td>
         </tr>
     </table> -->
-    <!-- <div class="page-break"></div> -->
-    <?php if (!empty($tasks)) : ?>
 
+    <?php if (!empty($tasks)) : ?>
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
             <thead>
