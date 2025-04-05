@@ -110,9 +110,7 @@
         .description-table {
             page-break-inside: avoid;
         }
-        .meeting-notes-table {
-            page-break-inside: avoid;
-        }
+        
         .footer {
             position: fixed;
             bottom: 0;
@@ -263,8 +261,9 @@
             </td>
         </tr>
     </table>
+    <div class="page-break"></div>
     <?php if (!empty($tasks)) : ?>
-        <div class="page-break"></div>
+        
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
             <thead>
