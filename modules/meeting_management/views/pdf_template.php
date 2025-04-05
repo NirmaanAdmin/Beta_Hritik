@@ -122,7 +122,7 @@
         }
 
         /* Add to your PDF template's CSS */
-        @media print {
+        /* @media print { */
 
             /* Force table headers to repeat on each page */
             thead {
@@ -150,7 +150,7 @@
             table table {
                 page-break-inside: avoid;
             }
-        }
+        /* } */
     </style>
 </head>
 
