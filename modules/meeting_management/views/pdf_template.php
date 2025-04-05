@@ -5,18 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meeting Details</title>
-    <script>
-        // Add this to force page breaks in Dompdf
-        document.addEventListener('DOMContentLoaded', function() {
-            var tables = document.querySelectorAll('table');
-            tables.forEach(function(table) {
-                var rect = table.getBoundingClientRect();
-                if (rect.height > 800) { // Approximate A4 page height
-                    table.style.pageBreakInside = 'auto';
-                }
-            });
-        });
-    </script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -119,10 +108,10 @@
         }
 
         /* Prevent page breaks inside tables */
-        .description-table {
+        .meeting-notes-table  {
             page-break-inside: avoid;
         }
-
+        
         .footer {
             position: fixed;
             bottom: 0;
@@ -275,7 +264,7 @@
     </table>
     <div class="page-break"></div>
     <?php if (!empty($tasks)) : ?>
-
+        
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
             <thead>
