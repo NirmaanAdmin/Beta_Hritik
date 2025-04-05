@@ -124,32 +124,19 @@
 
         /* Add to your PDF template's CSS */
         @media print {
-
-            /* Force table headers to repeat on each page */
-            thead {
-                display: table-header-group;
+            body {
+                margin: 0.5cm;
+                padding: 0;
+                font-size: 10pt;
             }
 
-            /* Allow table rows to break across pages */
+            table {
+                page-break-inside: auto;
+            }
+
             tr {
                 page-break-inside: avoid;
                 page-break-after: auto;
-            }
-
-            /* Handle table cell content */
-            td {
-                page-break-inside: auto;
-                overflow-wrap: break-word;
-            }
-
-            /* Force page break before specific sections */
-            .page-break {
-                page-break-before: always;
-            }
-
-            /* Prevent nested tables from breaking */
-            table table {
-                page-break-inside: avoid;
             }
         }
     </style>
