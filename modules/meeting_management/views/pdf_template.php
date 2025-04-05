@@ -155,7 +155,7 @@
         ?>
     </table>
 
-    <table class="description-table">
+    <table class="description-table table table-bordered">
         <tr>
             <td style="font-weight: bold;">Description</td>
         </tr>
