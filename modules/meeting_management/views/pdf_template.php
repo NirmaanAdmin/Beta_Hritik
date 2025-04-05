@@ -257,7 +257,7 @@
             <td>
                 <!-- Simplified table structure -->
                 <table class="meeting-notes-table">
-                    <?= preg_replace('/width=".*?"/', '', $meeting_notes) ?>
+                    <?=  $meeting_notes ?>
                 </table>
             </td>
         </tr>
