@@ -235,7 +235,7 @@
         ?>
     </table>
 
-    <h2 class="section-title">Tasks Overview</h2>
+    <h2 class="section-title">Description</h2>
     <?= $meeting_notes ?>
     <!-- <table class="description-table">
         <tr>
@@ -249,7 +249,7 @@
             </td>
         </tr>
     </table> -->
-    <div class="page-break"></div>
+    <!-- <div class="page-break"></div> -->
     <?php if (!empty($tasks)) : ?>
 
         <h2 class="section-title">Tasks Overview</h2>
