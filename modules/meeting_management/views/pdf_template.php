@@ -180,11 +180,11 @@
             <td style="font-weight: bold;">Description</td>
         </tr>
         <tr>
-            <td style="width: 100%;">
+            <td style="overflow-x: auto" >
 
-                <div style="overflow-x: auto">
+                
                     <?= $meeting_notes ?>
-                </div>
+                
                 
             </td>
         </tr>
