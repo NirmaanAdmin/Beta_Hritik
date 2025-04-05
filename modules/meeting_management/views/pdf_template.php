@@ -2,7 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meeting Details</title>
     <style>
         body {
@@ -64,6 +65,10 @@
             vertical-align: top !important;
         }
 
+        .meeting-notes-table thead {
+            display: table-header-group;
+        }
+
         /* Add page break protection */
         .description-table {
             page-break-inside: avoid;
@@ -78,7 +83,6 @@
             color: #666;
             padding: 10px 0;
         }
-        
     </style>
 </head>
 
@@ -180,12 +184,12 @@
             <td style="font-weight: bold;">Description</td>
         </tr>
         <tr>
-            <td >
+            <td>
 
                 <div style="overflow-x: auto">
                     <?= $meeting_notes ?>
                 </div>
-                
+
             </td>
         </tr>
     </table>
