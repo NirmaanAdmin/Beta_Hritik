@@ -50,26 +50,55 @@
             color: #333;
             margin-top: 30px;
         }
-
         .meeting-notes-table {
             width: 100% !important;
             border-collapse: collapse !important;
+            table-layout: fixed !important;
+            word-wrap: break-word;
             margin: 10px 0;
         }
-
+        
         .meeting-notes-table td,
         .meeting-notes-table th {
             border: 1px solid #000 !important;
             padding: 5px !important;
-            font-size: 9pt !important;
+            font-size: 8pt !important;  /* Reduced font size */
+            line-height: 1.2 !important;
             vertical-align: top !important;
         }
 
-        .meeting-notes-table thead {
-            display: table-header-group;
+        /* Column width adjustments */
+        .meeting-notes-table th:nth-child(1),
+        .meeting-notes-table td:nth-child(1) {
+            width: 5% !important;  /* Sr.No */
         }
 
-        /* Add page break protection */
+        .meeting-notes-table th:nth-child(2),
+        .meeting-notes-table td:nth-child(2) {
+            width: 12% !important; /* Area */
+        }
+
+        .meeting-notes-table th:nth-child(3),
+        .meeting-notes-table td:nth-child(3) {
+            width: 15% !important; /* Description */
+        }
+
+        .meeting-notes-table th:nth-child(4),
+        .meeting-notes-table td:nth-child(4) {
+            width: 45% !important; /* Decision */
+        }
+
+        .meeting-notes-table th:nth-child(5),
+        .meeting-notes-table td:nth-child(5) {
+            width: 13% !important; /* Action By */
+        }
+
+        .meeting-notes-table th:nth-child(6),
+        .meeting-notes-table td:nth-child(6) {
+            width: 10% !important; /* Target Date */
+        }
+
+        /* Prevent page breaks inside tables */
         .description-table {
             page-break-inside: avoid;
         }
@@ -82,6 +111,22 @@
             font-size: 12px;
             color: #666;
             padding: 10px 0;
+        }
+        @media print {
+            body {
+                margin: 0.5cm;
+                padding: 0;
+                font-size: 10pt;
+            }
+            
+            table {
+                page-break-inside: auto;
+            }
+            
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
         }
     </style>
 </head>
@@ -179,24 +224,20 @@
         ?>
     </table>
 
-    <table class="description-table ">
+
+    <table class="description-table">
         <tr>
             <td style="font-weight: bold;">Description</td>
         </tr>
         <tr>
             <td>
-                
-                <div style="overflow-x: auto">
-                <?php
-                $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
-
-                echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
-                </div>
-
+                <!-- Simplified table structure -->
+                <table class="meeting-notes-table">
+                    <?= preg_replace('/width=".*?"/', '', $meeting_notes) ?>
+                </table>
             </td>
         </tr>
     </table>
-
     <?php if (!empty($tasks)) : ?>
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
