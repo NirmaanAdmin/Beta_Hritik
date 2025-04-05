@@ -394,7 +394,7 @@
 						<hr>
 					<?php } ?>
 
-					<?php if ($item->creator_id == get_staff_user_id() && $item->creator_type == 'staff') { ?>
+					<?php if ( $item->creator_type == 'staff') { ?>
 						<?php if ($item->approve == 0) { ?>
 							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'normal')">
 								<i class="fa fa-check-square"></i> <?php echo _l('dmg_send_request_approve'); ?>
@@ -416,7 +416,7 @@
 					<?php } ?>
 
 
-					<?php if ($item->creator_id == get_staff_user_id() && $item->creator_type == 'staff') { ?>
+					<?php if ( $item->creator_type == 'staff') { ?>
 						<?php if ($item->sign_approve == 0) { ?>
 							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'eid')">
 								<i class="fa fa-check-square"></i> <?php echo _l('dmg_request_approve_with_eid'); ?>
