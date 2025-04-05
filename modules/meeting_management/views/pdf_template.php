@@ -70,7 +70,7 @@
         /* Column width adjustments */
         .meeting-notes-table th:nth-child(1),
         .meeting-notes-table td:nth-child(1) {
-            width: 5% !important;  /* Sr.No */
+            width: 10% !important;  /* Sr.No */
         }
 
         .meeting-notes-table th:nth-child(2),
@@ -85,7 +85,7 @@
 
         .meeting-notes-table th:nth-child(4),
         .meeting-notes-table td:nth-child(4) {
-            width: 45% !important; /* Decision */
+            width: 40% !important; /* Decision */
         }
 
         .meeting-notes-table th:nth-child(5),
@@ -99,9 +99,9 @@
         }
 
         /* Prevent page breaks inside tables */
-        .description-table {
+        /* .description-table {
             page-break-inside: avoid;
-        }
+        } */
 
         .footer {
             position: fixed;
