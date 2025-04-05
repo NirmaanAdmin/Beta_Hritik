@@ -49,12 +49,13 @@
             color: #333;
             margin-top: 30px;
         }
+
         .meeting-notes-table {
             width: 100% !important;
             border-collapse: collapse !important;
             margin: 10px 0;
         }
-        
+
         .meeting-notes-table td,
         .meeting-notes-table th {
             border: 1px solid #000 !important;
@@ -77,6 +78,7 @@
             color: #666;
             padding: 10px 0;
         }
+        
     </style>
 </head>
 
@@ -116,7 +118,7 @@
             <td style="width: 40%;">BGJ site office</td>
         </tr>
         <tr>
-            
+
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
             <td style="width: 15%;"></td>
@@ -179,10 +181,11 @@
         </tr>
         <tr>
             <td style="width: 100%;">
-                <?php
-                $meeting_notes_html = $meeting_notes;
 
-                echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
+                <div style="overflow-x: auto">
+                    <?= $meeting_notes ?>
+                </div>
+                
             </td>
         </tr>
     </table>
