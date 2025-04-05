@@ -388,6 +388,8 @@ class Meeting_model extends App_Model
         $agenda = $data['agenda'];
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'agendas', ['agenda' => $agenda]);
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'meeting_management', ['agenda' => $agenda]);
         return true;
     }
 
@@ -397,6 +399,9 @@ class Meeting_model extends App_Model
         $minutes = $data['minutes'];
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'meeting_management', ['agenda' => $minutes]);
+
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'agendas', ['agenda' => $minutes]);
         return true;
     }
 }

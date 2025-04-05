@@ -4,7 +4,8 @@
    .cke_notification {
       display: none !important;
    }
-   .margin_add_class{
+
+   .margin_add_class {
       margin-top: 14px;
    }
 </style>
@@ -15,6 +16,7 @@
 <div id="wrapper">
    <div class="content">
       <div class="row">
+         <input type="hidden" id="flag" value="<?php echo $agenda->flag; ?>">
          <?php echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form')); ?>
          <div class="col-md-12">
             <div class="panel_s">
@@ -33,9 +35,9 @@
                         $minutes_val .= isset($minutes) ? nl2br($minutes->minutes) : '';
                         // $minutes_val .= '<p><strong>Decision -<br>Action -</strong></p>';
                      }
-                     if($agenda->flag == 1){
+                     if ($agenda->flag == 1) {
                         $minutes_data = $minutes->minutes;
-                     }else{
+                     } else {
                         $minutes_data = $minutes->agenda;
                      }
 
@@ -367,12 +369,12 @@
    $(document).ready(function() {
       // Function to check if "Remove" buttons should be shown
       function updateRemoveButtons() {
-          
+
          const inputs = $('#other-participants-container .input-group');
          if (inputs.length > 1) {
             // Show "Remove" buttons for all input fields
             inputs.find('.remove-participant').show();
-            
+
          } else {
             // Hide "Remove" buttons if there's only one input field
             inputs.find('.remove-participant').hide();
@@ -405,16 +407,18 @@
          updateRemoveButtons(); // Update visibility of "Remove" buttons
       });
 
-      setInterval(function() {
-        update_minutes_of_meeting();
-      }, 5000);
+      var flag = $('#flag').val();
 
+      if (flag == 1) {
+         setInterval(function() {
+            update_minutes_of_meeting();
+         }, 5000);
+      }
       function update_minutes_of_meeting() {
          var data = {};
          data.id = <?php echo $agenda_id; ?>;
          data.minutes = tinymce.get('minutes').getContent();
-         $.post(admin_url + 'meeting_management/minutesController/update_minutes_of_meeting', data).done(function(response){
-         });
+         $.post(admin_url + 'meeting_management/minutesController/update_minutes_of_meeting', data).done(function(response) {});
       }
    });
 </script>

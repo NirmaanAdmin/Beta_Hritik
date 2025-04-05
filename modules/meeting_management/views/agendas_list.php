@@ -30,7 +30,10 @@
                                  <!-- <td><?php echo isset($agenda['project_name']) ? $agenda['project_name'] : 'N/A'; ?></td> -->
                                  <td>
                                     <!-- Correct Edit and Delete URLs with module name -->
-                                    <a href="<?php echo admin_url('meeting_management/agendaController/create/' . $agenda['id']); ?>" class="btn btn-info"><?php echo _l('edit'); ?></a>
+                                    <?php if ($agenda['flag'] == 0) { ?>
+                                       <a href="<?php echo admin_url('meeting_management/agendaController/create/' . $agenda['id']); ?>" class="btn btn-info"><?php echo _l('Edit Agenda'); ?></a>
+                                    <?php  } ?>
+
                                     <a href="<?php echo admin_url('meeting_management/agendaController/delete/' . $agenda['id']); ?>" class="btn btn-danger"><?php echo _l('delete'); ?></a>
 
                                     <?php
