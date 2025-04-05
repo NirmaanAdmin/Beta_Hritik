@@ -87,10 +87,6 @@
         .meeting-notes-table td:nth-child(4) {
             width: 40% !important; /* Decision */
         }
-    
-        .meeting-notes-table td:nth-child(4) p {
-            width: 40% !important; /* Decision */
-        }
         .meeting-notes-table th:nth-child(5),
         .meeting-notes-table td:nth-child(5) {
             width: 13% !important; /* Action By */

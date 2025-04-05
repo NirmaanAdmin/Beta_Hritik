@@ -42,7 +42,7 @@ class AgendaController extends AdminController
             $agenda_data_new = $this->input->post();
             $agenda_data_new['agenda'] = $this->input->post('agenda', false);
             $agenda_data_new['created_by'] = get_staff_user_id();
-            
+
             if ($id == '') {
                 // Insert new agenda
                 $this->Meeting_model->create_agenda($agenda_data_new);
@@ -99,36 +99,53 @@ class AgendaController extends AdminController
 
     public function export_to_pdf($agenda_id)
     {
-        // Initialize Dompdf
         $pdf = new Dompdf();
 
-        // Fetch meeting details and other data
-        $meeting_details = $this->Meeting_model->get_meeting_details($agenda_id);
-        $participants = $this->Meeting_model->get_detailed_participants($agenda_id);
-        $tasks = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
+        // Configure Dompdf settings
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'Helvetica');
+        $pdf->setOptions($options);
 
-        // Fetch the meeting notes
-        $meeting_notes = $this->Meeting_model->get_meeting_notes($agenda_id);
-
-        // Load your HTML view for the PDF content
+        // Fetch data
         $data = [
-            'meeting' => $meeting_details,
-            'participants' => $participants,
-            'tasks' => $tasks,
-            'meeting_notes' => $meeting_notes  // Add meeting notes here
+            'meeting' => $this->Meeting_model->get_meeting_details($agenda_id),
+            'participants' => $this->Meeting_model->get_detailed_participants($agenda_id),
+            'tasks' => $this->Meeting_model->get_tasks_by_agenda($agenda_id),
+            'meeting_notes' => $this->Meeting_model->get_meeting_notes($agenda_id),
+            'other_participants' => $this->Meeting_model->get_participants($agenda_id)
         ];
-        $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
+
+        // Process HTML content
         $html_content = $this->load->view('meeting_management/pdf_template', $data, true);
 
-        // Set the PDF content
+        // Clean up table HTML
+        $html_content = preg_replace('/<table([^>]+)style="[^"]*width:\s*100\.04%[^"]*"/i', '<table$1style="width: 100%"', $html_content);
+        $html_content = preg_replace('/width=".*?"/i', '', $html_content);
+        $html_content = preg_replace('/height=".*?"/i', '', $html_content);
+
+        // Set PDF content
         $pdf->loadHtml($html_content);
         $pdf->setPaper('A4', 'portrait');
 
-        // Render the PDF
+        // Render PDF
         $pdf->render();
 
-        // Output the PDF to the browser
-        $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => 1));  // Download the PDF
+        // Add footer watermark
+        $canvas = $pdf->getCanvas();
+        $canvas->page_script('
+            if ($PAGE_NUM > 1) {
+                $font = $fontMetrics->getFont("Helvetica");
+                $currentText = "Confidential - " . date("Y-m-d");
+                $x = 40;
+                $y = $pdf->get_height() - 40;
+                $canvas->text($x, $y, $currentText, $font, 8, array(0.5,0.5,0.5));
+            }
+        ');
+
+        // Output PDF
+        $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", ["Attachment" => 1]);
     }
 
     public function update_mom_list()
