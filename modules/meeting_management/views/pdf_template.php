@@ -144,7 +144,7 @@
 
             /* Force page break before specific sections */
             .page-break {
-                page-break-before: always;
+                page-break-before: avoid;
             }
 
             /* Prevent nested tables from breaking */
