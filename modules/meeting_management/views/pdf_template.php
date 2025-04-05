@@ -50,6 +50,7 @@
             color: #333;
             margin-top: 30px;
         }
+
         .meeting-notes-table {
             width: 100% !important;
             border-collapse: collapse !important;
@@ -57,12 +58,13 @@
             word-wrap: break-word;
             margin: 10px 0;
         }
-        
+
         .meeting-notes-table td,
         .meeting-notes-table th {
             border: 1px solid #000 !important;
             padding: 5px !important;
-            font-size: 8pt !important;  /* Reduced font size */
+            font-size: 8pt !important;
+            /* Reduced font size */
             line-height: 1.2 !important;
             vertical-align: top !important;
         }
@@ -70,31 +72,38 @@
         /* Column width adjustments */
         .meeting-notes-table th:nth-child(1),
         .meeting-notes-table td:nth-child(1) {
-            width: 10% !important;  /* Sr.No */
+            width: 10% !important;
+            /* Sr.No */
         }
 
         .meeting-notes-table th:nth-child(2),
         .meeting-notes-table td:nth-child(2) {
-            width: 15% !important; /* Area */
+            width: 15% !important;
+            /* Area */
         }
 
         .meeting-notes-table th:nth-child(3),
         .meeting-notes-table td:nth-child(3) {
-            width: 17% !important; /* Description */
+            width: 17% !important;
+            /* Description */
         }
 
         .meeting-notes-table th:nth-child(4),
         .meeting-notes-table td:nth-child(4) {
-            width: 40% !important; /* Decision */
+            width: 40% !important;
+            /* Decision */
         }
+
         .meeting-notes-table th:nth-child(5),
         .meeting-notes-table td:nth-child(5) {
-            width: 13% !important; /* Action By */
+            width: 13% !important;
+            /* Action By */
         }
 
         .meeting-notes-table th:nth-child(6),
         .meeting-notes-table td:nth-child(6) {
-            width: 5% !important; /* Target Date */
+            width: 5% !important;
+            /* Target Date */
         }
 
         /* Prevent page breaks inside tables */
@@ -111,20 +120,35 @@
             color: #666;
             padding: 10px 0;
         }
+
+        /* Add to your PDF template's CSS */
         @media print {
-            body {
-                margin: 0.5cm;
-                padding: 0;
-                font-size: 10pt;
+
+            /* Force table headers to repeat on each page */
+            thead {
+                display: table-header-group;
             }
-            
-            table {
-                page-break-inside: auto;
-            }
-            
+
+            /* Allow table rows to break across pages */
             tr {
                 page-break-inside: avoid;
                 page-break-after: auto;
+            }
+
+            /* Handle table cell content */
+            td {
+                page-break-inside: auto;
+                overflow-wrap: break-word;
+            }
+
+            /* Force page break before specific sections */
+            .page-break {
+                page-break-before: always;
+            }
+
+            /* Prevent nested tables from breaking */
+            table table {
+                page-break-inside: avoid;
             }
         }
     </style>
@@ -238,6 +262,7 @@
         </tr>
     </table>
     <?php if (!empty($tasks)) : ?>
+        <div class="page-break"></div>
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
             <thead>
