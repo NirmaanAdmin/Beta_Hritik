@@ -144,7 +144,7 @@
 
             /* Force page break before specific sections */
             .page-break {
-                page-break-before: avoid;
+                page-break-before: always;
             }
 
             /* Prevent nested tables from breaking */
@@ -248,7 +248,7 @@
         ?>
     </table>
 
-
+    <div class="page-break"></div>
     <table class="description-table">
         <tr>
             <td style="font-weight: bold;">Description</td>
