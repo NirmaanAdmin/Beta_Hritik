@@ -108,7 +108,7 @@
         }
 
         /* Prevent page breaks inside tables */
-        .description-table {
+        .meeting-notes-table  {
             page-break-inside: avoid;
         }
 
