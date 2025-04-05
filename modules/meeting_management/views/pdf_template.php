@@ -108,7 +108,7 @@
 
         /* Prevent page breaks inside tables */
         .description-table {
-            page-break-inside: avoid;
+            page-break-inside: auto;
         }
         
         .footer {
