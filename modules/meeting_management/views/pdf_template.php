@@ -110,7 +110,9 @@
         .description-table {
             page-break-inside: avoid;
         }
-
+        .meeting-notes-table {
+            page-break-inside: avoid;
+        }
         .footer {
             position: fixed;
             bottom: 0;
@@ -122,7 +124,7 @@
         }
 
         /* Add to your PDF template's CSS */
-        /* @media print { */
+        @media print {
 
             /* Force table headers to repeat on each page */
             thead {
@@ -150,7 +152,7 @@
             table table {
                 page-break-inside: avoid;
             }
-        /* } */
+        }
     </style>
 </head>
 
