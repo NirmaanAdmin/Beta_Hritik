@@ -1774,7 +1774,7 @@ class Purchase_model extends App_Model
      *
      * @return     <row , array>  The estimate, list estimate.
      */
-    public function get_estimate($id = '', $where = []) 
+    public function get_estimate($id = '', $where = [])
     {
         $this->db->select('*,' . db_prefix() . 'currencies.id as currencyid, ' . db_prefix() . 'pur_estimates.id as id, ' . db_prefix() . 'pur_estimates.currency as currency , ' . db_prefix() . 'currencies.name as currency_name');
         $this->db->from(db_prefix() . 'pur_estimates');
@@ -15550,7 +15550,7 @@ class Purchase_model extends App_Model
         $this->db->order_by('date', 'asc');
         return $this->db->get(db_prefix() . 'payment_certificate_activity')->result_array();
     }
-    
+
     public function get_wo_activity($id)
     {
         $this->db->where('rel_id', $id);
@@ -17787,6 +17787,12 @@ class Purchase_model extends App_Model
         return $this->db->get(db_prefix() . 'payment_certificate')->row();
     }
 
+    public function get_payment_certificate_po_wo_id($id)
+    {
+        $this->db->where('po_id', $id);
+        $this->db->or_where('wo_id', $id); // Use OR condition
+        return $this->db->get(db_prefix() . 'payment_certificate')->row();
+    }
     public function get_all_po_payment_certificate($id)
     {
         $this->db->where('po_id', $id);
@@ -18486,7 +18492,7 @@ class Purchase_model extends App_Model
 
     public function add_vendor_completed_items($data)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $value['vendorid'] = get_vendor_user_id();
                 $this->db->insert(db_prefix() . 'vendor_work_completed', $value);
@@ -18495,7 +18501,7 @@ class Purchase_model extends App_Model
         return true;
     }
 
-    public function get_vendor_work_completed($id) 
+    public function get_vendor_work_completed($id)
     {
         $this->db->where('vendorid', $id);
         return $this->db->get(db_prefix() . 'vendor_work_completed')->result_array();
@@ -18503,7 +18509,7 @@ class Purchase_model extends App_Model
 
     public function update_vendor_completed_items($data)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'vendor_work_completed', $value);
@@ -18512,18 +18518,18 @@ class Purchase_model extends App_Model
         return true;
     }
 
-    public function delete_vendor_completed_items($data) 
+    public function delete_vendor_completed_items($data)
     {
-       if(!empty($data)) {
+        if (!empty($data)) {
             $this->db->where_in('id', $data);
             $this->db->delete(db_prefix() . 'vendor_work_completed');
-       }
-       return true;
+        }
+        return true;
     }
 
     public function add_vendor_progress_items($data)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $value['vendorid'] = get_vendor_user_id();
                 $this->db->insert(db_prefix() . 'vendor_work_progress', $value);
@@ -18532,7 +18538,7 @@ class Purchase_model extends App_Model
         return true;
     }
 
-    public function get_vendor_work_progress($id) 
+    public function get_vendor_work_progress($id)
     {
         $this->db->where('vendorid', $id);
         return $this->db->get(db_prefix() . 'vendor_work_progress')->result_array();
@@ -18540,7 +18546,7 @@ class Purchase_model extends App_Model
 
     public function update_vendor_progress_items($data)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'vendor_work_progress', $value);
@@ -18549,18 +18555,18 @@ class Purchase_model extends App_Model
         return true;
     }
 
-    public function delete_vendor_progress_items($data) 
+    public function delete_vendor_progress_items($data)
     {
-       if(!empty($data)) {
+        if (!empty($data)) {
             $this->db->where_in('id', $data);
             $this->db->delete(db_prefix() . 'vendor_work_progress');
-       }
-       return true;
+        }
+        return true;
     }
 
     public function add_fresh_vendor_completed_items($data, $id)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $value['vendorid'] = $id;
                 $this->db->insert(db_prefix() . 'vendor_work_completed', $value);
@@ -18571,7 +18577,7 @@ class Purchase_model extends App_Model
 
     public function add_fresh_vendor_progress_items($data, $id)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $value['vendorid'] = $id;
                 $this->db->insert(db_prefix() . 'vendor_work_progress', $value);
@@ -18598,13 +18604,13 @@ class Purchase_model extends App_Model
         $response['line_order_date'] = $response['line_order_total'] = $response['column_po_labels'] = $response['column_po_value'] = $response['column_po_tax'] = $response['pie_budget_name'] = $response['pie_tax_value'] = $response['bar_top_vendor_name'] = $response['bar_top_vendor_value'] = $response['timeline_estimated_delivery'] = $response['timeline_actual_delivery_dates'] = array();
 
         $this->db->select('id, pur_order_number, approve_status, total, order_date, total_tax, group_pur, vendor');
-        if(!empty($vendors)) {
+        if (!empty($vendors)) {
             $this->db->where('vendor', $vendors);
         }
-        if(!empty($group_pur)) {
+        if (!empty($group_pur)) {
             $this->db->where('group_pur', $group_pur);
         }
-        if(!empty($kind)) {
+        if (!empty($kind)) {
             $this->db->where('kind', $kind);
         }
         if (!empty($from_date)) {
@@ -18617,26 +18623,26 @@ class Purchase_model extends App_Model
         }
         $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->result_array();
 
-        if(!empty($pur_orders)) {
+        if (!empty($pur_orders)) {
             $draft_po_value = 0;
             $approved_po_value = 0;
-            $draft_po_array = array_filter($pur_orders, function($item) {
+            $draft_po_array = array_filter($pur_orders, function ($item) {
                 return in_array($item['approve_status'], [1]);
             });
 
-            if(!empty($draft_po_array)) {
-                $draft_po_value = array_reduce($draft_po_array, function($carry, $item) {
+            if (!empty($draft_po_array)) {
+                $draft_po_value = array_reduce($draft_po_array, function ($carry, $item) {
                     return $carry + (float)$item['total'];
                 }, 0);
                 $response['draft_po_value'] = app_format_money($draft_po_value, $base_currency->symbol);
             }
 
-            $approved_po_array = array_filter($pur_orders, function($item) {
+            $approved_po_array = array_filter($pur_orders, function ($item) {
                 return in_array($item['approve_status'], [2]);
             });
 
-            if(!empty($approved_po_array)) {
-                $approved_po_value = array_reduce($approved_po_array, function($carry, $item) {
+            if (!empty($approved_po_array)) {
+                $approved_po_value = array_reduce($approved_po_array, function ($carry, $item) {
                     return $carry + (float)$item['total'];
                 }, 0);
                 $response['approved_po_value'] = app_format_money($approved_po_value, $base_currency->symbol);
@@ -18645,13 +18651,13 @@ class Purchase_model extends App_Model
             $total_po_value = $draft_po_value + $approved_po_value;
             $response['total_po_value'] = app_format_money($total_po_value, $base_currency->symbol);
 
-            $response['draft_po_count'] = count(array_filter($pur_orders, function($item) {
+            $response['draft_po_count'] = count(array_filter($pur_orders, function ($item) {
                 return isset($item['approve_status']) && $item['approve_status'] == 1;
             }));
-            $response['approved_po_count'] = count(array_filter($pur_orders, function($item) {
+            $response['approved_po_count'] = count(array_filter($pur_orders, function ($item) {
                 return isset($item['approve_status']) && $item['approve_status'] == 2;
             }));
-            $response['rejected_po_count'] = count(array_filter($pur_orders, function($item) {
+            $response['rejected_po_count'] = count(array_filter($pur_orders, function ($item) {
                 return isset($item['approve_status']) && $item['approve_status'] == 3;
             }));
 
@@ -18667,7 +18673,7 @@ class Purchase_model extends App_Model
                 $line_order_total[$date] += (float) $value['total'];
             }
 
-            if(!empty($line_order_date) && !empty($line_order_total)) {
+            if (!empty($line_order_date) && !empty($line_order_total)) {
                 $response['line_order_date'] = array_keys($line_order_date);
                 $response['line_order_total'] = array_values($line_order_total);
             }
@@ -18679,14 +18685,14 @@ class Purchase_model extends App_Model
                 $response['column_po_tax'][] = $value['total_tax'];
             }
 
-            $grouped = array_reduce($pur_orders, function($carry, $item) {
+            $grouped = array_reduce($pur_orders, function ($carry, $item) {
                 $items_group = get_group_name_item($item['group_pur']);
                 $group = $items_group->name;
                 $carry[$group] = ($carry[$group] ?? 0) + (float) $item['total_tax'];
                 return $carry;
             }, []);
 
-            if(!empty($grouped)) {
+            if (!empty($grouped)) {
                 $response['pie_budget_name'] = array_keys($grouped);
                 $response['pie_tax_value'] = array_values($grouped);
             }
@@ -18700,8 +18706,8 @@ class Purchase_model extends App_Model
                 }
                 $bar_top_vendors[$vendor_id]['value'] += (float) $item['total'];
             }
-            if(!empty($bar_top_vendors)) {
-                usort($bar_top_vendors, function($a, $b) {
+            if (!empty($bar_top_vendors)) {
+                usort($bar_top_vendors, function ($a, $b) {
                     return $b['value'] <=> $a['value'];
                 });
                 $bar_top_vendors = array_slice($bar_top_vendors, 0, 10);
@@ -18719,7 +18725,7 @@ class Purchase_model extends App_Model
                     $this->db->select('po_quantities, quantities, est_delivery_date, delivery_date');
                     $this->db->where_in('goods_receipt_id', $gr_ids);
                     $goods_receipt_detail = $this->db->get(db_prefix() . 'goods_receipt_detail')->result_array();
-                    if(!empty($goods_receipt_detail)) {
+                    if (!empty($goods_receipt_detail)) {
                         $po_qty = array_sum(array_column($goods_receipt_detail, 'po_quantities'));
                         $rec_qty = array_sum(array_column($goods_receipt_detail, 'quantities'));
                         if ($rec_qty == 0) {
@@ -18731,7 +18737,7 @@ class Purchase_model extends App_Model
                         }
 
                         foreach ($goods_receipt_detail as $gkey => $gvalue) {
-                            if(!empty($gvalue['delivery_date'])) {
+                            if (!empty($gvalue['delivery_date'])) {
                                 $response['timeline_estimated_delivery'][] = !empty($gvalue['est_delivery_date']) ? 1 : 0;
                                 $response['timeline_actual_delivery_dates'][] = $gvalue['delivery_date'] ?? '';
                             }
@@ -18764,13 +18770,13 @@ class Purchase_model extends App_Model
         $response['line_order_date'] = $response['line_order_total'] = $response['column_po_labels'] = $response['column_po_value'] = $response['column_po_tax'] = $response['pie_budget_name'] = $response['pie_tax_value'] = $response['bar_top_vendor_name'] = $response['bar_top_vendor_value'] = array();
 
         $this->db->select('id, wo_order_number, approve_status, total, order_date, total_tax, group_pur, vendor');
-        if(!empty($vendors)) {
+        if (!empty($vendors)) {
             $this->db->where('vendor', $vendors);
         }
-        if(!empty($group_pur)) {
+        if (!empty($group_pur)) {
             $this->db->where('group_pur', $group_pur);
         }
-        if(!empty($kind)) {
+        if (!empty($kind)) {
             $this->db->where('kind', $kind);
         }
         if (!empty($from_date)) {
@@ -18783,26 +18789,26 @@ class Purchase_model extends App_Model
         }
         $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->result_array();
 
-        if(!empty($wo_orders)) {
+        if (!empty($wo_orders)) {
             $draft_po_value = 0;
             $approved_po_value = 0;
-            $draft_po_array = array_filter($wo_orders, function($item) {
+            $draft_po_array = array_filter($wo_orders, function ($item) {
                 return in_array($item['approve_status'], [1]);
             });
 
-            if(!empty($draft_po_array)) {
-                $draft_po_value = array_reduce($draft_po_array, function($carry, $item) {
+            if (!empty($draft_po_array)) {
+                $draft_po_value = array_reduce($draft_po_array, function ($carry, $item) {
                     return $carry + (float)$item['total'];
                 }, 0);
                 $response['draft_po_value'] = app_format_money($draft_po_value, $base_currency->symbol);
             }
 
-            $approved_po_array = array_filter($wo_orders, function($item) {
+            $approved_po_array = array_filter($wo_orders, function ($item) {
                 return in_array($item['approve_status'], [2]);
             });
 
-            if(!empty($approved_po_array)) {
-                $approved_po_value = array_reduce($approved_po_array, function($carry, $item) {
+            if (!empty($approved_po_array)) {
+                $approved_po_value = array_reduce($approved_po_array, function ($carry, $item) {
                     return $carry + (float)$item['total'];
                 }, 0);
                 $response['approved_po_value'] = app_format_money($approved_po_value, $base_currency->symbol);
@@ -18811,13 +18817,13 @@ class Purchase_model extends App_Model
             $total_po_value = $draft_po_value + $approved_po_value;
             $response['total_po_value'] = app_format_money($total_po_value, $base_currency->symbol);
 
-            $response['draft_po_count'] = count(array_filter($wo_orders, function($item) {
+            $response['draft_po_count'] = count(array_filter($wo_orders, function ($item) {
                 return isset($item['approve_status']) && $item['approve_status'] == 1;
             }));
-            $response['approved_po_count'] = count(array_filter($wo_orders, function($item) {
+            $response['approved_po_count'] = count(array_filter($wo_orders, function ($item) {
                 return isset($item['approve_status']) && $item['approve_status'] == 2;
             }));
-            $response['rejected_po_count'] = count(array_filter($wo_orders, function($item) {
+            $response['rejected_po_count'] = count(array_filter($wo_orders, function ($item) {
                 return isset($item['approve_status']) && $item['approve_status'] == 3;
             }));
 
@@ -18833,7 +18839,7 @@ class Purchase_model extends App_Model
                 $line_order_total[$date] += (float) $value['total'];
             }
 
-            if(!empty($line_order_date) && !empty($line_order_total)) {
+            if (!empty($line_order_date) && !empty($line_order_total)) {
                 $response['line_order_date'] = array_keys($line_order_date);
                 $response['line_order_total'] = array_values($line_order_total);
             }
@@ -18845,14 +18851,14 @@ class Purchase_model extends App_Model
                 $response['column_po_tax'][] = $value['total_tax'];
             }
 
-            $grouped = array_reduce($wo_orders, function($carry, $item) {
+            $grouped = array_reduce($wo_orders, function ($carry, $item) {
                 $items_group = get_group_name_item($item['group_pur']);
                 $group = $items_group->name;
                 $carry[$group] = ($carry[$group] ?? 0) + (float) $item['total_tax'];
                 return $carry;
             }, []);
 
-            if(!empty($grouped)) {
+            if (!empty($grouped)) {
                 $response['pie_budget_name'] = array_keys($grouped);
                 $response['pie_tax_value'] = array_values($grouped);
             }
@@ -18866,8 +18872,8 @@ class Purchase_model extends App_Model
                 }
                 $bar_top_vendors[$vendor_id]['value'] += (float) $item['total'];
             }
-            if(!empty($bar_top_vendors)) {
-                usort($bar_top_vendors, function($a, $b) {
+            if (!empty($bar_top_vendors)) {
+                usort($bar_top_vendors, function ($a, $b) {
                     return $b['value'] <=> $a['value'];
                 });
                 $bar_top_vendors = array_slice($bar_top_vendors, 0, 10);
@@ -18886,7 +18892,7 @@ class Purchase_model extends App_Model
         $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
         return $attachments;
     }
-    
+
     public function get_work_attachments_with_id($id)
     {
         $this->db->where('id', $id);
@@ -18902,7 +18908,4 @@ class Purchase_model extends App_Model
         $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
         return $attachments;
     }
-    
-    
 }
-

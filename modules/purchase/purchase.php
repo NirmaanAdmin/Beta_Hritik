@@ -1622,16 +1622,21 @@ function wo_get_relation_data($data, $obj, $q = '')
 function pay_get_relation_data($data, $obj, $q = '')
 {
     $type = $obj['type'];
-    $rel_id = $obj['rel_id'];
+    $rel_id = $obj['rel_id'];    
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     if ($type == 'payment_certificate' || $type == 'payment_certificate') {
         if ($rel_id != '') {
-            $data = $CI->purchase_model->get_pur_order_new($rel_id);
-            if (empty($data)) {
+            $payment_certificate_data = $CI->purchase_model->get_payment_certificate_po_wo_id($rel_id);
+            
+
+            if($payment_certificate_data->po_id != ''){
+                $data = $CI->purchase_model->get_pur_order_new($rel_id);
+            }elseif ($payment_certificate_data->wo_id != '') {
                 $data = $CI->purchase_model->get_wo_order_new($rel_id);
             }
+         
         } else {
             if ($q != '') {
                 $data = $CI->purchase_model->get_wo_order_search($q);

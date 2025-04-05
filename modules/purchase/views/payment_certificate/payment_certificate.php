@@ -208,28 +208,28 @@
                             <tr>
                               <td>A1</td>
                               <td class="po_name"></td>
-                              <td class="po_contract_amount"></td>
+                              <td class="po_contract_amount" style="text-align:right"></td>
                               <td>
                                 <?php
                                 $po_previous = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_previous) : '');
-                                echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $po_this_bill = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_this_bill) : '');
-                                echo render_input('po_this_bill', '', $po_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('po_this_bill', '', $po_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="po_comulative"></td>
+                              <td class="po_comulative" style="text-align:right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>A</td>
                               <td><?php echo _l('total_value_of_works_executed'); ?></td>
-                              <td class="po_contract_amount"></td>
-                              <td class="total_po_previous"></td>
-                              <td class="total_po_this_bill"></td>
-                              <td class="po_comulative"></td>
+                              <td class="po_contract_amount" style="text-align:right"></td>
+                              <td class="total_po_previous" style="text-align:right"></td>
+                              <td class="total_po_this_bill" style="text-align:right"></td>
+                              <td class="po_comulative" style="text-align:right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>B</td>
@@ -260,22 +260,22 @@
                               <td>
                                 <?php
                                 $pay_cert_c1_1 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_1 : '');
-                                echo render_input('pay_cert_c1_1', '', $pay_cert_c1_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('pay_cert_c1_1', '', $pay_cert_c1_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c1_2 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_2 : '');
-                                echo render_input('pay_cert_c1_2', '', $pay_cert_c1_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('pay_cert_c1_2', '', $pay_cert_c1_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c1_3 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_3 : '');
-                                echo render_input('pay_cert_c1_3', '', $pay_cert_c1_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('pay_cert_c1_3', '', $pay_cert_c1_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="pay_cert_c1_4"></td>
+                              <td class="pay_cert_c1_4" style="text-align: right;"></td>
                             </tr>
                             <tr>
                               <td>C2</td>
@@ -283,38 +283,38 @@
                               <td>
                                 <?php
                                 $pay_cert_c2_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_1) : '');
-                                echo render_input('pay_cert_c2_1', '', $pay_cert_c2_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('pay_cert_c2_1', '', $pay_cert_c2_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c2_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_2) : '');
-                                echo render_input('pay_cert_c2_2', '', $pay_cert_c2_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('pay_cert_c2_2', '', $pay_cert_c2_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c2_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_3) : '');
-                                echo render_input('pay_cert_c2_3', '', $pay_cert_c2_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('pay_cert_c2_3', '', $pay_cert_c2_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="pay_cert_c2_4"></td>
+                              <td class="pay_cert_c2_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>C</td>
                               <td><?php echo _l('net_advance'); ?></td>
-                              <td class="net_advance_1"></td>
-                              <td class="net_advance_2"></td>
-                              <td class="net_advance_3"></td>
-                              <td class="net_advance_4"></td>
+                              <td class="net_advance_1" style="text-align: right"></td>
+                              <td class="net_advance_2" style="text-align: right"></td>
+                              <td class="net_advance_3" style="text-align: right"></td>
+                              <td class="net_advance_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>D</td>
                               <td><?php echo _l('sub_total_ac'); ?></td>
-                              <td class="sub_total_ac_1"></td>
-                              <td class="sub_total_ac_2"></td>
-                              <td class="sub_total_ac_3"></td>
-                              <td class="sub_total_ac_4"></td>
+                              <td class="sub_total_ac_1" style="text-align: right"></td>
+                              <td class="sub_total_ac_2" style="text-align: right"></td>
+                              <td class="sub_total_ac_3" style="text-align: right"></td>
+                              <td class="sub_total_ac_4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>E1</td>
@@ -322,22 +322,22 @@
                               <td>
                                 <?php
                                 $ret_fund_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_1) : '');
-                                echo render_input('ret_fund_1', '', $ret_fund_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('ret_fund_1', '', $ret_fund_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $ret_fund_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_2) : '');
-                                echo render_input('ret_fund_2', '', $ret_fund_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('ret_fund_2', '', $ret_fund_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $ret_fund_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_3) : '');
-                                echo render_input('ret_fund_3', '', $ret_fund_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('ret_fund_3', '', $ret_fund_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="ret_fund_4"></td>
+                              <td class="ret_fund_4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>E2</td>
@@ -358,38 +358,38 @@
                               <td>
                                 <?php
                                 $works_exe_a_1 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_1 : '');
-                                echo render_input('works_exe_a_1', '', $works_exe_a_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('works_exe_a_1', '', $works_exe_a_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $works_exe_a_2 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_2 : '');
-                                echo render_input('works_exe_a_2', '', $works_exe_a_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('works_exe_a_2', '', $works_exe_a_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $works_exe_a_3 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_3 : '');
-                                echo render_input('works_exe_a_3', '', $works_exe_a_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('works_exe_a_3', '', $works_exe_a_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="works_exe_a_4"></td>
+                              <td class="works_exe_a_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>E</td>
                               <td><?php echo _l('less_total_retention'); ?></td>
-                              <td class="less_ret_1"></td>
-                              <td class="less_ret_2"></td>
-                              <td class="less_ret_3"></td>
-                              <td class="less_ret_4"></td>
+                              <td class="less_ret_1" style="text-align: right"></td>
+                              <td class="less_ret_2" style="text-align: right"></td>
+                              <td class="less_ret_3" style="text-align: right"></td>
+                              <td class="less_ret_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>F</td>
                               <td><?php echo _l('sub_total_de'); ?></td>
-                              <td class="sub_t_de_1"></td>
-                              <td class="sub_t_de_2"></td>
-                              <td class="sub_t_de_3"></td>
-                              <td class="sub_t_de_4"></td>
+                              <td class="sub_t_de_1" style="text-align: right"></td>
+                              <td class="sub_t_de_2" style="text-align: right"></td>
+                              <td class="sub_t_de_3" style="text-align: right"></td>
+                              <td class="sub_t_de_4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>G1</td>
@@ -397,22 +397,22 @@
                               <td>
                                 <?php
                                 $less_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_1) : '');
-                                echo render_input('less_1', '', $less_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_1', '', $less_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_2) : '');
-                                echo render_input('less_2', '', $less_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_2', '', $less_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_3) : '');
-                                echo render_input('less_3', '', $less_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_3', '', $less_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="less_4"></td>
+                              <td class="less_4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>G2</td>
@@ -420,22 +420,22 @@
                               <td>
                                 <?php
                                 $less_ah_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_1) : '');
-                                echo render_input('less_ah_1', '', $less_ah_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_ah_1', '', $less_ah_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_ah_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_2) : '');
-                                echo render_input('less_ah_2', '', $less_ah_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_ah_2', '', $less_ah_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_ah_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_3) : '');
-                                echo render_input('less_ah_3', '', $less_ah_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_ah_3', '', $less_ah_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="less_ah_4"></td>
+                              <td class="less_ah_4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>G2</td>
@@ -443,38 +443,38 @@
                               <td>
                                 <?php
                                 $less_aht_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_1) : '');
-                                echo render_input('less_aht_1', '', $less_aht_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_aht_1', '', $less_aht_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_aht_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_2) : '');
-                                echo render_input('less_aht_2', '', $less_aht_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_aht_2', '', $less_aht_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_aht_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_3) : '');
-                                echo render_input('less_aht_3', '', $less_aht_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('less_aht_3', '', $less_aht_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="less_aht_4"></td>
+                              <td class="less_aht_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>G</td>
                               <td><?php echo _l('less_deductions'); ?></td>
-                              <td class="less_ded_1"></td>
-                              <td class="less_ded_2"></td>
-                              <td class="less_ded_3"></td>
-                              <td class="less_ded_4"></td>
+                              <td class="less_ded_1" style="text-align: right"></td>
+                              <td class="less_ded_2" style="text-align: right"></td>
+                              <td class="less_ded_3" style="text-align: right"></td>
+                              <td class="less_ded_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>H</td>
                               <td><?php echo _l('sub_total_exclusive_of_taxes'); ?></td>
-                              <td class="sub_fg_1"></td>
-                              <td class="sub_fg_2"></td>
-                              <td class="sub_fg_3"></td>
-                              <td class="sub_fg_4"></td>
+                              <td class="sub_fg_1" style="text-align: right"></td>
+                              <td class="sub_fg_2" style="text-align: right"></td>
+                              <td class="sub_fg_3" style="text-align: right"></td>
+                              <td class="sub_fg_4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>I1</td>
@@ -493,10 +493,10 @@
                                 </select>
                                 on A
                               </td>
-                              <td class="cgst_on_a1"></td>
-                              <td class="cgst_on_a2"></td>
-                              <td class="cgst_on_a3"></td>
-                              <td class="cgst_on_a4"></td>
+                              <td class="cgst_on_a1" style="text-align: right"></td>
+                              <td class="cgst_on_a2" style="text-align: right"></td>
+                              <td class="cgst_on_a3" style="text-align: right"></td>
+                              <td class="cgst_on_a4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>I2</td>
@@ -515,10 +515,10 @@
                                 </select>
                                 on A
                               </td>
-                              <td class="sgst_on_a1"></td>
-                              <td class="sgst_on_a2"></td>
-                              <td class="sgst_on_a3"></td>
-                              <td class="sgst_on_a4"></td>
+                              <td class="sgst_on_a1" style="text-align: right"></td>
+                              <td class="sgst_on_a2" style="text-align: right"></td>
+                              <td class="sgst_on_a3" style="text-align: right"></td>
+                              <td class="sgst_on_a4" style="text-align: right"></td>
                             </tr>
                             <tr>
                               <td>I3</td>
@@ -536,38 +536,38 @@
                               <td>
                                 <?php
                                 $labour_cess_1 = (isset($payment_certificate) ? $payment_certificate->labour_cess_1 : '');
-                                echo render_input('labour_cess_1', '', $labour_cess_1, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('labour_cess_1', '', $labour_cess_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $labour_cess_2 = (isset($payment_certificate) ? $payment_certificate->labour_cess_2 : '');
-                                echo render_input('labour_cess_2', '', $labour_cess_2, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('labour_cess_2', '', $labour_cess_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $labour_cess_3 = (isset($payment_certificate) ? $payment_certificate->labour_cess_3 : '');
-                                echo render_input('labour_cess_3', '', $labour_cess_3, 'number', ['oninput' => "calculate_payment_certificate()"]);
+                                echo render_input('labour_cess_3', '', $labour_cess_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
                                 ?>
                               </td>
-                              <td class="labour_cess_4"></td>
+                              <td class="labour_cess_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>I</td>
                               <td><?php echo _l('total_applicable_taxes'); ?></td>
-                              <td class="tot_app_tax_1"></td>
-                              <td class="tot_app_tax_2"></td>
-                              <td class="tot_app_tax_3"></td>
-                              <td class="tot_app_tax_4"></td>
+                              <td class="tot_app_tax_1" style="text-align: right"></td>
+                              <td class="tot_app_tax_2" style="text-align: right"></td>
+                              <td class="tot_app_tax_3" style="text-align: right"></td>
+                              <td class="tot_app_tax_4" style="text-align: right"></td>
                             </tr>
                             <tr class="table_head">
                               <td>J</td>
                               <td><?php echo _l('amount_recommended'); ?></td>
-                              <td class="amount_rec_1"></td>
-                              <td class="amount_rec_2"></td>
-                              <td class="amount_rec_3"></td>
-                              <td class="amount_rec_4"></td>
+                              <td class="amount_rec_1" style="text-align: right"></td>
+                              <td class="amount_rec_2" style="text-align: right"></td>
+                              <td class="amount_rec_3" style="text-align: right"></td>
+                              <td class="amount_rec_4" style="text-align: right"></td>
                             </tr>
                           </tbody>
                         </table>
