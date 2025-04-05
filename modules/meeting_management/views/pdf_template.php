@@ -160,7 +160,7 @@
             <td style="font-weight: bold;">Description</td>
         </tr>
         <tr>
-            <td>
+            <td style="width: 100%;">
                 <?php
                 $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
 
