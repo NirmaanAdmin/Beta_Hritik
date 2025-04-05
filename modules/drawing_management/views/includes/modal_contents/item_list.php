@@ -1,12 +1,13 @@
 <?php 
 $query = '';
 if($creator_type == 'staff'){
-	$query = 'parent_id = '.$parent_id.' and ((creator_id IN (1, '.$user_id.') and creator_type = "staff") or (creator_id = 0 and creator_type = "public")) and filetype = "folder"';
+	$query = 'parent_id = '.$parent_id.' AND filetype = "folder" AND ( (name != "Inbox" AND (creator_type = "staff" OR (creator_id = 0 AND creator_type = "public"))) OR (name = "Inbox" AND creator_type = "staff" AND creator_id = '.$user_id.')
+  )';
 }
 else{
 	$query = 'parent_id = '.$parent_id.' and ((creator_id IN (1, '.$user_id.') and creator_type = "customer") or (creator_id = 0 and creator_type = "public")) and filetype = "folder"';
 }
-
+ 
 $items = $this->drawing_management_model->get_item('', $query, 'name, id, filetype');
 if(count($items)){ ?>
 	<?php 
