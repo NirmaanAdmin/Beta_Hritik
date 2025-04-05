@@ -59,7 +59,22 @@
             color: #666;
             padding: 10px 0;
         }
-        
+        @media print {
+            body {
+                margin: 0.5cm;
+                padding: 0;
+                font-size: 10pt;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+        }
     </style>
 </head>
 
