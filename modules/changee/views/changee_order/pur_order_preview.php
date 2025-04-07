@@ -77,7 +77,7 @@ if ($estimate->currency != 0) {
                      </li>
                   <?php } ?>
                   <li role="presentation">
-                     <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo changee_pur_html_entity_decode($estimate->id); ?>,'pur_order'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
+                     <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo changee_pur_html_entity_decode($estimate->id); ?>,'changee_order'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
                         <?php echo _l('tasks'); ?>
                      </a>
                   </li>
@@ -320,7 +320,7 @@ if ($estimate->currency != 0) {
                </div>
             <?php } ?>
             <div role="tabpanel" class="tab-pane" id="tab_tasks">
-               <?php init_relation_tasks_table(array('data-new-rel-id' => $estimate->id, 'data-new-rel-type' => 'pur_order')); ?>
+               <?php init_relation_tasks_table(array('data-new-rel-id' => $estimate->id, 'data-new-rel-type' => 'changee_order')); ?>
             </div>
             <div role="tabpanel" class="tab-pane ptop10 active" id="tab_estimate">
                <div id="estimate-preview">

@@ -149,6 +149,14 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $search = $CI->misc_model->_search_purchase_orders($q);
             $data   = $search['result'];
         }
+    } elseif ($type == 'changee_order') {
+        if ($rel_id != '') {
+            $CI->load->model('changee/changee_model');
+            $data = $CI->changee_model->get_pur_order($rel_id);
+        } else {
+            $search = $CI->misc_model->_search_purchase_orders($q);
+            $data   = $search['result'];
+        }
     } elseif ($type == 'pur_quotation') {
         if ($rel_id != '') {
         } else {
@@ -397,6 +405,16 @@ function get_relation_values($relation, $type)
             $name      = $relation->pur_order_name;
         }
         $link = admin_url('purchase/purchase_order/' . $id);
+    } elseif ($type == 'changee_order') {
+
+        if (is_array($relation)) {
+            $id        = $relation['id'];
+            $name      = $relation['pur_order_name'];
+        } else {
+            $id        = $relation->id;
+            $name      = $relation->pur_order_name;
+        }
+        $link = admin_url('changee/changee_order/' . $id);
     } elseif ($type == 'pur_quotation') {
 
         if (is_array($relation)) {
@@ -494,7 +512,7 @@ function get_relation_values($relation, $type)
         $link = admin_url('purchase/purchase_request/' . $id);
     }
 
-    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate' || $type == 'purchase_request') {
+    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate' || $type == 'purchase_request' || $type == 'changee_order') {
         return [
             'id'        => $id,
             'name'      => $name,

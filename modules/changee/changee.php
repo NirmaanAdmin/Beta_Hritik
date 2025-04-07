@@ -1330,11 +1330,11 @@ function changee_init_invoice_customfield($custom_field = '') {
  */
 function changee_po_task_modal_rel_type_select($value) {
     $selected = '';
-    if (isset($value) && isset($value['rel_type']) && $value['rel_type'] == 'pur_order') {
+    if (isset($value) && isset($value['rel_type']) && $value['rel_type'] == 'changee_order') {
         $selected = 'selected';
     }
-    echo "<option value='pur_order' " . $selected . ">" .
-    _l('pur_order') . "
+    echo "<option value='changee_order' " . $selected . ">" .
+    _l('changee_order') . "
                            </option>";
 
 }
