@@ -34,7 +34,7 @@ hooks()->add_action('after_custom_profile_tab_content', 'init_content_pur_order'
 hooks()->add_action('task_related_to_select', 'po_related_to_select'); // old
 //hooks()->add_filter('before_return_relation_values', 'po_relation_values', 10, 2); // old
 hooks()->add_filter('before_return_relation_data', 'po_relation_data', 10, 4); // old
-// hooks()->add_action('task_modal_rel_type_select', 'po_task_modal_rel_type_select'); // new
+hooks()->add_action('task_modal_rel_type_select', 'po_task_modal_rel_type_select'); // new
 hooks()->add_filter('relation_values', 'po_get_relation_values', 10, 2); // new
 hooks()->add_filter('get_relation_data', 'po_get_relation_data', 10, 4); // new
 hooks()->add_filter('tasks_table_row_data', 'po_add_table_row', 10, 3);

@@ -150,7 +150,7 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $data   = $search['result'];
         }
     } elseif ($type == 'changee_order') {
-        if ($rel_id != '') {
+        if ($rel_id != '') { 
             $CI->load->model('changee/changee_model');
             $data = $CI->changee_model->get_pur_order($rel_id);
         } else {
