@@ -1,5 +1,11 @@
 <?php if (isset($item)) {
 ?>
+<style>
+	#vueApp,#related_tasks{
+		display: none;
+	}
+
+</style>
 	<div class="row">
 		<div class="col-md-8">
 			<input type="hidden" name="id" value="<?php echo drawing_htmldecode($item->id); ?>">
@@ -204,7 +210,7 @@
 				$data_log = drawing_get_audit_log_file($item->id);
 				if (count($data_log) > 0) { ?>
 					<tr>
-						<td class="text-nowrap" colspan="2">
+						<td class="" colspan="2">
 							<?php echo _l('dmg_audit_log'); ?>
 							<table class="table no-mtop table-striped">
 								<thead>
@@ -233,7 +239,7 @@
 
 
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-4" style="background: #ffffff;">
 			<!-- <div class="panel panel-default">
 				<div class="panel-heading"><?php echo _l('dmg_reminders'); ?></div>
 				<div class="panel-body no-border">
@@ -364,7 +370,12 @@
 				</div>
 			</div>
 			<!-- End share -->
-
+			<div class="panel panel-default">
+				<div class="panel-heading"><?php echo _l('Task'); ?></div>
+				<div class="panel-body no-border">
+				<?php init_relation_tasks_table(array('data-new-rel-id' => $item->id, 'data-new-rel-type' => 'drawing')); ?>
+				</div>
+			</div>
 			<div class="panel-default no-border">
 				<div class="panel-body no-border">
 					<?php
@@ -394,7 +405,7 @@
 						<hr>
 					<?php } ?>
 
-					<?php if ( $item->creator_type == 'staff') { ?>
+					<?php if ($item->creator_type == 'staff') { ?>
 						<?php if ($item->approve == 0) { ?>
 							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'normal')">
 								<i class="fa fa-check-square"></i> <?php echo _l('dmg_send_request_approve'); ?>
@@ -416,7 +427,7 @@
 					<?php } ?>
 
 
-					<?php if ( $item->creator_type == 'staff') { ?>
+					<?php if ($item->creator_type == 'staff') { ?>
 						<?php if ($item->sign_approve == 0) { ?>
 							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'eid')">
 								<i class="fa fa-check-square"></i> <?php echo _l('dmg_request_approve_with_eid'); ?>

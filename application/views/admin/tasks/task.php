@@ -414,6 +414,13 @@
                                                                     } ?>>
                                             <?php echo _l('purchase_request'); ?>
                                         </option>
+                                        <option value="drawing" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                                                        if ($rel_type == 'drawing') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
+                                            <?php echo _l('Drawing'); ?>
+                                        </option>
                                         <?php
                                         hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
                                         ?>
@@ -425,6 +432,7 @@
                                     <?php echo render_input('price', 'Price <span>(₹)</span>', (isset($task) ? $task->price : '') , 'number') ?>
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <div class="form-group<?php if ($rel_id == '') {
                                                             echo ' hide';

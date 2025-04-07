@@ -209,6 +209,15 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $search = $CI->misc_model->_search_purchase_request($q);
             $data   = $search['result'];
         }
+    } elseif ($type == 'drawing') {
+
+        if ($rel_id != '') {
+            $CI->load->model('drawing_management/Drawing_management_model');
+            $data = $CI->Drawing_management_model->get_item($rel_id);
+        } else{
+            $search = $CI->misc_model->_search_drawings($q);
+            $data   = $search['result'];
+        }
     }
     if (empty($data)) {
         $data = hooks()->apply_filters('get_relation_data', $data, compact('type', 'rel_id', 'extra'));
@@ -510,9 +519,19 @@ function get_relation_values($relation, $type)
             $name      = $relation->pur_rq_name;
         }
         $link = admin_url('purchase/purchase_request/' . $id);
+    } elseif ($type == 'drawing') {
+        
+        if (is_array($relation)) {
+            $id        = $relation['id'];
+            $name      = $relation['name'];
+        } else {
+            $id        = $relation->id;
+            $name      = $relation->name;
+        }
+        $link = admin_url('drawing_management?id=' . $id);
     }
 
-    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate' || $type == 'purchase_request' || $type == 'changee_order') {
+    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate' || $type == 'purchase_request' || $type == 'changee_order' || $type == 'drawing') {
         return [
             'id'        => $id,
             'name'      => $name,
