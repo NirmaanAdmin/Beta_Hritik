@@ -184,6 +184,7 @@
     </table> -->
 
     <?php if (!empty($tasks)) : ?>
+        <?php /*
         <h2 class="section-title">Tasks Overview</h2>
         <table class="details-table">
             <thead>
@@ -202,7 +203,7 @@
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-        </table>
+        </table> */ ?>
     <?php endif; ?>
 
     <table class="details-table">
