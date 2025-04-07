@@ -20023,7 +20023,7 @@ class Warehouse_model extends App_Model
 		$goods_delivery_row_template = '';
 		$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
 
-		$this->db->select('item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'items.unit_id , unit_price as rate, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax_id, ' . db_prefix() . 'pur_order_detail.total as total_money, ' . db_prefix() . 'pur_order_detail.total, ' . db_prefix() . 'pur_order_detail.discount_% as discount, ' . db_prefix() . 'pur_order_detail.discount_money, ' . db_prefix() . 'pur_order_detail.total_money as total_after_discount, ' . db_prefix() . 'items.guarantee, ' . db_prefix() . 'pur_order_detail.tax_rate');
+		$this->db->select('item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'pur_order_detail.unit_id , unit_price as rate, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax_id, ' . db_prefix() . 'pur_order_detail.total as total_money, ' . db_prefix() . 'pur_order_detail.total, ' . db_prefix() . 'pur_order_detail.discount_% as discount, ' . db_prefix() . 'pur_order_detail.discount_money, ' . db_prefix() . 'pur_order_detail.total_money as total_after_discount, ' . db_prefix() . 'items.guarantee, ' . db_prefix() . 'pur_order_detail.tax_rate');
 		$this->db->join(db_prefix() . 'items', '' . db_prefix() . 'pur_order_detail.item_code = ' . db_prefix() . 'items.id', 'left');
 		$this->db->where(db_prefix() . 'pur_order_detail.pur_order = ' . $pur_order);
 		$arr_results = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
