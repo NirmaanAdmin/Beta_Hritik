@@ -4798,6 +4798,14 @@ class purchase extends AdminController
                 array_push($where, $custom_date_select);
             }
 
+            if ($this->input->post('pur_vendor')
+                && count($this->input->post('pur_vendor')) > 0) {
+                array_push($where, 'AND vendor IN (' . implode(',', $this->input->post('pur_vendor')) . ')');
+            }
+
+            if ($this->input->post('pur_status') && count($this->input->post('pur_status')) > 0) {
+                array_push($where, 'AND approve_status IN (' . implode(',', $this->input->post('pur_status')) . ')');
+            }
 
 
             $currency = $this->currencies_model->get_base_currency();
@@ -4902,7 +4910,14 @@ class purchase extends AdminController
                 array_push($where, $custom_date_select);
             }
 
+            if ($this->input->post('wo_vendor')
+                && count($this->input->post('wo_vendor')) > 0) {
+                array_push($where, 'AND vendor IN (' . implode(',', $this->input->post('wo_vendor')) . ')');
+            }
 
+            if ($this->input->post('wo_status') && count($this->input->post('wo_status')) > 0) {
+                array_push($where, 'AND approve_status IN (' . implode(',', $this->input->post('wo_status')) . ')');
+            }
 
             $currency = $this->currencies_model->get_base_currency();
 

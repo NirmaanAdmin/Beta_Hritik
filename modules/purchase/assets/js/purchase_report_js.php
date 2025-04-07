@@ -27,6 +27,10 @@
       "report_currency": '[name="currency"]',
       "pur_order": '[name="pur_order[]"]',
       "vendor": '[name="vendor[]"]',
+      "pur_vendor": '[name="pur_vendor[]"]',
+      "pur_status": '[name="pur_status[]"]',
+      "wo_vendor": '[name="wo_vendor[]"]',
+      "wo_status": '[name="wo_status[]"]',
     }
 
     $('select[name="products_services"]').on('change', function() {
@@ -45,6 +49,22 @@
     });
 
     $('select[name="year_requisition"]').on('change', function() {
+      gen_reports();
+    });
+
+    $('select[name="pur_vendor[]"]').on('change', function() {
+      gen_reports();
+    });
+
+    $('select[name="pur_status[]"]').on('change', function() {
+      gen_reports();
+    });
+
+    $('select[name="wo_vendor[]"]').on('change', function() {
+      gen_reports();
+    });
+
+    $('select[name="wo_status[]"]').on('change', function() {
       gen_reports();
     });
 
