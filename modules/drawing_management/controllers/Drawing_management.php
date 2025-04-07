@@ -466,7 +466,7 @@ class drawing_management extends AdminController
 		$master_parent_id = '';
 		$id = $this->input->get('id');
 		$data['file'] = $this->drawing_management_model->get_item($id);
-        $this->load->view('file_managements/preview_file.php', $data);
+		$this->load->view('file_managements/preview_file.php', $data);
 	}
 
 	/**
@@ -1281,16 +1281,16 @@ class drawing_management extends AdminController
 
 	// public function update_discipline($parent_id)
 	// {
-    //     $this->db->where('parent_id', $parent_id);
-    //     $rootFolder =  $this->db->get(db_prefix() . 'dms_items')->result_array();
+	//     $this->db->where('parent_id', $parent_id);
+	//     $rootFolder =  $this->db->get(db_prefix() . 'dms_items')->result_array();
 
-    //     if(!empty($rootFolder)) {
-    //     	foreach ($rootFolder as $key => $value) {
-    //     		$this->db->where('id', $value['id']);
-    //     		$this->db->update(db_prefix() . 'dms_items', ['discipline' => 2]);
-    //     		$this->update_discipline($value['id']);
-    //     	}
-    //     }
+	//     if(!empty($rootFolder)) {
+	//     	foreach ($rootFolder as $key => $value) {
+	//     		$this->db->where('id', $value['id']);
+	//     		$this->db->update(db_prefix() . 'dms_items', ['discipline' => 2]);
+	//     		$this->update_discipline($value['id']);
+	//     	}
+	//     }
 	// }
 
 	public function get_primary_vendors()
@@ -1301,5 +1301,25 @@ class drawing_management extends AdminController
 			$response = $this->drawing_management_model->get_primary_vendors($data);
 		}
 		echo $response;
+	}
+
+	public function update_order()
+	{
+		if (!$this->input->is_ajax_request()) {
+			show_404();
+		}
+
+		$order = $this->input->post('order');
+		if (!is_array($order)) {
+			echo json_encode(['success' => false, 'message' => 'Invalid order']);
+			return;
+		}
+
+		foreach ($order as $position => $id) {
+			$this->db->where('id', $id);
+			$this->db->update(db_prefix() . 'dms_items', ['position' => $position]);
+		}
+
+		echo json_encode(['success' => true]);
 	}
 }
