@@ -11,6 +11,16 @@ $info_right_column .= '<b style="color:#4e4e4e;"># ' . $credit_note_number . '</
 if (get_option('show_status_on_pdf_ei') == 1) {
     $info_right_column .= '<br /><span style="color:rgb(' . credit_note_status_color_pdf($credit_note->status) . ');text-transform:uppercase;">' . format_credit_note_status($credit_note->status, '', false) . '</span>';
 }
+
+if($credit_note->pur_order_name != '') {
+    $po_name = $credit_note->pur_order_name->pur_order_number .'-'. $credit_note->pur_order_name->pur_order_name;
+    $p_name = '<p><b>Purchase Order</b>: ' . $po_name .'</p>';
+}
+
+if($credit_note->wo_order_name != '') {
+    $po_name = $credit_note->wo_order_name->wo_order_number .'-'. $credit_note->wo_order_name->wo_order_name;
+    $p_name = '<p><b>Work Order</b>: ' . $po_name .'</p>';
+}
 // Add logo
 $info_left_column .= pdf_logo_url();
 // Write top left logo and right column info/text
@@ -22,7 +32,7 @@ $organization_info = '<div style="color:#424242;">';
 
 $organization_info .= format_organization_info();
 
-$organization_info .= '</div>';
+$organization_info .= '</div>'.$p_name;
 
 // Bill to
 $credit_note_info = '<b>' . _l('credit_note_bill_to') . '</b>';

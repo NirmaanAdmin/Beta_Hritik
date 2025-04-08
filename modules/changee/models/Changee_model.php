@@ -3231,10 +3231,11 @@ class Changee_model extends App_Model
             $project = $this->get_changee_request($data['rel_id'])->project;
         }
         if ($data['rel_type'] == 'pur_order') {
-            $project = $this->get_pur_order($data['rel_id'])->project;
+            $module = $this->get_pur_order($data['rel_id']);
         }
         if ($data['rel_type'] == 'pur_quotation') {
             $project = $this->get_estimate($data['rel_id'])->project;
+            $project = $module->project;
         }
         $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
 
@@ -3248,12 +3249,43 @@ class Changee_model extends App_Model
                 $row['action'] = 'approve';
                 $row['staffid'] = $value['id'];
                 $row['date_send'] = $date_send;
-                $row['rel_id'] = $data['rel_id'];
+                $row['rel_id'] = $data['rel_id']; 
                 $row['rel_type'] = $data['rel_type'];
                 $row['sender'] = $sender;
                 $this->db->insert('tblco_approval_details', $row);
             }
-        }
+            $this->db->where('rel_type', $data['rel_type']);
+            $this->db->where('rel_id', $module->id);
+            $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
+
+            if (!$existing_task) {
+                if (($data['rel_type'] == 'pur_order')) {
+
+                    // Build the task name depending on the type
+                    if ($data['rel_type'] == 'pur_order') {
+                        $taskName = 'Review { ' . $module->pur_order_name . ' }{ ' . $module->pur_order_number . ' }';
+                    }
+
+                    $taskData = [
+                        'name'      => $taskName,
+                        'is_public' => 1,
+                        'startdate' => _d(date('Y-m-d')),
+                        'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
+                        'priority'  => 3,
+                        'rel_type'  => 'changee_order',
+                        'rel_id'    => $module->id,
+                        'category'  => $module->group_pur,
+                        'price'     => $module->total,
+                    ];
+                    $task_id =  $this->tasks_model->add($taskData);
+                    $assignss = [
+                        'staffid' => $value['id'],
+                        'taskid'  =>  $task_id
+                    ];
+                    $this->db->insert('tbltask_assigned', $assignss);
+                }
+            }
+        } 
 
         // foreach ($data_new as $value) {
         //     $row = [];

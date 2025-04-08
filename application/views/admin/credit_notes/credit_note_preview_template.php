@@ -206,6 +206,28 @@
                                 <address class="tw-text-neutral-500">
                                     <?php echo format_organization_info(); ?>
                                 </address>
+                                <?php 
+                                if($credit_note->pur_order){ ?>
+                                    <p class="no-mbot">
+                                    <span class="bold">
+                                        <?php echo _l('pur_order'); ?>:
+                                    </span>
+                                    <?php echo $pur_order_name->pur_order_number .'-'. $pur_order_name->pur_order_name ?>
+                                </p>
+                               <?php  }
+                                ?>
+                                <?php 
+                                if($credit_note->wo_order){ ?>
+                                    <p class="no-mbot">
+                                    <span class="bold">
+                                        <?php echo _l('wo_order'); ?>:
+                                    </span>
+                                    <?php echo $wo_order_name->wo_order_number .'-'. $wo_order_name->wo_order_name ?>
+                                </p>
+                               <?php  }
+                                ?>
+                                
+                               
                             </div>
                             <div class="col-sm-6 text-right">
                                 <span class="bold"><?php echo _l('credit_note_bill_to'); ?></span>
@@ -499,7 +521,7 @@
                     <?php render_datatable([ _l('reminder_description'), _l('reminder_date'), _l('reminder_staff'), _l('reminder_is_notified')], 'reminders'); ?>
                     <?php $this->load->view('admin/includes/modals/reminder', ['id' => $credit_note->id, 'name' => 'credit_note', 'members' => $members, 'reminder_title' => _l('credit_note_set_reminder_title')]); ?>
                 </div>
-            </div>
+            </div> 
         </div>
     </div>
 </div>

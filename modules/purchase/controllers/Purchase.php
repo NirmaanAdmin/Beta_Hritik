@@ -878,7 +878,7 @@ class purchase extends AdminController
                 if (!has_permission('purchase_quotations', '', 'create')) {
                     access_denied('quotations');
                 }
-                
+
                 $id = $this->purchase_model->add_estimate($estimate_data);
                 if ($id) {
                     set_alert('success', _l('added_successfully', _l('estimate')));
@@ -889,7 +889,7 @@ class purchase extends AdminController
                 if (!has_permission('purchase_quotations', '', 'edit')) {
                     access_denied('quotations');
                 }
-               
+
                 $success = $this->purchase_model->update_estimate($estimate_data, $id);
                 if ($success) {
                     set_alert('success', _l('updated_successfully', _l('estimate')));
@@ -4798,8 +4798,10 @@ class purchase extends AdminController
                 array_push($where, $custom_date_select);
             }
 
-            if ($this->input->post('pur_vendor')
-                && count($this->input->post('pur_vendor')) > 0) {
+            if (
+                $this->input->post('pur_vendor')
+                && count($this->input->post('pur_vendor')) > 0
+            ) {
                 array_push($where, 'AND vendor IN (' . implode(',', $this->input->post('pur_vendor')) . ')');
             }
 
@@ -4910,8 +4912,10 @@ class purchase extends AdminController
                 array_push($where, $custom_date_select);
             }
 
-            if ($this->input->post('wo_vendor')
-                && count($this->input->post('wo_vendor')) > 0) {
+            if (
+                $this->input->post('wo_vendor')
+                && count($this->input->post('wo_vendor')) > 0
+            ) {
                 array_push($where, 'AND vendor IN (' . implode(',', $this->input->post('wo_vendor')) . ')');
             }
 
@@ -7397,7 +7401,9 @@ class purchase extends AdminController
         $data['years']          = $this->purchase_model->get_debits_years();
         $data['statuses']       = $this->purchase_model->get_debit_note_statuses();
         $data['debit_note_id'] = $id;
+
         $data['title']          = _l('pur_debit_note');
+
         $this->load->view('debit_notes/manage', $data);
     }
 
@@ -7445,6 +7451,7 @@ class purchase extends AdminController
         }
         if ($id == '') {
             $title = _l('add_new', _l('debit_note'));
+            $data['isedit'] = false;
         } else {
             $debit_note = $this->purchase_model->get_debit_note($id);
 
@@ -7459,6 +7466,7 @@ class purchase extends AdminController
             $data['debit_note'] = $debit_note;
             $data['edit']        = true;
             $title               = _l('edit', _l('debit_note')) . ' - ' . format_debit_note_number($debit_note->id);
+            $data['isedit'] = true;
         }
 
         if ($this->input->get('customer_id')) {
@@ -7485,9 +7493,10 @@ class purchase extends AdminController
             $data['items']     = [];
             $data['ajaxItems'] = true;
         }
-
-        $data['title']     = $title;
-        $data['bodyclass'] = 'credit-note';
+        $data['pur_orders'] = $this->purchase_model->get_pur_order_approved();
+        $data['wo_orders']  =  $this->purchase_model->get_wo_order_approved();
+        $data['title']      = $title;
+        $data['bodyclass']  = 'credit-note';
         $this->load->view('debit_notes/debit_note', $data);
     }
 
@@ -7581,7 +7590,8 @@ class purchase extends AdminController
         $data['debit_note']                   = $debit_note;
         $data['members']                       = $this->staff_model->get('', ['active' => 1]);
         $data['available_debitable_invoices'] = $this->purchase_model->get_available_debitable_invoices($id);
-
+        $data['pur_order_name'] = $this->purchase_model->get_pur_order($debit_note->pur_order);
+        $data['wo_order_name']  = $this->purchase_model->get_wo_order($debit_note->wo_order);
         $this->load->view('debit_notes/debit_note_preview_template', $data);
     }
 
@@ -7795,7 +7805,13 @@ class purchase extends AdminController
         }
         $debit_note        = $this->purchase_model->get_debit_note($id);
         $debit_note_number = format_debit_note_number($debit_note->id);
+        // Fetch order names
+        $pur_order_name = $this->purchase_model->get_pur_order($debit_note->pur_order);
+        $wo_order_name  = $this->purchase_model->get_wo_order($debit_note->wo_order);
 
+        // Attach to credit_note object
+        $debit_note->pur_order_name = $pur_order_name;
+        $debit_note->wo_order_name  = $wo_order_name;
         try {
             $pdf = debit_note_pdf($debit_note);
         } catch (Exception $e) {
@@ -12692,38 +12708,37 @@ class purchase extends AdminController
         $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
         $data['current_user_is_admin']             = is_admin();
         $data['file'] = $this->purchase_model->get_purchase_attachments_with_id($id);
-    
+
         if (!$data['file']) {
             header('HTTP/1.0 404 Not Found');
             die;
         }
         $this->load->view('purchase_order/_file_new', $data);
-    } 
+    }
 
     public function file_work_preview($id, $rel_id)
     {
         $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
         $data['current_user_is_admin']             = is_admin();
         $data['file'] = $this->purchase_model->get_work_attachments_with_id($id);
-    
+
         if (!$data['file']) {
             header('HTTP/1.0 404 Not Found');
             die;
         }
         $this->load->view('work_order/_file_new', $data);
     }
-    
+
     public function file_estimate_preview($id, $rel_id)
     {
         $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
         $data['current_user_is_admin']             = is_admin();
         $data['file'] = $this->purchase_model->get_estimate_attachments_with_id($id);
-    
+
         if (!$data['file']) {
             header('HTTP/1.0 404 Not Found');
             die;
         }
         $this->load->view('quotations/_file_new', $data);
     }
-    
 }

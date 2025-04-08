@@ -80,7 +80,7 @@ class Credit_notes extends AdminController
         $original_number = $this->input->post('original_number');
         $number          = trim($number);
         $number          = ltrim($number, '0');
-        if ($isedit == 'true') { 
+        if ($isedit == 'true') {
             if ($number == $original_number) {
                 echo json_encode(true);
                 die;
@@ -124,6 +124,7 @@ class Credit_notes extends AdminController
                 redirect(admin_url('credit_notes/list_credit_notes/' . $id));
             }
         }
+        $data['isedit '] = false;
         if ($id == '') {
             $title = _l('add_new', _l('credit_note_lowercase'));
         } else {
@@ -136,6 +137,7 @@ class Credit_notes extends AdminController
             $data['credit_note'] = $credit_note;
             $data['edit']        = true;
             $title               = _l('edit', _l('credit_note_lowercase')) . ' - ' . format_credit_note_number($credit_note->id);
+            $data['isedit '] = true;
         }
 
         if ($this->input->get('customer_id')) {
@@ -160,7 +162,9 @@ class Credit_notes extends AdminController
         $data['currencies'] = $this->currencies_model->get();
 
         $data['base_currency'] = $this->currencies_model->get_base_currency();
-
+        $this->load->model('purchase/purchase_model');
+        $data['pur_orders'] = $this->purchase_model->get_pur_order_approved();
+        $data['wo_orders'] = $this->purchase_model->get_wo_order_approved();
         $data['title']     = $title;
         $data['bodyclass'] = 'credit-note';
         $this->load->view('admin/credit_notes/credit_note', $data);
@@ -286,7 +290,9 @@ class Credit_notes extends AdminController
         $data['credit_note']                   = $credit_note;
         $data['members']                       = $this->staff_model->get('', ['active' => 1]);
         $data['available_creditable_invoices'] = $this->credit_notes_model->get_available_creditable_invoices($id);
-
+        $this->load->model('purchase/purchase_model');
+        $data['pur_order_name'] = $this->purchase_model->get_pur_order($credit_note->pur_order);
+        $data['wo_order_name']  = $this->purchase_model->get_wo_order($credit_note->wo_order);
         $this->load->view('admin/credit_notes/credit_note_preview_template', $data);
     }
 
@@ -389,6 +395,15 @@ class Credit_notes extends AdminController
             redirect(admin_url('credit_notes/list_credit_notes'));
         }
         $credit_note        = $this->credit_notes_model->get($id);
+        $this->load->model('purchase/purchase_model');
+
+        // Fetch order names
+        $pur_order_name = $this->purchase_model->get_pur_order($credit_note->pur_order);
+        $wo_order_name  = $this->purchase_model->get_wo_order($credit_note->wo_order);
+
+        // Attach to credit_note object
+        $credit_note->pur_order_name = $pur_order_name;
+        $credit_note->wo_order_name  = $wo_order_name;
         $credit_note_number = format_credit_note_number($credit_note->id);
 
         try {

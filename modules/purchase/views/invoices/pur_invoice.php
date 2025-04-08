@@ -97,8 +97,8 @@
 										<option value=""></option>
 										<?php foreach ($pur_orders as $ct) { ?>
 											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->pur_order == $ct['id']) {
-																													echo 'selected';
-																												} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
+												echo 'selected';
+											} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>

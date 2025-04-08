@@ -176,6 +176,30 @@
                   </div>
 
                 </div>
+                <div class="row">
+                  <div class="col-md-6">
+                  <label for="pur_order"><?php echo _l('pur_order'); ?></label>
+									<select name="pur_order" id="pur_order" class="selectpicker"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+										<option value=""></option>
+										<?php foreach ($pur_orders as $ct) { ?>
+											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($debit_note) && $debit_note->pur_order == $ct['id']) {
+												echo 'selected';
+											} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
+										<?php } ?>
+									</select>
+                  </div>
+                  <div class="col-md-6">
+                  <label for="wo_order"><?php echo _l('wo_order'); ?></label>
+                    <select name="wo_order" id="wo_order" class="selectpicker"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                      <option value=""></option>
+                      <?php foreach ($wo_orders as $ct) { ?>
+                        <option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($debit_note) && $debit_note->wo_order == $ct['id']) {
+                                                            echo 'selected';
+                                                          } ?>><?php echo html_entity_decode($ct['wo_order_number'] . ' - ' . $ct['wo_order_name']); ?></option>
+                      <?php } ?>
+                    </select>
+                  </div>
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="">
@@ -466,6 +490,12 @@
           </div>
         </div>
       </div>
+      <?php
+            if ($isedit == true) { ?>
+                <input type="hidden" name="pur_order" id="pur_value" disabled="disabled" value="">
+                <input type="hidden" name="wo_order" id="wo_value" disabled="disabled" value="">
+            <?php }
+            ?>
       <?php echo form_close(); ?>
       <?php $this->load->view('admin/invoice_items/item'); ?>
     </div>
@@ -474,5 +504,46 @@
 <?php init_tail(); ?>
 <?php require 'modules/purchase/assets/js/debit_note_js.php'; ?>
 </body>
+<script>
+    $(document).ready(function () {
+        // Disable the second dropdown if the first dropdown has a selected value
+        function toggleDropdowns() {
+            const purOrderValue = $('#pur_order').val();
+            const woOrderValue = $('#wo_order').val();
 
+            if (purOrderValue) {
+                $('#wo_order').prop('disabled', true); // Disable the WO Order dropdown
+            } else {
+                $('#wo_order').prop('disabled', false); // Enable the WO Order dropdown
+            }
+
+            if (woOrderValue) {
+                $('#pur_order').prop('disabled', true); // Disable the PUR Order dropdown
+            } else {
+                $('#pur_order').prop('disabled', false); // Enable the PUR Order dropdown
+            }
+        }
+
+        // Attach event listeners to both dropdowns
+        $('#pur_order').on('change', function () {
+            toggleDropdowns();
+            $('#pur_value').val($('#pur_order').val());
+            $('#pur_value').prop('disabled', false);
+        });
+
+        $('#wo_order').on('change', function () {
+            toggleDropdowns();
+            $('#wo_value').val($('#wo_order').val());
+            $('#wo_value').prop('disabled', false);
+        });
+
+        // Initialize the dropdown states on page load
+        toggleDropdowns();
+
+        // Refresh the selectpicker after enabling/disabling
+        $('.selectpicker').on('change', function () {
+            $('.selectpicker').selectpicker('refresh');
+        });
+    });
+</script>
 </html>

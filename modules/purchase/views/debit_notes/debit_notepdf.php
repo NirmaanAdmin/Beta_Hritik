@@ -16,13 +16,22 @@ $info_left_column .= get_po_logo(150);
 // Write top left logo and right column info/text
 pdf_multi_row($info_left_column, $info_right_column, $pdf, ($dimensions['wk'] / 2) - $dimensions['lm']);
 
-$pdf->ln(10);
+$pdf->ln(10); 
 
+if($debit_note->pur_order_name != '') {
+    $po_name = $debit_note->pur_order_name->pur_order_number .'-'. $debit_note->pur_order_name->pur_order_name;
+    $p_name = '<p><b>Purchase Order</b>: ' . $po_name .'</p>';
+}
+
+if($debit_note->wo_order_name != '') {
+    $po_name = $debit_note->wo_order_name->wo_order_number .'-'. $debit_note->wo_order_name->wo_order_name;
+    $p_name = '<p><b>Work Order</b>: ' . $po_name .'</p>';
+}
 $organization_info = '<div style="color:#424242;">';
 
 $organization_info .= format_organization_info();
 
-$organization_info .= '</div>';
+$organization_info .= '</div>'.$p_name;
 
 // Bill to
 $debit_note_info = '<b>' . _l('debit_note_bill_to') . '</b>';
