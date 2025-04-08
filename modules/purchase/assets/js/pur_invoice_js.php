@@ -191,9 +191,9 @@ function pur_vendor_change(el){
       response = JSON.parse(response);
       $('select[name="currency"]').val(response.currency_id).change();
       
-        $('select[name="pur_order"]').html('');
-        $('select[name="pur_order"]').append(response.po_html);
-        $('select[name="pur_order"]').selectpicker('refresh');
+        // $('select[name="pur_order"]').html('');
+        // $('select[name="pur_order"]').append(response.po_html);
+        // $('select[name="pur_order"]').selectpicker('refresh');
       
         $('select[name="contract"]').html(response.html);
         $('select[name="contract"]').selectpicker('refresh');

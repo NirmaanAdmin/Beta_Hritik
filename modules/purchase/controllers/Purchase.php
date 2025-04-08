@@ -12749,4 +12749,18 @@ class purchase extends AdminController
         $this->purchase_model->delete_payment_certificate_files($id);
         redirect($_SERVER['HTTP_REFERER']);
     }
+
+    public function get_pur_order($pur_order)
+    {
+        $result = $this->purchase_model->get_pur_order($pur_order);
+        echo json_encode($result);
+        die;
+    }
+
+    public function get_wo_order($wo_order)
+    {
+        $result = $this->purchase_model->get_wo_order($wo_order);
+        echo json_encode($result);
+        die;
+    }
 }

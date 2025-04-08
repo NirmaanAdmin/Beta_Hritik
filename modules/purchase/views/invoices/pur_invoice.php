@@ -244,7 +244,7 @@
 
 								<div class="col-md-12 form-group pad_left_0 pad_right_0">
 									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
-									<select name="wo_order" id="wo_order" class="selectpicker" onchange="wo_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+									<select name="wo_order" id="wo_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
 										<?php foreach ($wo_orders as $ct) { ?>
 											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
@@ -485,6 +485,7 @@
 
 			// Calculate the sum
 			var sum = value1 + value2;
+			sum = sum.toFixed(2);
 
 			// Update the sum in another input field
 			$('#vendor_submitted_amount').val(sum);
@@ -493,5 +494,63 @@
 
 		// Attach the function to the keypress event of the second input
 		$('#vendor_submitted_amount_without_tax,#vendor_submitted_tax_amount').on('input', calculateSum);
+
+		$("body").on('change', 'select[name="pur_order"]', function () {
+	      "use strict";
+	      var pur_order = $(this).val();
+	      if(pur_order != '') {
+	        $.post(admin_url + 'purchase/get_pur_order/'+pur_order).done(function(response){
+	          response = JSON.parse(response);
+	          var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
+	          $('select[name="wo_order"]').val('').trigger('change');
+	          $('select[name="vendor"]').val(response.vendor).trigger('change');
+	          $('select[name="group_pur"]').val(response.group_pur).trigger('change');
+	          $('select[name="project_id"]').val(response.project).trigger('change');
+	          $('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
+	          $('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
+	          $('textarea[name="description_services"]').val(response.pur_order_name);
+	          calculateSum();
+	          init_selectpicker();
+	        });
+	      } else {
+	      	$('select[name="vendor"]').val('').trigger('change');
+	        $('select[name="group_pur"]').val('').trigger('change');
+	        $('select[name="project_id"]').val('').trigger('change');
+	        $('input[name="vendor_submitted_amount_without_tax"]').val('').trigger('change');
+	        $('input[name="vendor_submitted_tax_amount"]').val('').trigger('change');
+	        $('textarea[name="description_services"]').val('');
+	        calculateSum();
+	        init_selectpicker();
+	      }
+	    });
+
+	    $("body").on('change', 'select[name="wo_order"]', function () {
+	      "use strict";
+	      var wo_order = $(this).val();
+	      if(wo_order != '') {
+	        $.post(admin_url + 'purchase/get_wo_order/'+wo_order).done(function(response){
+	          response = JSON.parse(response);
+	          var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
+	          $('select[name="pur_order"]').val('').trigger('change');
+	          $('select[name="vendor"]').val(response.vendor).trigger('change');
+	          $('select[name="group_pur"]').val(response.group_pur).trigger('change');
+	          $('select[name="project_id"]').val(response.project).trigger('change');
+	          $('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
+	          $('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
+	          $('textarea[name="description_services"]').val(response.wo_order_name);
+	          calculateSum();
+	          init_selectpicker();
+	        });
+	      } else {
+	      	$('select[name="vendor"]').val('').trigger('change');
+	        $('select[name="group_pur"]').val('').trigger('change');
+	        $('select[name="project_id"]').val('').trigger('change');
+	        $('input[name="vendor_submitted_amount_without_tax"]').val('').trigger('change');
+	        $('input[name="vendor_submitted_tax_amount"]').val('').trigger('change');
+	        $('textarea[name="description_services"]').val('');
+	        calculateSum();
+	        init_selectpicker();
+	      }
+	    });
 	});
 </script>
