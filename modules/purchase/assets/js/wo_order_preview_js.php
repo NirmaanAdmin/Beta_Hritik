@@ -223,7 +223,7 @@ function send_payment_certificate_approve(id){
   "use strict";
     var data = {};
     data.rel_id = id;
-    data.rel_type = 'payment_certificate';
+    data.rel_type = 'wo_payment_certificate';
     $("body").append('<div class="dt-loader"></div>');
       $.post(admin_url + 'purchase/send_payment_certificate_approve', data).done(function(response){
           response = JSON.parse(response);

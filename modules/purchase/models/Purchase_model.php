@@ -18206,7 +18206,7 @@ class Purchase_model extends App_Model
         $date_send = date('Y-m-d H:i:s');
         $sender = get_staff_user_id();
         $project = 0;
-        $rel_name = 'payment_certificate';
+        // $rel_name = 'payment_certificate';
         $module = $this->get_payment_certificate($data['rel_id']);
 
         if (!empty($module->wo_id)) {
@@ -18233,7 +18233,7 @@ class Purchase_model extends App_Model
             $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
 
             if (!$existing_task) {
-                if (($data['rel_type'] == 'payment_certificate')) {
+                if (($data['rel_type'] == 'po_payment_certificate' || $data['rel_type'] == 'wo_payment_certificate')) {
 
                     // Build the task name depending on the type
                     if (!empty($module->wo_id)) {

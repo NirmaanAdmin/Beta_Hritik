@@ -959,7 +959,7 @@ if ($estimate->currency != 0) {
                            </td>
                            <td>
                               <?php
-                              $list_approval_details = get_list_approval_details($pay['id'], 'payment_certificate');
+                              $list_approval_details = get_list_approval_details($pay['id'], 'po_payment_certificate');
                               if (empty($list_approval_details)) { ?>
                                  <?php if ($pay['approve_status'] == 2) { ?>
                                     <span class="label label-primary"><?php echo _l('approved'); ?></span>

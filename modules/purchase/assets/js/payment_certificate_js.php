@@ -355,7 +355,7 @@ function payment_certificate_request_approval_status(id, status){
   "use strict";
   var data = {};
   data.rel_id = id;
-  data.rel_type = 'payment_certificate';
+  data.rel_type = 'po_payment_certificate';
   data.approve = status;
   data.note = $('textarea[name="reason"]').val();
   $.post(admin_url + 'purchase/payment_certificate_request/' + id, data).done(function(response){

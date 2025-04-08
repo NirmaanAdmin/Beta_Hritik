@@ -901,3 +901,5 @@ $lang['purchase_order_tax_analysis'] = 'Purchase Order Tax Analysis';
 $lang['delivery_payment_status_dashboard'] = 'Delivery & Payment Status Dashboard';
 $lang['work_order_summary_report'] = 'Work Order Summary Report';
 $lang['work_order_tax_analysis'] = 'Work Order Tax Analysis';
+$lang['po_payment_certificate'] = 'PO payment certificate';
+$lang['wo_payment_certificate'] = 'WO payment certificate';
