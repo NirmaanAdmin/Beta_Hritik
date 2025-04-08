@@ -16466,6 +16466,15 @@ class Purchase_model extends App_Model
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
                 }
+                $iuploadedFiles = handle_purchase_item_attachment_array('wo_order', $id, $rqd['id'], 'items', $_key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['image'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'wo_order_detail', $idata);
+                    }
+                }
             }
         }
 
