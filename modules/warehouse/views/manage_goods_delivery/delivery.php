@@ -412,7 +412,7 @@
 </div>
 <div id="modal_wrapper"></div>
 <div id="change_serial_modal_wrapper"></div>
-<input type="hidden" id="apply_to_all_value" value="">
+<input type="hidden" id="apply_to_all_value" value="0">
 <?php init_tail(); ?>
 <?php require 'modules/warehouse/assets/js/goods_delivery_js.php'; ?>
 </body>
