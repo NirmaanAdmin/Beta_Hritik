@@ -17705,7 +17705,7 @@ class Purchase_model extends App_Model
         return $result;
     }
 
-    public function get_po_contract_data($po_id, $payment_certificate_id = '')
+    public function get_po_contract_data($po_id, $payment_certificate_id = '', $cal = 1)
     {
         $result = array();
         $payment_certificate = array();
@@ -17723,13 +17723,16 @@ class Purchase_model extends App_Model
             $result['po_contract_amount'] = $pur_orders->subtotal;
         }
 
-        if ($result['po_previous'] == 0) {
-            $this->db->select_sum('po_previous');
+        if (empty($payment_certificate_id) && $cal == 1) {
+            $this->db->select('id');
             $this->db->where('po_id', $po_id);
             $this->db->where('approve_status', 2);
-            $po_previous = $this->db->get(db_prefix() . 'payment_certificate')->row();
-            if (!empty($po_previous)) {
-                $result['po_previous'] = $po_previous->po_previous;
+            $this->db->order_by('id', 'DESC');
+            $this->db->limit(1);
+            $last_payment_certificate = $this->db->get(db_prefix() . 'payment_certificate')->row();
+            if(!empty($last_payment_certificate)) {
+                $res = $this->get_payment_certificate_calc($last_payment_certificate->id);
+                $result['po_previous'] = $res['po_comulative'];
             }
         }
 
@@ -17764,6 +17767,7 @@ class Purchase_model extends App_Model
         $cron_email_options['requester'] = get_staff_user_id();
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix() . 'cron_email', $cron_email);
+        $this->save_payment_certificate_files($insert_id);
         return true;
     }
 
@@ -17778,6 +17782,7 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'payment_certificate', $data);
         $this->log_pay_cer_activity($id, 'pay_cert_activity_updated');
+        $this->save_payment_certificate_files($id);
         return true;
     }
 
@@ -17814,10 +17819,10 @@ class Purchase_model extends App_Model
         $result = !empty($pay_cert_data) ? $pay_cert_data[0] : array();
 
         if (!empty($result['wo_id'])) {
-            $po_contract_data = $this->get_wo_contract_data($result['wo_id']);
+            $po_contract_data = $this->get_wo_contract_data($result['wo_id'], '', 0);
             $po_contract_data['po_contract_amount'] = $po_contract_data['wo_contract_amount'];
         } else {
-            $po_contract_data = $this->get_po_contract_data($result['po_id']);
+            $po_contract_data = $this->get_po_contract_data($result['po_id'], '', 0);
         }
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
@@ -18365,7 +18370,7 @@ class Purchase_model extends App_Model
         return $this->db->get(db_prefix() . 'payment_certificate')->result_array();
     }
 
-    public function get_wo_contract_data($wo_id, $payment_certificate_id = '')
+    public function get_wo_contract_data($wo_id, $payment_certificate_id = '', $cal = 1)
     {
         $result = array();
         $payment_certificate = array();
@@ -18383,13 +18388,16 @@ class Purchase_model extends App_Model
             $result['wo_contract_amount'] = $wo_orders->subtotal;
         }
 
-        if ($result['po_previous'] == 0) {
-            $this->db->select_sum('po_previous');
+        if (empty($payment_certificate_id) && $cal == 1) {
+            $this->db->select('id');
             $this->db->where('wo_id', $wo_id);
             $this->db->where('approve_status', 2);
-            $po_previous = $this->db->get(db_prefix() . 'payment_certificate')->row();
-            if (!empty($po_previous)) {
-                $result['po_previous'] = $po_previous->po_previous;
+            $this->db->order_by('id', 'DESC');
+            $this->db->limit(1);
+            $last_payment_certificate = $this->db->get(db_prefix() . 'payment_certificate')->row();
+            if(!empty($last_payment_certificate)) {
+                $res = $this->get_payment_certificate_calc($last_payment_certificate->id);
+                $result['po_previous'] = $res['po_comulative'];
             }
         }
 
@@ -18907,5 +18915,53 @@ class Purchase_model extends App_Model
         $this->db->order_by('dateadded', 'desc');
         $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
         return $attachments;
+    }
+
+    public function save_payment_certificate_files($id)
+    {
+        $uploadedFiles = handle_payment_certificate_attachments_array($id);
+        if ($uploadedFiles && is_array($uploadedFiles)) {
+            foreach ($uploadedFiles as $file) {
+                $data = array();
+                $data['dateadded'] = date('Y-m-d H:i:s');
+                $data['rel_id'] = $id;
+                $data['staffid'] = get_staff_user_id();
+                $data['attachment_key'] = app_generate_hash();
+                $data['file_name'] = $file['file_name'];
+                $data['filetype']  = $file['filetype'];
+                $this->db->insert(db_prefix() . 'payment_certificate_files', $data);
+            }
+        }
+        return true;
+    }
+
+    public function get_payment_certificate_attachments($id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->order_by('dateadded', 'desc');
+        $attachments = $this->db->get(db_prefix() . 'payment_certificate_files')->result_array();
+        return $attachments;
+    }
+
+    public function delete_payment_certificate_files($id)
+    {
+        $deleted = false;
+        $rel_type = 'payment_certificate';
+        $this->db->where('id', $id);
+        $attachment = $this->db->get(db_prefix() . 'payment_certificate_files')->row();
+        if ($attachment) {
+            if (unlink(get_upload_path_by_type('purchase') . $rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name)) {
+                $this->db->where('id', $attachment->id);
+                $this->db->delete(db_prefix() . 'payment_certificate_files');
+                $deleted = true;
+            }
+            // Check if no attachments left, so we can delete the folder also
+            $other_attachments = list_files(get_upload_path_by_type('purchase') . $rel_type . '/' . $attachment->rel_id);
+            if (count($other_attachments) == 0) {
+                delete_dir(get_upload_path_by_type('purchase') . $rel_type . '/' . $attachment->rel_id);
+            }
+        }
+
+        return $deleted;
     }
 }

@@ -133,6 +133,19 @@ class Download extends App_Controller
                 }
                 $path = get_upload_path_by_type('purchase') . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
             }
+        }  elseif ($folder_indicator == 'payment_certificate') {
+            if (is_staff_logged_in() || is_vendor_logged_in()) {
+                if (!$attachmentid) {
+                    show_404();
+                }
+                $this->db->where('id', $attachmentid);
+                $attachment = $this->db->get(db_prefix() . 'payment_certificate_files')->row();
+                if (!$attachment) {
+                    show_404();
+                }
+                $rel_type = 'payment_certificate';
+                $path = get_upload_path_by_type('purchase') . $rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
+            }
         }  elseif ($folder_indicator == 'meeting_management') {
             if (is_staff_logged_in()) {
                 if (!$attachmentid) {

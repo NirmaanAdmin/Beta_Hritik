@@ -12356,6 +12356,7 @@ class purchase extends AdminController
         } else {
             $data['payment_certificate'] = $this->purchase_model->get_payment_certificate($payment_certificate_id);
             $title = _l('pur_cert_detail');
+            $data['attachments'] = $this->purchase_model->get_payment_certificate_attachments($payment_certificate_id);
             $is_edit = true;
         }
 
@@ -12585,6 +12586,7 @@ class purchase extends AdminController
         } else {
             $data['payment_certificate'] = $this->purchase_model->get_payment_certificate($payment_certificate_id);
             $title = _l('pur_cert_detail');
+            $data['attachments'] = $this->purchase_model->get_payment_certificate_attachments($payment_certificate_id);
             $is_edit = true;
         }
 
@@ -12740,5 +12742,11 @@ class purchase extends AdminController
             die;
         }
         $this->load->view('quotations/_file_new', $data);
+    }
+
+    public function delete_payment_certificate_files($id)
+    {
+        $this->purchase_model->delete_payment_certificate_files($id);
+        redirect($_SERVER['HTTP_REFERER']);
     }
 }
