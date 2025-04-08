@@ -5228,10 +5228,10 @@ class Warehouse_model extends App_Model
 		<th  colspan="1" class="th_stk10">' . _l('commodity_code') . '</th>
 		<th  colspan="1" class="th_stk10">' . _l('commodity_name') . '</th>
 		<th  colspan="1" class="th_stk7">' . _l('wh_unit_name') . '</th>
-		<th  colspan="2" class="th_stk17">' . _l('opening_stock') . '</th>
-		<th  colspan="2" class="th_stk17">' . _l('receipt_in_period') . '</th>
-		<th  colspan="2" class="th_stk17">' . _l('issue_in_period') . '</th>
-		<th  colspan="2" class="th_r_stk17">' . _l('closing_stock') . '</th>
+		<th  colspan="1" class="th_stk17">' . _l('opening_stock') . '</th>
+		<th  colspan="1" class="th_stk17">' . _l('receipt_in_period') . '</th>
+		<th  colspan="1" class="th_stk17">' . _l('issue_in_period') . '</th>
+		<th  colspan="1" class="th_r_stk17">' . _l('closing_stock') . '</th>
 		</tr>
 		<tr>
 		<th class="td_w5"></th>
@@ -5239,13 +5239,13 @@ class Warehouse_model extends App_Model
 		<th class="td_w10"></th>
 		<th class="td_stk_w7"></th>
 		<th  class="td_stkw5">' . _l('quantity') . '</th>
-		<th  class="td_stkw12">' . _l('Amount_') . '</th>
+		<th  class="td_stkw12 hide">' . _l('Amount_') . '</th>
 		<th  class="td_stkw5">' . _l('quantity') . '</th>
-		<th  class="td_stkw12">' . _l('Amount_') . '</th>
+		<th  class="td_stkw12 hide">' . _l('Amount_') . '</th>
 		<th  class="td_stkw5">' . _l('quantity') . '</th>
-		<th class="td_stkw12">' . _l('Amount_') . '</th>
+		<th class="td_stkw12 hide">' . _l('Amount_') . '</th>
 		<th  class="td_stkw5">' . _l('quantity') . '</th>
-		<th class="td_stkw12s">' . _l('Amount_') . '</th>
+		<th class="td_stkw12s hide">' . _l('Amount_') . '</th>
 		</tr>';
 		foreach ($commodity_lists as $commodity_list_key => $commodity_list) {
 			//get purchase price of item, before version get sales price.
@@ -5312,25 +5312,25 @@ class Warehouse_model extends App_Model
 			$total_closing_amount += $closing_amount;
 
 			$html .= '<td class="bor_alir">' . $stock_opening_quatity . '</td>
-			<td class="bor_alir">' . app_format_money((float) $stock_opening_amount, '') . '</td>
+			<td class="bor_alir hide">' . app_format_money((float) $stock_opening_amount, '') . '</td>
 			<td class="bor_alir">' . $import_period_quatity . '</td>
-			<td class="bor_alir">' . app_format_money((float) $import_period_amount, '') . '</td>
+			<td class="bor_alir hide">' . app_format_money((float) $import_period_amount, '') . '</td>
 			<td class="bor_alir">' . $export_period_quatity . '</td>
-			<td class="bor_alir">' . app_format_money((float) $export_period_amount, '') . '</td>
+			<td class="bor_alir hide">' . app_format_money((float) $export_period_amount, '') . '</td>
 			<td class="bor_alir">' . $closing_quatity . '</td>
-			<td class="bor_r">' . app_format_money((float) $closing_amount, '') . '</td>
+			<td class="bor_r hide">' . app_format_money((float) $closing_amount, '') . '</td>
 			</tr>';
 		}
 		$html .= '<tr>
 		<th  colspan="4" class="th_stk_style">' . _l('total') . ' : </th>
 		<th  colspan="1" class="th_stk_style">' . $total_opening_quatity . '</th>
-		<th  colspan="1" class="th_stk_style">' . app_format_money((float) $total_opening_amount, '') . '</th>
+		<th  colspan="1" class="th_stk_style hide">' . app_format_money((float) $total_opening_amount, '') . '</th>
 		<th  colspan="1" class="th_stk_style">' . $total_import_period_quatity . '</th>
-		<th  colspan="1" class="th_stk_style">' . app_format_money((float) $total_import_period_amount, '') . '</th>
+		<th  colspan="1" class="th_stk_style hide">' . app_format_money((float) $total_import_period_amount, '') . '</th>
 		<th  colspan="1" class="th_stk_style">' . $total_export_period_quatity . '</th>
-		<th  colspan="1" class="th_stk_style">' . app_format_money((float) $total_export_period_amount, '') . '</th>
+		<th  colspan="1" class="th_stk_style hide">' . app_format_money((float) $total_export_period_amount, '') . '</th>
 		<th  colspan="1" class="th_stk_style">' . $total_closing_quatity . '</th>
-		<th  colspan="1" class="th_st_spe">' . app_format_money((float) $total_closing_amount, '') . '</th>
+		<th  colspan="1" class="th_st_spe hide">' . app_format_money((float) $total_closing_amount, '') . '</th>
 		</tr>
 		</tbody>
 		</table>

@@ -60,10 +60,10 @@
                  <th colspan="1"><?php echo _l('commodity_code') ?></th>
                  <th colspan="1"><?php echo _l('commodity_name') ?></th>
                  <th colspan="1"><?php echo _l('wh_unit_name') ?></th>
-                 <th colspan="2" class="text-center"><?php echo _l('opening_stock') ?></th>
-                 <th colspan="2" class="text-center"><?php echo _l('receipt_in_period') ?></th>
-                 <th colspan="2" class="text-center"><?php echo _l('issue_in_period') ?></th>
-                 <th colspan="2" class="text-center"><?php echo _l('closing_stock') ?></th>
+                 <th colspan="1" class="text-center"><?php echo _l('opening_stock') ?></th>
+                 <th colspan="1" class="text-center"><?php echo _l('receipt_in_period') ?></th>
+                 <th colspan="1" class="text-center"><?php echo _l('issue_in_period') ?></th>
+                 <th colspan="1" class="text-center"><?php echo _l('closing_stock') ?></th>
                 </tr>
                 <tr>
                  <th></th>
@@ -71,13 +71,13 @@
                  <th></th>
                  <th></th>
                  <th><?php echo _l('quantity') ?></th>
-                 <th><?php echo _l('Amount_') ?></th>
+                 <th class="hide"><?php echo _l('Amount_') ?></th>
                  <th><?php echo _l('quantity') ?></th>
-                 <th><?php echo _l('Amount_') ?></th>
+                 <th class="hide"><?php echo _l('Amount_') ?></th>
                  <th><?php echo _l('quantity') ?></th>
-                 <th><?php echo _l('Amount_') ?></th>
+                 <th class="hide"><?php echo _l('Amount_') ?></th>
                  <th><?php echo _l('quantity') ?></th>
-                 <th><?php echo _l('Amount_') ?></th>
+                 <th class="hide"><?php echo _l('Amount_') ?></th>
                 </tr>
 
                 <tr>
@@ -86,24 +86,24 @@
                   <td>.....</td>
                   <td>.....</td>
                   <td>.....</td>
+                  <td class="hide">.....</td>
                   <td>.....</td>
+                  <td class="hide">.....</td>
                   <td>.....</td>
+                  <td class="hide">.....</td>
                   <td>.....</td>
-                  <td>.....</td>
-                  <td>.....</td>
-                  <td>.....</td>
-                  <td>.....</td>
+                  <td class="hide">.....</td>
                 </tr>
                 <tr>
                  <th colspan="4" class="text-right"><?php echo _l('total') ?> : </th>
                  <th colspan="1"></th>
+                 <th colspan="1" class="hide"></th>
                  <th colspan="1"></th>
+                 <th colspan="1" class="hide"></th>
                  <th colspan="1"></th>
+                 <th colspan="1" class="hide"></th>
                  <th colspan="1"></th>
-                 <th colspan="1"></th>
-                 <th colspan="1"></th>
-                 <th colspan="1"></th>
-                 <th colspan="1"></th>
+                 <th colspan="1" class="hide"></th>
                  
                 </tr>
               </tbody>
