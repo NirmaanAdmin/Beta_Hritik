@@ -1046,3 +1046,19 @@ function get_module_filter($module_name, $filter_name)
     $row = $CI->db->get()->row();
     return $row;
 }
+
+function get_share_to_me_dms() {
+    $CI = &get_instance();
+    $CI->db->select('tbldms_items.*');
+    $CI->db->from(db_prefix() . 'dms_share_logs');
+    $CI->db->join(
+        'tbldms_items', 
+        db_prefix() . 'dms_share_logs.item_id = tbldms_items.id', 
+        'left' 
+    );
+    $CI->db->where(db_prefix() . 'dms_share_logs.staff', get_staff_user_id());
+    $CI->db->where('tbldms_items.id IS NOT NULL');
+    $CI->db->where(db_prefix() . 'dms_share_logs.share_to', 'staff');
+    $row = $CI->db->get()->result();
+    return $row;
+}
