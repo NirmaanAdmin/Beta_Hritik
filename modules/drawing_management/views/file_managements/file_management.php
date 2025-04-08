@@ -62,7 +62,7 @@
 													<?php echo _l('dmg_upload'); ?>
 												</span>
 											</button>
-											<?php if (is_admin()) { ?>
+											
 												<button class="btn btn-default pull-right mright10 display-flex default-tool" onclick="create_folder()">
 													<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder-plus">
 														<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
@@ -73,7 +73,7 @@
 														<?php echo _l('dmg_new_folder'); ?>
 													</span>
 												</button>
-											<?php } ?>
+											
 
 											<!-- <?php echo render_input('search_new', '', '', 'text', ['placeholder' => _l('dmg_search_name_tag_etc')], [], 'pull-right default-tool'); ?> -->
 											<div class="input-group">
