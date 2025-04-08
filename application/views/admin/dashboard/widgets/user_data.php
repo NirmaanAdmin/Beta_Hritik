@@ -110,7 +110,7 @@
                         echo '</tbody>';
                         echo '</table>';
                     } else {
-                        echo '<p>No shared items found.</p>'; // Display message if no results
+                        echo '<p>No shared Drawings found.</p>'; // Display message if no results
                     }
 
                     
