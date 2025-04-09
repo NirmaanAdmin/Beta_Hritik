@@ -1195,6 +1195,307 @@ class drawing_management_model extends app_model
 		}
 	}
 
+	public function get_file_transmittal($transmittal_id)
+	{
+		// Initialize an array to store the final file records.
+		$files = array();
+
+		// Get all records from tbldms_items where parent_id matches the provided transmittal ID.
+		$this->db->where('parent_id', $transmittal_id);
+		$query = $this->db->get('tbldms_items');
+		$records = $query->result();
+
+		// Iterate over each record.
+		foreach ($records as $record) {
+			// Check if the record is a folder.
+			if ($record->filetype === 'folder') {
+				// If it's a folder, recursively retrieve its non-folder files.
+				$folder_files = $this->get_file_transmittal($record->id);
+				// Merge the retrieved files from the folder into the results array.
+				if (!empty($folder_files)) {
+					$files = array_merge($files, $folder_files);
+				}
+			} else {
+				// If it's not a folder, add the record directly to the files array.
+				$files[] = $record;
+			}
+		}
+
+		// Return the complete array of non-folder files.
+		return $files;
+	}
+	/**
+	 * Retrieves a single file from a transmittal based on discipline.
+	 *
+	 * Given a transmittal ID, this method will search for a file within the
+	 * transmittal that matches the current user's discipline. If a matching file
+	 * is found, it is returned. If not, the method returns null.
+	 *
+	 * @param int $transmittal_id The ID of the transmittal to search.
+	 *
+	 * @return object|null The matching file record from tbldms_items, or null if none is found.
+	 */
+	public function get_file_transmittal_with_discipline($transmittal_id)
+	{
+		// Fetch records with the given parent ID
+		$this->db->where('parent_id', $transmittal_id);
+		$query = $this->db->get('tbldms_items');
+		$records = $query->result();
+
+		foreach ($records as $record) {
+			// If it's an empty discipline folder, recurse into it
+			if ($record->filetype === 'folder' && empty($record->discipline)) {
+				$result = $this->get_file_transmittal_with_discipline($record->id);
+				if (!empty($result)) {
+					return $result;
+				}
+			}
+			// Check if it's a file with non-empty discipline
+			elseif ($record->filetype !== 'folder' && !empty($record->discipline)) {
+				return $record;
+			}
+		}
+
+		// Return null if no matching record is found
+		return null;
+	}
+
+	public function get_dms_project($transmittal_id)
+	{
+		// Fetch the record where id equals the provided transmittal_id.
+		$this->db->where('id', $transmittal_id);
+		$query = $this->db->get('tbldms_items');
+		$records = $query->result();
+
+		// Check if the initial record was found.
+		if (empty($records)) {
+			return null; // or return a default value if needed
+		}
+
+		// Retrieve the parent_id from the fetched record.
+		$parent_id = $records[0]->parent_id;
+
+		// Fetch the record from tbldms_items where id equals the parent_id.
+		$this->db->where('id', $parent_id);
+		$query = $this->db->get('tbldms_items');
+		$records2 = $query->result();
+
+		// Check if the parent record exists.
+		if (empty($records2)) {
+			return null; // or return a default value if needed
+		}
+
+		// Return the 'name' from the parent record.
+		return $records2[0]->name;
+	}
+
+	public function get_vendor_name($transmittal_id)
+	{
+		$this->db->where('item_id', $transmittal_id);
+		$query = $this->db->get('tbldms_share_logs');
+		$records = $query->result();
+
+		$vendor_id = $records[0]->vendor;
+
+		$this->db->where('userid', $vendor_id);
+		$query = $this->db->get('tblpur_vendor');
+		$records2 = $query->result();
+
+		// Check if the parent record exists.
+		if (empty($records2)) {
+			return null; // or return a default value if needed
+		}
+
+		// Return the 'company' from the parent record.
+		return $records2[0]->company;
+	}
+
+    /**
+     * Retrieves the count of records for each item associated with a given vendor.
+     *
+     * This function queries the 'tbldms_share_logs' table to obtain the count of records
+     * for each item_id where the 'vendor' matches the provided id. The results are grouped
+     * by item_id, allowing for a distinct count of records associated with each item.
+     *
+     * @param int $id The ID of the vendor to filter the records.
+     * @return array An array of results, each containing an item_id and its corresponding record count.
+     */
+
+
+	public function get_vendor_item_counts($id)
+	{
+		// Select the item_id and the number of records for each item_id.
+		$this->db->select('item_id, COUNT(item_id) as record_count');
+
+		// Filter records where the vendor column equals the provided id.
+		$this->db->where('vendor', $id);
+
+		// Group the results by item_id to get a distinct count for each item.
+		$this->db->group_by('item_id');
+
+		// Execute the query from tbldms_share_logs.
+		$query = $this->db->get('tbldms_share_logs');
+
+		// Return the resulting array.
+		return $query->result_array();
+	}
+
+
+	public function dms_get_table_data($transmittal_id)
+	{
+		$this->load->model('staff_model');
+		$get_all_file = $this->get_file_transmittal($transmittal_id);
+		$html = '';
+		$get_project = $this->get_dms_project($transmittal_id);
+		$get_vendor_name = $this->get_vendor_name($transmittal_id);
+		$get_staff_name = $this->staff_model->get(get_staff_user_id());
+		$discipline_id =  $this->get_file_transmittal_with_discipline($transmittal_id);
+
+		$get_discipline = $this->get_discipline($discipline_id->discipline);
+		$project_prefix = strtoupper(substr($get_project, 0, 3));
+		$discipline_prefix = strtoupper(substr($get_discipline[0]['name'], 0, 3));
+		$count = $this->get_vendor_item_counts(361);
+
+		
+		$company_logo = get_option('company_logo_dark');
+		if (!empty($company_logo)) {
+			$logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="130" height="100">';
+		}
+		$html = '<!DOCTYPE html>
+					<html lang="en">
+					<head>
+					<meta charset="UTF-8">
+					<title>Document Transmittal</title>
+					<style>
+						body {
+						font-family: Arial, sans-serif;
+						margin: 20px;
+						color: #000;
+						}
+						.header,
+						.footer,
+						.additional-info,
+						.page-info {
+						margin-bottom: 20px;
+						}
+						.header {
+						display: flex;
+						justify-content: space-between;
+						align-items: flex-start;
+						border-bottom: 2px solid #000;
+						padding-bottom: 10px;
+						}
+						.logo {
+						font-size: 20px;
+						font-weight: bold;
+						}
+						.transmittal-info {
+						text-align: right;
+						}
+						.transmittal-info h1 {
+						font-size: 24px;
+						margin: 0 0 5px;
+						text-transform: uppercase;
+						}
+						.content p {
+						margin: 5px 0;
+						}
+						.table {
+						width: 100%;
+						border-collapse: collapse;
+						margin-top: 20px;
+						}
+						.table th,
+						.table td {
+						border: 1px solid #000;
+						padding: 8px;
+						text-align: left;
+						}
+						.table th {
+						background-color: #eee;
+						}
+						.footer p, .additional-info p, .page-info p {
+						margin: 5px 0;
+						}
+					</style>
+					</head>
+					<body><table style="width: 100%; border-collapse: collapse;">
+					<tr>
+						<td style="vertical-align: top; width: 40%;">
+						' . $logo . '
+						</td>
+						<td style="vertical-align: top; text-align: right; width: 60%;">
+						<h1>Drawing Transmittal</h1>
+						<p><strong>Transmittal No.:</strong> ' . $project_prefix . '-BIL-' . $discipline_prefix . '-TRS-' . date('Y') . '00'.count($count).'</p>
+						<p><strong>Date of Issue:</strong> ' . date('d M, Y') . '</p>
+						</td>
+					</tr>
+					</table>
+					<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">
+						<tr>
+							<td style="vertical-align: top; width: 40%;">
+								<p style="margin-bottom: 0px;"><strong>Project Name :</strong> ' . $get_project . '</p>
+								<p><strong>Issuer :</strong> ' . $get_staff_name->firstname . ' ' . $get_staff_name->lastname . '</p>
+							</td>
+						
+							<td style="vertical-align: top; text-align: right; width: 60%;">
+								<p><strong>Discipline :</strong> ' . $get_discipline[0]['name'] . '</p>
+								<p><strong>Recipient :</strong> ' . $get_vendor_name . '</p>
+							</td>
+						</tr>
+					</table><br><br>
+					<!-- Table header for document details -->
+					<table class="table" style="width: 100%; border-collapse: collapse; border: none;">
+					<thead>
+						<tr style="border-bottom: 1px solid #000;">
+						<th style="width:5%;">#</th>
+						<th style="width:95%;">Document Title</th>
+						</tr>
+					</thead><tbody>';
+		$sr = 1;
+		foreach ($get_all_file as $key => $value) {
+			$html .= '<tr style="border-bottom: 1px solid #000;">
+						<td style="width:5%;">' . $sr++ . '</td>
+						<td style="width:95%;">' . $value->name . '</td>
+					</tr>';
+		}
+		$html .= '</tbody>
+					</table><br><br>
+					<div class="footer">
+						<table style="width: 100%; border-collapse: collapse;">
+						<tr>
+						<td style="width: 50%; vertical-align: top; padding: 5px;">
+							<p><strong>Sent by:</strong> Basilius Internațional LLP</p>
+						</td>
+						<td style="width: 50%; vertical-align: top; padding: 5px;text-align:right">
+							<p><strong>Received by:</strong> ' . $get_vendor_name . '</p>
+						</td>
+						</tr>
+						<tr>
+						<td style="width: 50%; vertical-align: top; padding: 5px;">
+							<p><strong>Date:</strong> ' . date('d M, Y') . '</p>
+						</td>
+						<td style="width: 50%; vertical-align: top; padding: 5px;">
+							
+						</td>
+						</tr>
+						<tr>
+						<td colspan="2" style="text-align: center; padding: 10px 5px 5px;">
+							<p>Please acknowledge receipt by signing, dating, and returning a copy of this Transmittal.</p>
+						</td>
+						</tr>
+						</table>
+						</div>
+
+
+					</body>
+					</html>
+					';
+
+		return $html;
+	}
+
+
 	/**
 	 * add share document
 	 * @param array $data 
@@ -1222,8 +1523,8 @@ class drawing_management_model extends app_model
 		}
 		$this->db->insert(db_prefix() . 'dms_share_logs', $data);
 
-		if($data['share_to'] == 'staff') {
-			if(!empty($data['staff'])) {
+		if ($data['share_to'] == 'staff') {
+			if (!empty($data['staff'])) {
 				$staff_list = $data['staff'];
 				$staff_list = explode(',', $staff_list);
 				$this->db->where_in('staffid', $staff_list);
@@ -1238,24 +1539,52 @@ class drawing_management_model extends app_model
 				}
 			}
 		}
-		if($data['share_to'] == 'vendor') {
-			if(isset($vendor_contact) && !empty($vendor_contact)) {
+		if ($data['share_to'] == 'vendor') {
+			if (isset($vendor_contact) && !empty($vendor_contact)) {
 				$this->db->select('email');
 				$this->db->where_in('id', $vendor_contact);
 				$pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
-				if(!empty($pur_contacts)) {
+				if (!empty($pur_contacts)) {
+
 					foreach ($pur_contacts as $key => $con) {
+
+						// Generate the transmittal HTML table data using your DMS function.
+						$transmittal = $this->dms_get_table_data($data['item_id']);
+
+						try {
+							$pdf = $this->dmshare_pdf($transmittal);
+						} catch (Exception $e) {
+							echo pur_html_entity_decode($e->getMessage());
+							die;
+						}
+
+						// Output the PDF in the browser as 'test.pdf'
+						$attach = $pdf->Output('Transmittal.pdf', 'S');
+
 						$data_send_mail = new stdClass();
 						$data_send_mail->email = trim($con['email']);
 						$data_send_mail->link = '<a href="' . admin_url('drawing_management?id=' . $data['item_id']) . '">' . drawing_dmg_get_file_name($data['item_id']) . '</a>';
 						$data_send_mail->message = $data['message'];
 						$template = mail_template('share', 'drawing_management', $data_send_mail);
+						$template->add_attachment([
+							'attachment' => $attach,
+							'filename'   => str_replace('/', '-', 'Transmittal.pdf'),
+							'type'       => 'application/pdf',
+						]);
 						$template->send();
 					}
 				}
 			}
 		}
 		return $this->db->insert_id();
+	}
+	public function dmshare_pdf($transmittal)
+	{
+		return app_pdf(
+			'transmittal',
+			module_dir_path(DRAWING_MANAGEMENT_MODULE_NAME, 'libraries/pdf/Dms_share_pdf'),
+			$transmittal
+		);
 	}
 
 	/**
@@ -1988,10 +2317,14 @@ class drawing_management_model extends app_model
 		$API->start($from_path, 'docx')->wait()->download($to_path)->delete();
 	}
 
-	public function get_discipline()
+	public function get_discipline($id = '')
 	{
+		if (!empty($id)) {
+			$this->db->where('id', $id);
+		}
 		return $this->db->get(db_prefix() . 'dms_discipline')->result_array();
 	}
+
 	public function searchFilesAndFolders($query)
 	{
 
@@ -2025,8 +2358,8 @@ class drawing_management_model extends app_model
 		$ds = 'design_stage';
 		$design_stage = !empty($design_stage) ? $design_stage : NULL;
 		update_module_filter($module_name, $ds, $design_stage);
-		$d = 'discipline';	
-		$discipline_string = !empty($discipline) ? implode(',', $discipline) : NULL;		
+		$d = 'discipline';
+		$discipline_string = !empty($discipline) ? implode(',', $discipline) : NULL;
 		update_module_filter($module_name, $d, $discipline_string);
 		$p = 'purpose';
 		$purpose = !empty($purpose) ? $purpose : NULL;
@@ -2130,7 +2463,7 @@ class drawing_management_model extends app_model
 		$this->db->select('id, email');
 		$this->db->where_in('userid', $data);
 		$pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
-		if(!empty($pur_contacts)) {
+		if (!empty($pur_contacts)) {
 			$selected_contacts = array_column($pur_contacts, 'id');
 			$response = render_select('vendor_contact[]', $pur_contacts, array('id', 'email'), '' . _l('vendor_contact'), $selected_contacts, ['multiple' => 1, 'data-actions-box' => true], [], '', '', false);
 		}
