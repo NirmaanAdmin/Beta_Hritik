@@ -15884,9 +15884,9 @@ class Purchase_model extends App_Model
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
-            <th class="thead-dark" style="width: 2%">' . _l('serial_no') . '</th>
+            <th class="thead-dark" style="width: 3%"></th>
             <th class="thead-dark" style="width: 10%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 22%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 21%">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 9%">' . _l('sub_groups_pur') . '</th>
             <th class="thead-dark" align="left" style="width: 9%">' . _l('area') . '</th>
             <th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>
@@ -15915,10 +15915,10 @@ class Purchase_model extends App_Model
                 $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/wo_order/' . $row['wo_order'] . '/' . $row['id'] . '/' . $row['image'].'" width="70" height="50">';
             }
             $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
-            $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 2%">' . $serial_no . '</td>
+            $html .= '<tr nobr="true" class="sortable" style="font-size: 11px">
+            <td style="width: 3%">' . $serial_no . '</td>
             <td style="width: 10%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="width: 22%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 21%">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 9%">' . $get_sub_head . '</td>
             <td align="left" style="width: 9%">' . get_area_name_by_id($row['area']) . '</td>
             <td align="left" style="width: 10%">' . $full_item_image . '</td>
