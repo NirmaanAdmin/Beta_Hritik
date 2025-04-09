@@ -11288,14 +11288,20 @@ class Warehouse_model extends App_Model
 	 */
 	public function  get_pr_order_delivered()
 	{
-
-		$arr_purchase_orders = $this->get_invoices_goods_delivery('purchase_orders');
-
-		if (count($arr_purchase_orders) > 0) {
-
-			return $this->db->query('select * from tblpur_orders where approve_status = 2 order by id desc')->result_array();
-		}
-		return $this->db->query('select * from tblpur_orders where approve_status = 2 order by id desc')->result_array();
+		$result = array();
+		$pur_orders = $this->db->query('select * from tblpur_orders where approve_status = 2 order by id desc')->result_array();
+		if(!empty($pur_orders)) {
+            foreach ($pur_orders as $key => $value) {
+                $po_id = $value['id'];
+                $get_pur_order = $this->goods_delivery_get_pur_order($po_id);
+                $pur_order_detail = $get_pur_order['goods_delivery_exist'] ? $get_pur_order['goods_delivery_exist'] : 0;
+                if($pur_order_detail > 0) {
+                    $result[] = $value;
+                }
+            }
+        }
+        $result = !empty($result) ? array_values($result) : array();
+        return $result;
 	}
 
 
@@ -20020,6 +20026,7 @@ class Warehouse_model extends App_Model
 		$total_tax_money = 0;
 		$additional_discount = 0;
 		$pur_total_money = 0;
+		$goods_delivery_exist = 0;
 		$goods_delivery_row_template = '';
 		$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
 
@@ -20125,6 +20132,7 @@ class Warehouse_model extends App_Model
 									$temporaty_commodity_name = $commodity_name . ' SN: ' . $value['serial_number'];
 									$quantities = 1;
 									$name = 'newitems[' . $item_index . ']';
+									$goods_delivery_exist++;
 									$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
 									$temporaty_quantity--;
 									$temporaty_available_quantity--;
@@ -20161,6 +20169,7 @@ class Warehouse_model extends App_Model
 										$available_quantity = $description_results->quantities;
 									}
 								}
+								$goods_delivery_exist++;
 								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
 								$item_index++;
 							}
@@ -20178,6 +20187,7 @@ class Warehouse_model extends App_Model
 
 		$arr_pur_resquest['result'] = $goods_delivery_row_template;
 		$arr_pur_resquest['additional_discount'] = $additional_discount;
+		$arr_pur_resquest['goods_delivery_exist'] = $goods_delivery_exist;
 
 		return $arr_pur_resquest;
 	}

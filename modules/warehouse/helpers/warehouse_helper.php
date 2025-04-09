@@ -160,7 +160,21 @@ function get_pr_order($id = false)
         return $CI->db->get(db_prefix() . 'pur_orders')->row();
     }
     if ($id == false) {
-        return $CI->db->query('select * from tblpur_orders where approve_status = 2 AND status_goods = 0')->result_array();
+        $result = array();
+        $CI->load->model('warehouse_model');
+        $pur_orders = $CI->db->query('select * from tblpur_orders where approve_status = 2 AND status_goods = 0')->result_array();
+        if(!empty($pur_orders)) {
+            foreach ($pur_orders as $key => $value) {
+                $po_id = $value['id'];
+                $get_pur_order = $CI->warehouse_model->get_pur_request($po_id);
+                $pur_order_detail = $get_pur_order[0] ? $get_pur_order[0] : '';
+                if(!empty($pur_order_detail)) {
+                    $result[] = $value;
+                }
+            }
+        }
+        $result = !empty($result) ? array_values($result) : array();
+        return $result;
     }
 }
 
