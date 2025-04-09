@@ -4289,7 +4289,8 @@ class Purchase_model extends App_Model
             $full_item_image = '';
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image']);
-                $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+                // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image'].'" width="70" height="50">';
             }
             $html .= '<tr nobr="true" class="sortable">
             <td>' . $items->commodity_code . ' - ' . $items->description . '</td>
@@ -4422,7 +4423,8 @@ class Purchase_model extends App_Model
             $full_item_image = '';
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image']);
-                $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+                // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image'].'" width="70" height="50">';
             }
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
@@ -5190,7 +5192,8 @@ class Purchase_model extends App_Model
             $full_item_image = '';
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image']);
-                $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+                // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image'].'" width="70" height="50">';
             }
             $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $html .= '<tr nobr="true" class="sortable">
