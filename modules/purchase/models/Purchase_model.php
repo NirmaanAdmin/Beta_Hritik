@@ -15879,15 +15879,16 @@ class Purchase_model extends App_Model
         $html .=  '<table class="table purorder-item" style="width: 100%">
         <thead>
           <tr>
-            <th class="thead-dark" style="width: 3%">' . _l('serial_no') . '</th>
+            <th class="thead-dark" style="width: 2%">' . _l('serial_no') . '</th>
             <th class="thead-dark" style="width: 10%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 29%">' . _l('item_description') . '</th>
-            <th class="thead-dark" align="left" style="width: 10%">' . _l('sub_groups_pur') . '</th>
-            <th class="thead-dark" align="left" style="width: 10%">' . _l('area') . '</th>
-            <th class="thead-dark" align="right" style="width: 10%">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="left" style="width: 22%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="width: 9%">' . _l('sub_groups_pur') . '</th>
+            <th class="thead-dark" align="left" style="width: 9%">' . _l('area') . '</th>
+            <th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>
+            <th class="thead-dark" align="right" style="width: 9%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 9%">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
-            <th class="thead-dark" align="right" style="width: 11%">' . _l('total') . '</th>
+            <th class="thead-dark" align="right" style="width: 10%">' . _l('total') . '</th>
           </tr>
           </thead>
           <tbody>';
@@ -15902,19 +15903,25 @@ class Purchase_model extends App_Model
             $units = $this->get_units_by_id($row['unit_id']);
             $unit_name = pur_get_unit_name($row['unit_id']);
             $get_sub_head = get_sub_head_name_by_id($row['sub_groups_pur']);
+            $full_item_image = '';
+            if (!empty($row['image'])) {
+                $item_base_url = base_url('uploads/purchase/wo_order/' . $row['wo_order'] . '/' . $row['id'] . '/' . $row['image']);
+                $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
+            }
             $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 3%">' . $serial_no . '</td>
+            <td style="width: 2%">' . $serial_no . '</td>
             <td style="width: 10%">' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td align="left" style="width: 29%">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="left" style="width: 10%">' . $get_sub_head . '</td>
-            <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>
-            <td align="right" style="width: 10%">' . $row['quantity']  . ' ' . $unit_name . '</td>
+            <td align="left" style="width: 22%">' . str_replace("<br />", " ", $row['description']) . '</td>
+            <td align="left" style="width: 9%">' . $get_sub_head . '</td>
+            <td align="left" style="width: 9%">' . get_area_name_by_id($row['area']) . '</td>
+            <td align="left" style="width: 10%">' . $full_item_image . '</td>
+            <td align="right" style="width: 9%">' . $row['quantity']  . ' ' . $unit_name . '</td>
             <td align="right" style="width: 9%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
             
             <td align="right" style="width: 10%">' . app_format_money($row['tax_rate'], '') . '</td>
             
-            <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
+            <td align="right" style="width: 10%">' . '₹ ' . app_format_money($row['total_money'], '') . '</td>
           </tr>';
             //   <td align="right" style="width: 11%">' . '₹ ' . app_format_money($row['total'] - $row['into_money'], '') . '</td>
             $t_mn += $row['total_money'];
