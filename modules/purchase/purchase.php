@@ -193,7 +193,7 @@ function purchase_module_init_menu_items()
 {
 
     $CI = &get_instance();
-    if (has_permission('purchase_items', '', 'view') || has_permission('purchase_vendors', '', 'view') || has_permission('purchase_vendor_items', '', 'view') || has_permission('purchase_request', '', 'view') || has_permission('purchase_quotations', '', 'view') || has_permission('purchase_orders', '', 'view') || has_permission('purchase_contracts', '', 'view') || has_permission('purchase_invoices', '', 'view') || has_permission('purchase_reports', '', 'view') || has_permission('order_tracker', '', 'view') || has_permission('purchase_tracker', '', 'view') || has_permission('work_order', '', 'view') || has_permission('work_order', '', 'view') || has_permission('purchase_debit_notes', '', 'view') || has_permission('purchase_settings', '', 'edit') || has_permission('purchase_vendors', '', 'view_own') || has_permission('purchase_vendor_items', '', 'view_own') || has_permission('purchase_request', '', 'view_own') || has_permission('purchase_quotations', '', 'view_own') || has_permission('purchase_orders', '', 'view_own') || has_permission('purchase_contracts', '', 'view_own') || has_permission('purchase_invoices', '', 'view_own') || has_permission('purchase_debit_notes', '', 'view_own') || has_permission('purchase_order_return', '', 'view_own') || has_permission('purchase_order_return', '', 'view')) {
+    if (has_permission('purchase_items', '', 'view') || has_permission('purchase_vendors', '', 'view') || has_permission('purchase_vendor_items', '', 'view') || has_permission('purchase_request', '', 'view') || has_permission('purchase_quotations', '', 'view') || has_permission('purchase_orders', '', 'view') || has_permission('purchase_contracts', '', 'view') || has_permission('purchase_invoices', '', 'view') || has_permission('purchase_reports', '', 'view') || has_permission('order_tracker', '', 'view') || has_permission('purchase_tracker', '', 'view') || has_permission('work_orders', '', 'view') || has_permission('work_orders', '', 'view') || has_permission('purchase_debit_notes', '', 'view') || has_permission('purchase_settings', '', 'edit') || has_permission('purchase_vendors', '', 'view_own') || has_permission('purchase_vendor_items', '', 'view_own') || has_permission('purchase_request', '', 'view_own') || has_permission('purchase_quotations', '', 'view_own') || has_permission('purchase_orders', '', 'view_own') || has_permission('purchase_contracts', '', 'view_own') || has_permission('purchase_invoices', '', 'view_own') || has_permission('purchase_debit_notes', '', 'view_own') || has_permission('purchase_order_return', '', 'view_own') || has_permission('purchase_order_return', '', 'view')) {
         $CI->app_menu->add_sidebar_menu_item('purchase', [
             'name' => _l('purchase'),
             'icon' => 'fa fa-shopping-cart',
@@ -346,7 +346,7 @@ function purchase_module_init_menu_items()
             'position' => 12,
         ]);
     }
-    if (has_permission('work_order', '', 'view')) {
+    if (has_permission('work_orders', '', 'view')) {
         
        $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'work-order',
@@ -461,7 +461,7 @@ function purchase_permissions()
     register_staff_capabilities('purchase_request', $capabilities_own, _l('purchase_request'));
     register_staff_capabilities('purchase_quotations', $capabilities_own, _l('purchase_quotations'));
     register_staff_capabilities('purchase_orders', $capabilities_own, _l('purchase_orders'));
-    register_staff_capabilities('work_order', $capabilities_own, _l('work_order'));
+    register_staff_capabilities('work_orders', $capabilities_own, _l('work_order'));
     register_staff_capabilities('order_tracker', $capabilities_own, _l('order_tracker'));
     register_staff_capabilities('purchase_tracker', $capabilities_own, _l('purchase_tracker'));
     register_staff_capabilities('purchase_order_return', $capabilities_own, _l('purchase_order_return'));

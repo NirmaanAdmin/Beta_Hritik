@@ -14,7 +14,7 @@
             <div class="panel-body">
                <div class="row">
                   <div class="_buttons col-md-3">
-                     <?php if (has_permission('work_order', '', 'create') || is_admin()) { ?>
+                     <?php if (has_permission('work_orders', '', 'create') || is_admin()) { ?>
                         <a href="<?php echo admin_url('purchase/wo_order'); ?>" class="btn btn-info pull-left mright10 display-block">
                            <?php echo _l('new_wo_order'); ?>
                         </a>
