@@ -681,6 +681,17 @@
                             </select>
                           </div>
                         </div>
+                        <div class="row">
+                          <div class="col-md-7">
+                            <span class="bold"><?php echo _l('discount_remarks'); ?> <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="<?php echo _l('discount_remarks_note'); ?>"></i></span>
+                          </div>
+                          <div class="col-md-3">
+                            <?php $discount_remarks = isset($pur_order) ? $pur_order->discount_remarks : '';
+                            echo render_input('discount_remarks', '', $discount_remarks); ?>
+                          </div>
+                          <div class="col-md-2">
+                          </div>
+                        </div>
                       </td>
                       <td class="order_discount_value">
 

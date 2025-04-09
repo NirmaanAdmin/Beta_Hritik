@@ -623,7 +623,10 @@ if ($estimate->currency != 0) {
                               <?php if (($estimate->discount_total + $item_discount) > 0) { ?>
 
                                  <tr id="subtotal">
-                                    <td><span class="bold"><?php echo _l('discount_total(money)'); ?></span>
+                                    <?php
+                                    $discount_remarks = !empty($estimate->discount_remarks) ? ' '.$estimate->discount_remarks : ''; 
+                                    ?>
+                                    <td><span class="bold">Total Discount<?php echo $discount_remarks; ?>(money)</span>
                                     </td>
                                     <td class="subtotal">
                                        <?php echo '-' . app_format_money(($estimate->discount_total + $item_discount), $base_currency->symbol); ?>

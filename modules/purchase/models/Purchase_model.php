@@ -5227,6 +5227,8 @@ class Purchase_model extends App_Model
             $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
         }
 
+        $discount_remarks = !empty($pur_order->discount_remarks) ? ' '.$pur_order->discount_remarks : '';
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
@@ -5240,14 +5242,14 @@ class Purchase_model extends App_Model
         if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>' . _l('discount(%)') . '(%)' . '</td>
+                 <td>Discount'.$discount_remarks.' (%)</td>
                  <td class="subtotal">
                     ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
                  </td>
               </tr>
               <tr id="subtotal">
               <td width="33%"></td>
-                 <td>' . _l('discount(amount)') . '</td>
+                 <td>Discount'.$discount_remarks.'(amount)</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                  </td>
@@ -5256,7 +5258,7 @@ class Purchase_model extends App_Model
             $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>' . _l('total_after_discount') . '</td>
+                 <td>Total after discount'.$discount_remarks.'</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($total_after_discount, '') . '
                  </td>
@@ -15940,6 +15942,8 @@ class Purchase_model extends App_Model
             $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
         }
 
+        $discount_remarks = !empty($pur_order->discount_remarks) ? ' '.$pur_order->discount_remarks : '';
+
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
             $html .= '<tr id="subtotal">
@@ -15953,14 +15957,14 @@ class Purchase_model extends App_Model
         if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>' . _l('discount(%)') . '(%)' . '</td>
+                 <td>Discount'.$discount_remarks.' (%)</td>
                  <td class="subtotal">
                     ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
                  </td>
               </tr>
               <tr id="subtotal">
               <td width="33%"></td>
-                 <td>' . _l('discount(amount)') . '</td>
+                 <td>Discount'.$discount_remarks.'(amount)</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                  </td>
@@ -15969,7 +15973,7 @@ class Purchase_model extends App_Model
             $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>' . _l('total_after_discount') . '</td>
+                 <td>Total after discount'.$discount_remarks.'</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($total_after_discount, '') . '
                  </td>
