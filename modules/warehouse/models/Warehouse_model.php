@@ -15428,7 +15428,7 @@ class Warehouse_model extends App_Model
 		$clients_attr = ["onchange" => "get_vehicle('" . $name_commodity_code . "','" . $name_unit_id . "','" . $name_warehouse_id . "');", "data-none-selected-text" => _l(''), 'data-customer_id' => 'invoice'];
 
 		$row .= '<td class="">' . render_textarea($name_commodity_name, '', $commodity_name, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
-		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description'), 'readonly' => true]) . '</td>';
 		$row .= '<td class="warehouse_select">' .
 			render_select($name_warehouse_id, $warehouse_data, array('warehouse_id', 'warehouse_name'), '', $warehouse_id, $warehouse_id_name_attr, ["data-none-selected-text" => _l('warehouse_name')], 'no-margin') .
 			render_input($name_note, '', $note, 'text', ['placeholder' => _l('commodity_notes')], [], 'no-margin', 'input-transparent text-left') .
@@ -20158,15 +20158,31 @@ class Warehouse_model extends App_Model
 									$quantities = (float)$temporaty_quantity;
 									$temporaty_quantity = 0;
 								}
-								$this->db->where('pr_order_id', $pur_order);
-								$this->db->where('approval', 1);
-								$check_goods_delivery = $this->db->get(db_prefix() . 'goods_delivery')->row();
-								if(empty($check_goods_delivery)) {
+								$duplicates = array_filter($arr_results, function ($item) use ($commodity_code) {
+								    return $item['commodity_code'] == $commodity_code;
+								});
+								if(count($duplicates) > 1) {
 									$non_break_description = str_replace("<br />", "", $description);
-									$this->db->like('description', $non_break_description);
-									$description_results = $this->db->get(db_prefix() . 'goods_receipt_detail')->row();
-									if(!empty($description_results)) {
-										$available_quantity = $description_results->quantities;
+									$this->db->select(db_prefix() . 'goods_receipt_detail.quantities');
+									$this->db->like(db_prefix() . 'goods_receipt_detail.description', $non_break_description);
+									$this->db->where(db_prefix() . 'goods_receipt.approval', 1);
+									$this->db->where('pr_order_id', $pur_order);
+									$this->db->join(db_prefix() . 'goods_receipt', db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id', 'left');
+									$goods_receipt_description = $this->db->get(db_prefix() . 'goods_receipt_detail')->row();
+									if(!empty($goods_receipt_description)) {
+										$available_quantity = $goods_receipt_description->quantities;
+									}
+									
+									$this->db->select(db_prefix() . 'goods_delivery_detail.quantities');
+									$this->db->like(db_prefix() . 'goods_delivery_detail.description', $non_break_description);
+									$this->db->where(db_prefix() . 'goods_delivery.approval', 1);
+									$this->db->where('pr_order_id', $pur_order);
+									$this->db->join(db_prefix() . 'goods_delivery', db_prefix() . 'goods_delivery.id = ' . db_prefix() . 'goods_delivery_detail.goods_delivery_id', 'left');
+									$goods_delivery_description = $this->db->get(db_prefix() . 'goods_delivery_detail')->row();
+									if(!empty($goods_delivery_description)) {
+										if(!empty($goods_delivery_description->quantities)) {
+											$available_quantity = $available_quantity - $goods_delivery_description->quantities;
+										}
 									}
 								}
 								$goods_delivery_exist++;
