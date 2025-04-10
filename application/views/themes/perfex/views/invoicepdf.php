@@ -68,7 +68,7 @@ $tblinvoicehtml .= '
 $tblinvoicehtml .= '
 <tr style="font-size:13px">
     <td>'._l('order_deal_loc_no').' :</td>
-    <td>2011A SPC</td>
+    <td>'.$invoice->deal_slip_no.'</td>
 </tr>';
 
 $tblinvoicehtml .= '

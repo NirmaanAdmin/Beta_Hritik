@@ -160,6 +160,12 @@ if (isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
                 <?php echo $value; ?>
             </p>
             <?php } ?>
+            <?php if ($invoice->deal_slip_no) { ?>
+            <p class="no-mbot">
+                <span class="bold"><?php echo _l('deal_slip_no'); ?>:</span>
+                <?php echo $invoice->deal_slip_no; ?>
+            </p>
+            <?php } ?>
             <?php hooks()->do_action('after_right_panel_invoice_preview_template', $invoice); ?>
         </div>
     </div>
