@@ -17,16 +17,32 @@ class Meeting_model extends App_Model
         $query = $this->db->get();
         return $query->result_array();
     }
-
+    public function get_mom_detials($id)
+    {
+        $this->db->where('agenda_id', $id);
+        $mom_details = $this->db->get(db_prefix() . 'agendas_details')->result_array();
+        return $mom_details;
+    }
     // Create a new agenda
     public function create_agenda($data)
     {
-
         unset($data['client_id']);
+        unset($data['area']);
+        unset($data['description']);
+        unset($data['decision']);
+        unset($data['action']);
+        unset($data['staff']);
+        unset($data['vendor']);
+        unset($data['target_date']);
+        $mom_detail = [];
+        if (isset($data['newitems'])) {
+            $mom_detail = $data['newitems'];
+            unset($data['newitems']);
+        }
         // Insert into the agendas table
         $this->db->insert(db_prefix() . 'agendas', $data);
         $agenda_id = $this->db->insert_id();
- 
+
         // Insert into the meeting_management table as well
         $meeting_data = [
             'meeting_title' => $data['meeting_title'],
@@ -36,7 +52,40 @@ class Meeting_model extends App_Model
             'project_id' => $data['project_id'],
         ];
         $this->db->insert(db_prefix() . 'meeting_management', $meeting_data);
+
         $this->save_agends_files('agenda_meeting', $agenda_id);
+
+        if (count($mom_detail) > 0) {
+            foreach ($mom_detail as $key => $value) {
+                if(!empty($value['staff']) && isset($value['staff'])){
+                    $staff = implode(',', $value['staff']);
+                }else{
+                    $staff = '';
+                }
+                $mom_arr = [];
+                $mom_arr['agenda_id'] = $agenda_id;
+                $mom_arr['area'] = $value['area'];
+                $mom_arr['description'] = $value['description'];
+                $mom_arr['decision'] = $value['decision'];
+                $mom_arr['action'] = $value['action'];
+                $mom_arr['staff'] = $staff;
+                $mom_arr['vendor'] = $value['vendor'];
+                $mom_arr['target_date'] = $value['target_date'];
+
+                $this->db->insert(db_prefix() . 'agendas_details', $mom_arr);
+                $last_insert_id = $this->db->insert_id();
+
+                $iuploadedFiles = handle_mom_item_attachment_array('mom_attachments', $agenda_id, $last_insert_id, 'newitems', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['attachments'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'agendas_details', $idata);
+                    }
+                }
+            }
+        }
         return $agenda_id;
     }
 
@@ -77,6 +126,39 @@ class Meeting_model extends App_Model
     // Update an existing agenda
     public function update_agenda($id, $data)
     {
+        // echo '<pre>';
+        // print_r($data);
+        // die;
+
+        $affectedRows = 0;
+
+        unset($data['client_id']);
+        unset($data['area']);
+        unset($data['description']);
+        unset($data['decision']);
+        unset($data['action']);
+        unset($data['staff']);
+        unset($data['vendor']);
+        unset($data['target_date']);
+        unset($data['isedit']);
+
+        $new_mom = [];
+        if (isset($data['newitems'])) {
+            $new_mom = $data['newitems'];
+            unset($data['newitems']);
+        }
+
+        $update_mom = [];
+        if (isset($data['items'])) {
+            $update_mom = $data['items'];
+            unset($data['items']);
+        }
+
+        $remove_order = [];
+        if (isset($data['removed_items'])) {
+            $remove_order = $data['removed_items'];
+            unset($data['removed_items']);
+        }
         // Update the agenda in the 'tblagendas' table
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'agendas', $data);
@@ -93,7 +175,80 @@ class Meeting_model extends App_Model
             $this->db->where('id', $id);  // Use the same ID as the agenda
             $this->db->update(db_prefix() . 'meeting_management', $meeting_data);
         }
+        
+        if (count($new_mom) > 0) {
+            foreach ($new_mom as $key => $value) {
+                if(!empty($value['staff']) && isset($value['staff'])){
+                    $staff = implode(',', $value['staff']);
+                }else{
+                    $staff = '';
+                }
+                $mom_arr = [];
+                $mom_arr['agenda_id'] = $id;
+                $mom_arr['area'] = $value['area'];
+                $mom_arr['description'] = $value['description'];
+                $mom_arr['decision'] = $value['decision'];
+                $mom_arr['action'] = $value['action'];
+                $mom_arr['staff'] = $staff;
+                $mom_arr['vendor'] = $value['vendor'];
+                $mom_arr['target_date'] = $value['target_date'];
+               
+                $this->db->insert(db_prefix() . 'agendas_details', $mom_arr);
+                $last_insert_id = $this->db->insert_id();
 
+                $iuploadedFiles = handle_mom_item_attachment_array('mom_attachments', $id, $last_insert_id, 'newitems', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['attachments'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'agendas_details', $idata);
+                    }
+                }
+            }
+        }
+
+        if (count($update_mom) > 0) {
+            foreach ($update_mom as $key => $value) {
+                if(!empty($value['staff']) && isset($value['staff'])){
+                    $staff = implode(',', $value['staff']);
+                }else{
+                    $staff = '';
+                }
+                $mom_arr = [];
+                $mom_arr['agenda_id'] = $id;
+                $mom_arr['area'] = $value['area'];
+                $mom_arr['description'] = $value['description'];
+                $mom_arr['decision'] = $value['decision'];
+                $mom_arr['action'] = $value['action'];
+                $mom_arr['staff'] = $staff;
+                $mom_arr['vendor'] = $value['vendor'];
+                $mom_arr['target_date'] = $value['target_date'];
+
+                $this->db->where('id', $value['id']);
+                $this->db->update(db_prefix() . 'agendas_details', $mom_arr);
+                if ($this->db->affected_rows() > 0) {
+                    $affectedRows++;
+                }
+                $iuploadedFiles = handle_mom_item_attachment_array('mom_attachments', $id, $value['id'], 'items', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['attachments'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'agendas_details', $idata);
+                    }
+                }
+            }
+        }
+        if (count($remove_order) > 0) {
+            foreach ($remove_order as $remove_id) {
+                $this->db->where('id', $remove_id);
+                if ($this->db->delete(db_prefix() . 'agendas_details')) {
+                    $affectedRows++;
+                }
+            }
+        }
         return $affected_rows;
     }
     public function delete_agenda($id)
@@ -403,5 +558,68 @@ class Meeting_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'agendas', ['agenda' => $minutes]);
         return true;
+    }
+
+    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '')
+    {
+        $row = '';
+
+        $name_area = 'area';
+        $name_description = 'description';
+        $name_decision = 'decision';
+        $name_action = 'action';
+        $name_staff = 'staff';
+        $name_vendor = 'vendor';
+        $name_target_date  = 'target_date';
+        $name_attachments = 'attachments';
+
+        if ($name == '') {
+            $row .= '<tr class="main">';
+            $manual = true;
+        } else {
+            $manual = false;
+            $row .= '<tr><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '">';
+            $name_area = $name . '[area]';
+            $name_description = $name . '[description]';
+            $name_decision = $name . '[decision]';
+            $name_action = $name . '[action]';
+            $name_staff = $name . '[staff][]';
+            $name_vendor = $name . '[vendor]';
+            $name_target_date = $name . '[target_date]';
+            $name_attachments = $name . '[attachments]';
+        }
+        $full_item_image = '';
+        if (!empty($attachments['attachments'])) {
+            $item_base_url = base_url('uploads/meetings/mom_attachments/' . $attachments['agenda_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
+            $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
+        }
+
+        $row .= '<td class="area">' . render_textarea($name_area, '', $area, ['rows' => 2, 'placeholder' => _l('area')]) . '</td>';
+        $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')]) . '</td>';
+        $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('decision')]) . '</td>';
+        $row .= '<td class="action">' . render_textarea($name_action, '', $action, ['rows' => 2, 'placeholder' => _l('action')]) . '</td>';
+
+        $getstaff = getstafflist();
+        $selectedstaff = !empty($staff) ? $staff : array();
+        if (!is_array($selectedstaff)) {
+            $selectedstaff = explode(",", $selectedstaff);
+        }
+
+
+        $row .= '<td class="action_by staff-vendor-group">' .
+            render_select($name_staff, $getstaff, ['staffid', 'fullname'], '', $selectedstaff, ['multiple' => 'multiple', 'data-none-selected-text' => 'Staff'], [], '', 'staff-select') .
+            render_input($name_vendor, '', $vendor, '', ['placeholder' => 'Vendor/Customer Name']) .
+            '</td>';
+        $row .= '<td class="target_date">' . render_date_input($name_target_date, '', $target_date) . '</td>';
+        $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_attachments . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
+
+        if ($name == '') {
+            $row .= '<td><button type="button" class="btn pull-right btn-info mom-add-item-to-table"><i class="fa fa-check"></i></button></td>';
+        } else {
+            $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="mom_delete_item(this,' . $item_key . ',\'.mom-items\'); return false;"><i class="fa fa-trash"></i></a></td>';
+        }
+
+        $row .= '</tr>';
+        return $row;
     }
 }

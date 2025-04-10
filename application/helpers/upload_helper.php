@@ -646,6 +646,73 @@ function handle_purchase_item_attachment_array($related, $id, $item_path, $index
 
     return false;
 }
+function handle_mom_item_attachment_array($related, $id, $item_path, $index_name, $key)
+{
+    if (!is_dir(get_upload_path_by_type('meeting_management'))) {
+        mkdir(get_upload_path_by_type('meeting_management'), 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('meeting_management') . $related)) {
+        mkdir(get_upload_path_by_type('meeting_management') . $related, 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('meeting_management') . $related . '/' . $id)) {
+        mkdir(get_upload_path_by_type('meeting_management') . $related . '/' . $id, 0755);
+    }
+    if (!is_dir(get_upload_path_by_type('mom_meeting_managementitems') . $related . '/' . $id . '/' . $item_path)) {
+        mkdir(get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path, 0755);
+    }
+    $uploaded_files = [];
+    $path           = get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path . '/';
+    $CI             = &get_instance();
+
+    if (
+        isset($_FILES[$index_name]['name'])
+        && ($_FILES[$index_name]['name'] != '' || is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
+    ) {
+
+        // _file_attachments_index_fix($index_name);
+        // Get the temp file path
+        $tmpFilePath = $_FILES[$index_name]['tmp_name'][$key]['attachments'];
+
+        // Make sure we have a filepath
+        if (!empty($tmpFilePath) && $tmpFilePath != '') {
+            if (
+                _perfex_upload_error($_FILES[$index_name]['error'][$key]['attachments'])
+                || !_upload_extension_allowed($_FILES[$index_name]['name'][$key]['attachments'])
+            ) {
+                return false;
+            }
+
+            _maybe_create_upload_path($path);
+            $filename    = unique_filename($path, $_FILES[$index_name]['name'][$key]['attachments']);
+            $newFilePath = $path . $filename;
+
+            // Upload the file into the temp dir
+            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                array_push($uploaded_files, [
+                    'item_id' => $item_path,
+                    'file_name' => $filename,
+                    'filetype'  => $_FILES[$index_name]['type'][$key]['attachments'],
+                ]);
+
+                if (is_image($newFilePath)) {
+                    // create_img_thumb($path, $filename);
+                }
+            }
+        }
+    }
+
+    if (count($uploaded_files) > 0) {
+        return $uploaded_files;
+    } else {
+        $other_attachments = list_files(get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path);
+        if (count($other_attachments) == 0) {
+            delete_dir(get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path);
+        }
+    }
+
+    return false;
+}
+
 
 /**
  * Change order attachments upload array

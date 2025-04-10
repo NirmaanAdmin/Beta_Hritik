@@ -41,6 +41,7 @@ class AgendaController extends AdminController
             ];
             $agenda_data_new = $this->input->post();
             $agenda_data_new['agenda'] = $this->input->post('agenda', false);
+            $agenda_data_new['additional_note'] = $this->input->post('additional_note', false);
             $agenda_data_new['created_by'] = get_staff_user_id();
             
             if ($id == '') {
@@ -55,12 +56,46 @@ class AgendaController extends AdminController
 
             redirect(admin_url('meeting_management/agendaController/index'));
         }
+        $mom_row_template = $this->Meeting_model->create_mom_row_template();
+        if($id == ''){
+            $is_edit = false;
+        }else{
+            $get_mom_detials = $this->Meeting_model->get_mom_detials($id);
 
+            if(count($get_mom_detials) > 0){
+                $index_order = 0;
+                foreach ($get_mom_detials as $mom_detail) {
+                    $index_order++;
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']',$mom_detail['area'],$mom_detail['description'],$mom_detail['decision'],$mom_detail['action'],$mom_detail['staff'],$mom_detail['vendor'],$mom_detail['target_date'],$mom_detail,$mom_detail['id']);
+                }
+            }   
+            $is_edit = true;
+        }
+        $data['is_edit'] = $is_edit;
+        $data['mom_row_template'] = $mom_row_template;
         $data['agenda'] = $this->Meeting_model->get_agenda($id);
         $data['title'] = _l('meeting_create_agenda');
+        $this->load->model('staff_model');
+        $data['staff_list'] = $this->staff_model->get('', ['active' => 1]);
+
         $this->load->view('meeting_management/agenda_form', $data);
     }
 
+    public function get_mom_row_template()
+    {
+        $name = $this->input->post('name');
+        $area = $this->input->post('area');
+        $description= $this->input->post('description');
+        $decision = $this->input->post('decision');
+        $action = $this->input->post('action');
+        $staff = $this->input->post('staff');
+        $vendor = $this->input->post('vendor'); 
+        $target_date = $this->input->post('target_date');
+        $attachments = $this->input->post('attachments');
+        $item_key = $this->input->post('item_key');
+
+        echo $this->Meeting_model->create_mom_row_template($name, $area, $description, $decision, $action, $staff, $vendor, $target_date, $attachments, $item_key);
+    }
     // Delete an agenda
     public function delete($id)
     {
