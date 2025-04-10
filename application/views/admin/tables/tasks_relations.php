@@ -117,7 +117,16 @@ return App_table::find('related_tasks')
                 $outputName .= '<span class="pull-left text-danger"><i class="fa-regular fa-clock fa-fw tw-mr-1"></i></span>';
             }
 
-            $outputName .= '<a href="' . admin_url('tasks/view/' . $aRow['id']) . '" class="display-block main-tasks-table-href-name" onclick="init_task_modal(' . $aRow['id'] . '); return false;">' . e($aRow['task_name']) . '</a>';
+            $po_name = '';
+            if($this->ci->db->escape_str($rel_type) == 'stock_import') {
+                $get_goods_receipt = get_goods_receipt_code($this->ci->db->escape_str($rel_id));
+                if(!empty($get_goods_receipt)) {
+                    $get_pur_order = get_pur_order_subject($get_goods_receipt->pr_order_id);
+                    $po_name = !empty($get_pur_order) ? ' - '.$get_pur_order : '';
+                }
+            }
+
+            $outputName .= '<a href="' . admin_url('tasks/view/' . $aRow['id']) . '" class="display-block main-tasks-table-href-name" onclick="init_task_modal(' . $aRow['id'] . '); return false;">' . e($aRow['task_name']) . $po_name . '</a>';
 
             if ($aRow['recurring'] == 1) {
                 $outputName .= '<span class="label label-primary inline-block mtop4"> ' . _l('recurring_task') . '</span>';
