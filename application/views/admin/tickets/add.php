@@ -9,6 +9,7 @@
                     <h4 class="tw-my-0 tw-font-semibold tw-text-lg tw-text-neutral-700 tw-mr-4">
                         <?php echo _l('clients_single_ticket_information_heading'); ?>
                     </h4>
+                    <?php /*
                     <?php if (!isset($project_id) && !isset($contact)) { ?>
                     <a href="#" id="ticket_no_contact" class="label label-default">
                         <i class="fa-regular fa-envelope tw-mr-1"></i> <?php echo _l('ticket_create_no_contact'); ?>
@@ -17,7 +18,7 @@
                         <i class="fa-regular fa-user tw-mr-1"></i>
                         <?php echo _l('ticket_create_to_contact'); ?>
                     </a>
-                    <?php } ?>
+                    <?php } ?> */ ?>
                 </div>
                 <div class="panel_s">
                     <div class="panel-body">
@@ -33,18 +34,20 @@
                                     ?>
                                 </div>
 
+                                <?php /*
                                 <div class="form-group select-placeholder" id="ticket_contact_w">
                                     <label for="contactid"><?php echo _l('contact'); ?></label>
                                     <select name="contactid" id="contactid" class="selectpicker" data-width="100%" data-live-search="true" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-actions-box="true" required="true">
                                     </select>
                                     <?php echo form_hidden('userid'); ?>
-                                </div>
+                                </div> */ ?>
+
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <?php echo render_input('name', 'ticket_settings_to', '', 'text', ['disabled' => true]); ?>
+                                        <?php echo render_input('name', 'ticket_settings_to', '', 'text'); ?>
                                     </div>
                                     <div class="col-md-6">
-                                        <?php echo render_input('email', 'ticket_settings_email', '', 'email', ['disabled' => true]); ?>
+                                        <?php echo render_input('email', 'ticket_settings_email', '', 'email'); ?>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -53,6 +56,19 @@
                                     </div>
                                     <div class="col-md-6">
                                         <?php echo render_input('cc', 'CC'); ?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <?php $priorities['callback_translate'] = 'ticket_priority_translate';
+                                        echo render_select('priority', $priorities, ['priorityid', 'name'], 'ticket_settings_priority', hooks()->apply_filters('new_ticket_priority_selected', 2), ['required' => 'true']); 
+                                        ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <?php 
+                                        $value = '';
+                                        echo render_date_input('duedate', 'task_add_edit_due_date', $value, array('required'=>'true'));
+                                        ?>
                                     </div>
                                 </div>
                             </div>
@@ -73,9 +89,7 @@
                                         data-width="100%" required="true">
                                         <option value=""><?php echo _l('ticket_settings_none_assigned'); ?></option>
                                         <?php foreach ($staff as $member) { ?>
-                                        <option value="<?php echo e($member['staffid']); ?>" <?php if ($member['staffid'] == get_staff_user_id()) {
-    echo 'selected';
-} ?>>
+                                        <option value="<?php echo e($member['staffid']); ?>" <?php if ($member['staffid'] == get_staff_user_id()) { echo 'selected';} ?>>
                                             <?php echo e($member['firstname'] . ' ' . $member['lastname']); ?>
                                         </option>
                                         <?php } ?>
@@ -83,27 +97,39 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <?php $priorities['callback_translate'] = 'ticket_priority_translate';
-                                echo render_select('priority', $priorities, ['priorityid', 'name'], 'ticket_settings_priority', hooks()->apply_filters('new_ticket_priority_selected', 2), ['required' => 'true']); ?>
+                                        <div class="form-group select-placeholder">
+                                            <label for="created_by" class="control-label">
+                                                <?php echo _l('created_by'); ?>
+                                            </label>
+                                            <select name="created_by" id="created_by" class="form-control selectpicker"
+                                                data-live-search="true"
+                                                data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>"
+                                                data-width="100%" required="true">
+                                                <option value=""><?php echo _l('ticket_settings_none_assigned'); ?></option>
+                                                <?php foreach ($staff as $member) { ?>
+                                                <option value="<?php echo e($member['staffid']); ?>" <?php if ($member['staffid'] == get_staff_user_id()) { echo 'selected';} ?>>
+                                                    <?php echo e($member['firstname'] . ' ' . $member['lastname']); ?>
+                                                </option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
                                     </div>
-
+                                    <div class="col-md-6">
+                                        <?php echo render_input('rfi_to', 'rfi_to'); ?>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6">
                                         <?php 
-                                        $value = '';
-                                        echo render_date_input('duedate', 'task_add_edit_due_date', $value, array('required'=>'true'));
+                                        echo render_select('area', $area, array('id','area_name'), 'area'); 
                                         ?>
                                     </div>
-                            
-                                    <?php if (get_option('services') == 1) { ?>
-                                    <div class="col-md-6 hide">
-                                        <?php if (is_admin() || get_option('staff_members_create_inline_ticket_services') == '1') {
-                                    echo render_select_with_input_group('service', $services, ['serviceid', 'name'], 'ticket_settings_service', '', '<div class="input-group-btn"><a href="#" class="btn btn-default" onclick="new_service();return false;"><i class="fa fa-plus"></i></a></div>');
-                                } else {
-                                    echo render_select('service', $services, ['serviceid', 'name'], 'ticket_settings_service');
-                                }
-                                    ?>
+                                    <div class="col-md-6">
+                                        <?php 
+                                        $disciplines = get_all_discipline();
+                                        echo render_select('discipline', $disciplines, array('id','name'), 'discipline'); 
+                                        ?>
                                     </div>
-                                    <?php } ?>
                                 </div>
                             </div>
                             <div class="col-md-12">

@@ -359,6 +359,82 @@ function can_staff_edit_ticket_message()
     return get_option('allow_non_admin_members_to_edit_ticket_messages') == '1';
 }
 
+function get_all_discipline()
+{
+    $result = array();
+    $result = [
+        [
+            'id' => 1,
+            'name' => 'General (all consultants)',
+        ],
+        [
+            'id' => 2,
+            'name' => 'BGJ-Architecture Drawings',
+        ],
+        [
+            'id' => 3,
+            'name' => 'Plumbing',
+        ],
+        [
+            'id' => 4,
+            'name' => 'Facility Planning',
+        ],
+        [
+            'id' => 5,
+            'name' => 'Structure',
+        ],
+        [
+            'id' => 6,
+            'name' => 'Electrical',
+        ],
+        [
+            'id' => 7,
+            'name' => 'HVAC',
+        ],
+        [
+            'id' => 8,
+            'name' => 'Data Networking (IT)',
+        ],
+        [
+            'id' => 9,
+            'name' => 'Audiovisual',
+        ],
+        [
+            'id' => 10,
+            'name' => 'Landscaping',
+        ],
+        [
+            'id' => 11,
+            'name' => 'Interior Design',
+        ],
+        [
+            'id' => 12,
+            'name' => 'Lighting',
+        ],
+        [
+            'id' => 13,
+            'name' => 'Extras',
+        ],
+        [
+            'id' => 14,
+            'name' => 'IT Drawings',
+        ],
+        [
+            'id' => 15,
+            'name' => 'Fire Fighting',
+        ],
+        [
+            'id' => 16,
+            'name' => 'Elevators',
+        ],
+        [
+            'id' => 17,
+            'name' => 'Kitchen Equipment',
+        ],
+    ];
+    return $result;
+}
+
 function ticket_public_form_customers_footer()
 {
     // Create new listeners for the public_form
