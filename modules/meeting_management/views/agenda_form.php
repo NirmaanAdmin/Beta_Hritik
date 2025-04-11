@@ -8,10 +8,12 @@
       font-family: Arial, sans-serif;
       font-size: 14px;
    }
-
+   th{
+      border: 1px solid #ccc;
+   }
    th,
    td {
-      border: 1px solid #ccc;
+     
       text-align: center;
       padding: 8px;
    }

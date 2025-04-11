@@ -29,6 +29,21 @@ class Meeting_model extends App_Model
         $mom_details = $this->db->get(db_prefix() . 'minutes_details')->result_array();
         return $mom_details;
     }
+
+    public function check_image($id) {
+        $this->db->where('minute_id', $id);
+        $mom_details = $this->db->get(db_prefix() . 'minutes_details')->result_array();
+    
+        // Check if any record has a non-empty attachments field.
+        foreach ($mom_details as $detail) {
+            if (!empty($detail['attachments'])) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+
     // Create a new agenda
     public function create_agenda($data)
     {
@@ -778,11 +793,11 @@ class Meeting_model extends App_Model
             render_select($name_staff, $getstaff, ['staffid', 'fullname'], '', $selectedstaff, ['multiple' => 'multiple', 'data-none-selected-text' => 'Staff'], [], '', 'staff-select') .
             render_input($name_vendor, '', $vendor, '', ['placeholder' => 'Vendor/Customer Name']) .
             '</td>';
-        $row .= '<td class="target_date">' . render_date_input($name_target_date, '', $target_date) . '</td>';
+        $row .= '<td class="target_date">' . render_input($name_target_date, '', $target_date,'date') . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_attachments . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
         if ($name == '') {
-            $row .= '<td><button type="button" class="btn pull-right btn-info mom-add-item-to-table"><i class="fa fa-check"></i></button></td>';
+            $row .= '&nbsp;<td><button type="button" class="btn pull-right btn-info mom-add-item-to-table"><i class="fa fa-check"></i></button></td>';
         } else {
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="mom_delete_item(this,' . $item_key . ',\'.mom-items\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }

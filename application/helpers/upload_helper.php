@@ -646,54 +646,83 @@ function handle_purchase_item_attachment_array($related, $id, $item_path, $index
 
     return false;
 }
+/**
+ * Handles the upload of an attachment.
+ *
+ * @param string $related    The type of attachment folder (for example, 'mom_attachments' or 'minutes_attachments').
+ * @param mixed  $id         The parent record ID (either $agenda_id or $minute_id).
+ * @param mixed  $item_path  The sub-folder record ID (agenda_detail_id or minutes_detail_id).
+ * @param string $index_name The $_FILES index name.
+ * @param int    $key        The index to use within the multi-dimensional $_FILES array.
+ *
+ * @return array|false       Returns array with file info on success, false if no upload occurred.
+ */
 function handle_mom_item_attachment_array($related, $id, $item_path, $index_name, $key)
 {
-    if (!is_dir(get_upload_path_by_type('meeting_management'))) {
-        mkdir(get_upload_path_by_type('meeting_management'), 0755);
+    // Base directory for meeting management uploads.
+    $base_path = get_upload_path_by_type('meeting_management');
+    if (!is_dir($base_path)) {
+        mkdir($base_path, 0755, true);
     }
-    if (!is_dir(get_upload_path_by_type('meeting_management') . $related)) {
-        mkdir(get_upload_path_by_type('meeting_management') . $related, 0755);
+
+    // Create the directory structure:
+    // - Related folder (e.g. 'mom_attachments' or 'minutes_attachments')
+    // - Parent ID folder (e.g. agenda_id or minute_id)
+    // - Detail ID folder (e.g. agenda_detail_id or minutes_detail_id)
+    $related_path = $base_path . $related . '/';
+    if (!is_dir($related_path)) {
+        mkdir($related_path, 0755, true);
     }
-    if (!is_dir(get_upload_path_by_type('meeting_management') . $related . '/' . $id)) {
-        mkdir(get_upload_path_by_type('meeting_management') . $related . '/' . $id, 0755);
+
+    $id_path = $related_path . $id . '/';
+    if (!is_dir($id_path)) {
+        mkdir($id_path, 0755, true);
     }
-    if (!is_dir(get_upload_path_by_type('mom_meeting_managementitems') . $related . '/' . $id . '/' . $item_path)) {
-        mkdir(get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path, 0755);
+
+    $item_dir = $id_path . $item_path . '/';
+    if (!is_dir($item_dir)) {
+        mkdir($item_dir, 0755, true);
     }
+
     $uploaded_files = [];
-    $path           = get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path . '/';
-    $CI             = &get_instance();
+    $path = $item_dir;
+    $CI = &get_instance();
 
     if (
-        isset($_FILES[$index_name]['name'])
-        && ($_FILES[$index_name]['name'] != '' || is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
+        isset($_FILES[$index_name]['name']) &&
+        (
+            $_FILES[$index_name]['name'] != '' ||
+            (is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
+        )
     ) {
-
-        // _file_attachments_index_fix($index_name);
-        // Get the temp file path
+        // Get the temporary file path from the passed key.
         $tmpFilePath = $_FILES[$index_name]['tmp_name'][$key]['attachments'];
 
-        // Make sure we have a filepath
-        if (!empty($tmpFilePath) && $tmpFilePath != '') {
+        if (!empty($tmpFilePath)) {
+            // Check for any upload errors or invalid extensions.
             if (
-                _perfex_upload_error($_FILES[$index_name]['error'][$key]['attachments'])
-                || !_upload_extension_allowed($_FILES[$index_name]['name'][$key]['attachments'])
+                _perfex_upload_error($_FILES[$index_name]['error'][$key]['attachments']) ||
+                !_upload_extension_allowed($_FILES[$index_name]['name'][$key]['attachments'])
             ) {
                 return false;
             }
 
+            // Ensure the upload path exists (a helper may already do this).
             _maybe_create_upload_path($path);
+            // Generate a unique filename.
             $filename    = unique_filename($path, $_FILES[$index_name]['name'][$key]['attachments']);
             $newFilePath = $path . $filename;
 
-            // Upload the file into the temp dir
+            // Move the temporary file to the new location.
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                array_push($uploaded_files, [
-                    'item_id' => $item_path,
+                $uploaded_files[] = [
+                    'item_id'   => $item_path,  // To be used later for database updates.
                     'file_name' => $filename,
                     'filetype'  => $_FILES[$index_name]['type'][$key]['attachments'],
-                ]);
+                    'file_path' => $newFilePath, // Full path, which is useful for copying.
+                ];
 
+                // Optionally create a thumbnail if the file is an image.
                 if (is_image($newFilePath)) {
                     // create_img_thumb($path, $filename);
                 }
@@ -701,12 +730,14 @@ function handle_mom_item_attachment_array($related, $id, $item_path, $index_name
         }
     }
 
+    // If at least one file is uploaded, return its details.
     if (count($uploaded_files) > 0) {
         return $uploaded_files;
     } else {
-        $other_attachments = list_files(get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path);
+        // No files uploaded. If the folder is empty, remove the directory.
+        $other_attachments = list_files($item_dir);
         if (count($other_attachments) == 0) {
-            delete_dir(get_upload_path_by_type('meeting_management') . $related . '/' . $id . '/' . $item_path);
+            delete_dir($item_dir);
         }
     }
 

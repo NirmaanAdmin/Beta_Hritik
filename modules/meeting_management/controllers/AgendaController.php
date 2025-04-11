@@ -43,7 +43,7 @@ class AgendaController extends AdminController
             $agenda_data_new['agenda'] = $this->input->post('agenda', false);
             $agenda_data_new['additional_note'] = $this->input->post('additional_note', false);
             $agenda_data_new['created_by'] = get_staff_user_id();
-            
+
             if ($id == '') {
                 // Insert new agenda
                 $this->Meeting_model->create_agenda($agenda_data_new);
@@ -57,18 +57,18 @@ class AgendaController extends AdminController
             redirect(admin_url('meeting_management/agendaController/index'));
         }
         $mom_row_template = $this->Meeting_model->create_mom_row_template();
-        if($id == ''){
+        if ($id == '') {
             $is_edit = false;
-        }else{
+        } else {
             $get_mom_detials = $this->Meeting_model->get_mom_detials($id);
 
-            if(count($get_mom_detials) > 0){
+            if (count($get_mom_detials) > 0) {
                 $index_order = 0;
                 foreach ($get_mom_detials as $mom_detail) {
                     $index_order++;
-                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']',$mom_detail['area'],$mom_detail['description'],$mom_detail['decision'],$mom_detail['action'],$mom_detail['staff'],$mom_detail['vendor'],$mom_detail['target_date'],$mom_detail,$mom_detail['id']);
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id']);
                 }
-            }   
+            }
             $is_edit = true;
         }
         $data['is_edit'] = $is_edit;
@@ -85,11 +85,11 @@ class AgendaController extends AdminController
     {
         $name = $this->input->post('name');
         $area = $this->input->post('area');
-        $description= $this->input->post('description');
+        $description = $this->input->post('description');
         $decision = $this->input->post('decision');
         $action = $this->input->post('action');
         $staff = $this->input->post('staff');
-        $vendor = $this->input->post('vendor'); 
+        $vendor = $this->input->post('vendor');
         $target_date = $this->input->post('target_date');
         $attachments = $this->input->post('attachments');
         $item_key = $this->input->post('item_key');
@@ -146,26 +146,31 @@ class AgendaController extends AdminController
 
         // Fetch the meeting notes
         $meeting_notes = $this->Meeting_model->get_meeting_notes($agenda_id);
-
+        $get_minutes_detials = $this->Meeting_model->get_minutes_detials($agenda_id);
+        $check_image = $this->Meeting_model->check_image($agenda_id);
         // Load your HTML view for the PDF content
         $data = [
             'meeting' => $meeting_details,
             'participants' => $participants,
             'tasks' => $tasks,
-            'meeting_notes' => $meeting_notes  // Add meeting notes here
+            'meeting_notes' => $meeting_notes,
+            'minutes_data' => $get_minutes_detials,
+            'check_attachment' => $check_image,
         ];
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
         $html_content = $this->load->view('meeting_management/pdf_template', $data, true);
-
+        $pdf->set_option('isRemoteEnabled', true);
+        $pdf->set_option('isHtml5ParserEnabled', true);
         // Set the PDF content
         $pdf->loadHtml($html_content);
+       
         $pdf->setPaper('A4', 'portrait');
 
         // Render the PDF
         $pdf->render();
 
         // Output the PDF to the browser
-        $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => 1));  // Download the PDF
+        $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => false));  // Download the PDF
     }
 
     public function update_mom_list()

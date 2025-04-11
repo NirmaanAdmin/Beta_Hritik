@@ -59,17 +59,45 @@
             color: #666;
             padding: 10px 0;
         }
+
         @media print {
-            
 
-            table {
-                page-break-inside: auto;
-            }
-
-            tr {
+            /* Force browsers to avoid breaking rows */
+            .mom-items-table tr {
                 page-break-inside: avoid;
-                page-break-after: avoid;
+                break-inside: avoid;
             }
+
+            /* Repeat table headers on every printed page */
+            thead {
+                display: table-header-group;
+            }
+
+            /* Ensure images don't overflow */
+            .images_w_table {
+                max-width: 100px !important;
+                height: auto !important;
+            }
+        }
+
+        /* Non-print styling for consistency */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        th {
+            border: 1px solid #ccc;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .mom-items-table td,
+        .mom-items-table th {
+            /* border: 1px solid #ddd; */
+            padding: 8px;
         }
     </style>
 </head>
@@ -110,7 +138,7 @@
             <td style="width: 40%;">BGJ site office</td>
         </tr>
         <tr>
-            
+
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
             <td style="width: 15%;"></td>
@@ -168,20 +196,74 @@
     </table>
 
     <h2 class="section-title">Description</h2>
-    <?= $meeting_notes ?>
-    <!-- <table class="description-table">
-        <tr>
-            <td style="font-weight: bold;">Description</td>
-        </tr>
-        <tr>
-            <td>
-                <?php
-                $meeting_notes_html = html_entity_decode($meeting_notes, ENT_QUOTES, 'UTF-8');
 
-                echo !empty($meeting_notes) ? $meeting_notes_html : 'No meeting notes available.'; ?>
-            </td>
-        </tr>
-    </table> -->
+    <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Area/Head</th>
+                <th>Description</th>
+                <th>Decision</th>
+                <th>Action</th>
+                <th>Action By</th>
+                <th>Target Date</th>
+                <?php if ($check_attachment) { ?>
+                    <th>Attachments</th>
+                <?php } ?>
+
+            </tr>
+        </thead>
+        <tbody class="mom_body">
+            <?php
+            $sr = 1;
+            $prev_area = ''; // Initialize the previous area value
+
+            foreach ($minutes_data as $data) {
+                // Process attachments if available
+                if (!empty($data['attachments']) && !empty($data['minute_id'])) {
+                    $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $data['minute_id'] . '/' . $data['id'] . '/' . $data['attachments']);
+                    $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $data['attachments'] . '" >';
+                }
+
+                // Format the target date
+                if (!empty($data['target_date'])) {
+                    $target_date = date('d M, Y', strtotime($data['target_date']));
+                } else {
+                    $target_date = '';
+                }
+
+                // Compare current area with the previous one.
+                // If they match then set $area as an empty string.
+                // Otherwise, use the current area's value.
+                if ($data['area'] == $prev_area) {
+                    $area = '';
+                } else {
+                    $area = $data['area'];
+                }
+                // Update the previous area for the next iteration
+                $prev_area = $data['area'];
+            ?>
+                <tr>
+                    <td><?php echo $sr++; ?></td>
+                    <!-- Use the $area variable so that duplicate areas show as blank -->
+                    <td><?php echo $area; ?></td>
+                    <td><?php echo $data['description']; ?></td>
+                    <td><?php echo $data['decision']; ?></td>
+                    <td><?php echo $data['action']; ?></td>
+                    <td>
+                        <?php echo getStaffNamesFromCSV($data['staff']); ?><br>
+                        <?php echo $data['vendor']; ?>
+                    </td>
+                    <td><?php echo $target_date; ?></td>
+                    <?php if ($check_attachment) { ?>
+                        <td><?php echo $full_item_image; ?></td>
+                    <?php } ?>
+                </tr>
+            <?php } ?>
+        </tbody>
+
+    </table>
+
 
     <?php if (!empty($tasks)) : ?>
         <?php /*
