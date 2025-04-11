@@ -36,6 +36,24 @@ class MinutesController extends AdminController
         $data['attachments'] = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
         $data['title'] = _l('meeting_minutes');
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
+
+        $mom_row_template = $this->Meeting_model->create_mom_row_template();
+        if ($agenda_id == '') {
+            $is_edit = false;
+        } else {
+            $get_mom_detials = $this->Meeting_model->get_minutes_detials($agenda_id);
+
+            if (count($get_mom_detials) > 0) {
+                $index_order = 0;
+                foreach ($get_mom_detials as $mom_detail) {
+                    $index_order++;
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id']);
+                }
+            }
+            $is_edit = true;
+        }
+        $data['is_edit'] = $is_edit;
+        $data['mom_row_template'] = $mom_row_template;
         // Load the minutes form view (with tasks form and task list added)
         $this->load->view('meeting_management/minutes_form', $data);
     }
@@ -120,6 +138,25 @@ class MinutesController extends AdminController
             set_alert('success', _l('meeting_task_created_success'));
             redirect(admin_url('meeting_management/minutesController/index/' . $agenda_id));
         }
+
+        $mom_row_template = $this->Meeting_model->create_mom_row_template();
+        if ($agenda_id == '') {
+            $is_edit = false;
+        } else {
+            $get_mom_detials = $this->Meeting_model->get_mom_detials($agenda_id);
+
+            if (count($get_mom_detials) > 0) {
+                $index_order = 0;
+                foreach ($get_mom_detials as $mom_detail) {
+                    $index_order++;
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id']);
+                }
+            }
+            $is_edit = true;
+        }
+        $data['is_edit'] = $is_edit;
+        $data['mom_row_template'] = $mom_row_template;
+
         $data['title'] = _l('meeting_minutes');
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
         // Load the view
@@ -138,12 +175,12 @@ class MinutesController extends AdminController
         log_message('error', 'Agenda ID during save: ' . $agenda_id);
 
         // Get minutes data from POST
-        $minutes_data = [
-            'minutes' => $this->input->post('minutes',false),
-        ];
-  
+        // $minutes_data = [
+        //     'minutes' => $this->input->post('minutes', false),
+        // ];
+        $data = $this->input->post();
         // Update the minutes for this meeting
-        $this->Meeting_model->update_minutes($agenda_id, $minutes_data);
+        $this->Meeting_model->update_minutes($agenda_id, $data);
 
         // Handle deleted tasks
         $deleted_task_ids = $this->input->post('deleted_tasks');
@@ -155,11 +192,11 @@ class MinutesController extends AdminController
         $participants = $this->input->post('participants');
         $other_participants = $this->input->post('other_participants');
         $company_name = $this->input->post('company_names');
-       
+
         if ($participants) {
-            $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants,$company_name);
+            $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants, $company_name);
         }
-        $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants,$company_name);
+        $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants, $company_name);
         // Handle new tasks if any
         $new_tasks = $this->input->post('new_tasks');  // Corrected
         if (!empty($new_tasks)) {
@@ -337,7 +374,7 @@ class MinutesController extends AdminController
         $data['attachments'] = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
 
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
-        
+        $data['minutes_data'] = $this->Meeting_model->get_minutes_detials($agenda_id);
         // Load the view
         $this->load->view('meeting_management/view_meeting', $data);
     }

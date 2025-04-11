@@ -1,7 +1,34 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <title><?php echo _l('view_meeting'); ?></title>
 <?php init_head(); ?>
+<style>
+   table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+   }
 
+   th,
+   td {
+      border: 1px solid #ccc;
+      text-align: left;
+      padding: 8px;
+   }
+
+   thead {
+      background-color: #f2f2f2;
+   }
+
+   button {
+      padding: 5px 10px;
+   }
+
+   img.images_w_table {
+      width: 116px;
+      height: 73px;
+   }
+</style>
 <div id="wrapper">
    <div class="content">
       <div class="row">
@@ -21,12 +48,92 @@
                      </tr>
                      <tr>
                         <td><strong><?php echo _l('agenda'); ?>:</strong></td>
-                        <td><?php echo isset($meeting['agenda']) ? $meeting['agenda'] : 'N/A'; ?></td>
+                        <td>
+                           <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
+                              <thead>
+                                 <tr>
+                                    <th>#</th>
+                                    <th>Area/Head</th>
+                                    <th>Description</th>
+                                    <th>Decision</th>
+                                    <th>Action</th>
+                                    <th>Action By</th>
+                                    <th>Target Date</th>
+                                    <th>Attachments</th>
+                                 </tr>
+                              </thead>
+                              <tbody class="mom_body">
+                                 <?php
+                                 $sr = 1;
+                                 foreach ($agenda_data as $data) {
+                                    if (!empty($data['attachments']) && !empty($data['agenda_id'])) {
+                                       $item_base_url = base_url('uploads/meetings/mom_attachments/' . $data['agenda_id'] . '/' . $data['id'] . '/' . $data['attachments']);
+                                       $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $data['attachments'] . '" >';
+                                    }
+                                 ?>
+                                    <tr>
+                                       <td><?php echo $sr++; ?></td>
+                                       <td><?php echo $data['area']; ?></td>
+                                       <td><?php echo $data['description']; ?></td>
+                                       <td><?php echo $data['decision']; ?></td>
+                                       <td><?php echo $data['action']; ?></td>
+                                       <td>
+                                          <?php echo getStaffNamesFromCSV($data['staff']); ?><br>
+                                          <?php echo $data['vendor']; ?>
+                                       </td>
+                                       <td><?php echo date('d M, Y', strtotime($data['target_date'])); ?></td>
+                                       <td><?php echo $full_item_image; ?></td>
+                                    </tr>
+                                 <?php }
+                                 ?>
+                              </tbody>
+                           </table>
+                        </td>
                      </tr>
                      <!-- New Row for Meeting Notes -->
                      <tr>
                         <td><strong><?php echo _l('meeting_notes'); ?></strong></td>
-                        <td><?php echo !empty($meeting_notes) ? $meeting_notes : 'N/A'; ?></td>
+                        <td>
+                           <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
+                              <thead>
+                                 <tr>
+                                    <th>#</th>
+                                    <th>Area/Head</th>
+                                    <th>Description</th>
+                                    <th>Decision</th>
+                                    <th>Action</th>
+                                    <th>Action By</th>
+                                    <th>Target Date</th>
+                                    <th>Attachments</th>
+                                 </tr>
+                              </thead>
+                              <tbody class="mom_body">
+                                 <?php
+                                 $sr = 1;
+                                 foreach ($minutes_data as $data) {
+                                    if (!empty($data['attachments']) && !empty($data['minute_id'])) {
+                                       $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $data['minute_id'] . '/' . $data['id'] . '/' . $data['attachments']);
+                                       $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $data['attachments'] . '" >';
+                                    }
+                                 ?>
+                                    <tr>
+                                       <td><?php echo $sr++; ?></td>
+                                       <td><?php echo $data['area']; ?></td>
+                                       <td><?php echo $data['description']; ?></td>
+                                       <td><?php echo $data['decision']; ?></td>
+                                       <td><?php echo $data['action']; ?></td>
+                                       <td>
+                                          <?php echo getStaffNamesFromCSV($data['staff']); ?><br>
+                                          <?php echo $data['vendor']; ?>
+                                       </td>
+                                       <td><?php echo date('d M, Y', strtotime($data['target_date'])); ?></td>
+                                       <td><?php echo $full_item_image; ?></td>
+                                    </tr>
+                                 <?php }
+                                 ?>
+                              </tbody>
+                           </table>
+                        </td>
                      </tr>
                   </table>
 

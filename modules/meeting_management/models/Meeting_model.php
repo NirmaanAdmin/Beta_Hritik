@@ -23,71 +23,130 @@ class Meeting_model extends App_Model
         $mom_details = $this->db->get(db_prefix() . 'agendas_details')->result_array();
         return $mom_details;
     }
+    public function get_minutes_detials($id)
+    {
+        $this->db->where('minute_id', $id);
+        $mom_details = $this->db->get(db_prefix() . 'minutes_details')->result_array();
+        return $mom_details;
+    }
     // Create a new agenda
     public function create_agenda($data)
     {
-        unset($data['client_id']);
-        unset($data['area']);
-        unset($data['description']);
-        unset($data['decision']);
-        unset($data['action']);
-        unset($data['staff']);
-        unset($data['vendor']);
-        unset($data['target_date']);
+        // Save detail items (MOM details) if provided.
         $mom_detail = [];
         if (isset($data['newitems'])) {
             $mom_detail = $data['newitems'];
             unset($data['newitems']);
         }
-        // Insert into the agendas table
+
+        // Remove agenda detail keys from main data array,
+        // so that they are not inserted into the main agendas table.
+        unset(
+            $data['client_id'],
+            $data['area'],
+            $data['description'],
+            $data['decision'],
+            $data['action'],
+            $data['staff'],
+            $data['vendor'],
+            $data['target_date']
+        );
+
+        // Insert into the agendas table.
         $this->db->insert(db_prefix() . 'agendas', $data);
         $agenda_id = $this->db->insert_id();
 
-        // Insert into the meeting_management table as well
+        // Prepare meeting_management data using fields that remain in $data.
         $meeting_data = [
-            'meeting_title' => $data['meeting_title'],
-            'agenda' => $data['agenda'],  // Add other fields that are relevant for the meeting_management table
-            'meeting_date' => $data['meeting_date'],
-            'created_by' => $data['created_by'],
-            'project_id' => $data['project_id'],
+            'meeting_title'   => isset($data['meeting_title']) ? $data['meeting_title'] : '',
+            'agenda'          => isset($data['agenda']) ? $data['agenda'] : '',
+            'meeting_date'    => isset($data['meeting_date']) ? $data['meeting_date'] : '',
+            'created_by'      => isset($data['created_by']) ? $data['created_by'] : '',
+            'project_id'      => isset($data['project_id']) ? $data['project_id'] : '',
+            'additional_note' => isset($data['additional_note']) ? $data['additional_note'] : '',
         ];
         $this->db->insert(db_prefix() . 'meeting_management', $meeting_data);
+        $minute_id = $this->db->insert_id();
 
+        // Save agenda meeting files.
         $this->save_agends_files('agenda_meeting', $agenda_id);
 
-        if (count($mom_detail) > 0) {
+        // Process the MOM detail items if provided.
+        if (!empty($mom_detail) && is_array($mom_detail)) {
             foreach ($mom_detail as $key => $value) {
-                if(!empty($value['staff']) && isset($value['staff'])){
+                // Process the staff field if it is an array.
+                $staff = '';
+                if (isset($value['staff']) && !empty($value['staff']) && is_array($value['staff'])) {
                     $staff = implode(',', $value['staff']);
-                }else{
-                    $staff = '';
                 }
-                $mom_arr = [];
-                $mom_arr['agenda_id'] = $agenda_id;
-                $mom_arr['area'] = $value['area'];
-                $mom_arr['description'] = $value['description'];
-                $mom_arr['decision'] = $value['decision'];
-                $mom_arr['action'] = $value['action'];
-                $mom_arr['staff'] = $staff;
-                $mom_arr['vendor'] = $value['vendor'];
-                $mom_arr['target_date'] = $value['target_date'];
 
-                $this->db->insert(db_prefix() . 'agendas_details', $mom_arr);
-                $last_insert_id = $this->db->insert_id();
+                // Build and insert the record into the agendas_details table.
+                $agenda_detail = [
+                    'agenda_id'   => $agenda_id,
+                    'area'        => isset($value['area']) ? $value['area'] : '',
+                    'description' => isset($value['description']) ? $value['description'] : '',
+                    'decision'    => isset($value['decision']) ? $value['decision'] : '',
+                    'action'      => isset($value['action']) ? $value['action'] : '',
+                    'staff'       => $staff,
+                    'vendor'      => isset($value['vendor']) ? $value['vendor'] : '',
+                    'target_date' => isset($value['target_date']) ? $value['target_date'] : '',
+                ];
 
-                $iuploadedFiles = handle_mom_item_attachment_array('mom_attachments', $agenda_id, $last_insert_id, 'newitems', $key);
-                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                $this->db->insert(db_prefix() . 'agendas_details', $agenda_detail);
+                $agenda_detail_id = $this->db->insert_id();
+
+                // Upload the file into the 'mom_attachments' folder.
+                $iuploadedFiles = handle_mom_item_attachment_array('mom_attachments', $agenda_id, $agenda_detail_id, 'newitems', $key);
+                if (!empty($iuploadedFiles) && is_array($iuploadedFiles)) {
                     foreach ($iuploadedFiles as $ifile) {
-                        $idata = array();
-                        $idata['attachments'] = $ifile['file_name'];
-                        $this->db->where('id', $ifile['item_id']);
+                        // Update the agendas_details record with the attachment.
+                        $idata = ['attachments' => $ifile['file_name']];
+                        $this->db->where('id', $agenda_detail_id);
                         $this->db->update(db_prefix() . 'agendas_details', $idata);
+                    }
+                }
+
+                // Prepare data for minutes_details (copying most fields from agenda).
+                $minutes_detail = $agenda_detail;
+                $minutes_detail['minute_id'] = $minute_id;
+                unset($minutes_detail['agenda_id']);
+
+                // Insert the minutes_details record.
+                $this->db->insert(db_prefix() . 'minutes_details', $minutes_detail);
+                $minutes_detail_id = $this->db->insert_id();
+
+                // If an attachment was uploaded for the agenda detail,
+                // copy the file from the mom_attachments folder to the minutes_attachments folder.
+                if (!empty($iuploadedFiles) && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        // Build the source path based on the earlier upload.
+                        $sourcePath = get_upload_path_by_type('meeting_management')
+                            . 'mom_attachments' . '/' . $agenda_id . '/' . $agenda_detail_id . '/' . $ifile['file_name'];
+
+                        // Build the destination folder path for minutes attachments.
+                        $destinationFolder = get_upload_path_by_type('meeting_management')
+                            . 'minutes_attachments' . '/' . $minute_id . '/' . $minutes_detail_id . '/';
+                        if (!is_dir($destinationFolder)) {
+                            mkdir($destinationFolder, 0755, true);
+                        }
+                        // Define the full destination file path.
+                        $destinationPath = $destinationFolder . $ifile['file_name'];
+
+                        // Copy the uploaded file to the minutes folder.
+                        if (copy($sourcePath, $destinationPath)) {
+                            // Update the minutes_details record with the attachment filename.
+                            $idata = ['attachments' => $ifile['file_name']];
+                            $this->db->where('id', $minutes_detail_id);
+                            $this->db->update(db_prefix() . 'minutes_details', $idata);
+                        }
                     }
                 }
             }
         }
+
         return $agenda_id;
     }
+
 
     public function save_agends_files($related, $id)
     {
@@ -126,9 +185,6 @@ class Meeting_model extends App_Model
     // Update an existing agenda
     public function update_agenda($id, $data)
     {
-        // echo '<pre>';
-        // print_r($data);
-        // die;
 
         $affectedRows = 0;
 
@@ -175,12 +231,12 @@ class Meeting_model extends App_Model
             $this->db->where('id', $id);  // Use the same ID as the agenda
             $this->db->update(db_prefix() . 'meeting_management', $meeting_data);
         }
-        
+
         if (count($new_mom) > 0) {
             foreach ($new_mom as $key => $value) {
-                if(!empty($value['staff']) && isset($value['staff'])){
+                if (!empty($value['staff']) && isset($value['staff'])) {
                     $staff = implode(',', $value['staff']);
-                }else{
+                } else {
                     $staff = '';
                 }
                 $mom_arr = [];
@@ -192,7 +248,7 @@ class Meeting_model extends App_Model
                 $mom_arr['staff'] = $staff;
                 $mom_arr['vendor'] = $value['vendor'];
                 $mom_arr['target_date'] = $value['target_date'];
-               
+
                 $this->db->insert(db_prefix() . 'agendas_details', $mom_arr);
                 $last_insert_id = $this->db->insert_id();
 
@@ -210,9 +266,9 @@ class Meeting_model extends App_Model
 
         if (count($update_mom) > 0) {
             foreach ($update_mom as $key => $value) {
-                if(!empty($value['staff']) && isset($value['staff'])){
+                if (!empty($value['staff']) && isset($value['staff'])) {
                     $staff = implode(',', $value['staff']);
-                }else{
+                } else {
                     $staff = '';
                 }
                 $mom_arr = [];
@@ -282,7 +338,7 @@ class Meeting_model extends App_Model
     // Get existing minutes for the agenda
     public function get_minutes($agenda_id)
     {
-        $this->db->select('meeting_title, minutes, agenda');
+        $this->db->select('meeting_title, minutes, agenda,additional_note');
         $this->db->where('id', $agenda_id);
         $query = $this->db->get(db_prefix() . 'meeting_management');  // Use the correct table name here
         return $query->row();
@@ -378,14 +434,123 @@ class Meeting_model extends App_Model
     // Update minutes for a given agenda
     public function update_minutes($agenda_id, $minutes_data)
     {
+        $affectedRows = 0;
+        unset($minutes_data['isedit']);
+        unset($minutes_data['area']);
+        unset($minutes_data['description']);
+        unset($minutes_data['decision']);
+        unset($minutes_data['action']);
+        unset($minutes_data['staff']);
+        unset($minutes_data['vendor']);
+        unset($minutes_data['target_date']);
+        unset($minutes_data['participants']);
+        unset($minutes_data['other_participants']);
+        unset($minutes_data['company_names']);
+        unset($minutes_data['agenda_id']);
+
+        $new_mom = [];
+        if (isset($minutes_data['newitems'])) {
+            $new_mom = $minutes_data['newitems'];
+            unset($minutes_data['newitems']);
+        }
+
+        $update_mom = [];
+        if (isset($minutes_data['items'])) {
+            $update_mom = $minutes_data['items'];
+            unset($minutes_data['items']);
+        }
+
+        $remove_order = [];
+        if (isset($minutes_data['removed_items'])) {
+            $remove_order = $minutes_data['removed_items'];
+            unset($minutes_data['removed_items']);
+        }
+
 
         $this->save_agends_files('agenda_meeting', $agenda_id);
 
         $this->db->where('id', $agenda_id);
         $this->db->update(db_prefix() . 'agendas', ['flag' => 1]);
 
-        $this->db->where('id', $agenda_id);
-        return $this->db->update(db_prefix() . 'meeting_management', $minutes_data);
+        if (!empty($minutes_data)) {
+            $this->db->where('id', $agenda_id);
+            $this->db->update(db_prefix() . 'meeting_management', $minutes_data);
+        }
+
+
+        if (count($new_mom) > 0) {
+            foreach ($new_mom as $key => $value) {
+                if (!empty($value['staff']) && isset($value['staff'])) {
+                    $staff = implode(',', $value['staff']);
+                } else {
+                    $staff = '';
+                }
+                $mom_arr = [];
+                $mom_arr['minute_id'] = $agenda_id;
+                $mom_arr['area'] = $value['area'];
+                $mom_arr['description'] = $value['description'];
+                $mom_arr['decision'] = $value['decision'];
+                $mom_arr['action'] = $value['action'];
+                $mom_arr['staff'] = $staff;
+                $mom_arr['vendor'] = $value['vendor'];
+                $mom_arr['target_date'] = $value['target_date'];
+
+                $this->db->insert(db_prefix() . 'minutes_details', $mom_arr);
+                $last_insert_id = $this->db->insert_id();
+
+                $iuploadedFiles = handle_mom_item_attachment_array('minutes_attachments', $agenda_id, $last_insert_id, 'newitems', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['attachments'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'minutes_details', $idata);
+                    }
+                }
+            }
+        }
+
+        if (count($update_mom) > 0) {
+            foreach ($update_mom as $key => $value) {
+                if (!empty($value['staff']) && isset($value['staff'])) {
+                    $staff = implode(',', $value['staff']);
+                } else {
+                    $staff = '';
+                }
+                $mom_arr = [];
+                $mom_arr['minute_id'] = $agenda_id;
+                $mom_arr['area'] = $value['area'];
+                $mom_arr['description'] = $value['description'];
+                $mom_arr['decision'] = $value['decision'];
+                $mom_arr['action'] = $value['action'];
+                $mom_arr['staff'] = $staff;
+                $mom_arr['vendor'] = $value['vendor'];
+                $mom_arr['target_date'] = $value['target_date'];
+
+                $this->db->where('id', $value['id']);
+                $this->db->update(db_prefix() . 'minutes_details', $mom_arr);
+                if ($this->db->affected_rows() > 0) {
+                    $affectedRows++;
+                }
+                $iuploadedFiles = handle_mom_item_attachment_array('minutes_attachments', $agenda_id, $value['id'], 'items', $key);
+                if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        $idata = array();
+                        $idata['attachments'] = $ifile['file_name'];
+                        $this->db->where('id', $ifile['item_id']);
+                        $this->db->update(db_prefix() . 'minutes_details', $idata);
+                    }
+                }
+            }
+        }
+        if (count($remove_order) > 0) {
+            foreach ($remove_order as $remove_id) {
+                $this->db->where('id', $remove_id);
+                if ($this->db->delete(db_prefix() . 'minutes_details')) {
+                    $affectedRows++;
+                }
+            }
+        }
     }
 
     // Save participants for a given agenda
@@ -589,8 +754,11 @@ class Meeting_model extends App_Model
             $name_attachments = $name . '[attachments]';
         }
         $full_item_image = '';
-        if (!empty($attachments['attachments'])) {
+        if (!empty($attachments['attachments']) && !empty($attachments['agenda_id'])) {
             $item_base_url = base_url('uploads/meetings/mom_attachments/' . $attachments['agenda_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
+            $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
+        } elseif (!empty($attachments['attachments']) && !empty($attachments['minute_id'])) {
+            $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $attachments['minute_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
         }
 

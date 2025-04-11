@@ -27,7 +27,38 @@ function getstafflist()
     
     return $staff_list;
 }
+/**
+ * Takes a comma separated string of staff IDs and returns a comma separated string of the
+ * corresponding staff full names.
+ * 
+ * @param string $staff_ids_csv A comma separated string of staff IDs.
+ * @return string A comma separated string of the corresponding staff full names.
+ */
+function getStaffNamesFromCSV($staff_ids_csv)
+{
+    // Retrieve the full staff list as an array with staffid and fullname.
+    $staff_list = getstafflist();
 
+    // Convert the comma separated input string to an array and trim any whitespace.
+    $staff_ids_array = array_map('trim', explode(',', $staff_ids_csv));
+
+    // Build a lookup array mapping each staff id to its fullname.
+    $staff_map = [];
+    foreach ($staff_list as $staff) {
+        $staff_map[$staff['staffid']] = $staff['fullname'];
+    }
+
+    // Prepare an array to hold the full names corresponding to the provided staff IDs.
+    $names = [];
+    foreach ($staff_ids_array as $id) {
+        if (isset($staff_map[$id])) {
+            $names[] = $staff_map[$id];
+        }
+    }
+
+    // Return the names as a comma separated string.
+    return implode(', ', $names);
+}
 function getvendorlist(){
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');

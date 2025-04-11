@@ -129,6 +129,8 @@ class AgendaController extends AdminController
         // Load the view
         $data['attachments'] = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
+        $data['minutes_data'] = $this->Meeting_model->get_minutes_detials($agenda_id);
+        $data['agenda_data'] = $this->Meeting_model->get_mom_detials($agenda_id);
         $this->load->view('meeting_management/view_meeting', $data);
     }
 

@@ -8,6 +8,33 @@
    .margin_add_class {
       margin-top: 14px;
    }
+
+   table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+   }
+
+   th,
+   td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 8px;
+   }
+
+   thead {
+      background-color: #f2f2f2;
+   }
+
+   button {
+      padding: 5px 10px;
+   }
+
+   img.images_w_table {
+      width: 116px;
+      height: 73px;
+   }
 </style>
 
 <!-- Add CKEditor and SweetAlert -->
@@ -17,10 +44,15 @@
    <div class="content">
       <div class="row">
          <input type="hidden" id="flag" value="<?php echo $agenda->flag; ?>">
-         <?php echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form')); ?>
+         <?php echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form'));
+         if (isset($agenda)) {
+            echo form_hidden('isedit');
+         }
+         ?>
+
          <div class="col-md-12">
             <div class="panel_s">
-               <div class="panel-body">
+               <div class="panel-body mom-items">
                   <h4><?php echo _l('meeting_minutes'); ?></h4>
 
                   <!-- Minutes of Meeting Form -->
@@ -40,11 +72,28 @@
                      } else {
                         $minutes_data = $minutes->agenda;
                      }
-
+                     $additional_note = isset($minutes) ? $minutes->additional_note : '';
                      ?>
-                     <?php echo render_textarea('minutes', '', html_entity_decode($minutes_data, ENT_QUOTES, 'UTF-8'), array(), array(), 'mtop15', 'tinymce'); ?>
+                     <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
+                        <thead>
+                           <tr>
+                              <th>Area/Head</th>
+                              <th>Description</th>
+                              <th>Decision</th>
+                              <th>Action</th>
+                              <th>Action By</th>
+                              <th>Target Date</th>
+                              <th>Attachments</th>
+                              <th></th>
+                           </tr>
+                        </thead>
+                        <tbody class="mom_body">
+                           <?php echo pur_html_entity_decode($mom_row_template); ?>
+                        </tbody>
+                     </table>
+                     <?php echo render_textarea('additional_note', 'Additional Note', $additional_note, array(), array(), 'mtop15', 'tinymce'); ?>
                   </div>
-
+                  <div id="removed-items"></div>    
                   <!-- Participants Selection -->
                   <div class="form-group">
                      <label for="participants"><?php echo _l('select_participants'); ?></label>
@@ -407,22 +456,105 @@
          updateRemoveButtons(); // Update visibility of "Remove" buttons
       });
 
-      var flag = $('#flag').val();
-
-      if (flag == 1) {
-         setInterval(function() {
-            update_minutes_of_meeting();
-         }, 5000);
-      }
-      function update_minutes_of_meeting() {
-         var data = {};
-         data.id = <?php echo $agenda_id; ?>;
-         data.minutes = tinymce.get('minutes').getContent();
-         $.post(admin_url + 'meeting_management/minutesController/update_minutes_of_meeting', data).done(function(response) {});
-      }
    });
 </script>
 
 </body>
 
 </html>
+
+<script type="text/javascript">
+   $(document).on('click', '.mom-add-item-to-table', function(event) {
+      "use strict";
+
+      var data = 'undefined';
+      data = typeof(data) == 'undefined' || data == 'undefined' ? mom_get_item_preview_values() : data;
+      var table_row = '';
+      var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.mom-items-table tbody .item').length + 1;
+      lastAddedItemKey = item_key;
+      mom_get_item_row_template('newitems[' + item_key + ']', data.area, data.description, data.decision, data.action, data.staff, data.vendor, data.target_date, data.attachments, item_key).done(function(output) {
+         table_row += output;
+
+         $('.mom_body').append(table_row);
+         var sourceInput = $("input[name='attachments']")[0];
+         var targetInput = $("input[name='newitems[" + lastAddedItemKey + "][attachments]']")[0];
+         if (sourceInput.files.length > 0) {
+            var dataTransfer = new DataTransfer();
+            for (var i = 0; i < sourceInput.files.length; i++) {
+               dataTransfer.items.add(sourceInput.files[i]);
+            }
+            targetInput.files = dataTransfer.files;
+         }
+         init_selectpicker();
+         pur_clear_item_preview_values();
+         $('body').find('#items-warning').remove();
+         $("body").find('.dt-loader').remove();
+         return true;
+      });
+      return false;
+   });
+
+   function mom_get_item_row_template(name, area, description, decision, action, staff, vendor, target_date, attachments, item_key) {
+      "use strict";
+
+      jQuery.ajaxSetup({
+         async: false
+      });
+
+      var d = $.post(admin_url + 'meeting_management/agendaController/get_mom_row_template', {
+         name: name,
+         area: area,
+         description: description,
+         decision: decision,
+         action: action,
+         staff: staff,
+         vendor: vendor,
+         target_date: target_date,
+         item_key: item_key
+      });
+      jQuery.ajaxSetup({
+         async: true
+      });
+      return d;
+   }
+
+   function mom_get_item_preview_values() {
+      "use strict";
+
+      var response = {};
+      response.area = $('.mom-items-table .main textarea[name="area"]').val();
+      response.description = $('.mom-items-table .main textarea[name="description"]').val();
+      response.decision = $('.mom-items-table .main textarea[name="decision"]').val();
+      response.action = $('.mom-items-table .main textarea[name="action"]').val();
+      response.staff = $('.mom-items-table .main select[name="staff"]').val();
+      response.vendor = $('.mom-items-table .main input[name="vendor"]').val();
+      response.target_date = $('.mom-items-table .main input[name="target_date"]').val();
+      return response;
+   }
+
+   function pur_clear_item_preview_values() {
+      "use strict";
+
+      var previewArea = $('.mom_body .main');
+      previewArea.find('input').val('');
+      previewArea.find('textarea').val('');
+      previewArea.find('select')
+         .prop('disabled', false) // Remove the disabled attribute
+         .val('') // Clear the value
+         .selectpicker('refresh'); // Refresh the selectpicker UI
+   }
+
+   function mom_delete_item(row, itemid, parent) {
+      "use strict";
+
+      $(row).parents('tr').addClass('animated fadeOut', function() {
+         setTimeout(function() {
+            $(row).parents('tr').remove();
+            pur_calculate_total();
+         }, 50);
+      });
+      if (itemid && $('input[name="isedit"]').length > 0) {
+         $(parent + ' #removed-items').append(hidden_input('removed_items[]', itemid));
+      }
+   }
+</script>
