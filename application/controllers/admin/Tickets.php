@@ -805,4 +805,36 @@ class Tickets extends AdminController
         }
         echo json_encode($response);
     }
+
+    public function pdf($id)
+    {
+        if (!$id) {
+            redirect(admin_url('tickets'));
+        }
+
+        $ticket = $this->tickets_model->get_ticket_by_id($id);
+       
+        try {
+            $pdf = ticket_pdf($ticket);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            echo $message;
+            if (strpos($message, 'Unable to get the size of the image') !== false) {
+                show_pdf_unable_to_get_image_size_error();
+            }
+            die;
+        }
+
+        $type = 'I';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+
+        $pdf->Output(mb_strtoupper(slug_it($ticket->subject)) . '.pdf', $type);
+    }
 }

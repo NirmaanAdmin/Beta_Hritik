@@ -311,3 +311,14 @@ function pdf_multi_row($left, $right, $pdf, $left_width = 40)
     $pdf->setPage(max($page_end_1, $page_end_2));
     $pdf->SetXY($pdf->GetX(), $ynew);
 }
+
+/**
+ * Prepare general ticket pdf
+ * @param  object $ticket Ticket as object with all necessary fields
+ * @param  string $tag     tag for bulk pdf exporter
+ * @return mixed object
+ */
+function ticket_pdf($ticket, $tag = '')
+{
+    return app_pdf('ticket', LIBSPATH . 'pdf/Ticket_pdf', $ticket, $tag);
+}
