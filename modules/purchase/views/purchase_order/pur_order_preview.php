@@ -655,14 +655,28 @@ if ($estimate->currency != 0) {
 
                               <?php
                               if(!empty($changes)) {
-                                 foreach ($changes as $ckey => $cvalue) { ?>
+                                 $grand_total = 0;
+                                 foreach ($changes as $ckey => $cvalue) { 
+                                    $grand_total = $grand_total + $cvalue['co_value'];
+                                 ?>
+                                 <tr id="subtotal">
                                     <td><span class="bold">CO Total for <?php echo $cvalue['pur_order_number']; ?></span>
                                     </td>
                                     <td class="subtotal bold">
-                                       <?php echo app_format_money($cvalue['total'], $base_currency->symbol); ?>
+                                       <?php echo app_format_money($cvalue['co_value'], $base_currency->symbol); ?>
                                     </td>
+                                 </tr>
                                  <?php }
-                              } ?>
+                                 $grand_total = $grand_total + $estimate->total;
+                                 ?>
+                                 <tr id="subtotal">
+                                    <td><span class="bold"><?php echo _l('grand_total'); ?></span>
+                                    </td>
+                                    <td class="subtotal bold">
+                                       <?php echo app_format_money($grand_total, $base_currency->symbol); ?>
+                                    </td>
+                                 </tr>
+                              <?php } ?>
                            </tbody>
                         </table>
                      </div>
@@ -788,7 +802,7 @@ if ($estimate->currency != 0) {
                                     <tr>
                                        <td><?php echo '<a href="' . admin_url('changee/pur_order/' . $change['id']) . '" target="_blank"><p>' . $change['pur_order_number'] . '</p></a>' ?></td>
                                        <td><?php echo date('d M Y', strtotime($change['datecreated'])) ?></td>
-                                       <td><?php echo app_format_money($change['total'], $base_currency->symbol); ?></td>
+                                       <td><?php echo app_format_money($change['co_value'], $base_currency->symbol); ?></td>
 
                                     </tr>
                                  <?php } ?>
