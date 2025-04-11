@@ -84,7 +84,13 @@ foreach ($rResult as $aRow) {
                 $_data = '<a href="' . admin_url('purchase/wo_payment_certificate/' . $aRow['wo_id'].'/'.$aRow['id'].'/1') . '" target="_blank">' . _l('view') . '</a>';
             }
         } elseif($aColumns[$i] == 'order_name'){
-            $_data = $aRow['order_name'];
+            $_data = '';
+            if(!empty($aRow['po_id'])) {
+                $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow['po_id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+            }
+            if(!empty($aRow['wo_id'])) {
+                $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow['wo_id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+            }
         } elseif($aColumns[$i] == 'vendor'){
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor']) . '" >' .  get_vendor_company_name($aRow['vendor']) . '</a>';
         } elseif($aColumns[$i] == 'order_date'){
