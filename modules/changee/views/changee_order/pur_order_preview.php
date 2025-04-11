@@ -547,6 +547,8 @@ if ($estimate->currency != 0) {
                                           if ($diff_unit == 0) {
                                              $align = 'center';
                                              $qty_after_incl_co = '-';
+                                          }
+                                          if ($diff == 0) {
                                              $rate_after_incl_co = '-';
                                           }
                                           ?>
