@@ -378,56 +378,12 @@
 			</div>
 			<div class="panel-default no-border">
 				<div class="panel-body no-border">
-					<?php
-					if (!$file_locked) {
-						$parameter = $item->id;
-						if ($item->locked == 1) {
-							$parameter = $parameter . ',\'unlock\'';
-						} else {
-							$parameter = $parameter . ',\'lock\'';
-						}
-						$lock_function = 'lock_unlock_file(' . $parameter . ')';
-					?>
-						<a href="javascript:void(0)" class="btn btn-primary w100 mtop5 mbot5" onclick="<?php echo drawing_htmldecode($lock_function); ?>">
-							<?php echo ($item->locked == 1 ? '<i class="fa fa-unlock"></i> ' . _l('dmg_unlock_file') : '<i class="fa fa-lock"></i> ' . _l('dmg_lock_file')); ?>
-						</a>
-					<?php } ?>
-
-					<?php
-					if (!$file_locked) { ?>
-						<a href="javascript:void(0)" class="btn btn-primary w100 mtop5 mbot5" onclick="upload_new_version(<?php echo drawing_htmldecode($item->id); ?>)">
-							<i class="fa fa-file"></i> <?php echo _l('dmg_upload_new_version'); ?>
-						</a>
-					<?php } ?>
-
-
+				
 					<?php if ($item->creator_id == get_staff_user_id() && $item->creator_type == 'staff') { ?>
 						<hr>
 					<?php } ?>
 
-					<?php if ($item->creator_type == 'staff') { ?>
-						<?php if ($item->approve == 0) { ?>
-							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'normal')">
-								<i class="fa fa-check-square"></i> <?php echo _l('dmg_send_request_approve'); ?>
-							</a>
-						<?php } ?>
-						<?php if ($item->approve == -1 || $item->approve == 1 || $item->approve == 2) {
-							$color_class = ' btn-warning';
-							if ($item->approve == 1) {
-								$color_class = ' btn-success';
-							}
-							if ($item->approve == 2) {
-								$color_class = ' btn-danger';
-							}
-						?>
-							<a href="<?php echo admin_url('drawing_management/detail_approve/' . $item->hash); ?>" class="btn w100 mtop5 mbot5<?php echo drawing_htmldecode($color_class); ?>">
-								<i class="fa fa-check-square"></i> <?php echo _l('dmg_view_request_approve'); ?>
-							</a>
-						<?php } ?>
-					<?php } ?>
-
-
-					<?php if ($item->creator_type == 'staff') { ?>
+					<?php if (false) { ?>
 						<?php if ($item->sign_approve == 0) { ?>
 							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'eid')">
 								<i class="fa fa-check-square"></i> <?php echo _l('dmg_request_approve_with_eid'); ?>
@@ -510,6 +466,48 @@
 						</a>
 					<?php } ?>
 
+					<?php
+					if (!$file_locked) { ?>
+						<a href="javascript:void(0)" class="btn btn-primary w100 mtop5 mbot5" onclick="upload_new_version(<?php echo drawing_htmldecode($item->id); ?>)">
+							<i class="fa fa-file"></i> <?php echo _l('dmg_upload_new_version'); ?>
+						</a>
+					<?php } ?>
+
+					<?php if ($item->creator_type == 'staff') { ?>
+						<?php if ($item->approve == 0) { ?>
+							<a href="javascript:void(0)" class="btn btn-default w100 mtop5 mbot5" onclick="send_request_approve(<?php echo drawing_htmldecode($item->id); ?>, 'normal')">
+								<i class="fa fa-check-square"></i> <?php echo _l('dmg_send_request_approve'); ?>
+							</a>
+						<?php } ?>
+						<?php if ($item->approve == -1 || $item->approve == 1 || $item->approve == 2) {
+							$color_class = ' btn-warning';
+							if ($item->approve == 1) {
+								$color_class = ' btn-success';
+							}
+							if ($item->approve == 2) {
+								$color_class = ' btn-danger';
+							}
+						?>
+							<a href="<?php echo admin_url('drawing_management/detail_approve/' . $item->hash); ?>" class="btn w100 mtop5 mbot5<?php echo drawing_htmldecode($color_class); ?>">
+								<i class="fa fa-check-square"></i> <?php echo _l('dmg_view_request_approve'); ?>
+							</a>
+						<?php } ?>
+					<?php } ?>
+
+					<?php
+					if (!$file_locked) {
+						$parameter = $item->id;
+						if ($item->locked == 1) {
+							$parameter = $parameter . ',\'unlock\'';
+						} else {
+							$parameter = $parameter . ',\'lock\'';
+						}
+						$lock_function = 'lock_unlock_file(' . $parameter . ')';
+					?>
+						<a href="javascript:void(0)" class="btn btn-primary w100 mtop5 mbot5" onclick="<?php echo drawing_htmldecode($lock_function); ?>">
+							<?php echo ($item->locked == 1 ? '<i class="fa fa-unlock"></i> ' . _l('dmg_unlock_file') : '<i class="fa fa-lock"></i> ' . _l('dmg_lock_file')); ?>
+						</a>
+					<?php } ?>
 
 				</div>
 			</div>
