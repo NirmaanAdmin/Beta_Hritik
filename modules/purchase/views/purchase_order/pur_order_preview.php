@@ -652,6 +652,17 @@ if ($estimate->currency != 0) {
                                     <?php echo app_format_money($estimate->total, $base_currency->symbol); ?>
                                  </td>
                               </tr>
+
+                              <?php
+                              if(!empty($changes)) {
+                                 foreach ($changes as $ckey => $cvalue) { ?>
+                                    <td><span class="bold">CO Total for <?php echo $cvalue['pur_order_number']; ?></span>
+                                    </td>
+                                    <td class="subtotal bold">
+                                       <?php echo app_format_money($cvalue['total'], $base_currency->symbol); ?>
+                                    </td>
+                                 <?php }
+                              } ?>
                            </tbody>
                         </table>
                      </div>
@@ -775,8 +786,8 @@ if ($estimate->currency != 0) {
                                  <?php foreach ($changes as $change) { ?>
 
                                     <tr>
-                                       <td><?php echo '<a href="' . admin_url('changee/view_co_request/' . $change['id']) . '"><p>' . $change['pur_rq_code'] . '-' . $change['pur_rq_name'] . '</p></a>' ?></td>
-                                       <td><?php echo date('d M Y', strtotime($change['request_date'])) ?></td>
+                                       <td><?php echo '<a href="' . admin_url('changee/pur_order/' . $change['id']) . '" target="_blank"><p>' . $change['pur_order_number'] . '</p></a>' ?></td>
+                                       <td><?php echo date('d M Y', strtotime($change['datecreated'])) ?></td>
                                        <td><?php echo app_format_money($change['total'], $base_currency->symbol); ?></td>
 
                                     </tr>

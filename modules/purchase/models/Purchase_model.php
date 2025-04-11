@@ -17154,7 +17154,7 @@ class Purchase_model extends App_Model
     public function get_po_changes($id)
     {
         $this->db->where('po_order_id', $id);
-        return $this->db->get('tblco_request')->result_array();
+        return $this->db->get('tblco_orders')->result_array();
     }
     public function get_change_wo_order($id)
     {
