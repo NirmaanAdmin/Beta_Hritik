@@ -10,6 +10,7 @@ Requires at least: 2.3.*
 */
 
 define('MEETING_MANAGEMENT_MODULE_NAME', 'meeting_management');
+define('MEETING_MANAGEMENT_MOM_ERROR', 'modules/meeting_management/uploads/import_items_mom_error/');
 require_once __DIR__ . '/vendor/autoload.php';
 
 

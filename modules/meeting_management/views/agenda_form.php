@@ -8,12 +8,14 @@
       font-family: Arial, sans-serif;
       font-size: 14px;
    }
-   th{
+
+   th {
       border: 1px solid #ccc;
    }
+
    th,
    td {
-     
+
       text-align: center;
       padding: 8px;
    }
@@ -30,9 +32,35 @@
       width: 116px;
       height: 73px;
    }
+
+   .error-border {
+      border: 1px solid red;
+   }
+
+   .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+   }
+
+   .loader-gif {
+      width: 100px;
+      /* Adjust the size as needed */
+      height: 100px;
+   }
 </style>
 <div id="wrapper">
    <div class="content">
+      <div class="loader-container hide" id="loader-container">
+         <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
+      </div>
       <div class="row ">
          <?php
          if (!empty($agenda->id)) {
@@ -42,7 +70,7 @@
          }
          if (isset($agenda)) {
             echo form_hidden('isedit');
-          }
+         }
          ?>
 
          <div class="col-md-12 left-column">
@@ -85,7 +113,41 @@
 
                   <!-- Agenda -->
                   <div class="form-group">
-                     <label for="agenda"><?php echo _l('agenda'); ?></label>
+                     <div class="col-md-4">
+
+                        <label for="agenda"><?php echo _l('agenda'); ?></label>
+                     </div>
+                     <?php if (!$is_edit) { ?>
+                        <div class="col-md-8">
+                           <div class="col-md-2 pull-right">
+                              <div id="dowload_file_sample" style="margin-top: 22px;">
+                                 <label for="file_csv" class="control-label"> </label>
+                                 <a href="<?php echo site_url('modules/meeting_management/uploads/file_sample/Sample_import_mom_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                              </div>
+                           </div>
+                           <div class="col-md-4 pull-right" style="display: flex;align-items: end;padding: 0px;">
+                              <?php echo form_open_multipart(admin_url('meeting_management/agendaController/import_file_xlsx_mom_items'), array('id' => 'import_form')); ?>
+                              <?php echo form_hidden('leads_import', 'true'); ?>
+                              <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+
+                              <div class="form-group" style="margin-left: 10px;">
+                                 <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadfilecsv(this);"><?php echo _l('import'); ?></button>
+                              </div>
+                              <?php echo form_close(); ?>
+                           </div>
+
+                        </div>
+                        <div class="col-md-12 ">
+                           <div class="form-group pull-right" id="file_upload_response">
+
+                           </div>
+
+                        </div>
+                        <div id="box-loading" class="pull-right">
+
+                        </div>
+                     <?php } ?>
+
                      <!-- <textarea id="agenda" name="agenda" class="form-control" required></textarea>  -->
 
                      <?php
@@ -115,7 +177,6 @@
                      <br>
 
                      <?php echo render_textarea('additional_note', 'Additional Note', $additional_note, array(), array(), 'mtop15', 'tinymce'); ?>
-
                   </div>
 
 
@@ -124,7 +185,7 @@
                      <button type="submit" class="btn btn-info"><?php echo _l('submit'); ?></button>
                   </div>
 
-                  <div id="removed-items"></div>         
+                  <div id="removed-items"></div>
                </div>
             </div>
             <div class="panel-body">
@@ -143,14 +204,14 @@
                </div>
                <br /> <br />
             </div>
-            
+
          </div>
          <?php echo form_close(); ?>
       </div>
    </div>
 
    <?php init_tail(); ?>
-
+   <?php require 'modules/meeting_management/assets/js/import_excel_items_mom_js.php'; ?>
    <!-- jQuery to handle client selection and load projects -->
    <script>
       $(document).ready(function() {
@@ -178,7 +239,7 @@
             }
          });
 
-        
+
       });
    </script>
 

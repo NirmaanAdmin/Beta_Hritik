@@ -163,7 +163,7 @@ class AgendaController extends AdminController
         $pdf->set_option('isHtml5ParserEnabled', true);
         // Set the PDF content
         $pdf->loadHtml($html_content);
-       
+
         $pdf->setPaper('A4', 'portrait');
 
         // Render the PDF
@@ -179,5 +179,164 @@ class AgendaController extends AdminController
         $this->Meeting_model->update_mom_list($data);
         echo json_encode(['success' => true]);
         die();
+    }
+
+    public function import_file_xlsx_mom_items()
+    {
+      
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if ($this->input->post()) {
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                //do_action('before_import_leads');
+
+                // Get the temp file path
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                // Make sure we have a filepath
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+
+                    // Setup our new file path
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+
+                        $import_result = true;
+                        $rows = [];
+
+                        //Writer file
+                        $writer_header = array(
+                            "(*)" . _l('area/head') => 'string',
+                            _l('description') => 'string',
+                            _l('decision')    => 'string',
+                            _l('action')    => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+
+                        $col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+                        $style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
+
+                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
+
+                        //init file error end
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+                       
+                        // start row write 2
+                        $numRow = 2;
+                        $total_rows = 0;
+
+                        $total_rows_actualy = 0;
+                        $list_item = $this->Meeting_model->create_mom_row_template();
+                        //get data for compare
+                        $index_quote = 0;
+                       
+                        for ($row = 1; $row < count($data); $row++) {
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+                            $flag_mail = 0;
+                            $string_error = '';
+                            $flag_contract_form = 0;
+
+                            $flag_id_commodity_code;
+                            $flag_id_item_description;
+
+                            // $value_cell_commodity_code = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_area = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_description = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_cell_decision = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_cell_action = isset($data[$row][3]) ? $data[$row][3] : '';
+                            /*check null*/
+                            if (is_null($value_cell_area) == true) {
+                                $string_error .= _l('area/head') . _l('not_yet_entered');
+                                $flag = 1;
+                            }
+                            if (($flag == 1) || ($flag2 == 1)) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_cell_area,
+                                    $value_cell_description,
+                                    $value_cell_decision,
+                                    $value_cell_action,
+                                    $string_error,
+                                ]);
+
+                                $numRow++;
+                                $total_rows_data_error++;
+                                $message = 'Import Error In Some Item';
+                            }
+                            if (($flag == 0) && ($flag2 == 0)) {
+
+                                $rows[] = $row;
+                                $list_item .= $this->Meeting_model->create_mom_row_template('newitems[' . $index_quote . ']',$value_cell_area, $value_cell_description, $value_cell_decision, $value_cell_action, '', '','',[],$index_quote);
+
+                                $index_quote++;
+                                $total_rows_data++;
+                                $message = 'Import Item successfully';
+                            }
+                        }
+                        // die('sadad');
+                        $total_rows = $total_rows;
+                        $data['total_rows_post'] = count($rows);
+                        $total_row_success = count($rows);
+                        // $total_row_false = '';
+                        if (($total_rows_data_error > 0)) {
+
+                            $filename = 'MEETING_MANAGEMENT_MOM_ERROR' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, MEETING_MANAGEMENT_MOM_ERROR . $filename, $filename));
+
+                            $filename = MEETING_MANAGEMENT_MOM_ERROR . $filename;
+                        }
+                        $list_item = $list_item;
+
+                        @delete_dir($tmpDir);
+                    }
+                } else {
+                    set_alert('warning', 'Import Item failed');
+                }
+            }
+        }
+
+        echo json_encode([
+            'message' => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false' => $total_rows_data_error,
+            'total_rows' => $total_rows_data,
+            'site_url' => site_url(),
+            'staff_id' => get_staff_user_id(),
+            'total_rows_data_error' => $total_rows_data_error,
+            'filename' => $filename,
+            'list_item' => $list_item
+        ]);
     }
 }

@@ -47,6 +47,7 @@ class Meeting_model extends App_Model
     // Create a new agenda
     public function create_agenda($data)
     {
+        
         // Save detail items (MOM details) if provided.
         $mom_detail = [];
         if (isset($data['newitems'])) {
@@ -64,7 +65,8 @@ class Meeting_model extends App_Model
             $data['action'],
             $data['staff'],
             $data['vendor'],
-            $data['target_date']
+            $data['target_date'],
+            $data['leads_import'],
         );
 
         // Insert into the agendas table.
