@@ -30,12 +30,31 @@
                     	</div>
                     	<br/>
                         <div class="row">
-                            <div  class="col-md-3 pull-right">
+                            <div  class="col-md-3">
                                 <?php
                                  $input_attr_e = [];
                                  $input_attr_e['placeholder'] = _l('day_vouchers');
 
                              echo render_date_input('date_add','','',$input_attr_e ); ?>
+                            </div>
+                            <div class="col-md-3">
+                              <select name="approval" id="approval" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('status_label'); ?>">
+                                  <option value=""></option>
+                                  <option value="0"><?php echo _l('not_yet_approve'); ?></option>
+                                  <option value="1"><?php echo _l('approved'); ?></option>
+                                  <option value="-1"><?php echo _l('reject'); ?></option>
+                              </select>
+                            </div>
+                            <div class="col-md-3">
+                              <select name="delivery_status" id="delivery_status" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('delivery_status_new'); ?>">
+                                  <option value=""></option>
+                                  <option value="ready_to_deliver"><?php echo _l('wh_ready_to_deliver_new'); ?></option>
+                                  <option value="delivery_in_progress"><?php echo _l('wh_delivery_in_progress_new'); ?></option>
+                                  <option value="delivered"><?php echo _l('wh_delivered_new'); ?></option>
+                                  <option value="received"><?php echo _l('wh_received'); ?></option>
+                                  <option value="returned"><?php echo _l('wh_returned'); ?></option>
+                                  <option value="not_delivered"><?php echo _l('wh_not_delivered_new'); ?></option>
+                              </select>
                             </div>
 
                         </div>

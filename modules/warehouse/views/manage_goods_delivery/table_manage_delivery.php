@@ -31,6 +31,22 @@ if ($this->ci->input->post('invoice_id')) {
     }
 }
 
+$approval = $this->ci->input->post('approval');
+if ($approval == 0) {
+    $where[] = 'AND ' . $sTable . '.approval = 0';
+} else if ($approval == 1) {
+    $where[] = 'AND ' . $sTable . '.approval = 1';
+} else if ($approval == -1) {
+    $where[] = 'AND ' . $sTable . '.approval = -1';
+}
+
+if ($this->ci->input->post('delivery_status')) {
+    $delivery_status = $this->ci->input->post('delivery_status');
+    if ($delivery_status) {
+        $where[] = 'AND ' . $sTable . '.delivery_status = "'.$delivery_status.'"';
+    }
+}
+
 // Add any extra fields you want to retrieve
 $additionalSelect = [
     'id',

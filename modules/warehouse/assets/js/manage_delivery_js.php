@@ -6,11 +6,15 @@
     var InvoiceServerParams = {
         "invoice_id": "input[name='invoice_id']",
          "day_vouchers": "input[name='date_add']",
+        "approval": "select[name='approval']",
+        "delivery_status": "select[name='delivery_status']",
      };
  <?php }else{ ?>
     var InvoiceServerParams = {
         "invoice_id": '',
          "day_vouchers": "input[name='date_add']",
+        "approval": "select[name='approval']",
+        "delivery_status": "select[name='delivery_status']",
      };
 
 <?php } ?>
@@ -24,6 +28,14 @@ $('.delivery_sm').DataTable().columns([0]).visible(false, false);
 
 
  $('#date_add').on('change', function() {
+    table_manage_delivery.DataTable().ajax.reload();
+});
+
+$('#approval').on('change', function () {
+    table_manage_delivery.DataTable().ajax.reload();
+});
+
+$('#delivery_status').on('change', function () {
     table_manage_delivery.DataTable().ajax.reload();
 });
 
