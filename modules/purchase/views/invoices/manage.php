@@ -107,7 +107,7 @@
                               ?>
                               <select name="billing_invoices" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('pur_invoices'); ?>" data-actions-box="true">
                                  <option value=""></option>
-                                 <option value="None">To Be Converted</option>
+                                 <option value="None" <?php echo ($billing_invoices_filter_val == 'None') ? 'selected' : ''; ?>>To Be Converted</option>
                                  <?php foreach ($billing_invoices as $invoice) { ?>
                                     <option value="<?php echo $invoice['id']; ?>" <?php echo ($billing_invoices_filter_val == $invoice['id']) ? 'selected' : ''; ?>><?php echo $invoice['value']; ?></option>
                                  <?php } ?>
@@ -122,7 +122,7 @@
                                  <option value=""></option>
                                  <option value="None">None</option>
                                  <?php foreach ($budget_head as $head) { ?>
-                                    <option value="<?php echo $head['id']; ?>" <?php echo ($budget_head_filter == $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
+                                    <option value="<?php echo $head['id']; ?>" <?php echo ($budget_head_filter_val == $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
                                  <?php } ?>
                               </select>
                            </div>
@@ -138,7 +138,7 @@
                                  ['id' => 5, 'name' => _l('bill_verified_by_ril')],
                                  ['id' => 6, 'name' => _l('payment_certifiate_issued')],
                                  ['id' => 7, 'name' => _l('payment_processed')],
-                                 ['id' => 0, 'name' => _l('unpaid')]
+                                 ['id' => 8, 'name' => _l('unpaid')]
                               ];
 
                               ?>
@@ -146,7 +146,7 @@
                                  <option value=""></option>
                                  <option value="None">None</option>
                                  <?php foreach ($billing_status as $head) { ?>
-                                    <option value="<?php echo $head['id']; ?>" <?php echo ($billing_status_filter_val === $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
+                                    <option value="<?php echo $head['id']; ?>" <?php echo ($billing_status_filter_val == $head['id']) ? 'selected' : ''; ?>><?php echo $head['name']; ?></option>
                                  <?php } ?>
                               </select>
                            </div>
