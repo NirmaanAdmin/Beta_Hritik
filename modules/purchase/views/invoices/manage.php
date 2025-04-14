@@ -138,7 +138,7 @@
                                  ['id' => 5, 'name' => _l('bill_verified_by_ril')],
                                  ['id' => 6, 'name' => _l('payment_certifiate_issued')],
                                  ['id' => 7, 'name' => _l('payment_processed')],
-                                 ['id' => 8, 'name' => _l('unpaid')]
+                                 ['id' => 0, 'name' => _l('unpaid')]
                               ];
 
                               ?>
