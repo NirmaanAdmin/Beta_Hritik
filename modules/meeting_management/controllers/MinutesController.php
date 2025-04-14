@@ -92,95 +92,147 @@ class MinutesController extends AdminController
 
 
     // Convert an agenda to minutes of meeting
-    public function convert_to_minutes($agenda_id)
+    public function convert_to_minutes($agenda_id = '')
     {
+       
+        
         // Load necessary models
         $this->load->model('Meeting_model');
         $this->load->model('Task_model');
+        
+        // Determine if we're in "edit" mode (existing agenda) or "new" mode.
+        if (!empty($agenda_id)) {
+            // Existing agenda: Fetch from database.
+            $agenda = $this->Meeting_model->get_agenda($agenda_id);
+            if (!$agenda) {
+                show_error('Agenda not found.');
+                return;
+            }
 
-        // Fetch the agenda and ensure it exists
-        $agenda = $this->Meeting_model->get_agenda($agenda_id);
-        if (!$agenda) {
-            show_error('Agenda not found.');
-            return;
+            $data['agenda']             = $agenda;
+            $data['minutes']            = $this->Meeting_model->get_minutes($agenda_id);
+            $data['tasks']              = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
+            $data['attachments']        = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
+            $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
+        } else {
+            // New agenda: setup empty/default arrays.
+            $data['agenda']             = null;
+            $data['minutes']            = [];
+            $data['tasks']              = [];
+            $data['attachments']        = [];
+            $data['other_participants'] = [];
         }
-
-        // Fetch the minutes and tasks for this agenda
-        $data['agenda'] = $agenda;
-        $data['minutes'] = $this->Meeting_model->get_minutes($agenda_id);
+        // Pass agenda_id along (it can be empty).
         $data['agenda_id'] = $agenda_id;
-        $data['tasks'] = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
+
+        // Load the staff members (common to both cases)
         $data['staff_members'] = $this->staff_model->get('', ['active' => 1]);
-        $data['attachments'] = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
-        // Handle form submissions
+
+        // Handle form submission for meeting minutes
         if ($this->input->post('minutes')) {
-            // Save minutes
             $minutes_data = [
                 'minutes' => $this->input->post('minutes')
             ];
-            $this->Meeting_model->save_minutes($agenda_id, $minutes_data);
+
+            // For new agenda, create a new record and get back its id.
+            if (empty($agenda_id)) {
+                // Assumes that create_agenda() creates a new agenda and returns its ID.
+                $agenda_id = $this->Meeting_model->create_agenda($minutes_data);
+                $data['agenda_id'] = $agenda_id;
+            } else {
+                // Existing agenda: update minutes.
+                $this->Meeting_model->save_minutes($agenda_id, $minutes_data);
+            }
 
             set_alert('success', _l('meeting_minutes_created_success'));
             redirect(admin_url('meeting_management/minutesController/index/' . $agenda_id));
         }
 
+        // Handle form submission for adding a new task
         if ($this->input->post('task_title')) {
-            // Save new task
             $task_data = [
-                'agenda_id' => $agenda_id,
-                'task_title' => $this->input->post('task_title'),
+                'agenda_id'   => $agenda_id,
+                'task_title'  => $this->input->post('task_title'),
                 'assigned_to' => $this->input->post('assigned_to'),
-                'due_date' => $this->input->post('due_date')
+                'due_date'    => $this->input->post('due_date')
             ];
-
             $this->Task_model->create_task($task_data);
 
             set_alert('success', _l('meeting_task_created_success'));
             redirect(admin_url('meeting_management/minutesController/index/' . $agenda_id));
         }
 
+        // Create the Minutes of Meeting (MOM) row template.
         $mom_row_template = $this->Meeting_model->create_mom_row_template();
-        if ($agenda_id == '') {
-            $is_edit = false;
-        } else {
+        if (!empty($agenda_id)) {
             $get_mom_detials = $this->Meeting_model->get_mom_detials($agenda_id);
-
-            if (count($get_mom_detials) > 0) {
+            if (!empty($get_mom_detials)) {
                 $index_order = 0;
                 foreach ($get_mom_detials as $mom_detail) {
                     $index_order++;
-                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id']);
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template(
+                        'items[' . $index_order . ']',
+                        $mom_detail['area'],
+                        $mom_detail['description'],
+                        $mom_detail['decision'],
+                        $mom_detail['action'],
+                        $mom_detail['staff'],
+                        $mom_detail['vendor'],
+                        $mom_detail['target_date'],
+                        $mom_detail,
+                        $mom_detail['id']
+                    );
                 }
+                $is_edit = true;
+            } else {
+                $is_edit = false;
             }
-            $is_edit = true;
+        } else {
+            // New agenda: No MOM details exist yet.
+            $is_edit = false;
         }
-        $data['is_edit'] = $is_edit;
+        $data['is_edit']         = $is_edit;
         $data['mom_row_template'] = $mom_row_template;
 
         $data['title'] = _l('meeting_minutes');
-        $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
-        // Load the view
+
+        // Load the view with the assembled data.
         $this->load->view('meeting_management/minutes_form', $data);
     }
 
-    public function save_minutes_and_tasks($agenda_id)
+
+    public function save_minutes_and_tasks($agenda_id = '')
     {
 
         // Ensure agenda_id is retrieved correctly
-        if (!$agenda_id) {
-            throw new Exception('Agenda ID is not valid');
-        }
+        // if (!$agenda_id) {
+        //     throw new Exception('Agenda ID is not valid');
+        // }
 
-        // Debugging to check if agenda_id is correct
-        log_message('error', 'Agenda ID during save: ' . $agenda_id);
+        // // Debugging to check if agenda_id is correct
+        // log_message('error', 'Agenda ID during save: ' . $agenda_id);
 
         // Get minutes data from POST
         // $minutes_data = [
         //     'minutes' => $this->input->post('minutes', false),
         // ];
         $data = $this->input->post();
+        $agenda_data_new = $data;
+        $agenda_data_new['additional_note'] = $this->input->post('additional_note', false);
+        $agenda_data_new['created_by'] = get_staff_user_id();
+    
+        if ($agenda_id == '') {
+           
+            // Insert new agenda
+            $agenda_id = $this->Meeting_model->create_agenda($agenda_data_new);
+            set_alert('success', _l('meeting_minutes_created_success'));
+        } else {
+            // Update existing agenda
+            $this->Meeting_model->update_minutes($agenda_id, $data);
+            set_alert('success', _l('meeting_updated_success'));
+        }
         // Update the minutes for this meeting
-        $this->Meeting_model->update_minutes($agenda_id, $data);
+
 
         // Handle deleted tasks
         $deleted_task_ids = $this->input->post('deleted_tasks');
@@ -208,7 +260,6 @@ class MinutesController extends AdminController
                         'assigned_to' => $task_data['assigned_to'],
                         'due_date' => $task_data['due_date'],
                     ];
-
                     $this->Task_model->create_task($task);
                 }
             }

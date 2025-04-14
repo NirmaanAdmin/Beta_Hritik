@@ -16,9 +16,13 @@
       font-size: 14px;
    }
 
+   th {
+      border: 1px solid #ccc;
+   }
+
    th,
    td {
-      border: 1px solid #ccc;
+
       text-align: center;
       padding: 8px;
    }
@@ -35,6 +39,29 @@
       width: 116px;
       height: 73px;
    }
+
+   .error-border {
+      border: 1px solid red;
+   }
+
+   .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+   }
+
+   .loader-gif {
+      width: 100px;
+      /* Adjust the size as needed */
+      height: 100px;
+   }
 </style>
 
 <!-- Add CKEditor and SweetAlert -->
@@ -42,11 +69,17 @@
 
 <div id="wrapper">
    <div class="content">
+      <div class="loader-container hide" id="loader-container">
+         <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
+      </div>
       <div class="row">
          <input type="hidden" id="flag" value="<?php echo $agenda->flag; ?>">
-         <?php echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form'));
+         <?php
          if (isset($agenda)) {
+            echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form'));
             echo form_hidden('isedit');
+         }else{
+            echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks'), array('id' => 'minutes-tasks-form'));
          }
          ?>
 
@@ -56,10 +89,58 @@
                   <h4><?php echo _l('meeting_minutes'); ?></h4>
 
                   <!-- Minutes of Meeting Form -->
-
-                  <input type="hidden" name="agenda_id" value="<?php echo $agenda_id; ?>">
+                  <!-- Meeting Title -->
                   <div class="form-group">
-                     <label for="minutes"><?php echo _l('meeting_minutes'); ?></label>
+                     <label for="meeting_title"><?php echo _l('meeting_title'); ?></label>
+                     <input type="text" id="meeting_title" name="meeting_title" class="form-control" value="<?php echo isset($agenda) && isset($agenda->meeting_title) ? htmlspecialchars($agenda->meeting_title) : ''; ?>" required>
+                  </div>
+
+                  <!-- Meeting Date -->
+                  <div class="form-group">
+                     <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
+                     <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($agenda) && isset($agenda->meeting_date) ? htmlspecialchars($agenda->meeting_date) : ''; ?>" class="form-control" required>
+                  </div>
+                  <input type="hidden" name="agenda_id" value="<?php echo $agenda_id; ?>">
+
+                  <div class="form-group">
+                     <div class="col-md-4">
+                        <!-- <label for="agenda"><?php echo _l('meeting_notes'); ?></label> -->
+                     </div>
+                     <?php
+                     // if (!$is_edit) { 
+                     ?>
+                     <div class="col-md-8">
+                        <div class="col-md-2 pull-right">
+                           <div id="dowload_file_sample" style="margin-top: 22px;">
+                              <label for="file_csv" class="control-label"> </label>
+                              <a href="<?php echo site_url('modules/meeting_management/uploads/file_sample/Sample_import_mom_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                           </div>
+                        </div>
+                        <div class="col-md-4 pull-right" style="display: flex;align-items: end;padding: 0px;">
+                           <?php echo form_open_multipart(admin_url('meeting_management/agendaController/import_file_xlsx_mom_items'), array('id' => 'import_form')); ?>
+                           <?php echo form_hidden('leads_import', 'true'); ?>
+                           <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+
+                           <div class="form-group" style="margin-left: 10px;">
+                              <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadfilecsv(this);"><?php echo _l('import'); ?></button>
+                           </div>
+                           <?php echo form_close(); ?>
+                        </div>
+
+                     </div>
+                     <div class="col-md-12 ">
+                        <div class="form-group pull-right" id="file_upload_response">
+
+                        </div>
+
+                     </div>
+                     <div id="box-loading" class="pull-right">
+
+                     </div>
+                     <?php
+                     //  } 
+                     ?>
+                     <label for="minutes"><?php echo _l('meeting_notes'); ?></label>
                      <?php
                      $minutes_val = '';
                      $minutes_val = isset($minutes) ? $minutes->minutes : '';
@@ -82,9 +163,9 @@
                               <th>Decision</th>
                               <th>Action</th>
                               <th>Action By</th>
-                              <th>Target Date</th>
-                              <th>Attachments</th>
-                              <th></th>
+                              <th width="7%">Target Date</th>
+                              <th width="8%">Attachments</th>
+                              <th width="3%"></th>
                            </tr>
                         </thead>
                         <tbody class="mom_body">
@@ -93,7 +174,7 @@
                      </table>
                      <?php echo render_textarea('additional_note', 'Additional Note', $additional_note, array(), array(), 'mtop15', 'tinymce'); ?>
                   </div>
-                  <div id="removed-items"></div>    
+                  <div id="removed-items"></div>
                   <!-- Participants Selection -->
                   <div class="form-group">
                      <label for="participants"><?php echo _l('select_participants'); ?></label>
@@ -312,7 +393,7 @@
 </div>
 
 <?php init_tail(); ?>
-
+<?php require 'modules/meeting_management/assets/js/import_excel_items_mom_js.php'; ?>
 <script>
    $(document).ready(function() {
       var taskCount = <?php echo !empty($tasks) ? count($tasks) : 0; ?>;

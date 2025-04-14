@@ -10,7 +10,7 @@
                <div class="panel-body">
                   <h4><?php echo _l('meeting_agenda'); ?></h4>
                   <!-- Correct Create URL with module name -->
-                  <a href="<?php echo admin_url('meeting_management/agendaController/create'); ?>" class="btn btn-success"><?php echo _l('create_new_agenda'); ?></a>
+                  <a href="<?php echo admin_url('meeting_management/minutesController/convert_to_minutes'); ?>" class="btn btn-success"><?php echo _l('create_new_minutes'); ?></a>
 
                   <table class="table table-bordered">
                      <thead>
@@ -26,24 +26,16 @@
                            <?php foreach ($agendas as $agenda) : ?>
                               <tr>
                                  <td><?php echo $agenda['meeting_title']; ?></td>
-                                 <td><?php echo $agenda['meeting_date']; ?></td>
+                                 <td><?php echo date('d M, Y h:i A', strtotime($agenda['meeting_date'])); ?></td>
                                  <!-- <td><?php echo isset($agenda['project_name']) ? $agenda['project_name'] : 'N/A'; ?></td> -->
                                  <td>
                                     <!-- Correct Edit and Delete URLs with module name -->
-                                    <?php if ($agenda['flag'] == 0) { ?>
+                                    <!-- <?php if ($agenda['flag'] == 0) { ?>
                                        <a href="<?php echo admin_url('meeting_management/agendaController/create/' . $agenda['id']); ?>" class="btn btn-info"><?php echo _l('Edit Agenda'); ?></a>
-                                    <?php  } ?>
+                                    <?php  } ?> -->
+                                    <a href="<?php echo admin_url('meeting_management/minutesController/index/' . $agenda['id']); ?>" class="btn btn-primary"><?php echo _l('edit_converted_metting'); ?></a>
 
                                     <a href="<?php echo admin_url('meeting_management/agendaController/delete/' . $agenda['id']); ?>" class="btn btn-danger"><?php echo _l('delete'); ?></a>
-
-                                    <?php
-                                    if ($agenda['flag'] == 1) { ?>
-                                       <a href="<?php echo admin_url('meeting_management/minutesController/index/' . $agenda['id']); ?>" class="btn btn-primary"><?php echo _l('edit_converted_metting'); ?></a>
-                                    <?php } else { ?>
-                                       <a href="<?php echo admin_url('meeting_management/minutesController/convert_to_minutes/' . $agenda['id']); ?>" class="btn btn-primary"><?php echo _l('meeting_convert_to_minutes'); ?></a>
-                                    <?php }
-                                    ?>
-
 
                                     <!-- View Meeting Button -->
                                     <a href="<?php echo admin_url('meeting_management/agendaController/view_meeting/' . $agenda['id']); ?>" class="btn btn-secondary"><?php echo _l('view_meeting'); ?></a>

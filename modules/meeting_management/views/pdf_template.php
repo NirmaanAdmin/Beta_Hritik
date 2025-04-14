@@ -74,10 +74,12 @@
             }
 
             /* Ensure images don't overflow */
-            .images_w_table {
-                max-width: 100px !important;
-                height: auto !important;
-            }
+
+        }
+
+        img.images_w_table {
+            width: 116px;
+            height: 73px;
         }
 
         /* Non-print styling for consistency */
@@ -219,6 +221,7 @@
             $prev_area = ''; // Initialize the previous area value
 
             foreach ($minutes_data as $data) {
+                $full_item_image = '';
                 // Process attachments if available
                 if (!empty($data['attachments']) && !empty($data['minute_id'])) {
                     $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $data['minute_id'] . '/' . $data['id'] . '/' . $data['attachments']);
@@ -290,8 +293,36 @@
 
     <table class="details-table">
         <tr>
+            <th style="width: 20%; text-align: left;">Additional Note</th>
+            <?php
+            if ($meeting['additional_note'] != '') {
+                $additional_note = $meeting['additional_note'];
+            } else {
+                $additional_note = 'None';
+            }
+            ?>
+            <td style="width: 80%; text-align: left;"><?= $additional_note ?></td>
+        </tr>
+        <tr>
             <th style="width: 20%; text-align: left;">Attachments</th>
-            <td style="width: 80%; text-align: left;">None</td>
+            <td style="width: 80%; text-align: left;">
+                <?php
+                if (isset($attachments) && count($attachments) > 0) {
+                   
+                    foreach ($attachments as $value) {
+                        // Construct the full URL for the image using the attachment data.
+                        $item_base_url = base_url('uploads/meetings/agenda_meeting/' . $value['rel_id'] . '/' . $value['file_name']);
+                        echo '<div class="mbot15 row inline-block full-width">';
+                        echo '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $value['file_name'] . '" >';
+                        echo '</div>';
+                    }
+                  
+                } else {
+                    echo 'None';
+                }
+                ?>
+
+            </td>
         </tr>
         <tr>
             <th style="width: 20%; text-align: left;">Distribution to</th>

@@ -30,10 +30,11 @@ class Meeting_model extends App_Model
         return $mom_details;
     }
 
-    public function check_image($id) {
+    public function check_image($id)
+    {
         $this->db->where('minute_id', $id);
         $mom_details = $this->db->get(db_prefix() . 'minutes_details')->result_array();
-    
+
         // Check if any record has a non-empty attachments field.
         foreach ($mom_details as $detail) {
             if (!empty($detail['attachments'])) {
@@ -42,12 +43,11 @@ class Meeting_model extends App_Model
         }
         return 0;
     }
-    
+
 
     // Create a new agenda
     public function create_agenda($data)
     {
-        
         // Save detail items (MOM details) if provided.
         $mom_detail = [];
         if (isset($data['newitems'])) {
@@ -67,6 +67,10 @@ class Meeting_model extends App_Model
             $data['vendor'],
             $data['target_date'],
             $data['leads_import'],
+            $data['participants'],
+            $data['other_participants'],
+            $data['company_names'],
+            $data['agenda_id'],
         );
 
         // Insert into the agendas table.
@@ -451,19 +455,23 @@ class Meeting_model extends App_Model
     // Update minutes for a given agenda
     public function update_minutes($agenda_id, $minutes_data)
     {
+        
         $affectedRows = 0;
-        unset($minutes_data['isedit']);
-        unset($minutes_data['area']);
-        unset($minutes_data['description']);
-        unset($minutes_data['decision']);
-        unset($minutes_data['action']);
-        unset($minutes_data['staff']);
-        unset($minutes_data['vendor']);
-        unset($minutes_data['target_date']);
-        unset($minutes_data['participants']);
-        unset($minutes_data['other_participants']);
-        unset($minutes_data['company_names']);
-        unset($minutes_data['agenda_id']);
+        unset(
+            $minutes_data['isedit'],
+            $minutes_data['area'],
+            $minutes_data['description'],
+            $minutes_data['decision'],
+            $minutes_data['action'],
+            $minutes_data['staff'],
+            $minutes_data['vendor'],
+            $minutes_data['target_date'],
+            $minutes_data['participants'],
+            $minutes_data['other_participants'],
+            $minutes_data['company_names'],
+            $minutes_data['agenda_id'],
+            $minutes_data['leads_import']
+        );
 
         $new_mom = [];
         if (isset($minutes_data['newitems'])) {
@@ -488,7 +496,6 @@ class Meeting_model extends App_Model
 
         $this->db->where('id', $agenda_id);
         $this->db->update(db_prefix() . 'agendas', ['flag' => 1]);
-
         if (!empty($minutes_data)) {
             $this->db->where('id', $agenda_id);
             $this->db->update(db_prefix() . 'meeting_management', $minutes_data);
@@ -633,7 +640,7 @@ class Meeting_model extends App_Model
     // Get meeting details for a given agenda
     public function get_meeting_details($agenda_id)
     {
-        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date, project_id, minutes, created_by, signature_path, updated_by'); // Make sure 'id' is included as 'meeting_id'
+        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date, project_id, minutes, created_by, signature_path, updated_by, additional_note'); // Make sure 'id' is included as 'meeting_id'
         $this->db->from(db_prefix() . 'meeting_management'); // Replace with your actual table name
         $this->db->where('id', $agenda_id); // Assuming 'id' is the primary key of the meeting table
         $query = $this->db->get();
@@ -795,7 +802,7 @@ class Meeting_model extends App_Model
             render_select($name_staff, $getstaff, ['staffid', 'fullname'], '', $selectedstaff, ['multiple' => 'multiple', 'data-none-selected-text' => 'Staff'], [], '', 'staff-select') .
             render_input($name_vendor, '', $vendor, '', ['placeholder' => 'Vendor/Customer Name']) .
             '</td>';
-        $row .= '<td class="target_date">' . render_input($name_target_date, '', $target_date,'date') . '</td>';
+        $row .= '<td class="target_date">' . render_input($name_target_date, '', $target_date, 'date') . '</td>';
         $row .= '<td class=""><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_attachments . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
 
         if ($name == '') {

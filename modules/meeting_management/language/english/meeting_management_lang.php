@@ -3,6 +3,7 @@
 $lang['meeting_management'] = 'Meeting Management';
 $lang['meeting_agenda'] = 'MOM List';
 $lang['create_new_agenda'] = 'Create New Agenda';
+$lang['create_new_minutes'] = 'Create New Minutes';
 $lang['meeting_minutes'] = 'Minutes of Meeting';
 $lang['meeting_title'] = 'Meeting Title';
 $lang['meeting_date'] = 'Meeting Date';
@@ -125,3 +126,4 @@ $lang['not_completed'] = 'Not Completed';
 $lang['view_meeting'] = 'View Meeting';
 $lang['meeting_notes'] = 'Meeting Notes';
 $lang['no_meetings_found'] = 'No meetings found';
+$lang['meeting_updated_success'] = 'Meeting updated successfully';

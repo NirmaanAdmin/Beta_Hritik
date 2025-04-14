@@ -114,8 +114,7 @@
                   <!-- Agenda -->
                   <div class="form-group">
                      <div class="col-md-4">
-
-                        <label for="agenda"><?php echo _l('agenda'); ?></label>
+                        <!-- <label for="agenda"><?php echo _l('meeting_notes'); ?></label> -->
                      </div>
                      <?php if (!$is_edit) { ?>
                         <div class="col-md-8">
@@ -155,7 +154,7 @@
                      $additional_note = $agenda->additional_note;
                      ?>
 
-
+                     <label for="agenda"><?php echo _l('meeting_notes'); ?></label>
 
                      <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
                         <thead>

@@ -44,9 +44,9 @@
                      </tr>
                      <tr>
                         <td><strong><?php echo _l('meeting_date'); ?>:</strong></td>
-                        <td><?php echo isset($meeting['meeting_date']) ? $meeting['meeting_date'] : 'N/A'; ?></td>
+                        <td><?php echo isset($meeting['meeting_date']) ? date('d M, Y h:i A', strtotime($meeting['meeting_date'])) : 'N/A'; ?></td>
                      </tr>
-                     <tr>
+                     <!-- <tr>
                         <td><strong><?php echo _l('agenda'); ?>:</strong></td>
                         <td>
                            <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
@@ -89,7 +89,7 @@
                               </tbody>
                            </table>
                         </td>
-                     </tr>
+                     </tr> -->
                      <!-- New Row for Meeting Notes -->
                      <tr>
                         <td><strong><?php echo _l('meeting_notes'); ?></strong></td>
@@ -111,9 +111,16 @@
                                  <?php
                                  $sr = 1;
                                  foreach ($minutes_data as $data) {
+                                    $full_item_image ='';
                                     if (!empty($data['attachments']) && !empty($data['minute_id'])) {
                                        $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $data['minute_id'] . '/' . $data['id'] . '/' . $data['attachments']);
                                        $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $data['attachments'] . '" >';
+                                    }
+                                    // Format the target date
+                                    if (!empty($data['target_date'])) {
+                                       $target_date = date('d M, Y', strtotime($data['target_date']));
+                                    } else {
+                                       $target_date = '';
                                     }
                                  ?>
                                     <tr>
@@ -126,7 +133,7 @@
                                           <?php echo getStaffNamesFromCSV($data['staff']); ?><br>
                                           <?php echo $data['vendor']; ?>
                                        </td>
-                                       <td><?php echo date('d M, Y', strtotime($data['target_date'])); ?></td>
+                                       <td><?php echo $target_date; ?></td>
                                        <td><?php echo $full_item_image; ?></td>
                                     </tr>
                                  <?php }
@@ -172,7 +179,7 @@
                      </tbody>
                   </table>
                   <h4><?php echo _l('Participants'); ?></h4>
-
+                 
                   <?php
                   // Extract all 'other_participants' and 'company_name' values into a single array
                   $all_other_participants = [];
@@ -208,7 +215,8 @@
                         <?php endif; ?>
                      </tbody>
                   </table>
-
+                  <h4>Additional Note</h4>
+                  <?php echo $meeting['additional_note']; ?>
                   <!-- Tasks Section -->
                   <h4><?php echo _l('tasks'); ?></h4>
                   <table class="table table-bordered">

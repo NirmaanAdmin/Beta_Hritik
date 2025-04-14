@@ -143,7 +143,7 @@ class AgendaController extends AdminController
         $meeting_details = $this->Meeting_model->get_meeting_details($agenda_id);
         $participants = $this->Meeting_model->get_detailed_participants($agenda_id);
         $tasks = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
-
+        $attachments = $this->Meeting_model->get_meeting_attachments('agenda_meeting', $agenda_id);
         // Fetch the meeting notes
         $meeting_notes = $this->Meeting_model->get_meeting_notes($agenda_id);
         $get_minutes_detials = $this->Meeting_model->get_minutes_detials($agenda_id);
@@ -156,6 +156,7 @@ class AgendaController extends AdminController
             'meeting_notes' => $meeting_notes,
             'minutes_data' => $get_minutes_detials,
             'check_attachment' => $check_image,
+            'attachments' => $attachments,
         ];
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);
         $html_content = $this->load->view('meeting_management/pdf_template', $data, true);
