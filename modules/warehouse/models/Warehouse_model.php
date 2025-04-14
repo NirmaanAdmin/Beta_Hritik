@@ -2409,7 +2409,7 @@ class Warehouse_model extends App_Model
 
 					// Build the task name depending on the type
 					if ($data['rel_type'] == '1') {
-						$taskName = 'Review { ' . $module->goods_receipt_code . ' }';
+						$taskName = 'Review { ' . $module->goods_receipt_code . ' }{ ' . $pur_order_data->pur_order_number . ' }';
 					}
 
 					$taskData = [
