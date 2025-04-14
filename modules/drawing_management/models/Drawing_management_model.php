@@ -2024,6 +2024,31 @@ class drawing_management_model extends app_model
 			$row['sender'] = $staff_id;
 			$this->db->insert(db_prefix() . 'dms_approval_details', $row);
 		}
+
+		$this->db->where('rel_type', $rel_type);
+        $this->db->where('rel_id', $rel_id);
+        $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
+        if (!$existing_task) {
+        	foreach ($data_new as $value) {
+        		$taskDetail = $this->get_item($rel_id);
+	        	$taskName = 'Approve ['.$taskDetail->name.']';
+	        	$taskData = [
+	                'name'      => $taskName,
+	                'is_public' => 1,
+	                'startdate' => _d(date('Y-m-d')),
+	                'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
+	                'priority'  => 3,
+	                'rel_type'  => $rel_type,
+	                'rel_id'    => $rel_id,
+	            ];
+	            $task_id =  $this->tasks_model->add($taskData);
+	            $assignss = [
+	                'staffid' => $value->staff,
+	                'taskid'  =>  $task_id
+	            ];
+	            $this->db->insert('tbltask_assigned', $assignss);
+	        }
+        }
 		return true;
 	}
 
