@@ -188,7 +188,14 @@ foreach ($rResult as $aRow) {
         }
 
         if($aColumns[$i] == 'total'){
-            $_data = app_format_money($aRow['total'], $base_currency->symbol);
+            // $_data = app_format_money($aRow['total'], $base_currency->symbol);
+            $_data = 0;
+            $wo_total = $aRow['total'];
+            $wo_co_sum_values = get_wo_co_sum_values($aRow['id']);
+            if(!empty($wo_co_sum_values)) {
+                $wo_total = $wo_total + $wo_co_sum_values->co_value;
+            }
+            $_data = app_format_money($wo_total, $base_currency->symbol);
         }elseif($aColumns[$i] == 'wo_order_number'){
 
             $numberOutput = '';
@@ -241,7 +248,14 @@ foreach ($rResult as $aRow) {
         }elseif($aColumns[$i] == 'type'){
             $_data = _l($aRow['type']);
         }elseif($aColumns[$i] == 'subtotal'){
-            $_data = app_format_money($aRow['subtotal'],$base_currency->symbol);
+            // $_data = app_format_money($aRow['subtotal'],$base_currency->symbol);
+            $_data = 0;
+            $wo_subtotal = $aRow['subtotal'];
+            $wo_co_sum_values = get_wo_co_sum_values($aRow['id']);
+            if(!empty($wo_co_sum_values)) {
+                $wo_subtotal = $wo_subtotal + $wo_co_sum_values->co_value;
+            }
+            $_data = app_format_money($wo_subtotal, $base_currency->symbol);
         }elseif($aColumns[$i] == 'project'){
             $_data = $aRow['project_name'];
         }elseif($aColumns[$i] == 'department'){

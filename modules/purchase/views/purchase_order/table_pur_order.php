@@ -229,7 +229,14 @@ foreach ($rResult as $aRow) {
         }
 
         if($aColumns[$i] == 'total'){
-            $_data = app_format_money($aRow['total'], $base_currency->symbol);
+            // $_data = app_format_money($aRow['total'], $base_currency->symbol);
+            $_data = 0;
+            $po_total = $aRow['total'];
+            $po_co_sum_values = get_po_co_sum_values($aRow['id']);
+            if(!empty($po_co_sum_values)) {
+                $po_total = $po_total + $po_co_sum_values->co_value;
+            }
+            $_data = app_format_money($po_total, $base_currency->symbol);
         }elseif($aColumns[$i] == 'pur_order_number'){
 
             $numberOutput = '';
@@ -282,7 +289,14 @@ foreach ($rResult as $aRow) {
         }elseif($aColumns[$i] == 'type'){
             $_data = _l($aRow['type']);
         }elseif($aColumns[$i] == 'subtotal'){
-            $_data = app_format_money($aRow['subtotal'],$base_currency->symbol);
+            // $_data = app_format_money($aRow['subtotal'],$base_currency->symbol);
+            $_data = 0;
+            $po_subtotal = $aRow['subtotal'];
+            $po_co_sum_values = get_po_co_sum_values($aRow['id']);
+            if(!empty($po_co_sum_values)) {
+                $po_subtotal = $po_subtotal + $po_co_sum_values->co_value;
+            }
+            $_data = app_format_money($po_subtotal, $base_currency->symbol);
         }elseif($aColumns[$i] == 'project'){
             $_data = $aRow['project_name'];
         }elseif($aColumns[$i] == 'department'){

@@ -3372,3 +3372,23 @@ function check_any_order_exitsin_po($id, $type)
     return false;
 }
 
+function get_po_co_sum_values($id)
+{
+    $CI = &get_instance();
+    $CI->db->select_sum('co_value');
+    $CI->db->from(db_prefix() . 'co_orders');
+    $CI->db->where('po_order_id', $id);
+    $result = $CI->db->get()->row();
+    return $result;
+}
+
+function get_wo_co_sum_values($id)
+{
+    $CI = &get_instance();
+    $CI->db->select_sum('co_value');
+    $CI->db->from(db_prefix() . 'co_orders');
+    $CI->db->where('wo_order_id', $id);
+    $result = $CI->db->get()->row();
+    return $result; 
+}
+
