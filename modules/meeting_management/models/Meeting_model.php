@@ -17,6 +17,13 @@ class Meeting_model extends App_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+    public function get_all_minutes()
+    {
+        $this->db->select('tblmeeting_management.*');
+        $this->db->from('tblmeeting_management');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
     public function get_mom_detials($id)
     {
         $this->db->where('agenda_id', $id);
@@ -360,7 +367,7 @@ class Meeting_model extends App_Model
     // Get existing minutes for the agenda
     public function get_minutes($agenda_id)
     {
-        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head');
+        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head,meeting_date');
         $this->db->where('id', $agenda_id);
         $query = $this->db->get(db_prefix() . 'meeting_management');  // Use the correct table name here
         return $query->row();

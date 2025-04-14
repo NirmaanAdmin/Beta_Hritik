@@ -92,13 +92,13 @@
                   <!-- Meeting Title -->
                   <div class="form-group">
                      <label for="meeting_title"><?php echo _l('meeting_title'); ?></label>
-                     <input type="text" id="meeting_title" name="meeting_title" class="form-control" value="<?php echo isset($agenda) && isset($agenda->meeting_title) ? htmlspecialchars($agenda->meeting_title) : ''; ?>" required>
+                     <input type="text" id="meeting_title" name="meeting_title" class="form-control" value="<?php echo isset($minutes) && isset($minutes->meeting_title) ? htmlspecialchars($minutes->meeting_title) : ''; ?>" required>
                   </div>
 
                   <!-- Meeting Date -->
                   <div class="form-group">
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
-                     <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($agenda) && isset($agenda->meeting_date) ? htmlspecialchars($agenda->meeting_date) : ''; ?>" class="form-control" required>
+                     <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($minutes) && isset($minutes->meeting_date) ? htmlspecialchars($minutes->meeting_date) : ''; ?>" class="form-control" required>
                   </div>
                   <input type="hidden" name="agenda_id" value="<?php echo $agenda_id; ?>">
 

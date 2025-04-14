@@ -20,7 +20,7 @@ class AgendaController extends AdminController
     // View the list of all agendas
     public function index()
     {
-        $data['agendas'] = $this->Meeting_model->get_all_agendas();
+        $data['agendas'] = $this->Meeting_model->get_all_minutes();
         $data['title'] = _l('meeting_agenda');
         $this->load->view('meeting_management/agendas_list', $data);
     }
