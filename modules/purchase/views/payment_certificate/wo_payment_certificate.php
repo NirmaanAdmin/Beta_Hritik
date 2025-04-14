@@ -1,26 +1,26 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
 <style type="text/css">
-  .table {
+  .pc-table .table {
     width: 100%;
     border-collapse: collapse;
   }
 
-  .table th {
+  .pc-table .table th {
     text-align: left;
     font-weight: bold !important;
   }
 
-  .table th,
-  .table td {
+  .pc-table .table th,
+  .pc-table .table td {
     border: 1px solid black !important;
     padding: 8px;
     text-align: left;
     color: black !important;
   }
 
-  .table thead,
-  .table_head {
+  .pc-table .table thead,
+  .pc-table .table_head {
     background-color: #f2f2f2;
     font-weight: bold;
   }
@@ -76,6 +76,14 @@
                         <?php echo _l('pur_information'); ?>
                       </a>
                     </li>
+                    <?php
+                    if (isset($payment_certificate)) { ?>
+                      <li role="presentation">
+                       <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo pur_html_entity_decode($payment_certificate->id); ?>, 'payment_certificate'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
+                          <?php echo _l('tasks'); ?>
+                       </a>
+                      </li>
+                    <?php } ?>
                     <li role="presentation">
                       <a href="#tab_activity" aria-controls="tab_activity" role="tab" data-toggle="tab">
                         <?php echo _l('invoice_view_activity_tooltip'); ?>
@@ -216,7 +224,7 @@
 
                 <div class="panel-body mtop15">
                   <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 pc-table">
                       <div class="table-responsive">
                         <table class="table items no-mtop">
                           <thead>
@@ -609,6 +617,14 @@
                   </div>
                 <?php } ?>
               </div>
+
+              <?php
+              if (isset($payment_certificate)) { ?>
+              <div role="tabpanel" class="tab-pane" id="tab_tasks">
+               <?php init_relation_tasks_table(array('data-new-rel-id' => $payment_certificate->id, 'data-new-rel-type' => 'payment_certificate')); ?>
+              </div>
+              <?php } ?>
+              
               <div role="tabpanel" class="tab-pane ptop10" id="tab_activity">
                 <div class="row">
                   <div class="col-md-12">

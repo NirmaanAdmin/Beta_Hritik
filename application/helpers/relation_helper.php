@@ -198,6 +198,8 @@ function get_relation_data($type, $rel_id = '', $extra = [])
     } elseif ($type == 'payment_certificate') {
 
         if ($rel_id != '') {
+            $CI->load->model('purchase/purchase_model');
+            $data = $CI->purchase_model->get_payment_certificate($rel_id);
         } else {
             $search = $CI->misc_model->_search_payment_certificate($q);
             $data   = $search['result'];
@@ -234,6 +236,7 @@ function get_relation_data($type, $rel_id = '', $extra = [])
  */
 function get_relation_values($relation, $type)
 {
+    $CI = &get_instance();
     if ($relation == '') {
         return [
             'name'      => '',
@@ -486,27 +489,30 @@ function get_relation_values($relation, $type)
         }
         $link = admin_url('purchase/work_order/' . $id);
     } elseif ($type == 'payment_certificate') {
-
+        $CI->load->model('purchase/purchase_model');
         if (is_array($relation)) {
-
             if ($relation['po_id']) {
-                $id        = $relation['po_id'];
-                $name      = $relation['pur_order_name'] . '(PO)';
-                $link      = admin_url('purchase/purchase_order/' . $id);
+                $get_pur_order = $CI->purchase_model->get_pur_order($relation['po_id']);
+                $id        = $relation['id'];
+                $name      = $get_pur_order->pur_order_number . '(PO)';
+                $link      = admin_url('purchase/purchase_order/' . $relation['po_id']);
             } elseif ($relation['wo_id']) {
-                $id        = $relation['wo_id'];
-                $name      = $relation['wo_order_name'] . '(WO)';
-                $link      = admin_url('purchase/work_order/' . $id);
+                $get_wo_order = $CI->purchase_model->get_wo_order($relation['wo_id']);
+                $id        = $relation['id'];
+                $name      = $get_wo_order->wo_order_number . '(WO)';
+                $link      = admin_url('purchase/work_order/' . $relation['wo_id']);
             }
         } else {
             if ($relation->po_id) {
-                $id        = $relation->po_id;
-                $name      = $relation->pur_order_name . '(PO)';
-                $link      = admin_url('purchase/purchase_order/' . $id);
+                $get_pur_order = $CI->purchase_model->get_pur_order($relation->po_id);
+                $id        = $relation->id;
+                $name      = $get_pur_order->pur_order_number . '(PO)';
+                $link      = admin_url('purchase/purchase_order/' . $relation->po_id);
             } elseif ($relation->wo_id) {
-                $id        = $relation->wo_id;
-                $name      = $relation->wo_order_name . '(WO)';
-                $link      = admin_url('purchase/work_order/' . $id);
+                $get_wo_order = $CI->purchase_model->get_wo_order($relation->wo_id);
+                $id        = $relation->id;
+                $name      = $get_wo_order->wo_order_number . '(WO)';
+                $link      = admin_url('purchase/work_order/' . $relation->wo_id);
             }
         }
     } elseif ($type == 'purchase_request') {

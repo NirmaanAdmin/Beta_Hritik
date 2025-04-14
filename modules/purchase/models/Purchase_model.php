@@ -18277,8 +18277,8 @@ class Purchase_model extends App_Model
                         'startdate' => _d(date('Y-m-d')),
                         'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
                         'priority'  => 3,
-                        'rel_type'  => $data['rel_type'],
-                        'rel_id'    => $pur_order->id,
+                        'rel_type'  => 'payment_certificate',
+                        'rel_id'    => $data['rel_id'],
                         'category'  => $pur_order->group_pur,
                         'price'     => $pur_order->total,
                     ];
