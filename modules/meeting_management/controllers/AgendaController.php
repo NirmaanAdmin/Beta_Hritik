@@ -171,7 +171,7 @@ class AgendaController extends AdminController
         $pdf->render();
 
         // Output the PDF to the browser
-        $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => false));  // Download the PDF
+        $pdf->stream("Meeting_Agenda_{$agenda_id}.pdf", array("Attachment" => true));  // Download the PDF
     }
 
     public function update_mom_list()
