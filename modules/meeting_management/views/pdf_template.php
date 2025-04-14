@@ -257,8 +257,17 @@
                 $prev_area = $data['area'];
             ?>
                 <tr>
+                    <?php
+                    // Check if a section break exists, and if so, display it.
+                    if (!empty($data['section_break'])) {
+                        // Determine the colspan based on whether the attachment column exists.
+                        $colspan = $check_attachment ? 8 : 7;
+                        echo '<tr>
+                                <td colspan="' . $colspan . '" style="text-align:center;">' . $data['section_break'] . '</td>
+                            </tr>';
+                    }
+                    ?>
                     <td><?php echo $sr++; ?></td>
-                    <!-- Use the $area variable so that duplicate areas show as blank -->
                     <td><?php echo $area; ?></td>
                     <td><?php echo $data['description']; ?></td>
                     <td><?php echo $data['decision']; ?></td>

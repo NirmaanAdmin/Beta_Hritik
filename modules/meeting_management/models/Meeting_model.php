@@ -119,6 +119,7 @@ class Meeting_model extends App_Model
                     'staff'       => $staff,
                     'vendor'      => isset($value['vendor']) ? $value['vendor'] : '',
                     'target_date' => isset($value['target_date']) ? $value['target_date'] : '',
+                    'section_break' => isset($value['section_break']) ? $value['section_break'] : '',
                 ];
 
                 $this->db->insert(db_prefix() . 'agendas_details', $agenda_detail);
@@ -463,7 +464,7 @@ class Meeting_model extends App_Model
     // Update minutes for a given agenda
     public function update_minutes($agenda_id, $minutes_data)
     {
-        
+
         $affectedRows = 0;
         unset(
             $minutes_data['isedit'],
@@ -526,6 +527,7 @@ class Meeting_model extends App_Model
                 $mom_arr['staff'] = $staff;
                 $mom_arr['vendor'] = $value['vendor'];
                 $mom_arr['target_date'] = $value['target_date'];
+                $mom_arr['section_break'] = $value['section_break'];
 
                 $this->db->insert(db_prefix() . 'minutes_details', $mom_arr);
                 $last_insert_id = $this->db->insert_id();
@@ -558,6 +560,7 @@ class Meeting_model extends App_Model
                 $mom_arr['staff'] = $staff;
                 $mom_arr['vendor'] = $value['vendor'];
                 $mom_arr['target_date'] = $value['target_date'];
+                $mom_arr['section_break'] = $value['section_break'];
 
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'minutes_details', $mom_arr);
@@ -757,19 +760,22 @@ class Meeting_model extends App_Model
         return true;
     }
 
-    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '')
+    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '',$section_break ='')
     {
         $row = '';
 
         $name_area = 'area';
-        $name_description = 'description';
+        $name_description = 'description'; 
         $name_decision = 'decision';
         $name_action = 'action';
         $name_staff = 'staff';
         $name_vendor = 'vendor';
         $name_target_date  = 'target_date';
         $name_attachments = 'attachments';
-
+        $name_section_break = 'section_break';
+        if($section_break){
+            $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="'.$name_section_break.'" value="'.$section_break.'" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
+        }
         if ($name == '') {
             $row .= '<tr class="main">';
             $manual = true;
@@ -784,6 +790,7 @@ class Meeting_model extends App_Model
             $name_vendor = $name . '[vendor]';
             $name_target_date = $name . '[target_date]';
             $name_attachments = $name . '[attachments]';
+            $name_section_break = $name . '[section_break]';
         }
         $full_item_image = '';
         if (!empty($attachments['attachments']) && !empty($attachments['agenda_id'])) {
@@ -794,7 +801,17 @@ class Meeting_model extends App_Model
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
         }
 
-        $row .= '<td class="area">' . render_textarea($name_area, '', $area, ['rows' => 2, 'placeholder' => 'Area/Head']) . '</td>';
+        $row .= '<td class="area" style="text-align:left">
+        <div class="form-group" app-field-wrapper="Area/Head" style="margin-bottom:2px;">
+            <textarea name="' . $name_area . '" id="' . $name_area . '" class="form-control" rows="2" placeholder="Area/Head">' .
+            htmlspecialchars($area, ENT_QUOTES, 'UTF-8') .
+            '</textarea>
+        </div>';
+        if ($name != '' && $section_break == '') {
+            $row .= '<a href="javascript:void(0)" onclick="add_section_break(this, \'' . htmlspecialchars($name_section_break, ENT_QUOTES, 'UTF-8') . '\');">Section break</a></td>';
+        }
+        
+
         $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')]) . '</td>';
         $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('decision')]) . '</td>';
         $row .= '<td class="action">' . render_textarea($name_action, '', $action, ['rows' => 2, 'placeholder' => _l('action')]) . '</td>';
@@ -819,7 +836,8 @@ class Meeting_model extends App_Model
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="mom_delete_item(this,' . $item_key . ',\'.mom-items\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }
 
-        $row .= '</tr>';
+        $row .= '</tr><div class="section-break-container"></div>';
+       
         return $row;
     }
 }

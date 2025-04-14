@@ -645,4 +645,28 @@
          $(parent + ' #removed-items').append(hidden_input('removed_items[]', itemid));
       }
    }
+
+   function add_section_break(anchor,name) {
+      // Find the closest <tr> relative to the clicked link.
+      var $tr = $(anchor).closest('tr');
+
+      // Optional: Prevent multiple section break rows from being added.
+      if ($tr.next().hasClass('section-break-row')) {
+         return;
+      }
+
+      // Determine how many columns exist in the current row
+      var colCount = $tr.children('td').length;
+
+      // Create a new row with a single cell spanning all columns.
+      // The cell will contain an input field with text centered.
+      var sectionBreakRow = '<tr class="section-break-row">' +
+         '<td colspan="' + colCount + '" style="text-align:center;">' +
+         '<input type="text" class="form-control" name="'+name+'" placeholder="Section Break" style="text-align:center;width:100%;" />' +
+         '</td>' +
+         '</tr>';
+
+      // Insert the new row right after the current row.
+      $tr.before(sectionBreakRow);
+   }
 </script>
