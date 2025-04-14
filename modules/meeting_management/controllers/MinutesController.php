@@ -220,7 +220,7 @@ class MinutesController extends AdminController
         $agenda_data_new = $data;
         $agenda_data_new['additional_note'] = $this->input->post('additional_note', false);
         $agenda_data_new['created_by'] = get_staff_user_id();
-    
+        
         if ($agenda_id == '') {
            
             // Insert new agenda

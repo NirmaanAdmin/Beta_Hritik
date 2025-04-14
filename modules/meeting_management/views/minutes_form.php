@@ -78,7 +78,7 @@
          if (isset($agenda)) {
             echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form'));
             echo form_hidden('isedit');
-         }else{
+         } else {
             echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks'), array('id' => 'minutes-tasks-form'));
          }
          ?>
@@ -158,7 +158,14 @@
                      <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
                         <thead>
                            <tr>
-                              <th>Area/Head</th>
+                              <th>
+                                 <select name="area_head" id="area_head" class="form-control">
+                                    <option value="">Select Option</option>
+                                    <option value="1" <?php echo ($minutes->area_head == 1) ? 'selected="selected"' : ''; ?>>Area</option>
+                                    <option value="2" <?php echo ($minutes->area_head == 2) ? 'selected="selected"' : ''; ?>>Head</option>
+                                 </select>
+                              </th>
+
                               <th>Description</th>
                               <th>Decision</th>
                               <th>Action</th>

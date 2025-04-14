@@ -203,7 +203,17 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Area/Head</th>
+                <th>
+                    <?php
+                    if ($meeting['area_head'] == 1) {
+                        echo "Area";
+                    } elseif ($meeting['area_head'] == 2) {
+                        echo "Head";
+                    } else {
+                        echo "None";
+                    }
+                    ?>
+                </th>
                 <th>Description</th>
                 <th>Decision</th>
                 <th>Action</th>
@@ -308,7 +318,7 @@
             <td style="width: 80%; text-align: left;">
                 <?php
                 if (isset($attachments) && count($attachments) > 0) {
-                   
+
                     foreach ($attachments as $value) {
                         // Construct the full URL for the image using the attachment data.
                         $item_base_url = base_url('uploads/meetings/agenda_meeting/' . $value['rel_id'] . '/' . $value['file_name']);
@@ -316,7 +326,6 @@
                         echo '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $value['file_name'] . '" >';
                         echo '</div>';
                     }
-                  
                 } else {
                     echo 'None';
                 }

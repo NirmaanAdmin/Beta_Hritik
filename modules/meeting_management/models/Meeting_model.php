@@ -85,6 +85,7 @@ class Meeting_model extends App_Model
             'created_by'      => isset($data['created_by']) ? $data['created_by'] : '',
             'project_id'      => isset($data['project_id']) ? $data['project_id'] : '',
             'additional_note' => isset($data['additional_note']) ? $data['additional_note'] : '',
+            'area_head'       => isset($data['area_head']) ? $data['area_head'] : '',
         ];
         $this->db->insert(db_prefix() . 'meeting_management', $meeting_data);
         $minute_id = $this->db->insert_id();
@@ -359,7 +360,7 @@ class Meeting_model extends App_Model
     // Get existing minutes for the agenda
     public function get_minutes($agenda_id)
     {
-        $this->db->select('meeting_title, minutes, agenda,additional_note');
+        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head');
         $this->db->where('id', $agenda_id);
         $query = $this->db->get(db_prefix() . 'meeting_management');  // Use the correct table name here
         return $query->row();
@@ -640,7 +641,7 @@ class Meeting_model extends App_Model
     // Get meeting details for a given agenda
     public function get_meeting_details($agenda_id)
     {
-        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date, project_id, minutes, created_by, signature_path, updated_by, additional_note'); // Make sure 'id' is included as 'meeting_id'
+        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date, project_id, minutes, created_by, signature_path, updated_by, additional_note,area_head'); // Make sure 'id' is included as 'meeting_id'
         $this->db->from(db_prefix() . 'meeting_management'); // Replace with your actual table name
         $this->db->where('id', $agenda_id); // Assuming 'id' is the primary key of the meeting table
         $query = $this->db->get();
@@ -786,7 +787,7 @@ class Meeting_model extends App_Model
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
         }
 
-        $row .= '<td class="area">' . render_textarea($name_area, '', $area, ['rows' => 2, 'placeholder' => _l('area')]) . '</td>';
+        $row .= '<td class="area">' . render_textarea($name_area, '', $area, ['rows' => 2, 'placeholder' => 'Area/Head']) . '</td>';
         $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')]) . '</td>';
         $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('decision')]) . '</td>';
         $row .= '<td class="action">' . render_textarea($name_action, '', $action, ['rows' => 2, 'placeholder' => _l('action')]) . '</td>';

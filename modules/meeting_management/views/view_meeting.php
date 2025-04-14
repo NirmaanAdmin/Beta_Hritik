@@ -98,7 +98,18 @@
                               <thead>
                                  <tr>
                                     <th>#</th>
-                                    <th>Area/Head</th>
+                                    <th>
+                                    <?php
+                                    if($meeting['area_head'] == 1){
+                                       echo "Area";
+                                    }elseif ($meeting['area_head'] == 2) {
+                                       echo "Head";
+                                    }else{
+                                       echo "None";
+                                    }                                    
+                                    ?>
+
+                                    </th>
                                     <th>Description</th>
                                     <th>Decision</th>
                                     <th>Action</th>
