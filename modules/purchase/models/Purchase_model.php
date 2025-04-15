@@ -18989,4 +18989,17 @@ class Purchase_model extends App_Model
 
         return $deleted;
     }
+
+    public function get_paymentcert_file($id, $rel_id = false)
+    {
+        $this->db->where('id', $id);
+        $file = $this->db->get(db_prefix() . 'payment_certificate_files')->row();
+
+        if ($file && $rel_id) {
+            if ($file->rel_id != $rel_id) {
+                return false;
+            }
+        }
+        return $file;
+    }
 }

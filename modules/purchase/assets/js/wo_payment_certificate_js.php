@@ -376,6 +376,28 @@ function change_status_pay_cert(invoker,id){
   });
 }
 
+function preview_paymentcert_btn(invoker){
+  "use strict"; 
+  var id = $(invoker).attr('id');
+  var rel_id = $(invoker).attr('rel_id');
+  view_paymentcert_file(id, rel_id);
+}
+
+function view_paymentcert_file(id, rel_id) {
+  "use strict"; 
+  $('#paymentcert_file_data').empty();
+  $("#paymentcert_file_data").load(admin_url + 'purchase/view_paymentcert_file/' + id + '/' + rel_id, function(response, status, xhr) {
+      if (status == "error") {
+          alert_float('danger', xhr.statusText);
+      }
+  });
+}
+
+function close_modal_preview(){
+  "use strict"; 
+ $('._project_file').modal('hide');
+}
+
 $("body").on('click', '.pay-cert-submit', function () { 
   var that = $(this);
   var form = that.parents('form._payment_transaction_form');

@@ -12763,4 +12763,16 @@ class purchase extends AdminController
         echo json_encode($result);
         die;
     }
+
+    public function view_paymentcert_file($id, $rel_id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->purchase_model->get_paymentcert_file($id, $rel_id);
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('payment_certificate/preview_file', $data);
+    }
 }
