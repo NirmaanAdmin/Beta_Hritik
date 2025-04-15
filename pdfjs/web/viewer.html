@@ -712,6 +712,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                   fetch(url, {
                       method: "POST",
                       body: formData,
+                      cache: 'no-store',
                   })
                       .then(response => response.json())
                       .then(data => {
