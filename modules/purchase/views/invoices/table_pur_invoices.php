@@ -20,7 +20,7 @@ $aColumns = [
     1,
     'invoice_number',
     'vendor_invoice_number',
-    db_prefix() . 'pur_invoices.vendor',
+    db_prefix() . 'pur_vendor.company',
     db_prefix() . 'items_groups.name',
     // db_prefix() . 'projects.name',
     db_prefix() . 'pur_invoices.pur_order',
@@ -42,7 +42,7 @@ if (isset($vendor) || isset($project)) {
     $aColumns = [
         'invoice_number',
         'vendor_invoice_number',
-        db_prefix() . 'pur_invoices.vendor',
+        db_prefix() . 'pur_vendor.company',
         db_prefix() . 'items_groups.name',
         // db_prefix() . 'projects.name',
         db_prefix() . 'pur_invoices.pur_order',
@@ -63,6 +63,7 @@ $join         = [
     'LEFT JOIN ' . db_prefix() . 'pur_contracts ON ' . db_prefix() . 'pur_contracts.id = ' . db_prefix() . 'pur_invoices.contract',
     'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'pur_invoices.project_id = ' . db_prefix() . 'projects.id',
     'LEFT JOIN ' . db_prefix() . 'items_groups ON ' . db_prefix() . 'pur_invoices.group_pur = ' . db_prefix() . 'items_groups.id',
+    'LEFT JOIN ' . db_prefix() . 'pur_vendor ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'pur_invoices.vendor',
 ];
 
 $i = 0;
@@ -260,7 +261,8 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.wo_order',
     db_prefix() . 'items_groups.name',
     db_prefix() . 'pur_invoices.description_services',
-]);
+    db_prefix() . 'pur_invoices.vendor as vendor_id',
+], '', [], '', 'vendor_billing_tracker');
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -509,8 +511,8 @@ foreach ($rResult as $aRow) {
         // elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.wo_order') {
         //     $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow[db_prefix() . 'pur_invoices.wo_order']) . '">' . get_wo_order_subject($aRow[db_prefix() . 'pur_invoices.wo_order']) . '</a>';
         // } 
-        elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.vendor') {
-            $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow[db_prefix() . 'pur_invoices.vendor']) . '" target="_blank">' .  get_vendor_company_name($aRow[db_prefix() . 'pur_invoices.vendor']) . '</a>';
+        elseif ($aColumns[$i] == db_prefix() . 'pur_vendor.company') {
+            $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor_id']) . '" target="_blank">' .  $aRow[db_prefix() . 'pur_vendor.company'] . '</a>';
         } elseif ($aColumns[$i] == 'expense_convert') {
             $expense_convert = '';
             if ($aRow['expense_convert'] == 0) {

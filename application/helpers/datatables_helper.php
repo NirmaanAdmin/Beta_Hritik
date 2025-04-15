@@ -84,6 +84,8 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', 'CAST(' . $columnName . ' as DATE)', $sTable);
                 } elseif ($type === 'date_picker_time') {
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', 'CAST(' . $columnName . ' as DATETIME)', $sTable);
+                } elseif($module == 'vendor_billing_tracker' && $columnName == 'tblpur_vendor.company') {
+                    $sOrder .= hooks()->apply_filters('datatables_query_order_column', 'TRIM(LOWER(' . $columnName . '))', $sTable);
                 } else {
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', $columnName, $sTable);
                 }
