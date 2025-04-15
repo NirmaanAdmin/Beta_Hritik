@@ -12,12 +12,12 @@
    table {
       width: 100%;
       border-collapse: collapse;
-      font-family: Arial, sans-serif;
       font-size: 14px;
    }
 
    th {
       border: 1px solid #ccc;
+      font-weight: 500;
    }
 
    th,
@@ -96,9 +96,13 @@
                   </div>
 
                   <!-- Meeting Date -->
-                  <div class="form-group">
+                  <div class="form-group col-md-6" style="padding-left:0px ;">
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
                      <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($minutes) && isset($minutes->meeting_date) ? htmlspecialchars($minutes->meeting_date) : ''; ?>" class="form-control" required>
+                  </div>
+                  <div class="form-group col-md-6" style="padding-right:0px ;">
+                     <label for="meeting_link"><?php echo _l('Meeting Link'); ?></label>
+                     <input type="text" id="meeting_link" name="meeting_link" value="<?php echo isset($minutes) && isset($minutes->meeting_link) ? htmlspecialchars($minutes->meeting_link) : ''; ?>" class="form-control">
                   </div>
                   <input type="hidden" name="agenda_id" id="agenda_id" value="<?php echo $agenda_id; ?>">
 
@@ -161,17 +165,17 @@
                               <th>
                                  <select name="area_head" id="area_head" class="form-control">
                                     <option value="">Select Option</option>
-                                    <option value="1" <?php echo ($minutes->area_head == 1) ? 'selected="selected"' : ''; ?>>Area</option>
-                                    <option value="2" <?php echo ($minutes->area_head == 2) ? 'selected="selected"' : ''; ?>>Head</option>
+                                    <option value="1" <?php echo ($minutes->area_head == 1) ? 'selected="selected"' : ''; ?>><strong>Area</strong></option>
+                                    <option value="2" <?php echo ($minutes->area_head == 2) ? 'selected="selected"' : ''; ?>><strong>Head</strong></option>
                                  </select>
                               </th>
 
-                              <th>Description</th>
-                              <th>Decision</th>
-                              <th>Action</th>
-                              <th>Action By</th>
-                              <th width="7%">Target Date</th>
-                              <th width="8%">Attachments</th>
+                              <th style="font-weight: 500;"><strong>Description</strong></th>
+                              <th><strong>Decision</strong></th>
+                              <th><strong>Action</strong></th>
+                              <th><strong>Action By</strong></th>
+                              <th width="7%"><strong>Target Date</strong></th>
+                              <th width="8%"><strong>Attachments</strong></th>
                               <th width="3%"></th>
                            </tr>
                         </thead>

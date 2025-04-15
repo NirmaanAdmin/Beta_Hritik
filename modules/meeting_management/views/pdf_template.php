@@ -130,8 +130,8 @@
             <td style="width: 40%;"><?php echo $meeting['meeting_title']; ?></td>
             <th style="width: 15%;">Meeting Date & Time</th>
             <td style="width: 40%;"><?php echo date('d-M-y h:i A', strtotime($meeting['meeting_date'])); ?></td>
-            <!-- <td style="width: 15%;">Subject</td>
-            <td style="width: 30%;"><?php echo $meeting['meeting_title']; ?></td> -->
+            <!-- <td style="width: 15%;">Meeting Link</td>
+            <td style="width: 30%;"><?php echo $meeting['meeting_link']; ?></td> -->
         </tr>
         <tr>
             <td style="width: 15%;">Minutes by</td>
@@ -143,8 +143,8 @@
 
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
-            <td style="width: 15%;"></td>
-            <td style="width: 30%;"></td>
+            <td style="width: 15%;">Meeting Link</td>
+            <td style="width: 30%;"><?php echo $meeting['meeting_link']; ?></td>
         </tr>
     </table>
 

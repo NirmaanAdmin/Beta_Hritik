@@ -9,9 +9,12 @@
       font-size: 14px;
    }
 
+   th {
+      border: 1px solid #ccc;
+   }
+
    th,
    td {
-      border: 1px solid #ccc;
       text-align: left;
       padding: 8px;
    }
@@ -45,6 +48,10 @@
                      <tr>
                         <td><strong><?php echo _l('meeting_date'); ?>:</strong></td>
                         <td><?php echo isset($meeting['meeting_date']) ? date('d M, Y h:i A', strtotime($meeting['meeting_date'])) : 'N/A'; ?></td>
+                     </tr>
+                     <tr>
+                        <td><strong><?php echo _l('Meeting Link'); ?>:</strong></td>
+                        <td><?php echo isset($meeting['meeting_link']) ? $meeting['meeting_link'] : 'N/A'; ?></td>
                      </tr>
                      <!-- <tr>
                         <td><strong><?php echo _l('agenda'); ?>:</strong></td>
@@ -99,15 +106,15 @@
                                  <tr>
                                     <th>#</th>
                                     <th>
-                                    <?php
-                                    if($meeting['area_head'] == 1){
-                                       echo "Area";
-                                    }elseif ($meeting['area_head'] == 2) {
-                                       echo "Head";
-                                    }else{
-                                       echo "None";
-                                    }                                    
-                                    ?>
+                                       <?php
+                                       if ($meeting['area_head'] == 1) {
+                                          echo "Area";
+                                       } elseif ($meeting['area_head'] == 2) {
+                                          echo "Head";
+                                       } else {
+                                          echo "None";
+                                       }
+                                       ?>
 
                                     </th>
                                     <th>Description</th>
@@ -121,22 +128,47 @@
                               <tbody class="mom_body">
                                  <?php
                                  $sr = 1;
+                                 $prev_area = ''; // Initialize the previous area value
+
                                  foreach ($minutes_data as $data) {
-                                    $full_item_image ='';
+                                    $full_item_image = '';
+                                    // Process attachments if available
                                     if (!empty($data['attachments']) && !empty($data['minute_id'])) {
                                        $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $data['minute_id'] . '/' . $data['id'] . '/' . $data['attachments']);
                                        $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $data['attachments'] . '" >';
                                     }
+
                                     // Format the target date
                                     if (!empty($data['target_date'])) {
                                        $target_date = date('d M, Y', strtotime($data['target_date']));
                                     } else {
                                        $target_date = '';
                                     }
+
+                                    // Compare current area with the previous one.
+                                    // If they match then set $area as an empty string.
+                                    // Otherwise, use the current area's value.
+                                    if ($data['area'] == $prev_area) {
+                                       $area = '';
+                                    } else {
+                                       $area = $data['area'];
+                                    }
+                                    // Update the previous area for the next iteration
+                                    $prev_area = $data['area'];
                                  ?>
                                     <tr>
+                                       <?php
+                                       // Check if a section break exists, and if so, display it.
+                                       if (!empty($data['section_break'])) {
+                                          // Determine the colspan based on whether the attachment column exists.
+                                          $colspan = $check_attachment ? 8 : 7;
+                                          echo '<tr>
+                                <td colspan="' . $colspan . '" style="text-align:center;font-size:18px;font-weight:600">' . $data['section_break'] . '</td>
+                            </tr>';
+                                       }
+                                       ?>
                                        <td><?php echo $sr++; ?></td>
-                                       <td><?php echo $data['area']; ?></td>
+                                       <td><?php echo $area; ?></td>
                                        <td><?php echo $data['description']; ?></td>
                                        <td><?php echo $data['decision']; ?></td>
                                        <td><?php echo $data['action']; ?></td>
@@ -147,8 +179,7 @@
                                        <td><?php echo $target_date; ?></td>
                                        <td><?php echo $full_item_image; ?></td>
                                     </tr>
-                                 <?php }
-                                 ?>
+                                 <?php } ?>
                               </tbody>
                            </table>
                         </td>
@@ -190,7 +221,7 @@
                      </tbody>
                   </table>
                   <h4><?php echo _l('Participants'); ?></h4>
-                 
+
                   <?php
                   // Extract all 'other_participants' and 'company_name' values into a single array
                   $all_other_participants = [];
@@ -312,6 +343,9 @@
 
                   <!-- Export as PDF Button -->
                   <div class="btn-bottom-toolbar text-right">
+                     <!-- <a href="<?php echo admin_url('meeting_management/agendaController/export_to_pdf/' . $meeting['meeting_id']); ?>" class="btn btn-info">
+                        <?php echo _l('export_as_pdf'); ?>
+                     </a> -->
                      <a href="<?php echo admin_url('meeting_management/agendaController/export_to_pdf/' . $meeting['meeting_id']); ?>" class="btn btn-info">
                         <?php echo _l('export_as_pdf'); ?>
                      </a>
