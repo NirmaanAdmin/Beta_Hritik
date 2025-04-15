@@ -19,18 +19,18 @@ function AdminTicketsTableStructure($name = '', $bulk_action = false)
 
     $table .= '<th class="toggleable" id="th-number">' . _l('the_number_sign') . '</th>';
     $table .= '<th class="toggleable" id="th-subject">' . _l('ticket_dt_subject') . '</th>';
-    $table .= '<th class="toggleable" id="th-tags">' . _l('tags') . '</th>';
     $table .= '<th class="toggleable" id="th-department">' . _l('ticket_dt_department') . '</th>';
     $services_th_attrs = '';
     if (get_option('services') == 0) {
         $services_th_attrs = ' class="not_visible"';
     }
-    $table .= '<th' . $services_th_attrs . '>' . _l('ticket_dt_service') . '</th>';
+    // $table .= '<th' . $services_th_attrs . '>' . _l('ticket_dt_service') . '</th>';
     $table .= '<th class="toggleable" id="th-submitter">' . _l('ticket_dt_submitter') . '</th>';
     $table .= '<th class="toggleable" id="th-status">' . _l('ticket_dt_status') . '</th>';
     $table .= '<th class="toggleable" id="th-priority">' . _l('ticket_dt_priority') . '</th>';
     $table .= '<th class="toggleable" id="th-last-reply">' . _l('ticket_dt_last_reply') . '</th>';
     $table .= '<th class="toggleable ticket_created_column" id="th-created">' . _l('ticket_date_created') . '</th>';
+    $table .= '<th class="toggleable" id="th-tags">' . _l('tags') . '</th>';
     $table .= '<th class="toggleable ticket_options" id="th-options">' . _l('options') . '</th>';
 
     $custom_fields = get_table_custom_fields('tickets');

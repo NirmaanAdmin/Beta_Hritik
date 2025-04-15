@@ -121,7 +121,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <?php 
-                                        echo render_select('area', $area, array('id','area_name'), 'area'); 
+                                        echo render_select('area[]', $area, array('id','area_name'), 'area', [], array('multiple' => true));
                                         ?>
                                     </div>
                                     <div class="col-md-6">

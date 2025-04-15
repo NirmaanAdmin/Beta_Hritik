@@ -21,6 +21,7 @@ class Ticket_pdf extends App_pdf
 
         $this->ticket = $ticket;
         $this->subject = $this->ticket->subject;
+        $this->ticket_replies  = $this->ci->tickets_model->get_ticket_replies($this->ticket->ticketid);
 
         $this->SetTitle($this->subject);
     }
@@ -30,6 +31,7 @@ class Ticket_pdf extends App_pdf
         $this->set_view_vars([
             'subject' => $this->subject,
             'ticket' => $this->ticket,
+            'ticket_replies' => $this->ticket_replies,
         ]);
 
         return $this->build();

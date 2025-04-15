@@ -63,19 +63,19 @@ return App_table::find('tickets')
             '1', // bulk actions
             'ticketid',
             'subject',
-            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'tickets.ticketid and rel_type="ticket" ORDER by tag_order ASC) as tags',
             db_prefix() . 'departments.name as department_name',
-            db_prefix() . 'services.name as service_name',
+            // db_prefix() . 'services.name as service_name',
             'CONCAT(' . db_prefix() . 'contacts.firstname, \' \', ' . db_prefix() . 'contacts.lastname) as contact_full_name',
             'status',
             'priority',
             'lastreply',
             db_prefix() . 'tickets.date',
+            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'tickets.ticketid and rel_type="ticket" ORDER by tag_order ASC) as tags',
             '2',
         ];
 
-        $contactColumn = 6;
-        $tagsColumns   = 3;
+        $contactColumn = 4;
+        $tagsColumns   = 9;
 
         $additionalSelect = [
             'adminread',

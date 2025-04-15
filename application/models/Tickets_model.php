@@ -478,6 +478,10 @@ class Tickets_model extends App_Model
             $data['userid'] = 0;
         }
 
+        if(isset($data['is_consultant'])) {
+            $data['is_consultant'] = 1;
+        }
+
         // $data['message'] = remove_emojis($data['message']);
         $data            = hooks()->apply_filters('before_ticket_reply_add', $data, $id, $admin);
 
@@ -725,7 +729,7 @@ class Tickets_model extends App_Model
         // backward compatibility for the action hook
         $ticket_replies_order = hooks()->apply_filters('ticket_replies_order', $ticket_replies_order);
 
-        $this->db->select(db_prefix() . 'ticket_replies.id,' . db_prefix() . 'ticket_replies.name as from_name,' . db_prefix() . 'ticket_replies.email as reply_email, ' . db_prefix() . 'ticket_replies.admin, ' . db_prefix() . 'ticket_replies.userid,' . db_prefix() . 'staff.firstname as staff_firstname, ' . db_prefix() . 'staff.lastname as staff_lastname,' . db_prefix() . 'contacts.firstname as user_firstname,' . db_prefix() . 'contacts.lastname as user_lastname,message,date,contactid');
+        $this->db->select(db_prefix() . 'ticket_replies.id,' . db_prefix() . 'ticket_replies.name as from_name,' . db_prefix() . 'ticket_replies.email as reply_email, ' . db_prefix() . 'ticket_replies.admin, ' . db_prefix() . 'ticket_replies.userid,' . db_prefix() . 'staff.firstname as staff_firstname, ' . db_prefix() . 'staff.lastname as staff_lastname,' . db_prefix() . 'contacts.firstname as user_firstname,' . db_prefix() . 'contacts.lastname as user_lastname,message,date,contactid,is_consultant');
         $this->db->from(db_prefix() . 'ticket_replies');
         $this->db->join(db_prefix() . 'clients', db_prefix() . 'clients.userid = ' . db_prefix() . 'ticket_replies.userid', 'left');
         $this->db->join(db_prefix() . 'staff', db_prefix() . 'staff.staffid = ' . db_prefix() . 'ticket_replies.admin', 'left');
@@ -835,6 +839,10 @@ class Tickets_model extends App_Model
         if (isset($data['tags'])) {
             $tags = $data['tags'];
             unset($data['tags']);
+        }
+
+        if (isset($data['area']) && $data['area'] != '') {
+            $data['area']  = implode(',', $data['area']);
         }
 
         // $data['message'] = remove_emojis($data['message']);
@@ -1100,6 +1108,10 @@ class Tickets_model extends App_Model
 
         if (isset($data['contact_db_id'])) {
             unset($data['contact_db_id']);
+        }
+
+        if (isset($data['area']) && $data['area'] != '') {
+            $data['area']  = implode(',', $data['area']);
         }
 
         $this->db->where('ticketid', $data['ticketid']);

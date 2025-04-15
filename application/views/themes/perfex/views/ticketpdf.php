@@ -87,11 +87,6 @@ $tickethtml .= '
     <td align="center" width="30%;"><b>Reference drawings</b></td>
     <td width="70%;">BGJ-AKD-IDE-DWG-ID-PL-312B</td>
 </tr>';
-$tickethtml .= '
-<tr style="font-size:13px;">
-    <td align="center" width="30%;"><b>Attachments (if any)</b></td>
-    <td width="70%;"></td>
-</tr>';
 $tickethtml .= '</tbody>';
 $tickethtml .= '</table>';
 
@@ -106,35 +101,51 @@ $tickethtml .= '
 $tickethtml .= '</tbody>';
 $tickethtml .= '</table>';
 
-$tickethtml .= '<table width="100%" cellspacing="0" cellpadding="5" border="1">';
-$tickethtml .= '<tbody>';
-$tickethtml .= '
-<tr>
-    <td width="100%;" align="left" style="font-size: 14px;">
-        <b>REPLY BY: </b> '.$ticket->opened_by.'
-    </td>
-</tr>';
-$tickethtml .= '</tbody>';
-$tickethtml .= '</table>';
+if(!empty($ticket_replies)) {
+    $tickethtml .= '<table width="100%" cellspacing="0" cellpadding="5" border="1">';
+    $tickethtml .= '<tbody>';
+    foreach ($ticket_replies as $reply) {
+        if($reply['is_consultant'] == 0) {
+            $tickethtml .= '
+            <tr>
+                <td width="100%;" align="left" style="font-size: 14px;">
+                    <b>REPLY BY: </b> '.$reply['submitter'].'
+                </td>
+            </tr>
+            <tr>
+                <td width="100%;" align="left" style="font-size: 14px;">
+                    <b>REPLY DATE:</b> '.date('d/m/y', strtotime($reply['date'])).'
+                </td>
+            </tr>
+            <tr>
+                <td width="100%;" align="left" style="font-size: 14px;">
+                    <b>Comments/Actions:</b> '.$reply['message'].'
+                </td>
+            </tr>
+            <tr>
+                <td width="100%;" align="left" style="font-size: 14px;">
+                    <b>Attachments (if any):</b>
+                </td>
+            </tr>';
+        }
+    }
+    $tickethtml .= '</tbody>';
+    $tickethtml .= '</table>';
+}
 
 $tickethtml .= '<table width="100%" cellspacing="0" cellpadding="5" border="1">';
 $tickethtml .= '<tbody>';
-$tickethtml .= '
-<tr>
-    <td width="100%;" align="left" style="font-size: 14px;">
-        <b>REPLY DATE:</b> '.$reply_by_date.'
-    </td>
-</tr>';
-$tickethtml .= '</tbody>';
-$tickethtml .= '</table>';
-
-$tickethtml .= '<table width="100%" cellspacing="0" cellpadding="5" border="1">';
-$tickethtml .= '<tbody>';
-$tickethtml .= '
-<tr style="font-size:13px;">
-    <td align="center" width="35%;"><b>Consultant’s advice/ notes</b></td>
-    <td width="65%;"></td>
-</tr>';
+if(!empty($ticket_replies)) {
+    foreach ($ticket_replies as $reply) {
+        if($reply['is_consultant'] == 1) {
+            $tickethtml .= '
+            <tr style="font-size:13px;">
+                <td align="center" width="35%;"><b>Consultant’s advice/ notes</b></td>
+                <td width="65%;">'.$reply['message'].'</td>
+            </tr>';
+        }
+    }
+}
 $tickethtml .= '
 <tr style="font-size:13px;">
     <td align="center" width="35%;"><b>Attachments by Consultant</b></td>
@@ -160,21 +171,6 @@ $tickethtml .= '
     <td width="65%;">
         ☐ Closed<br>
         ☐ Closed and Continued by RFI No.:
-    </td>
-</tr>';
-$tickethtml .= '</tbody>';
-$tickethtml .= '</table>';
-
-$tickethtml .= '<table width="100%" cellspacing="0" cellpadding="5" border="1">';
-$tickethtml .= '<tbody>';
-$tickethtml .= '
-<tr>
-    <td width="100%;" align="left" style="font-size: 14px;">
-        Comments/Actions:
-        <br><br><br><br><br>
-        Signature& Stamp:
-        <br>
-        Date:
     </td>
 </tr>';
 $tickethtml .= '</tbody>';

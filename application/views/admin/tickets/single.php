@@ -55,6 +55,11 @@
                                                 <?php echo _l('ticket_single_add_reply'); ?>
                                             </a>
                                         </li>
+                                        <li role="presentation" class="<?php if ($this->session->flashdata('active_tab_settings')) { echo 'active';} ?>">
+                                            <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">
+                                                <?php echo _l('rfi_details'); ?>
+                                            </a>
+                                        </li>
                                         <li role="presentation">
                                             <a href="#note" aria-controls="note" role="tab" data-toggle="tab">
                                                 <?php echo _l('ticket_single_add_note'); ?>
@@ -92,13 +97,6 @@
                                                 onclick="init_rel_tasks_table(<?php echo e($ticket->ticketid); ?>,'ticket'); return false;"
                                                 aria-controls="tasks" role="tab" data-toggle="tab">
                                                 <?php echo _l('tasks'); ?>
-                                            </a>
-                                        </li>
-                                        <li role="presentation" class="<?php if ($this->session->flashdata('active_tab_settings')) {
-                                    echo 'active';
-                                } ?>">
-                                            <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">
-                                                <?php echo _l('ticket_single_settings'); ?>
                                             </a>
                                         </li>
                                         <?php do_action_deprecated('add_single_ticket_tab_menu_item', $ticket, '3.0.7', 'after_admin_single_ticket_tab_menu_last_item'); ?>
@@ -233,6 +231,11 @@
                                         href="<?php echo get_ticket_public_url($ticket); ?>" target="_blank">
                                         <?php echo _l('view_public_form'); ?>
                                     </a>
+
+                                    <span class="pull-right">
+                                        Is Consultant?
+                                        <input type="checkbox" name="is_consultant" id="is_consultant" class="form-check-input">
+                                    </span>
 
                                     <div class="mtop15">
                                         <?php
@@ -532,7 +535,10 @@
                                             <div class="col-md-6">
                                                 <?php 
                                                 $area_selected = isset($ticket) ? $ticket->area : '';
-                                                echo render_select('area', $area, array('id','area_name'), 'area', $area_selected); 
+                                                if(!empty($area_selected)) {
+                                                    $area_selected = explode(",", $area_selected);
+                                                }
+                                                echo render_select('area[]', $area, array('id','area_name'), 'area', $area_selected, array('multiple' => true)); 
                                                 ?>
                                             </div>
                                             <div class="col-md-6">
@@ -710,6 +716,13 @@
                                             if ($reply['userid'] != 0) {
                                                 echo _l('ticket_client_string');
                                             }
+                                        }
+                                    ?>
+                                </p>
+                                <p class="text-muted">
+                                    <?php
+                                        if ($reply['is_consultant'] == 1) {
+                                            echo 'Consultant';
                                         }
                                     ?>
                                 </p>

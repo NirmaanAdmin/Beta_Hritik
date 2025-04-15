@@ -4221,3 +4221,4 @@ $lang['vendor_bills'] = 'Vendor Bills';
 $lang['shared_to_me_dms'] = 'Shared Drawings';
 $lang['changee_order']  = 'Change order';
 $lang['rfi_to']  = 'RFI To';
+$lang['rfi_details']  = 'RFI Details';
