@@ -24,6 +24,15 @@ class Meeting_model extends App_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+    public function get_all_minutes_task($id)
+    {
+        if ($id > 0) {
+            $this->db->where('id', $id);
+        }
+        $this->db->select('tblmeeting_management.*');
+        $this->db->from('tblmeeting_management');
+        return $query = $this->db->get()->row();
+    }
     public function get_mom_detials($id)
     {
         $this->db->where('agenda_id', $id);
@@ -78,6 +87,7 @@ class Meeting_model extends App_Model
             $data['other_participants'],
             $data['company_names'],
             $data['agenda_id'],
+            $data['section_break'],
         );
 
         // Insert into the agendas table.
@@ -479,7 +489,8 @@ class Meeting_model extends App_Model
             $minutes_data['other_participants'],
             $minutes_data['company_names'],
             $minutes_data['agenda_id'],
-            $minutes_data['leads_import']
+            $minutes_data['leads_import'],
+            $minutes_data['section_break'],
         );
 
         $new_mom = [];
