@@ -421,6 +421,13 @@
                                                                     } ?>>
                                             <?php echo _l('Drawing'); ?>
                                         </option>
+                                        <option value="meeting_minutes" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                                                        if ($rel_type == 'meeting_minutes') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
+                                            <?php echo _l('meeting_minutes'); ?>
+                                        </option>
                                         <?php
                                         hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
                                         ?>

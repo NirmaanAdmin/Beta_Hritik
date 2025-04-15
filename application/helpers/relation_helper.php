@@ -220,6 +220,16 @@ function get_relation_data($type, $rel_id = '', $extra = [])
             $search = $CI->misc_model->_search_drawings($q);
             $data   = $search['result'];
         }
+    } elseif ($type == 'meeting_minutes') {
+        
+        if ($rel_id != '') {
+            $CI->load->model('meeting_management/Meeting_model');
+            $data = $CI->Meeting_model->get_all_minutes_task($rel_id);
+
+        } else{
+            $search = $CI->misc_model->_search_minutes($q);
+            $data   = $search['result'];
+        }
     }
     if (empty($data)) {
         $data = hooks()->apply_filters('get_relation_data', $data, compact('type', 'rel_id', 'extra'));
@@ -535,9 +545,19 @@ function get_relation_values($relation, $type)
             $name      = $relation->name;
         }
         $link = admin_url('drawing_management?id=' . $id);
+    } elseif ($type == 'meeting_minutes') {
+
+        if (is_array($relation)) {
+            $id        = $relation['id'];
+            $name      = $relation['meeting_title'];
+        } else {
+            $id        = $relation->id;
+            $name      = $relation->meeting_title;
+        }
+        $link = admin_url('meeting_management/minutesController/index/' . $id);
     }
 
-    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate' || $type == 'purchase_request' || $type == 'changee_order' || $type == 'drawing') {
+    if ($type == 'pur_order' || $type == 'pur_quotation' || $type == 'pur_contract' || $type == 'pur_invoice' || $type == 'stock_import' || $type == 'stock_export' || $type == 'wo_order' || $type == 'payment_certificate' || $type == 'purchase_request' || $type == 'changee_order' || $type == 'drawing' || $type == 'meeting_minutes') {
         return [
             'id'        => $id,
             'name'      => $name,

@@ -1569,6 +1569,26 @@ class Misc_model extends App_Model
         $result['result'] = $this->db->get()->result_array();
         return $result;
     }
+    public function _search_minutes($q, $limit = 0)
+    {
+        $result = [
+            'result'         => [],
+            'type'           => 'minutes',
+            'search_heading' => _l('meeting_minutes'),
+        ];
+        $this->db->select();
+        $this->db->from(db_prefix() . 'meeting_management');
+
+        $this->db->where('(meeting_title LIKE "%' . $this->db->escape_like_str($q) . '%" ESCAPE \'!\')');
+        if ($limit != 0) {
+            $this->db->limit($limit);
+        }
+
+        $this->db->order_by('meeting_title', 'ASC');
+        $result['result'] = $this->db->get()->result_array();
+        return $result;
+    }
+    
     public function _search_quotations($q, $limit = 0)
     {
         $result = [

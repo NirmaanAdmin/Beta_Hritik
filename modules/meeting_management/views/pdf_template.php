@@ -255,7 +255,7 @@
                 }
                 // Update the previous area for the next iteration
                 $prev_area = $data['area'];
-            ?>
+                ?>
                 <tr>
                     <?php
                     // Check if a section break exists, and if so, display it.
@@ -263,7 +263,7 @@
                         // Determine the colspan based on whether the attachment column exists.
                         $colspan = $check_attachment ? 8 : 7;
                         echo '<tr>
-                                <td colspan="' . $colspan . '" style="text-align:center;">' . $data['section_break'] . '</td>
+                                <td colspan="' . $colspan . '" style="text-align:center;font-size:18px;font-weight:600">' . $data['section_break'] . '</td>
                             </tr>';
                     }
                     ?>

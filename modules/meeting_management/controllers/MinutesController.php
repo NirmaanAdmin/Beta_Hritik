@@ -94,12 +94,12 @@ class MinutesController extends AdminController
     // Convert an agenda to minutes of meeting
     public function convert_to_minutes($agenda_id = '')
     {
-       
-        
+
+
         // Load necessary models
         $this->load->model('Meeting_model');
         $this->load->model('Task_model');
-        
+
         // Determine if we're in "edit" mode (existing agenda) or "new" mode.
         if (!empty($agenda_id)) {
             // Existing agenda: Fetch from database.
@@ -220,9 +220,9 @@ class MinutesController extends AdminController
         $agenda_data_new = $data;
         $agenda_data_new['additional_note'] = $this->input->post('additional_note', false);
         $agenda_data_new['created_by'] = get_staff_user_id();
-        
+
         if ($agenda_id == '') {
-           
+
             // Insert new agenda
             $agenda_id = $this->Meeting_model->create_agenda($agenda_data_new);
             set_alert('success', _l('meeting_minutes_created_success'));
@@ -250,6 +250,7 @@ class MinutesController extends AdminController
         }
         $this->Meeting_model->save_participants($agenda_id, $participants, $other_participants, $company_name);
         // Handle new tasks if any
+
         $new_tasks = $this->input->post('new_tasks');  // Corrected
         if (!empty($new_tasks)) {
             foreach ($new_tasks as $task_data) {
@@ -260,7 +261,7 @@ class MinutesController extends AdminController
                         'assigned_to' => $task_data['assigned_to'],
                         'due_date' => $task_data['due_date'],
                     ];
-                    $this->Task_model->create_task($task);
+                    $this->Task_model->add($task);
                 }
             }
         }
@@ -456,5 +457,64 @@ class MinutesController extends AdminController
         $this->Meeting_model->update_minutes_of_meeting($data);
         echo json_encode(['success' => true]);
         die();
+    }
+
+    public function assign_task_in_mom()
+    {
+        
+        $this->load->model('tasks_model');
+
+        // Build the query to fetch task assignment data along with meeting title and minutes details.
+        $this->db->select('atm.*, mm.id as minute_id, mm.meeting_title, md.description, md.target_date');
+        $this->db->from('tbltask_assigned_mom atm');
+        $this->db->join('tblmeeting_management mm', 'mm.id = atm.agenda_id', 'left');
+        $this->db->join('tblminutes_details md', 'md.id = atm.minutes_detail_id', 'left');
+        $query = $this->db->get();
+
+        $assigned_tasks = $query->result();
+
+        if (!empty($assigned_tasks)) {
+            foreach ($assigned_tasks as $task) {
+                // Build the task name using the description (adjust as needed)
+                $taskName = $task->description;
+
+                // Prepare task data array.
+                $taskData = [
+                    'name'      => $taskName,
+                    'is_public' => 1,
+                    'startdate' => _d(date('Y-m-d')),
+                    'duedate'   => $task->target_date,
+                    'priority'  => 3,
+                    'rel_type'  => 'meeting_minutes',
+                    'rel_id'    => $task->minute_id,
+                ];
+                
+                // Insert the new task and get the inserted task's ID.
+                $task_id = $this->tasks_model->add($taskData);
+
+                // Manage comma-separated staff ids.
+                if (isset($task->staff_ids)) {
+                    $staff_ids = explode(',', $task->staff_ids);
+                    foreach ($staff_ids as $staff_id) {
+                        $staff_id = trim($staff_id);
+                        if (!empty($staff_id)) {
+                            $assignData = [
+                                'staffid' => $staff_id,
+                                'taskid'  => $task_id
+                            ];
+                            $this->db->insert('tbltask_assigned', $assignData);
+                        }
+                    }
+                } else {
+                    log_message('error', 'Staff ID not found for task assignment in assign_task_in_mom()');
+                }
+
+                // Delete the processed record from tbltask_assigned_mom.
+                $this->db->where('id', $task->id);
+                $this->db->delete('tbltask_assigned_mom');
+            }
+        } else {
+            log_message('info', 'No records found in tbltask_assigned_mom to process in assign_task_in_mom()');
+        }
     }
 }

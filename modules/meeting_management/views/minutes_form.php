@@ -100,7 +100,7 @@
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
                      <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($minutes) && isset($minutes->meeting_date) ? htmlspecialchars($minutes->meeting_date) : ''; ?>" class="form-control" required>
                   </div>
-                  <input type="hidden" name="agenda_id" value="<?php echo $agenda_id; ?>">
+                  <input type="hidden" name="agenda_id" id="agenda_id" value="<?php echo $agenda_id; ?>">
 
                   <div class="form-group">
                      <div class="col-md-4">
@@ -256,10 +256,10 @@
                         <?php echo _l('share_meeting'); ?>
                      </a>
                   </div>
-                  <hr>
+                  
 
                   <!-- Dynamic Task List -->
-                  <h4><?php echo _l('task_overview'); ?></h4>
+                  <!-- <h4><?php echo _l('task_overview'); ?></h4>
                   <table class="table table-bordered">
                      <thead>
                         <tr>
@@ -270,7 +270,7 @@
                         </tr>
                      </thead>
                      <tbody id="task-overview">
-                        <!-- Existing tasks will be loaded here -->
+                        
                         <?php if (!empty($tasks)) : ?>
                            <?php foreach ($tasks as $task) : ?>
                               <tr>
@@ -303,11 +303,19 @@
                         <?php endif; ?>
                      </tbody>
                   </table>
-
-                  <!-- Button to Add More Tasks -->
-                  <button type="button" id="add-task" class="btn btn-primary"><?php echo _l('add_another_task'); ?></button>
-
+                  <button type="button" id="add-task" class="btn btn-primary"><?php echo _l('add_another_task'); ?></button> -->
+                  <?php
+                  if ($agenda_id > 0) { ?>
                   <hr>
+                     <div>
+                        <h4><?php echo _l('task_overview'); ?></h4>
+                        <?php init_relation_tasks_table(array('data-new-rel-id' => $agenda_id, 'data-new-rel-type' => 'meeting_minutes')); ?>
+                     </div>
+                     <hr>
+                  <?php }
+                  ?>
+
+                 
 
                   <div class="btn-bottom-toolbar text-right">
                      <button
@@ -550,7 +558,11 @@
 </body>
 
 </html>
-
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+      init_rel_tasks_table(<?php echo pur_html_entity_decode($agenda_id); ?>, 'meeting_minutes');
+   });
+</script>
 <script type="text/javascript">
    $(document).on('click', '.mom-add-item-to-table', function(event) {
       "use strict";
@@ -646,7 +658,7 @@
       }
    }
 
-   function add_section_break(anchor,name) {
+   function add_section_break(anchor, name) {
       // Find the closest <tr> relative to the clicked link.
       var $tr = $(anchor).closest('tr');
 
@@ -662,7 +674,7 @@
       // The cell will contain an input field with text centered.
       var sectionBreakRow = '<tr class="section-break-row">' +
          '<td colspan="' + colCount + '" style="text-align:center;">' +
-         '<input type="text" class="form-control" name="'+name+'" placeholder="Section Break" style="text-align:center;width:100%;" />' +
+         '<input type="text" class="form-control" name="' + name + '" placeholder="Section Break" style="text-align:center;width:100%;" />' +
          '</td>' +
          '</tr>';
 

@@ -154,6 +154,15 @@ class Meeting_model extends App_Model
                 // Insert the minutes_details record.
                 $this->db->insert(db_prefix() . 'minutes_details', $minutes_detail);
                 $minutes_detail_id = $this->db->insert_id();
+                if (isset($value['staff']) && !empty($value['staff']) && is_array($value['staff'])) {
+                   
+                    $task_arr = [
+                        'staff_ids' => $staff,
+                        'agenda_id' => $agenda_id,
+                        'minutes_detail_id' => $minutes_detail_id
+                    ];
+                    $this->db->insert(db_prefix() . 'task_assigned_mom', $task_arr);
+                }
 
                 // If an attachment was uploaded for the agenda detail,
                 // copy the file from the mom_attachments folder to the minutes_attachments folder.
@@ -491,6 +500,7 @@ class Meeting_model extends App_Model
             $minutes_data['agenda_id'],
             $minutes_data['leads_import'],
             $minutes_data['section_break'],
+            $minutes_data['related_tasks_length'],
         );
 
         $new_mom = [];
@@ -514,8 +524,7 @@ class Meeting_model extends App_Model
 
         $this->save_agends_files('agenda_meeting', $agenda_id);
 
-        $this->db->where('id', $agenda_id);
-        $this->db->update(db_prefix() . 'agendas', ['flag' => 1]);
+
         if (!empty($minutes_data)) {
             $this->db->where('id', $agenda_id);
             $this->db->update(db_prefix() . 'meeting_management', $minutes_data);
@@ -771,12 +780,12 @@ class Meeting_model extends App_Model
         return true;
     }
 
-    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '',$section_break ='')
+    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '', $section_break = '')
     {
         $row = '';
 
         $name_area = 'area';
-        $name_description = 'description'; 
+        $name_description = 'description';
         $name_decision = 'decision';
         $name_action = 'action';
         $name_staff = 'staff';
@@ -784,8 +793,8 @@ class Meeting_model extends App_Model
         $name_target_date  = 'target_date';
         $name_attachments = 'attachments';
         $name_section_break = 'section_break';
-        if($section_break){
-            $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="'.$name_section_break.'" value="'.$section_break.'" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
+        if ($section_break) {
+            $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
         }
         if ($name == '') {
             $row .= '<tr class="main">';
@@ -821,7 +830,7 @@ class Meeting_model extends App_Model
         if ($name != '' && $section_break == '') {
             $row .= '<a href="javascript:void(0)" onclick="add_section_break(this, \'' . htmlspecialchars($name_section_break, ENT_QUOTES, 'UTF-8') . '\');">Section break</a></td>';
         }
-        
+
 
         $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')]) . '</td>';
         $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('decision')]) . '</td>';
@@ -848,7 +857,7 @@ class Meeting_model extends App_Model
         }
 
         $row .= '</tr><div class="section-break-container"></div>';
-       
+
         return $row;
     }
 }
