@@ -16691,6 +16691,7 @@ class Purchase_model extends App_Model
     public function get_wo_order_detail($wo_id)
     {
         $this->db->where('wo_order', $wo_id);
+        $this->db->order_by('id', 'ASC');
         $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
 
         foreach ($pur_order_details as $key => $detail) {
