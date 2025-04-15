@@ -155,7 +155,7 @@ class Meeting_model extends App_Model
                 $this->db->insert(db_prefix() . 'minutes_details', $minutes_detail);
                 $minutes_detail_id = $this->db->insert_id();
                 if (isset($value['staff']) && !empty($value['staff']) && is_array($value['staff'])) {
-                   
+
                     $task_arr = [
                         'staff_ids' => $staff,
                         'agenda_id' => $agenda_id,
@@ -793,15 +793,11 @@ class Meeting_model extends App_Model
         $name_target_date  = 'target_date';
         $name_attachments = 'attachments';
         $name_section_break = 'section_break';
-        if ($section_break) {
-            $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
-        }
+
         if ($name == '') {
             $row .= '<tr class="main">';
             $manual = true;
         } else {
-            $manual = false;
-            $row .= '<tr><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '">';
             $name_area = $name . '[area]';
             $name_description = $name . '[description]';
             $name_decision = $name . '[decision]';
@@ -811,6 +807,11 @@ class Meeting_model extends App_Model
             $name_target_date = $name . '[target_date]';
             $name_attachments = $name . '[attachments]';
             $name_section_break = $name . '[section_break]';
+            if ($section_break) {
+                $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
+            }
+            $manual = false;
+            $row .= '<tr><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '">';
         }
         $full_item_image = '';
         if (!empty($attachments['attachments']) && !empty($attachments['agenda_id'])) {
