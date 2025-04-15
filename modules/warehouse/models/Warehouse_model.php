@@ -20178,11 +20178,13 @@ class Warehouse_model extends App_Model
 									$this->db->where(db_prefix() . 'goods_delivery.approval', 1);
 									$this->db->where('pr_order_id', $pur_order);
 									$this->db->join(db_prefix() . 'goods_delivery', db_prefix() . 'goods_delivery.id = ' . db_prefix() . 'goods_delivery_detail.goods_delivery_id', 'left');
-									$goods_delivery_description = $this->db->get(db_prefix() . 'goods_delivery_detail')->row();
+									$goods_delivery_description = $this->db->get(db_prefix() . 'goods_delivery_detail')->result_array();
 									if(!empty($goods_delivery_description)) {
-										if(!empty($goods_delivery_description->quantities)) {
-											$available_quantity = $available_quantity - $goods_delivery_description->quantities;
+										$total_quantity = 0;
+										foreach ($goods_delivery_description as $qitem) {
+										    $total_quantity += $qitem['quantities'];
 										}
+										$available_quantity = $available_quantity - $total_quantity;
 									}
 								}
 								$goods_delivery_exist++;
