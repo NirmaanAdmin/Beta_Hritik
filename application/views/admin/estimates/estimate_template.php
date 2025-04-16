@@ -1,4 +1,12 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style type="text/css">
+    .sortable.item, .detailed_costing {
+        margin-top: 35px;
+        border-right: 1px solid #e2e8f0;
+        border-left: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+</style>
 <div class="panel_s accounting-template estimate">
     <div class="panel-body">
         <div class="row">
@@ -666,7 +674,7 @@
                                         if($item['annexure'] == $annexure['id']) {
                                             $manual = false;
                                             $table_row = '<tr class="sortable item">';
-                                            $table_row .= '<td class="dragger">';
+                                            $table_row .= '<td class="">';
                                             if ($item['qty'] == '' || $item['qty'] == 0) {
                                                 $item['qty'] = 1;
                                             }
@@ -715,6 +723,26 @@
                                     }
                                 } ?>
                             </tbody>
+                            <tfoot>
+                                <tr class="detailed_costing">
+                                    <td colspan="15">
+                                        <?php
+                                        $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
+                                        $detailed_costing_value = '';
+                                        if(isset($estimate_detailed_costing)) {
+                                            if(!empty($estimate_detailed_costing)) {
+                                                foreach ($estimate_detailed_costing as $ekey => $evalue) {
+                                                    if($evalue['budget_id'] == $annexure['id']) {
+                                                        $detailed_costing_value = $evalue['detailed_costing'];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
+                                        ?>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div class="col-md-8 col-md-offset-4">

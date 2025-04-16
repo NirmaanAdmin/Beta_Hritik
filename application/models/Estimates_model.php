@@ -533,6 +533,12 @@ class Estimates_model extends App_Model
             unset($data['newareaworkingitems']);
         }
 
+        $detailed_costing = [];
+        if (isset($data['detailed_costing'])) {
+            $detailed_costing = $data['detailed_costing'];
+            unset($data['detailed_costing']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -570,6 +576,7 @@ class Estimates_model extends App_Model
             }
 
             update_sales_total_tax_column($insert_id, 'estimate', db_prefix() . 'estimates');
+            $this->update_estimate_detailed_costing($insert_id, $detailed_costing);
             $this->update_basic_estimate_details($insert_id);
             $this->log_estimate_activity($insert_id, 'estimate_activity_created');
 
@@ -706,6 +713,12 @@ class Estimates_model extends App_Model
         if (isset($data['areaworkingitems'])) {
             $areaworkingitems = $data['areaworkingitems'];
             unset($data['areaworkingitems']);
+        }
+
+        $detailed_costing = [];
+        if (isset($data['detailed_costing'])) {
+            $detailed_costing = $data['detailed_costing'];
+            unset($data['detailed_costing']);
         }
 
         $this->db->where('id', $id);
@@ -846,6 +859,7 @@ class Estimates_model extends App_Model
             $this->send_estimate_to_client($id, '', true, '', true);
         }
 
+        $this->update_estimate_detailed_costing($id, $detailed_costing);
         $this->update_basic_estimate_details($id);
 
         if ($affectedRows > 0) {
@@ -1559,5 +1573,34 @@ class Estimates_model extends App_Model
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'costarea_working');
         return true;
+    }
+
+    public function update_estimate_detailed_costing($id, $detailed_costing)
+    {
+        if(!empty($detailed_costing)) {
+            foreach ($detailed_costing as $ckey => $cvalue) {
+                $this->db->where('estimate_id', $id);
+                $this->db->where('budget_id', $ckey);
+                $estimate_detailed_costing = $this->db->get(db_prefix() . 'estimate_detailed_costing')->row();
+                if(empty($estimate_detailed_costing) && !empty($cvalue)) {
+                    $this->db->insert(db_prefix() . 'estimate_detailed_costing', [
+                        'estimate_id' => $id,
+                        'budget_id' => $ckey,
+                        'detailed_costing' => $cvalue,
+                    ]);
+                } else {
+                    $this->db->where('estimate_id', $id);
+                    $this->db->where('budget_id', $ckey);
+                    $this->db->update(db_prefix() . 'estimate_detailed_costing', ['detailed_costing' => $cvalue]);
+                }
+            }
+        }
+        return true;
+    }
+
+    public function get_estimate_detailed_costing($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'estimate_detailed_costing')->result_array();
     }
 }
