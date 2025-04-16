@@ -24,6 +24,13 @@ $join = [
 ];
 
 $where = [];
+if ($this->ci->input->post('vendors') && count($this->ci->input->post('vendors')) > 0) {
+    array_push($where, 'AND ((' . db_prefix() . 'payment_certificate.po_id IS NOT NULL AND ' . db_prefix() . 'pur_orders.vendor IN (' . implode(',', $this->ci->input->post('vendors')) . ')) OR (' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL AND ' . db_prefix() . 'wo_orders.vendor IN (' . implode(',', $this->ci->input->post('vendors')) . ')))');
+}
+
+if ($this->ci->input->post('group_pur') && count($this->ci->input->post('group_pur')) > 0) {
+    array_push($where, 'AND ((' . db_prefix() . 'payment_certificate.po_id IS NOT NULL AND ' . db_prefix() . 'pur_orders.group_pur IN (' . implode(',', $this->ci->input->post('group_pur')) . ')) OR (' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL AND ' . db_prefix() . 'wo_orders.group_pur IN (' . implode(',', $this->ci->input->post('group_pur')) . ')))');
+}
 
 $having = '';
 

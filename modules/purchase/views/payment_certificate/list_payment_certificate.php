@@ -27,6 +27,20 @@
                         </div>
                      </div>
 
+                     <div class="row">
+                        <div class="col-md-3 form-group">
+                           <?php
+                           echo render_select('vendors[]', $vendors, array('userid', 'company'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('pur_vendor'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                           ?>
+                        </div>
+                        <div class="col-md-3 form-group">
+                           <?php 
+                           echo render_select('group_pur[]', $item_group, array('id', 'name'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('group_pur'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+                           ?>
+                        </div>
+                     </div>
+                     <br>
+
                      <div class="btn-group show_hide_columns" id="show_hide_columns">
                         <!-- Settings Icon -->
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
@@ -90,8 +104,18 @@
 <script>
    $(document).ready(function() {
       var table_payment_certificate = $('.table-table_payment_certificate');
-      var Params = {};
+      var Params = {
+        "vendors": "[name='vendors[]']",
+        "group_pur": "[name='group_pur[]']",
+      };
       initDataTable(table_payment_certificate, admin_url + 'purchase/table_payment_certificate', [], [], Params, [0, 'desc']);
+      $.each(Params, function (i, obj) {
+        $('select' + obj).on('change', function () {
+            table_payment_certificate.DataTable().ajax.reload()
+                .columns.adjust()
+                .responsive.recalc();
+        });
+      });
 
       // Handle "Select All" checkbox
       $('#select-all-columns').on('change', function() {
