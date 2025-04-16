@@ -47,6 +47,11 @@ if ($this->ci->input->post('department')
     array_push($where, 'AND department IN (' . implode(',', $this->ci->input->post('department')) . ')');
 }
 
+if ($this->ci->input->post('project')
+    && count($this->ci->input->post('project')) > 0) {
+    array_push($where, 'AND project IN (' . implode(',', $this->ci->input->post('project')) . ')');
+}
+
 if(isset($project)){
     array_push($where, ' AND '.db_prefix().'pur_request.project = '.$project);
 }

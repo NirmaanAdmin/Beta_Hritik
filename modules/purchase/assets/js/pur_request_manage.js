@@ -4,6 +4,7 @@ var table_pur_request = $('.table-table_pur_request');
         "from_date": 'input[name="from_date"]',
         "to_date": 'input[name="to_date"]',
         "department": "[name='department_filter[]']",
+        "project": "[name='project[]']",
     };
 
 (function($) {

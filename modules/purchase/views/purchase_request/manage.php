@@ -20,7 +20,20 @@
                             </a>
                             <?php } ?>
                         </div>
-                        <div class="col-md-4">
+                    </div>
+
+                    <div class="row">
+                        <hr>
+                        <div class="col-md-3">
+                          <select name="project[]" id="project" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('project'); ?>">
+                              <?php foreach ($projects as $pj) { ?>
+                                 <option value="<?php echo pur_html_entity_decode($pj['id']); ?>">
+                                    <?php echo pur_html_entity_decode($pj['name']); ?>
+                                 </option>
+                              <?php } ?>
+                           </select>
+                        </div>
+                        <div class="col-md-3">
                           <select name="department_filter[]" id="department_filter" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('department'); ?>">
                             <?php foreach($departments as $s) { ?>
                               <option value="<?php echo pur_html_entity_decode($s['departmentid']); ?>" <?php if(isset($pur_request) && $s['departmentid'] == $pur_request->department){ echo 'selected'; } ?>><?php echo pur_html_entity_decode($s['name']); ?></option>
@@ -34,6 +47,8 @@
                             <?php echo render_date_input('to_date','','',array('placeholder' => _l('to_date') )); ?>
                         </div>
                     </div>
+                    <br>
+
                     <?php render_datatable(array(
                         _l('pur_rq_code'),
                         _l('pur_rq_name'),

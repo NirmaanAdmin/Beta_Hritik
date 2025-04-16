@@ -530,11 +530,13 @@ class purchase extends AdminController
     public function purchase_request()
     {
         $this->load->model('departments_model');
+        $this->load->model('projects_model');
 
         $data['title'] = _l('purchase_request');
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['departments'] = $this->departments_model->get();
         $data['vendor_contacts'] = $this->purchase_model->get_contacts();
+        $data['projects'] = $this->projects_model->get();
 
         $this->load->view('purchase_request/manage', $data);
     }
