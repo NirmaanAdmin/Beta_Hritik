@@ -44,10 +44,10 @@ class MinutesController extends AdminController
             $get_mom_detials = $this->Meeting_model->get_minutes_detials($agenda_id);
 
             if (count($get_mom_detials) > 0) {
-                $index_order = 0;
+                $index_order = 1;
                 foreach ($get_mom_detials as $mom_detail) {
                     $index_order++;
-                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id'], $mom_detail['section_break']);
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id'], $mom_detail['section_break'], $mom_detail['serial_no']);
                 }
             }
             $is_edit = true;
@@ -167,7 +167,7 @@ class MinutesController extends AdminController
         if (!empty($agenda_id)) {
             $get_mom_detials = $this->Meeting_model->get_mom_detials($agenda_id);
             if (!empty($get_mom_detials)) {
-                $index_order = 0;
+                $index_order = 1;
                 foreach ($get_mom_detials as $mom_detail) {
                     $index_order++;
                     $mom_row_template .= $this->Meeting_model->create_mom_row_template(
@@ -416,7 +416,7 @@ class MinutesController extends AdminController
     {
         // Fetch meeting details
         $data['meeting'] = $this->Meeting_model->get_meeting_details($agenda_id);
-
+        $data['agenda_id'] = $agenda_id;
         // Fetch participants
         $data['participants'] = $this->Meeting_model->get_selected_participants($agenda_id);
 

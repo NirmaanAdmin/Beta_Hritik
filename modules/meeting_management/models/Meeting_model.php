@@ -88,6 +88,7 @@ class Meeting_model extends App_Model
             $data['company_names'],
             $data['agenda_id'],
             $data['section_break'],
+            $data['serial_no'],
         );
 
         // Insert into the agendas table.
@@ -105,7 +106,7 @@ class Meeting_model extends App_Model
             'area_head'       => isset($data['area_head']) ? $data['area_head'] : '',
             'meeting_link'    => isset($data['meeting_link']) ? $data['meeting_link'] : '',
         ];
-       
+
         $this->db->insert(db_prefix() . 'meeting_management', $meeting_data);
         $minute_id = $this->db->insert_id();
 
@@ -132,6 +133,7 @@ class Meeting_model extends App_Model
                     'vendor'      => isset($value['vendor']) ? $value['vendor'] : '',
                     'target_date' => isset($value['target_date']) ? $value['target_date'] : '',
                     'section_break' => isset($value['section_break']) ? $value['section_break'] : '',
+                    'serial_no' => isset($value['serial_no']) ? $value['serial_no'] : '',
                 ];
 
                 $this->db->insert(db_prefix() . 'agendas_details', $agenda_detail);
@@ -503,6 +505,7 @@ class Meeting_model extends App_Model
             $minutes_data['leads_import'],
             $minutes_data['section_break'],
             $minutes_data['related_tasks_length'],
+            $minutes_data['serial_no'],
         );
 
         $new_mom = [];
@@ -550,6 +553,7 @@ class Meeting_model extends App_Model
                 $mom_arr['vendor'] = $value['vendor'];
                 $mom_arr['target_date'] = $value['target_date'];
                 $mom_arr['section_break'] = $value['section_break'];
+                $mom_arr['serial_no'] = $value['serial_no'];
 
                 $this->db->insert(db_prefix() . 'minutes_details', $mom_arr);
                 $last_insert_id = $this->db->insert_id();
@@ -583,7 +587,7 @@ class Meeting_model extends App_Model
                 $mom_arr['vendor'] = $value['vendor'];
                 $mom_arr['target_date'] = $value['target_date'];
                 $mom_arr['section_break'] = $value['section_break'];
-
+                $mom_arr['serial_no'] = $value['serial_no'];
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'minutes_details', $mom_arr);
                 if ($this->db->affected_rows() > 0) {
@@ -693,12 +697,6 @@ class Meeting_model extends App_Model
         return $query->result_array();
     }
 
-
-
-
-
-
-
     public function get_meeting_details_for_client($meeting_id, $client_id)
     {
         $this->db->select('m.meeting_title, m.agenda, m.meeting_date, m.minutes');
@@ -709,10 +707,6 @@ class Meeting_model extends App_Model
 
         return $this->db->get()->row_array();
     }
-
-
-
-
 
     public function get_meeting_notes($agenda_id)
     {
@@ -782,7 +776,7 @@ class Meeting_model extends App_Model
         return true;
     }
 
-    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '', $section_break = '')
+    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '', $section_break = '', $serial_no = '')
     {
         $row = '';
 
@@ -795,7 +789,7 @@ class Meeting_model extends App_Model
         $name_target_date  = 'target_date';
         $name_attachments = 'attachments';
         $name_section_break = 'section_break';
-
+        $name_serial_no = 'serial_no';
         if ($name == '') {
             $row .= '<tr class="main">';
             $manual = true;
@@ -809,6 +803,7 @@ class Meeting_model extends App_Model
             $name_target_date = $name . '[target_date]';
             $name_attachments = $name . '[attachments]';
             $name_section_break = $name . '[section_break]';
+            $name_serial_no = $name . '[serial_no]';
             if ($section_break) {
                 $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
             }
@@ -822,6 +817,16 @@ class Meeting_model extends App_Model
         } elseif (!empty($attachments['attachments']) && !empty($attachments['minute_id'])) {
             $item_base_url = base_url('uploads/meetings/minutes_attachments/' . $attachments['minute_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
             $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
+        }
+        if (!empty($name)) {
+            if (!empty($serial_no) && $serial_no > 0) {
+                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
+            } else {
+                $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
+                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
+            }
+        } else {
+            $row .= '<td class="serial_no"></td>';
         }
 
         $row .= '<td class="area" style="text-align:left">

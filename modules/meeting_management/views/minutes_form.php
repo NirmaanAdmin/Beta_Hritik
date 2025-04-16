@@ -99,10 +99,10 @@
                   <div class="form-group col-md-6" style="padding-left:0px ;">
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
                      <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($minutes) && isset($minutes->meeting_date) ? htmlspecialchars($minutes->meeting_date) : ''; ?>" class="form-control" required>
-                  </div>
-                  <div class="form-group col-md-6" style="padding-right:0px ;">
-                     <label for="meeting_link"><?php echo _l('Meeting Link'); ?></label>
-                     <input type="text" id="meeting_link" name="meeting_link" value="<?php echo isset($minutes) && isset($minutes->meeting_link) ? htmlspecialchars($minutes->meeting_link) : ''; ?>" class="form-control">
+                  </div><br><br>
+                  <div class="form-group col-md-6" style="padding-right:0px ;"> 
+                     <label for="meeting_link"></label>
+                     <!-- <input type="text" id="meeting_link" name="meeting_link" value="<?php echo isset($minutes) && isset($minutes->meeting_link) ? htmlspecialchars($minutes->meeting_link) : ''; ?>" class="form-control"> -->
                   </div>
                   <input type="hidden" name="agenda_id" id="agenda_id" value="<?php echo $agenda_id; ?>">
 
@@ -162,6 +162,7 @@
                      <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
                         <thead>
                            <tr>
+                              <th width="5%">No.</th>
                               <th>
                                  <select name="area_head" id="area_head" class="form-control">
                                     <option value="">Select Option</option>

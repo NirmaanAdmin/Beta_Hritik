@@ -117,7 +117,7 @@ class AgendaController extends AdminController
     {
         // Fetch meeting details
         $data['meeting'] = $this->Meeting_model->get_meeting_details($agenda_id);
-
+        $data['agenda_id'] = $agenda_id;
         // Fetch participants using the detailed participant function
         $data['participants'] = $this->Meeting_model->get_detailed_participants($agenda_id);
         $data['meeting_notes'] = $this->Meeting_model->get_meeting_notes($agenda_id);  // Assuming the method fetches notes
@@ -259,7 +259,7 @@ class AgendaController extends AdminController
                         $total_rows_actualy = 0;
                         $list_item = $this->Meeting_model->create_mom_row_template();
                         //get data for compare
-                        $index_quote = 0;
+                        $index_quote = 1;
                        
                         for ($row = 1; $row < count($data); $row++) {
                             $rd = array();

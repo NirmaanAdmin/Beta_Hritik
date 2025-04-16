@@ -143,8 +143,8 @@
 
             <td style="width: 15%;">MOM No</td>
             <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
-            <td style="width: 15%;">Meeting Link</td>
-            <td style="width: 30%;"><?php echo $meeting['meeting_link']; ?></td>
+            <td style="width: 15%;"></td>
+            <td style="width: 30%;"></td>
         </tr>
     </table>
 
@@ -267,7 +267,7 @@
                             </tr>';
                     }
                     ?>
-                    <td><?php echo $sr++; ?></td>
+                    <td><?php echo $data['serial_no']; ?></td>
                     <td><?php echo $area; ?></td>
                     <td><?php echo $data['description']; ?></td>
                     <td><?php echo $data['decision']; ?></td>

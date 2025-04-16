@@ -31,6 +31,10 @@
       width: 116px;
       height: 73px;
    }
+
+   .new-task-relation {
+      display: none;
+   }
 </style>
 <div id="wrapper">
    <div class="content">
@@ -49,10 +53,10 @@
                         <td><strong><?php echo _l('meeting_date'); ?>:</strong></td>
                         <td><?php echo isset($meeting['meeting_date']) ? date('d M, Y h:i A', strtotime($meeting['meeting_date'])) : 'N/A'; ?></td>
                      </tr>
-                     <tr>
+                     <!-- <tr>
                         <td><strong><?php echo _l('Meeting Link'); ?>:</strong></td>
                         <td><?php echo isset($meeting['meeting_link']) ? $meeting['meeting_link'] : 'N/A'; ?></td>
-                     </tr>
+                     </tr> -->
                      <!-- <tr>
                         <td><strong><?php echo _l('agenda'); ?>:</strong></td>
                         <td>
@@ -127,9 +131,8 @@
                               </thead>
                               <tbody class="mom_body">
                                  <?php
-                                 $sr = 1;
                                  $prev_area = ''; // Initialize the previous area value
-
+                                 $last_serial = 0;
                                  foreach ($minutes_data as $data) {
                                     $full_item_image = '';
                                     // Process attachments if available
@@ -144,7 +147,13 @@
                                     } else {
                                        $target_date = '';
                                     }
-
+                                    if (empty($data['serial_no'])) {
+                                       $serial = $last_serial + 1;
+                                    } else {
+                                       $serial = $data['serial_no'];
+                                    }
+                                    // Update last serial for the next iteration.
+                                    $last_serial = $serial;
                                     // Compare current area with the previous one.
                                     // If they match then set $area as an empty string.
                                     // Otherwise, use the current area's value.
@@ -167,7 +176,7 @@
                             </tr>';
                                        }
                                        ?>
-                                       <td><?php echo $sr++; ?></td>
+                                       <td><?php echo $serial; ?></td>
                                        <td><?php echo $area; ?></td>
                                        <td><?php echo $data['description']; ?></td>
                                        <td><?php echo $data['decision']; ?></td>
@@ -261,7 +270,17 @@
                   <?php echo $meeting['additional_note']; ?>
                   <!-- Tasks Section -->
                   <h4><?php echo _l('tasks'); ?></h4>
-                  <table class="table table-bordered">
+                  <?php
+                  if ($agenda_id > 0) { ?>
+                     <hr>
+                     <div>
+                        <h4><?php echo _l('task_overview'); ?></h4>
+                        <?php init_relation_tasks_table(array('data-new-rel-id' => $agenda_id, 'data-new-rel-type' => 'meeting_minutes')); ?>
+                     </div>
+                     <hr>
+                  <?php }
+                  ?>
+                  <!-- <table class="table table-bordered">
                      <thead>
                         <tr>
                            <th><?php echo _l('task_title'); ?></th>
@@ -286,7 +305,7 @@
                            </tr>
                         <?php endif; ?>
                      </tbody>
-                  </table>
+                  </table> -->
                   <div class="col-md-12" id="meeting_attachments">
                      <?php
                      $file_html = '';
@@ -343,9 +362,9 @@
 
                   <!-- Export as PDF Button -->
                   <div class="btn-bottom-toolbar text-right">
-                     <!-- <a href="<?php echo admin_url('meeting_management/agendaController/export_to_pdf/' . $meeting['meeting_id']); ?>" class="btn btn-info">
-                        <?php echo _l('export_as_pdf'); ?>
-                     </a> -->
+                     <a href="javascript:void(0);" id="export-csv" class="btn btn-info">
+                        Export as CSV
+                     </a>
                      <a href="<?php echo admin_url('meeting_management/agendaController/export_to_pdf/' . $meeting['meeting_id']); ?>" class="btn btn-info">
                         <?php echo _l('export_as_pdf'); ?>
                      </a>
@@ -357,6 +376,57 @@
       </div>
    </div>
 </div>
+<script type="text/javascript">
+   document.getElementById('export-csv').addEventListener('click', function() {
+      // Select the table based on its class.
+      const table = document.querySelector('.mom-items-table');
+
+      // Get all rows (both header and body rows) then filter out section break rows.
+      // A section break row has at least one cell with a colspan attribute.
+      const rows = Array.from(table.querySelectorAll('tr')).filter(row => {
+         return !row.querySelector('th[colspan], td[colspan]');
+      });
+
+      // Initialize CSV content string.
+      let csvContent = '';
+
+      // Loop through each row.
+      rows.forEach(row => {
+         // Get all cells (both header and data cells).
+         let cells = Array.from(row.querySelectorAll('th, td'));
+
+         // Remove the attachments column (last cell) if it exists.
+         if (cells.length > 0) {
+            cells = cells.slice(0, -1);
+         }
+
+         // Map through the remaining cells to get their text content, trim any whitespace and wrap in double quotes.
+         const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
+
+         // Append the row's CSV string followed by a newline.
+         csvContent += rowContent + "\n";
+      });
+
+      // Add a UTF-8 BOM to support Excel (so that special characters display correctly).
+      const bom = "\uFEFF";
+
+      // Create a Blob from the CSV content with the appropriate MIME type.
+      const blob = new Blob([bom + csvContent], {
+         type: 'text/csv;charset=utf-8;'
+      });
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary link element that will trigger the download.
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'mom_export.csv');
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+   });
+</script>
+
 
 <?php init_tail(); ?>
 <script>
@@ -383,5 +453,10 @@
    }
 </script>
 </body>
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+      init_rel_tasks_table(<?php echo pur_html_entity_decode($agenda_id); ?>, 'meeting_minutes');
+   });
+</script>
 
 </html>
