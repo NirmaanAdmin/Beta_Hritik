@@ -13,7 +13,9 @@
                   <?php } ?>
                   <?php
                      $path = base_url('uploads/expenses/' . $file->rel_id . '/' . $file->file_name);
-                     if(is_image($path)){ ?>
+                     $pathArray = explode('.', $path);
+                     $ext = end($pathArray);
+                     if($ext == 'gif' || $ext == 'jpeg'  || $ext == 'jpg' || $ext == 'png' || $ext == 'bmp'){ ?>
                   <img src="<?php echo $path; ?>" class="img img-responsive img_style">
                   <?php } else if(!empty($file->external) && !empty($file->thumbnail_link)){ ?>
                   <img src="<?php echo optimize_dropbox_thumbnail($file->thumbnail_link); ?>" class="img img-responsive">
