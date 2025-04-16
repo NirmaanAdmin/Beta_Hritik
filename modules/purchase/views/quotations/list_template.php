@@ -22,6 +22,16 @@
      </select>
    </div>
 
+   <div class="col-md-3">
+    <select name="project[]" id="project" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('project'); ?>">
+      <?php foreach ($projects as $pj) { ?>
+         <option value="<?php echo pur_html_entity_decode($pj['id']); ?>">
+            <?php echo pur_html_entity_decode($pj['name']); ?>
+         </option>
+      <?php } ?>
+    </select>
+   </div>
+
   <div class="display-block text-right"> 
     <a href="#" class="btn btn-default btn-with-tooltip toggle-small-view hidden-xs" onclick="toggle_small_estimate_view('.table-pur_estimates','#estimate'); return false;" data-toggle="tooltip" title="<?php echo _l('estimates_toggle_table_tooltip'); ?>"><i class="fa fa-angle-double-left"></i></a>
   </div>

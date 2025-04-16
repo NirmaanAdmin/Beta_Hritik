@@ -16,6 +16,7 @@ $aColumns = [
     'date',
     'expirydate',
 
+    db_prefix() . 'pur_estimates.project',
     db_prefix() . 'pur_estimates.status',
     ];
 
@@ -72,6 +73,11 @@ if (isset($vendors)) {
 
 if(isset($vendor)){
     array_push($where, ' AND '.db_prefix().'pur_estimates.vendor = '.$vendor);
+}
+
+if ($this->ci->input->post('project')
+    && count($this->ci->input->post('project')) > 0) {
+    array_push($where, 'AND '.db_prefix().'pur_estimates.project IN (' . implode(',', $this->ci->input->post('project')) . ')');
 }
 
 if(!has_permission('purchase_quotations', '', 'view')){
@@ -169,6 +175,8 @@ foreach ($rResult as $aRow) {
     $row[] = _d($aRow['date']);
 
     $row[] = _d($aRow['expirydate']);
+
+    $row[] = get_project_name_by_id($aRow[db_prefix() . 'pur_estimates.project']);
 
     $row[] = get_status_approve($aRow[db_prefix() . 'pur_estimates.status']);
 

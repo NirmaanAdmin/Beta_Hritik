@@ -12,6 +12,7 @@
             <th><?php echo _l('sub_groups_pur'); ?></th>
             <th><?php echo _l('estimate_dt_table_heading_date'); ?></th>
             <th><?php echo _l('estimate_dt_table_heading_expirydate'); ?></th>
+            <th><?php echo _l('project'); ?></th>
             <th><?php echo _l('approval_status'); ?></th>
          </tr>
       </thead>
@@ -21,6 +22,7 @@
          <td></td>
          <td class="total_estimate_amount"></td>
          <td class="total_estimate_tax"></td>
+         <td></td>
          <td></td>
          <td></td>
          <td></td>

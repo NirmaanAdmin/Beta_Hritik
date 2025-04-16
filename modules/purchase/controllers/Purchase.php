@@ -854,10 +854,12 @@ class purchase extends AdminController
         if ($this->input->get('status') || $this->input->get('filter') && $isPipeline) {
             $this->pipeline(0, true);
         }
+        $this->load->model('projects_model');
 
         $data['estimateid']            = $id;
         $data['pur_request'] = $this->purchase_model->get_purchase_request();
         $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['projects'] = $this->projects_model->get();
         $data['title']                 = _l('estimates');
         $data['bodyclass']             = 'estimates-total-manual';
 
