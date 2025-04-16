@@ -357,15 +357,10 @@
     <div class="panel-body">
         <div class="horizontal-tabs">
             <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+
                 <li role="presentation" class="active">
                     <a href="#final_estimate" aria-controls="final_estimate" role="tab" id="tab_final_estimate" data-toggle="tab">
-                        <?php echo _l('final_estimate'); ?>
-                    </a>
-                </li>
-
-                <li role="presentation">
-                    <a href="#budget_summary" aria-controls="budget_summary" role="tab" id="tab_budget_summary" data-toggle="tab">
-                        <?php echo _l('budget_summary'); ?>
+                        <?php echo _l('project_brief'); ?>
                     </a>
                 </li>
 
@@ -376,8 +371,14 @@
                 </li>
 
                 <li role="presentation">
-                    <a href="#sum_of_values" aria-controls="sum_of_values" role="tab" id="tab_sum_of_values" data-toggle="tab">
-                        <?php echo _l('sum_of_values'); ?>
+                    <a href="#area_working" aria-controls="area_working" role="tab" id="tab_area_working" data-toggle="tab">
+                        <?php echo _l('area_statement'); ?>
+                    </a>
+                </li>
+
+                <li role="presentation">
+                    <a href="#budget_summary" aria-controls="budget_summary" role="tab" id="tab_budget_summary" data-toggle="tab">
+                        <?php echo _l('cost_plan_summary'); ?>
                     </a>
                 </li>
 
@@ -385,7 +386,7 @@
                 $annexures = get_all_annexures(); ?>
                 <li role="presentation" class="dropdown">
                     <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <?php echo _l('budget_working'); ?>
+                        <?php echo _l('detailed_costing_technical_assumptions'); ?>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu estimate-annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
@@ -401,15 +402,17 @@
                 </li>
 
                 <li role="presentation">
-                    <a href="#area_working" aria-controls="area_working" role="tab" id="tab_area_working" data-toggle="tab">
-                        <?php echo _l('area_working'); ?>
+                    <a href="#project_timelines" aria-controls="project_timelines" role="tab" id="tab_project_timelines" data-toggle="tab">
+                        <?php echo _l('project_timelines'); ?>
                     </a>
                 </li>
+
             </ul>
         </div>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="final_estimate">
+                <?php /*
                 <div class="table-responsive s_table">
                     <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
                         <thead>
@@ -450,7 +453,12 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div> */ ?>
+                <?php
+                $project_brief = (isset($estimate) ? $estimate->project_brief : '');
+                echo render_textarea('project_brief', '', $project_brief, [], [], '', 'tinymce'); 
+                ?>
+
                 <div class="col-md-8 col-md-offset-4">
                     <table class="table text-right">
                         <tbody>
@@ -566,7 +574,7 @@
             <div role="tabpanel" class="tab-pane" id="area_summary">
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="sum_of_values">
+            <div role="tabpanel" class="tab-pane" id="project_timelines">
             </div>
 
             <?php
