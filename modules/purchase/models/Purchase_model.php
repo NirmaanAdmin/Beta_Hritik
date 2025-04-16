@@ -5195,7 +5195,8 @@ class Purchase_model extends App_Model
                 // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
                 $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image'].'" width="70" height="50">';
             }
-            $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
+            // $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
+            $serial_no = $row['serial_no'];
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 3%">' . $serial_no . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
@@ -11811,12 +11812,13 @@ class Purchase_model extends App_Model
         }
 
         if (!empty($name)) {
-            if (!empty($serial_no)) {
-                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
-            } else {
-                $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
-                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
-            }
+            // if (!empty($serial_no)) {
+            //     $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
+            // } else {
+            //     $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
+            //     $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
+            // }
+            $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'text', []) . '</td>';
         } else {
             $row .= '<td class="serial_no"></td>';
         }
@@ -15914,7 +15916,8 @@ class Purchase_model extends App_Model
                 // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
                 $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/wo_order/' . $row['wo_order'] . '/' . $row['id'] . '/' . $row['image'].'" width="70" height="50">';
             }
-            $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
+            // $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
+            $serial_no = $row['serial_no'];
             $html .= '<tr nobr="true" class="sortable" style="font-size: 11px">
             <td style="width: 3%">' . $serial_no . '</td>
             <td style="width: 10%">' . $items->commodity_code . ' - ' . $items->description . '</td>
@@ -16933,12 +16936,13 @@ class Purchase_model extends App_Model
         }
 
         if (!empty($name)) {
-            if (!empty($serial_no)) {
-                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
-            } else {
-                $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
-                $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
-            }
+            // if (!empty($serial_no)) {
+            //     $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
+            // } else {
+            //     $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
+            //     $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no_updated, 'number', []) . '</td>';
+            // }
+            $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'text', []) . '</td>';
         } else {
             $row .= '<td class="serial_no"></td>';
         }
