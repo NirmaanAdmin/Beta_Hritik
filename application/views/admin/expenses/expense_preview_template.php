@@ -320,9 +320,10 @@
                                 }
                                 ?>
                                 <a href="<?php echo site_url('download/file/expense/' . $expense->expenseid); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-expense-<?php echo $expense->expenseid; ?>" <?php } ?>>
-                                   <i class="<?php echo get_mime_class($expense->filetype); ?>"></i> <?php echo $expense->attachment; ?>
+                                   <a name="expense-btn" onclick="preview_expense_btn(this); return false;" id = "<?php echo $expense->expenseid; ?>" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="<?php echo _l('preview_file'); ?>"><i class="fa fa-eye"></i></a>
+                                   <?php echo $expense->attachment; ?>
                                    <?php if ($is_image) { ?>
-                                      <img class="mtop5" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $expense->filetype); ?>" style="height: 165px;">
+                                      <img class="mtop5 hide" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $expense->filetype); ?>" style="height: 165px;">
                                    <?php } ?>
                                 </a>
                             </div>
@@ -341,6 +342,9 @@
                 </div>
             </div>
             </div>
+
+            <div id="expense_file_data"></div>
+
             <?php if (count($child_expenses) > 0 || $expense->recurring != 0) { ?>
             <div role="tabpanel" class="tab-pane" id="tab_child_expenses">
                 <?php if (count($child_expenses) > 0) { ?>
@@ -436,5 +440,26 @@ $("body").on('change', 'select[name="applied_to_invoice"]', function () {
         alert_float('warning', "Please select the valid invoice." );
     }
 });
+
+function preview_expense_btn(invoker){
+  "use strict"; 
+  var id = $(invoker).attr('id');
+  view_expense_file(id);
+}
+
+function view_expense_file(id) {
+  "use strict"; 
+  $('#expense_file_data').empty();
+  $("#expense_file_data").load(admin_url + 'expenses/view_expense_file/' + id, function(response, status, xhr) {
+      if (status == "error") {
+          alert_float('danger', xhr.statusText);
+      }
+  });
+}
+
+function close_modal_preview(){
+  "use strict"; 
+ $('._project_file').modal('hide');
+}
 
 </script>

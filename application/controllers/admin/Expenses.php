@@ -500,4 +500,16 @@ class Expenses extends AdminController
         }
         echo json_encode($response);
     }
+
+    public function view_expense_file($id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->expenses_model->get_expense_file($id);
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('admin/expenses/preview_file', $data);
+    }
 }

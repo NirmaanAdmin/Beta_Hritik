@@ -935,4 +935,12 @@ class Expenses_model extends App_Model
         $this->db->order_by('company', 'asc');
         return $this->db->get(db_prefix() . 'pur_vendor')->result_array();
     }
+
+    public function get_expense_file($id)
+    {
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'expense');
+        $file = $this->db->get(db_prefix() . 'files')->row();
+        return $file;
+    }
 }
