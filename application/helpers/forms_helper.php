@@ -677,3 +677,43 @@ function get_staff_list($where = '')
     }
     return $CI->db->get(db_prefix() . 'staff')->result_array();
 }
+ 
+function get_qcr_category($name_category, $category)
+{
+    $result = array();
+    $result = [
+        [
+            'id' => 1,
+            'name' => 'Morderate',
+        ],
+        [
+            'id' => 2,
+            'name' => 'Major',
+        ],
+        [
+            'id' => 3,
+            'name' => 'Critical',
+        ],
+    ];
+    return render_select($name_category, $result, array('id', 'name'), '', $category);
+}
+
+function get_qcr_status($name_status, $status)
+{
+    $result = array();
+    $result = [
+        [
+            'id' => 1,
+            'name' => 'Close',
+        ],
+        [
+            'id' => 2,
+            'name' => 'Open',
+        ],
+        [
+            'id' => 3,
+            'name' => 'Temporary work done for event',
+        ],
+    ];
+    return render_select($name_status, $result, array('id', 'name'), '', $status);
+}

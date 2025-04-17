@@ -808,7 +808,7 @@ class Forms extends AdminController
 
     public function find_form_design($form_type, $form_id = 0)
     {
-        
+
         if ($form_type == "dpr") {
             $dpr_row_template = $this->forms_model->create_dpr_row_template();
             if ($form_id != 0) {
@@ -841,8 +841,39 @@ class Forms extends AdminController
             }
             $data['dpr_row_template'] = $dpr_row_template;
             $this->load->view('admin/forms/form_design/dpr', $data);
-        } else {
-            $formConfigs = [
+        } elseif ($form_type == "qcr") {
+            $qcr_row_template = $this->forms_model->create_qcr_row_template();
+            if ($form_id != 0) {
+                $dpr_form = $this->forms_model->get_dpr_form($form_id);
+                $dpr_form_detail = $this->forms_model->get_dpr_form_detail($form_id);
+                if (!empty($dpr_form_detail)) {
+                    $index_order = 0;
+                    foreach ($dpr_form_detail as $value) {
+                        $index_order++;
+                        $qcr_row_template .= $this->forms_model->create_qcr_row_template(
+                            'items[' . $index_order . ']',
+                            $value['location'],
+                            $value['agency'],
+                            $value['type'],
+                            $value['work_execute'],
+                            $value['material_consumption'],
+                            $value['machinery'],
+                            $value['skilled'],
+                            $value['unskilled'],
+                            $value['depart'],
+                            $value['total'],
+                            $value['male'],
+                            $value['female'],
+                            true,
+                            $value['id']
+                        );
+                    }
+                }
+                $data['dpr_form'] = $dpr_form;
+            }
+            $data['qcr_row_template'] = $qcr_row_template;
+            $this->load->view('admin/forms/form_design/qcr', $data);
+        } else {            $formConfigs = [
                 'apc' => ['has_attachments' => true],
                 'wpc' => ['has_attachments' => true],
                 'mfa' => ['has_attachments' => false],
@@ -872,7 +903,7 @@ class Forms extends AdminController
         $form_items = $this->forms_model->get_form_items($form_type);
         $data = [];
         if ($form_id != 0) {
-            
+
             $getFormMethod = "get_{$form_type}_form";
             $data["{$form_type}_form"] = $this->forms_model->$getFormMethod($form_id);
 
@@ -885,8 +916,6 @@ class Forms extends AdminController
             }
 
             $data['form_id'] = $form_id;
-            
-
         }
         $data['form_items'] = $form_items;
         $this->load->view("admin/forms/form_design/{$form_type}", $data);
@@ -914,7 +943,23 @@ class Forms extends AdminController
 
         echo $this->forms_model->create_dpr_row_template($name, $location, $agency, $type, $work_execute, $material_consumption, $machinery, $skilled, $unskilled, $depart, $total, $male, $female, false, $item_key);
     }
+    public function get_qcr_row_template()
+    {
+        $name = $this->input->post('name');
+        $date = $this->input->post('date');
+        $floor = $this->input->post('floor');
+        $location = $this->input->post('location');
+        $observation = $this->input->post('observation');
+        $category = $this->input->post('category');
+        $photograph = $this->input->post('photograph');
+        $compliance_photograph = $this->input->post('compliance_photograph');
+        $compliance_detail = $this->input->post('compliance_detail');
+        $status = $this->input->post('status');
+        $remarks = $this->input->post('remarks');
+        $item_key = $this->input->post('item_key');
 
+        echo $this->forms_model->create_qcr_row_template($name, $date, $floor, $location, $observation, $category, $photograph, $compliance_photograph, $compliance_detail, $status, $remarks, false, $item_key);
+    }
     public function delete_apc_attachment($id)
     {
         $this->forms_model->delete_apc_attachment($id);
@@ -939,7 +984,7 @@ class Forms extends AdminController
     {
         $this->forms_model->delete_esc_attachment($id);
     }
-    
+
     public function delete_cfwas_attachment($id)
     {
         $this->forms_model->delete_cfwas_attachment($id);
@@ -956,5 +1001,4 @@ class Forms extends AdminController
     {
         $this->forms_model->delete_cosc_attachment($id);
     }
-    
 }
