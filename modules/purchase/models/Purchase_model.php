@@ -1156,8 +1156,18 @@ class Purchase_model extends App_Model
      */
     public function get_pur_order_detail($pur_request)
     {
+        $this->db->where('reorder', NULL);
         $this->db->where('pur_order', $pur_request);
         $pur_order_details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+        if(!empty($pur_order_details)) {
+            $this->db->where('pur_order', $pur_request);
+            $this->db->order_by('id', 'ASC');
+            $pur_order_details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+        } else {
+            $this->db->where('pur_order', $pur_request);
+            $this->db->order_by('reorder', 'ASC');
+            $pur_order_details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
+        }
 
         foreach ($pur_order_details as $key => $detail) {
             $pur_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
@@ -2756,6 +2766,7 @@ class Purchase_model extends App_Model
                     $dt_data['tax_name'] = $tax_name;
 
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+                    $dt_data['reorder'] = isset($rqd['order']) ? $rqd['order'] : null;
 
                     $this->db->insert(db_prefix() . 'pur_order_detail', $dt_data);
                     $last_insert_id = $this->db->insert_id();
@@ -2968,6 +2979,7 @@ class Purchase_model extends App_Model
                 $dt_data['tax_name'] = $tax_name;
 
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+                $dt_data['reorder'] = isset($rqd['order']) ? $rqd['order'] : null;
 
                 $this->db->insert(db_prefix() . 'pur_order_detail', $dt_data);
                 $new_quote_insert_id = $this->db->insert_id();
@@ -3027,6 +3039,7 @@ class Purchase_model extends App_Model
                 $dt_data['tax_name'] = $tax_name;
 
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+                $dt_data['reorder'] = isset($rqd['order']) ? $rqd['order'] : null;
 
                 $this->db->where('id', $rqd['id']);
                 $this->db->update(db_prefix() . 'pur_order_detail', $dt_data);
@@ -16215,6 +16228,7 @@ class Purchase_model extends App_Model
                     $dt_data['tax_name'] = $tax_name;
 
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+                    $dt_data['reorder'] = isset($rqd['order']) ? $rqd['order'] : null;
 
                     $this->db->insert(db_prefix() . 'wo_order_detail', $dt_data);
                     $last_insert_id = $this->db->insert_id();
@@ -16420,6 +16434,7 @@ class Purchase_model extends App_Model
                 $dt_data['tax_name'] = $tax_name;
 
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+                $dt_data['reorder'] = isset($rqd['order']) ? $rqd['order'] : null;
 
                 $this->db->insert(db_prefix() . 'wo_order_detail', $dt_data);
                 $new_quote_insert_id = $this->db->insert_id();
@@ -16478,6 +16493,7 @@ class Purchase_model extends App_Model
                 $dt_data['tax_name'] = $tax_name;
 
                 $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+                $dt_data['reorder'] = isset($rqd['order']) ? $rqd['order'] : null;
 
                 $this->db->where('id', $rqd['id']);
                 $this->db->update(db_prefix() . 'wo_order_detail', $dt_data);
@@ -16693,9 +16709,18 @@ class Purchase_model extends App_Model
     }
     public function get_wo_order_detail($wo_id)
     {
+        $this->db->where('reorder', NULL);
         $this->db->where('wo_order', $wo_id);
-        $this->db->order_by('id', 'ASC');
         $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
+        if(!empty($pur_order_details)) {
+            $this->db->where('wo_order', $wo_id);
+            $this->db->order_by('id', 'ASC');
+            $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
+        } else {
+            $this->db->where('wo_order', $wo_id);
+            $this->db->order_by('reorder', 'ASC');
+            $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
+        } 
 
         foreach ($pur_order_details as $key => $detail) {
             $pur_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
