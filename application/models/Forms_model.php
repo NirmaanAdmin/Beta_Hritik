@@ -873,6 +873,24 @@ class Forms_model extends App_Model
                     $new_order = $data['newitems'];
                     unset($data['newitems']);
                 }
+            } elseif ($data['form_type'] == "qcr") {
+                $qcr_form = [];
+                unset(
+                    $data['date'],
+                    $data['floor'],
+                    $data['isedit'],
+                    $data['location'],
+                    $data['observation'],
+                    $data['category'],
+                    $data['compliance_detail'],
+                    $data['status'],
+                    $data['remarks'],
+                );
+                $new_order = [];
+                if (isset($data['newitems'])) {
+                    $new_order = $data['newitems'];
+                    unset($data['newitems']);
+                }
             } elseif ($data['form_type'] == "apc") {
                 $apc_form = [];
                 $apc_form['date'] = $data['date'];
@@ -1080,6 +1098,30 @@ class Forms_model extends App_Model
                             $dt_data['total'] = $value['total'];
                             $dt_data['male'] = $value['male'];
                             $dt_data['female'] = $value['female'];
+                            $this->db->insert(db_prefix() . $data['form_type'] . '_form_detail', $dt_data);
+                        }
+                    }
+                }
+            } elseif ($data['form_type'] == "qcr") {
+                if (isset($qcr_form)) {
+                    if (!empty($qcr_form)) {
+                        $qcr_form['form_id'] = $formid;
+                        $this->db->insert(db_prefix() . $data['form_type'] . '_form', $dpr_form);
+                    }
+                }
+                if (isset($new_order)) {
+                    if (!empty($new_order)) {
+                        foreach ($new_order as $key => $value) {
+                            $dt_data = [];
+                            $dt_data['form_id'] = $formid;
+                            $dt_data['date'] = $value['date'];
+                            $dt_data['floor'] = $value['floor'];
+                            $dt_data['location'] = $value['location'];
+                            $dt_data['observation'] = $value['observation'];
+                            $dt_data['category'] = $value['category'];
+                            $dt_data['compliance_detail'] = $value['compliance_detail'];
+                            $dt_data['status'] = $value['status'];
+                            $dt_data['remarks'] = $value['remarks'];
                             $this->db->insert(db_prefix() . $data['form_type'] . '_form_detail', $dt_data);
                         }
                     }
@@ -1798,6 +1840,37 @@ class Forms_model extends App_Model
                 $remove_order = $data['removed_items'];
                 unset($data['removed_items']);
             }
+        } elseif ($formBeforeUpdate->form_type == "qcr") {
+            $qcr_form = [];
+            unset(
+                $data['date'],
+                $data['floor'],
+                $data['isedit'],
+                $data['location'],
+                $data['observation'],
+                $data['category'],
+                $data['compliance_detail'],
+                $data['status'],
+                $data['remarks'],
+            );
+            $new_order = [];
+            if (isset($data['newitems'])) {
+
+                $new_order = $data['newitems'];
+                unset($data['newitems']);
+            }
+
+            $update_order = [];
+            if (isset($data['items'])) {
+                $update_order = $data['items'];
+                unset($data['items']);
+            }
+
+            $remove_order = [];
+            if (isset($data['removed_items'])) {
+                $remove_order = $data['removed_items'];
+                unset($data['removed_items']);
+            }
         } elseif ($formBeforeUpdate->form_type == "apc") {
             $apc_form = [];
             $apc_form['date'] = $data['date'];
@@ -2003,6 +2076,79 @@ class Forms_model extends App_Model
                         $dt_data = [];
                         $dt_data['form_id'] = $data['formid'];
                         $dt_data['location'] = $value['location'];
+                        $dt_data['agency'] = $value['agency'];
+                        $dt_data['type'] = $value['type'];
+                        $dt_data['work_execute'] = $value['work_execute'];
+                        $dt_data['material_consumption'] = $value['material_consumption'];
+                        $dt_data['machinery'] = $value['machinery'];
+                        $dt_data['skilled'] = $value['skilled'];
+                        $dt_data['unskilled'] = $value['unskilled'];
+                        $dt_data['depart'] = $value['depart'];
+                        $dt_data['total'] = $value['total'];
+                        $dt_data['male'] = $value['male'];
+                        $dt_data['female'] = $value['female'];
+                        $this->db->insert(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $dt_data);
+                        $new_insert_id = $this->db->insert_id();
+                        if ($new_insert_id) {
+                            $affectedRows++;
+                        }
+                    }
+                }
+            }
+
+            if (isset($update_order)) {
+                if (!empty($update_order)) {
+                    foreach ($update_order as $key => $value) {
+                        $dt_data = [];
+                        $dt_data['form_id'] = $data['formid'];
+                        $dt_data['location'] = $value['location'];
+                        $dt_data['agency'] = $value['agency'];
+                        $dt_data['type'] = $value['type'];
+                        $dt_data['work_execute'] = $value['work_execute'];
+                        $dt_data['material_consumption'] = $value['material_consumption'];
+                        $dt_data['machinery'] = $value['machinery'];
+                        $dt_data['skilled'] = $value['skilled'];
+                        $dt_data['unskilled'] = $value['unskilled'];
+                        $dt_data['depart'] = $value['depart'];
+                        $dt_data['total'] = $value['total'];
+                        $dt_data['male'] = $value['male'];
+                        $dt_data['female'] = $value['female'];
+                        $this->db->where('id', $value['id']);
+                        $this->db->update(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $dt_data);
+                        if ($this->db->affected_rows() > 0) {
+                            $affectedRows++;
+                        }
+                    }
+                }
+            }
+
+            if (isset($remove_order)) {
+                if (!empty($remove_order)) {
+                    foreach ($remove_order as $key => $value) {
+                        $this->db->where('id', $value);
+                        if ($this->db->delete(db_prefix() . $formBeforeUpdate->form_type . '_form_detail')) {
+                            $affectedRows++;
+                        }
+                    }
+                }
+            }
+        } elseif ($formBeforeUpdate->form_type == "qcr") {
+            if (isset($qcr_form)) {
+                if (!empty($qcr_form)) {
+                    $this->db->where('form_id', $data['formid']);
+                    $this->db->update(db_prefix() . $formBeforeUpdate->form_type . '_form', $qcr_form);
+                    if ($this->db->affected_rows() > 0) {
+                        $affectedRows++;
+                    }
+                }
+            }
+
+            if (isset($new_order)) {
+                if (!empty($new_order)) {
+                    foreach ($new_order as $key => $value) {
+                        $dt_data = [];
+                        $dt_data['form_id'] = $data['formid'];
+                        $dt_data['date'] = $value['date'];
                         $dt_data['agency'] = $value['agency'];
                         $dt_data['type'] = $value['type'];
                         $dt_data['work_execute'] = $value['work_execute'];
@@ -3330,7 +3476,7 @@ class Forms_model extends App_Model
      * @return string                        The generated HTML row template
      */
 
-    public function create_qcr_row_template($name = '', $date = '', $floor = '',$location = '' , $observation = '' ,$category = '',$photograph = '',$compliance_photograph = '',$compliance_detail = '',$status = '',$remarks = '',$is_edit = false, $item_key = '')
+    public function create_qcr_row_template($name = '', $date = '', $floor = '', $location = '', $observation = '', $category = '', $photograph = '', $compliance_photograph = '', $compliance_detail = '', $status = '', $remarks = '', $is_edit = false, $item_key = '')
     {
         $row = '';
         $name_date = 'date';
@@ -3354,7 +3500,7 @@ class Forms_model extends App_Model
             $name_floor = $name . '[floor]';
             $name_location = $name . '[location]';
             $name_observation = $name . '[observation]';
-            $name_category = $name. '[category]';
+            $name_category = $name . '[category]';
             $name_photograph = $name . '[photograph]';
             $name_compliance_photograph = $name . '[compliance_photograph]';
             $name_compliance_detail = $name . '[compliance_detail]';
@@ -3367,16 +3513,16 @@ class Forms_model extends App_Model
         //     $item_base_url = base_url('uploads/meetings/mom_attachments/' . $attachments['agenda_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
         //     $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
         // }
-        $row .= '<td class="date">' . render_input($name_date, '', $date,'date') . '</td>';
-        $row .= '<td class="floor">' . render_input($name_floor, '',$floor) . '</td>';
+        $row .= '<td class="date">' . render_input($name_date, '', $date, 'date') . '</td>';
+        $row .= '<td class="floor">' . render_input($name_floor, '', $floor) . '</td>';
         $row .= '<td class="location">' . render_input($name_location, '', $location) . '</td>';
-        $row .= '<td class="observation">' . render_textarea($name_observation, '', $observation,['rows' => 2, 'placeholder' => _l('Observation')]) . '</td>';
-        $row .= '<td class="category">' . get_qcr_category($name_category,$category) . '</td>';
+        $row .= '<td class="observation">' . render_textarea($name_observation, '', $observation, ['rows' => 2, 'placeholder' => _l('Observation')]) . '</td>';
+        $row .= '<td class="category">' . get_qcr_category($name_category, $category) . '</td>';
         $row .= '<td class="photograph"><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.      jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_photograph . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
-        $row .= '<td class="compliance_photograph"><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' .$name_compliance_photograph . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
-        $row .= '<td class="compliance_detail">' . render_textarea($name_compliance_detail, '', $compliance_detail,['rows' => 2, 'placeholder' => _l('Compliance Detail')]) . '</td>';
+        $row .= '<td class="compliance_photograph"><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_compliance_photograph . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
+        $row .= '<td class="compliance_detail">' . render_textarea($name_compliance_detail, '', $compliance_detail, ['rows' => 2, 'placeholder' => _l('Compliance Detail')]) . '</td>';
         $row .= '<td class="status">' . get_qcr_status($name_status, $status) . '</td>';
-        $row .= '<td class="remarks">' . render_textarea($name_remarks, '', $remarks,['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
+        $row .= '<td class="remarks">' . render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
 
         if ($name == '') {
             $row .= '<td><button type="button" class="btn pull-right btn-info qcr-add-item-to-table"><i class="fa fa-check"></i></button></td>';
@@ -3399,7 +3545,17 @@ class Forms_model extends App_Model
         return $this->db->get(db_prefix() . 'dpr_form_detail')->result_array();
     }
 
+    public function get_qcr_form($form_id)
+    {
+        $this->db->where('form_id', $form_id);
+        return $this->db->get(db_prefix() . 'qcr_form')->row();
+    }
 
+    public function get_qcr_form_detail($form_id)
+    {
+        $this->db->where('form_id', $form_id);
+        return $this->db->get(db_prefix() . 'qcr_form_detail')->result_array();
+    }
     public function get_apc_form($form_id)
     {
         $this->db->where('form_id', $form_id);

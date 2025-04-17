@@ -44,7 +44,7 @@
 <div class="col-md-12">
     <hr class="hr-panel-separator" />
 </div>
-
+<?php  echo form_hidden('isedit'); ?>
 <div class="col-md-12">
     <div class="table-responsive">
         <table class="table qcr-items-table items table-main-dpr-edit has-calculations no-mtop">
@@ -93,6 +93,7 @@
             </tbody>
         </table>
     </div>
+    <div id="removed-items"></div>
 </div>
 
 <script type="text/javascript">

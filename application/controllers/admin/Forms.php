@@ -844,32 +844,30 @@ class Forms extends AdminController
         } elseif ($form_type == "qcr") {
             $qcr_row_template = $this->forms_model->create_qcr_row_template();
             if ($form_id != 0) {
-                $dpr_form = $this->forms_model->get_dpr_form($form_id);
-                $dpr_form_detail = $this->forms_model->get_dpr_form_detail($form_id);
-                if (!empty($dpr_form_detail)) {
+                $qcr_form = $this->forms_model->get_qcr_form($form_id);
+                $qcr_form_detail = $this->forms_model->get_qcr_form_detail($form_id);
+                if (!empty($qcr_form_detail)) {
                     $index_order = 0;
-                    foreach ($dpr_form_detail as $value) {
+                    foreach ($qcr_form_detail as $value) {
                         $index_order++;
                         $qcr_row_template .= $this->forms_model->create_qcr_row_template(
                             'items[' . $index_order . ']',
+                            $value['date'],
+                            $value['floor'],
                             $value['location'],
-                            $value['agency'],
-                            $value['type'],
-                            $value['work_execute'],
-                            $value['material_consumption'],
-                            $value['machinery'],
-                            $value['skilled'],
-                            $value['unskilled'],
-                            $value['depart'],
-                            $value['total'],
-                            $value['male'],
-                            $value['female'],
+                            $value['observation'],
+                            $value['category'],
+                            $value['photograph'],
+                            $value['compliance_photograph'],
+                            $value['compliance_detail'],
+                            $value['status'],
+                            $value['remarks'],
                             true,
                             $value['id']
                         );
                     }
                 }
-                $data['dpr_form'] = $dpr_form;
+                $data['qcr_form'] = $qcr_form;
             }
             $data['qcr_row_template'] = $qcr_row_template;
             $this->load->view('admin/forms/form_design/qcr', $data);
