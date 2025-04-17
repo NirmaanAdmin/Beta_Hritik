@@ -646,9 +646,10 @@ function pur_calculate_total(from_discount_money){
 }
 
 function subtotal_value_order_detail(subtotal) {
+  var subtotal = Math.round(subtotal);
   setTimeout(function () {
   var editor = tinymce.get('order_summary');
-    if (editor) {
+    if (editor && editor.initialized) {
       var currentContent = editor.getContent();
       if (subtotal) {
           currentContent = currentContent.replace(
@@ -658,63 +659,97 @@ function subtotal_value_order_detail(subtotal) {
       }
       editor.setContent(currentContent);
     } else {
-        console.error("TinyMCE is not initialized yet.");
+      setTimeout(function() {
+        editor = tinymce.get('order_summary');
+        if (editor && editor.initialized) {
+          var currentContent = editor.getContent();
+          if (subtotal) {
+              currentContent = currentContent.replace(
+                  /<span class="subtotal_in_value">.*?<\/span>/g,
+                  '<span class="subtotal_in_value">' + subtotal + '</span>'
+              );
+          }
+          editor.setContent(currentContent);
+        }
+      }, 1000);
     }
-  }, 500);
+  }, 0);
 }
 
-function subtotal_amount_order_detail(subtotal) {
-  var subtotal_word = numberToWords(subtotal);
+function subtotal_amount_order_detail(total) {
+  var total = Math.round(total);
+  var total_word = numberToWords(total);
   setTimeout(function () {
   var editor = tinymce.get('order_summary');
-    if (editor) {
+    if (editor && editor.initialized) {
       var currentContent = editor.getContent();
-      if (subtotal_word) {
+      if (total_word) {
           currentContent = currentContent.replace(
               /<span class="subtotal_in_words">.*?<\/span>/g,
-              '<span class="subtotal_in_words">' + subtotal_word + '</span>'
+              '<span class="subtotal_in_words">' + total_word + '</span>'
           );
       }
       editor.setContent(currentContent);
     } else {
-        console.error("TinyMCE is not initialized yet.");
+      setTimeout(function() {
+        editor = tinymce.get('order_summary');
+        if (editor && editor.initialized) {
+          var currentContent = editor.getContent();
+          if (total_word) {
+              currentContent = currentContent.replace(
+                  /<span class="subtotal_in_words">.*?<\/span>/g,
+                  '<span class="subtotal_in_words">' + total_word + '</span>'
+              );
+          }
+          editor.setContent(currentContent);
+        }
+      }, 1000);
     }
-  }, 500);
+  }, 0);
 }
 
-function numberToWords(num) {
-    if (num === 0) return "zero";
-    var ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
-    var teens = ["", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-    var tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-    var thousands = ["", "Thousand", "Million", "Billion"];
-
-    function convertHundreds(num) {
-        var word = "";
-        if (num >= 100) {
-            word += ones[Math.floor(num / 100)] + " Hundred ";
-            num %= 100;
-        }
-        if (num >= 11 && num <= 19) {
-            word += teens[num - 10] + " ";
-        } else if (num >= 10 || num > 0) {
-            word += tens[Math.floor(num / 10)] + " ";
-            word += ones[num % 10] + " ";
-        }
-        return word.trim();
+function numberToWords(amount) {
+    var words = {
+      0: '', 1: 'one', 2: 'two', 3: 'three', 4: 'four',
+      5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine',
+      10: 'ten', 11: 'eleven', 12: 'twelve', 13: 'thirteen',
+      14: 'fourteen', 15: 'fifteen', 16: 'sixteen',
+      17: 'seventeen', 18: 'eighteen', 19: 'nineteen',
+      20: 'twenty', 30: 'thirty', 40: 'forty', 50: 'fifty',
+      60: 'sixty', 70: 'seventy', 80: 'eighty', 90: 'ninety'
+    };
+    function getWords(n) {
+      if (n <= 20) return words[n];
+      if (n < 100) return words[Math.floor(n / 10) * 10] + (n % 10 ? ' ' + words[n % 10] : '');
+      return '';
     }
-
-    var word = "";
-    var i = 0;
-
-    while (num > 0) {
-      if (num % 1000 !== 0) {
-        word = convertHundreds(num % 1000) + " " + thousands[i] + " " + word;
+    function toTitleCase(str) {
+      return str.replace(/\w\S*/g, function (txt) {
+          return txt.charAt(0).toUpperCase() + txt.slice(1);
+      });
+    }
+    function convertToWords(num) {
+      if (num === 0) return 'Zero';
+      var result = '';
+      var crore = Math.floor(num / 10000000);
+      num = num % 10000000;
+      var lakh = Math.floor(num / 100000);
+      num = num % 100000;
+      var thousand = Math.floor(num / 1000);
+      num = num % 1000;
+      var hundred = Math.floor(num / 100);
+      var rest = num % 100;
+      if (crore) result += getWords(crore) + ' crore ';
+      if (lakh) result += getWords(lakh) + ' lakh ';
+      if (thousand) result += getWords(thousand) + ' thousand ';
+      if (hundred) result += getWords(hundred) + ' hundred ';
+      if (rest) {
+        if (result !== '') result += 'and ';
+        result += getWords(rest);
       }
-      num = Math.floor(num / 1000);
-      i++;
+      return toTitleCase(result.trim());
     }
-    return word.trim();
+    return convertToWords(amount);
 }
 
 function pur_add_item_to_preview(id) {
