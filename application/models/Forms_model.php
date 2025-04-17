@@ -2149,17 +2149,13 @@ class Forms_model extends App_Model
                         $dt_data = [];
                         $dt_data['form_id'] = $data['formid'];
                         $dt_data['date'] = $value['date'];
-                        $dt_data['agency'] = $value['agency'];
-                        $dt_data['type'] = $value['type'];
-                        $dt_data['work_execute'] = $value['work_execute'];
-                        $dt_data['material_consumption'] = $value['material_consumption'];
-                        $dt_data['machinery'] = $value['machinery'];
-                        $dt_data['skilled'] = $value['skilled'];
-                        $dt_data['unskilled'] = $value['unskilled'];
-                        $dt_data['depart'] = $value['depart'];
-                        $dt_data['total'] = $value['total'];
-                        $dt_data['male'] = $value['male'];
-                        $dt_data['female'] = $value['female'];
+                        $dt_data['floor'] = $value['floor'];
+                        $dt_data['location'] = $value['location'];
+                        $dt_data['observation'] = $value['observation'];
+                        $dt_data['category'] = $value['category'];
+                        $dt_data['compliance_detail'] = $value['compliance_detail'];
+                        $dt_data['status'] = $value['status'];
+                        $dt_data['remarks'] = $value['remarks'];
                         $this->db->insert(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $dt_data);
                         $new_insert_id = $this->db->insert_id();
                         if ($new_insert_id) {
@@ -2174,18 +2170,14 @@ class Forms_model extends App_Model
                     foreach ($update_order as $key => $value) {
                         $dt_data = [];
                         $dt_data['form_id'] = $data['formid'];
+                        $dt_data['date'] = $value['date'];
+                        $dt_data['floor'] = $value['floor'];
                         $dt_data['location'] = $value['location'];
-                        $dt_data['agency'] = $value['agency'];
-                        $dt_data['type'] = $value['type'];
-                        $dt_data['work_execute'] = $value['work_execute'];
-                        $dt_data['material_consumption'] = $value['material_consumption'];
-                        $dt_data['machinery'] = $value['machinery'];
-                        $dt_data['skilled'] = $value['skilled'];
-                        $dt_data['unskilled'] = $value['unskilled'];
-                        $dt_data['depart'] = $value['depart'];
-                        $dt_data['total'] = $value['total'];
-                        $dt_data['male'] = $value['male'];
-                        $dt_data['female'] = $value['female'];
+                        $dt_data['observation'] = $value['observation'];
+                        $dt_data['category'] = $value['category'];
+                        $dt_data['compliance_detail'] = $value['compliance_detail'];
+                        $dt_data['status'] = $value['status'];
+                        $dt_data['remarks'] = $value['remarks'];
                         $this->db->where('id', $value['id']);
                         $this->db->update(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $dt_data);
                         if ($this->db->affected_rows() > 0) {
