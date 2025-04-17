@@ -539,6 +539,10 @@ class Estimates_model extends App_Model
             unset($data['detailed_costing']);
         }
 
+        if (isset($data['file_csv'])) {
+            unset($data['file_csv']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -719,6 +723,10 @@ class Estimates_model extends App_Model
         if (isset($data['detailed_costing'])) {
             $detailed_costing = $data['detailed_costing'];
             unset($data['detailed_costing']);
+        }
+
+        if (isset($data['file_csv'])) {
+            unset($data['file_csv']);
         }
 
         $this->db->where('id', $id);

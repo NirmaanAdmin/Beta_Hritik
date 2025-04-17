@@ -4227,3 +4227,4 @@ $lang['area_statement']  = 'Area Statement';
 $lang['cost_plan_summary']  = 'Cost Plan Summary';
 $lang['detailed_costing_technical_assumptions'] = 'Detailed Costing & Technical Assumptions';
 $lang['project_timelines']  = 'Project Timelines';
+$lang['area'] = 'Area';

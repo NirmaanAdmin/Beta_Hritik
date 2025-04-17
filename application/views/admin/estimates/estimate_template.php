@@ -590,7 +590,18 @@
             $i = 1;
             foreach ($annexures as $key => $annexure) { ?>
                 <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
-                    <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                    <div class="col-md-4">
+                        <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                        <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+                        <div class="form-group">
+                          <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploaddetailedcostingcsv(this);"><?php echo _l('import'); ?></button>
+                          <a href="<?php echo site_url('uploads/estimates/file_sample/Sample_detailed_costing_technical_assumptions_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                        </div>
+                    </div>
                     <div class="table-responsive s_table">
                         <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
                             <thead>
@@ -598,7 +609,7 @@
                                     <th width="1%"></th>
                                     <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
                                     <th width="23%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
-                                    <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                    <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?></th>
                                     <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
                                     <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
                                     <th width="17%" align="right"><?php echo _l('remarks'); ?></th>
@@ -975,3 +986,6 @@
         </ul>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
