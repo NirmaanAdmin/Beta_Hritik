@@ -215,7 +215,9 @@ $billing_status = $this->ci->input->post('billing_status');
 if (isset($billing_status)) {
 
     $where_billing_status = '';
-
+    if($billing_status == 8) {
+        $billing_status = 0;
+    }
 
     if ($billing_status != '') {
         if ($where_billing_status == '') {
