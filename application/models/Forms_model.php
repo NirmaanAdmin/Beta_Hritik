@@ -1123,7 +1123,28 @@ class Forms_model extends App_Model
                             $dt_data['status'] = $value['status'];
                             $dt_data['remarks'] = $value['remarks'];
                             $this->db->insert(db_prefix() . $data['form_type'] . '_form_detail', $dt_data);
+                            $qcr_detail_id = $this->db->insert_id();
                         }
+                    }
+                }
+                // Upload the file into the 'qcr_attachments' folder.
+                $iuploadedFiles = handle_qcr_item_attachment_array('qcr_attachments', $formid, $qcr_detail_id, 'newitems', $key);
+                if (!empty($iuploadedFiles) && is_array($iuploadedFiles)) {
+                    foreach ($iuploadedFiles as $ifile) {
+                        // Update the agendas_details record with the attachment.
+                        $idata = ['photograph' => $ifile['file_name']];
+                        $this->db->where('id', $qcr_detail_id);
+                        $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
+                    }
+                }
+                // Upload the file into the 'compliance_photograph' folder.
+                $iuploadedFiles1 = handle_qcr_second_item_attachment_array('compliance_photograph', $formid, $qcr_detail_id, 'newitems', $key);
+                if (!empty($iuploadedFiles1) && is_array($iuploadedFiles1)) {
+                    foreach ($iuploadedFiles1 as $ifile) {
+                        // Update the agendas_details record with the attachment.
+                        $idata = ['compliance_photograph' => $ifile['file_name']];
+                        $this->db->where('id', $qcr_detail_id);
+                        $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
                     }
                 }
             } elseif ($data['form_type'] == "apc") {
@@ -2161,6 +2182,32 @@ class Forms_model extends App_Model
                         if ($new_insert_id) {
                             $affectedRows++;
                         }
+                        // Upload the file into the 'qcr_attachments' folder.
+                        $iuploadedFiles = handle_qcr_item_attachment_array('qcr_attachments',  $data['formid'], $new_insert_id, 'newitems', $key);
+                        if (!empty($iuploadedFiles) && is_array($iuploadedFiles)) {
+                            foreach ($iuploadedFiles as $ifile) {
+                                // Update the agendas_details record with the attachment.
+                                $idata = ['photograph' => $ifile['file_name']];
+                                $this->db->where('id', $new_insert_id);
+                                $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
+                                if ($this->db->affected_rows() > 0) {
+                                    $affectedRows++;
+                                }
+                            }
+                        }
+                        // Upload the file into the 'compliance_photograph' folder.
+                        $iuploadedFiles1 = handle_qcr_second_item_attachment_array('compliance_photograph', $data['formid'], $new_insert_id, 'newitems', $key);
+                        if (!empty($iuploadedFiles1) && is_array($iuploadedFiles1)) {
+                            foreach ($iuploadedFiles1 as $ifile) {
+                                // Update the agendas_details record with the attachment.
+                                $idata = ['compliance_photograph' => $ifile['file_name']];
+                                $this->db->where('id', $new_insert_id);
+                                $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
+                                if ($this->db->affected_rows() > 0) {
+                                    $affectedRows++;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2182,6 +2229,33 @@ class Forms_model extends App_Model
                         $this->db->update(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $dt_data);
                         if ($this->db->affected_rows() > 0) {
                             $affectedRows++;
+                        }
+                        // Upload the file into the 'qcr_attachments' folder.
+                        $iuploadedFiles = handle_qcr_item_attachment_array('qcr_attachments',  $data['formid'], $value['id'], 'items', $key);
+                        if (!empty($iuploadedFiles) && is_array($iuploadedFiles)) {
+                            foreach ($iuploadedFiles as $ifile) {
+                                // Update the agendas_details record with the attachment.
+                                $idata = ['photograph' => $ifile['file_name']];
+                                $this->db->where('id', $value['id']);
+                                $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
+                                $last_insert_id = $this->db->insert_id();
+                                if ($this->db->affected_rows() > 0) {
+                                    $affectedRows++;
+                                }
+                            }
+                        }
+                        // Upload the file into the 'compliance_photograph' folder.
+                        $iuploadedFiles1 = handle_qcr_second_item_attachment_array('compliance_photograph', $data['formid'], $value['id'], 'items', $key);
+                        if (!empty($iuploadedFiles1) && is_array($iuploadedFiles1)) {
+                            foreach ($iuploadedFiles1 as $ifile) {
+                                // Update the agendas_details record with the attachment.
+                                $idata = ['compliance_photograph' => $ifile['file_name']];
+                                $this->db->where('id', $value['id']);
+                                $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
+                                if ($this->db->affected_rows() > 0) {
+                                    $affectedRows++;
+                                }
+                            }
                         }
                     }
                 }
@@ -3468,7 +3542,7 @@ class Forms_model extends App_Model
      * @return string                        The generated HTML row template
      */
 
-    public function create_qcr_row_template($name = '', $date = '', $floor = '', $location = '', $observation = '', $category = '', $photograph = '', $compliance_photograph = '', $compliance_detail = '', $status = '', $remarks = '', $is_edit = false, $item_key = '')
+    public function create_qcr_row_template($name = '', $date = '', $floor = '', $location = '', $observation = '', $category = '', $photograph = '', $compliance_photograph = '', $compliance_detail = '', $status = '', $remarks = '', $is_edit = false, $item_key = '', $value = [])
     {
         $row = '';
         $name_date = 'date';
@@ -3501,17 +3575,23 @@ class Forms_model extends App_Model
         }
 
         $full_item_image = '';
-        // if (!empty($attachments['attachments']) && !empty($attachments['agenda_id'])) {
-        //     $item_base_url = base_url('uploads/meetings/mom_attachments/' . $attachments['agenda_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
-        //     $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $attachments . '" >';
-        // }
+        if (!empty($photograph) && !empty($value['photograph'])) {
+            $item_base_url = base_url('uploads/form_attachments/qcr_attachments/' . $value['form_id'] . '/' . $value['id'] . '/' . $value['photograph']);
+            $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $photograph . '" >';
+        }
+        $full_item_image1 = '';
+        if (!empty($compliance_photograph) && !empty($value['compliance_photograph'])) {
+            $item_base_url1 = base_url('uploads/form_attachments/compliance_photograph/' . $value['form_id'] . '/' . $value['id'] . '/' . $value['compliance_photograph']);
+            $full_item_image1 = '<img class="images_w_table" src="' . $item_base_url1 . '" alt="' . $compliance_photograph . '" >';
+        }
+
         $row .= '<td class="date">' . render_input($name_date, '', $date, 'date') . '</td>';
         $row .= '<td class="floor">' . render_input($name_floor, '', $floor) . '</td>';
         $row .= '<td class="location">' . render_input($name_location, '', $location) . '</td>';
         $row .= '<td class="observation">' . render_textarea($name_observation, '', $observation, ['rows' => 2, 'placeholder' => _l('Observation')]) . '</td>';
         $row .= '<td class="category">' . get_qcr_category($name_category, $category) . '</td>';
         $row .= '<td class="photograph"><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.      jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_photograph . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
-        $row .= '<td class="compliance_photograph"><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_compliance_photograph . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image . '</td>';
+        $row .= '<td class="compliance_photograph"><input type="file" extension="' . str_replace(['.', ' '], '', '.png,.jpg,.jpeg') . '" filesize="' . file_upload_max_size() . '" class="form-control" name="' . $name_compliance_photograph . '" accept="' . get_item_form_accepted_mimes() . '">' . $full_item_image1 . '</td>';
         $row .= '<td class="compliance_detail">' . render_textarea($name_compliance_detail, '', $compliance_detail, ['rows' => 2, 'placeholder' => _l('Compliance Detail')]) . '</td>';
         $row .= '<td class="status">' . get_qcr_status($name_status, $status) . '</td>';
         $row .= '<td class="remarks">' . render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';

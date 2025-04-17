@@ -743,8 +743,179 @@ function handle_mom_item_attachment_array($related, $id, $item_path, $index_name
 
     return false;
 }
+function handle_qcr_item_attachment_array($related, $id, $item_path, $index_name, $key)
+{
+    // Base directory for meeting management uploads.
+    $base_path = get_upload_path_by_type('form');
+    if (!is_dir($base_path)) {
+        mkdir($base_path, 0755, true);
+    }
 
+    // Create the directory structure:
+    // - Related folder (e.g. 'mom_attachments' or 'minutes_attachments')
+    // - Parent ID folder (e.g. agenda_id or minute_id)
+    // - Detail ID folder (e.g. agenda_detail_id or minutes_detail_id)
+    $related_path = $base_path . $related . '/';
+    if (!is_dir($related_path)) {
+        mkdir($related_path, 0755, true);
+    }
 
+    $id_path = $related_path . $id . '/';
+    if (!is_dir($id_path)) {
+        mkdir($id_path, 0755, true);
+    }
+
+    $item_dir = $id_path . $item_path . '/';
+    if (!is_dir($item_dir)) {
+        mkdir($item_dir, 0755, true);
+    }
+
+    $uploaded_files = [];
+    $path = $item_dir;
+    $CI = &get_instance();
+
+    if (
+        isset($_FILES[$index_name]['name']) &&
+        (
+            $_FILES[$index_name]['name'] != '' ||
+            (is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
+        )
+    ) {
+        // Get the temporary file path from the passed key.
+        $tmpFilePath = $_FILES[$index_name]['tmp_name'][$key]['photograph'];
+
+        if (!empty($tmpFilePath)) {
+            // Check for any upload errors or invalid extensions.
+            if (
+                _perfex_upload_error($_FILES[$index_name]['error'][$key]['photograph']) ||
+                !_upload_extension_allowed($_FILES[$index_name]['name'][$key]['photograph'])
+            ) {
+                return false;
+            }
+
+            // Ensure the upload path exists (a helper may already do this).
+            _maybe_create_upload_path($path);
+            // Generate a unique filename.
+            $filename    = unique_filename($path, $_FILES[$index_name]['name'][$key]['photograph']);
+            $newFilePath = $path . $filename;
+
+            // Move the temporary file to the new location.
+            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                $uploaded_files[] = [
+                    'item_id'   => $item_path,  // To be used later for database updates.
+                    'file_name' => $filename,
+                    'filetype'  => $_FILES[$index_name]['type'][$key]['photograph'],
+                    'file_path' => $newFilePath, // Full path, which is useful for copying.
+                ];
+
+                // Optionally create a thumbnail if the file is an image.
+                if (is_image($newFilePath)) {
+                    // create_img_thumb($path, $filename);
+                }
+            }
+        }
+    }
+
+    // If at least one file is uploaded, return its details.
+    if (count($uploaded_files) > 0) {
+        return $uploaded_files;
+    } else {
+        // No files uploaded. If the folder is empty, remove the directory.
+        $other_attachments = list_files($item_dir);
+        if (count($other_attachments) == 0) {
+            delete_dir($item_dir);
+        }
+    }
+
+    return false;
+}
+
+function handle_qcr_second_item_attachment_array($related, $id, $item_path, $index_name, $key)
+{
+    // Base directory for meeting management uploads.
+    $base_path = get_upload_path_by_type('form');
+    if (!is_dir($base_path)) {
+        mkdir($base_path, 0755, true);
+    }
+
+    // Create the directory structure:
+    // - Related folder (e.g. 'mom_attachments' or 'minutes_attachments')
+    // - Parent ID folder (e.g. agenda_id or minute_id)
+    // - Detail ID folder (e.g. agenda_detail_id or minutes_detail_id)
+    $related_path = $base_path . $related . '/';
+    if (!is_dir($related_path)) {
+        mkdir($related_path, 0755, true);
+    }
+
+    $id_path = $related_path . $id . '/';
+    if (!is_dir($id_path)) {
+        mkdir($id_path, 0755, true);
+    }
+
+    $item_dir = $id_path . $item_path . '/';
+    if (!is_dir($item_dir)) {
+        mkdir($item_dir, 0755, true);
+    }
+
+    $uploaded_files = [];
+    $path = $item_dir;
+    $CI = &get_instance();
+
+    if (
+        isset($_FILES[$index_name]['name']) &&
+        (
+            $_FILES[$index_name]['name'] != '' ||
+            (is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
+        )
+    ) {
+        // Get the temporary file path from the passed key.
+        $tmpFilePath = $_FILES[$index_name]['tmp_name'][$key]['compliance_photograph'];
+
+        if (!empty($tmpFilePath)) {
+            // Check for any upload errors or invalid extensions.
+            if (
+                _perfex_upload_error($_FILES[$index_name]['error'][$key]['compliance_photograph']) ||
+                !_upload_extension_allowed($_FILES[$index_name]['name'][$key]['compliance_photograph'])
+            ) {
+                return false;
+            }
+
+            // Ensure the upload path exists (a helper may already do this).
+            _maybe_create_upload_path($path);
+            // Generate a unique filename.
+            $filename    = unique_filename($path, $_FILES[$index_name]['name'][$key]['compliance_photograph']);
+            $newFilePath = $path . $filename;
+
+            // Move the temporary file to the new location.
+            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                $uploaded_files[] = [
+                    'item_id'   => $item_path,  // To be used later for database updates.
+                    'file_name' => $filename,
+                    'filetype'  => $_FILES[$index_name]['type'][$key]['compliance_photograph'],
+                    'file_path' => $newFilePath, // Full path, which is useful for copying.
+                ];
+
+                // Optionally create a thumbnail if the file is an image.
+                if (is_image($newFilePath)) {
+                    // create_img_thumb($path, $filename);
+                }
+            }
+        }
+    }
+
+    // If at least one file is uploaded, return its details.
+    if (count($uploaded_files) > 0) {
+        return $uploaded_files;
+    } else {
+        // No files uploaded. If the folder is empty, remove the directory.
+        $other_attachments = list_files($item_dir);
+        if (count($other_attachments) == 0) {
+            delete_dir($item_dir);
+        }
+    }
+
+    return false;
+}
 /**
  * Change order attachments upload array
  * Multiple changee attachments can be upload if input type is array or dropzone plugin is used

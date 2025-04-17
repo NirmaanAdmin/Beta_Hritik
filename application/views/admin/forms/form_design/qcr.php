@@ -40,6 +40,10 @@
     .laber-type .dropdown-toggle {
         width: 90px !important;
     }
+    img.images_w_table {
+      width: 116px;
+      height: 73px;
+   }
 </style>
 <div class="col-md-12">
     <hr class="hr-panel-separator" />
