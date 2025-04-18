@@ -101,6 +101,9 @@
             /* border: 1px solid #ddd; */
             padding: 8px;
         }
+        .mom_body tr {
+          border: 1px solid #ccc;
+        }
     </style>
 </head>
 
@@ -202,7 +205,7 @@
     <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
         <thead>
             <tr>
-                <th>#</th>
+                <th>No</th>
                 <th>
                     <?php
                     if ($meeting['area_head'] == 1) {
