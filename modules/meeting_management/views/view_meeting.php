@@ -35,7 +35,7 @@
    .new-task-relation {
       display: none;
    }
-   .mom_body tr {
+   .mom_body td {
       border: 1px solid #ccc;
    }
 </style>
