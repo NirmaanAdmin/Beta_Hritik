@@ -1501,7 +1501,8 @@ class Estimates_model extends App_Model
             $items_group = $this->get_items_groups($annexure);
             $summary[$annexure]['name'] = $items_group->name;
             $summary[$annexure]['description'] = '';
-            $summary[$annexure]['qty'] = 1;
+            $summary[$annexure]['qty'] += $value['qty'];
+            $summary[$annexure]['rate'] += $value['rate'];
             $summary[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
             $summary[$annexure]['tax'] = get_estimate_annexurewise_tax($estimate->id, $annexure);
             $summary[$annexure]['amount'] = $summary[$annexure]['subtotal'] + $summary[$annexure]['tax'];
