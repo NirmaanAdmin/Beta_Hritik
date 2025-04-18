@@ -718,7 +718,7 @@
         <?php echo form_close(); ?>
       </div>
 
-      <?php if (count($list_approve_status) > 0 && $is_view == 1) { ?>
+      <?php if (count($list_approve_status) > 0) { ?>
         <div class="row">
           <div class="col-md-12">
             <div class="panel_s">
