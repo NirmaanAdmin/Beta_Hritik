@@ -872,7 +872,8 @@ class Forms extends AdminController
             }
             $data['qcr_row_template'] = $qcr_row_template;
             $this->load->view('admin/forms/form_design/qcr', $data);
-        } else {            $formConfigs = [
+        } else {
+            $formConfigs = [
                 'apc' => ['has_attachments' => true],
                 'wpc' => ['has_attachments' => true],
                 'mfa' => ['has_attachments' => false],
@@ -999,5 +1000,47 @@ class Forms extends AdminController
     public function delete_cosc_attachment($id)
     {
         $this->forms_model->delete_cosc_attachment($id);
+    }
+
+    /**
+     * Generate a PDF file for the given form
+     *
+     * If a form ID is not provided, redirect to the form list page.
+     *
+     * @param int $id form ID
+     *
+     * @throws Exception
+     */
+    public function pdf($id)
+    {
+        if (!$id) {
+            redirect(admin_url('forms'));
+        }
+
+        $form = $this->forms_model->get_form_by_id($id);
+
+        try {
+            $pdf = form_pdf($form);
+           
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            echo $message;
+            if (strpos($message, 'Unable to get the size of the image') !== false) {
+                show_pdf_unable_to_get_image_size_error();
+            }
+            die;
+        }
+
+        $type = 'I';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+
+        $pdf->Output(mb_strtoupper(slug_it($form->subject)) . '.pdf', $type);
     }
 }

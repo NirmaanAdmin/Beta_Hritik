@@ -31,7 +31,7 @@ function AdminFormsTableStructure($name = '', $bulk_action = false)
     $table .= '<th class="toggleable" id="th-priority">' . _l('form_dt_priority') . '</th>';
     $table .= '<th class="toggleable" id="th-last-reply">' . _l('form_dt_last_reply') . '</th>';
     $table .= '<th class="toggleable form_created_column" id="th-created">' . _l('form_date_created') . '</th>';
-
+    $table .= '<th class="toggleable ticket_options" id="th-options">' . _l('options') . '</th>';
     $custom_fields = get_table_custom_fields('forms');
 
     foreach ($custom_fields as $field) {
@@ -677,7 +677,7 @@ function get_staff_list($where = '')
     }
     return $CI->db->get(db_prefix() . 'staff')->result_array();
 }
- 
+
 function get_qcr_category($name_category, $category)
 {
     $result = array();
@@ -716,4 +716,46 @@ function get_qcr_status($name_status, $status)
         ],
     ];
     return render_select($name_status, $result, array('id', 'name'), '', $status);
+}
+function get_qcr_category_by_id($category_id)
+{
+    $category = '';
+    if ($category_id == 1) {
+        $category = 'Morderate';
+    } elseif ($category_id == 2) {
+        $category = 'Major';
+    } elseif ($category_id == 3) {
+        $category = 'Critical';
+    }
+
+    return $category;
+}
+
+function get_qcr_status_by_id($status_id)
+{
+    $status = '';
+    if ($status_id == 1) {
+        $status = 'Close';
+    } elseif ($status_id == 2) {
+        $status = 'Open';
+    } elseif ($status_id == 3) {
+        $status = 'Temporary work done for event';
+    }
+
+    return $status;
+}
+
+
+function chcek_formid_is_qcr_qor($formid)
+{
+    $CI = &get_instance();
+    // Use your DB prefix helper (Perfex = db_prefix())
+    $table = db_prefix() . 'qcr_form_detail';
+
+    // Count how many rows match this formid
+    $count = $CI->db
+        ->where('form_id', $formid)
+        ->count_all_results($table);
+
+    return $count > 0;
 }

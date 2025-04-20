@@ -322,3 +322,8 @@ function ticket_pdf($ticket, $tag = '')
 {
     return app_pdf('ticket', LIBSPATH . 'pdf/Ticket_pdf', $ticket, $tag);
 }
+
+function form_pdf($form, $tag = '')
+{
+    return app_pdf('form', LIBSPATH . 'pdf/Form_pdf', $form, $tag);
+}

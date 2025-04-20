@@ -9,25 +9,25 @@ $this->ci->load->model('departments_model');
 $rules = [
     App_table_filter::new('subject', 'TextRule')->label(_l('form_dt_subject')),
     App_table_filter::new('department', 'SelectRule')->label(_l('form_dt_department'))->options(function ($ci) {
-        return collect($ci->departments_model->get())->map(fn ($dep) => [
+        return collect($ci->departments_model->get())->map(fn($dep) => [
             'value' => $dep['departmentid'],
             'label' => $dep['name']
         ])->all();
-    })->isVisible(fn () => is_admin()),
+    })->isVisible(fn() => is_admin()),
     App_table_filter::new('status', 'MultiSelectRule')->label(_l('form_dt_status'))->options(function ($ci) use ($statuses) {
-        return collect($statuses)->map(fn ($status) => [
+        return collect($statuses)->map(fn($status) => [
             'value' => $status['formstatusid'],
             'label' => form_status_translate($status['formstatusid'])
         ])->all();
     }),
     App_table_filter::new('priority', 'SelectRule')->label(_l('form_dt_priority'))->options(function ($ci) {
-        return collect($ci->forms_model->get_priority())->map(fn ($priority) => [
+        return collect($ci->forms_model->get_priority())->map(fn($priority) => [
             'value' => $priority['priorityid'],
             'label' => form_priority_translate($priority['priorityid'])
         ])->all();
     }),
     App_table_filter::new('service', 'SelectRule')->label(_l('form_dt_service'))->options(function ($ci) use ($statuses) {
-        return collect($ci->forms_model->get_service())->map(fn ($service) => [
+        return collect($ci->forms_model->get_service())->map(fn($service) => [
             'value' => $service['serviceid'],
             'label' => $service['name']
         ])->all();
@@ -43,7 +43,7 @@ $rules = [
 $rules[] = App_table_filter::new('assigned', 'SelectRule')->label(_l('form_assigned'))
     ->withEmptyOperators()
     ->emptyOperatorValue(0)
-    ->isVisible(fn () => is_admin())
+    ->isVisible(fn() => is_admin())
     ->options(function ($ci) {
         $staff = $ci->staff_model->get('', ['active' => 1]);
 
@@ -71,6 +71,7 @@ return App_table::find('forms')
             'priority',
             'lastreply',
             db_prefix() . 'forms.date',
+            '2'
         ];
 
         $contactColumn = 6;
@@ -216,10 +217,26 @@ return App_table::find('forms')
                     $_data = '<span class="label form-status-' . $aRow['status'] . '" style="border:1px solid ' . adjust_hex_brightness($aRow['statuscolor'], 0.4) . '; color:' . $aRow['statuscolor'] . ';background: ' . adjust_hex_brightness($aRow['statuscolor'], 0.04) . ';">' . e(form_status_translate($aRow['status'])) . '</span>';
                 } elseif ($aColumns[$i] == db_prefix() . 'forms.date') {
                     $_data = e(_dt($_data));
-                } elseif (strpos($aColumns[$i],'service_name') !== false) {
+                } elseif (strpos($aColumns[$i], 'service_name') !== false) {
                     $_data = e($_data);
                 } elseif ($aColumns[$i] == 'priority') {
                     $_data = e(form_priority_translate($aRow['priority']));
+                } elseif ($aColumns[$i] == '2') {
+                    $check_formid_is_qcr_qor = chcek_formid_is_qcr_qor($aRow['formid']);
+                    if($check_formid_is_qcr_qor > 0){
+                        $_data = '<div class="btn-group mright5">
+                       <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><i class="fa fa-file-pdf"></i><span class="caret"></span></a>
+                       <ul class="dropdown-menu dropdown-menu-right">
+                          <li class="hidden-xs"><a href="' . admin_url('forms/pdf/' . $aRow['formid'] . '?output_type=I') . '">' . _l('view_pdf') . '</a></li>
+                          <li class="hidden-xs"><a href="' . admin_url('forms/pdf/' . $aRow['formid'] . '?output_type=I') . '" target="_blank">' . _l('view_pdf_in_new_window') . '</a></li>
+                          <li><a href="' . admin_url('forms/pdf/' . $aRow['formid']) . '">' . _l('download') . '</a></li>
+                       </ul>
+                       </div>';
+                    }else{
+                        $_data = '';
+                    }
+
+                    
                 } else {
                     if (strpos($aColumns[$i], 'date_picker_') !== false) {
                         $_data = (strpos($_data, ' ') !== false ? _dt($_data) : _d($_data));
