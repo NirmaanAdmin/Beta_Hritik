@@ -54,6 +54,7 @@ class MinutesController extends AdminController
         }
         $data['is_edit'] = $is_edit;
         $data['mom_row_template'] = $mom_row_template;
+        $data['projects'] = $this->projects_model->get_items();
         // Load the minutes form view (with tasks form and task list added)
         $this->load->view('meeting_management/minutes_form', $data);
     }
@@ -193,6 +194,7 @@ class MinutesController extends AdminController
         }
         $data['is_edit']         = $is_edit;
         $data['mom_row_template'] = $mom_row_template;
+        $data['projects'] = $this->projects_model->get_items();
 
         $data['title'] = _l('meeting_minutes');
 

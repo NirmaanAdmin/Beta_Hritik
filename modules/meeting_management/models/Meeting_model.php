@@ -391,7 +391,7 @@ class Meeting_model extends App_Model
     // Get existing minutes for the agenda
     public function get_minutes($agenda_id)
     {
-        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head,meeting_date,meeting_link');
+        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head,meeting_date,meeting_link,project_id');
         $this->db->where('id', $agenda_id);
         $query = $this->db->get(db_prefix() . 'meeting_management');  // Use the correct table name here
         return $query->row();

@@ -99,11 +99,23 @@
                   <div class="form-group col-md-6" style="padding-left:0px ;">
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
                      <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($minutes) && isset($minutes->meeting_date) ? htmlspecialchars($minutes->meeting_date) : ''; ?>" class="form-control" required>
-                  </div><br><br>
-                  <div class="form-group col-md-6" style="padding-right:0px ;"> 
-                     <label for="meeting_link"></label>
-                     <!-- <input type="text" id="meeting_link" name="meeting_link" value="<?php echo isset($minutes) && isset($minutes->meeting_link) ? htmlspecialchars($minutes->meeting_link) : ''; ?>" class="form-control"> -->
                   </div>
+                  <div class="form-group col-md-6" style="padding-right:0px ;"> 
+                     <?php /* <label for="meeting_link"></label>
+                     <!-- <input type="text" id="meeting_link" name="meeting_link" value="<?php echo isset($minutes) && isset($minutes->meeting_link) ? htmlspecialchars($minutes->meeting_link) : ''; ?>" class="form-control"> --> */ ?>
+                     <label for="project"><?php echo _l('project'); ?></label>
+                     <select name="project_id" id="project_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" required>
+                          <option value=""></option>
+                          <?php foreach ($projects as $s) { ?>
+                            <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($minutes) && $s['id'] == $minutes->project_id) {
+                               echo 'selected';
+                             } ?>><?php echo pur_html_entity_decode($s['name']); ?>
+                            </option>
+                          <?php } ?>
+                     </select>
+                  </div>
+                  <br><br>
+
                   <input type="hidden" name="agenda_id" id="agenda_id" value="<?php echo $agenda_id; ?>">
 
                   <div class="form-group">
