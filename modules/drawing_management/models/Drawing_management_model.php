@@ -1541,7 +1541,7 @@ class drawing_management_model extends app_model
 		}
 		if ($data['share_to'] == 'vendor') {
 			if (isset($vendor_contact) && !empty($vendor_contact)) {
-				$this->db->select('email');
+				$this->db->select('id, email');
 				$this->db->where_in('id', $vendor_contact);
 				$pur_contacts = $this->db->get(db_prefix() . 'pur_contacts')->result_array();
 				if (!empty($pur_contacts)) {
@@ -1572,6 +1572,19 @@ class drawing_management_model extends app_model
 							'type'       => 'application/pdf',
 						]);
 						$template->send();
+
+						if (!is_dir(DRAWING_MANAGEMENT_PATH . 'transmittal')) {
+						    mkdir(DRAWING_MANAGEMENT_PATH . 'transmittal', 0755, true);
+						}
+						$pdf_filename = 'Transmittal_' . time() . '.pdf';
+						$pdf_path = DRAWING_MANAGEMENT_PATH . 'transmittal/' . $pdf_filename;
+						file_put_contents($pdf_path, $attach);
+
+						$transmittal_data = array();
+						$transmittal_data['vendor_contact'] = $con['id'];
+						$transmittal_data['pdf_filename'] = $pdf_filename;
+						$transmittal_data['created'] = date('Y-m-d H:i:s');
+						$this->db->insert(db_prefix() . 'dms_share_transmittal', $transmittal_data);
 					}
 				}
 			}

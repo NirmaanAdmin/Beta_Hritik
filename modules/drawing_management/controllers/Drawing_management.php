@@ -1322,4 +1322,15 @@ class drawing_management extends AdminController
 
 		echo json_encode(['success' => true]);
 	}
+
+	public function transmittal()
+    {
+        $data['title'] = _l('transmittal');
+        $this->load->view('transmittal/list_transmittal', $data);
+    }
+
+    public function table_transmittal()
+    {
+        $this->app->get_table_data(module_views_path('drawing_management', 'transmittal/table_transmittal'));
+    }
 }

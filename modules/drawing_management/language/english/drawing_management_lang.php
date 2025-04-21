@@ -200,3 +200,5 @@ $lang['vendor_first_name'] = 'First name';
 $lang['vendor_last_name'] = 'Last name';
 $lang['vendor_email'] = 'Email';
 $lang['vendor_contact'] = 'Contacts';
+$lang['transmittal'] = 'Transmittal';
+$lang['dmg_created'] = 'Created';

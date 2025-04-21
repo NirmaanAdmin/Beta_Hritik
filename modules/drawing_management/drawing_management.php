@@ -86,6 +86,14 @@ function drawing_management_module_init_menu_items()
 		]);
 	}
 
+	$CI->app_menu->add_sidebar_children_item('drawing_management', [
+		'slug'     => 'drawing_management_transmittal',
+		'name'     => _l('transmittal'),
+		'href'     => admin_url('drawing_management/transmittal'),
+		'icon'     => 'fa fa-file menu-icon',
+		'position' => 0,
+	]);
+
 	if (is_admin()) {
 		$CI->app_menu->add_sidebar_children_item('drawing_management', [
 			'slug'     => 'drawing_management_settings',
