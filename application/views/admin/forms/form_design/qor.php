@@ -98,24 +98,44 @@
                     </th>
                 </tr>
                 <tr>
-                    <th colspan="1" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Location :</span>
-                    </th>
-                    <th colspan="5" class="daily_report_head">
-                        <span class="daily_report_label"> <span class="view_project_name"></span></span>
+                    <th colspan="8" class="daily_report_head">
+                        <span class="daily_report_label" style="display: ruby;">Location : <span class="view_project_name"></span></span>
                     </th>
 
                 </tr>
 
                 <tr>
                     <th colspan="8" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Observation Description : <?php echo render_input('observation_description', '', isset($msh_form->observation_description) ? $msh_form->observation_description : '', 'text'); ?></span>
+                        <div class="daily_report_label col-md-12" style="display: flex;padding:0px;">
+                            <div class="col-md-1" style="padding: 0px;">
+                                Observation Description:
+                            </div>
+                            <div class="col-md-11" style="padding: 0px;">
+                                <input
+                                    type="text"
+                                    name="observation_description"
+                                    value="<?php echo isset($msh_form->observation_description) ? htmlspecialchars($msh_form->observation_description) : ''; ?>"
+                                    class="form-control" />
+                            </div>
+                        </div>
 
                     </th>
                 </tr>
                 <tr>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Design Consultant Recommendation : <?php echo render_input('design_consultant_recommendation', '', isset($msh_form->design_consultant_recommendation) ? $msh_form->design_consultant_recommendation : '', 'text'); ?></span>
+                        <div class="daily_report_label col-md-12" style="display: flex; padding: 0px;">
+                            <div class="col-md-2" style="padding: 0px;">
+                                Design Consultant Recommendation:
+                            </div>
+                            <div class="col-md-10" style="padding: 0px;">
+                                <input
+                                    type="text"
+                                    name="design_consultant_recommendation"
+                                    value="<?php echo isset($msh_form->design_consultant_recommendation) ? htmlspecialchars($msh_form->design_consultant_recommendation) : ''; ?>"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
 
                     </th>
                     <th colspan="4" class="daily_report_head">
@@ -128,7 +148,19 @@
                 </tr>
                 <tr>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Client Instruction : <?php echo render_input('client_instruction', '', isset($msh_form->client_instruction) ? $msh_form->client_instruction : '', 'text'); ?></span>
+                        <div class="daily_report_label col-md-12" style="display: flex; padding: 0px;">
+                            <div class="col-md-2" style="padding: 0px;">
+                                Client Instruction:
+                            </div>
+                            <div class="col-md-10" style="padding: 0px;">
+                                <input
+                                    type="text"
+                                    name="client_instruction"
+                                    value="<?php echo isset($msh_form->client_instruction) ? htmlspecialchars($msh_form->client_instruction) : ''; ?>"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
 
                     </th>
                     <th colspan="4" class="daily_report_head">
@@ -140,17 +172,22 @@
                     </th>
                 </tr>
                 <tr>
-                    <th colspan="2" class="daily_report_head">
+                    <th colspan="1" class="daily_report_head">
                         <span class="daily_report_label" style="display: ruby;">Supplier/Contractor’s
-                            Proposed Corrective Action : <?php echo render_input('suppliers_proposed_corrective_action1', '', isset($msh_form->suppliers_proposed_corrective_action1) ? $msh_form->suppliers_proposed_corrective_action1 : '', 'text'); ?></span>
+                            Proposed Corrective Action : </span>
 
                     </th>
                     <th colspan="2" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;"> <?php echo render_input('suppliers_proposed_corrective_action2', '', isset($msh_form->suppliers_proposed_corrective_action2) ? $msh_form->suppliers_proposed_corrective_action2 : '', 'text'); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Immediate Action : 
+                        <?php echo render_input('suppliers_proposed_corrective_action1', '', isset($msh_form->suppliers_proposed_corrective_action1) ? $msh_form->suppliers_proposed_corrective_action1 : '', 'text'); ?></span>
 
                     </th>
                     <th colspan="2" class="daily_report_head">
-                        <span class="daily_report_label" style="display: flex;align-items: baseline;">Date :
+                        <span class="daily_report_label" style="display: ruby;">Measure to prevent recurrence:  <?php echo render_input('suppliers_proposed_corrective_action2', '', isset($msh_form->suppliers_proposed_corrective_action2) ? $msh_form->suppliers_proposed_corrective_action2 : '', 'text'); ?></span>
+
+                    </th>
+                    <th colspan="2" class="daily_report_head">
+                        <span class="daily_report_label" style="display: flex;align-items: baseline;">Date:
                             <div class="form-group">
                                 <input type="date" class="form-control" name="proposed_date" value="<?= isset($msh_form->proposed_date) ? date('Y-m-d\TH:i', strtotime($msh_form->proposed_date)) : '' ?>">
                             </div>
