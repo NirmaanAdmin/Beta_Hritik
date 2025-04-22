@@ -84,7 +84,8 @@
 
                     </th>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Supplier/Contractor in Charge: <?php echo render_input('supplier_contractor_in_charge', '', isset($msh_form->supplier_contractor_in_charge) ? $msh_form->supplier_contractor_in_charge : '', 'text'); ?></span>
+                        <?php $vendor_list = get_vendor_list_for_forms(); ?>
+                        <span class="daily_report_label" style="display: ruby;">Supplier/Contractor in Charge: <?php echo render_select('supplier_contractor_in_charge', $vendor_list, array('userid', 'company'), '', isset($msh_form->supplier_contractor_in_charge) ? $msh_form->supplier_contractor_in_charge : ''); ?></span>
                     </th>
                 </tr>
                 <tr>
