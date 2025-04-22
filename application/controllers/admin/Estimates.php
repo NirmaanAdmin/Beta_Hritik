@@ -74,6 +74,7 @@ class Estimates extends AdminController
     /* Add new estimate or update existing */
     public function estimate($id = '')
     {
+        $this->load->model('costplanning_model');
         if ($this->input->post()) {
             $estimate_data = $this->input->post();
 
@@ -131,7 +132,8 @@ class Estimates extends AdminController
             $data['estimate_detailed_costing'] = $this->estimates_model->get_estimate_detailed_costing($id);
             $data['edit']     = true;
             $data['annexure_estimate'] = $this->estimates_model->get_annexure_estimate_details($id);
-            $data['estimate_master_area'] = $this->estimates_model->get_estimate_master_area($id);
+            $data['all_area_working'] = $this->estimates_model->get_area_working($id);
+            $data['area_statement_tabs'] = $this->costplanning_model->get_area_statement_tabs($id);
             $title            = _l('edit', _l('estimate_lowercase'));
         }
 
@@ -152,7 +154,6 @@ class Estimates extends AdminController
 
         $this->load->model('invoice_items_model');
         $this->load->model('invoices_model');
-        $this->load->model('costplanning_model');
 
         $data['ajaxItems'] = false;
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
@@ -648,5 +649,24 @@ class Estimates extends AdminController
                 echo $duedate;
             }
         }
+    }
+
+    public function update_area_statement_tabs()
+    {
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            $this->estimates_model->update_area_statement_tabs($data);
+        }
+        return true;
+    }
+
+    public function add_area_statement_tabs() 
+    {
+        $area_id = null;
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            $area_id = $this->estimates_model->add_area_statement_tabs($data);
+        }
+        echo json_encode(['group_id' => $area_id]);
     }
 }

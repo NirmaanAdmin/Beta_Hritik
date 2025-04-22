@@ -520,19 +520,6 @@ class Estimates_model extends App_Model
         }
         unset($data['unit_id']);
 
-        unset($data['master_area']);
-        unset($data['functionality_area']);
-        unset($data['area_description']);
-        unset($data['carpet_area']);
-        unset($data['surface_area']);
-        unset($data['carpet_area_unit']);
-        unset($data['surface_area_unit']);
-        $newareaworkingitems = [];
-        if (isset($data['newareaworkingitems'])) {
-            $newareaworkingitems = $data['newareaworkingitems'];
-            unset($data['newareaworkingitems']);
-        }
-
         $detailed_costing = [];
         if (isset($data['detailed_costing'])) {
             $detailed_costing = $data['detailed_costing'];
@@ -570,12 +557,6 @@ class Estimates_model extends App_Model
             foreach ($items as $key => $item) {
                 if ($itemid = add_new_sales_item_post($item, $insert_id, 'estimate')) {
                     _maybe_insert_post_item_tax($itemid, $item, $insert_id, 'estimate');
-                }
-            }
-
-            if(!empty($newareaworkingitems)) {
-                foreach ($newareaworkingitems as $akey => $aitem) {
-                    $this->add_new_area_working_item_post($aitem, $insert_id);
                 }
             }
 
@@ -701,13 +682,9 @@ class Estimates_model extends App_Model
         }
         unset($data['unit_id']);
 
-        unset($data['master_area']);
-        unset($data['functionality_area']);
         unset($data['area_description']);
-        unset($data['carpet_area']);
-        unset($data['surface_area']);
-        unset($data['carpet_area_unit']);
-        unset($data['surface_area_unit']);
+        unset($data['area_length']);
+        unset($data['area_width']);
         $newareaworkingitems = [];
         if (isset($data['newareaworkingitems'])) {
             $newareaworkingitems = $data['newareaworkingitems'];
@@ -1564,7 +1541,7 @@ class Estimates_model extends App_Model
         return true;
     }
 
-    public function get_estimate_master_area($id)
+    public function get_area_working($id)
     {
         $this->db->where('estimate_id', $id);
         return $this->db->get(db_prefix() . 'costarea_working')->result_array();
@@ -1611,5 +1588,27 @@ class Estimates_model extends App_Model
     {
         $this->db->where('estimate_id', $id);
         return $this->db->get(db_prefix() . 'estimate_detailed_costing')->result_array();
+    }
+
+    public function update_area_statement_tabs($data)
+    {
+        if(!empty($data)) {
+            if(!empty($data['id']) && !empty($data['name'])) {
+               $this->db->where('id', $data['id']);
+               $this->db->update(db_prefix() . 'area_statement_tabs', ['name' => $data['name']]); 
+            }
+        }
+        return true;    
+    }
+
+    public function add_area_statement_tabs($data)
+    {
+        if(!empty($data)) {
+            if(!empty($data['name']) && !empty($data['estimate_id'])) {
+                $this->db->insert(db_prefix() . 'area_statement_tabs', $data);
+                return $this->db->insert_id();
+            }
+        }
+        return null;
     }
 }

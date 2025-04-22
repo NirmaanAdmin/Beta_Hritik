@@ -347,6 +347,12 @@ class Costplanning_model extends App_Model
         $select .= '</select>';
         return $select;
     }
+
+    public function get_area_statement_tabs($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'area_statement_tabs')->result_array();
+    }
 }
 
 ?>

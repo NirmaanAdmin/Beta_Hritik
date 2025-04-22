@@ -380,7 +380,7 @@
 
                 <li role="presentation">
                     <a href="#area_working" aria-controls="area_working" role="tab" id="tab_area_working" data-toggle="tab">
-                        <?php echo _l('area_statement'); ?>
+                        <?php echo _l('area_working'); ?>
                     </a>
                 </li>
 
@@ -768,169 +768,109 @@
             <?php } ?>
 
             <div role="tabpanel" class="tab-pane" id="area_working">
-                <div class="table-responsive s_table">
-                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
-                        <thead>
-                            <tr>
-                                <th width="18%" align="left"><?php echo _l('master_area'); ?></th>
-                                <th width="18%" align="left"><?php echo _l('functionality_area'); ?></th>
-                                <th width="23%" align="left"><?php echo _l('area_description'); ?></th>
-                                <th width="18%" align="left"><?php echo _l('carpet_area'); ?></th>
-                                <th width="18%" align="left"><?php echo _l('surface_area'); ?></th>
-                                <th width="5%" align="center"><i class="fa fa-cog"></i></th>
-                            </tr>
-                        </thead>
-                        <tbody class="area_working">
-                            <tr class="main">
-                                <td>
-                                    <?php
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="master_area" data-none-selected-text="' . _l('master_area') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($master_area as $area) {
-                                        $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
-                                    }
-                                    $select .= '</select>';
-                                    echo $select;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="functionality_area" data-none-selected-text="' . _l('functionality_area') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($functionality_area as $area) {
-                                        $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
-                                    }
-                                    $select .= '</select>';
-                                    echo $select;
-                                    ?>
-                                </td>
-                                <td>
-                                    <textarea name="area_description" rows="4" class="form-control" placeholder="<?php echo _l('area_description'); ?>"></textarea>
-                                </td>
-                                <td>
-                                    <input type="number" name="carpet_area" class="form-control" placeholder="<?php echo _l('carpet_area'); ?>">
-                                    <?php
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="carpet_area_unit" data-none-selected-text="' . _l('unit') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($units as $unit) {
-                                        $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
-                                    }
-                                    $select .= '</select>';
-                                    echo $select;
-                                    ?>
-                                </td>
-                                <td>
-                                    <input type="number" name="surface_area" class="form-control" placeholder="<?php echo _l('surface_area'); ?>">
-                                    <?php
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="surface_area_unit" data-none-selected-text="' . _l('unit') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($units as $unit) {
-                                        $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
-                                    }
-                                    $select .= '</select>';
-                                    echo $select;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $new_area_working = 'undefined';
-                                    if (isset($estimate)) {
-                                        $new_area_working = true;
-                                    } ?>
-                                    <button type="button" onclick="add_area_working_item_to_table('undefined','undefined',<?php echo e($new_area_working); ?>); return false;"
-                                        class="btn pull-right btn-primary"><i class="fa fa-check"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <?php if (isset($estimate) && isset($estimate_master_area)) {
-                                $items_indicator = 'areaworkingitems';
-
-                                foreach ($estimate_master_area as $item) {
-                                    $table_row = '<tr class="item">';
-                                    $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
-
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][master_area]" data-none-selected-text="' . _l('master_area') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($master_area as $area) {
-                                        $selected = ($area['id'] == $item['master_area']) ? ' selected' : '';
-                                        $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
-                                    }
-                                    $select .= '</select>';
-                                    $table_row .= '<td>'.$select.'</td>';
-
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][functionality_area]" data-none-selected-text="' . _l('functionality_area') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($functionality_area as $area) {
-                                        $selected = ($area['id'] == $item['functionality_area']) ? ' selected' : '';
-                                        $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
-                                    }
-                                    $select .= '</select>';
-                                    $table_row .= '<td>'.$select.'</td>';
-
-                                    $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][area_description]" class="form-control" rows="4">' . clear_textarea_breaks($item['area_description']) . '</textarea></td>';
-
-                                    $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][carpet_area]" value="' . $item['carpet_area'] . '" class="form-control" id="carpet_area">';
-
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][carpet_area_unit]" data-none-selected-text="' . _l('unit') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($units as $unit) {
-                                        $selected = ($unit['unit_type_id'] == $item['carpet_area_unit']) ? ' selected' : '';
-                                        $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
-
-                                    }
-                                    $select .= '</select>';
-                                    $table_row .= $select;
-                                    $table_row .= '</td>';
-
-                                    $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][surface_area]" value="' . $item['surface_area'] . '" class="form-control" id="surface_area">';
-
-                                    $select = '';
-                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][surface_area_unit]" data-none-selected-text="' . _l('unit') . '">';
-                                    $select .= '<option value=""></option>';
-                                    foreach ($units as $unit) {
-                                        $selected = ($unit['unit_type_id'] == $item['surface_area_unit']) ? ' selected' : '';
-                                        $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
-
-                                    }
-                                    $select .= '</select>';
-                                    $table_row .= $select;
-                                    $table_row .= '</td>';
-                        
-                                    $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_area_working_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
-                                    $table_row .= '</tr>';
-                                    echo $table_row;
-                                    $i++;
-                                }
-                            } ?>
-                        </tbody>
-                    </table>
+                <div class="horizontal-tabs">
+                    <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                        <?php
+                        if(isset($estimate)) { 
+                            foreach ($area_statement_tabs as $akey => $avalue) { ?>
+                                <li role="presentation" class="<?php echo ($akey == 0) ? 'active' : ''; ?>">
+                                    <a href="#area_working_<?php echo $avalue['id']; ?>" aria-controls="area_working_<?php echo $avalue['id']; ?>" role="tab" id="tab_area_working_<?php echo $avalue['id']; ?>" class="tab_sub_area_working" data-toggle="tab" data-tab-id="<?php echo $avalue['id']; ?>">
+                                        <?php echo $avalue['name']; ?>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <li role="presentation" id="add_new_area_working_tab" style="cursor:pointer;" data-estimate-id="<?php echo $estimate->id; ?>">
+                                <a><strong>➕</strong></a>
+                            </li>
+                        <?php } ?>
+                    </ul>
                 </div>
-                <div class="col-md-8 col-md-offset-4">
-                    <table class="table text-right">
-                        <tbody>
-                            <tr>
-                                <td><span class="bold tw-text-neutral-700"><?php echo _l('total_carpet_area'); ?> :</span>
-                                </td>
-                                <td class="total_carpet_area">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="bold tw-text-neutral-700"><?php echo _l('total_surface_area'); ?> :</span>
-                                </td>
-                                <td class="total_surface_area">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <div class="tab-content">
+                    <?php
+                    if(isset($estimate)) { 
+                        foreach ($area_statement_tabs as $akey => $avalue) { ?>
+                            <div role="tabpanel" class="tab-pane area_working_tab <?php echo ($akey == 0) ? 'active' : ''; ?>" id="area_working_<?php echo $avalue['id']; ?>" data-id="<?php echo $avalue['id']; ?>">
+                                <div class="table-responsive s_table">
+                                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                        <thead>
+                                            <tr>
+                                                <th width="35%" align="left">Room/Spaces</th>
+                                                <th width="20%" align="left">Length</th>
+                                                <th width="20%" align="left">Width</th>
+                                                <th width="20%" align="left">Carpet Area</th>
+                                                <th width="5%" align="center"><i class="fa fa-cog"></i></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="area_working">
+                                            <tr class="main">
+                                                <td>
+                                                    <textarea name="area_description" rows="4" class="form-control" placeholder="<?php echo _l('area_description'); ?>"></textarea>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="area_length" class="form-control" placeholder="<?php echo _l('area_length'); ?>">
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="area_width" class="form-control" placeholder="<?php echo _l('area_width'); ?>">
+                                                </td>
+                                                <td></td>
+                                                <td>
+                                                    <?php
+                                                    $new_area_working = 'undefined';
+                                                    if (isset($estimate)) {
+                                                        $new_area_working = true;
+                                                    } ?>
+                                                    <button type="button" onclick="add_area_working_item_to_table('undefined','undefined',<?php echo e($new_area_working); ?>); return false;"
+                                                        class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            <?php if (isset($estimate) && isset($all_area_working)) {
+                                                $items_indicator = 'areaworkingitems';
+
+                                                foreach ($all_area_working as $item) {
+                                                    if($item['area_id'] == $avalue['id']) {
+                                                        $carpet_area = $item['area_length'] * $item['area_width'];
+                                                        $table_row = '<tr class="item">';
+                                                        $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
+                                                        $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][area_id]', $item['area_id']);
+
+                                                        $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][area_description]" class="form-control" rows="4">' . clear_textarea_breaks($item['area_description']) . '</textarea></td>';
+
+                                                        $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][area_length]" value="' . $item['area_length'] . '" class="form-control" id="area_length"></td>';
+
+                                                        $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][area_width]" value="' . $item['area_width'] . '" class="form-control" id="area_width"></td>';
+
+                                                        $table_row .= '<td class="carpet_area">'.$carpet_area.'</td>';
+                                            
+                                                        $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_area_working_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                                        $table_row .= '</tr>';
+                                                        echo $table_row;
+                                                        $i++;
+                                                    }
+                                                }
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-8 col-md-offset-4">
+                                    <table class="table text-right">
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="bold tw-text-neutral-700"><?php echo _l('total_carpet_area'); ?> :</span>
+                                                </td>
+                                                <td class="total_carpet_area">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        <?php }
+                    } ?>
                 </div>
+
                 <div id="removed-area-working-items"></div>
             </div>
         </div>
