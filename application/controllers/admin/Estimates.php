@@ -670,4 +670,14 @@ class Estimates extends AdminController
         }
         echo json_encode(['group_id' => $area_id]);
     }
+
+    public function delete_area_statement_tabs() 
+    {
+        $area_id = null;
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            $area_id = $this->estimates_model->delete_area_statement_tabs($data);
+        }
+        echo json_encode(['group_id' => $area_id]);
+    }
 }

@@ -1614,4 +1614,18 @@ class Estimates_model extends App_Model
         }
         return null;
     }
+
+    public function delete_area_statement_tabs($data)
+    {
+        if(!empty($data)) {
+            if(!empty($data['id'])) {
+                $this->db->where('id', $data['id']);
+                $this->db->delete(db_prefix() . 'area_statement_tabs');
+                $this->db->where('area_id', $data['id']);
+                $this->db->delete(db_prefix() . 'costarea_working');
+                return $data['id'];
+            }
+        }
+        return null;
+    }
 }

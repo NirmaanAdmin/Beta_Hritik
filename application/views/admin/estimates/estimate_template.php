@@ -775,7 +775,7 @@
                             foreach ($area_statement_tabs as $akey => $avalue) { ?>
                                 <li role="presentation" class="<?php echo ($akey == 0) ? 'active' : ''; ?>">
                                     <a href="#area_working_<?php echo $avalue['id']; ?>" aria-controls="area_working_<?php echo $avalue['id']; ?>" role="tab" id="tab_area_working_<?php echo $avalue['id']; ?>" class="tab_sub_area_working" data-toggle="tab" data-tab-id="<?php echo $avalue['id']; ?>">
-                                        <?php echo $avalue['name']; ?>
+                                        <?php echo $avalue['name']; ?> <span class="delete-area-working-tab" style="color:red; cursor:pointer;"><i class="fa fa-times"></i></span>
                                     </a>
                                 </li>
                             <?php } ?>
