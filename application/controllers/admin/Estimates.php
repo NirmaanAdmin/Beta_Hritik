@@ -653,11 +653,12 @@ class Estimates extends AdminController
 
     public function update_area_statement_tabs()
     {
+        $area_id = null;
         if ($this->input->post()) {
             $data = $this->input->post();
-            $this->estimates_model->update_area_statement_tabs($data);
+            $area_id = $this->estimates_model->update_area_statement_tabs($data);
         }
-        return true;
+        echo json_encode(['group_id' => $area_id]);
     }
 
     public function add_area_statement_tabs() 

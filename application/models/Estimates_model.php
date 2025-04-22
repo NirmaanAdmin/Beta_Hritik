@@ -1596,9 +1596,12 @@ class Estimates_model extends App_Model
             if(!empty($data['id']) && !empty($data['name'])) {
                $this->db->where('id', $data['id']);
                $this->db->update(db_prefix() . 'area_statement_tabs', ['name' => $data['name']]); 
+               if ($this->db->affected_rows() > 0) {
+                    return $data['id'];
+               }
             }
         }
-        return true;    
+        return null; 
     }
 
     public function add_area_statement_tabs($data)
