@@ -2232,7 +2232,7 @@ class Forms_model extends App_Model
                         }
                         // Upload the file into the 'qcr_attachments' folder.
                         $iuploadedFiles = handle_qcr_item_attachment_array('qcr_attachments',  $data['formid'], $value['id'], 'items', $key);
-                       
+
                         if (!empty($iuploadedFiles) && is_array($iuploadedFiles)) {
                             foreach ($iuploadedFiles as $ifile) {
                                 // Update the agendas_details record with the attachment.

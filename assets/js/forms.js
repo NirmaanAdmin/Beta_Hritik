@@ -29,12 +29,12 @@ $(function () {
         if (checkbox.prop("checked") == true) {
           $formsSelect.append(
             '<option value="' +
-              checkbox.val() +
-              '" data-status="' +
-              checkbox.data("status") +
-              '">' +
-              checkbox.data("name") +
-              "</option"
+            checkbox.val() +
+            '" data-status="' +
+            checkbox.data("status") +
+            '">' +
+            checkbox.data("name") +
+            "</option"
           );
         }
       });
@@ -73,6 +73,19 @@ $(function () {
   $("#form_no_contact").on("click", function (e) {
     e.preventDefault();
     validate_new_form_form();
+    let allGood = true;
+    $('.commentInput').each(function () {
+      if (!$(this).val().trim()) {
+        allGood = false;
+        $(this).addClass('is-invalid'); // you can style .is-invalid in CSS
+      } else {
+        $(this).removeClass('is-invalid');
+      }
+    });
+    if (!allGood) {
+      e.preventDefault();
+      alert('Please fill in all comment fields before submitting.');
+    }
     $("#name, #email").prop("disabled", false);
     $("#name").val("").rules("add", { required: true });
     $("#email").val("").rules("add", { required: true });
@@ -200,56 +213,56 @@ $(function () {
       return;
     }
 
-   // Create a FormData object
-var formData = new FormData();
+    // Create a FormData object
+    var formData = new FormData();
 
-// Serialize the form data
-$("#settings *")
-  .serializeArray()
-  .forEach(function (field) {
-    formData.append(field.name, field.value);
-  });
+    // Serialize the form data
+    $("#settings *")
+      .serializeArray()
+      .forEach(function (field) {
+        formData.append(field.name, field.value);
+      });
 
-// Add the form ID
-formData.append("formid", $('input[name="formid"]').val());
+    // Add the form ID
+    formData.append("formid", $('input[name="formid"]').val());
 
-// Add the CSRF token if available
-if (typeof csrfData !== "undefined") {
-  formData.append(csrfData["token_name"], csrfData["hash"]);
-}
-
-// Append all dynamic file inputs
-$('.attachment_new input[type="file"]').each(function () {
-  var fileInput = $(this)[0]; // Get the file input element
-  if (fileInput.files.length > 0) {
-    // Use the dynamic name attribute for the key
-    formData.append($(this).attr('name'), fileInput.files[0]);
-  }
-});
-// Send the AJAX request
-$.ajax({
-  url: admin_url + "forms/update_single_form_settings",
-  type: "POST",
-  data: formData,
-  processData: false, // Prevent jQuery from automatically processing the data
-  contentType: false, // Prevent jQuery from setting the Content-Type header
-  success: function (response) {
-    response = JSON.parse(response);
-    if (response.success === true) {
-      if (typeof response.department_reassigned !== "undefined") {
-        window.location.href = admin_url + "forms/";
-      } else {
-        window.location.reload();
-      }
-    } else if (typeof response.message !== "undefined") {
-      alert_float("warning", response.message);
+    // Add the CSRF token if available
+    if (typeof csrfData !== "undefined") {
+      formData.append(csrfData["token_name"], csrfData["hash"]);
     }
-  },
-  error: function (xhr, status, error) {
-    console.error("Error:", error);
-    alert_float("danger", "An error occurred while processing your request.");
-  },
-});
+
+    // Append all dynamic file inputs
+    $('.attachment_new input[type="file"]').each(function () {
+      var fileInput = $(this)[0]; // Get the file input element
+      if (fileInput.files.length > 0) {
+        // Use the dynamic name attribute for the key
+        formData.append($(this).attr('name'), fileInput.files[0]);
+      }
+    });
+    // Send the AJAX request
+    $.ajax({
+      url: admin_url + "forms/update_single_form_settings",
+      type: "POST",
+      data: formData,
+      processData: false, // Prevent jQuery from automatically processing the data
+      contentType: false, // Prevent jQuery from setting the Content-Type header
+      success: function (response) {
+        response = JSON.parse(response);
+        if (response.success === true) {
+          if (typeof response.department_reassigned !== "undefined") {
+            window.location.href = admin_url + "forms/";
+          } else {
+            window.location.reload();
+          }
+        } else if (typeof response.message !== "undefined") {
+          alert_float("warning", response.message);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error:", error);
+        alert_float("danger", "An error occurred while processing your request.");
+      },
+    });
 
   });
 
@@ -301,8 +314,8 @@ $.ajax({
         if (response.contact_data) {
           $('input[name="name"]').val(
             response.contact_data.firstname +
-              " " +
-              response.contact_data.lastname
+            " " +
+            response.contact_data.lastname
           );
           $('input[name="email"]').val(response.contact_data.email);
           $('input[name="userid"]').val(response.contact_data.userid);
@@ -353,12 +366,12 @@ function insert_form_knowledgebase_link(e) {
       "mceInsertContent",
       false,
       '<a href="' +
-        site_url +
-        "knowledge_base/" +
-        response.slug +
-        '">' +
-        response.subject +
-        "</a>"
+      site_url +
+      "knowledge_base/" +
+      response.slug +
+      '">' +
+      response.subject +
+      "</a>"
     );
     $(e).selectpicker("val", "");
   });
@@ -420,12 +433,12 @@ function show_form_no_contact_email_warning(userid, contactid) {
   if ($("#contact_email_notifications_warning").length == 0) {
     $("#new_form_form, #single-form-form").prepend(
       '<div class="alert alert-warning" id="contact_email_notifications_warning">Email notifications for forms is disabled for this contact, if you want the contact to receive form emails you must enable by clicking <a href="' +
-        admin_url +
-        "clients/client/" +
-        userid +
-        "?contactid=" +
-        contactid +
-        '" target="_blank">here</a>.</div>'
+      admin_url +
+      "clients/client/" +
+      userid +
+      "?contactid=" +
+      contactid +
+      '" target="_blank">here</a>.</div>'
     );
   }
 }

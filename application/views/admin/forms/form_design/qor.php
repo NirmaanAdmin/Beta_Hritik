@@ -209,15 +209,15 @@
             </tr>
             <tr>
                 <th colspan="2" class="daily_report_head">
-                    <span class="daily_report_label" style="display: ruby;">Observation Close-Out : 
+                    <span class="daily_report_label" style="display: ruby;">Observation Close-Out :
                         <label>
-                        <input type="checkbox" name="close_out" value="corrective_action" class="single-checkbox1">
-                        Corrective Action Accepted
+                            <input type="checkbox" name="close_out" value="corrective_action" class="single-checkbox1">
+                            Corrective Action Accepted
                         </label>
-                        
+
                         <label style="margin-left: 2%;">
                             <input type="checkbox" name="close_out" value="corrective_action_not_accepted" class="single-checkbox1">
-                            Corrective Action Not Accepted 
+                            Corrective Action Not Accepted
                         </label>
                     </span>
 
@@ -232,16 +232,127 @@
                 <th colspan="2" class="daily_report_head">
                     <span class="daily_report_label" style="display: flex;align-items: baseline;">Comments :
                         <div class="form-group">
-                        <?php echo render_textarea('comments1', '', isset($msh_form) ? $msh_form->comments1 : '',); ?>
+                            <?php echo render_textarea('comments1', '', isset($msh_form) ? $msh_form->comments1 : '',); ?>
                         </div>
                     </span>
                 </th>
             </tr>
         </thead>
     </table>
+    <div class="table-responsive">
+        <div id="sectionsContainer"></div>
+
+        <button type="button" id="addSectionBtn" class="btn pull-right btn-info">Add</button>
+    </div>
 </div>
 
+<template id="sectionTemplate">
+    <div class="section">
+        <h4>Section <span class="secIndex"></span>
+            <a href="javascript:void(0);" class="btn btn-danger removeSection pull-right" style="margin-bottom:10px;"><i class="fa fa-trash"></i></a>
+        </h4>
+        <table class="table qor-items-table items table-main-qor-edit has-calculations no-mtop">
+            <thead>
+                <tr>
+                    <th class="daily_report_head daily_center">Comments</th>
+                    <th class="daily_report_head daily_center">Attachments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="commentRow">
+                    <td>
+                        <textarea name="" class="commentInput form-control" required></textarea>
+                    </td>
+                    <td>
+                        <div class="attachmentsList">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="input-group" style="width: 50%;margin-bottom: 10px;">
+                                        <input type="file"
+                                            extension="<?php echo str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')); ?>"
+                                            filesize="<?php echo file_upload_max_size(); ?>"
+                                            class="form-control"
+                                            accept="<?php echo get_form_form_accepted_mimes(); ?>">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="addAttachmentBtn btn btn-default"><i class="fa fa-plus"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr />
+    </div>
+</template>
+
 <script type="text/javascript">
+    $(function() {
+        let sectionCount = 0;
+
+        function refreshIndices() {
+            // update headings and input names
+            $('#sectionsContainer .section').each(function(i) {
+                const $sec = $(this);
+                $sec.find('.secIndex').text(i + 1);
+                $sec.find('.commentInput')
+                    .attr('name', `comments[${i}]`);
+                // for each attachment input in this section:
+                $sec.find('.attachmentsList input[type=file]')
+                    .each(function(j) {
+                        $(this).attr('name', `attachments[${i}][]`);
+                    });
+            });
+        }
+
+        // Add a whole new section
+        $('#addSectionBtn').click(function() {
+            sectionCount++;
+            const $tpl = $($('#sectionTemplate').html());
+            $('#sectionsContainer').append($tpl);
+            refreshIndices();
+        });
+
+        // Remove a section
+        $('#sectionsContainer').on('click', '.removeSection', function() {
+            $(this).closest('.section').remove();
+            refreshIndices();
+        });
+
+        // Add attachment: clone the input‐group and convert its button into “remove”
+        $('#sectionsContainer').on('click', '.addAttachmentBtn', function() {
+            const $grp = $(this).closest('.input-group');
+            const $clone = $grp.clone();
+
+            // Clear the cloned file‐input
+            $clone.find('input[type=file]').val('');
+
+            // Turn the “+” into a red “−” remove button
+            $clone.find('button')
+                .removeClass('addAttachmentBtn btn-default')
+                .addClass('removeAttachmentBtn btn-danger')
+                .html('<i class="fa fa-minus"></i>');
+
+            // Insert it after the original row
+            $grp.after($clone);
+
+            refreshIndices();
+        });
+
+        // Remove an attachment row
+        $('#sectionsContainer').on('click', '.removeAttachmentBtn', function() {
+            $(this).closest('.input-group').remove();
+            refreshIndices();
+        });
+
+        // Bootstrap with one section on load
+        $('#addSectionBtn').trigger('click');
+    });
+
+
     $('.single-checkbox').on('change', function() {
         if (this.checked) {
             $('.single-checkbox').not(this).prop('checked', false);
@@ -252,7 +363,7 @@
             $('.single-checkbox1').not(this).prop('checked', false);
         }
     });
-    
+
 
     $('#project_id').on('change', function() {
         // var project_id = $(this).val();
