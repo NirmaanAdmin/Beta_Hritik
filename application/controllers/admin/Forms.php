@@ -885,6 +885,7 @@ class Forms extends AdminController
                 'cflc' => ['has_attachments' => true],
                 'facc' => ['has_attachments' => true],
                 'cosc' => ['has_attachments' => true],
+                'qor'  => ['has_attachments' => true],
             ];
 
             if (isset($formConfigs[$form_type])) {
