@@ -142,7 +142,7 @@
             <th style="width: 15%;">Venue</th>
            
             <?php
-            if($meeting['id'] == 32){
+            if($meeting['meeting_id'] == 32){
                 echo '<td style="width: 40%;">Online Meeting</td>';
             }else{
                 echo '<td style="width: 40%;">BGJ site office</td>';
@@ -153,7 +153,7 @@
 
             <td style="width: 15%;">MOM No</td>
             <?php
-            if($meeting['id'] == 32){ ?>
+            if($meeting['meeting_id'] == 32){ ?>
                 <td style="width: 30%;">BIL-MOM-TMC-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
            <?php }else{ ?>
                 <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
