@@ -1,5 +1,5 @@
 <?php
-
+ 
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -65,7 +65,12 @@ $formhtml .= '</tr>';
 
 $formhtml .= '<tr>';
 $formhtml .= '<th colspan="2"><span style="font-weight: bold;">Location:</span> </th>';
-$formhtml .= '<th colspan="9"></th>';
+if($form->project_id > 0){
+    $project_name = get_project_name_by_id($form->project_id);
+}else{
+    $project_name = '';
+}
+$formhtml .= '<th colspan="9">'.$project_name.'</th>';
 $formhtml .= '</tr>';
 
 // Observation Description with Attachment
