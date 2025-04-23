@@ -340,7 +340,7 @@
                                                 <?php foreach ($qor_attachments as $attachment) : ?>
                                                     <?php if ($attachment['form_detail_id'] == $detail['id']) : ?>
                                                         <div class="col-md-12">
-                                                            <div class="preview_image" style="margin-bottom: 10px; display: flex; align-items: center;">
+                                                            <div class="preview_image" style="margin-bottom: 10px; display: flex; align-items: center;width: 100%;">
                                                                 <a href="<?= site_url('uploads/form_attachments/qorattachments/' . $form_id . '/' . $attachment['form_detail_id'] . '/' . $attachment['file_name']); ?>"
                                                                     target="_blank" download style="margin-right: 10px;">
                                                                     <i class="<?= get_mime_class($attachment['filetype']); ?>"></i>
@@ -367,7 +367,7 @@
             <?php endif; ?>
         </div>
 
-        <button type="button" id="addSectionBtn" class="btn pull-right btn-info">Add</button>
+        <button type="button" id="addSectionBtn" class="btn pull-right btn-info" style="margin-bottom: 10px;">Add</button>
     </div>
 </div>
 

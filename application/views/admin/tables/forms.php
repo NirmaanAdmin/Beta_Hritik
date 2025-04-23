@@ -230,7 +230,7 @@ return App_table::find('forms')
                        <ul class="dropdown-menu dropdown-menu-right">
                           <li class="hidden-xs"><a href="' . admin_url('forms/pdf/' . $aRow['formid'] . '?output_type=I') . '">' . _l('view_pdf') . '</a></li>
                           <li class="hidden-xs"><a href="' . admin_url('forms/pdf/' . $aRow['formid'] . '?output_type=I') . '" target="_blank">' . _l('view_pdf_in_new_window') . '</a></li>
-                          <li><a href="' . admin_url('forms/pdf/' . $aRow['formid']) . '">' . _l('download') . '</a></li>
+                          <li><a href="' . admin_url('forms/pdf/' . $aRow['formid']) . '" download>' . _l('download') . '</a></li>
                        </ul>
                        </div>';
                     } elseif ($check_formid_is_qor > 0) {
@@ -239,7 +239,7 @@ return App_table::find('forms')
                         <ul class="dropdown-menu dropdown-menu-right">
                            <li class="hidden-xs"><a href="' . admin_url('forms/pdf_qor/' . $aRow['formid'] . '?output_type=I') . '">' . _l('view_pdf') . '</a></li>
                            <li class="hidden-xs"><a href="' . admin_url('forms/pdf_qor/' . $aRow['formid'] . '?output_type=I') . '" target="_blank">' . _l('view_pdf_in_new_window') . '</a></li>
-                           <li><a href="' . admin_url('forms/pdf_qor/' . $aRow['formid']) . '">' . _l('download') . '</a></li>
+                           <li><a href="' . admin_url('forms/pdf_qor/' . $aRow['formid']) . '" download>' . _l('download') . '</a></li>
                         </ul>
                         </div>';
                     } else {

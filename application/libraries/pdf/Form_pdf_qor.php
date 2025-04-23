@@ -8,7 +8,9 @@ class Form_pdf_qor extends App_pdf
 {
     protected $form;
     protected $subject;
-    protected $qcr_data;
+    protected $qor_data;
+    protected $qor_comments;
+    protected $attachments;
 
     public function __construct($form)
     {
@@ -23,7 +25,9 @@ class Form_pdf_qor extends App_pdf
 
         // <-- fix is here: use the object directly, not $this->$form
         $this->subject = $this->form->subject;
-        $this->qcr_data = $this->ci->forms_model->get_qcr_form_detail($this->form->formid);
+        $this->qor_data = $this->ci->forms_model->get_qor_form($this->form->formid);
+        $this->qor_comments = $this->ci->forms_model->get_qor_form_detail($this->form->formid);
+        $this->attachments =  $this->ci->forms_model->get_qor_form_attachments($this->form->formid);
 
         $this->SetTitle($this->subject);
     }
@@ -33,7 +37,9 @@ class Form_pdf_qor extends App_pdf
         $this->set_view_vars([
             'subject' => $this->subject,
             'form'    => $this->form,
-            'qcr_data' => $this->qcr_data,
+            'qor_data' => $this->qor_data,
+            'qor_comments' => $this->qor_comments,
+            'attachments' => $this->attachments,
         ]);
 
         return $this->build();
@@ -53,7 +59,7 @@ class Form_pdf_qor extends App_pdf
 
         $actualPath = APPPATH
             . 'views/themes/'
-            . active_clients_theme()
+            . active_clients_theme() 
             . '/views/formpdfqor.php';
 
         if (file_exists($customPath)) {

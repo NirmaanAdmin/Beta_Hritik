@@ -572,9 +572,12 @@ function get_vendor($name_agency, $agency)
 
     return render_select($name_agency, $result, array('userid', 'company'), '', $agency);
 }
-function get_vendor_list_for_forms()
+function get_vendor_list_for_forms($vendor_id = '')
 {
     $CI = &get_instance();
+    if($vendor_id != ''){
+        $CI->db->where('userid', $vendor_id);
+    }
     $result = $CI->db->get(db_prefix() . 'pur_vendor')->result_array();
     return $result;
 }

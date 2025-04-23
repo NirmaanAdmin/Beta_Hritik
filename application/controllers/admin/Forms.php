@@ -1044,7 +1044,7 @@ class Forms extends AdminController
         }
 
         if ($this->input->get('print')) {
-            $type = 'I';
+            $type = 'D';
         }
 
         $pdf->Output(mb_strtoupper(slug_it($form->subject)) . '.pdf', $type);
@@ -1076,7 +1076,7 @@ class Forms extends AdminController
         }
 
         if ($this->input->get('print')) {
-            $type = 'I';
+            $type = 'D';
         }
 
         $pdf->Output(mb_strtoupper(slug_it($form->subject)) . '.pdf', $type);

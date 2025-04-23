@@ -2440,6 +2440,21 @@ class Forms_model extends App_Model
                     if ($this->db->affected_rows() > 0) {
                         $affectedRows++;
                     }
+                    $iuploadedFiles = handle_qor_item_attachment_array('qorattachments', $existing_details[$i]['form_id'], $existing_details[$i]['id'], $i);
+
+                    if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                        if (!empty($iuploadedFiles)) {
+                            foreach ($iuploadedFiles as $file) {
+                                $idata = [
+                                    'form_id' =>  $existing_details[$i]['form_id'],
+                                    'form_detail_id' =>  $file['item_id'],
+                                    'file_name' => $file['file_name'],
+                                    'filetype' => $file['filetype'],
+                                ];
+                                $this->db->insert(db_prefix() . 'qorattachments', $idata);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2454,6 +2469,22 @@ class Forms_model extends App_Model
                     $new_insert_id = $this->db->insert_id();
                     if ($new_insert_id) {
                         $affectedRows++;
+                    }
+
+                    $iuploadedFiles = handle_qor_item_attachment_array('qorattachments', $data['formid'], $new_insert_id, $i);
+
+                    if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                        if (!empty($iuploadedFiles)) {
+                            foreach ($iuploadedFiles as $file) {
+                                $idata = [
+                                    'form_id' =>  $data['formid'],
+                                    'form_detail_id' =>  $file['item_id'],
+                                    'file_name' => $file['file_name'],
+                                    'filetype' => $file['filetype'],
+                                ];
+                                $this->db->insert(db_prefix() . 'qorattachments', $idata);
+                            }
+                        }
                     }
                 }
             }
