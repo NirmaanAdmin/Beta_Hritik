@@ -140,12 +140,26 @@
             <td style="width: 15%;">Minutes by</td>
             <td style="width: 30%;"><?php echo get_staff_full_name($meeting['created_by']); ?></td>
             <th style="width: 15%;">Venue</th>
-            <td style="width: 40%;">BGJ site office</td>
+           
+            <?php
+            if($meeting['id'] == 32){
+                echo '<td style="width: 40%;">Online Meeting</td>';
+            }else{
+                echo '<td style="width: 40%;">BGJ site office</td>';
+            }
+            ?>
         </tr>
         <tr>
 
             <td style="width: 15%;">MOM No</td>
-            <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
+            <?php
+            if($meeting['id'] == 32){ ?>
+                <td style="width: 30%;">BIL-MOM-TMC-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
+           <?php }else{ ?>
+                <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
+            <?php }
+            ?>
+            
             <td style="width: 15%;"></td>
             <td style="width: 30%;"></td>
         </tr>
