@@ -14,7 +14,7 @@ $aColumns = [
     'sub_group_name',
     'area_name',
     'type',
-    'project',
+    db_prefix().'area.project',
     'department',
     'pur_order_name',
     'subtotal',
@@ -237,7 +237,7 @@ foreach ($rResult as $aRow) {
             $_data = _l($aRow['type']);
         }elseif($aColumns[$i] == 'subtotal'){
             $_data = app_format_money($aRow['subtotal'],$base_currency->symbol);
-        }elseif($aColumns[$i] == 'project'){
+        }elseif($aColumns[$i] == db_prefix().'area.project'){
             $_data = $aRow['project_name'];
         }elseif($aColumns[$i] == 'department'){
             $_data = $aRow['department_name'];
