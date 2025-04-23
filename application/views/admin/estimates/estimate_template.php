@@ -566,9 +566,32 @@
                         </tbody>
                     </table>
                 </div>
+                <?php
+                $cost_plan_summary = (isset($estimate) ? $estimate->cost_plan_summary : '');
+                echo render_textarea('cost_plan_summary', '', $cost_plan_summary, [], [], '', 'tinymce'); 
+                ?>
             </div>
 
             <div role="tabpanel" class="tab-pane" id="area_summary">
+                <div class="row">
+                    <div class="col-md-12 text-right show_quantity_as_wrapper">
+                        <div class="mtop10">
+                            <span><?php echo _l('show_unit_as'); ?></span>
+                            <div class="radio radio-primary radio-inline">
+                                <input type="radio" value="1" id="1" name="show_as_unit"
+                                    data-text="<?php echo _l('estimate_table_quantity_heading'); ?>"
+                                    <?php echo isset($estimate) && $estimate->show_as_unit == 1 ? 'checked' : 'checked'; ?>>
+                                <label for="1">ft2</label>
+                            </div>
+                            <div class="radio radio-primary radio-inline">
+                                <input type="radio" value="2" id="2" name="show_as_unit"
+                                    data-text="<?php echo _l('estimate_table_hours_heading'); ?>"
+                                    <?php echo isset($estimate) && $estimate->show_as_unit == 2 ? 'checked' : ''; ?>>
+                                <label for="2">m2</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="horizontal-tabs">
                     <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
                         <?php
@@ -595,7 +618,7 @@
                                         <thead>
                                             <tr>
                                                 <th width="45%" align="left"><?php echo _l('floor'); ?></th>
-                                                <th width="45%" align="left"><?php echo _l('area'); ?></th>
+                                                <th width="45%" align="left"><?php echo _l('area'); ?> (<span class="show_as_unit_name"></span>)</th>
                                                 <th width="10%" align="center"><i class="fa fa-cog"></i></th>
                                             </tr>
                                         </thead>
@@ -663,6 +686,10 @@
             </div>
 
             <div role="tabpanel" class="tab-pane" id="project_timelines">
+                <?php
+                $project_timelines = (isset($estimate) ? $estimate->project_timelines : '');
+                echo render_textarea('project_timelines', '', $project_timelines, [], [], '', 'tinymce'); 
+                ?>
             </div>
 
             <?php
@@ -859,6 +886,25 @@
             <?php } ?>
 
             <div role="tabpanel" class="tab-pane" id="area_working">
+                <div class="row">
+                    <div class="col-md-12 text-right show_quantity_as_wrapper">
+                        <div class="mtop10">
+                            <span><?php echo _l('show_unit_as'); ?></span>
+                            <div class="radio radio-primary radio-inline">
+                                <input type="radio" value="1" id="1" name="show_aw_unit"
+                                    data-text="<?php echo _l('estimate_table_quantity_heading'); ?>"
+                                    <?php echo isset($estimate) && $estimate->show_aw_unit == 1 ? 'checked' : 'checked'; ?>>
+                                <label for="1">ft2</label>
+                            </div>
+                            <div class="radio radio-primary radio-inline">
+                                <input type="radio" value="2" id="2" name="show_aw_unit"
+                                    data-text="<?php echo _l('estimate_table_hours_heading'); ?>"
+                                    <?php echo isset($estimate) && $estimate->show_aw_unit == 2 ? 'checked' : ''; ?>>
+                                <label for="2">m2</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="horizontal-tabs">
                     <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
                         <?php
@@ -888,9 +934,9 @@
                                         <thead>
                                             <tr>
                                                 <th width="35%" align="left">Room/Spaces</th>
-                                                <th width="20%" align="left">Length</th>
-                                                <th width="20%" align="left">Width</th>
-                                                <th width="20%" align="left">Carpet Area</th>
+                                                <th width="20%" align="left">Length (<span class="show_aw_unit_name"></span>)</th>
+                                                <th width="20%" align="left">Width (<span class="show_aw_unit_name"></span>)</th>
+                                                <th width="20%" align="left">Carpet Area (<span class="show_aw_unit_name"></span>)</th>
                                                 <th width="5%" align="center"><i class="fa fa-cog"></i></th>
                                             </tr>
                                         </thead>
