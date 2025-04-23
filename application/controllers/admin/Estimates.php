@@ -134,6 +134,7 @@ class Estimates extends AdminController
             $data['annexure_estimate'] = $this->estimates_model->get_annexure_estimate_details($id);
             $data['all_area_working'] = $this->estimates_model->get_area_working($id);
             $data['area_statement_tabs'] = $this->costplanning_model->get_area_statement_tabs($id);
+            $data['all_area_summary'] = $this->estimates_model->get_area_summary($id);
             $title            = _l('edit', _l('estimate_lowercase'));
         }
 
@@ -170,6 +171,7 @@ class Estimates extends AdminController
         $data['master_area'] = $this->costplanning_model->get_master_area();
         $data['functionality_area'] = $this->costplanning_model->get_functionality_area();
         $data['units'] = $this->costplanning_model->get_units();
+        $data['area_summary_tabs'] = $this->costplanning_model->get_area_summary_tabs();
         $data['title']             = $title;
         $this->load->view('admin/estimates/estimate', $data);
     }

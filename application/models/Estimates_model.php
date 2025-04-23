@@ -530,6 +530,18 @@ class Estimates_model extends App_Model
             unset($data['file_csv']);
         }
 
+        if (isset($data['floor'])) {
+            unset($data['floor']);
+        }
+        if (isset($data['area'])) {
+            unset($data['area']);
+        }
+        $newareasummaryitems = [];
+        if (isset($data['newareasummaryitems'])) {
+            $newareasummaryitems = $data['newareasummaryitems'];
+            unset($data['newareasummaryitems']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -557,6 +569,12 @@ class Estimates_model extends App_Model
             foreach ($items as $key => $item) {
                 if ($itemid = add_new_sales_item_post($item, $insert_id, 'estimate')) {
                     _maybe_insert_post_item_tax($itemid, $item, $insert_id, 'estimate');
+                }
+            }
+
+            if(!empty($newareasummaryitems)) {
+                foreach ($newareasummaryitems as $akey => $aitem) {
+                    $this->add_new_area_summary_item_post($aitem, $insert_id);
                 }
             }
 
@@ -675,6 +693,13 @@ class Estimates_model extends App_Model
         }
         unset($data['removed_area_working_items']);
 
+        if(!empty($data['removed_area_summary_items'])) {
+            foreach ($data['removed_area_summary_items'] as $remove_item_id) {
+                $this->delete_area_summary_item($remove_item_id);
+            }
+        }
+        unset($data['removed_area_summary_items']);
+
         unset($data['removed_items']);
 
         if (isset($data['remarks'])) {
@@ -704,6 +729,19 @@ class Estimates_model extends App_Model
 
         if (isset($data['file_csv'])) {
             unset($data['file_csv']);
+        }
+
+        unset($data['floor']);
+        unset($data['area']);
+        $newareasummaryitems = [];
+        if (isset($data['newareasummaryitems'])) {
+            $newareasummaryitems = $data['newareasummaryitems'];
+            unset($data['newareasummaryitems']);
+        }
+        $areasummaryitems = [];
+        if (isset($data['areasummaryitems'])) {
+            $areasummaryitems = $data['areasummaryitems'];
+            unset($data['areasummaryitems']);
         }
 
         $this->db->where('id', $id);
@@ -823,16 +861,30 @@ class Estimates_model extends App_Model
         }
 
         if(!empty($newareaworkingitems)) {
-            foreach ($newareaworkingitems as $akey => $aitem) {
-                $this->add_new_area_working_item_post($aitem, $id);
+            foreach ($newareaworkingitems as $awkey => $awitem) {
+                $this->add_new_area_working_item_post($awitem, $id);
             }
         }
 
         if(!empty($areaworkingitems)) {
-            foreach ($areaworkingitems as $akey => $aitem) {
-                $id = $aitem['itemid'];
-                unset($aitem['itemid']);
-                $this->update_area_working_item_post($aitem, $id);
+            foreach ($areaworkingitems as $awkey => $awitem) {
+                $awid = $awitem['itemid'];
+                unset($awitem['itemid']);
+                $this->update_area_working_item_post($awitem, $awid);
+            }
+        }
+
+        if(!empty($newareasummaryitems)) {
+            foreach ($newareasummaryitems as $askey => $asitem) {
+                $this->add_new_area_summary_item_post($asitem, $id);
+            }
+        }
+
+        if(!empty($areasummaryitems)) {
+            foreach ($areasummaryitems as $askey => $asitem) {
+                $asid = $asitem['itemid'];
+                unset($asitem['itemid']);
+                $this->update_area_summary_item_post($asitem, $asid);
             }
         }
 
@@ -1627,5 +1679,32 @@ class Estimates_model extends App_Model
             }
         }
         return null;
+    }
+
+    public function get_area_summary($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'costarea_summary')->result_array();
+    }
+
+    public function add_new_area_summary_item_post($data, $id)
+    {
+        $data['estimate_id'] = $id;
+        $this->db->insert(db_prefix() . 'costarea_summary', $data);
+        return true;
+    }
+
+    public function update_area_summary_item_post($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'costarea_summary', $data);
+        return true;
+    }
+
+    public function delete_area_summary_item($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'costarea_summary');
+        return true;
     }
 }

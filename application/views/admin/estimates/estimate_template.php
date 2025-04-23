@@ -569,6 +569,97 @@
             </div>
 
             <div role="tabpanel" class="tab-pane" id="area_summary">
+                <div class="horizontal-tabs">
+                    <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                        <?php
+                        if(!empty($area_summary_tabs)) { 
+                            foreach ($area_summary_tabs as $akey => $avalue) { ?>
+                                <li role="presentation" class="<?php echo ($akey == 0) ? 'active' : ''; ?>">
+                                    <a href="#area_summary_<?php echo $avalue['id']; ?>" aria-controls="area_summary_<?php echo $avalue['id']; ?>" role="tab" id="tab_area_summary_<?php echo $avalue['id']; ?>" class="tab_sub_area_summary" data-toggle="tab" data-tab-id="<?php echo $avalue['id']; ?>">
+                                        <?php echo $avalue['name']; ?>
+                                    </a>
+                                </li>
+                            <?php }
+                        } ?>
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                    <?php
+                    $i = 1;
+                    if(!empty($area_summary_tabs)) { 
+                        foreach ($area_summary_tabs as $akey => $avalue) { ?>
+                            <div role="tabpanel" class="tab-pane area_summary_tab <?php echo ($akey == 0) ? 'active' : ''; ?>" id="area_summary_<?php echo $avalue['id']; ?>" data-id="<?php echo $avalue['id']; ?>">
+                                <div class="table-responsive s_table">
+                                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                        <thead>
+                                            <tr>
+                                                <th width="45%" align="left"><?php echo _l('floor'); ?></th>
+                                                <th width="45%" align="left"><?php echo _l('area'); ?></th>
+                                                <th width="10%" align="center"><i class="fa fa-cog"></i></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="area_summary">
+                                            <tr class="main">
+                                                <td>
+                                                    <textarea name="floor" rows="4" class="form-control" placeholder="<?php echo _l('floor'); ?>"></textarea>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="area" class="form-control" placeholder="<?php echo _l('area'); ?>">
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $new_area_summary = 'undefined';
+                                                    if (isset($estimate)) {
+                                                        $new_area_summary = true;
+                                                    } ?>
+                                                    <button type="button" onclick="add_area_summary_item_to_table('undefined','undefined',<?php echo e($new_area_summary); ?>); return false;"
+                                                        class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            <?php if (isset($estimate) && isset($all_area_summary)) {
+                                                $items_indicator = 'areasummaryitems';
+
+                                                foreach ($all_area_summary as $item) {
+                                                    if($item['area_id'] == $avalue['id']) {
+                                                        $table_row = '<tr class="item">';
+                                                        $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
+                                                        $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][area_id]', $item['area_id']);
+
+                                                        $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][floor]" class="form-control" rows="4">' . clear_textarea_breaks($item['floor']) . '</textarea></td>';
+
+                                                        $table_row .= '<td><input type="number" onblur="calculate_area_summary_total();" onchange="calculate_area_summary_total();" name="' . $items_indicator . '[' . $i . '][area]" value="' . $item['area'] . '" class="form-control" id="area"></td>';
+                                            
+                                                        $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_area_summary_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                                        $table_row .= '</tr>';
+                                                        echo $table_row;
+                                                        $i++;
+                                                    }
+                                                }
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-8 col-md-offset-4">
+                                    <table class="table text-right">
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="bold tw-text-neutral-700"><?php echo _l('total_area'); ?> :</span>
+                                                </td>
+                                                <td class="total_area">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        <?php }
+                    } ?>
+                </div>
+
+                <div id="removed-area-summary-items"></div>
             </div>
 
             <div role="tabpanel" class="tab-pane" id="project_timelines">
@@ -788,6 +879,7 @@
 
                 <div class="tab-content">
                     <?php
+                    $i = 1;
                     if(isset($estimate)) { 
                         foreach ($area_statement_tabs as $akey => $avalue) { ?>
                             <div role="tabpanel" class="tab-pane area_working_tab <?php echo ($akey == 0) ? 'active' : ''; ?>" id="area_working_<?php echo $avalue['id']; ?>" data-id="<?php echo $avalue['id']; ?>">

@@ -4230,3 +4230,5 @@ $lang['project_timelines']  = 'Project Timelines';
 $lang['area'] = 'Area';
 $lang['area_length'] = 'Length';
 $lang['area_width'] = 'Width';
+$lang['floor'] = 'Floor';
+$lang['total_area'] = 'Total Area';
