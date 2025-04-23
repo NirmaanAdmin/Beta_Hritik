@@ -4256,7 +4256,7 @@ class purchase extends AdminController
             $message = '';
             $data = $this->input->post();
 
-            if (!$this->input->post('id')) {
+            if (!$this->input->post('area_id')) {
 
                 $mess = $this->purchase_model->add_area($data);
                 if ($mess) {
@@ -4266,9 +4266,7 @@ class purchase extends AdminController
                 }
                 redirect(admin_url('purchase/setting?group=area'));
             } else {
-                $id = $data['id'];
-                unset($data['id']);
-                $success = $this->purchase_model->add_area($data, $id);
+                $success = $this->purchase_model->update_area($data);
                 if ($success) {
                     set_alert('success', _l('updated_successfully'));
                 } else {
@@ -12780,5 +12778,10 @@ class purchase extends AdminController
             die;
         }
         $this->load->view('payment_certificate/preview_file', $data);
+    }
+
+    public function table_pur_area()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'includes/table_pur_area'));
     }
 }

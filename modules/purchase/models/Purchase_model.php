@@ -6264,71 +6264,28 @@ class Purchase_model extends App_Model
             return $results_update;
         }
     }
-    public function add_area($data, $id = false)
+    public function add_area($data)
     {
-        $data['area'] = str_replace(', ', '|/\|', $data['hot_area']);
-
-        $area = explode(',', $data['area']);
-        $results = 0;
-        $results_update = '';
-        $flag_empty = 0;
-
-        foreach ($area as $area_key => $area_value) {
-            if ($area_value == '') {
-                $area_value = 0;
-            }
-            if (($area_key + 1) % 4 == 0) {
-
-                $arr_temp['note'] = str_replace('|/\|', ', ', $area_value);
-
-                if ($id == false && $flag_empty == 1) {
-                    $this->db->insert(db_prefix() . 'area', $arr_temp);
-                    $insert_id = $this->db->insert_id();
-                    if ($insert_id) {
-                        $results++;
-                    }
-                }
-                if (is_numeric($id) && $flag_empty == 1) {
-                    $this->db->where('id', $id);
-                    $this->db->update(db_prefix() . 'area', $arr_temp);
-                    if ($this->db->affected_rows() > 0) {
-                        $results_update = true;
-                    } else {
-                        $results_update = false;
-                    }
-                }
-
-                $flag_empty = 0;
-                $arr_temp = [];
-            } else {
-                switch (($area_key + 1) % 4) {
-                    case 1:
-                        $arr_temp['area_name'] = str_replace('|/\|', ', ', $area_value);
-                        if ($area_value != '0') {
-                            $flag_empty = 1;
-                        }
-                        break;
-                    case 2:
-                        $arr_temp['order'] = $area_value;
-                        break;
-                    case 3:
-                        //display 1: display (yes) , 0: not displayed (no)
-                        if ($area_value == 'yes') {
-                            $display_value = 1;
-                        } else {
-                            $display_value = 0;
-                        }
-                        $arr_temp['display'] = $display_value;
-                        break;
-                }
-            }
+        if(isset($data['area_id'])) {
+            unset($data['area_id']);
         }
+        $this->db->insert(db_prefix() . 'area', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
 
-        if ($id == false) {
-            return $results > 0 ? true : false;
-        } else {
-            return $results_update;
+    public function update_area($data)
+    {
+        if(isset($data['area_id'])) {
+            $id = $data['area_id'];
+            unset($data['area_id']);
         }
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'area', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
