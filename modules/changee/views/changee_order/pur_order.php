@@ -60,21 +60,24 @@
                           $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : $prefix . '-' . str_pad($next_number, 5, '0', STR_PAD_LEFT));
                         }
 
-
+ 
                         $number = (isset($pur_order) ? $pur_order->number : $next_number);
                         echo form_hidden('number', $number); ?>
 
                         <label for="pur_order_number"><?php echo _l('co_order_number'); ?></label>
 
-                        <input type="text" readonly class="form-control" name="pur_order_number" value="<?php echo changee_pur_html_entity_decode($pur_order_number); ?>">
+                        <input type="text" readonly class="form-control" name="pur_order_number" id="pur_order_number" value="<?php echo changee_pur_html_entity_decode($pur_order_number); ?>">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="form-group col-md-6">
-
+                        <?php $vendor_name = changee_get_vendor_company_name($pur_order->vendor);
+                        ?>
                         <label for="vendor"><?php echo _l('vendor'); ?></label>
-                        <select name="vendor" id="vendor" class="selectpicker" <?php if (isset($pur_order)) {
+                        <input type="text" class="form-control" id="vendor_name" value="<?= $vendor_name ?>" readonly>
+                        <input type="hidden"  id="vendor" name="vendor" value="">
+                        <!-- <select name="vendor" id="vendor" disabled   class="selectpicker" <?php if (isset($pur_order)) {
                                                                                   echo 'disabled';
                                                                                 } ?> onchange="estimate_by_vendor(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
@@ -87,7 +90,7 @@
                                                                                                           }
                                                                                                         } ?>><?php echo changee_pur_html_entity_decode($s['company']); ?></option>
                           <?php } ?>
-                        </select>
+                        </select> -->
 
                       </div>
 

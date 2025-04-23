@@ -3249,7 +3249,7 @@ class Changee_model extends App_Model
                 $row['action'] = 'approve';
                 $row['staffid'] = $value['id'];
                 $row['date_send'] = $date_send;
-                $row['rel_id'] = $data['rel_id']; 
+                $row['rel_id'] = $data['rel_id'];
                 $row['rel_type'] = $data['rel_type'];
                 $row['sender'] = $sender;
                 $this->db->insert('tblco_approval_details', $row);
@@ -3285,7 +3285,7 @@ class Changee_model extends App_Model
                     $this->db->insert('tbltask_assigned', $assignss);
                 }
             }
-        } 
+        }
 
         // foreach ($data_new as $value) {
         //     $row = [];
@@ -4809,10 +4809,10 @@ class Changee_model extends App_Model
             $html .= '<span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_co_request_area_po($pur_order->id) . '</span><br />';
         }
         if (!empty($pur_order->po_order_id)) {
-            $html .= '<span style="text-align: right;"><b>' . _l('releted_to') . ':</b> ' .get_pur_name_by_id($pur_order->po_order_id) . '</span><br />';
+            $html .= '<span style="text-align: right;"><b>' . _l('releted_to') . ':</b> ' . get_pur_name_by_id($pur_order->po_order_id) . '</span><br />';
         }
         if (!empty($pur_order->wo_order_id)) {
-            $html .= '<span style="text-align: right;"><b>' . _l('releted_to') . ':</b> ' .get_wo_order_name_by_id($pur_order->wo_order_id) . '</span><br />';
+            $html .= '<span style="text-align: right;"><b>' . _l('releted_to') . ':</b> ' . get_wo_order_name_by_id($pur_order->wo_order_id) . '</span><br />';
         }
         $html .= '            
             </td>
@@ -4835,7 +4835,7 @@ class Changee_model extends App_Model
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('qty_after_incl_co') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('awarded_rate') . '</th>
             <th class="thead-dark" align="right" style="width: 7%;font-size: 11px">' . _l('rate_after_incl_co') . '</th>
-            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">'. _l('updated_subtotal_before_tax'). '</th>
+            <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('updated_subtotal_before_tax') . '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('tax_value') . '</th>
             <th class="thead-dark" align="right" style="width: 8%;font-size: 11px">' . _l('debit_note_total') . '</th>
             <th class="thead-dark" align="right" style="width: 6%;font-size: 11px">Remark</th>
@@ -4873,16 +4873,16 @@ class Changee_model extends App_Model
             }
             $non_tender = '';
             $font_weight = '';
-            if($diff_unit > 0) {
+            if ($diff_unit > 0) {
                 $font_weight = 'font-weight: bold;';
             }
             if ($row['tender_item'] == 1) {
                 $non_tender = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>';
             }
-            $qty_after_incl_co = changee_pur_html_entity_decode($row['quantity']).' '.$units->unit_name;
-            $rate_after_incl_co = '₹'.app_format_money($row['unit_price'], '');
+            $qty_after_incl_co = changee_pur_html_entity_decode($row['quantity']) . ' ' . $units->unit_name;
+            $rate_after_incl_co = '₹' . app_format_money($row['unit_price'], '');
             $align = 'right';
-            if($diff_unit == 0) {
+            if ($diff_unit == 0) {
                 $align = 'center';
                 $qty_after_incl_co = '-';
             }
@@ -4890,16 +4890,16 @@ class Changee_model extends App_Model
                 $rate_after_incl_co = '-';
             }
             $html .= '<tr nobr="true" class="sortable">
-            <td style="width: 10%; font-size: 11px;'.$font_weight.'">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
+            <td style="width: 10%; font-size: 11px;' . $font_weight . '">' . $items->commodity_code . ' - ' . $items->description . $non_tender . '</td>
             <td style="width: 32%; font-size: 11px">' . str_replace("<br />", " ", $row['description']) . '</td>
-            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff_unit . '</span></td>
-            <td align="'.$align.'" style="width: 7%; font-size: 11px;'.$font_weight.'">' . $qty_after_incl_co . '</td>
-            <td align="right" style="width: 7%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff . '</span></td>
-            <td align="'.$align.'" style="width: 7%; font-size: 11px;'.$font_weight.'">' . $rate_after_incl_co . '</td>
-            <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['into_money_updated'], '') . '</td>
-            <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['tax_value'], '') . '</td>
-            <td align="right" style="width: 8%; font-size: 11px;'.$font_weight.'">₹' . app_format_money($row['total'], '') . '</td>
-            <td align="right" style="width: 6%; font-size: 11px;'.$font_weight.'">' . $row['remarks'] . '</td>
+            <td align="right" style="width: 7%; font-size: 11px;' . $font_weight . '">' . changee_pur_html_entity_decode($row['original_quantity']) . ' ' . $units->unit_name . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff_unit . '</span></td>
+            <td align="' . $align . '" style="width: 7%; font-size: 11px;' . $font_weight . '">' . $qty_after_incl_co . '</td>
+            <td align="right" style="width: 7%; font-size: 11px;' . $font_weight . '">₹' . app_format_money($row['original_unit_price'], '') . '<br><span style="display: block; font-size: 10px;font-style: italic;">Amendment : ' . $diff . '</span></td>
+            <td align="' . $align . '" style="width: 7%; font-size: 11px;' . $font_weight . '">' . $rate_after_incl_co . '</td>
+            <td align="right" style="width: 8%; font-size: 11px;' . $font_weight . '">₹' . app_format_money($row['into_money_updated'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px;' . $font_weight . '">₹' . app_format_money($row['tax_value'], '') . '</td>
+            <td align="right" style="width: 8%; font-size: 11px;' . $font_weight . '">₹' . app_format_money($row['total'], '') . '</td>
+            <td align="right" style="width: 6%; font-size: 11px;' . $font_weight . '">' . $row['remarks'] . '</td>
           </tr>';
 
             $t_mn += $row['total_money'];
@@ -4991,126 +4991,126 @@ class Changee_model extends App_Model
             </tr>
         </tbody>
       </table>';
-        $html .= '<div style="page-break-before:always"></div>';
-        $html .= '<h4 style="font-size: 20px;text-align:center;">Change Order Item History</h4>';
-        if ($pur_order->wo_order_id > 0) {
-            $check_pur_existing_in_co = check_any_order_exitsin_po($pur_order->wo_order_id, 'wo_order');
-        } elseif ($pur_order->po_order_id > 0) {
-            $check_pur_existing_in_co = check_any_order_exitsin_po($pur_order->po_order_id, 'pur_order');
-        }
+        // $html .= '<div style="page-break-before:always"></div>';
+        // $html .= '<h4 style="font-size: 20px;text-align:center;">Change Order Item History</h4>';
+        // if ($pur_order->wo_order_id > 0) {
+        //     $check_pur_existing_in_co = check_any_order_exitsin_po($pur_order->wo_order_id, 'wo_order');
+        // } elseif ($pur_order->po_order_id > 0) {
+        //     $check_pur_existing_in_co = check_any_order_exitsin_po($pur_order->po_order_id, 'pur_order');
+        // }
 
-        $true = !empty($check_pur_existing_in_co);
+        // $true = !empty($check_pur_existing_in_co);
 
-        $common_items = [];
-        $new_items = [];
+        // $common_items = [];
+        // $new_items = [];
 
-        // Pre-fetch all order details into a map for faster access
-        $order_details_map = [];
-        foreach ($check_pur_existing_in_co as $order_value) {
-            $order_details_map[$order_value['id']] = $this->changee_model->get_co_order_detail($order_value['id']);
-        }
+        // // Pre-fetch all order details into a map for faster access
+        // $order_details_map = [];
+        // foreach ($check_pur_existing_in_co as $order_value) {
+        //     $order_details_map[$order_value['id']] = $this->changee_model->get_co_order_detail($order_value['id']);
+        // }
 
-        // Process items into common and new categories
-        foreach ($order_details_map as $order_id => $details) {
-            foreach ($details as $detail) {
-                if (isset($common_items[$detail['item_code']])) {
-                    $common_items[$detail['item_code']][] = $detail;
-                } else {
-                    $new_items[] = $detail;
-                }
-            }
-        }
+        // // Process items into common and new categories
+        // foreach ($order_details_map as $order_id => $details) {
+        //     foreach ($details as $detail) {
+        //         if (isset($common_items[$detail['item_code']])) {
+        //             $common_items[$detail['item_code']][] = $detail;
+        //         } else {
+        //             $new_items[] = $detail;
+        //         }
+        //     }
+        // }
 
-        if (!empty($check_pur_existing_in_co)) {
-            // Calculate the remaining width for dynamic columns
-            $fixed_width = 10 + 25; // 10% for item_text and 25% for description
-            $dynamic_columns_count = count($check_pur_existing_in_co) * 2 + 2; // Two columns for each CO order, plus original unit price and quantity
-            $remaining_width = 100 - $fixed_width; // Remaining width to be distributed
-            $dynamic_column_width = $remaining_width / $dynamic_columns_count;
+        // if (!empty($check_pur_existing_in_co)) {
+        //     // Calculate the remaining width for dynamic columns
+        //     $fixed_width = 10 + 25; // 10% for item_text and 25% for description
+        //     $dynamic_columns_count = count($check_pur_existing_in_co) * 2 + 2; // Two columns for each CO order, plus original unit price and quantity
+        //     $remaining_width = 100 - $fixed_width; // Remaining width to be distributed
+        //     $dynamic_column_width = $remaining_width / $dynamic_columns_count;
 
-            // Initialize the table header
-            $history_tabel = '<table class="table purorder-item" style="width: 100%">
-                          <thead>
-                            <tr>
-                              <th class="thead-dark" align="left" style="width: 10%;font-size: 11px">' . _l('debit_note_table_item_heading') . '</th>
-                              <th class="thead-dark" align="left" style="width: 25%;font-size: 11px">' . _l('description') . '</th>
-                              <th class="thead-dark" align="left" style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . _l('original_unit_price') . ' (INR)</th>
-                              <th align="left" class="qty thead-dark" style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . _l('original_quantity') . '</th>';
+        //     // Initialize the table header
+        //     $history_tabel = '<table class="table purorder-item" style="width: 100%">
+        //                   <thead>
+        //                     <tr>
+        //                       <th class="thead-dark" align="left" style="width: 10%;font-size: 11px">' . _l('debit_note_table_item_heading') . '</th>
+        //                       <th class="thead-dark" align="left" style="width: 25%;font-size: 11px">' . _l('description') . '</th>
+        //                       <th class="thead-dark" align="left" style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . _l('original_unit_price') . ' (INR)</th>
+        //                       <th align="left" class="qty thead-dark" style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . _l('original_quantity') . '</th>';
 
-            // Dynamically create column headers for each pur_order
-            $count = 1;
-            foreach ($check_pur_existing_in_co as $value) {
-                $history_tabel .= '<th class="thead-dark" align="left" style="width: ' . $dynamic_column_width . '%;font-size: 11px">CO ' . $count . ' Rate (INR)</th>';
-                $history_tabel .= '<th align="left" class="qty thead-dark" style="width: ' . $dynamic_column_width . '%;font-size: 11px">CO ' . $count . ' Qty</th>';
-                $count++;
-            }
+        //     // Dynamically create column headers for each pur_order
+        //     $count = 1;
+        //     foreach ($check_pur_existing_in_co as $value) {
+        //         $history_tabel .= '<th class="thead-dark" align="left" style="width: ' . $dynamic_column_width . '%;font-size: 11px">CO ' . $count . ' Rate (INR)</th>';
+        //         $history_tabel .= '<th align="left" class="qty thead-dark" style="width: ' . $dynamic_column_width . '%;font-size: 11px">CO ' . $count . ' Qty</th>';
+        //         $count++;
+        //     }
 
-            $history_tabel .= '</tr>
-                          </thead>
-                          <tbody id="history_tbody">';
+        //     $history_tabel .= '</tr>
+        //                   </thead>
+        //                   <tbody id="history_tbody">';
 
-            // Print common items
-            foreach ($common_items as $item_code => $items) {
-                foreach ($items as $value) {
-                    $history_tabel .= '<tr>
-                  <td style="width: 10%; font-size: 11px">' . $value['item_text'] . '</td>
-                  <td style="width: 25%;font-size: 11px">' . $value['description'] . '</td>
-                  <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_unit_price'] . '</td>
-                  <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_quantity'] . '</td>';
+        //     // Print common items
+        //     foreach ($common_items as $item_code => $items) {
+        //         foreach ($items as $value) {
+        //             $history_tabel .= '<tr>
+        //           <td style="width: 10%; font-size: 11px">' . $value['item_text'] . '</td>
+        //           <td style="width: 25%;font-size: 11px">' . $value['description'] . '</td>
+        //           <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_unit_price'] . '</td>
+        //           <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_quantity'] . '</td>';
 
-                    // Add columns for rates and quantities dynamically
-                    foreach ($check_pur_existing_in_co as $order_value) {
-                        $rate = '-';
-                        $quantity = '-';
-                        if (isset($order_details_map[$order_value['id']])) {
-                            foreach ($order_details_map[$order_value['id']] as $order_item) {
-                                if ($order_item['item_code'] == $value['item_code']) {
-                                    $rate = '₹'.$order_item['unit_price'];
-                                    $quantity = '₹'.$order_item['quantity'];
-                                    break;
-                                }
-                            }
-                        }
-                        $history_tabel .= '<td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $rate . '</td><td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $quantity . '</td>';
-                    }
+        //             // Add columns for rates and quantities dynamically
+        //             foreach ($check_pur_existing_in_co as $order_value) {
+        //                 $rate = '-';
+        //                 $quantity = '-';
+        //                 if (isset($order_details_map[$order_value['id']])) {
+        //                     foreach ($order_details_map[$order_value['id']] as $order_item) {
+        //                         if ($order_item['item_code'] == $value['item_code']) {
+        //                             $rate = '₹' . $order_item['unit_price'];
+        //                             $quantity = '₹' . $order_item['quantity'];
+        //                             break;
+        //                         }
+        //                     }
+        //                 }
+        //                 $history_tabel .= '<td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $rate . '</td><td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $quantity . '</td>';
+        //             }
 
-                    $history_tabel .= '</tr>';
-                }
-            }
+        //             $history_tabel .= '</tr>';
+        //         }
+        //     }
 
-            // Print new items
-            foreach ($new_items as $item_code => $value) {
-                $non_tender = $value['tender_item'] == 1
-                    ? '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>'
-                    : '';
+        //     // Print new items
+        //     foreach ($new_items as $item_code => $value) {
+        //         $non_tender = $value['tender_item'] == 1
+        //             ? '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_tendor_item') . '</span>'
+        //             : '';
 
-                $history_tabel .= '<tr>
-              <td style="width: 10%; font-size: 11px">' . $value['item_text'] . '</td>
-              <td style="width: 25%;font-size: 11px">' . $value['description'] . $non_tender . '</td>
-              <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_unit_price'] . '</td>
-              <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_quantity'] . '</td>';
+        //         $history_tabel .= '<tr>
+        //       <td style="width: 10%; font-size: 11px">' . $value['item_text'] . '</td>
+        //       <td style="width: 25%;font-size: 11px">' . $value['description'] . $non_tender . '</td>
+        //       <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_unit_price'] . '</td>
+        //       <td style="width: ' . $dynamic_column_width . '%;font-size: 11px">₹' . $value['original_quantity'] . '</td>';
 
-                // Add columns for rates and quantities dynamically
-                foreach ($check_pur_existing_in_co as $order_value) {
-                    $rate = '-';
-                    $quantity = '-';
-                    if (isset($order_details_map[$order_value['id']])) {
-                        foreach ($order_details_map[$order_value['id']] as $order_item) {
-                            if ($order_item['item_code'] == $value['item_code']) {
-                                $rate = '₹'.$order_item['unit_price'];
-                                $quantity = '₹'.$order_item['quantity'];
-                                break;
-                            }
-                        }
-                    }
-                    $history_tabel .= '<td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $rate . '</td><td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $quantity . '</td>';
-                }
+        //         // Add columns for rates and quantities dynamically
+        //         foreach ($check_pur_existing_in_co as $order_value) {
+        //             $rate = '-';
+        //             $quantity = '-';
+        //             if (isset($order_details_map[$order_value['id']])) {
+        //                 foreach ($order_details_map[$order_value['id']] as $order_item) {
+        //                     if ($order_item['item_code'] == $value['item_code']) {
+        //                         $rate = '₹' . $order_item['unit_price'];
+        //                         $quantity = '₹' . $order_item['quantity'];
+        //                         break;
+        //                     }
+        //                 }
+        //             }
+        //             $history_tabel .= '<td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $rate . '</td><td style="width: ' . $dynamic_column_width . '%;font-size: 11px">' . $quantity . '</td>';
+        //         }
 
-                $history_tabel .= '</tr>';
-            }
+        //         $history_tabel .= '</tr>';
+        //     }
 
-            $history_tabel .= '</tbody></table>';
-        }
+        //     $history_tabel .= '</tbody></table>';
+        // }
 
         $html .= $history_tabel ?? '';
 
@@ -11292,8 +11292,8 @@ class Changee_model extends App_Model
             $variation = (float)$into_money_updated - (float)$into_money;
         }
 
-        if(!empty($name)) {
-            if(!empty($serial_no)) {
+        if (!empty($name)) {
+            if (!empty($serial_no)) {
                 $row .= '<td class="serial_no">' . render_input($name_serial_no, '', $serial_no, 'number', []) . '</td>';
             } else {
                 $serial_no_updated = preg_replace("/[^0-9]/", "", $name);
@@ -11331,7 +11331,7 @@ class Changee_model extends App_Model
             // render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
             render_select($name_unit_name, $units_list, ['id', 'label'], '', $unit_name, ['id']) .
             '</td>';
-            '</td>';
+        '</td>';
 
         $row .= '<td class="into_money">' . render_input($name_into_money, '', $into_money, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="into_money_updated">' . render_input($name_into_money_updated, '', $into_money_updated, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
@@ -14676,7 +14676,7 @@ class Changee_model extends App_Model
         // echo $related;
         // die;
         $uploadedFiles = handle_changee_attachments_array($related, $id);
-        
+
         if ($uploadedFiles && is_array($uploadedFiles)) {
             foreach ($uploadedFiles as $file) {
                 $data = array();

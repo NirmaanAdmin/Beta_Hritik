@@ -1469,7 +1469,7 @@ class changee extends AdminController
             $pur_order_data['vendornote'] = $this->input->post('vendornote', false);
             $pur_order_data['order_summary'] = $this->input->post('order_summary', false);
 
-            if ($id == '') { 
+            if ($id == '') {
                 if (!has_permission('changee_orders', '', 'create')) {
                     access_denied('changee_order');
                 }
@@ -8940,8 +8940,8 @@ class changee extends AdminController
                             $quantity = '-';
                             foreach ($order_details as $order_item) {
                                 if ($order_item['item_code'] == $value['item_code']) {
-                                    $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
-                                    $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                    $rate = '₹' . $order_item['unit_price'];  // Use the unit price from this order
+                                    $quantity = '₹' . $order_item['quantity'];  // Use the quantity from this order
                                     break;
                                 }
                             }
@@ -8976,8 +8976,8 @@ class changee extends AdminController
                         $quantity = '-';
                         foreach ($order_details as $order_item) {
                             if ($order_item['item_code'] == $value['item_code']) {
-                                $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
-                                $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                $rate = '₹' . $order_item['unit_price'];  // Use the unit price from this order
+                                $quantity = '₹' . $order_item['quantity'];  // Use the quantity from this order
                                 break;
                             }
                         }
@@ -8992,7 +8992,20 @@ class changee extends AdminController
             $history_tabel .= '</tbody></table>';
         }
 
+        $full_po_number = $purchase_order->pur_order_number;
+        preg_match('/^#PO-\d+/', $full_po_number, $matches);
+        $po_number = $matches[0] ?? '';
 
+        $vendor_id = $purchase_order->vendor;
+        $vendor_data = $this->changee_model->get_vendor($vendor_id);
+
+        $vendor_name = $vendor_data->company;
+
+        $vendor_code = $vendor_data->vendor_code;
+
+        echo '<pre>';
+        print_r($purchase_order);
+        die;
 
         echo json_encode([
             'result' => $pur_order_detail,
@@ -9005,7 +9018,11 @@ class changee extends AdminController
             'currency_rate' => $currency_rate,
             'estimate_html' => $estimate_html,
             'check_pur_existing_in_co' => $true,
-            'history_tabel_data' => $history_tabel
+            'history_tabel_data' => $history_tabel,
+            'po_prefix' => $po_number,
+            'vendor_id' => $vendor_id,
+            'vendor_name' => $vendor_name,
+            'vendor_code' => $vendor_code,
         ]);
     }
     public function coppy_wo_order_for_po($wo_order)
@@ -9120,8 +9137,8 @@ class changee extends AdminController
                             $quantity = '-';
                             foreach ($order_details as $order_item) {
                                 if ($order_item['item_code'] == $value['item_code']) {
-                                    $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
-                                    $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                    $rate = '₹' . $order_item['unit_price'];  // Use the unit price from this order
+                                    $quantity = '₹' . $order_item['quantity'];  // Use the quantity from this order
                                     break;
                                 }
                             }
@@ -9156,8 +9173,8 @@ class changee extends AdminController
                         $quantity = '-';
                         foreach ($order_details as $order_item) {
                             if ($order_item['item_code'] == $value['item_code']) {
-                                $rate = '₹'.$order_item['unit_price'];  // Use the unit price from this order
-                                $quantity = '₹'.$order_item['quantity'];  // Use the quantity from this order
+                                $rate = '₹' . $order_item['unit_price'];  // Use the unit price from this order
+                                $quantity = '₹' . $order_item['quantity'];  // Use the quantity from this order
                                 break;
                             }
                         }
@@ -9171,6 +9188,17 @@ class changee extends AdminController
 
             $history_tabel .= '</tbody></table>';
         }
+
+        $full_wo_number = $work_order->wo_order_number;
+
+        preg_match('/^#WO-\d+/', $full_wo_number, $matches);
+        $wo_number = $matches[0] ?? '';
+
+        $vendor_id = $work_order->vendor;
+        $vendor_data = $this->changee_model->get_vendor($vendor_id);
+
+        $vendor_name = $vendor_data->company;
+        $vendor_code = $vendor_data->vendor_code;
         echo json_encode([
             'result' => $wo_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -9182,7 +9210,11 @@ class changee extends AdminController
             'currency_rate' => $currency_rate,
             'estimate_html' => $estimate_html,
             'check_pur_existing_in_co' => $true,
-            'history_tabel_data' => $history_tabel
+            'history_tabel_data' => $history_tabel,
+            'wo_number' => $wo_number,
+            'vendor_id' => $vendor_id,
+            'vendor_name' => $vendor_name,
+            'vendor_code' => $vendor_code,
         ]);
     }
 
@@ -9191,12 +9223,11 @@ class changee extends AdminController
         $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
         $data['current_user_is_admin']             = is_admin();
         $data['file'] = $this->changee_model->get_changee_attachments_with_id($id);
-    
+
         if (!$data['file']) {
             header('HTTP/1.0 404 Not Found');
             die;
         }
         $this->load->view('changee_order/_file_new', $data);
     }
-    
 }

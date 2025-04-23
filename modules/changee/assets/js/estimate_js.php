@@ -147,7 +147,7 @@ function estimate_by_vendor(invoker){
 
       $('select[name="currency"]').val(response.currency_id).change();
        <?php if(changee_get_changee_option('item_by_vendor') == 1){ ?>
-        if(response.option_html != ''){
+        if(response.option_html != ''){ 
          $('#item_select').html(response.option_html);
          $('.selectpicker').selectpicker('refresh');
         }else if(response.option_html == ''){
