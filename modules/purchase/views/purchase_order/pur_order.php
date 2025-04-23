@@ -112,7 +112,7 @@
 
                         <label for="vendor"><?php echo _l('vendor'); ?></label>
                         <select name="vendor" id="vendor" class="selectpicker" <?php if (isset($pur_order)) {
-                                                                                  echo 'disabled';
+                                                                                  echo '';
                                                                                 } ?> onchange="estimate_by_vendor(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <?php foreach ($vendors as $s) { ?>
