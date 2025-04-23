@@ -572,7 +572,8 @@ function get_vendor($name_agency, $agency)
 
     return render_select($name_agency, $result, array('userid', 'company'), '', $agency);
 }
-function get_vendor_list_for_forms(){
+function get_vendor_list_for_forms()
+{
     $CI = &get_instance();
     $result = $CI->db->get(db_prefix() . 'pur_vendor')->result_array();
     return $result;
@@ -749,12 +750,26 @@ function get_qcr_status_by_id($status_id)
     return $status;
 }
 
-
-function chcek_formid_is_qcr_qor($formid)
+function chcek_formid_is_qcr($formid)
 {
     $CI = &get_instance();
     // Use your DB prefix helper (Perfex = db_prefix())
     $table = db_prefix() . 'qcr_form_detail';
+
+    // Count how many rows match this formid
+    $count = $CI->db
+        ->where('form_id', $formid)
+        ->count_all_results($table);
+
+    return $count > 0;
+}
+
+function check_formid_is_qor($formid)
+{
+
+    $CI = &get_instance();
+    // Use your DB prefix helper (Perfex = db_prefix())
+    $table = db_prefix() . 'qor_form_detail';
 
     // Count how many rows match this formid
     $count = $CI->db

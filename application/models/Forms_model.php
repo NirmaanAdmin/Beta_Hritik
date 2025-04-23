@@ -891,6 +891,61 @@ class Forms_model extends App_Model
                     $new_order = $data['newitems'];
                     unset($data['newitems']);
                 }
+            } elseif ($data['form_type'] == "qor") {
+                $qor_form = [];
+                $qor_form['raised_by'] = $data['raised_by'];
+                $qor_form['issue_date'] = $data['issue_date'];
+                $qor_form['observation_no'] = $data['observation_no'];
+                $qor_form['material_or_works_involved'] = $data['material_or_works_involved'];
+                $qor_form['supplier_contractor_in_charge'] = $data['supplier_contractor_in_charge'];
+                $qor_form['specification_drawing_reference'] = $data['specification_drawing_reference'];
+                $qor_form['procedure_or_itp_reference'] = $data['procedure_or_itp_reference'];
+                $qor_form['observation_description'] = $data['observation_description'];
+                $qor_form['design_consultant_recommendation'] = $data['design_consultant_recommendation'];
+                $qor_form['ref_date1'] = $data['ref_date1'];
+                $qor_form['client_instruction'] = $data['client_instruction'];
+                $qor_form['ref_date2'] = $data['ref_date2'];
+                $qor_form['suppliers_proposed_corrective_action1'] = $data['suppliers_proposed_corrective_action1'];
+                $qor_form['suppliers_proposed_corrective_action2'] = $data['suppliers_proposed_corrective_action2'];
+                $qor_form['proposed_date'] = $data['proposed_date'];
+                $qor_form['approval'] = $data['approval'];
+                $qor_form['staff_name'] = $data['staff_name'];
+                $qor_form['staff_name_date'] = $data['staff_name_date'];
+                $qor_form['close_out'] = $data['close_out'];
+                $qor_form['observation_date'] = $data['observation_date'];
+                $qor_form['comments1'] = $data['comments1'];
+                $qor_form['staff_comments'] = $data['staff_comments'];
+                unset(
+                    $data['raised_by'],
+                    $data['issue_date'],
+                    $data['observation_no'],
+                    $data['location'],
+                    $data['observation'],
+                    $data['material_or_works_involved'],
+                    $data['supplier_contractor_in_charge'],
+                    $data['specification_drawing_reference'],
+                    $data['procedure_or_itp_reference'],
+                    $data['observation_description'],
+                    $data['design_consultant_recommendation'],
+                    $data['ref_date1'],
+                    $data['client_instruction'],
+                    $data['ref_date2'],
+                    $data['suppliers_proposed_corrective_action1'],
+                    $data['suppliers_proposed_corrective_action2'],
+                    $data['proposed_date'],
+                    $data['approval'],
+                    $data['staff_name'],
+                    $data['staff_name_date'],
+                    $data['close_out'],
+                    $data['observation_date'],
+                    $data['comments1'],
+                    $data['staff_comments']
+                );
+                $new_order = [];
+                if (isset($data['comments'])) {
+                    $new_order = $data['comments'];
+                    unset($data['comments']);
+                }
             } elseif ($data['form_type'] == "apc") {
                 $apc_form = [];
                 $apc_form['date'] = $data['date'];
@@ -1068,9 +1123,7 @@ class Forms_model extends App_Model
 
         // $data['message'] = remove_emojis($data['message']);
         $data = hooks()->apply_filters('before_form_created', $data, $admin);
-        // echo '<pre>';
-        // print_r($data);
-        // die;
+
         $this->db->insert(db_prefix() . 'forms', $data);
         $formid = $this->db->insert_id();
         if ($formid) {
@@ -1145,6 +1198,41 @@ class Forms_model extends App_Model
                         $idata = ['compliance_photograph' => $ifile['file_name']];
                         $this->db->where('id', $qcr_detail_id);
                         $this->db->update(db_prefix() . 'qcr_form_detail', $idata);
+                    }
+                }
+            } elseif ($data['form_type'] == "qor") {
+                if (isset($qor_form)) {
+                    if (!empty($qor_form)) {
+                        $qor_form['form_id'] = $formid;
+                        $this->db->insert(db_prefix() . $data['form_type'] . '_form', $qor_form);
+                    }
+                }
+                if (isset($new_order)) {
+                    if (!empty($new_order)) {
+                        $sr = 1;
+                        foreach ($new_order as $key => $value) {
+                            $dt_data = [];
+                            $dt_data['form_id'] = $formid;
+                            $dt_data['comments'] = $value;
+                            $this->db->insert(db_prefix() . $data['form_type'] . '_form_detail', $dt_data);
+                            $insert_id = $this->db->insert_id();
+                            $iuploadedFiles = handle_qor_item_attachment_array('qorattachments', $formid, $insert_id, $sr);
+
+                            if ($iuploadedFiles && is_array($iuploadedFiles)) {
+                                if (!empty($iuploadedFiles)) {
+                                    foreach ($iuploadedFiles as $file) {
+                                        $idata = [
+                                            'form_id' =>  $formid,
+                                            'form_detail_id' =>  $file['item_id'],
+                                            'file_name' => $file['file_name'],
+                                            'filetype' => $file['filetype'],
+                                        ];
+                                        $this->db->insert(db_prefix() . 'qorattachments', $idata);
+                                    }
+                                }
+                            }
+                            $sr++;
+                        }
                     }
                 }
             } elseif ($data['form_type'] == "apc") {
@@ -1892,6 +1980,61 @@ class Forms_model extends App_Model
                 $remove_order = $data['removed_items'];
                 unset($data['removed_items']);
             }
+        } elseif ($formBeforeUpdate->form_type == "qor") {
+            $qor_form = [];
+            $qor_form['raised_by'] = $data['raised_by'];
+            $qor_form['issue_date'] = $data['issue_date'];
+            $qor_form['observation_no'] = $data['observation_no'];
+            $qor_form['material_or_works_involved'] = $data['material_or_works_involved'];
+            $qor_form['supplier_contractor_in_charge'] = $data['supplier_contractor_in_charge'];
+            $qor_form['specification_drawing_reference'] = $data['specification_drawing_reference'];
+            $qor_form['procedure_or_itp_reference'] = $data['procedure_or_itp_reference'];
+            $qor_form['observation_description'] = $data['observation_description'];
+            $qor_form['design_consultant_recommendation'] = $data['design_consultant_recommendation'];
+            $qor_form['ref_date1'] = $data['ref_date1'];
+            $qor_form['client_instruction'] = $data['client_instruction'];
+            $qor_form['ref_date2'] = $data['ref_date2'];
+            $qor_form['suppliers_proposed_corrective_action1'] = $data['suppliers_proposed_corrective_action1'];
+            $qor_form['suppliers_proposed_corrective_action2'] = $data['suppliers_proposed_corrective_action2'];
+            $qor_form['proposed_date'] = $data['proposed_date'];
+            $qor_form['approval'] = $data['approval'];
+            $qor_form['staff_name'] = $data['staff_name'];
+            $qor_form['staff_name_date'] = $data['staff_name_date'];
+            $qor_form['close_out'] = $data['close_out'];
+            $qor_form['observation_date'] = $data['observation_date'];
+            $qor_form['comments1'] = $data['comments1'];
+            $qor_form['staff_comments'] = $data['staff_comments'];
+            unset(
+                $data['raised_by'],
+                $data['issue_date'],
+                $data['observation_no'],
+                $data['location'],
+                $data['observation'],
+                $data['material_or_works_involved'],
+                $data['supplier_contractor_in_charge'],
+                $data['specification_drawing_reference'],
+                $data['procedure_or_itp_reference'],
+                $data['observation_description'],
+                $data['design_consultant_recommendation'],
+                $data['ref_date1'],
+                $data['client_instruction'],
+                $data['ref_date2'],
+                $data['suppliers_proposed_corrective_action1'],
+                $data['suppliers_proposed_corrective_action2'],
+                $data['proposed_date'],
+                $data['approval'],
+                $data['staff_name'],
+                $data['staff_name_date'],
+                $data['close_out'],
+                $data['observation_date'],
+                $data['comments1'],
+                $data['staff_comments']
+            );
+            $new_order = [];
+            if (isset($data['comments'])) {
+                $new_order = $data['comments'];
+                unset($data['comments']);
+            }
         } elseif ($formBeforeUpdate->form_type == "apc") {
             $apc_form = [];
             $apc_form['date'] = $data['date'];
@@ -2268,6 +2411,49 @@ class Forms_model extends App_Model
                         if ($this->db->delete(db_prefix() . $formBeforeUpdate->form_type . '_form_detail')) {
                             $affectedRows++;
                         }
+                    }
+                }
+            }
+        } elseif ($formBeforeUpdate->form_type == "qor") {
+            if (isset($qor_form)) {
+                if (!empty($qor_form)) {
+                    $this->db->where('form_id', $data['formid']);
+                    $this->db->update(db_prefix() . $formBeforeUpdate->form_type . '_form', $qor_form);
+                    if ($this->db->affected_rows() > 0) {
+                        $affectedRows++;
+                    }
+                }
+            }
+            $existing_details = $this->get_qor_form_detail($data['formid']); // current DB rows
+
+            $existing_count = count($existing_details);
+            $new_count = count($new_order);
+
+            // Update existing ones
+            for ($i = 0; $i < $existing_count; $i++) {
+                if (isset($new_order[$i])) {
+                    $update_data = [
+                        'comments' => $new_order[$i]
+                    ];
+                    $this->db->where('id', $existing_details[$i]['id']);
+                    $this->db->update(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $update_data);
+                    if ($this->db->affected_rows() > 0) {
+                        $affectedRows++;
+                    }
+                }
+            }
+
+            // Insert new ones
+            if ($new_count > $existing_count) {
+                for ($i = $existing_count; $i < $new_count; $i++) {
+                    $insert_data = [
+                        'form_id' => $data['formid'],
+                        'comments' => $new_order[$i]
+                    ];
+                    $this->db->insert(db_prefix() . $formBeforeUpdate->form_type . '_form_detail', $insert_data);
+                    $new_insert_id = $this->db->insert_id();
+                    if ($new_insert_id) {
+                        $affectedRows++;
                     }
                 }
             }
@@ -3691,6 +3877,11 @@ class Forms_model extends App_Model
         $this->db->where('form_id', $id);
         return $this->db->get(db_prefix() . 'escattachments')->result_array();
     }
+    public function get_qor_form_attachments($id)
+    {
+        $this->db->where('form_id', $id);
+        return $this->db->get(db_prefix() . 'qorattachments')->result_array();
+    }
     public function delete_apc_attachment($id)
     {
         // Fetch the file details from the database
@@ -3746,6 +3937,16 @@ class Forms_model extends App_Model
     {
         $this->db->where('form_id', $form_id);
         return $this->db->get(db_prefix() . 'sca_form_detail')->result_array();
+    }
+    public function get_qor_form($form_id)
+    {
+        $this->db->where('form_id', $form_id);
+        return $this->db->get(db_prefix() . 'qor_form')->row();
+    }
+    public function get_qor_form_detail($form_id)
+    {
+        $this->db->where('form_id', $form_id);
+        return $this->db->get(db_prefix() . 'qor_form_detail')->result_array();
     }
     public function get_sca_form_attachments($id)
     {
@@ -4097,6 +4298,38 @@ class Forms_model extends App_Model
             // Delete the attachment record from the database
             $this->db->where('id', $id);
             $this->db->delete(db_prefix() . 'coscattachments');
+
+            if ($this->db->affected_rows() > 0) {
+                set_alert('success', 'Attachment deleted successfully.');
+            } else {
+                set_alert('warning', 'Attachment could not be deleted.');
+            }
+        } else {
+            set_alert('warning', 'Attachment not found.');
+        }
+
+        // Redirect back to the previous page or list
+        redirect($_SERVER['HTTP_REFERER']);
+    }
+
+    public function delete_qor_attachment($id)
+    {
+        // Fetch the file details from the database
+        $this->db->where('id', $id);
+        $attachment = $this->db->get(db_prefix() . 'qorattachments')->row();
+
+        if ($attachment) {
+            // Construct the file path
+            $file_path = get_upload_path_by_type('form') . 'qorattachments/' . $attachment->form_id . '/' . $attachment->form_detail_id . '/' . $attachment->file_name;
+
+            // Check if the file exists and unlink it
+            if (file_exists($file_path)) {
+                unlink($file_path);
+            }
+
+            // Delete the attachment record from the database
+            $this->db->where('id', $id);
+            $this->db->delete(db_prefix() . 'qorattachments');
 
             if ($this->db->affected_rows() > 0) {
                 set_alert('success', 'Attachment deleted successfully.');

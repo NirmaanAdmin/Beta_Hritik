@@ -14,7 +14,7 @@ $formhtml .= '
 $formhtml .= '
 <tr>
     <td colspan="11" width="100%;" align="center" style="font-weight:bold; font-size: 16px;">
-        Quality Compliance Report
+        Quality Observation Report
     </td>
 </tr>';
 

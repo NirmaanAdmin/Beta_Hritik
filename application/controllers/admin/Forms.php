@@ -903,6 +903,7 @@ class Forms extends AdminController
     {
         $form_items = $this->forms_model->get_form_items($form_type);
         $data = [];
+        $data['isedit'] = 0;
         if ($form_id != 0) {
 
             $getFormMethod = "get_{$form_type}_form";
@@ -915,7 +916,7 @@ class Forms extends AdminController
                 $getAttachmentsMethod = "get_{$form_type}_form_attachments";
                 $data["{$form_type}_attachments"] = $this->forms_model->$getAttachmentsMethod($form_id);
             }
-
+            $data['isedit'] = 1;
             $data['form_id'] = $form_id;
         }
         $data['form_items'] = $form_items;
@@ -1002,7 +1003,11 @@ class Forms extends AdminController
     {
         $this->forms_model->delete_cosc_attachment($id);
     }
-
+    
+    public function delete_qor_attachment($id)
+    {
+        $this->forms_model->delete_qor_attachment($id);
+    }
     /**
      * Generate a PDF file for the given form
      *
@@ -1022,6 +1027,38 @@ class Forms extends AdminController
 
         try {
             $pdf = form_pdf($form);
+           
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            echo $message;
+            if (strpos($message, 'Unable to get the size of the image') !== false) {
+                show_pdf_unable_to_get_image_size_error();
+            }
+            die;
+        }
+
+        $type = 'I';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+
+        $pdf->Output(mb_strtoupper(slug_it($form->subject)) . '.pdf', $type);
+    }
+    public function pdf_qor($id)
+    {
+        if (!$id) {
+            redirect(admin_url('forms'));
+        }
+
+        $form = $this->forms_model->get_form_by_id($id);
+
+        try {
+            $pdf = form_pdf_qor($form);
            
         } catch (Exception $e) {
             $message = $e->getMessage();

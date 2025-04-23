@@ -60,19 +60,21 @@
                     $get_login_user_name =  get_staff_list($where);
                     ?>
                     <th colspan="2" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Raised by : <?= $get_login_user_name[0]['name'] ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Raised by :
+                            <input type="text" class="form-control" name="raised_by" value="<?= isset($qor_form->raised_by) ? $qor_form->raised_by : $get_login_user_name[0]['name'] ?>" style="width: 80%;">
+                        </span>
                     </th>
                     <th colspan="2" class="daily_report_head">
                         <span class="daily_report_label" style="display: flex;align-items: baseline;">Issue Date:
                             <div class="form-group" style="margin-left: 13px;">
-                                <input type="date" class="form-control" name="issue_date" value="<?= isset($msh_form->date) ? date('Y-m-d\TH:i', strtotime($msh_form->date)) : '' ?>">
+                                <input type="date" class="form-control" name="issue_date" value="<?= isset($qor_form->issue_date) ? date('Y-m-d', strtotime($qor_form->issue_date)) : '' ?>">
                             </div>
                         </span>
                     </th>
                     <th colspan="2" class="daily_report_head">
                         <span class="daily_report_label" style="display: flex;align-items: baseline;">Observation No.:
                             <div class="form-group" style="margin-left: 13px;">
-                                <input type="text" class="form-control" name="observation_no" value="<?= isset($msh_form->observation_no) ? $msh_form->observation_no : '' ?>">
+                                <input type="text" class="form-control" name="observation_no" value="<?= isset($qor_form->observation_no) ? $qor_form->observation_no : '' ?>">
                             </div>
                         </span>
                     </th>
@@ -80,21 +82,21 @@
 
                 <tr>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Material or Works Involved : <?php echo render_input('material_or_works_involved', '', isset($msh_form->material_or_works_involved) ? $msh_form->material_or_works_involved : '', 'text'); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Material or Works Involved : <?php echo render_input('material_or_works_involved', '', isset($qor_form->material_or_works_involved) ? $qor_form->material_or_works_involved : '', 'text'); ?></span>
 
                     </th>
                     <th colspan="4" class="daily_report_head">
                         <?php $vendor_list = get_vendor_list_for_forms(); ?>
-                        <span class="daily_report_label" style="display: ruby;">Supplier/Contractor in Charge: <?php echo render_select('supplier_contractor_in_charge', $vendor_list, array('userid', 'company'), '', isset($msh_form->supplier_contractor_in_charge) ? $msh_form->supplier_contractor_in_charge : ''); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Supplier/Contractor in Charge: <?php echo render_select('supplier_contractor_in_charge', $vendor_list, array('userid', 'company'), '', isset($qor_form->supplier_contractor_in_charge) ? $qor_form->supplier_contractor_in_charge : ''); ?></span>
                     </th>
                 </tr>
                 <tr>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Specification/Drawing Reference : <?php echo render_input('specification_drawing_reference', '', isset($msh_form->specification_drawing_reference) ? $msh_form->specification_drawing_reference : '', 'text'); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Specification/Drawing Reference : <?php echo render_input('specification_drawing_reference', '', isset($qor_form->specification_drawing_reference) ? $qor_form->specification_drawing_reference : '', 'text'); ?></span>
 
                     </th>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Procedure or ITP Reference: <?php echo render_input('procedure_or_itp_reference', '', isset($msh_form->procedure_or_itp_reference) ? $msh_form->procedure_or_itp_reference : '', 'text'); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Procedure or ITP Reference: <?php echo render_input('procedure_or_itp_reference', '', isset($qor_form->procedure_or_itp_reference) ? $qor_form->procedure_or_itp_reference : '', 'text'); ?></span>
                     </th>
                 </tr>
                 <tr>
@@ -114,7 +116,7 @@
                                 <input
                                     type="text"
                                     name="observation_description"
-                                    value="<?php echo isset($msh_form->observation_description) ? htmlspecialchars($msh_form->observation_description) : ''; ?>"
+                                    value="<?php echo isset($qor_form->observation_description) ? htmlspecialchars($qor_form->observation_description) : ''; ?>"
                                     class="form-control" />
                             </div>
                         </div>
@@ -131,7 +133,7 @@
                                 <input
                                     type="text"
                                     name="design_consultant_recommendation"
-                                    value="<?php echo isset($msh_form->design_consultant_recommendation) ? htmlspecialchars($msh_form->design_consultant_recommendation) : ''; ?>"
+                                    value="<?php echo isset($qor_form->design_consultant_recommendation) ? htmlspecialchars($qor_form->design_consultant_recommendation) : ''; ?>"
                                     class="form-control" />
                             </div>
                         </div>
@@ -141,7 +143,7 @@
                     <th colspan="4" class="daily_report_head">
                         <span class="daily_report_label" style="display: flex;align-items: baseline;">Ref. & Date :
                             <div class="form-group">
-                                <input type="date" class="form-control" name="ref_date1" value="<?= isset($msh_form->ref_date1) ? date('Y-m-d\TH:i', strtotime($msh_form->ref_date1)) : '' ?>">
+                                <input type="date" class="form-control" name="ref_date1" value="<?= isset($qor_form->ref_date1) ? date('Y-m-d', strtotime($qor_form->ref_date1)) : '' ?>">
                             </div>
                         </span>
                     </th>
@@ -156,7 +158,7 @@
                                 <input
                                     type="text"
                                     name="client_instruction"
-                                    value="<?php echo isset($msh_form->client_instruction) ? htmlspecialchars($msh_form->client_instruction) : ''; ?>"
+                                    value="<?php echo isset($qor_form->client_instruction) ? htmlspecialchars($qor_form->client_instruction) : ''; ?>"
                                     class="form-control" />
                             </div>
                         </div>
@@ -166,7 +168,7 @@
                     <th colspan="4" class="daily_report_head">
                         <span class="daily_report_label" style="display: flex;align-items: baseline;">Ref. & Date :
                             <div class="form-group">
-                                <input type="date" class="form-control" name="ref_date2" value="<?= isset($msh_form->ref_date2) ? date('Y-m-d\TH:i', strtotime($msh_form->ref_date2)) : '' ?>">
+                                <input type="date" class="form-control" name="ref_date2" value="<?= isset($qor_form->ref_date2) ? date('Y-m-d', strtotime($qor_form->ref_date2)) : '' ?>">
                             </div>
                         </span>
                     </th>
@@ -178,18 +180,18 @@
 
                     </th>
                     <th colspan="2" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Immediate Action : 
-                        <?php echo render_input('suppliers_proposed_corrective_action1', '', isset($msh_form->suppliers_proposed_corrective_action1) ? $msh_form->suppliers_proposed_corrective_action1 : '', 'text'); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Immediate Action :
+                            <?php echo render_input('suppliers_proposed_corrective_action1', '', isset($qor_form->suppliers_proposed_corrective_action1) ? $qor_form->suppliers_proposed_corrective_action1 : '', 'text'); ?></span>
 
                     </th>
                     <th colspan="2" class="daily_report_head">
-                        <span class="daily_report_label" style="display: ruby;">Measure to prevent recurrence:  <?php echo render_input('suppliers_proposed_corrective_action2', '', isset($msh_form->suppliers_proposed_corrective_action2) ? $msh_form->suppliers_proposed_corrective_action2 : '', 'text'); ?></span>
+                        <span class="daily_report_label" style="display: ruby;">Measure to prevent recurrence: <?php echo render_input('suppliers_proposed_corrective_action2', '', isset($qor_form->suppliers_proposed_corrective_action2) ? $qor_form->suppliers_proposed_corrective_action2 : '', 'text'); ?></span>
 
                     </th>
                     <th colspan="2" class="daily_report_head">
                         <span class="daily_report_label" style="display: flex;align-items: baseline;">Date:
                             <div class="form-group">
-                                <input type="date" class="form-control" name="proposed_date" value="<?= isset($msh_form->proposed_date) ? date('Y-m-d\TH:i', strtotime($msh_form->proposed_date)) : '' ?>">
+                                <input type="date" class="form-control" name="proposed_date" value="<?= isset($qor_form) ? date('Y-m-d', strtotime($qor_form->proposed_date)) : '' ?>">
                             </div>
                         </span>
                     </th>
@@ -205,26 +207,30 @@
         </table>
         <div class="col-md-12 display-flex">
             <label>
-                <input type="checkbox" name="approval" value="proceed" class="single-checkbox">
+                <input type="checkbox" name="approval" value="proceed" class="single-checkbox"
+                    <?php echo (isset($qor_form->approval) && $qor_form->approval === 'proceed') ? 'checked' : ''; ?>>
                 Approved to Proceed
             </label>
             <br>
             <label style="margin-left: 2%;">
-                <input type="checkbox" name="approval" value="proceed_comments" class="single-checkbox">
+                <input type="checkbox" name="approval" value="proceed_comments" class="single-checkbox"
+                    <?php echo (isset($qor_form->approval) && $qor_form->approval === 'proceed_comments') ? 'checked' : ''; ?>>
                 Approved to Proceed with Comments
             </label>
             <br>
             <label style="margin-left: 2%;">
-                <input type="checkbox" name="approval" value="not_approved" class="single-checkbox">
+                <input type="checkbox" name="approval" value="not_approved" class="single-checkbox"
+                    <?php echo (isset($qor_form->approval) && $qor_form->approval === 'not_approved') ? 'checked' : ''; ?>>
                 Not Approved
             </label>
         </div>
+
 
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="form-group">
-                <?php echo render_textarea('comments', 'Comments', isset($msh_form) ? $msh_form->comments : '',); ?>
+                <?php echo render_textarea('staff_comments', 'Comments', isset($qor_form) ? $qor_form->staff_comments : '',); ?>
             </div>
         </div>
 
@@ -233,51 +239,133 @@
         <thead>
             <tr>
                 <th colspan="4" class="daily_report_head">
-                    <span class="daily_report_label" style="display: ruby;">Name : <?php echo render_select('staff_name', get_staff_list(), array('staffid', 'name'), '', isset($apc_form->staff_name) ? $apc_form->staff_name : ''); ?></span>
+                    <span class="daily_report_label" style="display: ruby;">Name : <?php echo render_select('staff_name', get_staff_list(), array('staffid', 'name'), '', isset($qor_form->staff_name) ? $qor_form->staff_name : ''); ?></span>
 
                 </th>
                 <th colspan="4" class="daily_report_head">
                     <span class="daily_report_label" style="display: flex;align-items: baseline;">Date :
                         <div class="form-group">
-                            <input type="date" class="form-control" name="staff_name_date" value="<?= isset($msh_form->staff_name_date) ? date('Y-m-d', strtotime($msh_form->staff_name_date)) : '' ?>">
+                            <input type="date" class="form-control" name="staff_name_date" value="<?= isset($qor_form->staff_name_date) ? date('Y-m-d', strtotime($qor_form->staff_name_date)) : '' ?>">
                         </div>
                     </span>
                 </th>
             </tr>
             <tr>
                 <th colspan="2" class="daily_report_head">
-                    <span class="daily_report_label" style="display: ruby;">Observation Close-Out :
-                        <label>
-                            <input type="checkbox" name="close_out" value="corrective_action" class="single-checkbox1">
-                            Corrective Action Accepted
-                        </label>
+                    <div class="daily_report_label col-md-12" style="display: flex; align-items: center; padding: 0px;">
+                        <div class="col-md-3" style="padding: 0px;">
+                            Observation Close-Out:
+                        </div>
+                        <div class="col-md-9" style="padding: 0px;">
+                            <label style="margin-right: 20px;">
+                                <input
+                                    type="checkbox"
+                                    name="close_out"
+                                    value="corrective_action"
+                                    class="single-checkbox1"
+                                    <?php echo (isset($qor_form->close_out) && $qor_form->close_out === 'corrective_action') ? 'checked' : ''; ?>>
+                                Corrective Action Accepted
+                            </label>
 
-                        <label style="margin-left: 2%;">
-                            <input type="checkbox" name="close_out" value="corrective_action_not_accepted" class="single-checkbox1">
-                            Corrective Action Not Accepted
-                        </label>
-                    </span>
-
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    name="close_out"
+                                    value="corrective_action_not_accepted"
+                                    class="single-checkbox1"
+                                    <?php echo (isset($qor_form->close_out) && $qor_form->close_out === 'corrective_action_not_accepted') ? 'checked' : ''; ?>>
+                                Corrective Action Not Accepted
+                            </label>
+                        </div>
+                    </div>
                 </th>
+
                 <th colspan="2" class="daily_report_head">
                     <span class="daily_report_label" style="display: flex;align-items: baseline;">Date :
                         <div class="form-group">
-                            <input type="date" class="form-control" name="observation_date" value="<?= isset($msh_form->observation_date) ? date('Y-m-d', strtotime($msh_form->observation_date)) : '' ?>">
+                            <input type="date" class="form-control" name="observation_date" value="<?= isset($qor_form->observation_date) ? date('Y-m-d', strtotime($qor_form->observation_date)) : '' ?>">
                         </div>
                     </span>
                 </th>
                 <th colspan="2" class="daily_report_head">
                     <span class="daily_report_label" style="display: flex;align-items: baseline;">Comments :
                         <div class="form-group">
-                            <?php echo render_textarea('comments1', '', isset($msh_form) ? $msh_form->comments1 : '',); ?>
+                            <?php echo render_textarea('comments1', '', isset($qor_form) ? $qor_form->comments1 : '',); ?>
                         </div>
                     </span>
                 </th>
             </tr>
         </thead>
     </table>
+    <?php $isedit = isset($isedit) && $isedit; ?>
     <div class="table-responsive">
-        <div id="sectionsContainer"></div>
+        <div id="sectionsContainer">
+            <?php if ($isedit && !empty($qor_form_detail)) : ?>
+                <?php foreach ($qor_form_detail as $i => $detail) : ?>
+                    <div class="section">
+                        <h4>Quality Observtion Photo Section <span class="secIndex"><?php echo $i + 1; ?></span>
+                            <a href="javascript:void(0);" class="btn btn-danger removeSection pull-right" style="margin-bottom:10px;"><i class="fa fa-trash"></i></a>
+                        </h4>
+                        <table class="table qor-items-table items table-main-qor-edit has-calculations no-mtop">
+                            <thead>
+                                <tr>
+                                    <th class="daily_report_head daily_center">Comments</th>
+                                    <th class="daily_report_head daily_center">Attachments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="commentRow">
+                                    <td>
+                                        <textarea name="comments[<?php echo $i; ?>]" class="commentInput form-control" required><?php echo htmlspecialchars($detail['comments']); ?></textarea>
+                                    </td>
+                                    <td>
+                                        <div class="attachmentsList">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="input-group" style="width: 50%; margin-bottom: 10px;">
+                                                        <input type="file"
+                                                            name="attachments[<?php echo $i + 1; ?>][]"
+                                                            extension="<?= str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')) ?>"
+                                                            filesize="<?= file_upload_max_size(); ?>"
+                                                            class="form-control"
+                                                            accept="<?= get_form_form_accepted_mimes(); ?>">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="addAttachmentBtn btn btn-default"><i class="fa fa-plus"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <?php if (!empty($qor_attachments)) : ?>
+                                                <?php foreach ($qor_attachments as $attachment) : ?>
+                                                    <?php if ($attachment['form_detail_id'] == $detail['id']) : ?>
+                                                        <div class="col-md-12">
+                                                            <div class="preview_image" style="margin-bottom: 10px; display: flex; align-items: center;">
+                                                                <a href="<?= site_url('uploads/form_attachments/qorattachments/' . $form_id . '/' . $attachment['form_detail_id'] . '/' . $attachment['file_name']); ?>"
+                                                                    target="_blank" download style="margin-right: 10px;">
+                                                                    <i class="<?= get_mime_class($attachment['filetype']); ?>"></i>
+                                                                    <?= $attachment['file_name']; ?>
+                                                                </a>
+                                                                <a href="<?= admin_url('forms/delete_qor_attachment/' . $attachment['id']); ?>"
+                                                                    class="text-danger _delete">
+                                                                    <i class="fa fa-remove"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <hr />
+                    </div>
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+        </div>
 
         <button type="button" id="addSectionBtn" class="btn pull-right btn-info">Add</button>
     </div>
@@ -285,7 +373,7 @@
 
 <template id="sectionTemplate">
     <div class="section">
-        <h4>Section <span class="secIndex"></span>
+        <h4>Quality Observtion Photo Section <span class="secIndex"></span>
             <a href="javascript:void(0);" class="btn btn-danger removeSection pull-right" style="margin-bottom:10px;"><i class="fa fa-trash"></i></a>
         </h4>
         <table class="table qor-items-table items table-main-qor-edit has-calculations no-mtop">
@@ -298,18 +386,18 @@
             <tbody>
                 <tr class="commentRow">
                     <td>
-                        <textarea name="" class="commentInput form-control" required></textarea>
+                        <textarea class="commentInput form-control" required></textarea>
                     </td>
                     <td>
                         <div class="attachmentsList">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <div class="input-group" style="width: 50%;margin-bottom: 10px;">
+                                    <div class="input-group" style="width: 50%; margin-bottom: 10px;">
                                         <input type="file"
-                                            extension="<?php echo str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')); ?>"
-                                            filesize="<?php echo file_upload_max_size(); ?>"
+                                            extension="<?= str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')) ?>"
+                                            filesize="<?= file_upload_max_size(); ?>"
                                             class="form-control"
-                                            accept="<?php echo get_form_form_accepted_mimes(); ?>">
+                                            accept="<?= get_form_form_accepted_mimes(); ?>">
                                         <span class="input-group-btn">
                                             <button type="button" class="addAttachmentBtn btn btn-default"><i class="fa fa-plus"></i></button>
                                         </span>
@@ -317,6 +405,7 @@
                                 </div>
                             </div>
                         </div>
+
 
                     </td>
                 </tr>
@@ -326,68 +415,61 @@
     </div>
 </template>
 
+
 <script type="text/javascript">
     $(function() {
-        let sectionCount = 0;
+        // Initialize sectionCount based on existing rendered PHP sections
+        let sectionCount = $('#sectionsContainer .section').length;
 
         function refreshIndices() {
-            // update headings and input names
             $('#sectionsContainer .section').each(function(i) {
+                const sectionIndex = i + 1; // Start from 1
                 const $sec = $(this);
-                $sec.find('.secIndex').text(i + 1);
-                $sec.find('.commentInput')
-                    .attr('name', `comments[${i}]`);
-                // for each attachment input in this section:
-                $sec.find('.attachmentsList input[type=file]')
-                    .each(function(j) {
-                        $(this).attr('name', `attachments[${i}][]`);
-                    });
+
+                $sec.find('.secIndex').text(sectionIndex);
+                $sec.find('.commentInput').attr('name', `comments[${sectionIndex}]`);
+
+                $sec.find('.attachmentsList input[type=file]').each(function() {
+                    $(this).attr('name', `attachments[${sectionIndex}][]`);
+                });
             });
         }
 
-        // Add a whole new section
         $('#addSectionBtn').click(function() {
-            sectionCount++;
             const $tpl = $($('#sectionTemplate').html());
             $('#sectionsContainer').append($tpl);
+            sectionCount++;
             refreshIndices();
         });
 
-        // Remove a section
         $('#sectionsContainer').on('click', '.removeSection', function() {
             $(this).closest('.section').remove();
             refreshIndices();
         });
 
-        // Add attachment: clone the input‐group and convert its button into “remove”
         $('#sectionsContainer').on('click', '.addAttachmentBtn', function() {
             const $grp = $(this).closest('.input-group');
             const $clone = $grp.clone();
-
-            // Clear the cloned file‐input
             $clone.find('input[type=file]').val('');
-
-            // Turn the “+” into a red “−” remove button
             $clone.find('button')
                 .removeClass('addAttachmentBtn btn-default')
                 .addClass('removeAttachmentBtn btn-danger')
                 .html('<i class="fa fa-minus"></i>');
-
-            // Insert it after the original row
             $grp.after($clone);
-
             refreshIndices();
         });
 
-        // Remove an attachment row
         $('#sectionsContainer').on('click', '.removeAttachmentBtn', function() {
             $(this).closest('.input-group').remove();
             refreshIndices();
         });
 
-        // Bootstrap with one section on load
-        $('#addSectionBtn').trigger('click');
+        // If not in edit mode and no sections, initialize with one
+        if (sectionCount === 0) {
+            $('#addSectionBtn').trigger('click');
+        }
     });
+
 
 
     $('.single-checkbox').on('change', function() {

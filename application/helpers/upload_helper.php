@@ -2059,6 +2059,56 @@ function handle_ckecklist_item_attachment_array($related, $form_id, $item_id, $i
     return false;
 }
 
+function handle_qor_item_attachment_array($related, $form_id, $item_id, $itemIndex)
+{
+    $base_path = get_upload_path_by_type('form');
+    $item_path = $base_path . $related . '/' . $form_id . '/' . $item_id . '/';
+    $uploaded_files = [];
+
+    $CI = &get_instance();
+
+    // Validate and create path
+    if (!is_dir($item_path)) {
+        mkdir($item_path, 0755, true);
+    }
+
+    // Check if there are any attachments for this index
+    if (!empty($_FILES['attachments']['name'][$itemIndex]) && is_array($_FILES['attachments']['name'][$itemIndex])) {
+        foreach ($_FILES['attachments']['name'][$itemIndex] as $key => $fileName) {
+            if (!empty($fileName)) {
+                $tmpFilePath = $_FILES['attachments']['tmp_name'][$itemIndex][$key];
+                $fileError   = $_FILES['attachments']['error'][$itemIndex][$key];
+                $fileType    = $_FILES['attachments']['type'][$itemIndex][$key];
+
+                // Validate file
+                if (!empty($tmpFilePath) && $fileError === 0 && _upload_extension_allowed($fileName)) {
+                    $filename = unique_filename($item_path, $fileName);
+                    $newFilePath = $item_path . $filename;
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        $uploaded_files[] = [
+                            'item_id'   => $item_id,
+                            'file_name' => $filename,
+                            'filetype'  => $fileType,
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
+    // Clean up if no files
+    if (!empty($uploaded_files)) {
+        return $uploaded_files;
+    } else {
+        if (is_dir($item_path) && count(list_files($item_path)) == 0) {
+            delete_dir($item_path);
+        }
+    }
+
+    return false;
+}
+
 function handle_agends_attachments_array($related, $id, $index_name = 'attachments')
 {
     if (!is_dir(get_upload_path_by_type('meeting_management'))) {
