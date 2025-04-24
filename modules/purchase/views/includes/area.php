@@ -20,6 +20,23 @@
         ?>
     </div>
 </div>
+
+<hr class="hr-panel-heading" />
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-3">
+        <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_purchase_area'), array('id' => 'import_form')); ?>
+        <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+        <div class="form-group">
+          <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadpurchaseareafilecsv(this);"><?php echo _l('import'); ?></button>
+          <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_purchase_area_item_en.xlsx') ?>" class="btn btn-primary">Template</a>
+        </div>
+        <?php echo form_close(); ?>
+        <div class="form-group" id="file_upload_response" style="padding-left: 20px;">
+        </div>
+    </div>
+</div>
+
 <hr class="hr-panel-heading" />
 <div class="clearfix"></div>
 <table class="table border area-table">
@@ -36,7 +53,7 @@
  </thead>
 <tbody>
 </tbody>
-</table>   
+</table>
 
 <div class="modal1 fade" id="area_model" tabindex="-1" role="dialog">
     <div class="modal-dialog setting-handsome-table">
@@ -55,7 +72,11 @@
                     <div class="col-md-12">
                         <div class="form">
                             <?php echo render_input('area_name', 'area_name', ''); ?>
-                            <?php echo render_select('project', $projects, array('id', 'name'), 'project', ''); ?>
+                            <?php
+                            $project_filter = get_module_filter($module_name, 'project');
+                            $project_filter_val = !empty($project_filter) ? $project_filter->filter_value : '';  
+                            echo render_select('project', $projects, array('id', 'name'), 'project', $project_filter_val); 
+                            ?>
                         </div>
                     </div>
                 </div>
