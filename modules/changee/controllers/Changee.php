@@ -9005,7 +9005,13 @@ class changee extends AdminController
         $vendor_code = $vendor_data->vendor_code;
 
         $get_co_count = $this->changee_model->get_co_count($pur_order);
+
+        $get_vendor_note = $purchase_order->vendornote;
         
+        $get_order_summary =  $purchase_order->order_summary;
+
+        $get_terms = $purchase_order->terms;
+
         echo json_encode([
             'result' => $pur_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -9023,6 +9029,9 @@ class changee extends AdminController
             'vendor_name' => $vendor_name,
             'vendor_code' => $vendor_code,
             'co_count' => $get_co_count,
+            'vendernote' => $get_vendor_note,
+            'order_summary' => $get_order_summary,
+            'terms' => $get_terms,
         ]);
     }
     public function coppy_wo_order_for_po($wo_order)
