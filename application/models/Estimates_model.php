@@ -536,6 +536,9 @@ class Estimates_model extends App_Model
         if (isset($data['area'])) {
             unset($data['area']);
         }
+        if (isset($data['master_area'])) {
+            unset($data['master_area']);
+        }
         $newareasummaryitems = [];
         if (isset($data['newareasummaryitems'])) {
             $newareasummaryitems = $data['newareasummaryitems'];
@@ -733,6 +736,7 @@ class Estimates_model extends App_Model
 
         unset($data['floor']);
         unset($data['area']);
+        unset($data['master_area']);
         $newareasummaryitems = [];
         if (isset($data['newareasummaryitems'])) {
             $newareasummaryitems = $data['newareasummaryitems'];

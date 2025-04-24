@@ -508,7 +508,7 @@
                                 <input type="radio" value="1" id="1" name="show_as_unit"
                                     data-text="<?php echo _l('estimate_table_quantity_heading'); ?>"
                                     <?php echo isset($estimate) && $estimate->show_as_unit == 1 ? 'checked' : 'checked'; ?>>
-                                <label for="1">ft2</label>
+                                <label for="1">sqft</label>
                             </div>
                             <div class="radio radio-primary radio-inline">
                                 <input type="radio" value="2" id="2" name="show_as_unit"
@@ -544,7 +544,7 @@
                                     <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
                                         <thead>
                                             <tr>
-                                                <th width="45%" align="left"><?php echo _l('floor'); ?></th>
+                                                <th width="45%" align="left"><?php echo _l('floor'); ?>/<?php echo _l('area'); ?></th>
                                                 <th width="45%" align="left"><?php echo _l('area'); ?> (<span class="show_as_unit_name"></span>)</th>
                                                 <th width="10%" align="center"><i class="fa fa-cog"></i></th>
                                             </tr>
@@ -552,7 +552,16 @@
                                         <tbody class="area_summary">
                                             <tr class="main">
                                                 <td>
-                                                    <textarea name="floor" rows="4" class="form-control" placeholder="<?php echo _l('floor'); ?>"></textarea>
+                                                    <?php
+                                                    $select = '';
+                                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="master_area" data-none-selected-text="' . _l('master_area') . '">';
+                                                    $select .= '<option value=""></option>';
+                                                    foreach ($master_area as $area) {
+                                                        $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                                    }
+                                                    $select .= '</select>';
+                                                    echo $select;
+                                                    ?>
                                                 </td>
                                                 <td>
                                                     <input type="number" name="area" class="form-control" placeholder="<?php echo _l('area'); ?>">
@@ -564,7 +573,7 @@
                                                         $new_area_summary = true;
                                                     } ?>
                                                     <button type="button" onclick="add_area_summary_item_to_table('undefined','undefined',<?php echo e($new_area_summary); ?>); return false;"
-                                                        class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                                        class="btn btn-primary"><i class="fa fa-check"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -578,7 +587,15 @@
                                                         $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
                                                         $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][area_id]', $item['area_id']);
 
-                                                        $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][floor]" class="form-control" rows="4">' . clear_textarea_breaks($item['floor']) . '</textarea></td>';
+                                                        $select = '';
+                                                        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][master_area]" data-none-selected-text="' . _l('master_area') . '">';
+                                                        $select .= '<option value=""></option>';
+                                                        foreach ($master_area as $area) {
+                                                            $selected = ($area['id'] == $item['master_area']) ? ' selected' : '';
+                                                            $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+                                                        }
+                                                        $select .= '</select>';
+                                                        $table_row .= '<td>'.$select.'</td>';
 
                                                         $table_row .= '<td><input type="number" onblur="calculate_area_summary_total();" onchange="calculate_area_summary_total();" name="' . $items_indicator . '[' . $i . '][area]" value="' . $item['area'] . '" class="form-control" id="area"></td>';
                                             
@@ -598,7 +615,8 @@
                                             <tr>
                                                 <td><span class="bold tw-text-neutral-700"><?php echo _l('total_area'); ?> :</span>
                                                 </td>
-                                                <td class="total_area">
+                                                <td>
+                                                    <span class="total_area"></span> <span class="show_as_unit_name"></span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -839,7 +857,7 @@
                             foreach ($area_statement_tabs as $akey => $avalue) { ?>
                                 <li role="presentation" class="<?php echo ($akey == 0) ? 'active' : ''; ?>">
                                     <a href="#area_working_<?php echo $avalue['id']; ?>" aria-controls="area_working_<?php echo $avalue['id']; ?>" role="tab" id="tab_area_working_<?php echo $avalue['id']; ?>" class="tab_sub_area_working" data-toggle="tab" data-tab-id="<?php echo $avalue['id']; ?>">
-                                        <?php echo $avalue['name']; ?> <span class="delete-area-working-tab" style="color:red; cursor:pointer;"><i class="fa fa-times"></i></span>
+                                        <?php echo $avalue['name']; ?>  <span class="delete-area-working-tab" style="color:red; cursor:pointer; font-size: 10px;"><i class="fa fa-times"></i></span>
                                     </a>
                                 </li>
                             <?php } ?>
@@ -861,8 +879,8 @@
                                         <thead>
                                             <tr>
                                                 <th width="35%" align="left">Room/Spaces</th>
-                                                <th width="20%" align="left">Length (<span class="show_aw_unit_name"></span>)</th>
-                                                <th width="20%" align="left">Width (<span class="show_aw_unit_name"></span>)</th>
+                                                <th width="20%" align="left">Length (<span class="show_aw_unit_se"></span>)</th>
+                                                <th width="20%" align="left">Width (<span class="show_aw_unit_se"></span>)</th>
                                                 <th width="20%" align="left">Carpet Area (<span class="show_aw_unit_name"></span>)</th>
                                                 <th width="5%" align="center"><i class="fa fa-cog"></i></th>
                                             </tr>
@@ -886,7 +904,7 @@
                                                         $new_area_working = true;
                                                     } ?>
                                                     <button type="button" onclick="add_area_working_item_to_table('undefined','undefined',<?php echo e($new_area_working); ?>); return false;"
-                                                        class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                                        class="btn btn-primary"><i class="fa fa-check"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -903,9 +921,9 @@
 
                                                         $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][area_description]" class="form-control" rows="4">' . clear_textarea_breaks($item['area_description']) . '</textarea></td>';
 
-                                                        $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][area_length]" value="' . $item['area_length'] . '" class="form-control" id="area_length"></td>';
+                                                        $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][area_length]" value="' . $item['area_length'] . '" class="form-control" id="area_length"><br><span class="show_aw_unit_se"></span></td>';
 
-                                                        $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][area_width]" value="' . $item['area_width'] . '" class="form-control" id="area_width"></td>';
+                                                        $table_row .= '<td><input type="number" onblur="calculate_area_working_total();" onchange="calculate_area_working_total();" name="' . $items_indicator . '[' . $i . '][area_width]" value="' . $item['area_width'] . '" class="form-control" id="area_width"><br><span class="show_aw_unit_se"></span></td>';
 
                                                         $table_row .= '<td class="carpet_area">'.$carpet_area.'</td>';
                                             
@@ -925,7 +943,8 @@
                                             <tr>
                                                 <td><span class="bold tw-text-neutral-700"><?php echo _l('total_carpet_area'); ?> :</span>
                                                 </td>
-                                                <td class="total_carpet_area">
+                                                <td>
+                                                    <span class="total_carpet_area"></span> <span class="show_aw_unit_name"></span>
                                                 </td>
                                             </tr>
                                         </tbody>

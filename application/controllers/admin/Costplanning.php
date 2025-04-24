@@ -20,7 +20,7 @@ class Costplanning extends AdminController
         $data['tab'][] = 'commodity_group';
         $data['tab'][] = 'sub_group';
         $data['tab'][] = 'master_area';
-        $data['tab'][] = 'functionality_area';
+        // $data['tab'][] = 'functionality_area';
         if ($data['group'] == '') {
             $data['group'] = 'commodity_group';
         }
