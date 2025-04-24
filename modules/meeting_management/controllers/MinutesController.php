@@ -27,7 +27,7 @@ class MinutesController extends AdminController
         // Fetch the list of staff members for task assignment
         $this->load->model('Staff_model');
         $data['staff_members'] = $this->Staff_model->get();  // Load all staff members
-        $data['clients'] = $this->Clients_model->get();      // Load all clients
+        // $data['clients'] = $this->Clients_model->get();      // Load all clients
 
         // Fetch selected participants
         $data['selected_participants'] = $this->Meeting_model->get_selected_participants($agenda_id) ?? [];  // Ensure it's always an array
