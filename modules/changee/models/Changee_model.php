@@ -4973,17 +4973,20 @@ class Changee_model extends App_Model
 
         $html .= ' </tbody></table>';
         $html .= '<div>&nbsp;</div>';
-        $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
-        $html .= '<div class="col-md-12 mtop15">
+        if ($pur_order->vendornote != '' || $pur_order->terms != '') {
+            $vendornote_with_break = str_replace('ANNEXURE - B', '<div style="page-break-after:always"></div><div style="text-align:center; ">ANNEXURE - B</div>', $pur_order->vendornote);
+            $html .= '<div class="col-md-12 mtop15">
             <p class="bold">' . nl2br($vendornote_with_break) . '</p>';
-        $html .= '<div style="page-break-before:always"></div>';
-        $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
+            $html .= '<div style="page-break-before:always"></div>';
+            $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
             </div>';
-        $html .= '<br>
-      <br>
-      <br>
-      <br>
-      <table class="table">
+            $html .= '<br>
+                <br>
+                <br>
+                <br>';
+        }
+
+        $html .= '<table class="table">
         <tbody>
           <tr>';
 
