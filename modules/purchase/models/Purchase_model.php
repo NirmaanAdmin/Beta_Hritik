@@ -18988,4 +18988,11 @@ class Purchase_model extends App_Model
         }
         return $file;
     }
+
+    public function get_areas_by_project($project)
+    {
+        $this->db->where('project', $project);
+        $query = $this->db->get(db_prefix() . 'area');
+        return $query->result_array();
+    }
 }

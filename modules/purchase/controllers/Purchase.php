@@ -12784,4 +12784,13 @@ class purchase extends AdminController
     {
         $this->app->get_table_data(module_views_path('purchase', 'includes/table_pur_area'));
     }
+
+    public function get_project_areas()
+    {
+        if ($this->input->post()) {
+            $project = $this->input->post('project');
+            $areas = $this->purchase_model->get_areas_by_project($project);
+            echo json_encode($areas);
+        }
+    }
 }

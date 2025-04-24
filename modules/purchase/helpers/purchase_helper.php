@@ -3482,7 +3482,7 @@ function get_area_list($name_area, $area)
     if (!is_array($selected)) {
         $selected = explode(",", $selected);
     }
-    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple' => true), array(), '', '', false);
+    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple' => true), array('id' => 'project_area'), '', '', false);
 }
 function get_vemdor_list($name_vendor, $area)
 {
