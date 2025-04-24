@@ -202,12 +202,14 @@
                    <tr>
 
                     <th width="25%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
-                    <th width="10%" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('unit_price'); ?></th>
-                    <th width="15%" align="right"><?php echo _l('subtotal_before_tax'); ?></th>
-                    <th width="15%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('tax_value'); ?></th>
-                    <th width="10%" align="right"><?php echo _l('debit_note_total'); ?></th>
+                    <th  width="25%" align="left"><?php echo _l('decription') ?></th>
+                    <th  width="5%" align="left"><?php echo _l('Image') ?></th>
+                    <th width="5%" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
+                    <th width="5%" align="right"><?php echo _l('unit_price'); ?></th>
+                    <th width="10%" align="right"><?php echo _l('subtotal_before_tax'); ?></th>
+                    <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
+                    <th width="5%" align="right"><?php echo _l('tax_value'); ?></th>
+                    <th width="5%" align="right"><?php echo _l('debit_note_total'); ?></th>
                    </tr>
                 </thead>
                 <tbody class="ui-sortable">
@@ -220,9 +222,16 @@
                    foreach($pur_request_detail as $es) { 
                     $_subtotal += $es['into_money'];
                     $_total += $es['total'];
+                    $full_item_image =  $item_base_url ='';
+                    if (!empty($es['image'])) {
+                      $item_base_url = base_url('uploads/purchase/pur_request/' . $es['pur_request'] . '/' . $es['prd_id'] . '/' . $es['image']);
+                      $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" width="70" height="50">';
+                      // $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $es['pur_request'] . '/' . $es['prd_id'] . '/' . $es['image'] . '" width="70" height="50">';
+                  }
                     ?>
+                    
                    <tr nobr="true" class="sortable">
-     
+                    
                       <td class="description" align="left;"><span><strong><?php 
                       $item = get_item_hp($es['item_code']); 
                       if(isset($item) && isset($item->commodity_code) && isset($item->description)){
@@ -231,6 +240,8 @@
                          echo pur_html_entity_decode($es['item_text']);
                       }
                       ?></strong></td>
+                      <td  align="left;"><?php echo  $es['description'] ?></td>
+                      <td  align="left;"><?php echo  $full_item_image  ?></td>
                       <?php
                            $unit_name = pur_get_unit_name($es['unit_id']); 
                         ?>

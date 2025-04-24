@@ -978,7 +978,7 @@ class Vendors_portal extends App_Controller
         $data['attachments'] = $this->purchase_model->get_purchase_attachments('pur_request', $id);
 
         $this->data($data);
-        $this->view('vendor_portal/pur_request');
+        $this->view('vendor_portal/pur_request'); 
         $this->layout();
     }
 
