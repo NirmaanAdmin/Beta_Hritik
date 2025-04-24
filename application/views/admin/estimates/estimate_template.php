@@ -420,83 +420,10 @@
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="final_estimate">
-                <?php /*
-                <div class="table-responsive s_table">
-                    <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th width="20%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1"
-                                aria-hidden="true" data-toggle="tooltip"
-                                data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i>
-                                <?php echo _l('estimate_table_item_heading'); ?></th>
-                                <th width="25%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
-                                <th width="10%" align="right" class="qty"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
-                                <th width="15%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
-                                <th width="20%" align="right"><?php echo _l('estimate_table_tax_heading'); ?></th>
-                                <th width="10%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="main">
-                                <td></td>
-                                <td align="left">
-                                    <?php echo $annexure_estimate['final_estimate']['name']; ?>
-                                </td>
-                                <td align="left">
-                                    <?php echo $annexure_estimate['final_estimate']['description']; ?>
-                                </td>
-                                <td align="right">
-                                    <?php echo $annexure_estimate['final_estimate']['qty']; ?>
-                                </td>
-                                <td align="right">
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
-                                </td>
-                                <td align="right">
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
-                                </td>
-                                <td align="right">
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div> */ ?>
                 <?php
                 $project_brief = (isset($estimate) ? $estimate->project_brief : '');
                 echo render_textarea('project_brief', '', $project_brief, [], [], '', 'tinymce'); 
                 ?>
-
-                <div class="col-md-8 col-md-offset-4">
-                    <table class="table text-right">
-                        <tbody>
-                            <tr id="subtotal">
-                                <td>
-                                    <span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <tr id="total_tax">
-                                <td>
-                                    <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <?php hooks()->do_action('after_admin_estimate_form_total_field', $estimate ?? null); ?>
-                        </tbody>
-                    </table>
-                </div>
             </div>
 
             <div role="tabpanel" class="tab-pane" id="budget_summary">
@@ -1015,9 +942,7 @@
 
     </div>
 
-    <hr class="hr-panel-separator" />
-
-    <div class="panel-body">
+    <div class="panel-body hide">
         <?php
             $value = (isset($estimate) ? $estimate->clientnote : get_option('predefined_clientnote_estimate'));
             echo render_textarea('clientnote', 'estimate_add_edit_client_note', $value);
