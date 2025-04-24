@@ -1159,7 +1159,7 @@ class Purchase_model extends App_Model
         $this->db->where('reorder', NULL);
         $this->db->where('pur_order', $pur_request);
         $pur_order_details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
-        if(!empty($pur_order_details)) {
+        if (!empty($pur_order_details)) {
             $this->db->where('pur_order', $pur_request);
             $this->db->order_by('id', 'ASC');
             $pur_order_details = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
@@ -4252,7 +4252,16 @@ class Purchase_model extends App_Model
         $year = date('Y', strtotime($pur_request->request_date));
         $list_approve_status = $this->get_list_approval_details($pur_request_id, 'pur_request');
         $logo = '';
-
+        $show_image_column = false;
+        $width = 'width: 35%';
+        // Check if any record has an image
+        foreach ($pur_request_detail as $row) {
+            if (!empty($row['image'])) {
+                $show_image_column = true;
+                $width = 'width: 26%';
+                break;
+            }
+        }
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
             $logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="230" height="100">';
@@ -4284,15 +4293,15 @@ class Purchase_model extends App_Model
         $html .=  '<table class="table purorder-item">
         <thead>
           <tr>
-            <th class="thead-dark">' . _l('items') . '</th>
-            <th class="thead-dark">' . _l('decription') . '</th>
-            <th class="thead-dark">' . _l('area') . '</th>
-            <th class="thead-dark">' . _l('Image') . '</th>
-            <th class="thead-dark" align="right">' . _l('unit') . '</th>
-            <th class="thead-dark" align="right">' . _l('unit_price') . '</th>
-            <th class="thead-dark" align="right">' . _l('quantity') . '</th>
-            <th class="thead-dark" align="right">' . _l('into_money') . '</th>
-            <th class="thead-dark" align="right">' . _l('inventory_quantity') . '</th>
+            <th class="thead-dark" style="width: 15%">' . _l('items') . '</th>
+            <th class="thead-dark"  style="' . $width . '">' . _l('decription') . '</th>
+            <th class="thead-dark" style="width: 12%">' . _l('area') . '</th>';
+        if ($show_image_column) {
+            $html .=  ' <th class="thead-dark" style="width: 10%">' . _l('Image') . '</th>';
+        }
+        $html .= ' <th class="thead-dark" align="right" style="width: 12%">' . _l('unit_price') . '</th>
+            <th class="thead-dark" align="right" style="width: 12%">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="right" style="width: 12%">' . _l('into_money') . '</th>
           </tr>
         </thead>
         <tbody>';
@@ -4303,18 +4312,18 @@ class Purchase_model extends App_Model
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image']);
                 // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
-                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image'].'" width="70" height="50">';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image'] . '" width="70" height="50">';
             }
             $html .= '<tr nobr="true" class="sortable">
-            <td>' . $items->commodity_code . ' - ' . $items->description . '</td>
-            <td>' . $row['description'] . '</td>
-            <td>' . get_area_name_by_id($row['area']) . '</td>
-            <td>' . $full_item_image . '</td>
-            <td align="right">' . $units->unit_name . '</td>
-            <td align="right">' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right">' . $row['quantity'] . '</td>
-            <td align="right">' . app_format_money($row['into_money'], '') . '</td>
-            <td align="right">' . $row['inventory_quantity'] . '</td>
+            <td   style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
+            <td style="' . $width . '">' . $row['description'] . '</td>
+            <td style="width: 12%">' . get_area_name_by_id($row['area']) . '</td>';
+            if ($show_image_column) {
+                $html .= '<td style="width: 10%">' . $full_item_image . '</td>';
+            }
+            $html .= '<td align="right" style="width: 12%">' . app_format_money($row['unit_price'], '') . '</td>
+            <td align="right" style="width: 12%">' . $row['quantity'] . $units->unit_name . '</td>
+            <td align="right" style="width: 12%">' . app_format_money($row['into_money'], '') . '</td>
           </tr>';
         }
         $html .=  '</tbody>
@@ -4437,7 +4446,7 @@ class Purchase_model extends App_Model
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image']);
                 // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
-                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image'].'" width="70" height="50">';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_request/' . $row['pur_request'] . '/' . $row['prd_id'] . '/' . $row['image'] . '" width="70" height="50">';
             }
             $html .= '<tr nobr="true" class="sortable">
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
@@ -5206,7 +5215,7 @@ class Purchase_model extends App_Model
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image']);
                 // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
-                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image'].'" width="70" height="50">';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/pur_order/' . $row['pur_order'] . '/' . $row['id'] . '/' . $row['image'] . '" width="70" height="50">';
             }
             // $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $serial_no = $row['serial_no'];
@@ -5241,7 +5250,7 @@ class Purchase_model extends App_Model
             $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
         }
 
-        $discount_remarks = !empty($pur_order->discount_remarks) ? ' '.$pur_order->discount_remarks : '';
+        $discount_remarks = !empty($pur_order->discount_remarks) ? ' ' . $pur_order->discount_remarks : '';
 
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
@@ -5256,14 +5265,14 @@ class Purchase_model extends App_Model
         if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>Discount'.$discount_remarks.' (%)</td>
+                 <td>Discount' . $discount_remarks . ' (%)</td>
                  <td class="subtotal">
                     ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
                  </td>
               </tr>
               <tr id="subtotal">
               <td width="33%"></td>
-                 <td>Discount'.$discount_remarks.'(amount)</td>
+                 <td>Discount' . $discount_remarks . '(amount)</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                  </td>
@@ -5272,7 +5281,7 @@ class Purchase_model extends App_Model
             $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>Total after discount'.$discount_remarks.'</td>
+                 <td>Total after discount' . $discount_remarks . '</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($total_after_discount, '') . '
                  </td>
@@ -6266,7 +6275,7 @@ class Purchase_model extends App_Model
     }
     public function add_area($data)
     {
-        if(isset($data['area_id'])) {
+        if (isset($data['area_id'])) {
             unset($data['area_id']);
         }
         $this->db->insert(db_prefix() . 'area', $data);
@@ -6276,7 +6285,7 @@ class Purchase_model extends App_Model
 
     public function update_area($data)
     {
-        if(isset($data['area_id'])) {
+        if (isset($data['area_id'])) {
             $id = $data['area_id'];
             unset($data['area_id']);
         }
@@ -15884,7 +15893,7 @@ class Purchase_model extends App_Model
             if (!empty($row['image'])) {
                 $item_base_url = base_url('uploads/purchase/wo_order/' . $row['wo_order'] . '/' . $row['id'] . '/' . $row['image']);
                 // $full_item_image = '<img class="images_w_table" src="' . $item_base_url . '" alt="' . $row['image'] . '" >';
-                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/wo_order/' . $row['wo_order'] . '/' . $row['id'] . '/' . $row['image'].'" width="70" height="50">';
+                $full_item_image = '<img src="' . FCPATH . 'uploads/purchase/wo_order/' . $row['wo_order'] . '/' . $row['id'] . '/' . $row['image'] . '" width="70" height="50">';
             }
             // $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $serial_no = $row['serial_no'];
@@ -15915,7 +15924,7 @@ class Purchase_model extends App_Model
             $tax_total = ($tax_total - ($tax_total * $tax_per) / 100);
         }
 
-        $discount_remarks = !empty($pur_order->discount_remarks) ? ' '.$pur_order->discount_remarks : '';
+        $discount_remarks = !empty($pur_order->discount_remarks) ? ' ' . $pur_order->discount_remarks : '';
 
         $html .= '<table class="table text-right"><tbody>';
         if ($pur_order->discount_total > 0 || $tax_total > 0) {
@@ -15930,14 +15939,14 @@ class Purchase_model extends App_Model
         if ($pur_order->discount_total > 0) {
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>Discount'.$discount_remarks.' (%)</td>
+                 <td>Discount' . $discount_remarks . ' (%)</td>
                  <td class="subtotal">
                     ' . app_format_money($pur_order->discount_percent, '') . ' %' . '
                  </td>
               </tr>
               <tr id="subtotal">
               <td width="33%"></td>
-                 <td>Discount'.$discount_remarks.'(amount)</td>
+                 <td>Discount' . $discount_remarks . '(amount)</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($pur_order->discount_total, '') . '
                  </td>
@@ -15946,7 +15955,7 @@ class Purchase_model extends App_Model
             $total_after_discount = $pur_order->subtotal - $pur_order->discount_total;
             $html .= '<tr id="subtotal">
               <td width="33%"></td>
-                 <td>Total after discount'.$discount_remarks.'</td>
+                 <td>Total after discount' . $discount_remarks . '</td>
                  <td class="subtotal">
                     ' . '₹ ' . app_format_money($total_after_discount, '') . '
                  </td>
@@ -16669,7 +16678,7 @@ class Purchase_model extends App_Model
         $this->db->where('reorder', NULL);
         $this->db->where('wo_order', $wo_id);
         $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
-        if(!empty($pur_order_details)) {
+        if (!empty($pur_order_details)) {
             $this->db->where('wo_order', $wo_id);
             $this->db->order_by('id', 'ASC');
             $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
@@ -16677,7 +16686,7 @@ class Purchase_model extends App_Model
             $this->db->where('wo_order', $wo_id);
             $this->db->order_by('reorder', 'ASC');
             $pur_order_details = $this->db->get(db_prefix() . 'wo_order_detail')->result_array();
-        } 
+        }
 
         foreach ($pur_order_details as $key => $detail) {
             $pur_order_details[$key]['discount_money'] = (float) $detail['discount_money'];
@@ -17741,7 +17750,7 @@ class Purchase_model extends App_Model
             $this->db->order_by('id', 'DESC');
             $this->db->limit(1);
             $last_payment_certificate = $this->db->get(db_prefix() . 'payment_certificate')->row();
-            if(!empty($last_payment_certificate)) {
+            if (!empty($last_payment_certificate)) {
                 $res = $this->get_payment_certificate_calc($last_payment_certificate->id);
                 $result['po_previous'] = $res['po_comulative'];
             }
@@ -18406,7 +18415,7 @@ class Purchase_model extends App_Model
             $this->db->order_by('id', 'DESC');
             $this->db->limit(1);
             $last_payment_certificate = $this->db->get(db_prefix() . 'payment_certificate')->row();
-            if(!empty($last_payment_certificate)) {
+            if (!empty($last_payment_certificate)) {
                 $res = $this->get_payment_certificate_calc($last_payment_certificate->id);
                 $result['po_previous'] = $res['po_comulative'];
             }
