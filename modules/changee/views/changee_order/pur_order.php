@@ -76,7 +76,7 @@
                         ?>
                         <label for="vendor"><?php echo _l('vendor'); ?></label>
                         <input type="text" class="form-control" id="vendor_name" value="<?= $vendor_name ?>" readonly>
-                        <input type="hidden"  id="vendor" name="vendor" value="">
+                        <input type="hidden"  id="vendor" name="vendor" value="<?= $pur_order->vendor ?>">
                         <!-- <select name="vendor" id="vendor" disabled   class="selectpicker" <?php if (isset($pur_order)) {
                                                                                   echo 'disabled';
                                                                                 } ?> onchange="estimate_by_vendor(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
