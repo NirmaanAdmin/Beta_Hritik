@@ -4980,12 +4980,12 @@ class Changee_model extends App_Model
             $html .= '<div style="page-break-before:always"></div>';
             $html .= '<p class="bold">' . nl2br($pur_order->terms) . '</p>
             </div>';
-            $html .= '<br>
-                <br>
-                <br>
-                <br>';
+           
         }
-
+        $html .= '<br>
+        <br>
+        <br>
+        <br>';
         $html .= '<table class="table">
         <tbody>
           <tr>';
