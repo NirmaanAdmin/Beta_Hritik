@@ -861,16 +861,11 @@
     var pur_order = $('select[name="po_order_id"]').val();
     if (pur_order != '') {
       var old_po_number = '<?php echo changee_pur_html_entity_decode($pur_order_number); ?>';
-      var po_number = $('#pur_order_number').val();
+      var po_number = '#CO-';
 
       po_number = po_number.replace(/^#PO-[^-\s]+-/, '');
-      old_po_number = old_po_number.replace(/^#PO-[^-\s]+-/, '');
-      if (po_number != old_po_number) {
-        po_number = old_po_number;
-      } else {
-        po_number = po_number;
-      }
 
+      let final_po_number = '';
       let cleaned_po_number = po_number.replace('#', '');
       $("#wo_order_id").prop("disabled", true).selectpicker('refresh');
       $.post(admin_url + 'changee/coppy_pur_order_for_po/' + pur_order).done(function(response) {
@@ -878,7 +873,20 @@
         if (response) {
           $('#vendor_name').val(response.vendor_name);
           $('#vendor').val(response.vendor_id);
-          let final_po_number = response.po_prefix + '-' + cleaned_po_number + '-' + response.vendor_code;
+          if (response.co_count == 0) {
+            final_po_number = response.po_prefix + '-' + 'CO-001-' +
+              new Date().toLocaleString('default', {
+                month: 'short'
+              }) + '-' +
+              new Date().getFullYear() + '-' + response.vendor_code;
+          } else {
+            final_po_number = response.po_prefix + '-' + 'CO-00' + response.co_count + '-' +
+              new Date().toLocaleString('default', {
+                month: 'short'
+              }) + '-' +
+              new Date().getFullYear() + '-' + response.vendor_code;
+          }
+
 
           $('#pur_order_number').val(final_po_number);
           $('select[name="currency"]').val(response.currency).change();
@@ -915,6 +923,7 @@
       });
     } else {
       $("#wo_order_id").prop("disabled", false).selectpicker('refresh');
+      $('#vendor_name, #vendor, #pur_order_number').val('');
     }
   }
 
@@ -925,13 +934,8 @@
       var old_po_number = '<?php echo changee_pur_html_entity_decode($pur_order_number); ?>';
       var po_number = $('#pur_order_number').val();
       po_number = po_number.replace(/^#WO-[^-\s]+-/, '');
-      old_po_number = old_po_number.replace(/^#WO-[^-\s]+-/, '');
-      if (po_number != old_po_number) {
-        po_number = old_po_number;
-      } else {
-        po_number = po_number;
-      }
 
+      let final_po_number = '';
       let cleaned_po_number = po_number.replace('#', '');
       $("#po_order_id").prop("disabled", true).selectpicker('refresh');
       $.post(admin_url + 'changee/coppy_wo_order_for_po/' + wo_order).done(function(response) {
@@ -939,8 +943,19 @@
         if (response) {
           $('#vendor_name').val(response.vendor_name);
           $('#vendor').val(response.vendor_id);
-          let final_po_number = response.wo_number + '-' + cleaned_po_number + '-' + response.vendor_code;
-
+          if (response.wo_count == 0) {
+            final_po_number = response.wo_number + '-' + 'CO-001-' +
+              new Date().toLocaleString('default', {
+                month: 'short'
+              }) + '-' +
+              new Date().getFullYear() + '-' + response.vendor_code;
+          } else {
+            final_po_number = response.wo_number + '-' + 'CO-00' + response.wo_count + '-' +
+              new Date().toLocaleString('default', {
+                month: 'short'
+              }) + '-' +
+              new Date().getFullYear() + '-' + response.vendor_code;
+          }
           $('#pur_order_number').val(final_po_number);
           $('select[name="currency"]').val(response.currency).change();
           $('input[name="currency_rate"]').val(response.currency_rate).change();
@@ -976,6 +991,7 @@
       });
     } else {
       $("#po_order_id").prop("disabled", false).selectpicker('refresh');
+      $('#vendor_name, #vendor, #pur_order_number').val('');
     }
   }
 </script>

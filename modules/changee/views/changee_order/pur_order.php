@@ -55,9 +55,9 @@
                         <?php $prefix = changee_get_changee_option('pur_order_prefix');
                         $next_number = changee_get_changee_option('next_po_number');
 
-                        $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : $prefix . '-' . str_pad($next_number, 5, '0', STR_PAD_LEFT) . '-' . date('M-Y'));
+                        $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : '');
                         if (get_option('po_only_prefix_and_number') == 1) {
-                          $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : $prefix . '-' . str_pad($next_number, 5, '0', STR_PAD_LEFT));
+                          $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : '');
                         }
 
  

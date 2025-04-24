@@ -1473,6 +1473,7 @@ class changee extends AdminController
                 if (!has_permission('changee_orders', '', 'create')) {
                     access_denied('changee_order');
                 }
+                
                 $id = $this->changee_model->add_pur_order($pur_order_data);
                 if ($id) {
                     set_alert('success', _l('added_successfully', _l('pur_order')));
@@ -9003,8 +9004,8 @@ class changee extends AdminController
 
         $vendor_code = $vendor_data->vendor_code;
 
-    
-
+        $get_co_count = $this->changee_model->get_co_count($pur_order);
+        
         echo json_encode([
             'result' => $pur_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -9021,6 +9022,7 @@ class changee extends AdminController
             'vendor_id' => $vendor_id,
             'vendor_name' => $vendor_name,
             'vendor_code' => $vendor_code,
+            'co_count' => $get_co_count,
         ]);
     }
     public function coppy_wo_order_for_po($wo_order)
@@ -9197,6 +9199,7 @@ class changee extends AdminController
 
         $vendor_name = $vendor_data->company;
         $vendor_code = $vendor_data->vendor_code;
+        $get_co_wo_count = $this->changee_model->get_co_wo_count($wo_order);
         echo json_encode([
             'result' => $wo_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -9213,6 +9216,7 @@ class changee extends AdminController
             'vendor_id' => $vendor_id,
             'vendor_name' => $vendor_name,
             'vendor_code' => $vendor_code,
+            'wo_count' => $get_co_wo_count,
         ]);
     }
 

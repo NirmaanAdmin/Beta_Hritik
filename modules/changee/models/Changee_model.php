@@ -2428,21 +2428,21 @@ class Changee_model extends App_Model
             unset($data['newitems']);
         }
 
-        $prefix = changee_get_changee_option('pur_order_prefix');
+        // $prefix = changee_get_changee_option('pur_order_prefix');
 
-        $this->db->where('pur_order_number', $data['pur_order_number']);
-        $check_exist_number = $this->db->get(db_prefix() . 'co_orders')->row();
+        // $this->db->where('pur_order_number', $data['pur_order_number']);
+        // $check_exist_number = $this->db->get(db_prefix() . 'co_orders')->row();
 
-        while ($check_exist_number) {
-            $data['number'] = $data['number'] + 1;
-            $data['pur_order_number'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT) . '-' . date('M-Y') . '-' . changee_get_vendor_company_name($data['vendor']);
-            if (get_option('po_only_prefix_and_number') == 1) {
-                $data['pur_order_number'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT);
-            }
+        // while ($check_exist_number) {
+        //     $data['number'] = $data['number'] + 1;
+        //     $data['pur_order_number'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT) . '-' . date('M-Y') . '-' . changee_get_vendor_company_name($data['vendor']);
+        //     if (get_option('po_only_prefix_and_number') == 1) {
+        //         $data['pur_order_number'] =  $prefix . '-' . str_pad($data['number'], 5, '0', STR_PAD_LEFT);
+        //     }
 
-            $this->db->where('pur_order_number', $data['pur_order_number']);
-            $check_exist_number = $this->db->get(db_prefix() . 'co_orders')->row();
-        }
+        //     $this->db->where('pur_order_number', $data['pur_order_number']);
+        //     $check_exist_number = $this->db->get(db_prefix() . 'co_orders')->row();
+        // }
 
         $data['order_date'] = to_sql_date($data['order_date']);
 
@@ -2498,7 +2498,7 @@ class Changee_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
-
+       
         $this->db->insert(db_prefix() . 'co_orders', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_order', 'changee_order', $insert_id);
@@ -14911,5 +14911,18 @@ class Changee_model extends App_Model
         $this->db->order_by('dateadded', 'desc');
         $attachments = $this->db->get(db_prefix() . 'changee_files')->row();
         return $attachments;
+    }
+
+    public function get_co_count($pur_order_id){
+        $this->db->where('po_order_id', $pur_order_id);
+        $this->db->from(db_prefix() . 'co_orders');
+        return $this->db->count_all_results();
+    }
+
+    public function get_co_wo_count($wo_order_id){
+        $this->db->where('wo_order_id', $wo_order_id);
+        $this->db->from(db_prefix() . 'co_orders');
+        return $this->db->count_all_results();
+
     }
 }
