@@ -17,12 +17,41 @@ class Meeting_model extends App_Model
         $query = $this->db->get();
         return $query->result_array();
     }
-    public function get_all_minutes()
+    public function get_all_minutes($project_id = null)
     {
+        if ($project_id !== null) {
+            $this->db->where('project_id', $project_id);
+        }
         $this->db->select('tblmeeting_management.*');
         $this->db->from('tblmeeting_management');
         $query = $this->db->get();
         return $query->result_array();
+    }
+    public function filter_minutes()
+    {
+        $project_id = $this->input->get('project_filter');
+
+        $this->db->select('tblmeeting_management.*, tblprojects.name as project_name');
+        $this->db->from('tblmeeting_management');
+        $this->db->join('tblprojects', 'tblprojects.id = tblmeeting_management.project_id', 'left');
+
+        if (!empty($project_id)) {
+            $this->db->where('tblmeeting_management.project_id', $project_id);
+        }
+
+        $query = $this->db->get();
+        $agendas = $query->result_array();
+
+        // Convert date format for consistent display
+        foreach ($agendas as &$agenda) {
+            if (isset($agenda['meeting_date'])) {
+                $agenda['meeting_date'] = date('Y-m-d H:i:s', strtotime($agenda['meeting_date']));
+            }
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($agendas);
+        exit;
     }
     public function get_all_minutes_task($id)
     {
@@ -105,6 +134,7 @@ class Meeting_model extends App_Model
             'additional_note' => isset($data['additional_note']) ? $data['additional_note'] : '',
             'area_head'       => isset($data['area_head']) ? $data['area_head'] : '',
             'meeting_link'    => isset($data['meeting_link']) ? $data['meeting_link'] : '',
+            'venue'           => isset($data['venue']) ? $data['venue'] : '',
         ];
 
         $this->db->insert(db_prefix() . 'meeting_management', $meeting_data);
@@ -391,7 +421,7 @@ class Meeting_model extends App_Model
     // Get existing minutes for the agenda
     public function get_minutes($agenda_id)
     {
-        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head,meeting_date,meeting_link,project_id');
+        $this->db->select('meeting_title, minutes, agenda,additional_note,area_head,meeting_date,meeting_link,project_id,venue');
         $this->db->where('id', $agenda_id);
         $query = $this->db->get(db_prefix() . 'meeting_management');  // Use the correct table name here
         return $query->row();
@@ -677,7 +707,7 @@ class Meeting_model extends App_Model
     // Get meeting details for a given agenda
     public function get_meeting_details($agenda_id)
     {
-        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date, project_id, minutes, created_by, signature_path, updated_by, additional_note,area_head,meeting_link'); // Make sure 'id' is included as 'meeting_id'
+        $this->db->select('id as meeting_id, meeting_title, agenda, meeting_date, project_id, minutes, created_by, signature_path, updated_by, additional_note,area_head,meeting_link,venue'); // Make sure 'id' is included as 'meeting_id'
         $this->db->from(db_prefix() . 'meeting_management'); // Replace with your actual table name
         $this->db->where('id', $agenda_id); // Assuming 'id' is the primary key of the meeting table
         $query = $this->db->get();

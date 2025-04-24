@@ -127,3 +127,5 @@ $lang['view_meeting'] = 'View Meeting';
 $lang['meeting_notes'] = 'Meeting Notes';
 $lang['no_meetings_found'] = 'No meetings found';
 $lang['meeting_updated_success'] = 'Meeting updated successfully';
+$lang['filter_by_project'] = 'Project';
+$lang['all_projects'] = 'All Projects';

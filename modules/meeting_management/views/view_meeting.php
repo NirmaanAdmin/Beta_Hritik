@@ -35,6 +35,7 @@
    .new-task-relation {
       display: none;
    }
+
    .mom_body td {
       border: 1px solid #ccc;
    }
@@ -49,13 +50,23 @@
                   <h4><?php echo _l('meeting_details'); ?></h4>
                   <table class="table table-bordered">
                      <tr>
-                        <td><strong><?php echo _l('meeting_title'); ?>:</strong></td>
-                        <td><?php echo isset($meeting['meeting_title']) ? $meeting['meeting_title'] : 'N/A'; ?></td>
+                        <td style="width: 20%;"><span style="font-weight: bold;"><?php echo _l('meeting_title'); ?>:</span>
+                           <?php echo isset($meeting['meeting_title']) ? $meeting['meeting_title'] : 'N/A'; ?>
+                        </td>
+                        <td style="width: 80%;"><span style="font-weight: bold;"><?php echo _l('meeting_date'); ?>:</span>
+                           <?php echo isset($meeting['meeting_date']) ? date('d M, Y h:i A', strtotime($meeting['meeting_date'])) : 'N/A'; ?>
+                        </td>
                      </tr>
+
                      <tr>
-                        <td><strong><?php echo _l('meeting_date'); ?>:</strong></td>
-                        <td><?php echo isset($meeting['meeting_date']) ? date('d M, Y h:i A', strtotime($meeting['meeting_date'])) : 'N/A'; ?></td>
+                        <td style="width: 20%;"><span style="font-weight: bold;"><?php echo _l('project'); ?>:</span>
+                           <?php echo isset($meeting['project_id']) ? get_project_name_by_id($meeting['project_id']) : 'N/A'; ?>
+                        </td>
+                        <td style="width: 80%;"><span style="font-weight: bold;"><?php echo _l('Venue'); ?>:</span>
+                           <?php echo isset($meeting['venue']) ? $meeting['venue'] : 'N/A'; ?>
+                        </td>
                      </tr>
+
                      <!-- <tr>
                         <td><strong><?php echo _l('Meeting Link'); ?>:</strong></td>
                         <td><?php echo isset($meeting['meeting_link']) ? $meeting['meeting_link'] : 'N/A'; ?></td>
@@ -106,7 +117,7 @@
                      </tr> -->
                      <!-- New Row for Meeting Notes -->
                      <tr>
-                        <td><strong><?php echo _l('meeting_notes'); ?></strong></td>
+                        <td><span style="font-weight: bold;"><?php echo _l('meeting_notes'); ?></span></td>
                         <td>
                            <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
                               <thead>

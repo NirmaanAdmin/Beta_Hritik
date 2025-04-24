@@ -101,8 +101,9 @@
             /* border: 1px solid #ddd; */
             padding: 8px;
         }
+
         .mom_body td {
-          border: 1px solid #ccc;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
@@ -137,31 +138,28 @@
             <td style="width: 30%;"><?php echo $meeting['meeting_link']; ?></td> -->
         </tr>
         <tr>
-            <td style="width: 15%;">Minutes by</td>
+            <th style="width: 15%;">Minutes by</th>
             <td style="width: 30%;"><?php echo get_staff_full_name($meeting['created_by']); ?></td>
             <th style="width: 15%;">Venue</th>
-           
-            <?php
-            if($meeting['meeting_id'] == 32){
-                echo '<td style="width: 40%;">Online Meeting</td>';
-            }else{
-                echo '<td style="width: 40%;">BGJ site office</td>';
-            }
-            ?>
+            <td style="width: 30%;"><?php echo $meeting['venue']; ?></td>
+
         </tr>
         <tr>
-
-            <td style="width: 15%;">MOM No</td>
             <?php
-            if($meeting['meeting_id'] == 32){ ?>
-                <td style="width: 30%;">BIL-MOM-TMC-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
-           <?php }else{ ?>
-                <td style="width: 30%;">BIL-MOM-SUR-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
-            <?php }
+            $project_name = isset($meeting['project_id']) ? get_project_name_by_id($meeting['project_id']) : 'N/A';
+            $project_code = 'N/A';
+
+            if ($project_name !== 'N/A') {
+                $project_code = substr(trim($project_name), 0, 3); // Get first 3 chars
+                $project_code = strtoupper($project_code); // Convert to uppercase
+            }
             ?>
+            <th style="width: 15%;">MOM No</th>
+            <td>BIL-MOM-<?= $project_code ?>-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
             
-            <td style="width: 15%;"></td>
-            <td style="width: 30%;"></td>
+
+            <th style="width: 15%;">Project</th>
+            <td style="width: 30%;"><?php echo isset($meeting['project_id']) ? get_project_name_by_id($meeting['project_id']) : 'N/A'; ?> </td>
         </tr>
     </table>
 
@@ -272,7 +270,7 @@
                 }
                 // Update the previous area for the next iteration
                 $prev_area = $data['area'];
-                ?>
+            ?>
                 <tr>
                     <?php
                     // Check if a section break exists, and if so, display it.

@@ -20,9 +20,45 @@ class AgendaController extends AdminController
     // View the list of all agendas
     public function index()
     {
-        $data['agendas'] = $this->Meeting_model->get_all_minutes();
+        // 1. Get project filter from GET parameters
+        $project_id = $this->input->get('project_filter');
+
+        // 2. Pass the project filter to model if set
+        if (!empty($project_id)) {
+            $data['agendas'] = $this->Meeting_model->get_all_minutes($project_id);
+        } else {
+            $data['agendas'] = $this->Meeting_model->get_all_minutes();
+        }
+        $data['projects'] = $this->projects_model->get_items();
         $data['title'] = _l('meeting_agenda');
         $this->load->view('meeting_management/agendas_list', $data);
+    }
+
+    public function filter_minutes()
+    {
+        $project_id = $this->input->get('project_filter');
+
+        $this->db->select('tblmeeting_management.*, tblprojects.name as project_name');
+        $this->db->from('tblmeeting_management');
+        $this->db->join('tblprojects', 'tblprojects.id = tblmeeting_management.project_id', 'left');
+
+        if (!empty($project_id)) {
+            $this->db->where('tblmeeting_management.project_id', $project_id);
+        }
+
+        $query = $this->db->get();
+        $agendas = $query->result_array();
+
+        // Convert date format for consistent display
+        foreach ($agendas as &$agenda) {
+            if (isset($agenda['meeting_date'])) {
+                $agenda['meeting_date'] = date('Y-m-d H:i:s', strtotime($agenda['meeting_date']));
+            }
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($agendas);
+        exit;
     }
 
     // Create or edit an agenda
@@ -184,7 +220,7 @@ class AgendaController extends AdminController
 
     public function import_file_xlsx_mom_items()
     {
-      
+
 
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
@@ -251,7 +287,7 @@ class AgendaController extends AdminController
                         $xlsx = new XLSXReader_fin($newFilePath);
                         $sheetNames = $xlsx->getSheetNames();
                         $data = $xlsx->getSheetData($sheetNames[1]);
-                       
+
                         // start row write 2
                         $numRow = 2;
                         $total_rows = 0;
@@ -260,7 +296,7 @@ class AgendaController extends AdminController
                         $list_item = $this->Meeting_model->create_mom_row_template();
                         //get data for compare
                         $index_quote = 1;
-                       
+
                         for ($row = 1; $row < count($data); $row++) {
                             $rd = array();
                             $flag = 0;
@@ -299,7 +335,7 @@ class AgendaController extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
-                                $list_item .= $this->Meeting_model->create_mom_row_template('newitems[' . $index_quote . ']',$value_cell_area, $value_cell_description, $value_cell_decision, $value_cell_action, '', '','',[],$index_quote);
+                                $list_item .= $this->Meeting_model->create_mom_row_template('newitems[' . $index_quote . ']', $value_cell_area, $value_cell_description, $value_cell_decision, $value_cell_action, '', '', '', [], $index_quote);
 
                                 $index_quote++;
                                 $total_rows_data++;

@@ -100,18 +100,18 @@
                      <label for="meeting_date"><?php echo _l('meeting_date'); ?></label>
                      <input type="datetime-local" id="meeting_date" name="meeting_date" value="<?php echo isset($minutes) && isset($minutes->meeting_date) ? htmlspecialchars($minutes->meeting_date) : ''; ?>" class="form-control" required>
                   </div>
-                  <div class="form-group col-md-6" style="padding-right:0px ;"> 
+                  <div class="form-group col-md-6" style="padding-right:0px ;">
                      <?php /* <label for="meeting_link"></label>
                      <!-- <input type="text" id="meeting_link" name="meeting_link" value="<?php echo isset($minutes) && isset($minutes->meeting_link) ? htmlspecialchars($minutes->meeting_link) : ''; ?>" class="form-control"> --> */ ?>
                      <label for="project"><?php echo _l('project'); ?></label>
                      <select name="project_id" id="project_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" required>
-                          <option value=""></option>
-                          <?php foreach ($projects as $s) { ?>
-                            <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($minutes) && $s['id'] == $minutes->project_id) {
-                               echo 'selected';
-                             } ?>><?php echo pur_html_entity_decode($s['name']); ?>
-                            </option>
-                          <?php } ?>
+                        <option value=""></option>
+                        <?php foreach ($projects as $s) { ?>
+                           <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($minutes) && $s['id'] == $minutes->project_id) {
+                                                                                                echo 'selected';
+                                                                                             } ?>><?php echo pur_html_entity_decode($s['name']); ?>
+                           </option>
+                        <?php } ?>
                      </select>
                   </div>
                   <br><br>
@@ -119,8 +119,9 @@
                   <input type="hidden" name="agenda_id" id="agenda_id" value="<?php echo $agenda_id; ?>">
 
                   <div class="form-group">
-                     <div class="col-md-4">
-                        <!-- <label for="agenda"><?php echo _l('meeting_notes'); ?></label> -->
+                     <div class="col-md-4" style="padding: 0px;">
+                        <label for="venu"><?php echo _l('Venue'); ?></label>
+                        <input type="ext" id="venue" name="venue" value="<?php echo isset($minutes) ? $minutes->venue : ''; ?>" class="form-control">
                      </div>
                      <?php
                      // if (!$is_edit) { 
@@ -273,7 +274,7 @@
                         <?php echo _l('share_meeting'); ?>
                      </a>
                   </div>
-                  
+
 
                   <!-- Dynamic Task List -->
                   <!-- <h4><?php echo _l('task_overview'); ?></h4>
@@ -323,7 +324,7 @@
                   <button type="button" id="add-task" class="btn btn-primary"><?php echo _l('add_another_task'); ?></button> -->
                   <?php
                   if ($agenda_id > 0) { ?>
-                  <hr>
+                     <hr>
                      <div>
                         <h4><?php echo _l('task_overview'); ?></h4>
                         <?php init_relation_tasks_table(array('data-new-rel-id' => $agenda_id, 'data-new-rel-type' => 'meeting_minutes')); ?>
@@ -332,7 +333,7 @@
                   <?php }
                   ?>
 
-                 
+
 
                   <div class="btn-bottom-toolbar text-right">
                      <button
