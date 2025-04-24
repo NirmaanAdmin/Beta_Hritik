@@ -9003,9 +9003,7 @@ class changee extends AdminController
 
         $vendor_code = $vendor_data->vendor_code;
 
-        echo '<pre>';
-        print_r($purchase_order);
-        die;
+    
 
         echo json_encode([
             'result' => $pur_order_detail,
