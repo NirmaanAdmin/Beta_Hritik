@@ -551,6 +551,14 @@ class Estimates_model extends App_Model
             unset($data['newareasummaryitems']);
         }
 
+        if (isset($data['item_name'])) {
+            unset($data['item_name']);
+        }
+
+        if (isset($data['item_code'])) {
+            unset($data['item_code']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -761,6 +769,14 @@ class Estimates_model extends App_Model
             unset($data['areasummaryitems']);
         }
 
+        if (isset($data['item_name'])) {
+            unset($data['item_name']);
+        }
+
+        if (isset($data['item_code'])) {
+            unset($data['item_code']);
+        }
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', $data);
 
@@ -830,6 +846,10 @@ class Estimates_model extends App_Model
                     $original_item->long_description,
                     $item['long_description'],
                 ]));
+                $affectedRows++;
+            }
+
+            if (update_sales_item_post($item['itemid'], $item, 'detailed_costing_item_code')) {
                 $affectedRows++;
             }
 

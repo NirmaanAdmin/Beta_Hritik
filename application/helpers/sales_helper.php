@@ -744,6 +744,7 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'vbt_id'           => isset($item['vbt_id']) ? $item['vbt_id'] : NULL,
                     'expense_id'       => isset($item['expense_id']) ? $item['expense_id'] : NULL,
                     'remarks'          => isset($item['remarks']) ? $item['remarks'] : NULL,
+                    'item_code'        => isset($item['item_name']) ? $item['item_name'] : NULL,
                 ]);
 
     $id = $CI->db->insert_id();
@@ -772,6 +773,8 @@ function update_sales_item_post($item_id, $data, $field = '')
             $update[$field] = number_format($data[$field], get_decimal_places(), '.', '');
         } elseif ($field == 'item_order') {
             $update[$field] = $data['order'];
+        } elseif ($field == 'detailed_costing_item_code') {
+            $update['item_code'] = $data['item_name'];
         } else {
             $update[$field] = $data[$field];
         }
@@ -784,6 +787,7 @@ function update_sales_item_post($item_id, $data, $field = '')
             'qty'              => $data['qty'],
             'unit'             => $data['unit'],
             'unit_id'          => isset($data['unit_id']) ? $data['unit_id'] : NULL,
+            'item_code'        => isset($data['item_name']) ? $data['item_name'] : NULL,
         ];
     }
 

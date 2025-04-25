@@ -683,4 +683,11 @@ class Estimates extends AdminController
         }
         echo json_encode(['group_id' => $area_id]);
     }
+
+    public function get_estimate_purchase_items()
+    {
+        $name    = $this->input->post('name');
+        $value = $this->input->post('value');
+        echo pur_get_item_selcted_select($name, $value);
+    }
 }

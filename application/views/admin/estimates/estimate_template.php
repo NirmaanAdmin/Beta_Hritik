@@ -352,16 +352,6 @@
 
     <hr class="hr-panel-separator" />
 
-    <div class="panel-body" style="padding-bottom: 0px !important;">
-        <div class="row">
-            <div class="col-md-4">
-                <?php $this->load->view('admin/invoice_items/item_select'); ?>
-            </div>
-            <div class="col-md-8 text-right show_quantity_as_wrapper">
-            </div>
-        </div>
-    </div>
-
     <div class="panel-body">
         <div class="horizontal-tabs">
             <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
@@ -638,7 +628,7 @@
             $annexures = get_all_annexures(); 
             $i = 1;
             foreach ($annexures as $key => $annexure) { ?>
-                <div role="tabpanel" class="tab-pane" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
+                <div role="tabpanel" class="tab-pane detailed-costing-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
                     <div class="col-md-4">
                         <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
                     </div>
@@ -669,7 +659,14 @@
                                 <tr class="main">
                                     <td></td>
                                     <td>
-                                        <textarea name="description" rows="4" class="form-control" placeholder="<?php echo _l('item_description_placeholder'); ?>"></textarea>
+                                        <select id="item_name" name="item_name" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
+                                            <option value="">Type at least 3 letters...</option>
+                                        </select>
+                                    </td>
+                                    <td class="hide commodity_code">
+                                        <div class="form-group" app-field-wrapper="item_code">
+                                            <input type="text" id="item_code" name="item_code" class="form-control" placeholder="Commodity Code" value="">
+                                        </div>
                                     </td>
                                     <td>
                                         <textarea name="long_description" rows="4" class="form-control" placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
@@ -750,11 +747,24 @@
                                             $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
                                             $amount = $item['rate'] * $item['qty'];
                                             $amount = app_format_number($amount);
+                                            $name_item_name = $items_indicator . '[' . $i . '][item_name]';
+                                            $item_name = $item['item_code'];
                                              // order input
                                             $table_row .= '<input type="hidden" class="order" name="' . $items_indicator . '[' . $i . '][order]">';
                                             $table_row .= '<input type="hidden" class="annexure" name="' . $items_indicator . '[' . $i . '][annexure]" value="'.$item['annexure'].'">';
                                             $table_row .= '</td>';
-                                            $table_row .= '<td class="bold description"><textarea name="' . $items_indicator . '[' . $i . '][description]" class="form-control" rows="5">' . clear_textarea_breaks($item['description']) . '</textarea></td>';
+
+                                            $get_selected_item = pur_get_item_selcted_select($item_name, $name_item_name);
+                                            if ($item_name == '') {
+                                                $table_row .= '<td class="">
+                                                <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
+                                                    <option value="">Type at least 3 letters...</option>
+                                                </select>
+                                             </td>';
+                                            } else {
+                                                $table_row .= '<td class="">' . $get_selected_item . '</td>';
+                                            }
+
                                             $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
                                             $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
                                             
