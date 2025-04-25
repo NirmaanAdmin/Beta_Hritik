@@ -91,7 +91,7 @@ $module_name = 'purchase_request';
               <div class="col-md-3 form-group">
 
                 <?php
-                $approval_status_type_filter = get_module_filter($module_name, 'pur_approval_status');
+                $approval_status_type_filter = get_module_filter($module_name, 'status');
                 $approval_status_type_filter_val = !empty($approval_status_type_filter) ? explode(",", $approval_status_type_filter->filter_value) : [];
                 $statuses = [
                   1 => ['id' => '1', 'name' => _l('draft')],
