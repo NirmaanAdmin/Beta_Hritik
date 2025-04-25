@@ -915,6 +915,7 @@
             }
           } else {
             console.error("No vendornote data in response!");
+            tinymce.get('vendornote').setContent('');
           }
 
 
@@ -988,6 +989,36 @@
               }) + '-' +
               new Date().getFullYear() + '-' + response.vendor_code;
           }
+
+          var order_date = $('#order_date').val();
+          // Process order_summary content
+          let updatedContent = response.order_summary
+            .replace(/<strong>WORK ORDER<\/strong>/g, '<strong>CHANGE ORDER</strong>')
+            .replace(/<strong>W\.O\. Number:<\/strong>\s*[^<]+/g, `<strong>C.O. Number:</strong> ${final_po_number}`)
+            .replace(/<strong>W\.O\. Date:<\/strong>\s*(<[^>]+>[^<]*<\/[^>]+>)/g, `<strong>C.O. Date:</strong> ${order_date}`);
+
+          // Set order_summary content (with TinyMCE check)
+          if (tinymce.get('order_summary')) {
+            tinymce.get('order_summary').setContent(updatedContent);
+          } else {
+            console.error("TinyMCE 'order_summary' editor not found!");
+          }
+          // Set vendornote content (with validation)
+          if (response.vendernote) {
+            let updatedVendornote = response.vendernote
+              .replace(/ANNEXURE\s*-\s*B\s*<br>\s*SPECIAL CONDITIONS OF WORK/gi, 'ANNEXURE - B<br>SPECIAL CONDITIONS OF CHANGE ORDER');
+            if (updatedVendornote === response.vendernote) {
+              updatedVendornote = response.vendernote.replace(/SPECIAL CONDITIONS OF WORK/gi, 'SPECIAL CONDITIONS OF CHANGE ORDER');
+            }
+            if (tinymce.get('vendornote')) {
+              tinymce.get('vendornote').setContent(updatedVendornote);
+            } else {
+              console.error("TinyMCE 'vendornote' editor not found!");
+            }
+          } else {
+            tinymce.get('vendornote').setContent('');
+          }
+
           $('#pur_order_number').val(final_po_number);
           $('select[name="currency"]').val(response.currency).change();
           $('input[name="currency_rate"]').val(response.currency_rate).change();
