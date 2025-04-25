@@ -1006,6 +1006,7 @@ if (!function_exists('previous_url')) {
     }
 }
 
+
 function update_module_filter($module_name, $filter_name, $filter_value)
 {
     $CI = &get_instance();

@@ -80,7 +80,8 @@ $module_name = 'purchase_request';
                 <?php
                 $sub_groups_pur_type_filter = get_module_filter($module_name, 'sub_groups_pur');
                 $sub_groups_pur_type_filter_val = !empty($sub_groups_pur_type_filter) ? explode(",", $sub_groups_pur_type_filter->filter_value) : [];
-                echo render_select('sub_groups_pur[]', $item_sub_group, array('id', 'sub_group_name'), '', $sub_groups_pur_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('sub_groups_pur'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
+                echo render_select('sub_groups_pur[]', $item_sub_group, array('id', 'sub_group_name'), '', $sub_groups_pur_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('sub_groups_pur'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+                ?>
               </div>
               <div class="col-md-3 form-group">
                 <?php
