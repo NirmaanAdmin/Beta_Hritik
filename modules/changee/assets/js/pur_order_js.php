@@ -880,7 +880,9 @@
               }) + '-' +
               new Date().getFullYear() + '-' + response.vendor_code;
           } else {
-            final_po_number = response.po_prefix + '-' + 'CO-00' + response.co_count + '-' +
+            let count = parseInt(response.co_count) + 1;
+            const paddedCount = count.toString().padStart(3, '0'); // Ensures 3-digit format
+            final_po_number = response.po_prefix + '-' + 'CO-' + paddedCount + '-' +
               new Date().toLocaleString('default', {
                 month: 'short'
               }) + '-' +
@@ -914,7 +916,7 @@
           } else {
             console.error("No vendornote data in response!");
           }
-         
+
 
           $('#pur_order_number').val(final_po_number);
           $('select[name="currency"]').val(response.currency).change();
@@ -978,7 +980,9 @@
               }) + '-' +
               new Date().getFullYear() + '-' + response.vendor_code;
           } else {
-            final_po_number = response.wo_number + '-' + 'CO-00' + response.wo_count + '-' +
+            let count = parseInt(response.wo_count) + 1;
+            const paddedCount = count.toString().padStart(3, '0'); // Ensures 3-digit format
+            final_po_number = response.wo_number + '-' + 'CO-' + paddedCount + '-' +
               new Date().toLocaleString('default', {
                 month: 'short'
               }) + '-' +
