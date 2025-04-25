@@ -443,7 +443,7 @@
                             if(!empty($annexure_estimate['summary'])) {
                                 $summary = $annexure_estimate['summary'];
                                 foreach($summary as $ikey => $svalue) { ?>
-                                    <tr class="main">
+                                    <tr class="main" style="background-color: white;">
                                         <td></td>
                                         <td align="left">
                                             <?php echo $svalue['name']; ?>
@@ -452,44 +452,41 @@
                                             <?php echo app_format_money($svalue['amount'], $base_currency); ?>
                                         </td>
                                         <td align="right">
-                                            <?php echo app_format_money($svalue['rate'], $base_currency); ?>
+                                            <?php 
+                                            $total_bua = 0;
+                                            if (isset($estimate) && isset($all_area_summary)) {
+                                                if(!empty($all_area_summary)) {
+                                                    foreach ($all_area_summary as $arkey => $asvalue) 
+                                                    {
+                                                        if($asvalue['area_id'] == 2) {
+                                                            $total_bua = $total_bua + $asvalue['area'];
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            $final_bua = $total_bua == 0 ? 1 : $total_bua;
+                                            echo app_format_money($svalue['rate'] / $final_bua, $base_currency); 
+                                            ?>
                                         </td>
                                         <td align="right">
-                                            
+                                            <?php
+                                            $budget_summary_remarks = 'budget_summary_remarks['.$svalue['annexure'].']';
+                                            $budget_summary_remarks_value = '';
+                                            if(isset($estimate_budget_summary_remarks)) {
+                                                if(!empty($estimate_budget_summary_remarks)) {
+                                                    foreach ($estimate_budget_summary_remarks as $ekey => $evalue) {
+                                                        if($evalue['budget_id'] == $svalue['annexure']) {
+                                                            $budget_summary_remarks_value = $evalue['budget_summary_remarks'];
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            echo render_textarea($budget_summary_remarks, '', $budget_summary_remarks_value, [], [], '', ''); 
+                                            ?>
                                         </td>
                                     </tr>
                                 <?php } 
                             } ?>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-8 col-md-offset-4">
-                    <table class="table text-right">
-                        <tbody>
-                            <tr id="subtotal">
-                                <td>
-                                    <span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['subtotal'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <tr id="total_tax">
-                                <td>
-                                    <span class="bold tw-text-neutral-700"><?php echo _l('tax'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['tax'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
-                                </td>
-                                <td>
-                                    <?php echo app_format_money($annexure_estimate['final_estimate']['amount'], $base_currency); ?>
-                                </td>
-                            </tr>
-                            <?php hooks()->do_action('after_admin_estimate_form_total_field', $estimate ?? null); ?>
                         </tbody>
                     </table>
                 </div>
