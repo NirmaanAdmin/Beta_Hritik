@@ -565,7 +565,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="horizontal-tabs">
+              <!-- <div class="horizontal-tabs">
                 <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
                   <li role="presentation" id="item" class="active">
                     <a href="#items" aria-controls="items" role="tab" id="tab_items" data-toggle="tab">
@@ -580,9 +580,9 @@
 
 
                 </ul>
-              </div>
-              <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="items">
+              </div> -->
+              <!-- <div class="tab-content">
+                <div role="tabpanel" class="tab-pane" id="items"> -->
                   <div class="col-md-12">
                     <div class="table-responsive s_table ">
                       <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
@@ -703,12 +703,12 @@
                   </div>
                 </div>
                 <div role="tabpanel" class="tab-pane " id="history" class="hide">
-                <div class="col-md-12" id="history_tbody">
+                <!-- <div class="col-md-12" id="history_tbody">
                     
-                    
-                  </div>
-                </div>
-              </div>
+                                                                                                                      
+                  </div> -->
+                <!-- </div>
+              </div> -->
             </div>
           </div>
           <div class="row">
