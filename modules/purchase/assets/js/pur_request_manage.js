@@ -19,17 +19,17 @@ var Params = {
   $.each(Params, function (i, obj) {
     $('select' + obj).on('change', function () {
       table_pur_request.DataTable().ajax.reload()
-        .columns.adjust();
+        .columns.adjust().recalc();
     });
   });
 
   $('input[name="from_date"]').on('change', function () {
     table_pur_request.DataTable().ajax.reload()
-      .columns.adjust();
+      .columns.adjust().recalc();
   });
   $('input[name="to_date"]').on('change', function () {
     table_pur_request.DataTable().ajax.reload()
-      .columns.adjust();
+      .columns.adjust().recalc();
   });
 
   appValidateForm($('#send_rq-form'), { subject: 'required', attachment: 'required' });
