@@ -179,7 +179,7 @@ function app_init_admin_sidebar_menu_items()
         $enable_badge = get_option('enable_support_menu_badges');
         $CI->app_menu->add_sidebar_menu_item('support', [
             'collapse' => $enable_badge ? true : null,
-            'name'     => _l('RFI'),
+            'name'     => _l('RFI Tracker'),
             'href'     => admin_url('tickets'),
             'icon'     => 'fa-regular fa-life-ring',
             'position' => 40,
@@ -205,7 +205,7 @@ function app_init_admin_sidebar_menu_items()
         }
     }
     $CI->app_menu->add_sidebar_menu_item('forms', [
-        'name'     => 'Forms',
+        'name'     => 'Forms Tracker',
         'href'     => admin_url('forms'),
         'icon'     => 'fa-regular fa-life-ring',
         'position' => 41,
