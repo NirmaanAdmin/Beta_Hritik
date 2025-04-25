@@ -537,6 +537,9 @@ class purchase extends AdminController
         $data['departments'] = $this->departments_model->get();
         $data['vendor_contacts'] = $this->purchase_model->get_contacts();
         $data['projects'] = $this->projects_model->get();
+        $data['item_group'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['item_sub_group'] = $this->purchase_model->get_sub_group();
+        $data['requester'] = $this->staff_model->get('', ['active' => 1]);
 
         $this->load->view('purchase_request/manage', $data);
     }
