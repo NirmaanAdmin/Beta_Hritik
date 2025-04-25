@@ -1519,7 +1519,6 @@ class Purchase_model extends App_Model
                 }
             }
         }
-
         if (count($update_purchase_request) > 0) {
             foreach ($update_purchase_request as $_key => $rqd) {
                 $dt_data = [];
@@ -1527,7 +1526,7 @@ class Purchase_model extends App_Model
                 $dt_data['item_code'] = $rqd['item_code'];
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
-                $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                $dt_data['unit_id'] = isset($rqd['unit_name']) ? $rqd['unit_name'] : null;
                 $dt_data['unit_price'] = $rqd['unit_price'];
                 $dt_data['into_money'] = $rqd['into_money'];
                 $dt_data['total'] = $rqd['total'];
