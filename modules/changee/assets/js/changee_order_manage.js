@@ -23,20 +23,17 @@ var expenseDropzone;
     $.each(Params, function (i, obj) {
         $('select' + obj).on('change', function () {
             table_rec_campaign.DataTable().ajax.reload()
-                .columns.adjust()
-                .responsive.recalc();
+                .columns.adjust().recalc();
         });
     });
 
     $('input[name="from_date"]').on('change', function () {
         table_rec_campaign.DataTable().ajax.reload()
-            .columns.adjust()
-            .responsive.recalc();
+            .columns.adjust().recalc();
     });
     $('input[name="to_date"]').on('change', function () {
         table_rec_campaign.DataTable().ajax.reload()
-            .columns.adjust()
-            .responsive.recalc();
+            .columns.adjust().recalc();
     });
 
 
