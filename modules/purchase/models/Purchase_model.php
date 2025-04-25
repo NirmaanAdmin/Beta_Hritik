@@ -4321,7 +4321,7 @@ class Purchase_model extends App_Model
                 $html .= '<td style="width: 10%">' . $full_item_image . '</td>';
             }
             $html .= '<td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 12%">' . $row['quantity'] . $units->unit_name . '</td>
+            <td align="right" style="width: 12%">' . $row['quantity'] .' '. $units->unit_name . '</td>
             <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['into_money'], '') . '</td>
           </tr>';
         }
