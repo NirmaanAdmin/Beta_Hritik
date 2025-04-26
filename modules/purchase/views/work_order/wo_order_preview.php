@@ -178,7 +178,7 @@ if ($estimate->currency != 0) {
                <?php if (!empty($estimate->hsn_sac)) { ?>
                   <p class="bold p_mar"><?php echo _l('hsn_sac') . ': ' ?> <?php echo get_hsn_sac_name_by_id($pur_order->hsn_sac); ?></p>
                <?php } ?>
-               <p class="bold p_mar"><?php echo _l('purchase_requestor') . ': ' ?> <?php echo get_staff_full_name($pur_order->addedfrom); ?></p>
+               <p class="bold p_mar"><?php echo _l('purchase_requestor') . ': ' ?> <?php echo get_staff_full_name($pur_order->buyer); ?></p>
             </div>
             <div class="col-md-8">
                <div class="btn-group pull-right">
