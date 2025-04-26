@@ -190,10 +190,10 @@ return App_table::find('forms')
                     }
 
                     $url   = admin_url('forms/form/' . $aRow['formid']);
-                    $_data = '<a href="' . $url . '" class="valign">' . $_data . '</a>';
+                    $_data = '<a href="' . $url . '?tab=settings" class="valign">' . $_data . '</a>';
                     if ($aColumns[$i] == 'subject') {
                         $_data .= '<div class="row-options">';
-                        $_data .= '<a href="' . $url . '">' . _l('view') . '</a>';
+                        $_data .= '<a href="' . $url . '?tab=settings">' . _l('view') . '</a>';
                         $_data .= ' | <a href="' . $url . '?tab=settings">' . _l('edit') . '</a>';
                         $_data .= ' | <a href="' . get_form_public_url($aRow) . '" target="_blank">' . _l('view_public_form') . '</a>';
                         if (can_staff_delete_form()) {

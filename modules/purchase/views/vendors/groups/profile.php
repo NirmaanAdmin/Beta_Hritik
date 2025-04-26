@@ -173,6 +173,16 @@
                         </select>
                      </div>
                   <?php } ?>
+                  <div class="form-group">
+                     <label for="category"><?php echo _l('Created By'); ?> :-</label>
+                     <?php 
+                     if($client->addedfrom > 0){
+                        echo $staff_name = get_staff_full_name($client->addedfrom); 
+                     }else{
+                        echo $client->company;
+                     }
+                     ?>
+                  </div>
                </div>
                <div class="col-md-6">
                   <?php $value = (isset($client) ? $client->address : ''); ?>
@@ -192,6 +202,7 @@
                   <?php echo render_textarea('bank_detail', 'bank_detail', $bank_detail); ?>
                   <?php $preferred_location = (isset($client) ? $client->preferred_location : ''); ?>
                   <?php echo render_textarea('preferred_location', 'Preferred Location', $preferred_location); ?>
+
                </div>
             </div>
          </div>

@@ -104,6 +104,8 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
             // Add specific ordering logic based on the module value
             if ($module === 'warehouse') {
                 $additionalOrder = db_prefix() . 'inventory_manage.inventory_number DESC, ';
+            } elseif ($module === 'tasks') {
+                $additionalOrder = db_prefix() . 'tasks.status ASC, ';
             }
 
             // Prepend additional order conditions
@@ -270,7 +272,6 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
     $sOrder
     $sLimit
     ";
-
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),

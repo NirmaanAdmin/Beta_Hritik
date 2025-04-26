@@ -1,5 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
+<style>
+   .show_hide_columns {
+      position: absolute;
+      z-index: 5000;
+      left: 291px;
+      top: 99px;
+   }
+</style>
 <div id="wrapper">
    <div class="content">
       <div class="row">
@@ -134,7 +142,40 @@
                   <div class="row col-md-12">
                      <hr />
                   </div>
+                  <div class="btn-group show_hide_columns" id="show_hide_columns">
+                     <!-- Settings Icon -->
+                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
+                        <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
+                     </button>
+                     <!-- Dropdown Menu with Checkboxes -->
+                     <div class="dropdown-menu" style="padding: 10px; min-width: 250px;">
+                        <!-- Select All / Deselect All -->
+                        <div>
+                           <input type="checkbox" id="select-all-columns"> <strong><?php echo _l('select_all'); ?></strong>
+                        </div>
+                        <hr>
+                        <!-- Column Checkboxes -->
+                        <?php
+                        $columns = [
+                           'checkbox',
+                           'the_number_sign',
+                           'clients_list_company',
+                           'Company Email',
+                           'clients_list_phone',
+                           'vendor_category',
+                           'customer_active',
+                           'pur_date_created',
+                        ];
+                        ?>
+                        <div>
+                           <?php foreach ($columns as $key => $label): ?>
+                              <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
+                              <?php echo _l($label); ?><br>
+                           <?php endforeach; ?>
+                        </div>
 
+                     </div>
+                  </div>
                   <a href="#" onclick="staff_bulk_actions(); return false;" data-table=".table-vendors" class=" hide bulk-actions-btn table-btn"><?php echo _l('bulk_actions'); ?></a>
                   <?php
                   $table_data = array();
@@ -152,7 +193,7 @@
                         'name' => _l('Company Email'),
                         'th_attrs' => array('class' => 'toggleable', 'id' => 'th-company-email')
                      ),
-                     
+
                      array(
                         'name' => _l('clients_list_phone'),
                         'th_attrs' => array('class' => 'toggleable', 'id' => 'th-phone')
@@ -192,6 +233,38 @@
    </div>
 </div>
 <?php init_tail(); ?>
+<script>
+   $(document).ready(function() {
+      var table = $('.table-vendors').DataTable();
+
+      // Handle "Select All" checkbox
+      $('#select-all-columns').on('change', function() {
+         var isChecked = $(this).is(':checked');
+         $('.toggle-column').prop('checked', isChecked).trigger('change');
+      });
+
+      // Handle individual column visibility toggling
+      $('.toggle-column').on('change', function() {
+         var column = table.column($(this).val());
+         column.visible($(this).is(':checked'));
+
+         // Sync "Select All" checkbox state
+         var allChecked = $('.toggle-column').length === $('.toggle-column:checked').length;
+         $('#select-all-columns').prop('checked', allChecked);
+      });
+
+      // Sync checkboxes with column visibility on page load
+      table.columns().every(function(index) {
+         var column = this;
+         $('.toggle-column[value="' + index + '"]').prop('checked', column.visible());
+      });
+
+      // Prevent dropdown from closing when clicking inside
+      $('.dropdown-menu').on('click', function(e) {
+         e.stopPropagation();
+      });
+   });
+</script>
 </body>
 
 </html>

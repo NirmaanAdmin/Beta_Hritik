@@ -3612,7 +3612,7 @@ class Warehouse_model extends App_Model
 		$data['total_discount'] = reformat_currency_j($data['total_discount']);
 		$data['after_discount'] = reformat_currency_j($data['after_discount']);
 		$data['addedfrom'] = get_staff_user_id();
-		$data['delivery_status'] = null;
+		$data['delivery_status'] = 'delivered';
 
 		$this->db->insert(db_prefix() . 'goods_delivery', $data);
 		$insert_id = $this->db->insert_id();
@@ -3945,9 +3945,10 @@ class Warehouse_model extends App_Model
 		//organization_info
 		$organization_info = '<div  class="bill_to_color">';
 		$organization_info .= '<b>' . _l('project') . ': ' . get_project_name_by_id($goods_delivery->project) . '</b><br />';
+		$organization_info .= '<b>' . _l('pur_order') . ': ' . get_pur_order_name($goods_delivery->pr_order_id) . '</b><br />';
 		$organization_info .= format_organization_info_name();
-
-		$organization_info .= '</div>';
+		
+		$organization_info .= '</div>';	
 
 
 		$bill_to = '';

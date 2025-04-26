@@ -96,22 +96,22 @@
                 }
                  ?>
 
-                  <tr class="project-overview">
+                  <!-- <tr class="project-overview">
                     <td class="bold" width="30%"><?php echo _l('customer_name'); ?></td>
                     <td><?php echo html_entity_decode($customer_name) ; ?></td>
-                 </tr>
-                 <tr class="project-overview">
+                 </tr> -->
+                 <!-- <tr class="project-overview">
                     <td class="bold"><?php echo _l('to'); ?></td>
                     <td><?php echo html_entity_decode($goods_delivery->to_) ; ?></td>
-                 </tr>
-                <tr class="project-overview">
+                 </tr> -->
+                <!-- <tr class="project-overview">
                     <td class="bold"><?php echo _l('address'); ?></td>
                     <td><?php echo html_entity_decode($goods_delivery->address) ; ?></td>
-                 </tr>
-                 <tr class="project-overview">
+                 </tr> -->
+                 <!-- <tr class="project-overview">
                     <td class="bold"><?php echo _l('note_'); ?></td>
                     <td><?php echo html_entity_decode($goods_delivery->description) ; ?></td>
-                 </tr>
+                 </tr> -->
 
                  <?php 
                       if( ($goods_delivery->invoice_id != '') && ($goods_delivery->invoice_id != 0) ){ ?>

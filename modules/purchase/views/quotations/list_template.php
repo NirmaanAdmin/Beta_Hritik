@@ -103,6 +103,44 @@ $module_name = 'quotations';
     <div class="col-md-12" id="small-table">
       <div class="panel_s">
         <div class="panel-body">
+          <div class="btn-group show_hide_columns" id="show_hide_columns">
+            <!-- Settings Icon -->
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
+              <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
+            </button>
+            <!-- Dropdown Menu with Checkboxes -->
+            <div class="dropdown-menu" style="padding: 10px; min-width: 250px;">
+              <!-- Select All / Deselect All -->
+              <div>
+                <input type="checkbox" id="select-all-columns"> <strong><?php echo _l('select_all'); ?></strong>
+              </div>
+              <hr>
+              <!-- Column Checkboxes -->
+              <?php
+              $columns = [
+                'estimate_dt_table_heading_number',
+                'estimate_dt_table_heading_amount',
+                'estimates_total_tax',
+                'invoice_estimate_year',
+                'vendor',
+                'pur_request',
+                'group_pur',
+                'sub_groups_pur',
+                'estimate_dt_table_heading_date',
+                'estimate_dt_table_heading_expirydate',
+                'project',
+                'approval_status',
+              ];
+              ?>
+              <div>
+                <?php foreach ($columns as $key => $label): ?>
+                  <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
+                  <?php echo _l($label); ?><br>
+                <?php endforeach; ?>
+              </div>
+
+            </div>
+          </div>
           <!-- if estimateid found in url -->
           <?php echo form_hidden('estimateid', $estimateid); ?>
           <?php $this->load->view('quotations/table_html'); ?>
