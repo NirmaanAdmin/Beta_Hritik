@@ -865,7 +865,8 @@ class purchase extends AdminController
         $data['projects'] = $this->projects_model->get();
         $data['title']                 = _l('estimates');
         $data['bodyclass']             = 'estimates-total-manual';
-
+        $data['item_group'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['item_sub_group'] = $this->purchase_model->get_sub_group();
         $this->load->view('quotations/manage', $data);
     }
 
