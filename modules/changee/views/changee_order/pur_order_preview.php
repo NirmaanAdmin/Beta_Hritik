@@ -138,7 +138,7 @@ if ($estimate->currency != 0) {
                   <p class="bold p_mar"><?php echo _l('order_status') . ': '; ?><span class="label <?php echo changee_pur_html_entity_decode($order_status_class); ?>"><?php echo changee_pur_html_entity_decode($order_status_text); ?></span></p>
                <?php } ?>
 
-               <?php $clients_ids = explode(',', $estimate->clients ?? ''); ?>
+               <!-- <?php $clients_ids = explode(',', $estimate->clients ?? ''); ?>
                <?php if (count($clients_ids) > 0) { ?>
 
                   <p class="bold p_mar"><?php echo _l('clients') . ': ' ?></p>
@@ -146,7 +146,7 @@ if ($estimate->currency != 0) {
                   ?>
                      <a href="<?php echo admin_url('clients/client/' . $ids); ?>"><span class="label label-tag"><?php echo get_company_name($ids); ?></span></a>
                   <?php } ?>
-               <?php } ?>
+               <?php } ?> -->
                <?php
                if ($pur_order->group_pur > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('group_pur') . ': ' ?> <?php foreach ($commodity_groups as $group) {
@@ -173,12 +173,18 @@ if ($estimate->currency != 0) {
                   <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/purchase_order/' . $pur_order->po_order_id); ?>"><?php echo get_pur_name_by_id($pur_order->po_order_id); ?></a></p>
                <?php }
                if ($pur_order->wo_order_id > 0) { ?>
-                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/wo_order/' . $pur_order->wo_order_id); ?>"><?php echo get_wo_order_name_by_id($pur_order->wo_order_id); ?></a></p>
+                  <p class="bold p_mar"><?php echo _l('releted_to') . ': ' ?><a href="<?php echo admin_url('purchase/work_order/' . $pur_order->wo_order_id); ?>"><?php echo get_wo_order_name_by_id($pur_order->wo_order_id); ?></a></p>
                <?php } ?>
                <?php
                if ($pur_order->kind > 0) { ?>
                   <p class="bold p_mar"><?php echo _l('kind') . ': ' ?> <?php echo $pur_order->kind ?> </p>
-               <?php } ?>
+               <?php } 
+               if($pur_order->buyer > 0){ ?>
+                  <p class="bold p_mar"><?php echo _l('buyer') . ': ' ?> <?php echo get_staff_full_name($pur_order->buyer); ?> </p>
+               <?php }
+               ?>
+
+               
 
 
             </div>
