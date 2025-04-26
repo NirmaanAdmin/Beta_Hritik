@@ -25,7 +25,7 @@ $aColumns = [
     'sub_group_name',
     'area_name',
     'type',
-    db_prefix() . 'area.project',
+    db_prefix() . 'projects.name as project_name',
     'department',
     'pur_order_name',
     'subtotal',
@@ -116,7 +116,7 @@ if (
     $this->ci->input->post('project')
     && count($this->ci->input->post('project')) > 0
 ) {
-    array_push($where, 'AND project IN (' . implode(',', $this->ci->input->post('project')) . ')');
+    array_push($where, 'AND ' . db_prefix() . 'co_orders.project IN (' . implode(',', $this->ci->input->post('project')) . ')');
 }
 
 if (
@@ -294,7 +294,7 @@ foreach ($rResult as $aRow) {
             $_data = _l($aRow['type']);
         } elseif ($aColumns[$i] == 'subtotal') {
             $_data = app_format_money($aRow['subtotal'], $base_currency->symbol);
-        } elseif ($aColumns[$i] == db_prefix() . 'area.project') {
+        } elseif ($aColumns[$i] == db_prefix() . 'projects.name as project_name') {
             $_data = $aRow['project_name'];
         } elseif ($aColumns[$i] == 'department') {
             $_data = $aRow['department_name'];

@@ -259,7 +259,7 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
         $havingSet = 'HAVING ' . $having;
     }
    
-    echo $resultQuery = '
+    $resultQuery = '
     SELECT ' . str_replace(' , ', ' ', implode(', ', $allColumns)) . ' ' . $additionalColumns . "
     FROM $sTable
     " . $join . "
@@ -270,7 +270,7 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
     $sOrder
     $sLimit
     ";
-    die;
+
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),
