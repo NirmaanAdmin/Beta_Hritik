@@ -15835,7 +15835,7 @@ class Purchase_model extends App_Model
                 ' . $delivery_person . '
                 ' . $pur_request_name . ' ';
         if (!empty($pur_order->addedfrom)) {
-            $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . $buyer . '</span><br />';
+            $html .= '<span style="text-align: right;"><b>' . _l('add_from') . ':</b> ' . get_staff_full_name($pur_order->buyer) . '</span><br />';
         }
         if (!empty($pur_order->kind)) {
             $html .= '<span style="text-align: right;"><b>' . _l('kind') . ':</b> ' . $pur_order->kind . '</span><br />';
