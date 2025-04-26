@@ -106,7 +106,7 @@
                                   <span class="content-menu hide">
                                     <ul>
                                       <?php
-                                      for ($pur_status = 1; $pur_status <= 3; $pur_status++) { ?>
+                                      for ($pur_status = 1; $pur_status <= 4; $pur_status++) { ?>
                                         <?php if ($pur_request->status != $pur_status) { ?>
                                           <li>
                                             <a href="#" onclick="purchase_request_mark_as(<?php echo $pur_status; ?>,<?php echo $pur_request->id; ?>); return false;">
@@ -242,6 +242,8 @@
                             <span><?php echo get_pur_send_to_vendors_list($pur_request->send_to_vendors); ?></span>
                           </td>
                           <td width="50%">
+                            <?php echo get_pur_order_by_id_pur_request($pur_request->id); ?>
+                            
                           </td>
                         </tr>
 

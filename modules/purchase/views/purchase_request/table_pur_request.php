@@ -169,7 +169,7 @@ foreach ($rResult as $aRow) {
             } elseif ($aRow['status'] == 3) {
                 $approve_status = '<span class="label label-warning" id="status_span_' . $aRow['id'] . '"> ' . _l('pur_rejected');
             } elseif ($aRow['status'] == 4) {
-                $approve_status = '<span class="label label-danger" id="status_span_' . $aRow['id'] . '"> ' . _l('pur_canceled');
+                $approve_status = '<span class="label label-default" id="status_span_' . $aRow['id'] . '"> ' . _l('pur_closed');
             }
 
             if (false) {

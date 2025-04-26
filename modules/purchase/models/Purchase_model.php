@@ -2694,6 +2694,12 @@ class Purchase_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
+
+        if (isset($data['pur_request']) && $data['pur_request'] > 0) {
+            $this->db->where('id', $data['pur_request']);
+            $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
+        }
+
         $this->db->insert(db_prefix() . 'pur_orders', $data);
         $insert_id = $this->db->insert_id();
         // $this->send_mail_to_approver($data, 'pur_order', 'purchase_order', $insert_id);
@@ -4321,7 +4327,7 @@ class Purchase_model extends App_Model
                 $html .= '<td style="width: 10%">' . $full_item_image . '</td>';
             }
             $html .= '<td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['unit_price'], '') . '</td>
-            <td align="right" style="width: 12%">' . $row['quantity'] .' '. $units->unit_name . '</td>
+            <td align="right" style="width: 12%">' . $row['quantity'] . ' ' . $units->unit_name . '</td>
             <td align="right" style="width: 12%">' . '₹ ' . app_format_money($row['into_money'], '') . '</td>
           </tr>';
         }
@@ -16121,7 +16127,10 @@ class Purchase_model extends App_Model
             $data['total'] = $data['grand_total'];
             unset($data['grand_total']);
         }
-
+        if (isset($data['pur_request']) && $data['pur_request'] > 0) {
+            $this->db->where('id', $data['pur_request']);
+            $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
+        }
         $this->db->insert(db_prefix() . 'wo_orders', $data);
         $insert_id = $this->db->insert_id();
 

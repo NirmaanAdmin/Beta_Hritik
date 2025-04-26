@@ -905,3 +905,4 @@ $lang['po_payment_certificate'] = 'PO payment certificate';
 $lang['wo_payment_certificate'] = 'WO payment certificate';
 $lang['discount_remarks'] = 'Remarks';
 $lang['discount_remarks_note'] = 'This remarks section for discount field';
+$lang['pur_closed'] = 'Closed';

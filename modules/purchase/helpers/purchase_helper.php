@@ -117,7 +117,7 @@ function get_status_approve($status)
     } elseif ($status == 3) {
         $result = '<span class="label label-warning"> ' . _l('pur_rejected') . ' </span>';
     } elseif ($status == 4) {
-        $result = '<span class="label label-danger"> ' . _l('pur_canceled') . ' </span>';
+        $result = '<span class="label label-default"> ' . _l('pur_closed') . ' </span>';
     }
 
     return $result;
@@ -140,9 +140,8 @@ function get_status_approve_str($status)
     } elseif ($status == 3) {
         $result = _l('pur_rejected');
     } elseif ($status == 4) {
-        $result = _l('pur_canceled');
+        $result = _l('pur_closed');
     }
-
     return $result;
 }
 
@@ -929,6 +928,35 @@ function get_pur_order_subject($pur_order)
     } else {
         return '';
     }
+}
+function get_pur_order_by_id_pur_request($pur_request)
+{
+    $CI = &get_instance();
+
+    $CI->db->where('pur_request', $pur_request);
+    $po = $CI->db->get(db_prefix() . 'pur_orders')->row();
+
+    if ($po) {
+        $url = admin_url('purchase/purchase_order/' . $po->id);
+        $pur_order = '<a href="' . $url . '">' . $po->pur_order_number . ' - ' . $po->pur_order_name . '</a>';
+
+        return '<span class="bold">' . _l('pur_order') . ' :</span>
+                <span>' . $pur_order . '</span>';
+    }
+
+
+    $CI->db->where('pur_request', $pur_request);
+    $wo = $CI->db->get(db_prefix() . 'wo_orders')->row();
+
+    if ($wo) {
+        $url = admin_url('purchase/work_order/' . $wo->id); 
+        $wo_order = '<a href="' . $url . '">' . $wo->wo_order_number . ' - ' . $wo->wo_order_name . '</a>';
+
+        return '<span class="bold">' . _l('work_order') . ' :</span>
+                <span>' . $wo_order . '</span>';
+    }
+
+    return '';
 }
 function get_wo_order_subject($wo_order)
 {
@@ -2917,7 +2945,6 @@ function pur_render_taxes_html($item_tax, $width)
  */
 function pur_format_approve_status($status, $text = false, $clean = false)
 {
-
     $status_name = '';
     if ($status == 1) {
         $status_name = _l('purchase_draft');
@@ -2926,7 +2953,7 @@ function pur_format_approve_status($status, $text = false, $clean = false)
     } elseif ($status == 3) {
         $status_name = _l('pur_rejected');
     } elseif ($status == 4) {
-        $status_name = _l('pur_canceled');
+        $status_name = _l('pur_closed');
     }
 
     if ($clean == true) {
@@ -2943,7 +2970,7 @@ function pur_format_approve_status($status, $text = false, $clean = false)
         } elseif ($status == 3) {
             $class = 'label label-warning';
         } elseif ($status == 4) {
-            $class = 'label label-danger';
+            $class = 'label label-default';
         }
     } else {
         if ($status == 1) {
@@ -2953,11 +2980,12 @@ function pur_format_approve_status($status, $text = false, $clean = false)
         } elseif ($status == 3) {
             $class = 'label text-warning';
         } elseif ($status == 4) {
-            $class = 'label text-danger';
+            $class = 'label text-black';
+            $style = 'style="color: #000000 !important;"';
         }
     }
 
-    return '<span class="' . $class . '" >' . $status_name . '</span>';
+    return '<span class="' . $class . '" ' . $style . ' >' . $status_name . '</span>';
 }
 
 
@@ -3558,6 +3586,7 @@ function get_pur_send_to_vendors_list($vendors)
     return '';
 }
 
+
 /**
  * Gets the area name by identifier
  *
@@ -4041,7 +4070,7 @@ function get_production_status($id)
     $CI->db->from(db_prefix() . 'goods_receipt_detail');
     $CI->db->where('goods_receipt_id', $id);
     $details = $CI->db->get()->result();
-    
+
     // Handle empty case
     if (empty($details)) {
         return '<span class="inline-block label label-danger">Not Started</span>';
