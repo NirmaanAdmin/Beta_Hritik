@@ -532,6 +532,12 @@ class Estimates_model extends App_Model
             unset($data['budget_summary_remarks']);
         }
 
+        $overall_budget_area = [];
+        if (isset($data['overall_budget_area'])) {
+            $overall_budget_area = $data['overall_budget_area'];
+            unset($data['overall_budget_area']);
+        }
+
         if (isset($data['file_csv'])) {
             unset($data['file_csv']);
         }
@@ -602,6 +608,7 @@ class Estimates_model extends App_Model
             update_sales_total_tax_column($insert_id, 'estimate', db_prefix() . 'estimates');
             $this->update_estimate_detailed_costing($insert_id, $detailed_costing);
             $this->update_estimate_budget_summary_remarks($insert_id, $budget_summary_remarks);
+            $this->update_estimate_overall_budget_area($insert_id, $overall_budget_area);
             $this->update_basic_estimate_details($insert_id);
             $this->log_estimate_activity($insert_id, 'estimate_activity_created');
 
@@ -753,6 +760,12 @@ class Estimates_model extends App_Model
         if (isset($data['budget_summary_remarks'])) {
             $budget_summary_remarks = $data['budget_summary_remarks'];
             unset($data['budget_summary_remarks']);
+        }
+
+        $overall_budget_area = [];
+        if (isset($data['overall_budget_area'])) {
+            $overall_budget_area = $data['overall_budget_area'];
+            unset($data['overall_budget_area']);
         }
 
         if (isset($data['file_csv'])) {
@@ -947,6 +960,7 @@ class Estimates_model extends App_Model
 
         $this->update_estimate_detailed_costing($id, $detailed_costing);
         $this->update_estimate_budget_summary_remarks($id, $budget_summary_remarks);
+        $this->update_estimate_overall_budget_area($id, $overall_budget_area);
         $this->update_basic_estimate_details($id);
 
         if ($affectedRows > 0) {
@@ -1785,5 +1799,34 @@ class Estimates_model extends App_Model
     {
         $this->db->where('estimate_id', $id);
         return $this->db->get(db_prefix() . 'estimate_budget_summary_remarks')->result_array();
+    }
+
+    public function update_estimate_overall_budget_area($id, $overall_budget_area)
+    {
+        if(!empty($overall_budget_area)) {
+            foreach ($overall_budget_area as $ckey => $cvalue) {
+                $this->db->where('estimate_id', $id);
+                $this->db->where('budget_id', $ckey);
+                $estimate_overall_budget_area = $this->db->get(db_prefix() . 'estimate_overall_budget_area')->row();
+                if(empty($estimate_overall_budget_area) && !empty($cvalue)) {
+                    $this->db->insert(db_prefix() . 'estimate_overall_budget_area', [
+                        'estimate_id' => $id,
+                        'budget_id' => $ckey,
+                        'overall_budget_area' => $cvalue,
+                    ]);
+                } else {
+                    $this->db->where('estimate_id', $id);
+                    $this->db->where('budget_id', $ckey);
+                    $this->db->update(db_prefix() . 'estimate_overall_budget_area', ['overall_budget_area' => $cvalue]);
+                }
+            }
+        }
+        return true;
+    }
+
+    public function get_estimate_overall_budget_area($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'estimate_overall_budget_area')->result_array();
     }
 }

@@ -631,6 +631,20 @@
                 <div role="tabpanel" class="tab-pane detailed-costing-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
                     <div class="col-md-4">
                         <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                        <?php
+                        $overall_budget_area_name = 'overall_budget_area['.$annexure['id'].']';
+                        $overall_budget_area_value = '';
+                        if(isset($estimate_overall_budget_area)) {
+                            if(!empty($estimate_overall_budget_area)) {
+                                foreach ($estimate_overall_budget_area as $okey => $ovalue) {
+                                    if($ovalue['budget_id'] == $annexure['id']) {
+                                        $overall_budget_area_value = $ovalue['overall_budget_area'];
+                                    }
+                                }
+                            }
+                        }
+                        echo render_input($overall_budget_area_name, 'Overall area (sqft)', $overall_budget_area_value, 'number', ['style' => 'width: 300px;']);
+                        ?>
                     </div>
                     <div class="col-md-4">
                     </div>
