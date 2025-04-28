@@ -1,11 +1,11 @@
 <?php if (isset($item)) {
 ?>
-<style>
-	#vueApp,#related_tasks{
-		display: none;
-	}
-
-</style>
+	<style>
+		#vueApp,
+		#related_tasks {
+			display: none;
+		}
+	</style>
 	<div class="row">
 		<div class="col-md-8">
 			<input type="hidden" name="id" value="<?php echo drawing_htmldecode($item->id); ?>">
@@ -373,12 +373,12 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"><?php echo _l('Task'); ?></div>
 				<div class="panel-body no-border">
-				<?php init_relation_tasks_table(array('data-new-rel-id' => $item->id, 'data-new-rel-type' => 'drawing')); ?>
+					<?php init_relation_tasks_table(array('data-new-rel-id' => $item->id, 'data-new-rel-type' => 'drawing')); ?>
 				</div>
 			</div>
 			<div class="panel-default no-border">
 				<div class="panel-body no-border">
-				
+
 					<?php if ($item->creator_id == get_staff_user_id() && $item->creator_type == 'staff') { ?>
 						<hr>
 					<?php } ?>
@@ -493,7 +493,14 @@
 							</a>
 						<?php } ?>
 					<?php } ?>
-
+					<?php if (!(strpos($item->name, '.pdf') === false)) { ?>
+						<a href="<?php echo admin_url('drawing_management/preview_superseder?id=' . $item->id) ?>"
+							target="_blank"
+							class="btn btn-default w100 mtop5 mbot5"
+							onclick="return confirm('<?php echo _l('Are you sure you want to supersede this document?'); ?>')">
+							<i class="fa fa-arrow-up"></i> <?php echo _l('Supersede'); ?>
+						</a>
+					<?php } ?>
 					<?php
 					if (!$file_locked) {
 						$parameter = $item->id;
