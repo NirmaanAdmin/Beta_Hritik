@@ -1,6 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
 <input type="hidden" name="parent_id" value="<?php echo htmldecode($parent_id); ?>">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
 	/* Basic styles for dropdown */
 	.dropdown-menu {

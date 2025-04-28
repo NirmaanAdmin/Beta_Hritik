@@ -11,7 +11,7 @@ use PhpOffice\PhpWord\Shared\Html;
 class document_management extends AdminController
 {
 	public function __construct()
-	{ 
+	{
 		parent::__construct();
 		$this->load->model('document_management_model');
 		$this->load->model('departments_model');
@@ -1245,5 +1245,25 @@ class document_management extends AdminController
 		} else {
 			echo json_encode([]);  // Return an empty array if query is too short
 		}
+	}
+
+	public function update_order()
+	{
+		if (!$this->input->is_ajax_request()) {
+			show_404();
+		}
+
+		$order = $this->input->post('order');
+		if (!is_array($order)) {
+			echo json_encode(['success' => false, 'message' => 'Invalid order']);
+			return;
+		}
+
+		foreach ($order as $position => $id) {
+			$this->db->where('id', $id);
+			$this->db->update(db_prefix() . 'dmg_items', ['position' => $position]);
+		}
+
+		echo json_encode(['success' => true]);
 	}
 }
