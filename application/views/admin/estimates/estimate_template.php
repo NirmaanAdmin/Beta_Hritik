@@ -646,12 +646,13 @@
                             <thead>
                                 <tr>
                                     <th width="1%"></th>
-                                    <th width="15%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
-                                    <th width="23%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                    <th width="13%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
+                                    <th width="18%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                    <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?></th>
                                     <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
-                                    <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
-                                    <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
-                                    <th width="17%" align="right"><?php echo _l('remarks'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                    <th width="16%" align="right"><?php echo _l('remarks'); ?></th>
                                     <th align="center"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
@@ -670,6 +671,9 @@
                                     </td>
                                     <td>
                                         <textarea name="long_description" rows="4" class="form-control" placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="budget_area" class="form-control" placeholder="<?php echo _l('area'); ?>">
                                     </td>
                                     <td>
                                         <input type="number" name="quantity" min="0" value="1" class="form-control" placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
@@ -766,6 +770,9 @@
                                             }
 
                                             $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
+
+                                            $table_row .= '<td class="budget_area"><input type="number" data-toggle="tooltip" name="' . $items_indicator . '[' . $i . '][budget_area]" value="' . $item['budget_area'] . '" class="form-control"></td>';
+
                                             $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
                                             
                                             $select = '';
