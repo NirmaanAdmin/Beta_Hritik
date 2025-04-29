@@ -550,7 +550,12 @@
                               </td>
                               <td class="cgst_on_a1" style="text-align: right"></td>
                               <td class="cgst_on_a2" style="text-align: right"></td>
-                              <td class="cgst_on_a3" style="text-align: right"></td>
+                              <td class="cgst_on_a3" style="text-align: right">
+                                <?php
+                                $cgst_this_bill = (isset($payment_certificate) ? $payment_certificate->cgst_this_bill : '');
+                                echo render_input('cgst_this_bill', '', $cgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                ?>
+                              </td>
                               <td class="cgst_on_a4" style="text-align: right"></td>
                             </tr>
                             <tr>
@@ -572,7 +577,12 @@
                               </td>
                               <td class="sgst_on_a1" style="text-align: right"></td>
                               <td class="sgst_on_a2" style="text-align: right"></td>
-                              <td class="sgst_on_a3" style="text-align: right"></td>
+                              <td class="sgst_on_a3" style="text-align: right">
+                                <?php
+                                $sgst_this_bill = (isset($payment_certificate) ? $payment_certificate->sgst_this_bill : '');
+                                echo render_input('sgst_this_bill', '', $sgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                ?>
+                              </td>
                               <td class="sgst_on_a4" style="text-align: right"></td>
                             </tr>
                             <tr>

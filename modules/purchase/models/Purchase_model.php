@@ -17893,11 +17893,11 @@ class Purchase_model extends App_Model
         $result['sub_fg_4'] = $result['sub_fg_2'] + $result['sub_fg_3'];
         $result['cgst_on_a1'] = $po_contract_amount * ($cgst_tax / 100);
         $result['cgst_on_a2'] = $result['po_previous'] * ($cgst_tax / 100);
-        $result['cgst_on_a3'] = $result['po_this_bill'] * ($cgst_tax / 100);
+        $result['cgst_on_a3'] = $result['cgst_this_bill'];
         $result['cgst_on_a4'] = $result['cgst_on_a2'] + $result['cgst_on_a3'];
         $result['sgst_on_a1'] = $po_contract_amount * ($sgst_tax / 100);
         $result['sgst_on_a2'] = $result['po_previous'] * ($sgst_tax / 100);
-        $result['sgst_on_a3'] = $result['po_this_bill'] * ($sgst_tax / 100);
+        $result['sgst_on_a3'] = $result['sgst_this_bill'];
         $result['sgst_on_a4'] = $result['sgst_on_a2'] + $result['sgst_on_a3'];
         $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
         $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['labour_cess_1'];
