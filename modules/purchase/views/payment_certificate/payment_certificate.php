@@ -872,7 +872,14 @@
     // Loop through each row
     rows.forEach(row => {
       const cells = Array.from(row.querySelectorAll('th, td'));
-      const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
+      const rowContent = cells.map(cell => {
+        const input = cell.querySelector('input');
+        if (input) {
+          return `"${input.value.trim()}"`;
+        } else {
+          return `"${cell.textContent.trim()}"`;
+        }
+      }).join(',');
       csvContent += rowContent + '\n';
     });
 
