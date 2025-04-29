@@ -569,6 +569,32 @@ class Estimates_model extends App_Model
             unset($data['budget_area']);
         }
 
+        if (isset($data['int_master_area'])) {
+            unset($data['int_master_area']);
+        }
+
+        if (isset($data['int_fun_area'])) {
+            unset($data['int_fun_area']);
+        }
+
+        if (isset($data['int_area'])) {
+            unset($data['int_area']);
+        }
+
+        if (isset($data['int_rate'])) {
+            unset($data['int_rate']);
+        }
+
+        if (isset($data['int_remarks'])) {
+            unset($data['int_remarks']);
+        }
+
+        $newintitems = [];
+        if (isset($data['newintitems'])) {
+            $newintitems = $data['newintitems'];
+            unset($data['newintitems']);
+        }
+
         $this->db->insert(db_prefix() . 'estimates', $data);
         $insert_id = $this->db->insert_id();
 
@@ -602,6 +628,12 @@ class Estimates_model extends App_Model
             if(!empty($newareasummaryitems)) {
                 foreach ($newareasummaryitems as $akey => $aitem) {
                     $this->add_new_area_summary_item_post($aitem, $insert_id);
+                }
+            }
+
+            if(!empty($newintitems)) {
+                foreach ($newintitems as $ikey => $iitem) {
+                    $this->add_new_interior_item_post($iitem, $insert_id);
                 }
             }
 
@@ -798,6 +830,47 @@ class Estimates_model extends App_Model
             unset($data['budget_area']);
         }
 
+        if (isset($data['int_master_area'])) {
+            unset($data['int_master_area']);
+        }
+
+        if (isset($data['int_fun_area'])) {
+            unset($data['int_fun_area']);
+        }
+
+        if (isset($data['int_area'])) {
+            unset($data['int_area']);
+        }
+
+        if (isset($data['int_rate'])) {
+            unset($data['int_rate']);
+        }
+
+        if (isset($data['int_remarks'])) {
+            unset($data['int_remarks']);
+        }
+
+        $newintitems = [];
+        if (isset($data['newintitems'])) {
+            $newintitems = $data['newintitems'];
+            unset($data['newintitems']);
+        }
+
+        $intitems = [];
+        if (isset($data['intitems'])) {
+            $intitems = $data['intitems'];
+            unset($data['intitems']);
+        }
+
+        if (isset($data['removed_interior_items'])) {
+            if(!empty($data['removed_interior_items'])) {
+                foreach ($data['removed_interior_items'] as $remove_interior_item_id) {
+                    $this->delete_interior_item($remove_interior_item_id);
+                }
+            }
+            unset($data['removed_interior_items']);
+        }
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', $data);
 
@@ -947,6 +1020,20 @@ class Estimates_model extends App_Model
                 $asid = $asitem['itemid'];
                 unset($asitem['itemid']);
                 $this->update_area_summary_item_post($asitem, $asid);
+            }
+        }
+
+        if(!empty($newintitems)) {
+            foreach ($newintitems as $ikey => $iitem) {
+                $this->add_new_interior_item_post($iitem, $id);
+            }
+        }
+
+        if(!empty($intitems)) {
+            foreach ($intitems as $ikey => $iitem) {
+                $iid = $iitem['itemid'];
+                unset($iitem['itemid']);
+                $this->update_interior_item_post($iitem, $iid);
             }
         }
 
@@ -1770,5 +1857,32 @@ class Estimates_model extends App_Model
     {
         $this->db->where('estimate_id', $id);
         return $this->db->get(db_prefix() . 'estimate_budget_info')->result_array();
+    }
+
+    public function add_new_interior_item_post($data, $id)
+    {
+        $data['estimate_id'] = $id;
+        $this->db->insert(db_prefix() . 'interior_items', $data);
+        return true;
+    }
+
+    public function update_interior_item_post($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'interior_items', $data);
+        return true;
+    }
+
+    public function delete_interior_item($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'interior_items');
+        return true;
+    }
+
+    public function get_interior_items($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'interior_items')->result_array();
     }
 }

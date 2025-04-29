@@ -629,232 +629,395 @@
             $i = 1;
             foreach ($annexures as $key => $annexure) { ?>
                 <div role="tabpanel" class="tab-pane detailed-costing-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
-                    <div class="col-md-4">
-                        <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
-                        <?php
-                        $overall_budget_area_name = 'overall_budget_area['.$annexure['id'].']';
-                        $overall_budget_area_value = '';
-                        if(isset($estimate_budget_info)) {
-                            if(!empty($estimate_budget_info)) {
-                                foreach ($estimate_budget_info as $okey => $ovalue) {
-                                    if($ovalue['budget_id'] == $annexure['id']) {
-                                        $overall_budget_area_value = $ovalue['overall_budget_area'];
+                    <?php if($annexure['id'] == 7) { ?>
+                        <div class="col-md-4">
+                            <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                            <?php
+                            $overall_budget_area_name = 'overall_budget_area['.$annexure['id'].']';
+                            $overall_budget_area_value = '';
+                            if(isset($estimate_budget_info)) {
+                                if(!empty($estimate_budget_info)) {
+                                    foreach ($estimate_budget_info as $okey => $ovalue) {
+                                        if($ovalue['budget_id'] == $annexure['id']) {
+                                            $overall_budget_area_value = $ovalue['overall_budget_area'];
+                                        }
                                     }
                                 }
                             }
-                        }
-                        echo render_input($overall_budget_area_name, 'Overall area (sqft)', $overall_budget_area_value, 'number', ['style' => 'width: 300px;']);
-                        ?>
-                    </div>
-                    <div class="col-md-4">
-                    </div>
-                    <div class="col-md-4">
-                        <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
-                        <div class="form-group">
-                          <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploaddetailedcostingcsv(this);"><?php echo _l('import'); ?></button>
-                          <a href="<?php echo site_url('uploads/estimates/file_sample/Sample_detailed_costing_technical_assumptions_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                            echo render_input($overall_budget_area_name, 'Overall area (sqft)', $overall_budget_area_value, 'number', ['style' => 'width: 300px;']);
+                            ?>
                         </div>
-                    </div>
-                    <div class="table-responsive s_table">
-                        <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
-                            <thead>
-                                <tr>
-                                    <th width="1%"></th>
-                                    <th width="13%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
-                                    <th width="18%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
-                                    <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?></th>
-                                    <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
-                                    <th width="16%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
-                                    <th width="16%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
-                                    <th width="16%" align="right"><?php echo _l('remarks'); ?></th>
-                                    <th align="center"><i class="fa fa-cog"></i></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="main">
-                                    <td></td>
-                                    <td>
-                                        <select id="item_name" name="item_name" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
-                                            <option value="">Type at least 3 letters...</option>
-                                        </select>
-                                    </td>
-                                    <td class="hide commodity_code">
-                                        <div class="form-group" app-field-wrapper="item_code">
-                                            <input type="text" id="item_code" name="item_code" class="form-control" placeholder="Commodity Code" value="">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <textarea name="long_description" rows="4" class="form-control" placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="budget_area" class="form-control" placeholder="<?php echo _l('area'); ?>">
-                                    </td>
-                                    <td>
-                                        <input type="number" name="quantity" min="0" value="1" class="form-control" placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
-                                        <?php
-                                        $select = '';
-                                        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="unit_id" data-none-selected-text="' . _l('unit') . '">';
-                                        $select .= '<option value=""></option>';
-                                        foreach ($units as $unit) {
-                                            $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
-                                        }
-                                        $select .= '</select>';
-                                        echo $select;
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="rate" class="form-control" placeholder="<?php echo _l('item_rate_placeholder'); ?>">
-                                    </td>
-                                    <td class="hide">
-                                        <?php
-                                        $default_tax = unserialize(get_option('default_tax'));
-                                        $select      = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="taxname" multiple data-none-selected-text="' . _l('no_tax') . '">';
-                                        foreach ($taxes as $tax) {
-                                             $selected = '';
-                                             if (is_array($default_tax)) {
-                                                if (in_array($tax['name'] . '|' . $tax['taxrate'], $default_tax)) {
-                                                    $selected = ' selected ';
-                                                }
-                                             }
-                                             $select .= '<option value="' . $tax['name'] . '|' . $tax['taxrate'] . '"' . $selected . 'data-taxrate="' . $tax['taxrate'] . '" data-taxname="' . $tax['name'] . '" data-subtext="' . $tax['name'] . '">' . $tax['taxrate'] . '%</option>';
-                                        }
-                                        $select .= '</select>';
-                                        echo $select;
-                                        ?>
-                                    </td>
-                                    <td></td>
-                                    <td>
-                                        <textarea name="remarks" rows="4" class="form-control" placeholder="<?php echo _l('remarks'); ?>"></textarea>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        $new_item = 'undefined';
-                                        if (isset($estimate)) {
-                                            $new_item = true;
-                                        } ?>
-                                        <button type="button" onclick="add_estimate_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
-                                            class="btn pull-right btn-primary"><i class="fa fa-check"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <?php if (isset($estimate) || isset($add_items)) {
-                                    $items_indicator = 'newitems';
-                                    if (isset($estimate)) {
-                                        $add_items = $estimate->items;
-                                        $items_indicator = 'items';
-                                    }
-
-                                    foreach ($add_items as $item) {
-                                        if($item['annexure'] == $annexure['id']) {
-                                            $manual = false;
-                                            $table_row = '<tr class="sortable item">';
-                                            $table_row .= '<td class="">';
-                                            if ($item['qty'] == '' || $item['qty'] == 0) {
-                                                $item['qty'] = 1;
-                                            }
-                                            if (!isset($is_proposal)) {
-                                                $estimate_item_taxes = get_estimate_item_taxes($item['id']);
-                                            } else {
-                                                $estimate_item_taxes = get_proposal_item_taxes($item['id']);
-                                            }
-                                            if ($item['id'] == 0) {
-                                                $estimate_item_taxes = $item['taxname'];
-                                                $manual = true;
-                                            }
-                                            $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
-                                            $amount = $item['rate'] * $item['qty'];
-                                            $amount = app_format_number($amount);
-                                            $name_item_name = $items_indicator . '[' . $i . '][item_name]';
-                                            $item_name = $item['item_code'];
-                                             // order input
-                                            $table_row .= '<input type="hidden" class="order" name="' . $items_indicator . '[' . $i . '][order]">';
-                                            $table_row .= '<input type="hidden" class="annexure" name="' . $items_indicator . '[' . $i . '][annexure]" value="'.$item['annexure'].'">';
-                                            $table_row .= '</td>';
-
-                                            $get_selected_item = pur_get_item_selcted_select($item_name, $name_item_name);
-                                            if ($item_name == '') {
-                                                $table_row .= '<td class="">
-                                                <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
-                                                    <option value="">Type at least 3 letters...</option>
-                                                </select>
-                                             </td>';
-                                            } else {
-                                                $table_row .= '<td class="">' . $get_selected_item . '</td>';
-                                            }
-
-                                            $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
-
-                                            $table_row .= '<td class="budget_area"><input type="number" data-toggle="tooltip" name="' . $items_indicator . '[' . $i . '][budget_area]" value="' . $item['budget_area'] . '" class="form-control"></td>';
-
-                                            $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
-                                            
+                        <div class="col-md-8">
+                        </div>
+                        <div class="table-responsive s_table">
+                            <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                        <th width="1%"></th>
+                                        <th width="15%" align="left"><?php echo _l('master_area'); ?></th>
+                                        <th width="18%" align="left"><?php echo _l('functionality_area'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('area'); ?></th>
+                                        <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                        <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                        <th width="17%" align="right"><?php echo _l('remarks'); ?></th>
+                                        <th align="center"><i class="fa fa-cog"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="main">
+                                        <td></td>
+                                        <td>
+                                            <?php
                                             $select = '';
-                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][unit_id]" data-none-selected-text="' . _l('unit') . '">';
+                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="int_master_area" data-none-selected-text="' . _l('master_area') . '">';
                                             $select .= '<option value=""></option>';
-                                            foreach ($units as $unit) {
-                                                $selected = ($unit['unit_type_id'] == $item['unit_id']) ? ' selected' : '';
-                                                $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
-
+                                            foreach ($master_area as $area) {
+                                                $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
                                             }
                                             $select .= '</select>';
-                                            $table_row .= $select;
+                                            echo $select;
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $select = '';
+                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="int_fun_area" data-none-selected-text="' . _l('functionality_area') . '">';
+                                            $select .= '<option value=""></option>';
+                                            foreach ($functionality_area as $area) {
+                                                $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                            }
+                                            $select .= '</select>';
+                                            echo $select;
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="int_area" class="form-control" placeholder="<?php echo _l('area'); ?>">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="int_rate" class="form-control" placeholder="<?php echo _l('item_rate_placeholder'); ?>">
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <textarea name="int_remarks" rows="4" class="form-control" placeholder="<?php echo _l('remarks'); ?>"></textarea>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $new_item = 'undefined';
+                                            if (isset($estimate)) {
+                                                $new_item = true;
+                                            } ?>
+                                            <button type="button" onclick="add_interior_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                                class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php if (isset($estimate)) {
+                                        $items_indicator = 'intitems';
+                                        foreach ($interior_items as $iitem) {
+                                            $table_row = '<tr class="sortable item">';
+                                            $table_row .= '<td class="">';
+                                            $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $iitem['id']);
+                                            $int_amount = $iitem['int_area'] * $iitem['int_rate'];
+                                            $int_amount = app_format_number($int_amount);
                                             $table_row .= '</td>';
-
-                                            $table_row .= '</td>';
-                                            $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control"></td>';
-                                            $table_row .= '<td class="taxrate hide">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $estimate_item_taxes, (isset($is_proposal) ? 'proposal' : 'estimate'), $item['id'], true, $manual) . '</td>';
-                                            $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
-                                            $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][remarks]" class="form-control" rows="5">' . clear_textarea_breaks($item['remarks']) . '</textarea></td>';
-                                            $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_estimate_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
-                                            $table_row .= '</tr>';
-                                            echo $table_row;
-                                            $i++;
+                                            $select = '';
+                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][int_master_area]" data-none-selected-text="' . _l('master_area') . '">';
+                                            $select .= '<option value=""></option>';
+                                            foreach ($master_area as $area) {
+                                                $selected = ($area['id'] == $iitem['int_master_area']) ? ' selected' : '';
+                                                $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+                                            }
+                                            $select .= '</select>';
+                                            $table_row .= '<td>'.$select.'</td>';
+                                            $select = '';
+                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][int_fun_area]" data-none-selected-text="' . _l('functionality_area') . '">';
+                                            $select .= '<option value=""></option>';
+                                            foreach ($functionality_area as $area) {
+                                                $selected = ($area['id'] == $iitem['int_fun_area']) ? ' selected' : '';
+                                                $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+                                            }
+                                            $select .= '</select>';
+                                            $table_row .= '<td>'.$select.'</td>';
+                                            $table_row .= '<td class="int_area"><input type="number" onblur="calculate_interior_total();" onchange="calculate_interior_total();" name="' . $items_indicator . '[' . $i . '][int_area]" value="' . $iitem['int_area'] . '" class="form-control"></td>';
+                                            $table_row .= '<td class="int_rate"><input type="number" onblur="calculate_interior_total();" onchange="calculate_interior_total();" name="' . $items_indicator . '[' . $i . '][int_rate]" value="' . $iitem['int_rate'] . '" class="form-control"></td>';
+                                            $table_row .= '<td class="int_amount" align="right">' . $int_amount . '</td>';
+                                            $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][int_remarks]" class="form-control" rows="5">' . clear_textarea_breaks($iitem['int_remarks']) . '</textarea></td>';
+                                            $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_interior_item(this,' . $iitem['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                                $table_row .= '</tr>';
+                                                echo $table_row;
+                                                $i++;
                                         }
-                                    }
-                                } ?>
-                            </tbody>
-                            <tfoot>
-                                <tr class="detailed_costing">
-                                    <td colspan="15">
-                                        <?php
-                                        $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
-                                        $detailed_costing_value = '';
-                                        if(isset($estimate_budget_info)) {
-                                            if(!empty($estimate_budget_info)) {
-                                                foreach ($estimate_budget_info as $ekey => $evalue) {
-                                                    if($evalue['budget_id'] == $annexure['id']) {
-                                                        $detailed_costing_value = $evalue['detailed_costing'];
+                                    } ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="detailed_costing">
+                                        <td colspan="15">
+                                            <?php
+                                            $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
+                                            $detailed_costing_value = '';
+                                            if(isset($estimate_budget_info)) {
+                                                if(!empty($estimate_budget_info)) {
+                                                    foreach ($estimate_budget_info as $ekey => $evalue) {
+                                                        if($evalue['budget_id'] == $annexure['id']) {
+                                                            $detailed_costing_value = $evalue['detailed_costing'];
+                                                        }
                                                     }
                                                 }
                                             }
+                                            echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <tr id="subtotal">
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        </td>
+                                        <td class="annexure_subtotal">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        </td>
+                                        <td class="annexure_total">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="removed-interior-items"></div>
+                    <?php } else { ?>
+                        <div class="col-md-4">
+                            <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                            <?php
+                            $overall_budget_area_name = 'overall_budget_area['.$annexure['id'].']';
+                            $overall_budget_area_value = '';
+                            if(isset($estimate_budget_info)) {
+                                if(!empty($estimate_budget_info)) {
+                                    foreach ($estimate_budget_info as $okey => $ovalue) {
+                                        if($ovalue['budget_id'] == $annexure['id']) {
+                                            $overall_budget_area_value = $ovalue['overall_budget_area'];
                                         }
-                                        echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
-                                        ?>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="col-md-8 col-md-offset-4">
-                        <table class="table text-right">
-                            <tbody>
-                                <tr id="subtotal">
-                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
-                                    </td>
-                                    <td class="annexure_subtotal">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
-                                    </td>
-                                    <td class="annexure_total">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="removed-items"></div>
+                                    }
+                                }
+                            }
+                            echo render_input($overall_budget_area_name, 'Overall area (sqft)', $overall_budget_area_value, 'number', ['style' => 'width: 300px;']);
+                            ?>
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
+                            <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
+                            <div class="form-group">
+                              <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploaddetailedcostingcsv(this);"><?php echo _l('import'); ?></button>
+                              <a href="<?php echo site_url('uploads/estimates/file_sample/Sample_detailed_costing_technical_assumptions_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                            </div>
+                        </div>
+                        <div class="table-responsive s_table">
+                            <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                        <th width="1%"></th>
+                                        <th width="13%" align="left"><i class="fa-solid fa-circle-exclamation tw-mr-1" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i><?php echo _l('estimate_table_item_heading'); ?></th>
+                                        <th width="18%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                        <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?></th>
+                                        <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('remarks'); ?></th>
+                                        <th align="center"><i class="fa fa-cog"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="main">
+                                        <td></td>
+                                        <td>
+                                            <select id="item_name" name="item_name" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
+                                                <option value="">Type at least 3 letters...</option>
+                                            </select>
+                                        </td>
+                                        <td class="hide commodity_code">
+                                            <div class="form-group" app-field-wrapper="item_code">
+                                                <input type="text" id="item_code" name="item_code" class="form-control" placeholder="Commodity Code" value="">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <textarea name="long_description" rows="4" class="form-control" placeholder="<?php echo _l('item_long_description_placeholder'); ?>"></textarea>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="budget_area" class="form-control" placeholder="<?php echo _l('area'); ?>">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="quantity" min="0" value="1" class="form-control" placeholder="<?php echo _l('item_quantity_placeholder'); ?>">
+                                            <?php
+                                            $select = '';
+                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="unit_id" data-none-selected-text="' . _l('unit') . '">';
+                                            $select .= '<option value=""></option>';
+                                            foreach ($units as $unit) {
+                                                $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
+                                            }
+                                            $select .= '</select>';
+                                            echo $select;
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="rate" class="form-control" placeholder="<?php echo _l('item_rate_placeholder'); ?>">
+                                        </td>
+                                        <td class="hide">
+                                            <?php
+                                            $default_tax = unserialize(get_option('default_tax'));
+                                            $select      = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="taxname" multiple data-none-selected-text="' . _l('no_tax') . '">';
+                                            foreach ($taxes as $tax) {
+                                                 $selected = '';
+                                                 if (is_array($default_tax)) {
+                                                    if (in_array($tax['name'] . '|' . $tax['taxrate'], $default_tax)) {
+                                                        $selected = ' selected ';
+                                                    }
+                                                 }
+                                                 $select .= '<option value="' . $tax['name'] . '|' . $tax['taxrate'] . '"' . $selected . 'data-taxrate="' . $tax['taxrate'] . '" data-taxname="' . $tax['name'] . '" data-subtext="' . $tax['name'] . '">' . $tax['taxrate'] . '%</option>';
+                                            }
+                                            $select .= '</select>';
+                                            echo $select;
+                                            ?>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <textarea name="remarks" rows="4" class="form-control" placeholder="<?php echo _l('remarks'); ?>"></textarea>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $new_item = 'undefined';
+                                            if (isset($estimate)) {
+                                                $new_item = true;
+                                            } ?>
+                                            <button type="button" onclick="add_estimate_item_to_table('undefined','undefined',<?php echo e($new_item); ?>); return false;"
+                                                class="btn pull-right btn-primary"><i class="fa fa-check"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <?php if (isset($estimate) || isset($add_items)) {
+                                        $items_indicator = 'newitems';
+                                        if (isset($estimate)) {
+                                            $add_items = $estimate->items;
+                                            $items_indicator = 'items';
+                                        }
+
+                                        foreach ($add_items as $item) {
+                                            if($item['annexure'] == $annexure['id']) {
+                                                $manual = false;
+                                                $table_row = '<tr class="sortable item">';
+                                                $table_row .= '<td class="">';
+                                                if ($item['qty'] == '' || $item['qty'] == 0) {
+                                                    $item['qty'] = 1;
+                                                }
+                                                if (!isset($is_proposal)) {
+                                                    $estimate_item_taxes = get_estimate_item_taxes($item['id']);
+                                                } else {
+                                                    $estimate_item_taxes = get_proposal_item_taxes($item['id']);
+                                                }
+                                                if ($item['id'] == 0) {
+                                                    $estimate_item_taxes = $item['taxname'];
+                                                    $manual = true;
+                                                }
+                                                $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][itemid]', $item['id']);
+                                                $amount = $item['rate'] * $item['qty'];
+                                                $amount = app_format_number($amount);
+                                                $name_item_name = $items_indicator . '[' . $i . '][item_name]';
+                                                $item_name = $item['item_code'];
+                                                 // order input
+                                                $table_row .= '<input type="hidden" class="order" name="' . $items_indicator . '[' . $i . '][order]">';
+                                                $table_row .= '<input type="hidden" class="annexure" name="' . $items_indicator . '[' . $i . '][annexure]" value="'.$item['annexure'].'">';
+                                                $table_row .= '</td>';
+
+                                                $get_selected_item = pur_get_item_selcted_select($item_name, $name_item_name);
+                                                if ($item_name == '') {
+                                                    $table_row .= '<td class="">
+                                                    <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
+                                                        <option value="">Type at least 3 letters...</option>
+                                                    </select>
+                                                 </td>';
+                                                } else {
+                                                    $table_row .= '<td class="">' . $get_selected_item . '</td>';
+                                                }
+
+                                                $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
+
+                                                $table_row .= '<td class="budget_area"><input type="number" data-toggle="tooltip" name="' . $items_indicator . '[' . $i . '][budget_area]" value="' . $item['budget_area'] . '" class="form-control"></td>';
+
+                                                $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
+                                                
+                                                $select = '';
+                                                $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][unit_id]" data-none-selected-text="' . _l('unit') . '">';
+                                                $select .= '<option value=""></option>';
+                                                foreach ($units as $unit) {
+                                                    $selected = ($unit['unit_type_id'] == $item['unit_id']) ? ' selected' : '';
+                                                    $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
+
+                                                }
+                                                $select .= '</select>';
+                                                $table_row .= $select;
+                                                $table_row .= '</td>';
+
+                                                $table_row .= '</td>';
+                                                $table_row .= '<td class="rate"><input type="number" data-toggle="tooltip" title="' . _l('numbers_not_formatted_while_editing') . '" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" name="' . $items_indicator . '[' . $i . '][rate]" value="' . $item['rate'] . '" class="form-control"></td>';
+                                                $table_row .= '<td class="taxrate hide">' . $this->misc_model->get_taxes_dropdown_template('' . $items_indicator . '[' . $i . '][taxname][]', $estimate_item_taxes, (isset($is_proposal) ? 'proposal' : 'estimate'), $item['id'], true, $manual) . '</td>';
+                                                $table_row .= '<td class="amount" align="right">' . $amount . '</td>';
+                                                $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][remarks]" class="form-control" rows="5">' . clear_textarea_breaks($item['remarks']) . '</textarea></td>';
+                                                $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_estimate_item(this,' . $item['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
+                                                $table_row .= '</tr>';
+                                                echo $table_row;
+                                                $i++;
+                                            }
+                                        }
+                                    } ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="detailed_costing">
+                                        <td colspan="15">
+                                            <?php
+                                            $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
+                                            $detailed_costing_value = '';
+                                            if(isset($estimate_budget_info)) {
+                                                if(!empty($estimate_budget_info)) {
+                                                    foreach ($estimate_budget_info as $ekey => $evalue) {
+                                                        if($evalue['budget_id'] == $annexure['id']) {
+                                                            $detailed_costing_value = $evalue['detailed_costing'];
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <tr id="subtotal">
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        </td>
+                                        <td class="annexure_subtotal">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        </td>
+                                        <td class="annexure_total">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="removed-items"></div>
+                    <?php } ?>
                 </div>
             <?php } ?>
 
