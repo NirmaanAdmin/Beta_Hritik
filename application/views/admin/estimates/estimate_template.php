@@ -462,9 +462,9 @@
                                             <?php
                                             $budget_summary_remarks = 'budget_summary_remarks['.$svalue['annexure'].']';
                                             $budget_summary_remarks_value = '';
-                                            if(isset($estimate_budget_summary_remarks)) {
-                                                if(!empty($estimate_budget_summary_remarks)) {
-                                                    foreach ($estimate_budget_summary_remarks as $ekey => $evalue) {
+                                            if(isset($estimate_budget_info)) {
+                                                if(!empty($estimate_budget_info)) {
+                                                    foreach ($estimate_budget_info as $ekey => $evalue) {
                                                         if($evalue['budget_id'] == $svalue['annexure']) {
                                                             $budget_summary_remarks_value = $evalue['budget_summary_remarks'];
                                                         }
@@ -634,9 +634,9 @@
                         <?php
                         $overall_budget_area_name = 'overall_budget_area['.$annexure['id'].']';
                         $overall_budget_area_value = '';
-                        if(isset($estimate_overall_budget_area)) {
-                            if(!empty($estimate_overall_budget_area)) {
-                                foreach ($estimate_overall_budget_area as $okey => $ovalue) {
+                        if(isset($estimate_budget_info)) {
+                            if(!empty($estimate_budget_info)) {
+                                foreach ($estimate_budget_info as $okey => $ovalue) {
                                     if($ovalue['budget_id'] == $annexure['id']) {
                                         $overall_budget_area_value = $ovalue['overall_budget_area'];
                                     }
@@ -820,9 +820,9 @@
                                         <?php
                                         $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
                                         $detailed_costing_value = '';
-                                        if(isset($estimate_detailed_costing)) {
-                                            if(!empty($estimate_detailed_costing)) {
-                                                foreach ($estimate_detailed_costing as $ekey => $evalue) {
+                                        if(isset($estimate_budget_info)) {
+                                            if(!empty($estimate_budget_info)) {
+                                                foreach ($estimate_budget_info as $ekey => $evalue) {
                                                     if($evalue['budget_id'] == $annexure['id']) {
                                                         $detailed_costing_value = $evalue['detailed_costing'];
                                                     }
