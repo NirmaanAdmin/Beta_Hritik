@@ -728,6 +728,8 @@
                                                 $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
                                             }
                                             $select .= '</select>';
+                                            $select .= '<br>';
+                                            $select .= '<button class="btn btn-info pull-left mright10 display-block" data-toggle="modal" data-target="#interiorExpand">Expand</button>';
                                             $table_row .= '<td>'.$select.'</td>';
                                             $select = '';
                                             $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][int_fun_area]" data-none-selected-text="' . _l('functionality_area') . '">';
