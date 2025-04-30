@@ -15775,6 +15775,16 @@ class Purchase_model extends App_Model
         $project_detail = '';
         $buyer = '';
         $delivery_person = '';
+        $show_image_column = false;
+        $width = 'width: 31%';
+        // Check if any record has an image
+        foreach ($pur_order_detail as $row) {
+            if (!empty($row['image'])) {
+                $show_image_column = true;
+                $width = 'width: 21%';
+                break;
+            }
+        }
 
         $ship_to = format_wo_ship_to_info($pur_order);
         $company_logo = get_option('company_logo_dark');
@@ -15872,11 +15882,13 @@ class Purchase_model extends App_Model
           <tr>
             <th class="thead-dark" style="width: 3%"></th>
             <th class="thead-dark" style="width: 10%">' . _l('items') . '</th>
-            <th class="thead-dark" align="left" style="width: 21%">' . _l('item_description') . '</th>
+            <th class="thead-dark" align="left" style="' . $width . '">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 9%">' . _l('sub_groups_pur') . '</th>
-            <th class="thead-dark" align="left" style="width: 9%">' . _l('area') . '</th>
-            <th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>
-            <th class="thead-dark" align="right" style="width: 9%">' . _l('quantity') . '</th>
+            <th class="thead-dark" align="left" style="width: 9%">' . _l('area') . '</th>';
+            if ($show_image_column) {
+                $html .=  '<th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>';
+            }
+            $html .= '<th class="thead-dark" align="right" style="width: 9%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 9%">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('total') . '</th>
