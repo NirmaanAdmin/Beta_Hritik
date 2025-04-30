@@ -79,9 +79,9 @@
                     <?php
                     if (isset($payment_certificate)) { ?>
                       <li role="presentation">
-                       <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo pur_html_entity_decode($payment_certificate->id); ?>, 'payment_certificate'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
+                        <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo pur_html_entity_decode($payment_certificate->id); ?>, 'payment_certificate'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
                           <?php echo _l('tasks'); ?>
-                       </a>
+                        </a>
                       </li>
                     <?php } ?>
                     <li role="presentation">
@@ -181,19 +181,19 @@
 
                 <div class="panel-body mtop15">
                   <?php if ($is_view == 0) { ?>
-                  <label for="attachment"><?php echo _l('attachment'); ?></label>
-                  <div class="attachments">
-                    <div class="attachment">
-                      <div class="col-md-5 form-group" style="padding-left: 0px;">
-                        <div class="input-group">
-                          <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
-                          <span class="input-group-btn">
-                            <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
-                          </span>
+                    <label for="attachment"><?php echo _l('attachment'); ?></label>
+                    <div class="attachments">
+                      <div class="attachment">
+                        <div class="col-md-5 form-group" style="padding-left: 0px;">
+                          <div class="input-group">
+                            <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                            <span class="input-group-btn">
+                              <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
                   <?php } ?>
                   <div class="clearfix"></div>
 
@@ -206,9 +206,9 @@
                       if ($is_image) {
                         echo '<div class="preview_image">';
                       }
-                      ?>
-                      <a href="<?php echo site_url('download/file/payment_certificate/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-payment_certificate-<?php echo $value['rel_id']; ?>" <?php } ?>> 
-                        <a name="preview-payment-cert-btn" onclick="preview_paymentcert_btn(this); return false;" rel_id = "<?php echo $value['rel_id']; ?>" id = "<?php echo $value['id']; ?>" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="<?php echo _l('preview_file'); ?>"><i class="fa fa-eye"></i></a>
+                  ?>
+                      <a href="<?php echo site_url('download/file/payment_certificate/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-payment_certificate-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                        <a name="preview-payment-cert-btn" onclick="preview_paymentcert_btn(this); return false;" rel_id="<?php echo $value['rel_id']; ?>" id="<?php echo $value['id']; ?>" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="<?php echo _l('preview_file'); ?>"><i class="fa fa-eye"></i></a>
                         <?php echo $value['file_name']; ?>
                         <?php if ($is_image) { ?>
                           <img class="mtop5 hide" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
@@ -218,7 +218,9 @@
                       <?php
                       echo '<a href="' . admin_url('purchase/delete_payment_certificate_files/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                       ?>
-                  <?php if ($is_image) { echo '</div>'; } ?>
+                      <?php if ($is_image) {
+                        echo '</div>';
+                      } ?>
                   <?php echo '</div>';
                     }
                   } ?>
@@ -267,13 +269,13 @@
                               <td>
                                 <?php
                                 $po_previous = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_previous) : '');
-                                echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('po_previous', '', $po_previous, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $po_this_bill = (isset($payment_certificate) ? format_amount_cert($payment_certificate->po_this_bill) : '');
-                                echo render_input('po_this_bill', '', $po_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('po_this_bill', '', $po_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="po_comulative" style="text-align:right"></td>
@@ -297,7 +299,7 @@
                             <tr>
                               <td>C1</td>
                               <td class="mobilization_advance_class">
-                                Mobilization Advance payment
+                                <?php echo _l('mobilization_advance'); ?>
                                 <select name="mobilization_advance" id="mobilization_advance" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
                                   <option value="0%" <?php if (isset($payment_certificate) && $payment_certificate->mobilization_advance == '0%') {
                                                         echo 'selected';
@@ -315,19 +317,19 @@
                               <td>
                                 <?php
                                 $pay_cert_c1_1 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_1 : '');
-                                echo render_input('pay_cert_c1_1', '', $pay_cert_c1_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('pay_cert_c1_1', '', $pay_cert_c1_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c1_2 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_2 : '');
-                                echo render_input('pay_cert_c1_2', '', $pay_cert_c1_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('pay_cert_c1_2', '', $pay_cert_c1_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c1_3 = (isset($payment_certificate) ? $payment_certificate->pay_cert_c1_3 : '');
-                                echo render_input('pay_cert_c1_3', '', $pay_cert_c1_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('pay_cert_c1_3', '', $pay_cert_c1_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="pay_cert_c1_4" style="text-align: right;"></td>
@@ -338,19 +340,19 @@
                               <td>
                                 <?php
                                 $pay_cert_c2_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_1) : '');
-                                echo render_input('pay_cert_c2_1', '', $pay_cert_c2_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('pay_cert_c2_1', '', $pay_cert_c2_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c2_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_2) : '');
-                                echo render_input('pay_cert_c2_2', '', $pay_cert_c2_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('pay_cert_c2_2', '', $pay_cert_c2_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $pay_cert_c2_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->pay_cert_c2_3) : '');
-                                echo render_input('pay_cert_c2_3', '', $pay_cert_c2_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('pay_cert_c2_3', '', $pay_cert_c2_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="pay_cert_c2_4" style="text-align: right"></td>
@@ -377,19 +379,19 @@
                               <td>
                                 <?php
                                 $ret_fund_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_1) : '');
-                                echo render_input('ret_fund_1', '', $ret_fund_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('ret_fund_1', '', $ret_fund_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $ret_fund_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_2) : '');
-                                echo render_input('ret_fund_2', '', $ret_fund_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('ret_fund_2', '', $ret_fund_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $ret_fund_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->ret_fund_3) : '');
-                                echo render_input('ret_fund_3', '', $ret_fund_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('ret_fund_3', '', $ret_fund_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="ret_fund_4" style="text-align: right"></td>
@@ -413,19 +415,19 @@
                               <td>
                                 <?php
                                 $works_exe_a_1 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_1 : '');
-                                echo render_input('works_exe_a_1', '', $works_exe_a_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('works_exe_a_1', '', $works_exe_a_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $works_exe_a_2 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_2 : '');
-                                echo render_input('works_exe_a_2', '', $works_exe_a_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('works_exe_a_2', '', $works_exe_a_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $works_exe_a_3 = (isset($payment_certificate) ? $payment_certificate->works_exe_a_3 : '');
-                                echo render_input('works_exe_a_3', '', $works_exe_a_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('works_exe_a_3', '', $works_exe_a_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="works_exe_a_4" style="text-align: right"></td>
@@ -452,19 +454,19 @@
                               <td>
                                 <?php
                                 $less_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_1) : '');
-                                echo render_input('less_1', '', $less_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_1', '', $less_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_2) : '');
-                                echo render_input('less_2', '', $less_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_2', '', $less_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_3) : '');
-                                echo render_input('less_3', '', $less_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_3', '', $less_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="less_4" style="text-align: right"></td>
@@ -475,19 +477,19 @@
                               <td>
                                 <?php
                                 $less_ah_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_1) : '');
-                                echo render_input('less_ah_1', '', $less_ah_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_ah_1', '', $less_ah_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_ah_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_2) : '');
-                                echo render_input('less_ah_2', '', $less_ah_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_ah_2', '', $less_ah_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_ah_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_ah_3) : '');
-                                echo render_input('less_ah_3', '', $less_ah_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_ah_3', '', $less_ah_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="less_ah_4" style="text-align: right"></td>
@@ -498,19 +500,19 @@
                               <td>
                                 <?php
                                 $less_aht_1 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_1) : '');
-                                echo render_input('less_aht_1', '', $less_aht_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_aht_1', '', $less_aht_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_aht_2 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_2) : '');
-                                echo render_input('less_aht_2', '', $less_aht_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_aht_2', '', $less_aht_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $less_aht_3 = (isset($payment_certificate) ? format_amount_cert($payment_certificate->less_aht_3) : '');
-                                echo render_input('less_aht_3', '', $less_aht_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('less_aht_3', '', $less_aht_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="less_aht_4" style="text-align: right"></td>
@@ -553,7 +555,7 @@
                               <td class="cgst_on_a3" style="text-align: right">
                                 <?php
                                 $cgst_this_bill = (isset($payment_certificate) ? $payment_certificate->cgst_this_bill : '');
-                                echo render_input('cgst_this_bill', '', $cgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('cgst_this_bill', '', $cgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="cgst_on_a4" style="text-align: right"></td>
@@ -580,7 +582,7 @@
                               <td class="sgst_on_a3" style="text-align: right">
                                 <?php
                                 $sgst_this_bill = (isset($payment_certificate) ? $payment_certificate->sgst_this_bill : '');
-                                echo render_input('sgst_this_bill', '', $sgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('sgst_this_bill', '', $sgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="sgst_on_a4" style="text-align: right"></td>
@@ -601,19 +603,19 @@
                               <td>
                                 <?php
                                 $labour_cess_1 = (isset($payment_certificate) ? $payment_certificate->labour_cess_1 : '');
-                                echo render_input('labour_cess_1', '', $labour_cess_1, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('labour_cess_1', '', $labour_cess_1, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $labour_cess_2 = (isset($payment_certificate) ? $payment_certificate->labour_cess_2 : '');
-                                echo render_input('labour_cess_2', '', $labour_cess_2, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('labour_cess_2', '', $labour_cess_2, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td>
                                 <?php
                                 $labour_cess_3 = (isset($payment_certificate) ? $payment_certificate->labour_cess_3 : '');
-                                echo render_input('labour_cess_3', '', $labour_cess_3, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('labour_cess_3', '', $labour_cess_3, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="labour_cess_4" style="text-align: right"></td>
@@ -651,9 +653,9 @@
 
               <?php
               if (isset($payment_certificate)) { ?>
-              <div role="tabpanel" class="tab-pane" id="tab_tasks">
-               <?php init_relation_tasks_table(array('data-new-rel-id' => $payment_certificate->id, 'data-new-rel-type' => 'payment_certificate')); ?>
-              </div>
+                <div role="tabpanel" class="tab-pane" id="tab_tasks">
+                  <?php init_relation_tasks_table(array('data-new-rel-id' => $payment_certificate->id, 'data-new-rel-type' => 'payment_certificate')); ?>
+                </div>
               <?php } ?>
 
               <div role="tabpanel" class="tab-pane ptop10" id="tab_activity">
@@ -860,39 +862,63 @@
 </script>
 <script>
   document.getElementById('export-csv').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent page reload
+    event.preventDefault();
 
-    // Select the table
     const table = document.querySelector('.payment-certificate-table');
     const rows = Array.from(table.querySelectorAll('tr'));
-
-    // Initialize CSV content
     let csvContent = '';
 
-    // Loop through each row
+    // Helper function to clean numbers
+    const cleanNumber = (value) => {
+      return value.toString()
+        .replace(/₹/g, '') // Remove ₹ symbol
+        .replace(/,/g, '') // Remove commas
+        .replace(/\s+/g, ' ') // Normalize spaces
+        .trim();
+    };
+
+    // Helper to get combined content for C1 cell
+    const getC1Content = (cell) => {
+      const label = '<?php echo _l("mobilization_advance"); ?>';
+      const select = cell.querySelector('select');
+      const selectedOption = select ? select.options[select.selectedIndex].text : '';
+      const clauseInput = cell.querySelector('input[name="payment_clause"]');
+      const clauseValue = clauseInput ? cleanNumber(clauseInput.value) : '14.2';
+
+      return `${label} ${selectedOption} as per clause ${clauseValue}`;
+    };
+
     rows.forEach(row => {
       const cells = Array.from(row.querySelectorAll('th, td'));
       const rowContent = cells.map(cell => {
+        // Special handling for C1 cell
+        if (cell.classList.contains('mobilization_advance_class')) {
+          return `"${getC1Content(cell)}"`;
+        }
+
         const input = cell.querySelector('input');
+        const select = cell.querySelector('select');
+
         if (input) {
-          return `"${input.value.trim()}"`;
+          return `"${cleanNumber(input.value)}"`;
+        } else if (select) {
+          return `"${select.options[select.selectedIndex].text}"`;
         } else {
-          return `"${cell.textContent.trim()}"`;
+          return `"${cleanNumber(cell.textContent)}"`;
         }
       }).join(',');
+
       csvContent += rowContent + '\n';
     });
 
     // Add UTF-8 BOM
     const bom = '\uFEFF';
-
-    // Create a Blob and downloadable link
     const blob = new Blob([bom + csvContent], {
       type: 'text/csv;charset=utf-8;'
     });
     const url = URL.createObjectURL(blob);
 
-    // Create a temporary link and trigger download
+    // Create and trigger download
     const link = document.createElement('a');
     link.setAttribute('href', url);
     link.setAttribute('download', 'payment_certificate_export.csv');
