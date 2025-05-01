@@ -1271,20 +1271,18 @@ class document_management extends AdminController
 	{
 		$basePath = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/';
 
-		$minSize = 50 * 1024 * 1024;   // 50 MB in bytes
-		$maxSize = 100 * 1024 * 1024;  // 100 MB in bytes
+		$minSize = 50 * 1024 * 1024;   // 50 MB
+		$maxSize = 100 * 1024 * 1024;  // 100 MB
 		$targetFiles = [];
+		$totalSizeMB = 0; // Initialize total size counter
 
-		// Check if directory exists
 		if (!is_dir($basePath)) {
 			die("Directory not found: $basePath");
 		}
 
-		// Open the directory
 		$dir = new DirectoryIterator($basePath);
 
 		foreach ($dir as $folder) {
-			// Skip non-directories and special entries (. and ..)
 			if (!$folder->isDir() || $folder->isDot()) {
 				continue;
 			}
@@ -1292,12 +1290,10 @@ class document_management extends AdminController
 			$folderName = $folder->getFilename();
 			$folderPath = $basePath . $folderName . '/';
 
-			// Check if this is a numeric folder (ID)
 			if (!is_numeric($folderName)) {
 				continue;
 			}
 
-			// Scan the folder for files
 			if (is_dir($folderPath)) {
 				$files = new DirectoryIterator($folderPath);
 
@@ -1305,12 +1301,15 @@ class document_management extends AdminController
 					if ($file->isFile()) {
 						$fileSize = $file->getSize();
 
-						// Check if file size is between 50MB and 100MB
 						if ($fileSize >= $minSize && $fileSize <= $maxSize) {
+							$fileSizeMB = round($fileSize / (1024 * 1024), 2);
+							$totalSizeMB += $fileSizeMB; // Add to total
+
 							$targetFiles[] = [
 								'folder_id' => $folderName,
 								'file_name' => $file->getFilename(),
-								'file_size' => round($fileSize / (1024 * 1024), 2) . ' MB',
+								'file_size' => $fileSizeMB . ' MB',
+								'file_size_raw' => $fileSizeMB, // Store numeric value for sorting
 								'file_path' => $folderPath . $file->getFilename()
 							];
 						}
@@ -1323,32 +1322,58 @@ class document_management extends AdminController
 		if (empty($targetFiles)) {
 			echo "No files between 50 MB and 100 MB found.";
 		} else {
+			// Sort by file size (descending)
+			usort($targetFiles, function ($a, $b) {
+				return $b['file_size_raw'] <=> $a['file_size_raw'];
+			});
+
 			echo "<h2>Files Between 50 MB and 100 MB</h2>";
-			echo "<table border='1'>";
-			echo "<tr><th>Folder ID</th><th>File Name</th><th>File Size</th><th>File Path</th></tr>";
+			echo "<table border='1' style='width:100%'>";
+			echo "<tr>
+                <th>Folder ID</th>
+                <th>File Name</th>
+                <th>File Size</th>
+                <th>File Path</th>
+              </tr>";
 
 			foreach ($targetFiles as $file) {
 				echo "<tr>";
 				echo "<td>{$file['folder_id']}</td>";
 				echo "<td>{$file['file_name']}</td>";
-				echo "<td>{$file['file_size']}</td>";
+				echo "<td style='text-align:right'>{$file['file_size']}</td>";
 				echo "<td>{$file['file_path']}</td>";
 				echo "</tr>";
 			}
 
+			// Display total row
+			echo "<tr style='font-weight:bold; background-color:#f2f2f2'>
+                <td colspan='2'>Total Files: " . count($targetFiles) . "</td>
+                <td style='text-align:right'>" . round($totalSizeMB, 2) . " MB</td>
+                <td></td>
+              </tr>";
 			echo "</table>";
 
-			// Save to CSV
+			// CSV Report
 			$csvFile = 'medium_files_report_' . date('Y-m-d') . '.csv';
 			$csvHandle = fopen($csvFile, 'w');
 			fputcsv($csvHandle, ['Folder ID', 'File Name', 'File Size (MB)', 'File Path']);
 
 			foreach ($targetFiles as $file) {
-				fputcsv($csvHandle, $file);
+				fputcsv($csvHandle, [
+					$file['folder_id'],
+					$file['file_name'],
+					$file['file_size_raw'], // Numeric value for Excel
+					$file['file_path']
+				]);
 			}
 
+			// Add total to CSV
+			fputcsv($csvHandle, []);
+			fputcsv($csvHandle, ['Total Files:', count($targetFiles)]);
+			fputcsv($csvHandle, ['Total Size:', round($totalSizeMB, 2) . ' MB']);
+
 			fclose($csvHandle);
-			echo "<p>Report saved to: $csvFile</p>";
+			echo "<p>Report saved to: <a href='$csvFile' download>$csvFile</a></p>";
 		}
 	}
 }
