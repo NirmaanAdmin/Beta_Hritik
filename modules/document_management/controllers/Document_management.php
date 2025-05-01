@@ -1272,7 +1272,7 @@ class document_management extends AdminController
 		$basePath = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/';
 
 		
-		$sizeLimit = 200 * 1024 * 1024; // 500 MB in bytes
+		$sizeLimit = 100 * 1024 * 1024; // 500 MB in bytes
 		$largeFiles = [];
 
 		// Check if directory exists
@@ -1320,9 +1320,9 @@ class document_management extends AdminController
 
 		// Output results
 		if (empty($largeFiles)) {
-			echo "No files larger than 500 MB found.";
+			echo "No files larger than 100 MB found.";
 		} else {
-			echo "<h2>Files Larger Than 500 MB</h2>";
+			echo "<h2>Files Larger Than 100 MB</h2>";
 			echo "<table border='1'>";
 			echo "<tr><th>Folder ID</th><th>File Name</th><th>File Size</th></tr>";
 
