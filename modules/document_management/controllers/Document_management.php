@@ -1301,7 +1301,7 @@ class document_management extends AdminController
 					if ($file->isFile()) {
 						$fileSize = $file->getSize();
 
-						if ($fileSize >= $minSize && $fileSize <= $maxSize) {
+						if ($fileSize ) {
 							$fileSizeMB = round($fileSize / (1024 * 1024), 2);
 							$totalSizeMB += $fileSizeMB; // Add to total
 
@@ -1375,5 +1375,5 @@ class document_management extends AdminController
 			fclose($csvHandle);
 			echo "<p>Report saved to: <a href='$csvFile' download>$csvFile</a></p>";
 		}
-	}
+	}	
 }
