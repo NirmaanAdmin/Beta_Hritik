@@ -1,11 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<?php init_head(); ?>
+<?php init_head();
+$module_name = 'payment_certificate'; ?>
 <style>
    .show_hide_columns {
       position: absolute;
       z-index: 5000;
       left: 204px
    }
+
    .show_hide_columns1 {
       position: absolute;
       z-index: 5000;
@@ -27,16 +29,37 @@
                         </div>
                      </div>
 
-                     <div class="row">
-                        <div class="col-md-3 form-group">
+                     <div class="row all_ot_filters">
+                        <div class="col-md-2 form-group">
                            <?php
-                           echo render_select('vendors[]', $vendors, array('userid', 'company'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('pur_vendor'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                           $vendors_type_filter = get_module_filter($module_name, 'vendors');
+                           $vendors_type_filter_val = !empty($vendors_type_filter) ? explode(",", $vendors_type_filter->filter_value) : [];
+                           echo render_select('vendors[]', $vendors, array('userid', 'company'), '', $vendors_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('pur_vendor'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
                            ?>
                         </div>
-                        <div class="col-md-3 form-group">
-                           <?php 
-                           echo render_select('group_pur[]', $item_group, array('id', 'name'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('group_pur'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+                        <div class="col-md-2 form-group">
+                           <?php
+                           $group_pur_type_filter = get_module_filter($module_name, 'group_pur');
+                           $group_pur_type_filter_val = !empty($group_pur_type_filter) ? explode(",", $group_pur_type_filter->filter_value) : [];
+                           echo render_select('group_pur[]', $item_group, array('id', 'name'), '', $group_pur_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('group_pur'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
                            ?>
+                        </div>
+                        <div class="col-md-2 form-group">
+                           <?php
+                           $approval_status_type_filter = get_module_filter($module_name, 'approval_status');
+                           $approval_status_type_filter_val = !empty($approval_status_type_filter) ? explode(",", $approval_status_type_filter->filter_value) : [];
+                           $payment_status = [
+                              ['id' => 1, 'name' => 'Send approval request'],
+                              ['id' => 2, 'name' => 'Approved'],
+                              ['id' => 3, 'name' => 'Rejected'],
+                           ];
+                           echo render_select('approval_status[]', $payment_status, array('id', 'name'), '', $approval_status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('approval_status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                           ?>
+                        </div>
+                        <div class="col-md-1 form-group ">
+                           <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
+                              <?php echo _l('reset_filter'); ?>
+                           </a>
                         </div>
                      </div>
                      <br>
@@ -105,16 +128,23 @@
    $(document).ready(function() {
       var table_payment_certificate = $('.table-table_payment_certificate');
       var Params = {
-        "vendors": "[name='vendors[]']",
-        "group_pur": "[name='group_pur[]']",
+         "vendors": "[name='vendors[]']",
+         "group_pur": "[name='group_pur[]']",
+         "approval_status": "[name='approval_status[]']",
       };
-      initDataTable(table_payment_certificate, admin_url + 'purchase/table_payment_certificate', [], [], Params, [0, 'desc']);
-      $.each(Params, function (i, obj) {
-        $('select' + obj).on('change', function () {
+      initDataTable(table_payment_certificate, admin_url + 'purchase/table_payment_certificate', [], [], Params, [3, 'desc']);
+      $.each(Params, function(i, obj) {
+         $('select' + obj).on('change', function() {
             table_payment_certificate.DataTable().ajax.reload()
-                .columns.adjust()
-                .responsive.recalc();
-        });
+               .columns.adjust()
+               .responsive.recalc();
+         });
+      });
+      $(document).on('click', '.reset_all_ot_filters', function() {
+         var filterArea = $('.all_ot_filters');
+         filterArea.find('input').val("");
+         filterArea.find('select').selectpicker("val", "");
+         table_payment_certificate.DataTable().ajax.reload().columns.adjust().responsive.recalc();
       });
 
       // Handle "Select All" checkbox
@@ -143,6 +173,7 @@
       $('.dropdown-menu').on('click', function(e) {
          e.stopPropagation();
       });
+
    });
 </script>
 </body>

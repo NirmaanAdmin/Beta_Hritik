@@ -121,8 +121,8 @@ update_module_filter($module_name, $status_filter_name, $status_filter_name_valu
 $group_pur_filter_name_value = !empty($this->ci->input->post('group_pur')) ? implode(',', $this->ci->input->post('group_pur')) : NULL;
 update_module_filter($module_name, $group_pur_filter_name, $group_pur_filter_name_value);
 
-$$sub_groups_pur_filter_name_value = !empty($this->ci->input->post('sub_groups_pur')) ? implode(',', $this->ci->input->post('sub_groups_pur')) : NULL;
-update_module_filter($module_name, $sub_groups_pur_filter_name, $$sub_groups_pur_filter_name_value);
+$sub_groups_pur_filter_name_value = !empty($this->ci->input->post('sub_groups_pur')) ? implode(',', $this->ci->input->post('sub_groups_pur')) : NULL;
+update_module_filter($module_name, $sub_groups_pur_filter_name, $sub_groups_pur_filter_name_value);
 
 $project_filter_name_value = !empty($this->ci->input->post('project')) ? implode(',', $this->ci->input->post('project')) : NULL;
 update_module_filter($module_name, $project_filter_name, $project_filter_name_value);

@@ -18374,7 +18374,7 @@ class Purchase_model extends App_Model
     {
         $all_approved = $this->db->query("SELECT COUNT(*) = SUM(approve = 2) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '" . $rel_id . "' AND rel_type = '" . $rel_type . "'")->result_array();
 
-        $all_rejected = $this->db->query("SELECT COUNT(*) = SUM(approve = 3) AS all_approved FROM tblpayment_certificate_details WHERE rel_id = '" . $rel_id . "' AND rel_type = '" . $rel_type . "'")->result_array();
+        $all_rejected = $this->db->query("SELECT COUNT(*) = SUM(approve = 3) AS all_rejected FROM tblpayment_certificate_details WHERE rel_id = '" . $rel_id . "' AND rel_type = '" . $rel_type . "'")->result_array();
 
         if (!empty($all_approved)) {
             if ($all_approved[0]['all_approved'] == 1) {
