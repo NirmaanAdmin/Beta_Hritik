@@ -1266,4 +1266,87 @@ class document_management extends AdminController
 
 		echo json_encode(['success' => true]);
 	}
+
+	public function check_files_size()
+	{
+		$basePath = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/';
+
+		
+		$sizeLimit = 500 * 1024 * 1024; // 500 MB in bytes
+		$largeFiles = [];
+
+		// Check if directory exists
+		if (!is_dir($basePath)) {
+			die("Directory not found: $basePath");
+		}
+
+		// Open the directory
+		$dir = new DirectoryIterator($basePath);
+
+		foreach ($dir as $folder) {
+			// Skip non-directories and special entries (. and ..)
+			if (!$folder->isDir() || $folder->isDot()) {
+				continue;
+			}
+
+			$folderName = $folder->getFilename();
+			$folderPath = $basePath . $folderName . '/';
+
+			// Check if this is a numeric folder (ID)
+			if (!is_numeric($folderName)) {
+				continue;
+			}
+
+			// Scan the folder for files
+			if (is_dir($folderPath)) {
+				$files = new DirectoryIterator($folderPath);
+
+				foreach ($files as $file) {
+					if ($file->isFile()) {
+						$fileSize = $file->getSize();
+
+						if ($fileSize > $sizeLimit) {
+							$largeFiles[] = [
+								'folder_id' => $folderName,
+								'file_name' => $file->getFilename(),
+								'file_size' => round($fileSize / (1024 * 1024), 2) . ' MB',
+								'file_path' => $folderPath . $file->getFilename()
+							];
+						}
+					}
+				}
+			}
+		}
+
+		// Output results
+		if (empty($largeFiles)) {
+			echo "No files larger than 500 MB found.";
+		} else {
+			echo "<h2>Files Larger Than 500 MB</h2>";
+			echo "<table border='1'>";
+			echo "<tr><th>Folder ID</th><th>File Name</th><th>File Size</th></tr>";
+
+			foreach ($largeFiles as $file) {
+				echo "<tr>";
+				echo "<td>{$file['folder_id']}</td>";
+				echo "<td>{$file['file_name']}</td>";
+				echo "<td>{$file['file_size']}</td>";
+				echo "</tr>";
+			}
+
+			echo "</table>";
+
+			// Optionally save to CSV
+			$csvFile = 'large_files_report_' . date('Y-m-d') . '.csv';
+			$csvHandle = fopen($csvFile, 'w');
+			fputcsv($csvHandle, ['Folder ID', 'File Name', 'File Size (MB)', 'File Path']);
+
+			foreach ($largeFiles as $file) {
+				fputcsv($csvHandle, $file);
+			}
+
+			fclose($csvHandle);
+			echo "<p>Report saved to: $csvFile</p>";
+		}
+	}
 }
