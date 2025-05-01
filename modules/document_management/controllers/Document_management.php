@@ -1271,9 +1271,9 @@ class document_management extends AdminController
 	{
 		$basePath = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/';
 
-		
-		$sizeLimit = 100 * 1024 * 1024; // 500 MB in bytes
-		$largeFiles = [];
+		$minSize = 50 * 1024 * 1024;   // 50 MB in bytes
+		$maxSize = 100 * 1024 * 1024;  // 100 MB in bytes
+		$targetFiles = [];
 
 		// Check if directory exists
 		if (!is_dir($basePath)) {
@@ -1305,8 +1305,9 @@ class document_management extends AdminController
 					if ($file->isFile()) {
 						$fileSize = $file->getSize();
 
-						if ($fileSize > $sizeLimit) {
-							$largeFiles[] = [
+						// Check if file size is between 50MB and 100MB
+						if ($fileSize >= $minSize && $fileSize <= $maxSize) {
+							$targetFiles[] = [
 								'folder_id' => $folderName,
 								'file_name' => $file->getFilename(),
 								'file_size' => round($fileSize / (1024 * 1024), 2) . ' MB',
@@ -1319,29 +1320,30 @@ class document_management extends AdminController
 		}
 
 		// Output results
-		if (empty($largeFiles)) {
-			echo "No files larger than 100 MB found.";
+		if (empty($targetFiles)) {
+			echo "No files between 50 MB and 100 MB found.";
 		} else {
-			echo "<h2>Files Larger Than 100 MB</h2>";
+			echo "<h2>Files Between 50 MB and 100 MB</h2>";
 			echo "<table border='1'>";
-			echo "<tr><th>Folder ID</th><th>File Name</th><th>File Size</th></tr>";
+			echo "<tr><th>Folder ID</th><th>File Name</th><th>File Size</th><th>File Path</th></tr>";
 
-			foreach ($largeFiles as $file) {
+			foreach ($targetFiles as $file) {
 				echo "<tr>";
 				echo "<td>{$file['folder_id']}</td>";
 				echo "<td>{$file['file_name']}</td>";
 				echo "<td>{$file['file_size']}</td>";
+				echo "<td>{$file['file_path']}</td>";
 				echo "</tr>";
 			}
 
 			echo "</table>";
 
-			// Optionally save to CSV
-			$csvFile = 'large_files_report_' . date('Y-m-d') . '.csv';
+			// Save to CSV
+			$csvFile = 'medium_files_report_' . date('Y-m-d') . '.csv';
 			$csvHandle = fopen($csvFile, 'w');
 			fputcsv($csvHandle, ['Folder ID', 'File Name', 'File Size (MB)', 'File Path']);
 
-			foreach ($largeFiles as $file) {
+			foreach ($targetFiles as $file) {
 				fputcsv($csvHandle, $file);
 			}
 
