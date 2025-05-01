@@ -3946,7 +3946,47 @@ class Purchase_model extends App_Model
                 $data_update['approve_status'] = $status;
                 $this->db->where('id', $rel_id);
                 $this->db->update(db_prefix() . 'pur_orders', $data_update);
+                if ($status == 2) {
+                    $pur_request = $this->get_purorder_pdf_html($rel_id);
 
+                    try {
+                        $pdf = $this->purorder_pdf($pur_request, $rel_id);
+                    } catch (Exception $e) {
+                        echo pur_html_entity_decode($e->getMessage());
+                        die;
+                    }
+
+                    $type = 'D';
+                    if ($this->input->get('output_type')) {
+                        $type = $this->input->get('output_type');
+                    }
+                    if ($this->input->get('print')) {
+                        $type = 'I';
+                    }
+
+                    $pur_order = $this->get_pur_order($rel_id);
+                    $vendor_name = get_vendor_name_by_id($pur_order->vendor);
+                    $po_number_clean = str_replace('#', '', $pur_order->pur_order_number);
+                    $pdf_name = $po_number_clean . '-' . $vendor_name . '-' .$pur_order->pur_order_name.'.pdf';
+
+                    // Define the save path
+                    $save_path = FCPATH . 'modules/document_management/uploads/files/3269/';
+
+                    // Save the PDF to the specified location
+                    $pdf->Output($save_path . $pdf_name, 'F');
+
+                    $data['dateadded'] = date('Y-m-d H:i:s');
+                    $data['creator_id'] = get_staff_user_id();
+                    $data['creator_type'] = 'staff';
+                    $data['name'] = $pdf_name;
+                    $data['parent_id'] = 3269;
+                    $data['version'] = '1.0.0';
+                    $data['filetype'] = 'application/pdf';
+                    $data['hash'] = app_generate_hash();
+                    $data['master_id'] = 2;
+
+                    $this->db->insert(db_prefix() . 'dmg_items', $data);
+                }
                 // warehouse module hook after purchase order approve
                 hooks()->do_action('after_purchase_order_approve', $rel_id);
 
@@ -15885,10 +15925,10 @@ class Purchase_model extends App_Model
             <th class="thead-dark" align="left" style="' . $width . '">' . _l('item_description') . '</th>
             <th class="thead-dark" align="left" style="width: 9%">' . _l('sub_groups_pur') . '</th>
             <th class="thead-dark" align="left" style="width: 9%">' . _l('area') . '</th>';
-            if ($show_image_column) {
-                $html .=  '<th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>';
-            }
-            $html .= '<th class="thead-dark" align="right" style="width: 9%">' . _l('quantity') . '</th>
+        if ($show_image_column) {
+            $html .=  '<th class="thead-dark" align="left" style="width: 10%">' . _l('Image') . '</th>';
+        }
+        $html .= '<th class="thead-dark" align="right" style="width: 9%">' . _l('quantity') . '</th>
             <th class="thead-dark" align="right" style="width: 9%">' . _l('unit_price') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('tax_percentage') . '</th>
             <th class="thead-dark" align="right" style="width: 10%">' . _l('total') . '</th>
