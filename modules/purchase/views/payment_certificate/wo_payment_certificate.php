@@ -79,9 +79,9 @@
                     <?php
                     if (isset($payment_certificate)) { ?>
                       <li role="presentation">
-                       <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo pur_html_entity_decode($payment_certificate->id); ?>, 'payment_certificate'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
+                        <a href="#tab_tasks" onclick="init_rel_tasks_table(<?php echo pur_html_entity_decode($payment_certificate->id); ?>, 'payment_certificate'); return false;" aria-controls="tab_tasks" role="tab" data-toggle="tab">
                           <?php echo _l('tasks'); ?>
-                       </a>
+                        </a>
                       </li>
                     <?php } ?>
                     <li role="presentation">
@@ -181,19 +181,19 @@
 
                 <div class="panel-body mtop15">
                   <?php if ($is_view == 0) { ?>
-                  <label for="attachment"><?php echo _l('attachment'); ?></label>
-                  <div class="attachments">
-                    <div class="attachment">
-                      <div class="col-md-5 form-group" style="padding-left: 0px;">
-                        <div class="input-group">
-                          <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
-                          <span class="input-group-btn">
-                            <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
-                          </span>
+                    <label for="attachment"><?php echo _l('attachment'); ?></label>
+                    <div class="attachments">
+                      <div class="attachment">
+                        <div class="col-md-5 form-group" style="padding-left: 0px;">
+                          <div class="input-group">
+                            <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                            <span class="input-group-btn">
+                              <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
                   <?php } ?>
                   <div class="clearfix"></div>
 
@@ -206,9 +206,9 @@
                       if ($is_image) {
                         echo '<div class="preview_image">';
                       }
-                      ?>
-                      <a href="<?php echo site_url('download/file/payment_certificate/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-payment_certificate-<?php echo $value['rel_id']; ?>" <?php } ?>> 
-                        <a name="preview-payment-cert-btn" onclick="preview_paymentcert_btn(this); return false;" rel_id = "<?php echo $value['rel_id']; ?>" id = "<?php echo $value['id']; ?>" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="<?php echo _l('preview_file'); ?>"><i class="fa fa-eye"></i></a>
+                  ?>
+                      <a href="<?php echo site_url('download/file/payment_certificate/' . $value['id']); ?>" class="display-block mbot5" <?php if ($is_image) { ?> data-lightbox="attachment-payment_certificate-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                        <a name="preview-payment-cert-btn" onclick="preview_paymentcert_btn(this); return false;" rel_id="<?php echo $value['rel_id']; ?>" id="<?php echo $value['id']; ?>" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="<?php echo _l('preview_file'); ?>"><i class="fa fa-eye"></i></a>
                         <?php echo $value['file_name']; ?>
                         <?php if ($is_image) { ?>
                           <img class="mtop5 hide" src="<?php echo site_url('download/preview_image?path=' . protected_file_url_by_path($path) . '&type=' . $value['filetype']); ?>" style="height: 165px;">
@@ -218,19 +218,37 @@
                       <?php
                       echo '<a href="' . admin_url('purchase/delete_payment_certificate_files/' . $value['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
                       ?>
-                  <?php if ($is_image) { echo '</div>'; } ?>
+                      <?php if ($is_image) {
+                        echo '</div>';
+                      } ?>
                   <?php echo '</div>';
                     }
                   } ?>
                 </div>
 
                 <div id="paymentcert_file_data"></div>
+                <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
 
+                  <span style="margin-right: 10px;">
+                    <button class="btn btn-primary" id="settings-toggle-payment-certificate">Columns</button>
+                    <div id="settings-dropdown-payment-certificate" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:130px;">
+
+                      <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('decription'); ?></label><br>
+                      <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('contract_amount'); ?></label><br>
+                      <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('previous'); ?></label><br>
+                      <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('this_bill'); ?></label><br>
+                      <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> <?php echo _l('comulative'); ?></label><br>
+                    </div>
+                  </span>
+                  <span style="padding: 0px;">
+                    <button id="export-csv" class="btn btn-primary  pull-right">Export to CSV</button>
+                  </span>
+                </div>
                 <div class="panel-body mtop15">
                   <div class="row">
                     <div class="col-md-12 pc-table">
                       <div class="table-responsive">
-                        <table class="table items no-mtop">
+                        <table class="table wo-payment-certificate-table items no-mtop">
                           <thead>
                             <tr>
                               <th width="5%"><?php echo _l('serial_no'); ?></th>
@@ -535,7 +553,7 @@
                               <td class="cgst_on_a3">
                                 <?php
                                 $cgst_this_bill = (isset($payment_certificate) ? $payment_certificate->cgst_this_bill : '');
-                                echo render_input('cgst_this_bill', '', $cgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('cgst_this_bill', '', $cgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="cgst_on_a4"></td>
@@ -562,7 +580,7 @@
                               <td class="sgst_on_a3">
                                 <?php
                                 $sgst_this_bill = (isset($payment_certificate) ? $payment_certificate->sgst_this_bill : '');
-                                echo render_input('sgst_this_bill', '', $sgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"],[],'','text-right');
+                                echo render_input('sgst_this_bill', '', $sgst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
                                 ?>
                               </td>
                               <td class="sgst_on_a4"></td>
@@ -634,11 +652,11 @@
 
               <?php
               if (isset($payment_certificate)) { ?>
-              <div role="tabpanel" class="tab-pane" id="tab_tasks">
-               <?php init_relation_tasks_table(array('data-new-rel-id' => $payment_certificate->id, 'data-new-rel-type' => 'payment_certificate')); ?>
-              </div>
+                <div role="tabpanel" class="tab-pane" id="tab_tasks">
+                  <?php init_relation_tasks_table(array('data-new-rel-id' => $payment_certificate->id, 'data-new-rel-type' => 'payment_certificate')); ?>
+                </div>
               <?php } ?>
-              
+
               <div role="tabpanel" class="tab-pane ptop10" id="tab_activity">
                 <div class="row">
                   <div class="col-md-12">
@@ -836,5 +854,119 @@
     } else {
       $('.selectpicker').selectpicker('refresh');
     }
+  });
+</script>
+<script>
+  document.getElementById('export-csv').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    const table = document.querySelector('.wo-payment-certificate-table');
+    const rows = Array.from(table.querySelectorAll('tr'));
+    let csvContent = '';
+
+    // Helper function to clean and escape CSV values
+    const cleanCSVValue = (value) => {
+      if (value === null || value === undefined) return '""';
+
+      return `"${value.toString()
+            .replace(/₹/g, '')              // Remove ₹ symbol
+            .replace(/,/g, '')             // Remove commas (for numbers)
+            .replace(/\s+/g, ' ')          // Normalize spaces
+            .replace(/"/g, '""')           // Escape double quotes for CSV
+            .trim()}"`;
+    };
+
+    // Helper to get combined content for C1 cell
+    const getC1Content = (cell) => {
+      const label = '<?php echo _l("mobilization_advance"); ?>';
+      const select = cell.querySelector('select');
+      const selectedOption = select ? select.options[select.selectedIndex].text : '';
+      const clauseInput = cell.querySelector('input[name="payment_clause"]');
+      const clauseValue = clauseInput ? clauseInput.value : '14.2';
+
+      return `${label} ${selectedOption} as per clause ${clauseValue}`;
+    };
+
+    // Process each row
+    rows.forEach(row => {
+      const cells = Array.from(row.querySelectorAll('th, td'));
+      const rowContent = cells.map(cell => {
+        // Special handling for mobilization advance cell
+        if (cell.classList.contains('mobilization_advance_class')) {
+          return cleanCSVValue(getC1Content(cell));
+        }
+
+        const input = cell.querySelector('input:not([type="hidden"])');
+        const select = cell.querySelector('select');
+        const staticText = Array.from(cell.childNodes)
+          .filter(node => node.nodeType === Node.TEXT_NODE)
+          .map(node => node.textContent.trim())
+          .join(' ')
+          .trim();
+
+        // Case 1: Both input and select exist
+        if (input && select) {
+          const inputValue = input.value;
+          const selectValue = select.options[select.selectedIndex].text;
+          const combined = `${staticText} ${selectValue} ${inputValue}`.trim();
+          return cleanCSVValue(combined);
+        }
+        // Case 2: Only input exists
+        else if (input) {
+          return cleanCSVValue(input.value);
+        }
+        // Case 3: Only select exists
+        else if (select) {
+          return cleanCSVValue(select.options[select.selectedIndex].text);
+        }
+        // Case 4: Only static text
+        else {
+          return cleanCSVValue(cell.textContent);
+        }
+      }).join(',');
+
+      csvContent += rowContent + '\n';
+    });
+
+    // Create and trigger download with BOM for Excel compatibility
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + csvContent], {
+      type: 'text/csv;charset=utf-8;'
+    });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'payment_certificate_export_' + new Date().toISOString().slice(0, 10) + '.csv';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
+  });
+  // Toggle settings dropdown visibility
+  document.getElementById('settings-toggle-payment-certificate').addEventListener('click', function() {
+    event.preventDefault(); // Prevent page reload
+
+    const dropdown = document.getElementById('settings-dropdown-payment-certificate');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Add event listener to toggle column visibility
+  document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      const columnIndex = this.getAttribute('data-column');
+      const table = document.querySelector('.wo-payment-certificate-table');
+
+      // Iterate through all rows and toggle column visibility
+      table.querySelectorAll('tr').forEach(function(row) {
+        const cells = row.querySelectorAll('th, td');
+        if (cells[columnIndex]) {
+          cells[columnIndex].style.display = checkbox.checked ? '' : 'none';
+        }
+      });
+    });
   });
 </script>
