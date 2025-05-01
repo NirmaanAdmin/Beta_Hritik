@@ -1272,7 +1272,7 @@ class document_management extends AdminController
 		$basePath = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/';
 
 		
-		$sizeLimit = 500 * 1024 * 1024; // 500 MB in bytes
+		$sizeLimit = 200 * 1024 * 1024; // 500 MB in bytes
 		$largeFiles = [];
 
 		// Check if directory exists
