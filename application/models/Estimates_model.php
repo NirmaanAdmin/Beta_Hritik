@@ -633,7 +633,7 @@ class Estimates_model extends App_Model
 
             if(!empty($newintitems)) {
                 foreach ($newintitems as $ikey => $iitem) {
-                    $this->add_new_interior_item_post($iitem, $insert_id);
+                    $this->add_new_multilevel_item_post($iitem, $insert_id);
                 }
             }
 
@@ -862,13 +862,70 @@ class Estimates_model extends App_Model
             unset($data['intitems']);
         }
 
-        if (isset($data['removed_interior_items'])) {
-            if(!empty($data['removed_interior_items'])) {
-                foreach ($data['removed_interior_items'] as $remove_interior_item_id) {
-                    $this->delete_interior_item($remove_interior_item_id);
+        if (isset($data['removed_multilevel_items'])) {
+            if(!empty($data['removed_multilevel_items'])) {
+                foreach ($data['removed_multilevel_items'] as $remove_multilevel_item_id) {
+                    $this->delete_multilevel_item($remove_multilevel_item_id);
                 }
             }
-            unset($data['removed_interior_items']);
+            unset($data['removed_multilevel_items']);
+        }
+
+        if (isset($data['sub_item_name'])) {
+            unset($data['sub_item_name']);
+        }
+
+        if (isset($data['sub_item_code'])) {
+            unset($data['sub_item_code']);
+        }
+
+        if (isset($data['sub_long_description'])) {
+            unset($data['sub_long_description']);
+        }
+
+        if (isset($data['sub_budget_area'])) {
+            unset($data['sub_budget_area']);
+        }
+
+        if (isset($data['sub_quantity'])) {
+            unset($data['sub_quantity']);
+        }
+
+        if (isset($data['sub_unit_id'])) {
+            unset($data['sub_unit_id']);
+        }
+
+        if (isset($data['sub_rate'])) {
+            unset($data['sub_rate']);
+        }
+
+        if (isset($data['sub_remarks'])) {
+            unset($data['sub_remarks']);
+        }
+
+        $newsubintitems = [];
+        if (isset($data['newsubintitems'])) {
+            $newsubintitems = $data['newsubintitems'];
+            unset($data['newsubintitems']);
+        }
+
+        $subintitems = [];
+        if (isset($data['subintitems'])) {
+            $subintitems = $data['subintitems'];
+            unset($data['subintitems']);
+        }
+
+        if (isset($data['removed_sub_multilevel_items'])) {
+            if(!empty($data['removed_sub_multilevel_items'])) {
+                foreach ($data['removed_sub_multilevel_items'] as $remove_sub_multilevel_item_id) {
+                    $this->delete_sub_multilevel_item($remove_sub_multilevel_item_id);
+                }
+            }
+            unset($data['removed_sub_multilevel_items']);
+        }
+
+        if (isset($data['sub_file_csv'])) {
+            unset($data['sub_file_csv']);
         }
 
         $this->db->where('id', $id);
@@ -1025,7 +1082,7 @@ class Estimates_model extends App_Model
 
         if(!empty($newintitems)) {
             foreach ($newintitems as $ikey => $iitem) {
-                $this->add_new_interior_item_post($iitem, $id);
+                $this->add_new_multilevel_item_post($iitem, $id);
             }
         }
 
@@ -1033,7 +1090,21 @@ class Estimates_model extends App_Model
             foreach ($intitems as $ikey => $iitem) {
                 $iid = $iitem['itemid'];
                 unset($iitem['itemid']);
-                $this->update_interior_item_post($iitem, $iid);
+                $this->update_multilevel_item_post($iitem, $iid);
+            }
+        }
+
+        if(!empty($newsubintitems)) {
+            foreach ($newsubintitems as $sikey => $siitem) {
+                $this->add_new_sub_multilevel_item_post($siitem, $id);
+            }
+        }
+
+        if(!empty($subintitems)) {
+            foreach ($subintitems as $sikey => $siitem) {
+                $siid = $siitem['itemid'];
+                unset($siitem['itemid']);
+                $this->update_sub_multilevel_item_post($siitem, $siid);
             }
         }
 
@@ -1859,30 +1930,59 @@ class Estimates_model extends App_Model
         return $this->db->get(db_prefix() . 'estimate_budget_info')->result_array();
     }
 
-    public function add_new_interior_item_post($data, $id)
+    public function add_new_multilevel_item_post($data, $id)
     {
         $data['estimate_id'] = $id;
-        $this->db->insert(db_prefix() . 'interior_items', $data);
+        $this->db->insert(db_prefix() . 'estimate_multilevel_items', $data);
         return true;
     }
 
-    public function update_interior_item_post($data, $id)
+    public function update_multilevel_item_post($data, $id)
     {
         $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'interior_items', $data);
+        $this->db->update(db_prefix() . 'estimate_multilevel_items', $data);
         return true;
     }
 
-    public function delete_interior_item($id)
+    public function delete_multilevel_item($id)
     {
         $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'interior_items');
+        $this->db->delete(db_prefix() . 'estimate_multilevel_items');
+        $this->db->where('parent_id', $id);
+        $this->db->delete(db_prefix() . 'estimate_sub_multilevel_items');
         return true;
     }
 
-    public function get_interior_items($id)
+    public function get_multilevel_items($id)
     {
         $this->db->where('estimate_id', $id);
-        return $this->db->get(db_prefix() . 'interior_items')->result_array();
+        return $this->db->get(db_prefix() . 'estimate_multilevel_items')->result_array();
+    }
+
+    public function add_new_sub_multilevel_item_post($data, $id)
+    {
+        $data['estimate_id'] = $id;
+        $this->db->insert(db_prefix() . 'estimate_sub_multilevel_items', $data);
+        return true;
+    }
+
+    public function update_sub_multilevel_item_post($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'estimate_sub_multilevel_items', $data);
+        return true;
+    }
+
+    public function delete_sub_multilevel_item($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete(db_prefix() . 'estimate_sub_multilevel_items');
+        return true;
+    }
+
+    public function get_sub_multilevel_items($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'estimate_sub_multilevel_items')->result_array();
     }
 }

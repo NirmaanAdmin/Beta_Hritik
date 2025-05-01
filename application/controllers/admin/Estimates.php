@@ -130,7 +130,8 @@ class Estimates extends AdminController
 
             $data['estimate'] = $estimate;
             $data['estimate_budget_info'] = $this->estimates_model->get_estimate_budget_info($id);
-            $data['interior_items'] = $this->estimates_model->get_interior_items($id);
+            $data['multilevel_items'] = $this->estimates_model->get_multilevel_items($id);
+            $data['sub_multilevel_items'] = $this->estimates_model->get_sub_multilevel_items($id);
             $data['edit']     = true;
             $data['annexure_estimate'] = $this->estimates_model->get_annexure_estimate_details($id);
             $data['all_area_working'] = $this->estimates_model->get_area_working($id);
