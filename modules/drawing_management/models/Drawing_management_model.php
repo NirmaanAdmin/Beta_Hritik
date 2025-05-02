@@ -41,6 +41,7 @@ class drawing_management_model extends app_model
 		}
 	}
 
+
 	public function get_root_item($user_id)
 	{
 		$this->db->where('parent_id = 0 and ((creator_id = ' . $user_id . ' and creator_type = "staff") or (creator_id = 0 and creator_type = "public"))');
@@ -154,8 +155,46 @@ class drawing_management_model extends app_model
 			if (isset($data['parent_id'])) {
 				$data['master_id'] = $this->get_master_id($data['parent_id']);
 			}
+
+			if (!empty($_FILES['pdf_attachment']['name'])) {
+				$uploadDir = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/pdf_attachments/' . $id . '/';
+
+				// Create directory if it doesn't exist
+				if (!file_exists($uploadDir)) {
+					mkdir($uploadDir, 0755, true);
+				}
+
+				$allowedExtensions = ['dwg', 'xref'];
+				$fileExtension = pathinfo($_FILES['pdf_attachment']['name'], PATHINFO_EXTENSION);
+				$originalFileName = basename($_FILES['pdf_attachment']['name']);
+
+				// Validate file type
+				if (in_array(strtolower($fileExtension), $allowedExtensions)) {
+					$targetPath = $uploadDir . $originalFileName;
+
+					// Check if file already exists and handle accordingly
+					if (file_exists($targetPath)) {
+						// Option 1: Append timestamp to filename to avoid overwriting
+						$fileNameParts = pathinfo($originalFileName);
+						$targetPath = $uploadDir . $fileNameParts['filename'] . '.' . $fileNameParts['extension'];
+
+						// Option 2: Uncomment below to simply overwrite existing file
+						// unlink($targetPath);
+					}
+
+					if (move_uploaded_file($_FILES['pdf_attachment']['tmp_name'], $targetPath)) {
+						// Save relative path in database (including the subfolder structure)
+						$data['pdf_attachment'] =  basename($targetPath);
+					} else {
+						// set_alert('warning', _l('file_upload_failed'));
+					}
+				} else {
+					// set_alert('danger', _l('only_dwg_xref_files_allowed'));
+				}
+			}
 			$this->db->where('id', $id);
 			$this->db->update(db_prefix() . 'dms_items', $data);
+
 			if ($this->db->affected_rows() > 0) {
 				// Rename file if name has been changed
 				if (isset($data['name']) && ($data_item->name != $data['name'])) {
@@ -738,23 +777,43 @@ class drawing_management_model extends app_model
 	public function create_folder_bulk_download($id_lever_1, $folder_name)
 	{
 		// Create root folder
-		$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/temps/bulk_downloads/' . $folder_name . '/';
-		drawing_dmg_create_folder($path);
-		$data_child = $this->get_item('', 'id IN (' . $id_lever_1 . ')', 'id, name, filetype, parent_id');
-		if ($data_child) {
-			foreach ($data_child as $key => $value) {
-				if ($value['filetype'] == 'folder') {
-					$new_path = $path . '/' . $value['name'];
-					drawing_dmg_create_folder($new_path);
-					$this->create_folder($value['id'], $new_path);
-				} else {
-					$path1 = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/files/' . $value['parent_id'] . '/' . $value['name'];
-					$path2 = $path . '/' . $value['name'];
-					$this->copy_file($path1, $path2);
+		$root = rtrim(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER, '/') . '/temps/bulk_downloads/' . $folder_name;
+		drawing_dmg_create_folder($root);
+
+		$data_child = $this->get_item('', 'id IN (' . $id_lever_1 . ')', 'id, name, filetype, parent_id, pdf_attachment');
+		if (!$data_child) {
+			return;
+		}
+
+		foreach ($data_child as $value) {
+			if ($value['filetype'] === 'folder') {
+				// recursion into sub-folder
+				$new_folder = $root . '/' . $value['name'];
+				drawing_dmg_create_folder($new_folder);
+				$this->create_folder_bulk_download($value['id'], $folder_name . '/' . $value['name']);
+			} else {
+				// 1) copy the original file
+				$sourceFile = rtrim(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER, '/') . '/files/'
+					. $value['parent_id'] . '/' . $value['name'];
+
+				$destFile   = $root . '/' . $value['name'];
+				$this->copy_file($sourceFile, $destFile);
+
+				// 2) if there’s a PDF‐attachment, copy that too (same folder, same name)
+				if (!empty($value['pdf_attachment'])) {
+					$sourcePdf = rtrim(DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER, '/')
+						. '/pdf_attachments/' . $value['id'] . '/' . $value['pdf_attachment'];
+
+					if (file_exists($sourcePdf)) {
+						$pdfName     = basename($sourcePdf);
+						$destPdfPath = $root . '/' . $pdfName;
+						$this->copy_file($sourcePdf, $destPdfPath);
+					}
 				}
 			}
 		}
 	}
+
 
 	/**
 	 * duplicate item
@@ -1310,16 +1369,16 @@ class drawing_management_model extends app_model
 		return $records2[0]->company;
 	}
 
-    /**
-     * Retrieves the count of records for each item associated with a given vendor.
-     *
-     * This function queries the 'tbldms_share_logs' table to obtain the count of records
-     * for each item_id where the 'vendor' matches the provided id. The results are grouped
-     * by item_id, allowing for a distinct count of records associated with each item.
-     *
-     * @param int $id The ID of the vendor to filter the records.
-     * @return array An array of results, each containing an item_id and its corresponding record count.
-     */
+	/**
+	 * Retrieves the count of records for each item associated with a given vendor.
+	 *
+	 * This function queries the 'tbldms_share_logs' table to obtain the count of records
+	 * for each item_id where the 'vendor' matches the provided id. The results are grouped
+	 * by item_id, allowing for a distinct count of records associated with each item.
+	 *
+	 * @param int $id The ID of the vendor to filter the records.
+	 * @return array An array of results, each containing an item_id and its corresponding record count.
+	 */
 
 
 	public function get_vendor_item_counts($id)
@@ -1356,7 +1415,7 @@ class drawing_management_model extends app_model
 		$discipline_prefix = strtoupper(substr($get_discipline[0]['name'], 0, 3));
 		$count = $this->get_vendor_item_counts(361);
 
-		
+
 		$company_logo = get_option('company_logo_dark');
 		if (!empty($company_logo)) {
 			$logo = '<img src="' . base_url('uploads/company/' . $company_logo) . '" width="130" height="100">';
@@ -1426,7 +1485,7 @@ class drawing_management_model extends app_model
 						</td>
 						<td style="vertical-align: top; text-align: right; width: 60%;">
 						<h1>Drawing Transmittal</h1>
-						<p><strong>Transmittal No.:</strong> ' . $project_prefix . '-BIL-' . $discipline_prefix . '-TRS-' . date('Y') . '00'.count($count).'</p>
+						<p><strong>Transmittal No.:</strong> ' . $project_prefix . '-BIL-' . $discipline_prefix . '-TRS-' . date('Y') . '00' . count($count) . '</p>
 						<p><strong>Date of Issue:</strong> ' . date('d M, Y') . '</p>
 						</td>
 					</tr>
@@ -1574,7 +1633,7 @@ class drawing_management_model extends app_model
 						$template->send();
 
 						if (!is_dir(DRAWING_MANAGEMENT_PATH . 'transmittal')) {
-						    mkdir(DRAWING_MANAGEMENT_PATH . 'transmittal', 0755, true);
+							mkdir(DRAWING_MANAGEMENT_PATH . 'transmittal', 0755, true);
 						}
 						$pdf_filename = 'Transmittal_' . time() . '.pdf';
 						$pdf_path = DRAWING_MANAGEMENT_PATH . 'transmittal/' . $pdf_filename;
@@ -2039,29 +2098,29 @@ class drawing_management_model extends app_model
 		}
 
 		$this->db->where('rel_type', $rel_type);
-        $this->db->where('rel_id', $rel_id);
-        $existing_task = $this->db->get(db_prefix() . 'tasks')->row();
-        if (!$existing_task) {
-        	foreach ($data_new as $value) {
-        		$taskDetail = $this->get_item($rel_id);
-	        	$taskName = 'Approve ['.$taskDetail->name.']';
-	        	$taskData = [
-	                'name'      => $taskName,
-	                'is_public' => 1,
-	                'startdate' => _d(date('Y-m-d')),
-	                'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
-	                'priority'  => 3,
-	                'rel_type'  => $rel_type,
-	                'rel_id'    => $rel_id,
-	            ];
-	            $task_id =  $this->tasks_model->add($taskData);
-	            $assignss = [
-	                'staffid' => $value->staff,
-	                'taskid'  =>  $task_id
-	            ];
-	            $this->db->insert('tbltask_assigned', $assignss);
-	        }
-        }
+		$this->db->where('rel_id', $rel_id);
+		$existing_task = $this->db->get(db_prefix() . 'tasks')->row();
+		if (!$existing_task) {
+			foreach ($data_new as $value) {
+				$taskDetail = $this->get_item($rel_id);
+				$taskName = 'Approve [' . $taskDetail->name . ']';
+				$taskData = [
+					'name'      => $taskName,
+					'is_public' => 1,
+					'startdate' => _d(date('Y-m-d')),
+					'duedate'   => _d(date('Y-m-d', strtotime('+3 day'))),
+					'priority'  => 3,
+					'rel_type'  => $rel_type,
+					'rel_id'    => $rel_id,
+				];
+				$task_id =  $this->tasks_model->add($taskData);
+				$assignss = [
+					'staffid' => $value->staff,
+					'taskid'  =>  $task_id
+				];
+				$this->db->insert('tbltask_assigned', $assignss);
+			}
+		}
 		return true;
 	}
 
@@ -2506,5 +2565,27 @@ class drawing_management_model extends app_model
 			$response = render_select('vendor_contact[]', $pur_contacts, array('id', 'email'), '' . _l('vendor_contact'), $selected_contacts, ['multiple' => 1, 'data-actions-box' => true], [], '', '', false);
 		}
 		return $response;
+	}
+
+	public function delete_pdf_attachment($id)
+	{
+		// echo $id;
+		// die;
+		$get_pdf_attachment = $this->get_item($id);
+		if ($get_pdf_attachment->pdf_attachment != '') {
+
+			$path = DRAWING_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/pdf_attachments/' . $id . '/' . $get_pdf_attachment->pdf_attachment;
+
+			if (file_exists($path)) {
+
+				unlink($path);
+			}
+
+			$this->db->where('id', $id);
+			$this->db->update(db_prefix() . 'dms_items', ['pdf_attachment' => '']);
+			if ($this->db->affected_rows() > 0) {
+				return true;
+			}
+		}
 	}
 }

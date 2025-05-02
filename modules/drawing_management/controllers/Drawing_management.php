@@ -244,7 +244,7 @@ class drawing_management extends AdminController
 				}
 				$data['custom_field'] = $custom_field;
 				$data['related_file'] = $related_file;
-				$res = $this->drawing_management_model->update_item($data);
+				$res = $this->drawing_management_model->update_item($data); 
 				if ($res) {
 					set_alert('success', _l('dmg_updated_successfully'));
 				} else {
@@ -468,7 +468,18 @@ class drawing_management extends AdminController
 		$data['file'] = $this->drawing_management_model->get_item($id);
 		$this->load->view('file_managements/preview_file.php', $data);
 	}
-
+	public function preview_file_pdf_dwg()
+	{
+		if (!(has_permission('drawing_management_file_management', '', 'view') || has_permission('drawing_management_file_management', '', 'view_own'))) {
+			access_denied('drawing_management');
+		}
+		$data['title']                 = _l('dmg_file_management');
+		$master_parent_id = '';
+		$id = $this->input->get('id');
+		$data['file'] = $this->drawing_management_model->get_item($id);
+		$this->load->view('file_managements/preview_file_pdf_dwg.php', $data);
+	}
+	
 	public function preview_superseder()
 	{
 		if (!(has_permission('drawing_management_file_management', '', 'view') || has_permission('drawing_management_file_management', '', 'view_own'))) {
@@ -1344,4 +1355,16 @@ class drawing_management extends AdminController
     {
         $this->app->get_table_data(module_views_path('drawing_management', 'transmittal/table_transmittal'));
     }
+
+	public function delete_pdf_attachment($id){
+		
+		$result =  $this->drawing_management_model->delete_pdf_attachment($id);
+		if ($result) {
+			set_alert('success', _l('Attachment deleted successfully'));
+		} else {
+			set_alert('danger', _l('Attachment deleted failed'));
+		}
+		
+		redirect($_SERVER['HTTP_REFERER']);
+	}
 }

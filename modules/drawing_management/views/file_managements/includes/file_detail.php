@@ -83,6 +83,30 @@
 					<td class="text-nowrap"><?php echo _l('dmg_notes'); ?></td>
 					<td><?php echo ($item->note != null ? drawing_nlbr($item->note) : ''); ?></td>
 				</tr>
+				<?php 
+				if (strpos($item->name, '.pdf') !== false) { ?>
+				<tr>
+					<td class="text-nowrap"><?php echo _l('DWG Drawing'); ?></td>
+					<td><?php if (isset($item->pdf_attachment) && !empty($item->pdf_attachment)) : ?>
+							
+								<?php
+								// Build the correct file path and URLs
+								$file_path = FCPATH . 'modules/drawing_management/uploads/pdf_attachments/' . $item->id . '/' . $item->pdf_attachment;
+								$download_url = base_url('modules/drawing_management/uploads/pdf_attachments/' . $item->id . '/' . rawurlencode($item->pdf_attachment));
+
+								// Only show if file exists
+								if (file_exists($file_path)) : ?>
+									<a href="<?php echo $download_url; ?>" class="display-block mbot5" target="_blank" download>
+										<?php echo htmlspecialchars($item->pdf_attachment); ?>
+									</a>
+									
+								<?php endif; ?>
+							
+						<?php endif; ?>
+					</td>
+				</tr>
+
+				<?php } ?>
 				<tr>
 					<td class="text-nowrap"><?php echo _l('dmg_controlled_document'); ?></td>
 					<td><?php echo ($item->controlled_document == 1 ? 'Yes' : 'No'); ?></td>
@@ -427,7 +451,11 @@
 							<i class="fa fa-eye"></i> <?php echo _l('dmg_view_pdf'); ?>
 						</a>
 					<?php } ?>
-
+					<?php if (!(strpos($item->pdf_attachment, '.dwg') === false) || !(strpos($item->pdf_attachment, '.xref') === false)) { ?>
+						<a href="<?php echo admin_url('drawing_management/preview_file_pdf_dwg?id=' . $item->id) ?>" target="_blank" class="btn btn-default w100 mtop5 mbot5">
+							<i class="fa fa-eye"></i> View DWG
+						</a>
+					<?php } ?>
 					<?php if (!(strpos($item->name, '.dwg') === false)) { ?>
 						<a href="<?php echo admin_url('drawing_management/preview?id=' . $item->id) ?>" target="_blank" class="btn btn-default w100 mtop5 mbot5">
 							<i class="fa fa-eye"></i> View DWG

@@ -864,3 +864,20 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 
 	});
 </script>
+<script>
+	$(document).ready(function() {
+		$('#pdf_attachment').change(function() {
+			var fileInput = $(this);
+			var filePath = fileInput.val();
+			var allowedExtensions = /(\.dwg|\.xref)$/i;
+
+			if (!allowedExtensions.exec(filePath)) {
+				alert('Please upload files with .dwg or .xref extensions only.');
+				fileInput.val(''); // Clear the file input
+				return false;
+			}
+
+			return true;
+		});
+	});
+</script>

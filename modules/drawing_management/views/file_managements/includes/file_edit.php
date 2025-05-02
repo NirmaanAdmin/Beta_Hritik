@@ -112,9 +112,9 @@ if (isset($item)) {
 						<label for="status" class="control-label"><?php echo _l('status'); ?></label>
 						<select id="status" name="status" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
 							<option value=""></option>
-							<option value="under_review" <?php echo ($item->status == "under_review" ? 'selected' : '') ?> >Under Review</option>
+							<option value="under_review" <?php echo ($item->status == "under_review" ? 'selected' : '') ?>>Under Review</option>
 							<option value="released" <?php echo ($item->status == "released" ? 'selected' : '') ?>>Released</option>
-							<option value="released_with_comments" <?php echo ($item->status == "released_with_comments" ? 'selected' : '') ?> >Released with comments</option>
+							<option value="released_with_comments" <?php echo ($item->status == "released_with_comments" ? 'selected' : '') ?>>Released with comments</option>
 							<option value="rejected" <?php echo ($item->status == "rejected" ? 'selected' : '') ?>>Rejected</option>
 						</select>
 					</div>
@@ -130,9 +130,36 @@ if (isset($item)) {
 							<?php echo ($item->controlled_document || $id === 25) ? 'checked' : ''; ?>>
 					</label>
 				</div>
-				<div class="col-md-12">
+				<div class="col-md-6" style="clear: both;">
 					<?php echo render_textarea('note', 'dmg_notes', $item->note); ?>
 				</div>
+				<?php if (strpos($item->name, '.pdf') !== false) { ?>
+					<div class="col-md-6">
+						CAD Drawing
+						<input type="file" name="pdf_attachment" id="pdf_attachment" class="form-control" accept=".dwg,.xref">
+					</div>
+					<?php if (isset($item->pdf_attachment) && !empty($item->pdf_attachment)) : ?>
+						<div class="col-md-3" style="margin-top: 13px; display: flex;justify-content: space-between;">
+							<?php
+							// Build the correct file path and URLs
+							$file_path = FCPATH . 'modules/drawing_management/uploads/pdf_attachments/' . $item->id . '/' . $item->pdf_attachment;
+							$download_url = base_url('modules/drawing_management/uploads/pdf_attachments/' . $item->id . '/' . rawurlencode($item->pdf_attachment));
+							$delete_url = admin_url('drawing_management/delete_pdf_attachment/' . $item->id);
+
+							// Only show if file exists
+							if (file_exists($file_path)) : ?>
+								<a href="<?php echo $download_url; ?>" class="display-block mbot5" target="_blank" download>
+									<?php echo htmlspecialchars($item->pdf_attachment); ?>
+								</a>
+								<a href="<?php echo $delete_url; ?>" class="text-danger _delete">
+									<?php echo _l('delete'); ?>
+								</a>
+							<?php endif; ?>
+						</div>
+					<?php endif; ?>
+
+				<?php } ?>
+
 				<div class="col-md-12">
 					<div class="row">
 						<div class="col-md-6">
