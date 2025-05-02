@@ -1228,6 +1228,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4 col-md-offset-8 pull-right">
+                        <?php echo render_input('area_working_file_csv', 'choose_excel_file', '', 'file'); ?>
+                        <div class="form-group">
+                          <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadareaworkingcsv(this);"><?php echo _l('import'); ?></button>
+                          <a href="<?php echo site_url('uploads/estimates/file_sample/Sample_area_working_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="horizontal-tabs">
                     <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
