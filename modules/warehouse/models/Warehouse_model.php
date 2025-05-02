@@ -20628,7 +20628,7 @@ class Warehouse_model extends App_Model
 				$url  = FCPATH . 'modules/warehouse/uploads/qrcodes/' . $data_items->qr_code . '.png';
 			} else {
 				$tempDir = WAREHOUSE_PATH . 'qrcodes/';
-				$commodity_code = $data_items->commodity_code;
+				$commodity_code = $data_items->commodity_code .'_'. $data_items->description;
 				$qr_code = md5($commodity_code);
 				$html = '';
 				$html .= "\n" . _l('commodity_code') . ': ' . $commodity_code . "\n";
