@@ -34,7 +34,7 @@
                     <p><strong><?php echo _l('Description'); ?> : </strong>
                         <?php echo $log_desc; ?>
                     </p>
-
+                    <p><strong><?php echo _l('Quantity'); ?> : </strong><?php echo $current_quantity; ?></p>
                 </td>
             </tr>
             <tr>
