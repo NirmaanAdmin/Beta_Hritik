@@ -383,95 +383,115 @@
                            } ?>
                             </div>
                         </div>
+                        
+                        <hr class="hr-panel-separator" />
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="table-responsive">
+                            <div class="horizontal-tabs">
+                                <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#final_estimate" aria-controls="final_estimate" role="tab" id="tab_final_estimate" data-toggle="tab">
+                                            <?php echo _l('project_brief'); ?>
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#area_summary" aria-controls="area_summary" role="tab" id="tab_area_summary" data-toggle="tab">
+                                            <?php echo _l('area_summary'); ?>
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#area_working" aria-controls="area_working" role="tab" id="tab_area_working" data-toggle="tab">
+                                            <?php echo _l('area_working'); ?>
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#budget_summary" aria-controls="budget_summary" role="tab" id="tab_budget_summary" data-toggle="tab">
+                                            <?php echo _l('cost_plan_summary'); ?>
+                                        </a>
+                                    </li>
                                     <?php
-                                        $items = get_items_table_data($estimate, 'estimate', 'html', true);
-                                        echo $items->table();
-                                    ?>
+                                    $annexures = get_all_annexures(); ?>
+                                    <li role="presentation" class="dropdown">
+                                        <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <?php echo _l('detailed_costing_technical_assumptions'); ?>
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu estimate-annexture-list" aria-labelledby="tab_child_items" style="width: max-content;">
+                                            <?php
+                                            foreach ($annexures as $key => $annexure) { ?>
+                                                <li>
+                                                    <a href="#<?php echo $annexure['annexure_key']; ?>" aria-controls="<?php echo $annexure['annexure_key']; ?>" role="tab" id="tab_<?php echo $annexure['annexure_key']; ?>" data-toggle="tab">
+                                                        <?php echo $annexure['name']; ?>
+                                                    </a>
+                                                </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#project_timelines" aria-controls="project_timelines" role="tab" id="tab_project_timelines" data-toggle="tab">
+                                            <?php echo _l('project_timelines'); ?>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="final_estimate">
+                                    <div class="col-md-12">
+                                        <?php echo $cost_planning_details['project_brief']; ?>
+                                    </div>
                                 </div>
+
+                                <div role="tabpanel" class="tab-pane" id="project_timelines">
+                                    <div class="col-md-12">
+                                        <?php echo $cost_planning_details['project_timelines']; ?>
+                                    </div>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="budget_summary">
+                                    <div class="table-responsive s_table">
+                                        <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                            <thead>
+                                                <tr>
+                                                    <th width="25%" align="left"><?php echo _l('group_pur'); ?></th>
+                                                    <th width="25%" align="right">Cost (INR)</th>
+                                                    <th width="25%" align="right">Cost/BUA</th>
+                                                    <th width="25%" align="right"><?php echo _l('remarks'); ?></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                if(!empty($cost_planning_details['annexure_estimate'])) {
+                                                    $annexure_estimate = $cost_planning_details['annexure_estimate'];
+                                                    foreach($annexure_estimate as $ikey => $svalue) { ?>
+                                                        <tr>
+                                                            <td align="left">
+                                                                <?php echo $svalue['name']; ?>
+                                                            </td>
+                                                            <td align="right">
+                                                                <?php echo app_format_money($svalue['amount'], $base_currency); ?>
+                                                            </td>
+                                                            <td align="right">
+                                                                <?php 
+                                                                echo app_format_money($svalue['total_bua'], $base_currency); 
+                                                                ?>
+                                                            </td>
+                                                            <td align="right">
+                                                                <?php
+                                                                echo $svalue['budget_summary_remarks']; 
+                                                                ?>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } 
+                                                } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <?php echo $cost_planning_details['cost_plan_summary']; ?>
+                                    </div>
+                                </div>
+
                             </div>
-                            <div class="col-md-5 col-md-offset-7">
-                                <table class="table text-right">
-                                    <tbody>
-                                        <tr id="subtotal">
-                                            <td>
-                                                <span class="bold tw-text-neutral-700">
-                                                    <?php echo _l('estimate_subtotal'); ?>
-                                                </span>
-                                            </td>
-                                            <td class="subtotal">
-                                                <?php echo e(app_format_money($estimate->subtotal, $estimate->currency_name)); ?>
-                                            </td>
-                                        </tr>
-                                        <?php if (is_sale_discount_applied($estimate)) { ?>
-                                        <tr>
-                                            <td>
-                                                <span
-                                                    class="bold tw-text-neutral-700"><?php echo _l('estimate_discount'); ?>
-                                                    <?php if (is_sale_discount($estimate, 'percent')) { ?>
-                                                    (<?php echo e(app_format_number($estimate->discount_percent, true)); ?>%)
-                                                    <?php } ?>
-                                                </span>
-                                            </td>
-                                            <td class="discount">
-                                                <?php echo e('-' . app_format_money($estimate->discount_total, $estimate->currency_name)); ?>
-                                            </td>
-                                        </tr>
-                                        <?php } ?>
-                                        <?php
-                                            foreach ($items->taxes() as $tax) {
-                                                echo '<tr class="tax-area"><td class="bold !tw-text-neutral-700">' . e($tax['taxname']) . ' (' . e(app_format_number($tax['taxrate'])) . '%)</td><td>' . e(app_format_money($tax['total_tax'], $estimate->currency_name)) . '</td></tr>';
-                                            }
-                                        ?>
-                                        <?php if ((int)$estimate->adjustment != 0) { ?>
-                                        <tr>
-                                            <td>
-                                                <span class="bold tw-text-neutral-700">
-                                                    <?php echo _l('estimate_adjustment'); ?>
-                                                </span>
-                                            </td>
-                                            <td class="adjustment">
-                                                <?php echo e(app_format_money($estimate->adjustment, $estimate->currency_name)); ?>
-                                            </td>
-                                        </tr>
-                                        <?php } ?>
-                                        <tr>
-                                            <td>
-                                                <span class="bold tw-text-neutral-700">
-                                                    Change Order Total
-                                                </span>
-                                            </td>
-                                            <td class="total">
-                                                <?php echo e(app_format_money($co_total, $estimate->currency_name)); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span class="bold tw-text-neutral-700">
-                                                    <?php echo _l('estimate_total'); ?>
-                                                </span>
-                                            </td>
-                                            <td class="total">
-                                                <?php echo e(app_format_money($estimate->total, $estimate->currency_name)); ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <?php if ($estimate->clientnote != '') { ?>
-                            <div class="col-md-12 mtop15">
-                                <p class="bold text-muted"><?php echo _l('estimate_note'); ?></p>
-                                <?php echo process_text_content_for_display($estimate->clientnote); ?>
-                            </div>
-                            <?php } ?>
-                            <?php if ($estimate->terms != '') { ?>
-                            <div class="col-md-12 mtop15">
-                                <p class="bold text-muted"><?php echo _l('terms_and_conditions'); ?></p>
-                                <?php echo process_text_content_for_display($estimate->terms); ?>
-                            </div>
-                            <?php } ?>
                         </div>
                     </div>
                 </div>

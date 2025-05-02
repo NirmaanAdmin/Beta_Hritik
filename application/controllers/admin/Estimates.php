@@ -287,6 +287,9 @@ class Estimates extends AdminController
         $data['estimate_statuses'] = $this->estimates_model->get_statuses();
         $data['totalNotes']        = total_rows(db_prefix() . 'notes', ['rel_id' => $id, 'rel_type' => 'estimate']);
         $data['co_total']          = $this->estimates_model->get_co_total_for_estimate($id);
+        $data['cost_planning_details'] = $this->estimates_model->get_cost_planning_details($id);
+        $this->load->model('currencies_model');
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
 
         $data['send_later'] = false;
         if ($this->session->has_userdata('send_later')) {

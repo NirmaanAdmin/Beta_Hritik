@@ -2011,4 +2011,60 @@ class Estimates_model extends App_Model
         $this->db->update(db_prefix() . 'estimate_multilevel_items', $data);
         return true;
     }
+
+    public function get_area_summary_tabs()
+    {
+        return $this->db->get(db_prefix() . 'area_summary_tabs')->result_array();
+    }
+
+    public function get_cost_planning_details($id)
+    {
+        $final_result = array();
+        $annexure_estimate = array();
+        $budget_info_lookup = array();
+        $total_built_up_area = 1;
+
+        $estimate = $this->get($id);
+        $items = get_items_by_type('estimate', $id);
+        $all_area_summary = $this->get_area_summary($id);
+        $budget_info = $this->get_estimate_budget_info($id);
+        $area_summary_tabs = $this->get_area_summary_tabs();
+
+        if(!empty($all_area_summary)) {
+            $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
+            $total_built_up_area = $total_built_up_area == 0 ? 1 : $total_built_up_area;
+        }
+        if(!empty($budget_info)) {
+            $budget_info_lookup = array_column($budget_info, null, 'budget_id');
+        }
+
+        foreach ($items as $key => $value) {
+            $annexure = $value['annexure'];
+            $items_group = $this->get_items_groups($annexure);
+            $annexure_estimate[$annexure]['name'] = $items_group->name;
+            $annexure_estimate[$annexure]['description'] = '';
+            $annexure_estimate[$annexure]['qty'] += $value['qty'];
+            $annexure_estimate[$annexure]['rate'] += $value['rate'];
+            $annexure_estimate[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
+            $annexure_estimate[$annexure]['tax'] = 0;
+            $annexure_estimate[$annexure]['amount'] = $annexure_estimate[$annexure]['subtotal'] + $all_area_summary[$annexure]['tax'];
+            $annexure_estimate[$annexure]['annexure'] = $annexure;
+            $annexure_estimate[$annexure]['total_bua'] = $annexure_estimate[$annexure]['amount'] / $total_built_up_area;
+            $annexure_estimate[$annexure]['budget_summary_remarks'] = isset($budget_info_lookup[$annexure]) ? $budget_info_lookup[$annexure]['budget_summary_remarks'] : '';
+        }
+        $annexure_estimate = !empty($annexure_estimate) ? array_values($annexure_estimate) : array();
+        if(!empty($annexure_estimate)) {
+            usort($annexure_estimate, function($a, $b) {
+                return $a['annexure'] <=> $b['annexure'];
+            });
+            $annexure_estimate = array_values($annexure_estimate);
+        }
+
+        $final_result['project_brief'] = $estimate->project_brief;
+        $final_result['project_timelines'] = $estimate->project_timelines;
+        $final_result['cost_plan_summary'] = $estimate->cost_plan_summary;
+        $final_result['annexure_estimate'] = $annexure_estimate;
+        
+        return $final_result;
+    }
 }
