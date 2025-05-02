@@ -854,6 +854,11 @@ class Estimates_model extends App_Model
             unset($data['int_remarks']);
         }
 
+        if (isset($data['sub_overall_budget_area'])) {
+            $sub_overall_budget_area = $data['sub_overall_budget_area'];
+            unset($data['sub_overall_budget_area']);
+        }
+
         $newintitems = [];
         if (isset($data['newintitems'])) {
             $newintitems = $data['newintitems'];
@@ -1113,6 +1118,12 @@ class Estimates_model extends App_Model
                 $siid = $siitem['itemid'];
                 unset($siitem['itemid']);
                 $this->update_sub_multilevel_item_post($siitem, $siid);
+            }
+        }
+
+        if(!empty($sub_overall_budget_area)) {
+            foreach ($sub_overall_budget_area as $okey => $oitem) {
+                $this->update_sub_overall_budget_area($oitem, $okey);
             }
         }
 
@@ -1992,5 +2003,12 @@ class Estimates_model extends App_Model
     {
         $this->db->where('estimate_id', $id);
         return $this->db->get(db_prefix() . 'estimate_sub_multilevel_items')->result_array();
+    }
+
+    public function update_sub_overall_budget_area($data, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'estimate_multilevel_items', $data);
+        return true;
     }
 }

@@ -748,7 +748,7 @@
                                             $select .= '</select>';
                                             $table_row .= '<td>'.$select.'</td>';
                                             $table_row .= '<td class="int_area"><input type="number" onblur="calculate_multilevel_total();" onchange="calculate_multilevel_total();" name="' . $items_indicator . '[' . $i . '][int_area]" value="' . $iitem['int_area'] . '" class="form-control"></td>';
-                                            $table_row .= '<td class="int_rate"><input type="number" onblur="calculate_multilevel_total();" onchange="calculate_multilevel_total();" name="' . $items_indicator . '[' . $i . '][int_rate]" value="' . $iitem['int_rate'] . '" class="form-control"></td>';
+                                            $table_row .= '<td class="int_rate"><input type="number" onblur="calculate_multilevel_total();" onchange="calculate_multilevel_total();" name="' . $items_indicator . '[' . $i . '][int_rate]" value="' . $iitem['int_rate'] . '" class="form-control" data-expand="multilevelExpand_'.$iitem['id'].'" readonly></td>';
                                             $table_row .= '<td class="int_amount" align="right">' . $int_amount . '</td>';
                                             $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][int_remarks]" class="form-control" rows="5">' . clear_textarea_breaks($iitem['int_remarks']) . '</textarea></td>';
                                             $table_row .= '<td><a href="#" class="btn btn-danger pull-left" onclick="delete_multilevel_item(this,' . $iitem['id'] . '); return false;"><i class="fa fa-times"></i></a></td>';
@@ -1036,6 +1036,14 @@
                                       <div class="modal-header">
                                         <h4 class="modal-title">Add New Item</h4>
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <div class="col-md-3" style="padding-left: 0px">
+                                            <div class="form-group">
+                                                <label class="control-label">Overall area</label>
+                                                <input type="number" data-oarea="multilevelExpand_'.$iitem['id'].'" name="sub_overall_budget_area['.$iitem['id'].'][sub_overall_budget_area]" class="form-control sub_overall_budget_area_id" style="width: 300px;" value="'.$iitem['sub_overall_budget_area'].'">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                        </div>
                                         <div class="col-md-3 pull-right">
                                             '.render_input('sub_file_csv', 'choose_excel_file', '', 'file').'
                                             <div class="form-group">
