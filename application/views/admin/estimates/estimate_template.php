@@ -356,7 +356,7 @@
         <div class="horizontal-tabs">
             <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
 
-                <li role="presentation" class="active">
+                <li role="presentation" class="">
                     <a href="#final_estimate" aria-controls="final_estimate" role="tab" id="tab_final_estimate" data-toggle="tab">
                         <?php echo _l('project_brief'); ?>
                     </a>
@@ -409,7 +409,7 @@
         </div>
 
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="final_estimate">
+            <div role="tabpanel" class="tab-pane" id="final_estimate">
                 <?php
                 $project_brief = (isset($estimate) ? $estimate->project_brief : '');
                 echo render_textarea('project_brief', '', $project_brief, [], [], '', 'tinymce'); 
@@ -501,7 +501,7 @@
                                 <input type="radio" value="2" id="2" name="show_as_unit"
                                     data-text="<?php echo _l('estimate_table_hours_heading'); ?>"
                                     <?php echo isset($estimate) && $estimate->show_as_unit == 2 ? 'checked' : ''; ?>>
-                                <label for="2">m2</label>
+                                <label for="2">sqm</label>
                             </div>
                         </div>
                     </div>
@@ -541,12 +541,21 @@
                                                 <td>
                                                     <?php
                                                     $select = '';
-                                                    $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="master_area" data-none-selected-text="' . _l('master_area') . '">';
-                                                    $select .= '<option value=""></option>';
-                                                    foreach ($master_area as $area) {
-                                                        $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                                    if($avalue['id'] == 3) {
+                                                        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="master_area" data-none-selected-text="' . _l('functionality_area') . '">';
+                                                        $select .= '<option value=""></option>';
+                                                        foreach ($functionality_area as $area) {
+                                                            $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                                        }
+                                                        $select .= '</select>';
+                                                    } else {
+                                                        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="master_area" data-none-selected-text="' . _l('master_area') . '">';
+                                                        $select .= '<option value=""></option>';
+                                                        foreach ($master_area as $area) {
+                                                            $select .= '<option value="'.$area['id'].'">'.$area['category_name'].'</option>';
+                                                        }
+                                                        $select .= '</select>';
                                                     }
-                                                    $select .= '</select>';
                                                     echo $select;
                                                     ?>
                                                 </td>
@@ -559,7 +568,7 @@
                                                     if (isset($estimate)) {
                                                         $new_area_summary = true;
                                                     } ?>
-                                                    <button type="button" onclick="add_area_summary_item_to_table('undefined','undefined',<?php echo e($new_area_summary); ?>); return false;"
+                                                    <button type="button" onclick="add_area_summary_item_to_table('undefined','undefined',<?php echo $avalue['id']; ?>); return false;"
                                                         class="btn btn-primary"><i class="fa fa-check"></i>
                                                     </button>
                                                 </td>
@@ -575,14 +584,25 @@
                                                         $table_row .= form_hidden('' . $items_indicator . '[' . $i . '][area_id]', $item['area_id']);
 
                                                         $select = '';
-                                                        $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][master_area]" data-none-selected-text="' . _l('master_area') . '">';
-                                                        $select .= '<option value=""></option>';
-                                                        foreach ($master_area as $area) {
-                                                            $selected = ($area['id'] == $item['master_area']) ? ' selected' : '';
-                                                            $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+                                                        if($avalue['id'] == 3) {
+                                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][master_area]" data-none-selected-text="' . _l('functionality_area') . '">';
+                                                            $select .= '<option value=""></option>';
+                                                            foreach ($functionality_area as $area) {
+                                                                $selected = ($area['id'] == $item['master_area']) ? ' selected' : '';
+                                                                $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+                                                            }
+                                                            $select .= '</select>';
+                                                            $table_row .= '<td>'.$select.'</td>';
+                                                        } else {
+                                                            $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][master_area]" data-none-selected-text="' . _l('master_area') . '">';
+                                                            $select .= '<option value=""></option>';
+                                                            foreach ($master_area as $area) {
+                                                                $selected = ($area['id'] == $item['master_area']) ? ' selected' : '';
+                                                                $select .= '<option value="' . $area['id'] . '"' . $selected . '>' . $area['category_name'] . '</option>';
+                                                            }
+                                                            $select .= '</select>';
+                                                            $table_row .= '<td>'.$select.'</td>';
                                                         }
-                                                        $select .= '</select>';
-                                                        $table_row .= '<td>'.$select.'</td>';
 
                                                         $table_row .= '<td><input type="number" onblur="calculate_area_summary_total();" onchange="calculate_area_summary_total();" name="' . $items_indicator . '[' . $i . '][area]" value="' . $item['area'] . '" class="form-control" id="area"></td>';
                                             
@@ -1198,13 +1218,13 @@
                                 <input type="radio" value="1" id="1" name="show_aw_unit"
                                     data-text="<?php echo _l('estimate_table_quantity_heading'); ?>"
                                     <?php echo isset($estimate) && $estimate->show_aw_unit == 1 ? 'checked' : 'checked'; ?>>
-                                <label for="1">ft2</label>
+                                <label for="1">sqft</label>
                             </div>
                             <div class="radio radio-primary radio-inline">
                                 <input type="radio" value="2" id="2" name="show_aw_unit"
                                     data-text="<?php echo _l('estimate_table_hours_heading'); ?>"
                                     <?php echo isset($estimate) && $estimate->show_aw_unit == 2 ? 'checked' : ''; ?>>
-                                <label for="2">m2</label>
+                                <label for="2">sqm</label>
                             </div>
                         </div>
                     </div>

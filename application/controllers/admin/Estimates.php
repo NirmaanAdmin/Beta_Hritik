@@ -112,11 +112,12 @@ class Estimates extends AdminController
                 if ($success) {
                     set_alert('success', _l('updated_successfully', _l('estimate')));
                 }
-                if ($this->set_estimate_pipeline_autoload($id)) {
-                    redirect(admin_url('estimates/list_estimates/'));
-                } else {
-                    redirect(admin_url('estimates/list_estimates/' . $id));
-                }
+                // if ($this->set_estimate_pipeline_autoload($id)) {
+                //     redirect(admin_url('estimates/list_estimates/'));
+                // } else {
+                //     redirect(admin_url('estimates/list_estimates/' . $id));
+                // }
+                redirect(admin_url('estimates/estimate/' . $id));
             }
         }
         if ($id == '') {
