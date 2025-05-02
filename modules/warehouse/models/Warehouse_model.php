@@ -3922,6 +3922,11 @@ class Warehouse_model extends App_Model
 		$address = get_option('invoice_company_address');
 		$tax_data = $this->get_html_tax_delivery($goods_delivery_id);
 		$get_dept = $this->get_department($goods_delivery->department);
+		$get_all_po_details = get_all_po_details_in_warehouse($goods_delivery->pr_order_id);
+		$budget_head = get_group_name_item($get_all_po_details->group_pur);
+		
+		$this->load->model('staff_model');
+		$staff_name = $this->staff_model->get($goods_delivery->addedfrom);
 
 		$day = date('d', strtotime($goods_delivery->date_add));
 		$month = date('m', strtotime($goods_delivery->date_add));
@@ -3964,8 +3969,11 @@ class Warehouse_model extends App_Model
 		$organization_info = '<div  class="bill_to_color">';
 		$organization_info .= '<b>' . _l('project') . ': ' . get_project_name_by_id($goods_delivery->project) . '</b><br />';
 		$organization_info .= '<b>' . _l('pur_order') . ': ' . get_pur_order_name($goods_delivery->pr_order_id) . '</b><br />';
+		$organization_info .= '<b>' . _l('Issued By') . ':</b> ' . $staff_name->firstname . ' ' . $staff_name->lastname . '<br />';
+	
+		
 		$organization_info .= format_organization_info_name();
-
+		
 		$organization_info .= '</div>';
 
 
@@ -3992,6 +4000,7 @@ class Warehouse_model extends App_Model
 		if (is_numeric($goods_delivery->invoice_id) && $goods_delivery->invoice_id != 0) {
 			$invoice_date .= '<b>' . _l('invoice_no') . ': ' . format_invoice_number($goods_delivery->invoice_id) . '</b>';
 		}
+		$budget_head = '<b>' . _l('budget_head') . ':</b> ' . $budget_head->name . '<br />';
 
 		$html .= '<table class="table">
 		<tbody>
@@ -4006,7 +4015,7 @@ class Warehouse_model extends App_Model
 		<tbody>
 		<tr>
 		<td rowspan="2" width="50%" class="text-left"></td>
-		<td rowspan="2" width="50%" class="text_right">' . $invoice_date . '</td>
+		<td rowspan="2" width="50%" class="text_right">' . $invoice_date.$budget_head . '</td>
 		</tr>
 		</tbody>
 		</table>
