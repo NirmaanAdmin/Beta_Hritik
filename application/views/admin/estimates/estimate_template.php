@@ -455,7 +455,7 @@
                                                 }
                                             }
                                             $final_bua = $total_bua == 0 ? 1 : $total_bua;
-                                            echo app_format_money($svalue['rate'] / $final_bua, $base_currency); 
+                                            echo app_format_money($svalue['amount'] / $final_bua, $base_currency); 
                                             ?>
                                         </td>
                                         <td align="right">
