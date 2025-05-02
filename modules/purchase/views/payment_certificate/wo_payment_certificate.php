@@ -224,10 +224,10 @@
                   <?php echo '</div>';
                     }
                   } ?>
-                </div>
+                </div> 
 
                 <div id="paymentcert_file_data"></div>
-                <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
+                <div class="col-md-10 pull-right" style="z-index: 999;display: flex;justify-content: end;">
 
                   <span style="margin-right: 10px;">
                     <button class="btn btn-primary" id="settings-toggle-payment-certificate">Columns</button>
