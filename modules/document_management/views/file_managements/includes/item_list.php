@@ -106,7 +106,7 @@
 			const tbody = document.querySelector('#sortable-tbody');
 
 			// Restore order if available
-			const savedOrder = JSON.parse(localStorage.getItem('drawingOrder')) || [];
+			const savedOrder = JSON.parse(localStorage.getItem('documentOrder')) || [];
 			if (savedOrder.length) {
 				const rows = Array.from(tbody.querySelectorAll('tr'));
 				const rowMap = new Map();
@@ -129,12 +129,12 @@
 					const newOrder = Array.from(tbody.querySelectorAll('tr'))
 						.map(row => row.dataset.id)
 						.filter(Boolean);
-					localStorage.setItem('drawingOrder', JSON.stringify(newOrder));
+					localStorage.setItem('documentOrder', JSON.stringify(newOrder));
 					// Send AJAX to save order in DB
 					$.ajax({
 						url: admin_url + 'document_management/update_order',
 						type: 'POST',
-						data: {
+						data: { 
 							order: newOrder
 						},
 						success: function(response) {
