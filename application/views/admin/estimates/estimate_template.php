@@ -808,8 +808,11 @@
                                     }
                                 }
                             }
-                            echo render_input($overall_budget_area_name, 'Overall area (sqft)', $overall_budget_area_value, 'number', ['style' => 'width: 300px;']);
                             ?>
+                            <div class="form-group" app-field-wrapper="<?php echo $overall_budget_area_name; ?>">
+                                <label for="<?php echo $overall_budget_area_name; ?>" class="control-label">Overall area (sqft)</label>
+                                <input type="number" id="overall_budget_area_id" name="<?php echo $overall_budget_area_name; ?>" class="form-control" style="width: 300px;" value="<?php echo $overall_budget_area_value; ?>">
+                            </div>
                         </div>
                         <div class="col-md-4">
                         </div>
