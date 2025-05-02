@@ -49,8 +49,8 @@
                       <br>
                       <div class="row">
                         <div class="col-md-3 pull-right">
-                          <p><span class="bold"><?php echo _l('debit'); ?>: </span>.....................</p>
-                          <p><span class="bold"><?php echo _l('credit'); ?>: </span>.....................</p>
+                          <!-- <p><span class="bold"><?php echo _l('debit'); ?>: </span>.....................</p>
+                          <p><span class="bold"><?php echo _l('credit'); ?>: </span>.....................</p> -->
                         </div>
                         <div class="col-md-4 pull-right">
                           <p><span class="span-font-style"><?php echo _l('days') . ' ' . $day . ' ' . _l('month') . ' ' . $month . ' ' . _l('year') . ' ' . $year; ?></p>
@@ -73,7 +73,7 @@
                           }
                         }
                         ?>
-                        <tr>
+                        <!-- <tr>
                           <td class="bold td-width"><?php echo _l('Buyer'); ?></td>
                           <td><?php echo html_entity_decode($goods_delivery->to_); ?></td>
                         </tr>
@@ -88,7 +88,7 @@
                         <tr>
                           <td class="bold"><?php echo _l('note_'); ?></td>
                           <td><?php echo html_entity_decode($goods_delivery->description); ?></td>
-                        </tr>
+                        </tr> -->
 
                         <?php
                         if (($goods_delivery->invoice_id != '') && ($goods_delivery->invoice_id != 0)) { ?>
@@ -164,18 +164,10 @@
                             <th align="right" colspan="1"><?php echo _l('discount(money)') ?></th> -->
                             <th align="right" colspan="1"><?php echo _l('lot_number') ?></th>
                             <!-- <th align="right" colspan="1"><?php echo _l('total_money') ?></th> -->
-                            <th align="right" colspan="1"><?php echo _l('guarantee_period') ?></th>
+                            <!-- <th align="right" colspan="1"><?php echo _l('guarantee_period') ?></th> -->
 
                           </tr>
-                          <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                          </tr>
+                          
                           <?php $subtotal = 0; ?>
                           <?php foreach (json_decode($goods_delivery_detail) as $receipt_key => $receipt_value) {
                             $receipt_key++;
@@ -263,7 +255,7 @@
                  <td class="text-right"><?php echo app_format_money((float)$discount_money, '') ?></td> -->
                               <td class="text-right"><?php echo html_entity_decode($lot_number) ?></td>
                               <!-- <td class="text-right"><?php echo app_format_money((float)$total_after_discount, '') ?></td> -->
-                              <td class="text-right"><?php echo html_entity_decode($guarantee_period) ?></td>
+                              <!-- <td class="text-right"><?php echo html_entity_decode($guarantee_period) ?></td> -->
 
                             </tr>
                           <?php } ?>
