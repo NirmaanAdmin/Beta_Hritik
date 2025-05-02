@@ -3230,7 +3230,7 @@ class Warehouse_model extends App_Model
 			$diff = $receipt_value['po_quantities'] - $receipt_value['quantities'];
 			$html .= '<tr>';
 			$html .= '<td class="td_style_r_ep_c"><b>' . $commodity_name . '</b></td>
-			<td class="td_style_r_ep_c">' . $description . '</td>
+			<td class="td_style_r_ep_c" style="text-align: left;">' . $description . '</td>
 			<td class="td_style_r_ep_c">' . $warehouse_code . '</td>
 			<td class="td_style_r_ep_c">' . $unit_name . '</td>
 			<td class="td_style_r_ep_c">' . $po_quantities . '<br><span style="display: block; font-size: 10px;font-style: italic;">Rem : ' . $diff . '</span></td>
