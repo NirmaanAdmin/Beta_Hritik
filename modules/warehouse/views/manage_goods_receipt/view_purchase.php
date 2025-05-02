@@ -154,7 +154,7 @@
                     <input type="hidden" id="vendor_name" value="<?= htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" id="pur_order_name" value="<?= htmlspecialchars($pur_order_name, ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" id="project_name" value="<?= htmlspecialchars($project_name->name, ENT_QUOTES, 'UTF-8'); ?>">
-
+                    <input type="hidden" id="purchase_id" value="<?= htmlspecialchars(json_encode($goods_receipt->id), ENT_QUOTES, 'UTF-8'); ?>">                                                                                                                                                         
                     <td>
                       <div class="btn-group">
                         <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" onclick="print_qrcodes()" aria-haspopup="true" aria-expanded="false"><i class="fa fa-qrcode"></i></a>
@@ -175,7 +175,7 @@
             ?>
             <input type="hidden" id="commodity_code_ids" value="<?= htmlspecialchars($commodity_code_ids, ENT_QUOTES, 'UTF-8'); ?>">
             <input type="hidden" id="commodity_descriptions" value="<?= htmlspecialchars(json_encode($commodity_descriptions), ENT_QUOTES, 'UTF-8'); ?>">
-
+                                                                                                                                                                           
             <div class="row">
               <div class="col-md-12">
                 <div class="table-responsive">

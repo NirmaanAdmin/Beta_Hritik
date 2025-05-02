@@ -703,6 +703,42 @@ function get_pur_order_project_id($id)
     return $project;
 }
 
+function get_pur_order_project_name($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $project = $CI->db->get(db_prefix() . 'projects')->row();
+    if ($project) {
+        return $project->name;
+    } else {
+        return '';
+    }
+}
+
+function get_all_po_details_in_warehouse($id)
+{
+    
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $pur_orders = $CI->db->get(db_prefix() . 'pur_orders')->row();
+
+    return $pur_orders;
+}
+
+function get_department_by_id($id)
+{
+    $department = '';
+    $CI = &get_instance();
+    $CI->db->where('departmentid', $id);
+    $departments = $CI->db->get(db_prefix() . 'departments')->row();
+
+    if ($departments) {
+        $department .= $departments->name;
+    }
+
+    return $department;
+}
+
 function get_pur_order_goods_status($id)
 {
     $status = '';

@@ -2329,7 +2329,7 @@ class Warehouse_model extends App_Model
 	 */
 	public function get_activity_log($rel_id, $rel_type)
 	{
-		
+
 		$this->db->where('rel_id', $rel_id);
 		$this->db->where('rel_type', $rel_type);
 		return $this->db->get(db_prefix() . 'wh_activity_log')->result_array();
@@ -2422,7 +2422,7 @@ class Warehouse_model extends App_Model
 						'rel_id'    => $module->id,
 						'category'  => $pur_order_data->group_pur,
 						'price'     => $pur_order_data->total,
-						'project_id'=> $project,
+						'project_id' => $project,
 					];
 					$task_id =  $this->tasks_model->add($taskData);
 					$assignss = [
@@ -3030,11 +3030,21 @@ class Warehouse_model extends App_Model
 		$company_name = get_option('invoice_company_name');
 		$address = get_option('invoice_company_address');
 
+		$get_project_id = get_pur_order_project_id($goods_receipt->pr_order_id);
+		$this->load->model('projects_model');
+		$this->load->model('staff_model');
+		$project_name = get_pur_order_project_name($get_project_id);
+		$get_all_po_details = get_all_po_details_in_warehouse($goods_receipt->pr_order_id);
+		$department_name = get_department_by_id($goods_receipt->department);
+
 		$tax_data = $this->get_html_tax_receip($goods_receipt_id);
 
 		$day = date('d', strtotime($goods_receipt->date_add));
 		$month = date('m', strtotime($goods_receipt->date_add));
 		$year = date('Y', strtotime($goods_receipt->date_add));
+		$budget_head = get_group_name_item($get_all_po_details->group_pur);
+		$staff_name = $this->staff_model->get($get_all_po_details->buyer);
+
 		$warehouse_lotnumber_bottom_infor_option = get_warehouse_option('goods_delivery_pdf_display_warehouse_lotnumber_bottom_infor');
 		$serial_number_html = '';
 		$serial_number_index = 1;
@@ -3057,7 +3067,13 @@ class Warehouse_model extends App_Model
 
 		//organization_info
 		$organization_info = '<div  class="bill_to_color">';
-		$organization_info .= format_organization_info();
+		$organization_info .= format_organization_info().'<br><br>';
+		$organization_info .= '<b>Project : </b>' . $project_name . '<br>';
+		$organization_info .= '<b>Department : </b>' . $department_name . '<br>';
+		
+		$organization_info .= '<b>PO Name : </b>' . $get_all_po_details->pur_order_number .'-'. $get_all_po_details->pur_order_name  . '<br>';
+		
+		
 		$organization_info .= '</div>';
 
 		//get vendor infor
@@ -3118,7 +3134,9 @@ class Warehouse_model extends App_Model
 
 		//invoice_data_date
 		$invoice_date = '<br /><b>' . _l('invoice_data_date') . ' ' . _d($goods_receipt->date_add) . '</b><br />';
-
+		$kind = '<b>Category : </b>' . $get_all_po_details->kind  . '<br>';
+		$budget_head = '<b>Budget Head : </b>' . $budget_head->name  . '<br>';
+		$requseter = '<b>Requester : </b>' . $staff_name->firstname .' '. $staff_name->lastname  . '<br>';
 		$html .= '<table class="table">
 		<tbody>
 		<tr>
@@ -3135,7 +3153,7 @@ class Warehouse_model extends App_Model
 		<tbody>
 		<tr>
 		<td rowspan="2" width="50%" class="text-left"></td>
-		<td rowspan="2" width="50%" class="text_right">' . $invoice_date . '</td>
+		<td rowspan="2" width="50%" class="text_right">' . $invoice_date .$kind .$budget_head.$requseter. '</td>
 		</tr>
 		</tbody>
 		</table>
@@ -3947,8 +3965,8 @@ class Warehouse_model extends App_Model
 		$organization_info .= '<b>' . _l('project') . ': ' . get_project_name_by_id($goods_delivery->project) . '</b><br />';
 		$organization_info .= '<b>' . _l('pur_order') . ': ' . get_pur_order_name($goods_delivery->pr_order_id) . '</b><br />';
 		$organization_info .= format_organization_info_name();
-		
-		$organization_info .= '</div>';	
+
+		$organization_info .= '</div>';
 
 
 		$bill_to = '';
@@ -7259,7 +7277,7 @@ class Warehouse_model extends App_Model
 		hooks()->do_action('before_goods_receipt_deleted', $id);
 
 		$affected_rows = 0;
-		
+
 		$arr_goods_receipt_detail = $this->get_goods_receipt_detail($id);
 		$arr_goods_receipt = $this->get_goods_receipt($id);
 		// echo '<pre>';
@@ -10341,7 +10359,7 @@ class Warehouse_model extends App_Model
 	}
 	public function revert_po_detail_quantity($po_id, $goods_receipt_detail)
 	{
-		
+
 		$flag_update_status = true;
 
 		$this->db->where('pur_order', $po_id);
@@ -10352,7 +10370,7 @@ class Warehouse_model extends App_Model
 		if ($pur_order_detail) {
 			// Decrease the received quantity
 			$wh_quantity_received = (float)($pur_order_detail->wh_quantity_received) - (float)$goods_receipt_detail['quantities'];
-			
+
 			// Prevent negative quantity
 			if ($wh_quantity_received < 0) {
 				$wh_quantity_received = 0;
@@ -11291,18 +11309,18 @@ class Warehouse_model extends App_Model
 	{
 		$result = array();
 		$pur_orders = $this->db->query('select * from tblpur_orders where approve_status = 2 order by id desc')->result_array();
-		if(!empty($pur_orders)) {
-            foreach ($pur_orders as $key => $value) {
-                $po_id = $value['id'];
-                $get_pur_order = $this->goods_delivery_get_pur_order($po_id);
-                $pur_order_detail = $get_pur_order['goods_delivery_exist'] ? $get_pur_order['goods_delivery_exist'] : 0;
-                if($pur_order_detail > 0) {
-                    $result[] = $value;
-                }
-            }
-        }
-        $result = !empty($result) ? array_values($result) : array();
-        return $result;
+		if (!empty($pur_orders)) {
+			foreach ($pur_orders as $key => $value) {
+				$po_id = $value['id'];
+				$get_pur_order = $this->goods_delivery_get_pur_order($po_id);
+				$pur_order_detail = $get_pur_order['goods_delivery_exist'] ? $get_pur_order['goods_delivery_exist'] : 0;
+				if ($pur_order_detail > 0) {
+					$result[] = $value;
+				}
+			}
+		}
+		$result = !empty($result) ? array_values($result) : array();
+		return $result;
 	}
 
 
@@ -17890,7 +17908,7 @@ class Warehouse_model extends App_Model
 
 		//create stock import
 		$result = $this->add_goods_receipt($data);
-		if ($result) { 
+		if ($result) {
 			//update order return
 			$this->db->where('id', $order_return_id);
 			$this->db->update(db_prefix() . 'wh_order_returns', ['receipt_delivery_id' => $result]);
@@ -19933,25 +19951,24 @@ class Warehouse_model extends App_Model
 
 	public function get_vendor_issued_data($data)
 	{
-		
+
 		$response = array();
 		$options = isset($data['options']) ? $data['options'] : array();
 		// / Generate quantities HTML for each vendor in options
 		$quantities_html = $lot_number_html = $issued_date_html = '';
 		foreach ($options as $vendor) {
-			
-			if($data['vendor'] == $vendor && $data['apply_to_all'] == 0){
+
+			if ($data['vendor'] == $vendor && $data['apply_to_all'] == 0) {
 				$data['vendor'] = $vendor;
 				$quantities_html .= $this->get_quantities_html($data);
 				$lot_number_html .= $this->get_lot_number_html($data);
 				$issued_date_html .= $this->get_issued_date_html($data);
-			}elseif($data['apply_to_all'] == 1){
+			} elseif ($data['apply_to_all'] == 1) {
 				$data['vendor'] = $vendor;
 				$quantities_html .= $this->get_quantities_html($data);
 				$lot_number_html .= $this->get_lot_number_html($data);
 				$issued_date_html .= $this->get_issued_date_html($data);
 			}
-			
 		}
 		$response['quantities_html'] = $quantities_html;
 		$response['lot_number_html'] = $lot_number_html;
@@ -20160,9 +20177,9 @@ class Warehouse_model extends App_Model
 									$temporaty_quantity = 0;
 								}
 								$duplicates = array_filter($arr_results, function ($item) use ($commodity_code) {
-								    return $item['commodity_code'] == $commodity_code;
+									return $item['commodity_code'] == $commodity_code;
 								});
-								if(count($duplicates) > 1) {
+								if (count($duplicates) > 1) {
 									$non_break_description = str_replace("<br />", "", $description);
 									$this->db->select(db_prefix() . 'goods_receipt_detail.quantities');
 									$this->db->like(db_prefix() . 'goods_receipt_detail.description', $non_break_description);
@@ -20170,20 +20187,20 @@ class Warehouse_model extends App_Model
 									$this->db->where('pr_order_id', $pur_order);
 									$this->db->join(db_prefix() . 'goods_receipt', db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id', 'left');
 									$goods_receipt_description = $this->db->get(db_prefix() . 'goods_receipt_detail')->row();
-									if(!empty($goods_receipt_description)) {
+									if (!empty($goods_receipt_description)) {
 										$available_quantity = $goods_receipt_description->quantities;
 									}
-									
+
 									$this->db->select(db_prefix() . 'goods_delivery_detail.quantities');
 									$this->db->like(db_prefix() . 'goods_delivery_detail.description', $non_break_description);
 									$this->db->where(db_prefix() . 'goods_delivery.approval', 1);
 									$this->db->where('pr_order_id', $pur_order);
 									$this->db->join(db_prefix() . 'goods_delivery', db_prefix() . 'goods_delivery.id = ' . db_prefix() . 'goods_delivery_detail.goods_delivery_id', 'left');
 									$goods_delivery_description = $this->db->get(db_prefix() . 'goods_delivery_detail')->result_array();
-									if(!empty($goods_delivery_description)) {
+									if (!empty($goods_delivery_description)) {
 										$total_quantity = 0;
 										foreach ($goods_delivery_description as $qitem) {
-										    $total_quantity += $qitem['quantities'];
+											$total_quantity += $qitem['quantities'];
 										}
 										$available_quantity = $available_quantity - $total_quantity;
 									}
@@ -20618,20 +20635,26 @@ class Warehouse_model extends App_Model
 		return app_pdf('vendor_allocation_report', module_dir_path(WAREHOUSE_MODULE_NAME, 'libraries/pdf/Vendor_allocation_report_pdf.php'), $vendor_allocation);
 	}
 
-	public function fe_get_item_image_qrcode_pdf($item_id)
+	public function fe_get_item_image_qrcode_pdf($item_id, $vendor, $pur_order, $project_name, $log_desc, $quantities, $unit_id)
 	{
 		$url = site_url('modules/warehouse/assets/images/no_image.jpg');
 		$this->db->where('id', $item_id);
 		$data_items = $this->db->get(db_prefix() . 'items')->row();
 		if ($data_items) {
 			if ($data_items->qr_code != '') {
-				$url  = FCPATH . 'modules/warehouse/uploads/qrcodes/' . $data_items->qr_code . '.png';
+				$url  =  site_url('modules/warehouse/uploads/qrcodes/' . $data_items->qr_code . '.png');
 			} else {
 				$tempDir = WAREHOUSE_PATH . 'qrcodes/';
-				$commodity_code = $data_items->commodity_code .'_'. $data_items->description;
+				$commodity_code = $data_items->commodity_code . '_' . $data_items->description;
 				$qr_code = md5($commodity_code);
+				$unit_name = (get_unit_type($unit_id) != null && isset(get_unit_type($unit_id)->unit_name)) ? get_unit_type($unit_id)->unit_name : '';
 				$html = '';
 				$html .= "\n" . _l('commodity_code') . ': ' . $commodity_code . "\n";
+				$html .= "\n" . _l('supplier_name') . ': ' . $vendor . "\n";
+				$html .= "\n" . _l('Purchase Order') . ': ' . $pur_order . "\n";
+				$html .= "\n" . _l('project') . ': ' . $project_name . "\n";
+				$html .= "\n" . _l('Description') . ': ' . $log_desc . "\n";
+				$html .= "\n" . _l('Quantity') . ': ' . $quantities . ' ' . $unit_name . "\n";
 				$codeContents = $html;
 				$fileName = $qr_code;
 				$pngAbsoluteFilePath = $tempDir . $fileName;
@@ -20640,7 +20663,7 @@ class Warehouse_model extends App_Model
 					QRcode::png($codeContents, $pngAbsoluteFilePath . '.png', "L", 4, 4);
 					$this->db->where('id', $item_id);
 					$this->db->update(db_prefix() . 'items', ['qr_code' => $qr_code]);
-					$url  = FCPATH . 'modules/warehouse/uploads/qrcodes/' . $qr_code . '.png';
+					$url  = site_url('modules/warehouse/uploads/qrcodes/' . $qr_code . '.png');
 				}
 			}
 		}

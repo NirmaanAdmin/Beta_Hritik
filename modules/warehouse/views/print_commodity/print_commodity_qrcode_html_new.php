@@ -4,14 +4,23 @@
 		$commodity_descriptions = json_decode($commodity_descriptions, true);
 		$row_index = 0;
 		foreach ($list_id as $key => $id) {
-			$row_index++; ?>
+			$row_index++; 
+			$log_desc = isset($commodity_descriptions[$key])
+			? $commodity_descriptions[$key]
+			: 'N/A';
+			
+			 $purchase_id = str_replace('"', '', $purchase_id);
+			
+			?>
 			<tr>
 				<td width="50%">
 					<?php
 					$item_data = $this->warehouse_model->get_item_longdescriptions($id);
+					$get_item_quantity = $this->warehouse_model->get_goods_receipt_detail($purchase_id);
+					
 					if ($item_data) {
 					?>
-						<img src="<?php echo $this->warehouse_model->fe_get_item_image_qrcode_pdf($item_data->id); ?>" width="400">
+						<img src="<?php echo $this->warehouse_model->fe_get_item_image_qrcode_pdf($item_data->id,$vendor,$pur_order,$project_name,$log_desc,$get_item_quantity[$key]['quantities'], $get_item_quantity[$key]['unit_id']); ?>" width="400">
 					<?php } ?>
 				</td>
 				<td width="50%">
@@ -26,6 +35,7 @@
 							: 'N/A';
 						?>
 					</p>
+
 				</td>
 			</tr>
 			<tr>

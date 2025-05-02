@@ -209,10 +209,11 @@
     var pur_order = $('#pur_order_name').val() || ""; // Ensure a default empty string
     var project_name =  $('#project_name').val() || "";
     var commodity_descriptions = $('#commodity_descriptions').val() || "";
+    var purchase_id = $('#purchase_id').val() || ""; // Ensure a default empty string
     if (!print_id) {
       alert("Please select a commodity code.");
       return;
-    }
+    } 
 
     // Encode parameters
     var encoded_print_id = encodeURIComponent(print_id);
@@ -220,8 +221,9 @@
     var encoded_pur_order = encodeURIComponent(pur_order);
     var encoded_project_name = encodeURIComponent(project_name);
     var encoded_commodity_descriptions = encodeURIComponent(commodity_descriptions);
+    var encoded_purchase_id = encodeURIComponent(purchase_id);
     // Construct URL safely using template literals
-    var url = `${admin_url}warehouse/print_qrcodes_pdf/${encoded_print_id}?vendor=${encoded_vendor}&pur_order=${encoded_pur_order}&project_name=${encoded_project_name}&commodity_descriptions=${encoded_commodity_descriptions}&output_type=I`;
+    var url = `${admin_url}warehouse/print_qrcodes_pdf/${encoded_print_id}?vendor=${encoded_vendor}&pur_order=${encoded_pur_order}&project_name=${encoded_project_name}&commodity_descriptions=${encoded_commodity_descriptions}&purchase_id=${encoded_purchase_id}&output_type=I`;
 
     // Redirect to the generated URL
     window.location.href = url;
