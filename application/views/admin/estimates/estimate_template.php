@@ -758,26 +758,6 @@
                                         }
                                     } ?>
                                 </tbody>
-                                <tfoot>
-                                    <tr class="detailed_costing">
-                                        <td colspan="15">
-                                            <?php
-                                            $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
-                                            $detailed_costing_value = '';
-                                            if(isset($estimate_budget_info)) {
-                                                if(!empty($estimate_budget_info)) {
-                                                    foreach ($estimate_budget_info as $ekey => $evalue) {
-                                                        if($evalue['budget_id'] == $annexure['id']) {
-                                                            $detailed_costing_value = $evalue['detailed_costing'];
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
-                                            ?>
-                                        </td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                         <div class="col-md-8 col-md-offset-4">
@@ -799,6 +779,20 @@
                             </table>
                         </div>
                         <div id="removed-multilevel-items"></div>
+                        <?php
+                        $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
+                        $detailed_costing_value = '';
+                        if(isset($estimate_budget_info)) {
+                            if(!empty($estimate_budget_info)) {
+                                foreach ($estimate_budget_info as $ekey => $evalue) {
+                                    if($evalue['budget_id'] == $annexure['id']) {
+                                        $detailed_costing_value = $evalue['detailed_costing'];
+                                    }
+                                }
+                            }
+                        }
+                        echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
+                        ?>
                     <?php } else { ?>
                         <div class="col-md-4">
                             <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
@@ -985,26 +979,6 @@
                                         }
                                     } ?>
                                 </tbody>
-                                <tfoot>
-                                    <tr class="detailed_costing">
-                                        <td colspan="15">
-                                            <?php
-                                            $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
-                                            $detailed_costing_value = '';
-                                            if(isset($estimate_budget_info)) {
-                                                if(!empty($estimate_budget_info)) {
-                                                    foreach ($estimate_budget_info as $ekey => $evalue) {
-                                                        if($evalue['budget_id'] == $annexure['id']) {
-                                                            $detailed_costing_value = $evalue['detailed_costing'];
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
-                                            ?>
-                                        </td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                         <div class="col-md-8 col-md-offset-4">
@@ -1026,6 +1000,20 @@
                             </table>
                         </div>
                         <div id="removed-items"></div>
+                        <?php
+                        $detailed_costing_name = 'detailed_costing['.$annexure['id'].']';
+                        $detailed_costing_value = '';
+                        if(isset($estimate_budget_info)) {
+                            if(!empty($estimate_budget_info)) {
+                                foreach ($estimate_budget_info as $ekey => $evalue) {
+                                    if($evalue['budget_id'] == $annexure['id']) {
+                                        $detailed_costing_value = $evalue['detailed_costing'];
+                                    }
+                                }
+                            }
+                        }
+                        echo render_textarea($detailed_costing_name, '', $detailed_costing_value, [], [], '', 'tinymce'); 
+                        ?>
                     <?php } ?>
                 </div>
             <?php } ?>
