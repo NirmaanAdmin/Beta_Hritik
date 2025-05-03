@@ -2017,6 +2017,12 @@ class Estimates_model extends App_Model
         return $this->db->get(db_prefix() . 'area_summary_tabs')->result_array();
     }
 
+    public function get_area_statement_tabs($id)
+    {
+        $this->db->where('estimate_id', $id);
+        return $this->db->get(db_prefix() . 'area_statement_tabs')->result_array();
+    }
+
     public function get_cost_planning_details($id)
     {
         $final_result = array();
@@ -2030,6 +2036,8 @@ class Estimates_model extends App_Model
         $all_area_summary = $this->get_area_summary($id);
         $budget_info = $this->get_estimate_budget_info($id);
         $area_summary_tabs = $this->get_area_summary_tabs();
+        $area_statement_tabs = $this->get_area_statement_tabs($id);
+        $area_working = $this->get_area_working($id);
 
         if(!empty($all_area_summary)) {
             $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
@@ -2065,6 +2073,8 @@ class Estimates_model extends App_Model
         $final_result['annexure_estimate'] = $annexure_estimate;
         $final_result['area_summary_tabs'] = $area_summary_tabs;
         $final_result['all_area_summary'] = $all_area_summary;
+        $final_result['area_statement_tabs'] = $area_statement_tabs;
+        $final_result['area_working'] = $area_working;
         
         return $final_result;
     }

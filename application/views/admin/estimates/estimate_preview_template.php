@@ -554,7 +554,86 @@
                                                                     <td><span class="bold tw-text-neutral-700"><?php echo _l('total_area'); ?> :</span>
                                                                     </td>
                                                                     <td>
-                                                                        <span class="total_area"></span> <?php echo number_format($total_area_summary, 2); ?><span class="show_as_unit_name"> <?php echo $show_as_unit_name; ?></span>
+                                                                        <span class="total_area"></span> <?php echo $total_area_summary; ?><span class="show_as_unit_name"> <?php echo $show_as_unit_name; ?></span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            <?php }
+                                        } ?>
+                                    </div>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="area_working">
+                                    <?php
+                                    $show_aw_unit_name = $cost_planning_details['estimate_detail']['show_aw_unit'] == 1 ? 'sqft' : 'sqm';
+                                    ?>
+                                    <div class="horizontal-tabs">
+                                        <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                                            <?php
+                                            if(!empty($cost_planning_details['area_statement_tabs'])) { 
+                                                foreach ($cost_planning_details['area_statement_tabs'] as $akey => $avalue) { ?>
+                                                    <li role="presentation" class="<?php echo ($akey == 0) ? 'active' : ''; ?>">
+                                                        <a href="#area_working_<?php echo $avalue['id']; ?>" aria-controls="area_working_<?php echo $avalue['id']; ?>" role="tab" id="tab_area_working_<?php echo $avalue['id']; ?>" class="tab_sub_area_working" data-toggle="tab" data-tab-id="<?php echo $avalue['id']; ?>">
+                                                            <?php echo $avalue['name']; ?>
+                                                        </a>
+                                                    </li>
+                                                <?php }
+                                            } ?>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content">
+                                        <?php
+                                        if(!empty($cost_planning_details['area_statement_tabs'])) {
+                                            foreach ($cost_planning_details['area_statement_tabs'] as $akey => $avalue) { ?>
+                                                <div role="tabpanel" class="tab-pane area_working_tab <?php echo ($akey == 0) ? 'active' : ''; ?>" id="area_working_<?php echo $avalue['id']; ?>" data-id="<?php echo $avalue['id']; ?>">
+                                                    <div class="table-responsive s_table">
+                                                        <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="40%" align="left">Room/Spaces</th>
+                                                                    <th width="20%" align="left">Length (<?php echo $show_aw_unit_name; ?>)</th>
+                                                                    <th width="20%" align="left">Width (<?php echo $show_aw_unit_name; ?>)</th>
+                                                                    <th width="20%" align="left">Carpet Area (<?php echo $show_aw_unit_name; ?>)</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="area_working">
+                                                                <?php
+                                                                if(!empty($cost_planning_details['area_working'])) {
+                                                                $total_carpet_area = 0;
+                                                                foreach ($cost_planning_details['area_working'] as $item) {
+                                                                if($item['area_id'] == $avalue['id']) {
+                                                                $carpet_area = $item['area_length'] * $item['area_width'];
+                                                                $total_carpet_area = $total_carpet_area + $carpet_area;
+                                                                ?>
+                                                                <tr>
+                                                                    <td>
+                                                                        <?php echo clear_textarea_breaks($item['area_description']);?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php echo $item['area_length']; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php echo $item['area_width']; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php echo $carpet_area; ?>
+                                                                    </td>
+                                                                </tr>
+                                                                <?php } } } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="col-md-8 col-md-offset-4">
+                                                        <table class="table text-right">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('total_carpet_area'); ?> :</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="total_carpet_area"><?php echo $total_carpet_area; ?></span> <span class="show_aw_unit_name"><?php echo $show_aw_unit_name; ?></span>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
