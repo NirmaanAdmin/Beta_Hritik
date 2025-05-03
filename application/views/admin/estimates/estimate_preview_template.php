@@ -653,6 +653,324 @@
                                     </div>
                                 </div>
 
+            <?php
+            $annexures = get_all_annexures(); 
+            foreach ($annexures as $key => $annexure) { ?>
+                <div role="tabpanel" class="tab-pane detailed-costing-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
+                    <?php if($annexure['id'] == 7) { ?>
+                        <div class="col-md-4">
+                            <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                        </div>
+                        <div class="col-md-8">
+                        </div>
+                        <div class="table-responsive s_table">
+                            <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                        <th width="15%" align="left"><?php echo _l('master_area'); ?></th>
+                                        <th width="18%" align="left"><?php echo _l('functionality_area'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('area'); ?></th>
+                                        <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                        <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                        <th width="18%" align="right"><?php echo _l('remarks'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $estimate_item_sub = 0;
+                                    if(!empty($cost_planning_details['multilevel_items'])) {
+                                        foreach ($cost_planning_details['multilevel_items'] as $iitem) { 
+                                            $int_amount = $iitem['int_area'] * $iitem['int_rate'];
+                                            $estimate_item_sub = $estimate_item_sub + $int_amount;
+                                            ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo get_master_area($iitem['int_master_area']); ?>
+                                                    <br><br>
+                                                    <button type="button" class="btn btn-info pull-left mright10 display-block" data-toggle="modal" data-target="#multilevelExpand_<?php echo $iitem['id']; ?>">Expand</button>
+                                                </td>
+                                                <td>
+                                                    <?php echo get_functionality_area($iitem['int_fun_area']); ?>
+                                                </td>
+                                                <td align="right">
+                                                    <?php echo $iitem['int_area']; ?>
+                                                </td>
+                                                <td align="right">
+                                                    <?php echo $iitem['int_rate']; ?>
+                                                </td>
+                                                <td align="right">
+                                                    <?php echo number_format($int_amount, 2); ?>
+                                                </td>
+                                                <td align="right">
+                                                    <?php echo clear_textarea_breaks($iitem['int_remarks']); ?>
+                                                </td>
+                                            </tr>
+                                        <?php }
+                                    } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <tr id="subtotal">
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php 
+                                            echo app_format_money($estimate_item_sub, $base_currency);
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php 
+                                            echo app_format_money($estimate_item_sub, $base_currency);
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <?php
+                            $detailed_costing_value = '';
+                            if(!empty($cost_planning_details['budget_info'])) {
+                                foreach ($cost_planning_details['budget_info'] as $ekey => $evalue) {
+                                    if($evalue['budget_id'] == $annexure['id']) {
+                                        $detailed_costing_value = $evalue['detailed_costing'];
+                                    }
+                                }
+                            }
+                            echo $detailed_costing_value; 
+                            ?>
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-4">
+                            <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                            <p>Overall area (sqft):
+                            <?php
+                            $estimate_overall_budget_area = 1;
+                            if(!empty($cost_planning_details['budget_info'])) 
+                            {
+                            foreach ($cost_planning_details['budget_info'] as $cpkey => $cpvalue) 
+                            {
+                                if($cpvalue['budget_id'] == $annexure['id']) {
+                                    echo $cpvalue['overall_budget_area'];
+                                    if(!empty($cpvalue['overall_budget_area'])) {
+                                        $estimate_overall_budget_area = $cpvalue['overall_budget_area'];
+                                    }
+                                }
+                            }
+                            }
+                            ?>
+                            </p>
+                        </div>
+                        <div class="col-md-8">
+                        </div>
+                        <div class="table-responsive s_table">
+                            <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                        <th width="13%" align="left"><?php echo _l('estimate_table_item_heading'); ?></th>
+                                        <th width="18%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
+                                        <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?></th>
+                                        <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
+                                        <th width="16%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
+                                        <th width="17%" align="right"><?php echo _l('remarks'); ?></th>
+                                    </tr>
+                                    <tbody>
+                                        <?php
+                                        $estimate_item_sub = 0;
+                                        if(!empty($cost_planning_details['estimate_items'])) {
+                                            foreach ($cost_planning_details['estimate_items'] as $item) {
+                                                if($item['annexure'] == $annexure['id']) { 
+                                                    $amount = $item['rate'] * $item['qty'];
+                                                    $estimate_item_sub = $estimate_item_sub + $amount;
+                                                ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo get_purchase_items($item['item_code']); ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo clear_textarea_breaks($item['long_description']); ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo $item['budget_area']; ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo number_format($item['qty'], 2); ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo $item['rate']; ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo number_format($amount, 2); ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo clear_textarea_breaks($item['remarks']); ?>
+                                                        </td>
+                                                    </tr>
+                                            <?php } }
+                                        } ?>
+                                    </tbody>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="col-md-8 col-md-offset-4">
+                            <table class="table text-right">
+                                <tbody>
+                                    <tr id="subtotal">
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php 
+                                            $annexure_subtotal = $estimate_item_sub / $estimate_overall_budget_area;
+                                            echo app_format_money($annexure_subtotal, $base_currency);
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        </td>
+                                        <td>
+                                            <?php 
+                                            $annexure_total = $estimate_item_sub / $estimate_overall_budget_area;
+                                            echo app_format_money($annexure_total, $base_currency);
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <?php
+                            $detailed_costing_value = '';
+                            if(!empty($cost_planning_details['budget_info'])) {
+                                foreach ($cost_planning_details['budget_info'] as $ekey => $evalue) {
+                                    if($evalue['budget_id'] == $annexure['id']) {
+                                        $detailed_costing_value = $evalue['detailed_costing'];
+                                    }
+                                }
+                            }
+                            echo $detailed_costing_value; 
+                            ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <?php
+            foreach ($annexures as $key => $annexure) { ?>
+                <div class="multilevel-sub-items-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
+                    <?php if ($annexure['id'] == 7) {
+                        if (!empty($cost_planning_details['multilevel_items'])) {
+                            foreach ($cost_planning_details['multilevel_items'] as $iitem) {
+                                $modals_html = '';
+                                $modals_html .= '
+                                <div class="modal fade" id="multilevelExpand_'.$iitem['id'].'" tabindex="-1" role="dialog">
+                                  <div class="modal-dialog" role="document" style="width: 98%;">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h4 class="modal-title">View Items</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <div class="col-md-3" style="padding-left: 0px">
+                                            <p>Overall area: '.$iitem['sub_overall_budget_area'].'</p>
+                                        </div>
+                                        <div class="col-md-9">
+                                        </div>
+                                      </div>
+                                      <div class="modal-body multilevel-sub-item">
+                                        <div class="row">
+                                          <div class="col-md-12">
+                                            <div class="table-responsive s_table">
+                                              <table class="table estimate-sub-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                                <thead>
+                                                  <tr>
+                                                    <th width="13%" align="left">'._l('estimate_table_item_heading').'</th>
+                                                    <th width="18%" align="left">'._l('estimate_table_item_description').'</th>
+                                                    <th width="10%" class="qty" align="right">'._l('area').'</th>
+                                                    <th width="10%" class="qty" align="right">'._l('estimate_table_quantity_heading').'</th>
+                                                    <th width="16%" align="right">'._l('estimate_table_rate_heading').'</th>
+                                                    <th width="16%" align="right">'._l('estimate_table_amount_heading').'</th>
+                                                    <th width="17%" align="right">'._l('remarks').'</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>';
+                                                $estimate_item_sub = 0;
+                                                if (!empty($cost_planning_details['sub_multilevel_items'])) {
+                                                foreach ($cost_planning_details['sub_multilevel_items'] as $sitem) {
+                                                if($sitem['parent_id'] == $iitem['id']) {
+                                                    $sub_amount = $sitem['sub_rate'] * $sitem['sub_qty'];
+                                                    $estimate_item_sub = $estimate_item_sub + $sub_amount;
+                                                   $modals_html .= '<tr>
+                                                        <td>
+                                                            '.get_purchase_items($sitem['item_name']).'
+                                                        </td>
+                                                        <td>
+                                                            '.clear_textarea_breaks($sitem['sub_long_description']).'
+                                                        </td>
+                                                        <td align="right">
+                                                            '.$sitem['sub_budget_area'].'
+                                                        </td>
+                                                        <td align="right">
+                                                            '.number_format($sitem['sub_qty'], 2).'
+                                                        </td>
+                                                        <td align="right">
+                                                            '.$sitem['sub_rate'].'
+                                                        </td>
+                                                        <td align="right">
+                                                            '.number_format($sub_amount, 2).'
+                                                        </td>
+                                                        <td align="right">
+                                                            '.clear_textarea_breaks($sitem['sub_remarks']).'
+                                                        </td>
+                                                    </tr>';
+                                                } } }
+                                                $sub_overall_budget_area = $iitem['sub_overall_budget_area'];
+                                                if($sub_overall_budget_area == 0 || empty($sub_overall_budget_area)) {
+                                                    $sub_overall_budget_area = 1;
+                                                }
+                                                $modal_total = $estimate_item_sub / $sub_overall_budget_area;
+                                                $modals_html .= '</tbody>
+                                              </table>
+                                            </div>
+                                            <div class="col-md-8 col-md-offset-4">
+                                                <table class="table text-right">
+                                                    <tbody>
+                                                        <tr id="subtotal">
+                                                            <td><span class="bold tw-text-neutral-700">'._l('estimate_subtotal').' :</span>
+                                                            </td>
+                                                            <td>
+                                                                '.app_format_money($modal_total, $base_currency).'
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('estimate_total').' :</span>
+                                                            </td>
+                                                            <td>
+                                                                '.app_format_money($modal_total, $base_currency).'
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>';
+                              echo $modals_html;
+                            }
+                        }
+                    } ?>
+                </div>
+            <?php } ?>
+
                             </div>
                         </div>
                     </div>
