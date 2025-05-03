@@ -27,6 +27,7 @@ class Estimate_pdf extends App_pdf
         $this->estimate        = $estimate;
         $this->estimate_number = format_estimate_number($this->estimate->id);
         $this->basic_estimate   = $this->ci->estimates_model->get_annexure_estimate_details($this->estimate->id);
+        $this->cost_planning_details = $this->ci->estimates_model->get_cost_planning_details($this->estimate->id);
 
         $this->SetTitle($this->estimate_number);
     }
@@ -40,6 +41,7 @@ class Estimate_pdf extends App_pdf
             'estimate_number' => $this->estimate_number,
             'estimate'        => $this->estimate,
             'basic_estimate'   => $this->basic_estimate,
+            'cost_planning_details' => $this->cost_planning_details,
         ]);
 
         return $this->build();
