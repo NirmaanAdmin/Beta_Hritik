@@ -385,3 +385,25 @@ function user_can_view_estimate($id, $staff_id = false)
 
     return false;
 }
+
+function get_master_area($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $master_area = $CI->db->get(db_prefix() . 'master_area')->row();
+    if(!empty($master_area)) {
+        return $master_area->category_name;
+    }
+    return '';
+}
+
+function get_functionality_area($id)
+{
+    $CI = &get_instance();
+    $CI->db->where('id', $id);
+    $functionality_area = $CI->db->get(db_prefix() . 'functionality_area')->row();
+    if(!empty($functionality_area)) {
+        return $functionality_area->category_name;
+    }
+    return '';
+}

@@ -2024,7 +2024,8 @@ class Estimates_model extends App_Model
         $budget_info_lookup = array();
         $total_built_up_area = 1;
 
-        $estimate = $this->get($id);
+        $this->db->where('id', $id);
+        $estimate = $this->db->get(db_prefix() . 'estimates')->result_array();
         $items = get_items_by_type('estimate', $id);
         $all_area_summary = $this->get_area_summary($id);
         $budget_info = $this->get_estimate_budget_info($id);
@@ -2060,10 +2061,10 @@ class Estimates_model extends App_Model
             $annexure_estimate = array_values($annexure_estimate);
         }
 
-        $final_result['project_brief'] = $estimate->project_brief;
-        $final_result['project_timelines'] = $estimate->project_timelines;
-        $final_result['cost_plan_summary'] = $estimate->cost_plan_summary;
+        $final_result['estimate_detail'] = $estimate[0];
         $final_result['annexure_estimate'] = $annexure_estimate;
+        $final_result['area_summary_tabs'] = $area_summary_tabs;
+        $final_result['all_area_summary'] = $all_area_summary;
         
         return $final_result;
     }

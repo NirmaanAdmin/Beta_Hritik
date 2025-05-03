@@ -437,13 +437,13 @@
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane active" id="final_estimate">
                                     <div class="col-md-12">
-                                        <?php echo $cost_planning_details['project_brief']; ?>
+                                        <?php echo $cost_planning_details['estimate_detail']['project_brief']; ?>
                                     </div>
                                 </div>
 
                                 <div role="tabpanel" class="tab-pane" id="project_timelines">
                                     <div class="col-md-12">
-                                        <?php echo $cost_planning_details['project_timelines']; ?>
+                                        <?php echo $cost_planning_details['estimate_detail']['project_timelines']; ?>
                                     </div>
                                 </div>
 
@@ -487,7 +487,82 @@
                                         </table>
                                     </div>
                                     <div class="col-md-12">
-                                        <?php echo $cost_planning_details['cost_plan_summary']; ?>
+                                        <?php echo $cost_planning_details['estimate_detail']['cost_plan_summary']; ?>
+                                    </div>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="area_summary">
+                                    <?php
+                                    $show_as_unit_name = $cost_planning_details['estimate_detail']['show_as_unit'] == 1 ? 'sqft' : 'sqm';
+                                    ?>
+                                    <div class="horizontal-tabs">
+                                        <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                                            <?php
+                                            if(!empty($cost_planning_details['area_summary_tabs'])) { 
+                                                foreach ($cost_planning_details['area_summary_tabs'] as $akey => $avalue) { ?>
+                                                    <li role="presentation" class="<?php echo ($akey == 0) ? 'active' : ''; ?>">
+                                                        <a href="#area_summary_<?php echo $avalue['id']; ?>" aria-controls="area_summary_<?php echo $avalue['id']; ?>" role="tab" id="tab_area_summary_<?php echo $avalue['id']; ?>" class="tab_sub_area_summary" data-toggle="tab" data-tab-id="<?php echo $avalue['id']; ?>">
+                                                            <?php echo $avalue['name']; ?>
+                                                        </a>
+                                                    </li>
+                                                <?php }
+                                            } ?>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content">
+                                        <?php
+                                        if(!empty($cost_planning_details['area_summary_tabs'])) { 
+                                            foreach ($cost_planning_details['area_summary_tabs'] as $akey => $avalue) { ?>
+                                                <div role="tabpanel" class="tab-pane area_summary_tab <?php echo ($akey == 0) ? 'active' : ''; ?>" id="area_summary_<?php echo $avalue['id']; ?>" data-id="<?php echo $avalue['id']; ?>">
+                                                    <div class="table-responsive s_table">
+                                                        <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="50%" align="left"><?php echo _l('floor'); ?>/<?php echo _l('area'); ?></th>
+                                                                    <th width="50%" align="left"><?php echo _l('area'); ?> (<span class="show_as_unit_name"><?php echo $show_as_unit_name; ?></span>)</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="area_summary">
+                                                                <?php
+                                                                if(!empty($cost_planning_details['all_area_summary'])) {
+                                                                    $total_area_summary = 0;
+                                                                    foreach ($cost_planning_details['all_area_summary'] as $item) {
+                                                                    if($item['area_id'] == $avalue['id']) {
+                                                                    $total_area_summary = $total_area_summary + $item['area'];
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td>
+                                                                        <?php 
+                                                                        if($avalue['id'] == 3) {
+                                                                            echo get_functionality_area($item['master_area']); 
+                                                                        } else {
+                                                                            echo get_master_area($item['master_area']); 
+                                                                        }
+                                                                        ?></td>
+                                                                        <td><?php echo $item['area']; ?></td>
+                                                                    </tr>
+
+                                                                    <?php } }
+                                                                } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="col-md-8 col-md-offset-4">
+                                                        <table class="table text-right">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td><span class="bold tw-text-neutral-700"><?php echo _l('total_area'); ?> :</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="total_area"></span> <?php echo number_format($total_area_summary, 2); ?><span class="show_as_unit_name"> <?php echo $show_as_unit_name; ?></span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            <?php }
+                                        } ?>
                                     </div>
                                 </div>
 
