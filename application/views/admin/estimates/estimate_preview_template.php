@@ -477,7 +477,15 @@
                                                             </td>
                                                             <td align="right">
                                                                 <?php
-                                                                echo $svalue['budget_summary_remarks']; 
+                                                                if(!empty($cost_planning_details['budget_info'])) 
+                                                                {
+                                                                foreach ($cost_planning_details['budget_info'] as $cpkey => $cpvalue) 
+                                                                {
+                                                                    if($cpvalue['budget_id'] == $svalue['annexure']) {
+                                                                        echo $cpvalue['budget_summary_remarks'];
+                                                                    }
+                                                                }
+                                                                }
                                                                 ?>
                                                             </td>
                                                         </tr>

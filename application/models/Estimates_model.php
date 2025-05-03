@@ -2027,7 +2027,6 @@ class Estimates_model extends App_Model
     {
         $final_result = array();
         $annexure_estimate = array();
-        $budget_info_lookup = array();
         $total_built_up_area = 1;
 
         $this->db->where('id', $id);
@@ -2043,9 +2042,6 @@ class Estimates_model extends App_Model
             $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
             $total_built_up_area = $total_built_up_area == 0 ? 1 : $total_built_up_area;
         }
-        if(!empty($budget_info)) {
-            $budget_info_lookup = array_column($budget_info, null, 'budget_id');
-        }
 
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
@@ -2059,7 +2055,6 @@ class Estimates_model extends App_Model
             $annexure_estimate[$annexure]['amount'] = $annexure_estimate[$annexure]['subtotal'] + $all_area_summary[$annexure]['tax'];
             $annexure_estimate[$annexure]['annexure'] = $annexure;
             $annexure_estimate[$annexure]['total_bua'] = $annexure_estimate[$annexure]['amount'] / $total_built_up_area;
-            $annexure_estimate[$annexure]['budget_summary_remarks'] = isset($budget_info_lookup[$annexure]) ? $budget_info_lookup[$annexure]['budget_summary_remarks'] : '';
         }
         $annexure_estimate = !empty($annexure_estimate) ? array_values($annexure_estimate) : array();
         if(!empty($annexure_estimate)) {
@@ -2070,6 +2065,7 @@ class Estimates_model extends App_Model
         }
 
         $final_result['estimate_detail'] = $estimate[0];
+        $final_result['budget_info'] = $budget_info;
         $final_result['annexure_estimate'] = $annexure_estimate;
         $final_result['area_summary_tabs'] = $area_summary_tabs;
         $final_result['all_area_summary'] = $all_area_summary;
