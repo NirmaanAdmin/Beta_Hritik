@@ -161,6 +161,55 @@ if(!empty($cost_planning_details['area_summary_tabs'])) {
 $pdf->AddPage();
 $pdf->writeHTML($areasummary, true, false, false, false, '');
 
+$areastatement = '';
+$show_aw_unit_name = $cost_planning_details['estimate_detail']['show_aw_unit'] == 1 ? 'sqft' : 'sqm';
+$areastatement .= '<p style="font-weight:bold;">3. '.strtoupper(_l('area_working')).'</p>';
+if(!empty($cost_planning_details['area_statement_tabs'])) {
+    $areastatement .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+    $areastatement .= '
+    <thead>
+      <tr bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
+         <th width="40%" align="center">Room/Spaces</th>
+         <th width="20%" align="center">Length ('.$show_aw_unit_name.')</th>
+         <th width="20%" align="center">Width ('.$show_aw_unit_name.')</th>
+         <th width="20%" align="center">Carpet Area ('.$show_aw_unit_name.')</th>
+      </tr>
+    </thead>';
+    $areastatement .= '<tbody>';
+    foreach ($cost_planning_details['area_statement_tabs'] as $akey => $avalue) {
+        $areastatement .= '
+        <tr style="font-size:12px; font-weight:bold;">
+            <td colspan="4" align="left">'.$avalue['name'].'</td>
+        </tr>';
+        $total_carpet_area = 0;
+        if(!empty($cost_planning_details['area_working'])) {
+            foreach ($cost_planning_details['area_working'] as $item) {
+                if($item['area_id'] == $avalue['id']) {
+                    $carpet_area = $item['area_length'] * $item['area_width'];
+                    $total_carpet_area = $total_carpet_area + $carpet_area;
+                    $areastatement .= '
+                    <tr style="font-size:12px;">
+                        <td width="40%" align="left">'.clear_textarea_breaks($item['area_description']).'</td>
+                        <td width="20%" align="center">'.$item['area_length'].'</td>
+                        <td width="20%" align="center">'.$item['area_width'].'</td>
+                        <td width="20%" align="center">'.$carpet_area.'</td>
+                    </tr>';
+                }
+            }
+        }
+        $areastatement .= '
+        <tr style="font-size:12px; font-weight:bold;">
+            <td colspan="3" align="left">Total</td>
+            <td align="center">'.$total_carpet_area.'</td>
+        </tr>';
+    }
+    $areastatement .= '</tbody>';
+    $areastatement .= '</table>';
+}
+
+$pdf->AddPage();
+$pdf->writeHTML($areastatement, true, false, false, false, '');
+
 $costplansummary = '';
 $costplansummary .= '<p style="font-weight:bold;">4. '.strtoupper(_l('cost_plan_summary')).'</p>';
 $costplansummary .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
