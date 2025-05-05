@@ -2429,7 +2429,11 @@ class Warehouse_model extends App_Model
 						'staffid' => $value['id'],
 						'taskid'  =>  $task_id
 					];
-					$this->db->insert('tbltask_assigned', $assignss);
+					// $this->db->insert('tbltask_assigned', $assignss);
+					$this->tasks_model->add_task_assignees([
+                        'taskid'   => $task_id,
+                        'assignee' => $value['id'], 
+                    ]);
 				}
 			}
 		}
