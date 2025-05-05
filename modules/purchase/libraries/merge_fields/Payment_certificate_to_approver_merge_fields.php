@@ -57,7 +57,7 @@ class Payment_certificate_to_approver_merge_fields extends App_merge_fields
      */
     public function format($data)
     {
-        $id = $data->id;
+        $id = $data->pc_id;
         $this->ci->load->model('purchase/purchase_model');
 
 
