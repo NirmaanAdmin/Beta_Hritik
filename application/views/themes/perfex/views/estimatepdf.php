@@ -266,6 +266,121 @@ $costplansummary .= '</table>';
 $pdf->AddPage();
 $pdf->writeHTML($costplansummary, true, false, false, false, '');
 
+$detailedcosting = '';
+$detailedcosting .= '<p style="font-weight:bold;">5. '.strtoupper(_l('detailed_costing_technical_assumptions')).'</p>';
+
+$annexures = get_all_annexures();
+$main_annexure_items = array();
+$sub_annexure_items = array();
+$estimate_items = $cost_planning_details['estimate_items'];
+$multilevel_items = $cost_planning_details['multilevel_items'];
+$sub_multilevel_items = $cost_planning_details['sub_multilevel_items'];
+if(!empty($estimate_items)) {
+    foreach ($estimate_items as $item) {
+        if (!isset($main_annexure_items[$item['annexure']])) {
+            $main_annexure_items[$item['annexure']] = $item;
+        }
+    }
+    $main_annexure_items = array_column($main_annexure_items, 'annexure');
+    $main_annexure_items = array_values(array_filter($annexures, function($annexure) use ($main_annexure_items) {
+        return in_array($annexure['id'], $main_annexure_items, true);
+    }));
+    $main_annexure_items = array_values($main_annexure_items);
+}
+if(!empty($multilevel_items)) {
+    $sub_annexure_items = array_column($multilevel_items, 'annexure');
+    $sub_annexure_items = array_values(array_filter($annexures, function($annexure) use ($sub_annexure_items) {
+        return in_array($annexure['id'], $sub_annexure_items, true);
+    }));
+    $sub_annexure_items = array_values($sub_annexure_items);
+}
+$annexures = array_merge($main_annexure_items, $sub_annexure_items);
+usort($annexures, function($a, $b) {
+    return $a['id'] <=> $b['id'];
+});
+
+foreach ($annexures as $key => $annexure) {
+    if($annexure['id'] == 7) {
+        $detailedcosting .= '<p style="font-weight:bold; font-size:13px; padding-bottom: 5px;">' . strtoupper($annexure['name']) . '</p>';
+    } else {
+        $detailedcosting .= '<p style="font-weight:bold; font-size:13px; padding-bottom: 5px;">' . strtoupper($annexure['name']) . '</p>';
+        $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+        $detailedcosting .= '
+        <thead>
+          <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
+             <th width="19%;" align="center">'._l('estimate_table_item_heading').'</th>
+             <th width="22%;" align="center">'._l('estimate_table_item_description').'</th>
+             <th width="10%;" align="center">'._l('unit').'</th>
+             <th width="12%;" align="center">'._l('area').'(sqft)</th>
+             <th width="11%;" align="center">'._l('estimate_table_quantity_heading').'</th>
+             <th width="13%;" align="center">'._l('estimate_table_rate_heading').' INR</th>
+             <th width="13%;" align="center">'._l('estimate_table_amount_heading').' (INR)</th>
+          </tr>
+        </thead>';
+        if(!empty($estimate_items)) {
+            $detailedcosting .= '<tbody>';
+            $total_rate = 0;
+            $total_amount = 0;
+            $overall_budget_area = '';
+            foreach ($estimate_items as $item) {
+                if($item['annexure'] == $annexure['id']) { 
+                    $amount = $item['rate'] * $item['qty'];
+                    $total_rate = $total_rate + $item['rate'];
+                    $total_amount = $total_amount + $amount;
+                    $detailedcosting .= '<tr style="font-size:11px;">
+                        <td width="19%;" align="left">'.get_purchase_items($item['item_code']).'</td>
+                        <td width="22%;" align="left">'.clear_textarea_breaks($item['long_description']).'</td>
+                        <td width="10%;" align="center">'.get_purchase_unit($item['unit_id']).'</td>
+                        <td width="12%;" align="center">'.$item['budget_area'].'</td>
+                        <td width="11%;" align="center">'.number_format($item['qty'], 2).'</td>
+                        <td width="13%;" align="center">'.app_format_money($item['rate'], '').'</td>
+                        <td width="13%;" align="center">'.app_format_money($amount, '').'</td>
+                    </tr>';
+                }
+            }
+            if(!empty($cost_planning_details['budget_info'])) {
+                foreach ($cost_planning_details['budget_info'] as $cpkey => $cpvalue) {
+                    if($cpvalue['budget_id'] == $annexure['id']) {
+                        $overall_budget_area = $cpvalue['overall_budget_area'];
+                    }
+                }
+            }
+            $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
+                <td width="19%;" align="left">Total</td>
+                <td width="22%;" align="center"></td>
+                <td width="10%;" align="center">sqft</td>
+                <td width="12%;" align="center">'.$overall_budget_area.'</td>
+                <td width="11%;" align="center"></td>
+                <td width="13%;" align="center">'.app_format_money($total_rate, $base_currency).'</td>
+                <td width="13%;" align="center">'.app_format_money($total_amount, $base_currency).'</td>
+            </tr>';
+            $detailedcosting .= '</tbody>';
+        }
+        $detailedcosting .= '</table>';
+
+        $detailed_costing_editor = '';
+        if(!empty($cost_planning_details['budget_info'])) {
+            foreach ($cost_planning_details['budget_info'] as $cpkey => $cpvalue) {
+                if($cpvalue['budget_id'] == $annexure['id']) {
+                    $detailed_costing_editor = $cpvalue['detailed_costing'];
+                }
+            }
+        }
+        if(!empty($detailed_costing_editor)) {
+            $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
+            $detailedcosting .= '<tbody>
+                <tr style="font-size:13px;">
+                    <td>'.$detailed_costing_editor.'</td>
+                </tr>
+            </tbody>';
+            $detailedcosting .= '</table>';
+        }
+    }
+}
+
+$pdf->AddPage();
+$pdf->writeHTML($detailedcosting, true, false, false, false, '');
+
 $projecttimelines = '';
 $projecttimelines .= '<p style="font-weight:bold;">6. '.strtoupper(_l('project_timelines')).'</p>';
 $projecttimelines .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';

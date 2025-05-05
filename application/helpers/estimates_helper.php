@@ -424,3 +424,16 @@ function get_purchase_items($id)
     }
     return '';
 }
+
+function get_purchase_unit($id)
+{
+    if(!empty($id)) {
+        $CI = &get_instance();
+        $CI->db->where('unit_id', $id);
+        $pur_unit = $CI->db->get(db_prefix() . 'pur_unit')->row();
+        if(!empty($pur_unit)) {
+            return $pur_unit->unit_name;
+        }
+    }
+    return '';
+}
