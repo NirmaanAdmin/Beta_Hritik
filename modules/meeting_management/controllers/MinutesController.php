@@ -505,7 +505,12 @@ class MinutesController extends AdminController
                                 'staffid' => $staff_id,
                                 'taskid'  => $task_id
                             ];
-                            $this->db->insert('tbltask_assigned', $assignData);
+                            // $this->db->insert('tbltask_assigned', $assignData);
+
+                            $this->tasks_model->add_task_assignees([
+                                'taskid'   => $task_id,
+                                'assignee' => $staff_id, 
+                            ]);
                         }
                     }
                 } else {
