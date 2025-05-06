@@ -728,17 +728,8 @@
                         <div class="col-md-8 col-md-offset-4">
                             <table class="table text-right">
                                 <tbody>
-                                    <tr id="subtotal">
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_rate'); ?> :</span>
-                                        </td>
-                                        <td>
-                                            <?php 
-                                            echo app_format_money($estimate_item_rate, $base_currency);
-                                            ?>
-                                        </td>
-                                    </tr>
                                     <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_amount'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
@@ -845,24 +836,21 @@
                             <table class="table text-right">
                                 <tbody>
                                     <tr id="subtotal">
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_rate'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost_overall_area'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
-                                            // $annexure_subtotal = $estimate_item_rate / $estimate_overall_budget_area;
-                                            $annexure_subtotal = $estimate_item_rate;
-                                            echo app_format_money($annexure_subtotal, $base_currency);
+                                            $cost_overall_area = $estimate_item_amount / $estimate_overall_budget_area;
+                                            echo app_format_money($cost_overall_area, $base_currency);
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_amount'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
-                                            // $annexure_total = $estimate_item_amount / $estimate_overall_budget_area;
-                                            $annexure_total = $estimate_item_amount;
-                                            echo app_format_money($annexure_total, $base_currency);
+                                            echo app_format_money($estimate_item_amount, $base_currency);
                                             ?>
                                         </td>
                                     </tr>
@@ -961,8 +949,7 @@
                                                 if($sub_overall_budget_area == 0 || empty($sub_overall_budget_area)) {
                                                     $sub_overall_budget_area = 1;
                                                 }
-                                                // $modal_total = $estimate_item_sub / $sub_overall_budget_area;
-                                                $modal_rate = $estimate_item_rate;
+                                                $cost_overall_area = $estimate_item_amount / $sub_overall_budget_area;
                                                 $modal_amount = $estimate_item_amount;
                                                 $modals_html .= '</tbody>
                                               </table>
@@ -971,14 +958,14 @@
                                                 <table class="table text-right">
                                                     <tbody>
                                                         <tr id="subtotal">
-                                                            <td><span class="bold tw-text-neutral-700">'._l('total_rate').' :</span>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('cost_overall_area').' :</span>
                                                             </td>
                                                             <td>
-                                                                '.app_format_money($modal_rate, $base_currency).'
+                                                                '.app_format_money($cost_overall_area, $base_currency).'
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td><span class="bold tw-text-neutral-700">'._l('total_amount').' :</span>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('cost').' :</span>
                                                             </td>
                                                             <td>
                                                                 '.app_format_money($modal_amount, $base_currency).'
