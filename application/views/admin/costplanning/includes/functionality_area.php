@@ -16,9 +16,9 @@
     <th><?php echo _l('options'); ?></th>
  </thead>
  <tbody>
-  <?php foreach($functionality_area as $vc){ ?>
+  <?php foreach($functionality_area as $key => $vc){ ?>
     <tr>
-      <td><?php echo pur_html_entity_decode($vc['id']); ?></td>
+      <td><?php echo $key + 1; ?></td>
       <td><?php echo pur_html_entity_decode($vc['category_name']); ?></td>
       <td><?php echo pur_html_entity_decode($vc['description']); ?></td>
       <td>
