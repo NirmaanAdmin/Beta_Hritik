@@ -415,12 +415,14 @@ foreach ($annexures as $key => $annexure) {
                                 $filtered_multilevel_qty = $filtered_multilevel_qty + $fmlvalue['sub_qty'];
                                 $filtered_multilevel_rate = $filtered_multilevel_rate + $fmlvalue['sub_rate'];
                                 $filtered_multilevel_amount = $filtered_multilevel_amount + $sub_amount;
+                                $purchase_unit_name = get_purchase_unit($fmlvalue['sub_unit_id']);
+                                $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
                                 $detailedcosting .= '<tr style="font-size:11px;">
                                     <td width="19%;" align="left">'.get_purchase_items($fmlvalue['item_name']).'</td>
                                     <td width="22%;" align="left">'.clear_textarea_breaks($fmlvalue['sub_long_description']).'</td>
                                     <td width="10%;" align="center">'.get_purchase_unit($fmlvalue['sub_unit_id']).'</td>
                                     <td width="12%;" align="center">'.$fmlvalue['sub_budget_area'].'</td>
-                                    <td width="11%;" align="center">'.number_format($fmlvalue['sub_qty'], 2).'</td>
+                                    <td width="11%;" align="center">'.number_format($fmlvalue['sub_qty'], 2).$purchase_unit_name.'</td>
                                     <td width="13%;" align="center">'.app_format_money($fmlvalue['sub_rate'], $base_currency).'</td>
                                     <td width="13%;" align="center">'.app_format_money($sub_amount, $base_currency).'</td>
                                 </tr>';
@@ -466,12 +468,14 @@ foreach ($annexures as $key => $annexure) {
                     $amount = $item['rate'] * $item['qty'];
                     $total_rate = $total_rate + $item['rate'];
                     $total_amount = $total_amount + $amount;
+                    $purchase_unit_name = get_purchase_unit($item['unit_id']);
+                    $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
                     $detailedcosting .= '<tr style="font-size:11px;">
                         <td width="19%;" align="left">'.get_purchase_items($item['item_code']).'</td>
                         <td width="22%;" align="left">'.clear_textarea_breaks($item['long_description']).'</td>
                         <td width="10%;" align="center">'.get_purchase_unit($item['unit_id']).'</td>
                         <td width="12%;" align="center">'.$item['budget_area'].'</td>
-                        <td width="11%;" align="center">'.number_format($item['qty'], 2).'</td>
+                        <td width="11%;" align="center">'.number_format($item['qty'], 2).$purchase_unit_name.'</td>
                         <td width="13%;" align="center">'.app_format_money($item['rate'], $base_currency).'</td>
                         <td width="13%;" align="center">'.app_format_money($amount, $base_currency).'</td>
                     </tr>';
