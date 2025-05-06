@@ -10,7 +10,7 @@ $aColumns = [
     db_prefix() . 'payment_certificate' . '.id as id',
     'po_id',
     '"vendor" as vendor',
-    '"order_date" as order_date',
+    db_prefix() . 'payment_certificate' . '.order_date as order_date',
     '"group_pur" as group_pur',
     db_prefix() . 'payment_certificate' . '.approve_status as approve_status',
     db_prefix() . 'payment_certificate' . '.approve_status as applied_to_vendor_bill',

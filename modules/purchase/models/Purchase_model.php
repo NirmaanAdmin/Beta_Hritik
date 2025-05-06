@@ -17829,14 +17829,16 @@ class Purchase_model extends App_Model
         if (!empty($data['bill_period_upto'])) {
             $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
         }
-        $this->db->insert(db_prefix() . 'payment_certificate', $data);
-        $insert_id = $this->db->insert_id();
-        $this->log_pay_cer_activity($insert_id, 'pay_cert_activity_created');
         if (isset($data['wo_id'])) {
             $pur_order = $this->get_wo_order($data['wo_id']);
         } else {
             $pur_order = $this->get_pur_order($data['po_id']);
         }
+        $data['order_date'] = $pur_order->order_date;
+        $this->db->insert(db_prefix() . 'payment_certificate', $data);
+        $insert_id = $this->db->insert_id();
+        $this->log_pay_cer_activity($insert_id, 'pay_cert_activity_created');
+        
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "purchase";
