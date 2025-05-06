@@ -9,9 +9,9 @@ $approval_status_filter_name = 'approval_status';
 $aColumns = [
     db_prefix() . 'payment_certificate' . '.id as id',
     'po_id',
-    '"vendor" as vendor',
+    db_prefix() . 'payment_certificate' . '.vendor as vendor',
     db_prefix() . 'payment_certificate' . '.order_date as order_date',
-    '"group_pur" as group_pur',
+    db_prefix() . 'payment_certificate' . '.group_pur as group_pur',
     db_prefix() . 'payment_certificate' . '.approve_status as approve_status',
     db_prefix() . 'payment_certificate' . '.approve_status as applied_to_vendor_bill',
 ];
@@ -61,23 +61,8 @@ $result = data_tables_init(
         db_prefix() . 'payment_certificate.po_id',
         db_prefix() . 'payment_certificate.wo_id',
         db_prefix() . 'payment_certificate.approve_status',
-        'CASE 
-        WHEN ' . db_prefix() . 'payment_certificate.po_id IS NOT NULL THEN ' . db_prefix() . 'pur_orders.vendor
-        WHEN ' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL THEN ' . db_prefix() . 'wo_orders.vendor
-    END AS vendor',
-        'CASE 
-        WHEN ' . db_prefix() . 'payment_certificate.po_id IS NOT NULL THEN ' . db_prefix() . 'pur_orders.order_date
-        WHEN ' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL THEN ' . db_prefix() . 'wo_orders.order_date
-    END AS order_date',
-        'CASE 
-        WHEN ' . db_prefix() . 'payment_certificate.po_id IS NOT NULL THEN ' . db_prefix() . 'pur_orders.group_pur
-        WHEN ' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL THEN ' . db_prefix() . 'wo_orders.group_pur
-    END AS group_pur',
-        'CASE 
-        WHEN ' . db_prefix() . 'payment_certificate.po_id IS NOT NULL THEN ' . db_prefix() . 'pur_orders.pur_order_number
-        WHEN ' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL THEN ' . db_prefix() . 'wo_orders.wo_order_number
-    END AS po_id',
-
+        db_prefix() . 'payment_certificate.wo_number',
+        db_prefix() . 'payment_certificate.po_number',
     ],
     '',
     [],
@@ -119,10 +104,10 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'po_id') {
             $_data = '';
             if (!empty($aRow['po_id'])) {
-                $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow['po_id']) . '" target="_blank">' . $aRow['po_id'] . '</a>';
+                $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow['po_id']) . '" target="_blank">' . $aRow['po_number'] . '</a>';
             }
             if (!empty($aRow['wo_id'])) {
-                $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow['wo_id']) . '" target="_blank">' . $aRow['po_id'] . '</a>';
+                $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow['wo_id']) . '" target="_blank">' . $aRow['wo_number'] . '</a>';
             }
         } elseif ($aColumns[$i] == 'vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor']) . '" >' .  get_vendor_company_name($aRow['vendor']) . '</a>';

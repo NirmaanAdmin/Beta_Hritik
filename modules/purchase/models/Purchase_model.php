@@ -17829,12 +17829,21 @@ class Purchase_model extends App_Model
         if (!empty($data['bill_period_upto'])) {
             $data['bill_period_upto'] = to_sql_date($data['bill_period_upto']);
         }
+        $po_number = $wo_number = '';
         if (isset($data['wo_id'])) {
             $pur_order = $this->get_wo_order($data['wo_id']);
+            $wo_number = $pur_order->wo_order_number;
         } else {
             $pur_order = $this->get_pur_order($data['po_id']);
+           
+            $po_number = $pur_order->pur_order_number;
         }
         $data['order_date'] = $pur_order->order_date;
+        $data['vendor'] = $pur_order->vendor;
+        $data['group_pur'] = $pur_order->group_pur;
+        $data['po_number'] = $po_number;
+        $data['wo_number'] = $wo_number;
+
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
         $insert_id = $this->db->insert_id();
         $this->log_pay_cer_activity($insert_id, 'pay_cert_activity_created');
