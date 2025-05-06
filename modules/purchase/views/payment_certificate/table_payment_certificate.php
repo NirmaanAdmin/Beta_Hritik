@@ -7,13 +7,13 @@ $group_pur_filter_name = 'group_pur';
 $approval_status_filter_name = 'approval_status';
 
 $aColumns = [
-    '"id" as id',
-    '"order_name" as order_name',
+    db_prefix() . 'payment_certificate' . '.id as id',
+    'po_id',
     '"vendor" as vendor',
     '"order_date" as order_date',
     '"group_pur" as group_pur',
-    '"approve_status" as approve_status',
-    '"applied_to_vendor_bill" as applied_to_vendor_bill',
+    db_prefix() . 'payment_certificate' . '.approve_status as approve_status',
+    db_prefix() . 'payment_certificate' . '.approve_status as applied_to_vendor_bill',
 ];
 
 $sIndexColumn = 'id';
@@ -76,7 +76,7 @@ $result = data_tables_init(
         'CASE 
         WHEN ' . db_prefix() . 'payment_certificate.po_id IS NOT NULL THEN ' . db_prefix() . 'pur_orders.pur_order_number
         WHEN ' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL THEN ' . db_prefix() . 'wo_orders.wo_order_number
-    END AS order_name',
+    END AS po_id',
 
     ],
     '',
@@ -116,13 +116,13 @@ foreach ($rResult as $aRow) {
             if (!empty($aRow['wo_id'])) {
                 $_data = '<a href="' . admin_url('purchase/wo_payment_certificate/' . $aRow['wo_id'] . '/' . $aRow['id']) . '" target="_blank">' . _l('view') . '</a>';
             }
-        } elseif ($aColumns[$i] == 'order_name') {
+        } elseif ($aColumns[$i] == 'po_id') {
             $_data = '';
             if (!empty($aRow['po_id'])) {
-                $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow['po_id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+                $_data = '<a href="' . admin_url('purchase/purchase_order/' . $aRow['po_id']) . '" target="_blank">' . $aRow['po_id'] . '</a>';
             }
             if (!empty($aRow['wo_id'])) {
-                $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow['wo_id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+                $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow['wo_id']) . '" target="_blank">' . $aRow['po_id'] . '</a>';
             }
         } elseif ($aColumns[$i] == 'vendor') {
             $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor']) . '" >' .  get_vendor_company_name($aRow['vendor']) . '</a>';
