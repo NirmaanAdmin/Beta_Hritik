@@ -120,7 +120,7 @@ $areasummary .= '<p style="font-weight:bold;">2. '.strtoupper(_l('area_summary')
 if(!empty($cost_planning_details['area_summary_tabs'])) {
     foreach ($cost_planning_details['area_summary_tabs'] as $akey => $avalue) {
         $areasummary .= '<p style="font-size:13px; padding-bottom: 5px;">'.($akey + 1).'. '.$avalue['name'].'</p>';
-        $areasummary .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+        $areasummary .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
         $areasummary .= '
         <thead>
           <tr bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
@@ -165,7 +165,7 @@ $areastatement = '';
 $show_aw_unit_name = $cost_planning_details['estimate_detail']['show_aw_unit'] == 1 ? 'sqft' : 'sqm';
 $areastatement .= '<p style="font-weight:bold;">3. '.strtoupper(_l('area_working')).'</p>';
 if(!empty($cost_planning_details['area_statement_tabs'])) {
-    $areastatement .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+    $areastatement .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
     $areastatement .= '
     <thead>
       <tr bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
@@ -228,7 +228,7 @@ $costplansummary .= '<tbody>
     </tr>
 </tbody>';
 $costplansummary .= '</table><br><br>';
-$costplansummary .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+$costplansummary .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
 $costplansummary .= '
 <thead>
   <tr bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
@@ -346,7 +346,7 @@ foreach ($annexures as $key => $annexure) {
             foreach ($unique_multilevel_items as $ukey => $uvalue) {
                 $detailedcosting .= '<p style="font-weight:bold; font-size:11px;">' . alphaCounter($ukey). '. ' . get_master_area($uvalue['int_master_area']) . '</p>';
                 $detailedcosting .= '<p style="font-size:11px;">Summary of ' . get_master_area($uvalue['int_master_area']) . '</p>';
-                $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+                $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
                 $detailedcosting .= '
                 <thead>
                   <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
@@ -393,7 +393,7 @@ foreach ($annexures as $key => $annexure) {
                         }));
                         if(!empty($filtered_multilevel_items)) {
                             $detailedcosting .= '<p style="font-weight:bold; font-size:11px;">' . toRoman($fmkey+1). '. ' . get_functionality_area($fmvalue['int_fun_area']) . '</p>';
-                            $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+                            $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
                             $detailedcosting .= '
                             <thead>
                               <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
@@ -445,7 +445,7 @@ foreach ($annexures as $key => $annexure) {
         }
     } else {
         $detailedcosting .= '<p style="font-weight:bold; font-size:13px; padding-bottom: 5px;">' . strtoupper($annexure['name']) . '</p>';
-        $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="1">';
+        $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
         $detailedcosting .= '
         <thead>
           <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
