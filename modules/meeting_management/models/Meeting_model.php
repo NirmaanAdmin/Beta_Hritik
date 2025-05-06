@@ -71,6 +71,7 @@ class Meeting_model extends App_Model
     public function get_minutes_detials($id)
     {
         $this->db->where('minute_id', $id);
+        $this->db->order_by('reorder', 'ASC');
         $mom_details = $this->db->get(db_prefix() . 'minutes_details')->result_array();
         return $mom_details;
     }
@@ -164,6 +165,7 @@ class Meeting_model extends App_Model
                     'target_date' => isset($value['target_date']) ? $value['target_date'] : '',
                     'section_break' => isset($value['section_break']) ? $value['section_break'] : '',
                     'serial_no' => isset($value['serial_no']) ? $value['serial_no'] : '',
+                    'reorder' => isset($value['order']) ? $value['order'] : '',
                 ];
 
                 $this->db->insert(db_prefix() . 'agendas_details', $agenda_detail);
@@ -584,7 +586,7 @@ class Meeting_model extends App_Model
                 $mom_arr['target_date'] = $value['target_date'];
                 $mom_arr['section_break'] = $value['section_break'];
                 $mom_arr['serial_no'] = $value['serial_no'];
-
+                $mom_arr['reorder'] = isset($value['order']) ? $value['order'] : null;
                 $this->db->insert(db_prefix() . 'minutes_details', $mom_arr);
                 $last_insert_id = $this->db->insert_id();
 
@@ -618,6 +620,7 @@ class Meeting_model extends App_Model
                 $mom_arr['target_date'] = $value['target_date'];
                 $mom_arr['section_break'] = $value['section_break'];
                 $mom_arr['serial_no'] = $value['serial_no'];
+                $mom_arr['reorder'] = isset($value['order']) ? $value['order'] : '';
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'minutes_details', $mom_arr);
                 if ($this->db->affected_rows() > 0) {
@@ -821,9 +824,11 @@ class Meeting_model extends App_Model
         $name_section_break = 'section_break';
         $name_serial_no = 'serial_no';
         if ($name == '') {
-            $row .= '<tr class="main">';
+            $row .= '<tr class="main"><td></td>';
             $manual = true;
         } else {
+            $row .= '<tr class="sortable item">
+            <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
             $name_area = $name . '[area]';
             $name_description = $name . '[description]';
             $name_decision = $name . '[decision]';
@@ -838,7 +843,6 @@ class Meeting_model extends App_Model
                 $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
             }
             $manual = false;
-            $row .= '<tr><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '">';
         }
         $full_item_image = '';
         if (!empty($attachments['attachments']) && !empty($attachments['agenda_id'])) {

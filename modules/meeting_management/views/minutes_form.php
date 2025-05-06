@@ -62,6 +62,7 @@
       /* Adjust the size as needed */
       height: 100px;
    }
+
 </style>
 
 <!-- Add CKEditor and SweetAlert -->
@@ -73,7 +74,7 @@
          <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
       </div>
       <div class="row">
-         <input type="hidden" id="flag" value="<?php echo $agenda->flag; ?>">
+         <input type="hidden" id="flag" value="<?php echo isset($agenda) && isset($agenda->flag) ? $agenda->flag :''; ?>">
          <?php
          if (isset($agenda)) {
             echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form'));
@@ -172,9 +173,11 @@
                      }
                      $additional_note = isset($minutes) ? $minutes->additional_note : '';
                      ?>
-                     <table class="mom-items-table items table-main-dpr-edit has-calculations no-mtop">
+                     <!-- <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop"> -->
+                     <table class="table mom-items-table items table-main-dpr-edit has-calculations no-mtop">
                         <thead>
                            <tr>
+                              <th width="1%"></th>
                               <th width="5%">No.</th>
                               <th>
                                  <select name="area_head" id="area_head" class="form-control">
