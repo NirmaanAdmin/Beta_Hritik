@@ -462,7 +462,12 @@
                                                 <?php
                                                 if(!empty($cost_planning_details['annexure_estimate'])) {
                                                     $annexure_estimate = $cost_planning_details['annexure_estimate'];
-                                                    foreach($annexure_estimate as $ikey => $svalue) { ?>
+                                                    $total_amount = 0;
+                                                    $total_bua = 0;
+                                                    foreach($annexure_estimate as $ikey => $svalue) {
+                                                    $total_amount = $total_amount + $svalue['amount'];
+                                                    $total_bua = $total_bua + $svalue['total_bua'];
+                                                    ?>
                                                         <tr>
                                                             <td align="left">
                                                                 <?php echo $svalue['name']; ?>
@@ -492,6 +497,14 @@
                                                     <?php } 
                                                 } ?>
                                             </tbody>
+                                            <tfoot>
+                                                <tr style="font-weight: bold;">
+                                                    <td align="left">Total</td>
+                                                    <td align="right"><?php echo app_format_money($total_amount, $base_currency); ?></td>
+                                                    <td align="right"><?php echo app_format_money($total_bua, $base_currency); ?></td>
+                                                    <td align="right"></td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                     <div class="col-md-12">
@@ -669,7 +682,7 @@
                                     <tr>
                                         <th width="15%" align="left"><?php echo _l('master_area'); ?></th>
                                         <th width="18%" align="left"><?php echo _l('functionality_area'); ?></th>
-                                        <th width="15%" align="right"><?php echo _l('area'); ?></th>
+                                        <th width="15%" align="right"><?php echo _l('area'); ?> (sqft)</th>
                                         <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
                                         <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
                                         <th width="18%" align="right"><?php echo _l('remarks'); ?></th>
@@ -677,11 +690,13 @@
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $estimate_item_sub = 0;
+                                    $estimate_item_rate = 0;
+                                    $estimate_item_amount = 0;
                                     if(!empty($cost_planning_details['multilevel_items'])) {
                                         foreach ($cost_planning_details['multilevel_items'] as $iitem) { 
                                             $int_amount = $iitem['int_area'] * $iitem['int_rate'];
-                                            $estimate_item_sub = $estimate_item_sub + $int_amount;
+                                            $estimate_item_rate = $estimate_item_rate + $iitem['int_rate'];
+                                            $estimate_item_amount = $estimate_item_amount + $int_amount;
                                             ?>
                                             <tr>
                                                 <td>
@@ -696,10 +711,10 @@
                                                     <?php echo $iitem['int_area']; ?>
                                                 </td>
                                                 <td align="right">
-                                                    <?php echo $iitem['int_rate']; ?>
+                                                    <?php echo app_format_money($iitem['int_rate'], $base_currency); ?>
                                                 </td>
                                                 <td align="right">
-                                                    <?php echo number_format($int_amount, 2); ?>
+                                                    <?php echo app_format_money($int_amount, $base_currency); ?>
                                                 </td>
                                                 <td align="right">
                                                     <?php echo clear_textarea_breaks($iitem['int_remarks']); ?>
@@ -714,20 +729,20 @@
                             <table class="table text-right">
                                 <tbody>
                                     <tr id="subtotal">
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_rate'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
-                                            echo app_format_money($estimate_item_sub, $base_currency);
+                                            echo app_format_money($estimate_item_rate, $base_currency);
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_amount'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
-                                            echo app_format_money($estimate_item_sub, $base_currency);
+                                            echo app_format_money($estimate_item_amount, $base_currency);
                                             ?>
                                         </td>
                                     </tr>
@@ -776,7 +791,7 @@
                                     <tr>
                                         <th width="13%" align="left"><?php echo _l('estimate_table_item_heading'); ?></th>
                                         <th width="18%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
-                                        <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?></th>
+                                        <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?> (sqft)</th>
                                         <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
                                         <th width="16%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
                                         <th width="16%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
@@ -784,12 +799,14 @@
                                     </tr>
                                     <tbody>
                                         <?php
-                                        $estimate_item_sub = 0;
+                                        $estimate_item_rate = 0;
+                                        $estimate_item_amount = 0;
                                         if(!empty($cost_planning_details['estimate_items'])) {
                                             foreach ($cost_planning_details['estimate_items'] as $item) {
                                                 if($item['annexure'] == $annexure['id']) { 
                                                     $amount = $item['rate'] * $item['qty'];
-                                                    $estimate_item_sub = $estimate_item_sub + $amount;
+                                                    $estimate_item_rate = $estimate_item_rate + $item['rate'];
+                                                    $estimate_item_amount = $estimate_item_amount + $amount;
                                                 ?>
                                                     <tr>
                                                         <td>
@@ -805,10 +822,10 @@
                                                             <?php echo number_format($item['qty'], 2); ?>
                                                         </td>
                                                         <td align="right">
-                                                            <?php echo $item['rate']; ?>
+                                                            <?php echo app_format_money($item['rate'], $base_currency); ?>
                                                         </td>
                                                         <td align="right">
-                                                            <?php echo number_format($amount, 2); ?>
+                                                            <?php echo app_format_money($amount, $base_currency); ?>
                                                         </td>
                                                         <td align="right">
                                                             <?php echo clear_textarea_breaks($item['remarks']); ?>
@@ -824,21 +841,23 @@
                             <table class="table text-right">
                                 <tbody>
                                     <tr id="subtotal">
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_rate'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
-                                            $annexure_subtotal = $estimate_item_sub / $estimate_overall_budget_area;
+                                            // $annexure_subtotal = $estimate_item_rate / $estimate_overall_budget_area;
+                                            $annexure_subtotal = $estimate_item_rate;
                                             echo app_format_money($annexure_subtotal, $base_currency);
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('total_amount'); ?> :</span>
                                         </td>
                                         <td>
                                             <?php 
-                                            $annexure_total = $estimate_item_sub / $estimate_overall_budget_area;
+                                            // $annexure_total = $estimate_item_amount / $estimate_overall_budget_area;
+                                            $annexure_total = $estimate_item_amount;
                                             echo app_format_money($annexure_total, $base_currency);
                                             ?>
                                         </td>
@@ -892,7 +911,7 @@
                                                   <tr>
                                                     <th width="13%" align="left">'._l('estimate_table_item_heading').'</th>
                                                     <th width="18%" align="left">'._l('estimate_table_item_description').'</th>
-                                                    <th width="10%" class="qty" align="right">'._l('area').'</th>
+                                                    <th width="10%" class="qty" align="right">'._l('area').' (sqft)</th>
                                                     <th width="10%" class="qty" align="right">'._l('estimate_table_quantity_heading').'</th>
                                                     <th width="16%" align="right">'._l('estimate_table_rate_heading').'</th>
                                                     <th width="16%" align="right">'._l('estimate_table_amount_heading').'</th>
@@ -900,12 +919,14 @@
                                                   </tr>
                                                 </thead>
                                                 <tbody>';
-                                                $estimate_item_sub = 0;
+                                                $estimate_item_rate = 0;
+                                                $estimate_item_amount = 0;
                                                 if (!empty($cost_planning_details['sub_multilevel_items'])) {
                                                 foreach ($cost_planning_details['sub_multilevel_items'] as $sitem) {
                                                 if($sitem['parent_id'] == $iitem['id']) {
                                                     $sub_amount = $sitem['sub_rate'] * $sitem['sub_qty'];
-                                                    $estimate_item_sub = $estimate_item_sub + $sub_amount;
+                                                    $estimate_item_rate = $estimate_item_rate + $sitem['sub_rate'];
+                                                    $estimate_item_amount = $estimate_item_amount + $sub_amount;
                                                    $modals_html .= '<tr>
                                                         <td>
                                                             '.get_purchase_items($sitem['item_name']).'
@@ -920,10 +941,10 @@
                                                             '.number_format($sitem['sub_qty'], 2).'
                                                         </td>
                                                         <td align="right">
-                                                            '.$sitem['sub_rate'].'
+                                                            '.app_format_money($sitem['sub_rate'], $base_currency).'
                                                         </td>
                                                         <td align="right">
-                                                            '.number_format($sub_amount, 2).'
+                                                            '.app_format_money($sub_amount, $base_currency).'
                                                         </td>
                                                         <td align="right">
                                                             '.clear_textarea_breaks($sitem['sub_remarks']).'
@@ -934,7 +955,9 @@
                                                 if($sub_overall_budget_area == 0 || empty($sub_overall_budget_area)) {
                                                     $sub_overall_budget_area = 1;
                                                 }
-                                                $modal_total = $estimate_item_sub / $sub_overall_budget_area;
+                                                // $modal_total = $estimate_item_sub / $sub_overall_budget_area;
+                                                $modal_rate = $estimate_item_rate;
+                                                $modal_amount = $estimate_item_amount;
                                                 $modals_html .= '</tbody>
                                               </table>
                                             </div>
@@ -942,17 +965,17 @@
                                                 <table class="table text-right">
                                                     <tbody>
                                                         <tr id="subtotal">
-                                                            <td><span class="bold tw-text-neutral-700">'._l('estimate_subtotal').' :</span>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('total_rate').' :</span>
                                                             </td>
                                                             <td>
-                                                                '.app_format_money($modal_total, $base_currency).'
+                                                                '.app_format_money($modal_rate, $base_currency).'
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td><span class="bold tw-text-neutral-700">'._l('estimate_total').' :</span>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('total_amount').' :</span>
                                                             </td>
                                                             <td>
-                                                                '.app_format_money($modal_total, $base_currency).'
+                                                                '.app_format_money($modal_amount, $base_currency).'
                                                             </td>
                                                         </tr>
                                                     </tbody>

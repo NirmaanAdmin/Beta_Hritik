@@ -4233,3 +4233,5 @@ $lang['area_width'] = 'Width';
 $lang['floor'] = 'Floor';
 $lang['total_area'] = 'Total Area';
 $lang['show_unit_as'] = 'Show unit as:';
+$lang['total_rate'] = 'Total Rate';
+$lang['total_amount'] = 'Total Amount';

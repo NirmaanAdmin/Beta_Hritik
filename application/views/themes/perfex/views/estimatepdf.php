@@ -143,14 +143,14 @@ if(!empty($cost_planning_details['area_summary_tabs'])) {
                     $areasummary .= '
                     <tr style="font-size:12px;">
                         <td align="left">'.$master_area_name.'</td>
-                        <td align="right">'.$item['area'].'</td>
+                        <td align="center">'.$item['area'].'</td>
                     </tr>';
                 }
             }
             $areasummary .= '
             <tr style="font-size:12px; font-weight:bold;">
                 <td align="left">Total</td>
-                <td align="right">'.$total_area_summary.'</td>
+                <td align="center">'.$total_area_summary.'</td>
             </tr>';
         }
         $areasummary .= '</tbody>';
@@ -177,6 +177,15 @@ if(!empty($cost_planning_details['area_statement_tabs'])) {
     </thead>';
     $areastatement .= '<tbody>';
     foreach ($cost_planning_details['area_statement_tabs'] as $akey => $avalue) {
+        if($akey > 0) {
+            $areastatement .= '
+            <tr bgcolor="#323a45" style="color:#ffffff; font-size:13px;">
+                <td width="40%" align="center">Room/Spaces</td>
+                <td width="20%" align="center">Length ('.$show_aw_unit_name.')</td>
+                <td width="20%" align="center">Width ('.$show_aw_unit_name.')</td>
+                <td width="20%" align="center">Carpet Area ('.$show_aw_unit_name.')</td>
+            </tr>'; 
+        }
         $areastatement .= '
         <tr style="font-size:12px; font-weight:bold;">
             <td colspan="4" align="left">'.$avalue['name'].'</td>
@@ -253,7 +262,7 @@ if(!empty($cost_planning_details['annexure_estimate'])) {
             <td align="center">'.$budget_summary_remarks.'</td>
         </tr>';
     }
-    $costplansummary .= '<tr style="font-size:12px;">
+    $costplansummary .= '<tr style="font-size:12px; font-weight:bold;">
         <td align="center">Total</td>
         <td align="center">'.app_format_money($total_amount, $base_currency).'</td>
         <td align="center">'.app_format_money($total_bua, $base_currency).'</td>
@@ -362,8 +371,8 @@ foreach ($annexures as $key => $annexure) {
                         $detailedcosting .= '<tr style="font-size:11px;">
                             <td width="40%;" align="left">'.get_functionality_area($fmvalue['int_fun_area']).'</td>
                             <td width="20%;" align="center">'.$fmvalue['int_area'].'</td>
-                            <td width="20%;" align="center">'.app_format_money($fmvalue['int_rate'], '').'</td>
-                            <td width="20%;" align="center">'.app_format_money($fm_amount, '').'</td>
+                            <td width="20%;" align="center">'.app_format_money($fmvalue['int_rate'], $base_currency).'</td>
+                            <td width="20%;" align="center">'.app_format_money($fm_amount, $base_currency).'</td>
                         </tr>';
                     }
                 }
@@ -412,8 +421,8 @@ foreach ($annexures as $key => $annexure) {
                                     <td width="10%;" align="center">'.get_purchase_unit($fmlvalue['sub_unit_id']).'</td>
                                     <td width="12%;" align="center">'.$fmlvalue['sub_budget_area'].'</td>
                                     <td width="11%;" align="center">'.number_format($fmlvalue['sub_qty'], 2).'</td>
-                                    <td width="13%;" align="center">'.app_format_money($fmlvalue['sub_rate'], '').'</td>
-                                    <td width="13%;" align="center">'.app_format_money($sub_amount, '').'</td>
+                                    <td width="13%;" align="center">'.app_format_money($fmlvalue['sub_rate'], $base_currency).'</td>
+                                    <td width="13%;" align="center">'.app_format_money($sub_amount, $base_currency).'</td>
                                 </tr>';
                             }
                             $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
@@ -463,8 +472,8 @@ foreach ($annexures as $key => $annexure) {
                         <td width="10%;" align="center">'.get_purchase_unit($item['unit_id']).'</td>
                         <td width="12%;" align="center">'.$item['budget_area'].'</td>
                         <td width="11%;" align="center">'.number_format($item['qty'], 2).'</td>
-                        <td width="13%;" align="center">'.app_format_money($item['rate'], '').'</td>
-                        <td width="13%;" align="center">'.app_format_money($amount, '').'</td>
+                        <td width="13%;" align="center">'.app_format_money($item['rate'], $base_currency).'</td>
+                        <td width="13%;" align="center">'.app_format_money($amount, $base_currency).'</td>
                     </tr>';
                 }
             }
