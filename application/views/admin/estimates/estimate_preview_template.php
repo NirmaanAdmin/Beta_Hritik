@@ -819,7 +819,11 @@
                                                             <?php echo $item['budget_area']; ?>
                                                         </td>
                                                         <td align="right">
-                                                            <?php echo number_format($item['qty'], 2); ?>
+                                                            <?php 
+                                                            $purchase_unit_name = get_purchase_unit($item['unit_id']);
+                                                            $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
+                                                            echo number_format($item['qty'], 2).$purchase_unit_name; 
+                                                            ?>
                                                         </td>
                                                         <td align="right">
                                                             <?php echo app_format_money($item['rate'], $base_currency); ?>
@@ -927,6 +931,8 @@
                                                     $sub_amount = $sitem['sub_rate'] * $sitem['sub_qty'];
                                                     $estimate_item_rate = $estimate_item_rate + $sitem['sub_rate'];
                                                     $estimate_item_amount = $estimate_item_amount + $sub_amount;
+                                                    $purchase_unit_name = get_purchase_unit($sitem['sub_unit_id']);
+                                                    $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
                                                    $modals_html .= '<tr>
                                                         <td>
                                                             '.get_purchase_items($sitem['item_name']).'
@@ -938,7 +944,7 @@
                                                             '.$sitem['sub_budget_area'].'
                                                         </td>
                                                         <td align="right">
-                                                            '.number_format($sitem['sub_qty'], 2).'
+                                                            '.number_format($sitem['sub_qty'], 2).$purchase_unit_name.'
                                                         </td>
                                                         <td align="right">
                                                             '.app_format_money($sitem['sub_rate'], $base_currency).'
