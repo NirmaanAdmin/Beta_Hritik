@@ -9,9 +9,9 @@ $approval_status_filter_name = 'approval_status';
 $aColumns = [
     db_prefix() . 'payment_certificate' . '.id as id',
     'po_id',
-    db_prefix() . 'payment_certificate' . '.vendor as vendor',
+    db_prefix() . 'pur_vendor' . '.company as company',
     db_prefix() . 'payment_certificate' . '.order_date as order_date',
-    db_prefix() . 'payment_certificate' . '.group_pur as group_pur',
+    db_prefix() . 'assets_group' . '.group_name as group_name',
     db_prefix() . 'payment_certificate' . '.approve_status as approve_status',
     db_prefix() . 'payment_certificate' . '.approve_status as applied_to_vendor_bill',
 ];
@@ -25,6 +25,9 @@ $join = [
     'LEFT JOIN ' . db_prefix() . 'wo_orders 
     ON ' . db_prefix() . 'payment_certificate.wo_id IS NOT NULL 
     AND ' . db_prefix() . 'wo_orders.id = ' . db_prefix() . 'payment_certificate.wo_id',
+    'LEFT JOIN ' . db_prefix() . 'pur_vendor 
+    ON ' . db_prefix() . 'pur_vendor.userid = ' . db_prefix() . 'payment_certificate.vendor',
+    'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = ' . db_prefix() . 'payment_certificate.group_pur',
 ];
 
 $where = [];
@@ -63,6 +66,8 @@ $result = data_tables_init(
         db_prefix() . 'payment_certificate.approve_status',
         db_prefix() . 'payment_certificate.wo_number',
         db_prefix() . 'payment_certificate.po_number',
+        db_prefix() . 'payment_certificate.vendor',
+        db_prefix() . 'payment_certificate.group_pur',
     ],
     '',
     [],
@@ -109,13 +114,12 @@ foreach ($rResult as $aRow) {
             if (!empty($aRow['wo_id'])) {
                 $_data = '<a href="' . admin_url('purchase/work_order/' . $aRow['wo_id']) . '" target="_blank">' . $aRow['wo_number'] . '</a>';
             }
-        } elseif ($aColumns[$i] == 'vendor') {
-            $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor']) . '" >' .  get_vendor_company_name($aRow['vendor']) . '</a>';
+        } elseif ($aColumns[$i] == 'company') {
+            $_data = '<a href="' . admin_url('purchase/vendor/' . $aRow['vendor']) . '" >' . $aRow['company'] . '</a>';
         } elseif ($aColumns[$i] == 'order_date') {
             $_data = _d($aRow['order_date']);
-        } elseif ($aColumns[$i] == 'group_pur') {
-            $budget_head = get_group_name_item($aRow['group_pur']);
-            $_data = $budget_head->name;
+        } elseif ($aColumns[$i] == 'group_name') {
+            $_data = $aRow['group_name'];
         } elseif ($aColumns[$i] == 'approve_status') {
             $_data = '';
             $list_approval_details = get_list_approval_details($aRow['id'], 'payment_certificate');
