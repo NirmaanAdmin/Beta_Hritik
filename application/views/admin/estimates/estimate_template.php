@@ -763,14 +763,8 @@
                         <div class="col-md-8 col-md-offset-4">
                             <table class="table text-right">
                                 <tbody>
-                                    <tr id="subtotal">
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
-                                        </td>
-                                        <td class="annexure_subtotal">
-                                        </td>
-                                    </tr>
                                     <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost'); ?> :</span>
                                         </td>
                                         <td class="annexure_total">
                                         </td>
@@ -988,13 +982,13 @@
                             <table class="table text-right">
                                 <tbody>
                                     <tr id="subtotal">
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_subtotal'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost_overall_area'); ?> :</span>
                                         </td>
                                         <td class="annexure_subtotal">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('estimate_total'); ?> :</span>
+                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost'); ?> :</span>
                                         </td>
                                         <td class="annexure_total">
                                         </td>
@@ -1179,13 +1173,13 @@
                                                 <table class="table text-right">
                                                     <tbody>
                                                         <tr id="subtotal">
-                                                            <td><span class="bold tw-text-neutral-700">'._l('estimate_subtotal').' :</span>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('cost_overall_area').' :</span>
                                                             </td>
                                                             <td class="sub_multilevel_subtotal">
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td><span class="bold tw-text-neutral-700">'._l('estimate_total').' :</span>
+                                                            <td><span class="bold tw-text-neutral-700">'._l('cost').' :</span>
                                                             </td>
                                                             <td class="sub_multilevel_total">
                                                             </td>
