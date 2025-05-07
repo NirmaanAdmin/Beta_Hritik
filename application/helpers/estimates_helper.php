@@ -429,10 +429,10 @@ function get_purchase_unit($id)
 {
     if(!empty($id)) {
         $CI = &get_instance();
-        $CI->db->where('unit_id', $id);
-        $pur_unit = $CI->db->get(db_prefix() . 'pur_unit')->row();
-        if(!empty($pur_unit)) {
-            return $pur_unit->unit_name;
+        $CI->db->where('unit_type_id', $id);
+        $ware_unit_type = $CI->db->get(db_prefix() . 'ware_unit_type')->row();
+        if(!empty($ware_unit_type)) {
+            return $ware_unit_type->unit_name;
         }
     }
     return '';
