@@ -790,6 +790,7 @@
                     <?php } else { ?>
                         <div class="col-md-4">
                             <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
+                            <div class="annexure_name hide"><?php echo $annexure['name']; ?></div>
                             <?php
                             $overall_budget_area_name = 'overall_budget_area['.$annexure['id'].']';
                             $overall_budget_area_value = '';
@@ -936,13 +937,13 @@
 
                                                 $get_selected_item = pur_get_item_selcted_select($item_name, $name_item_name);
                                                 if ($item_name == '') {
-                                                    $table_row .= '<td class="">
+                                                    $table_row .= '<td class="pur_item_name">
                                                     <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
                                                         <option value="">Type at least 3 letters...</option>
                                                     </select>
                                                  </td>';
                                                 } else {
-                                                    $table_row .= '<td class="">' . $get_selected_item . '</td>';
+                                                    $table_row .= '<td class="pur_item_name">' . $get_selected_item . '</td>';
                                                 }
 
                                                 $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
