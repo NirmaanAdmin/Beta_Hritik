@@ -395,7 +395,7 @@ function render_select($name, $options, $option_attrs = [], $label = '', $select
                 $data_content = ' ' . $data_content;
             }
         }
-        $select .= '<option value="' . $key . '"' . $_selected . $data_content . $data_sub_text . '>' . $val . '</option>';
+        $select .= '<option value="' . $key . '"' . $_selected . $data_content . $data_sub_text . '>' . _l($val) . '</option>';
     }
     $select .= '</select>';
     $select .= '</div>';

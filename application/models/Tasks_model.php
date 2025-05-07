@@ -579,7 +579,7 @@ class Tasks_model extends App_Model
                     foreach ($assignees as $staff_id) {
                         $this->add_task_assignees([
                             'taskid'   => $insert_id,
-                            'assignee' => $staff_id,
+                            'assignee' => $staff_id, 
                         ]);
                     }
                 }
@@ -618,7 +618,7 @@ class Tasks_model extends App_Model
                 //         ]);
                 //     }
                 // }
-
+ 
                 if ($fromTicketId !== null) {
                     $ticket_attachments = $this->db->query('SELECT * FROM ' . db_prefix() . 'ticket_attachments WHERE ticketid=' . $this->db->escape_str($fromTicketId) . ' OR (ticketid=' . $this->db->escape_str($fromTicketId) . ' AND replyid IN (SELECT id FROM ' . db_prefix() . 'ticket_replies WHERE ticketid=' . $this->db->escape_str($fromTicketId) . '))')->result_array();
 
@@ -2376,5 +2376,9 @@ class Tasks_model extends App_Model
     }
     public function get_task_unit(){
         return $this->db->query('select * from tblunit  order by tblunit.unit_name asc')->result_array();
+    }
+
+    public function get_task_rel_types() {
+        return $this->db->query("SELECT DISTINCT rel_type FROM `tbltasks` WHERE rel_type IS NOT NULL AND rel_type != '' ORDER BY rel_type ASC")->result_array();
     }
 }

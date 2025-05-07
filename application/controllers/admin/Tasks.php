@@ -40,15 +40,22 @@ class Tasks extends AdminController
         }
 
         $data['title'] = _l('tasks');
-        $data['tasks_table'] = App_table::find('tasks');
-        
-        
+        // $data['tasks_table'] = App_table::find('tasks');
+        $data['staff'] = $this->staff_model->get('', ['active' => 1]);
+        $data['task_rel_types'] = $this->tasks_model->get_task_rel_types();
+
         $this->load->view('admin/tasks/manage', $data);
     }
 
     public function table()
     {
-        App_table::find('tasks')->output();
+        $this->app->get_table_data('tasks_new');
+    }
+    public function table_tasks_details()
+    {
+        if ($this->input->is_ajax_request()) {
+            $this->app->get_table_data('tasks_new');
+        }
     }
 
     public function kanban()
@@ -366,7 +373,7 @@ class Tasks extends AdminController
         $data['checklistTemplates'] = $this->tasks_model->get_checklist_templates();
         if ($id == '') {
             $title = _l('add_new', _l('task_lowercase'));
-        } else {
+        } else { 
             $data['task'] = $this->tasks_model->get($id);
             if ($data['task']->rel_type == 'project') {
                 $data['milestones'] = $this->projects_model->get_milestones($data['task']->rel_id);
