@@ -108,10 +108,10 @@ class Authentication_vendor extends App_Controller
         
         $this->form_validation->set_rules('company', _l('client_company'), 'required');
         $this->form_validation->set_rules('firstname', _l('client_firstname'), 'required');
-        $this->form_validation->set_rules('lastname', _l('client_lastname'), 'required');
         $this->form_validation->set_rules('email', _l('client_email'), 'trim|required|is_unique[' . db_prefix() . 'pur_contacts.email]|valid_email');
         $this->form_validation->set_rules('password', _l('clients_register_password'), 'required');
         $this->form_validation->set_rules('passwordr', _l('clients_register_password_repeat'), 'required|matches[password]');
+        $this->form_validation->set_rules('vat', _l('vendor_vat'), 'required');
 
         
         $this->form_validation->set_rules(
@@ -160,6 +160,7 @@ class Authentication_vendor extends App_Controller
                       'address'             => $data['address'],
                       'zip'                 => $data['zip'],
                       'state'               => $data['state'],
+                      'bank_detail'         => $data['bank_detail'],
                       'custom_fields'       => isset($data['custom_fields']) && is_array($data['custom_fields']) ? $data['custom_fields'] : [],
                       'is_primary'          => 1,
                       'newworkcompleteditems' => $this->input->post('newworkcompleteditems') ? $this->input->post('newworkcompleteditems') : array(),

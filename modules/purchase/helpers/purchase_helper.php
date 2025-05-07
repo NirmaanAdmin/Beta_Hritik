@@ -4085,3 +4085,67 @@ function get_production_status($id)
 
     return '<span class="inline-block label label-warning" id="status_span_10" task-status-table="approved">Delivered </span>'; // All items completed
 }
+
+function handle_vendor_vat_attachments_upload($id, $customer_upload = false)
+{
+
+    $path           = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_vendor/' . $id . '/';
+    $CI            = &get_instance();
+    $totalUploaded = 0;
+
+    if (
+        isset($_FILES['vat_file']['name'])
+        && ($_FILES['vat_file']['name'] != '' || is_array($_FILES['vat_file']['name']) && count($_FILES['vat_file']['name']) > 0)
+    ) {
+        if (!is_array($_FILES['vat_file']['name'])) {
+            $_FILES['vat_file']['name']     = [$_FILES['vat_file']['name']];
+            $_FILES['vat_file']['type']     = [$_FILES['vat_file']['type']];
+            $_FILES['vat_file']['tmp_name'] = [$_FILES['vat_file']['tmp_name']];
+            $_FILES['vat_file']['error']    = [$_FILES['vat_file']['error']];
+            $_FILES['vat_file']['size']     = [$_FILES['vat_file']['size']];
+        }
+
+        _file_attachments_index_fix('vat_file');
+        for ($i = 0; $i < count($_FILES['vat_file']['name']); $i++) {
+            hooks()->do_action('before_upload_client_attachment', $id);
+            // Get the temp file path
+            $tmpFilePath = $_FILES['vat_file']['tmp_name'][$i];
+            // Make sure we have a filepath
+            if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                if (
+                    _perfex_upload_error($_FILES['vat_file']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['vat_file']['name'][$i])
+                ) {
+                    continue;
+                }
+
+                _maybe_create_upload_path($path);
+                $filename    = unique_filename($path, $_FILES['vat_file']['name'][$i]);
+                $newFilePath = $path . $filename;
+                // Upload the file into the temp dir
+                if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                    $attachment   = [];
+                    $attachment[] = [
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['vat_file']['type'][$i],
+                    ];
+
+                    if (is_image($newFilePath)) {
+                        create_img_thumb($newFilePath, $filename);
+                    }
+
+                    if ($customer_upload == true) {
+                        $attachment[0]['staffid']          = 0;
+                        $attachment[0]['contact_id']       = get_vendor_contact_user_id();
+                        $attachment['visible_to_customer'] = 1;
+                    }
+
+                    $CI->misc_model->add_attachment_to_database($id, 'pur_vendor', $attachment);
+                    $totalUploaded++;
+                }
+            }
+        }
+    }
+
+    return (bool) $totalUploaded;
+}

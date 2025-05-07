@@ -13,6 +13,7 @@
                 <div class="col-md-6">
                     <h4 class="bold register-contact-info-heading"><?php echo _l('client_register_contact_info'); ?></h4>
                     <div class="form-group mtop15 register-firstname-group">
+                        <small class="req text-danger">* </small>
                         <label class="control-label" for="firstname"><?php echo _l('clients_firstname'); ?></label>
                         <input type="text" class="form-control" name="firstname" id="firstname" value="<?php echo set_value('firstname'); ?>">
                         <?php echo form_error('firstname'); ?>
@@ -23,11 +24,13 @@
                         <?php echo form_error('lastname'); ?>
                     </div>
                     <div class="form-group register-email-group">
+                        <small class="req text-danger">* </small>
                         <label class="control-label" for="email"><?php echo _l('clients_email'); ?></label>
                         <input type="email" class="form-control" name="email" id="email" value="<?php echo set_value('email'); ?>">
                         <?php echo form_error('email'); ?>
                     </div>
                     <div class="form-group register-contact-phone-group">
+                        <small class="req text-danger">* </small>
                         <label class="control-label" for="contact_phonenumber"><?php echo _l('clients_phone'); ?></label>
                         <input type="text" class="form-control" name="contact_phonenumber" id="contact_phonenumber" value="<?php echo set_value('contact_phonenumber'); ?>">
                     </div>
@@ -40,30 +43,48 @@
                         <input type="text" class="form-control" name="title" id="title" value="<?php echo set_value('title'); ?>">
                     </div>
                     <div class="form-group register-password-group">
+                        <small class="req text-danger">* </small>
                         <label class="control-label" for="password"><?php echo _l('clients_register_password'); ?></label>
                         <input type="password" class="form-control" name="password" id="password">
                         <?php echo form_error('password'); ?>
                     </div>
                     <div class="form-group register-password-repeat-group">
+                        <small class="req text-danger">* </small>
                         <label class="control-label" for="passwordr"><?php echo _l('clients_register_password_repeat'); ?></label>
                         <input type="password" class="form-control" name="passwordr" id="passwordr">
                         <?php echo form_error('passwordr'); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank_detail" class="control-label"><?php echo _l('bank_detail'); ?></label>
+                        <textarea id="bank_detail" name="bank_detail" class="form-control" rows="4">
+                        </textarea>
                     </div>
                    
                 </div>
                 <div class="col-md-6">
                     <h4 class="bold register-company-info-heading"><?php echo _l('client_register_company_info'); ?></h4>
                     <div class="form-group mtop15 register-company-group">
+                        <small class="req text-danger">* </small>
                         <label class="control-label" for="company"><?php echo _l('clients_company'); ?></label>
                         <input type="text" class="form-control" name="company" id="company" value="<?php echo set_value('company'); ?>">
                         <?php echo form_error('company'); ?>
                     </div>
-                    <?php if(get_option('company_requires_vat_number_field') == 1){ ?>
-                    <div class="form-group register-vat-group">
-                        <label class="control-label" for="vat"><?php echo _l('vendor_vat'); ?></label>
-                        <input type="text" class="form-control" name="vat" id="vat" value="<?php echo set_value('vat'); ?>">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group register-vat-group">
+                                <small class="req text-danger">* </small>
+                                <label class="control-label" for="vat"><?php echo _l('vendor_vat'); ?></label>
+                                <input type="text" class="form-control" name="vat" id="vat" value="<?php echo set_value('vat'); ?>">
+                                <?php echo form_error('vat'); ?>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group register-vat-group">
+                                <label class="control-label"><?php echo _l('attachment'); ?></label>
+                                <input type="file" name="vat_file" class="form-control" />
+                            </div>
+                        </div>
                     </div>
-                    <?php } ?>
                     <div class="form-group register-company-phone-group">
                         <label class="control-label" for="phonenumber"><?php echo _l('clients_phone'); ?></label>
                         <input type="text" class="form-control" name="phonenumber" id="phonenumber" value="<?php echo set_value('phonenumber'); ?>">
@@ -105,18 +126,6 @@
                         <?php echo render_custom_fields( 'vendors',''); ?>
                 </div>
                 <?php } ?>
-
-                <div class="col-md-12 register-terms-and-conditions-wrapper">
-                    <div class="text-center">
-                        <div class="checkbox">
-                            <input type="checkbox" name="accept_terms_and_conditions" id="accept_terms_and_conditions" <?php echo set_checkbox('accept_terms_and_conditions', 'on'); ?>>
-                            <label for="accept_terms_and_conditions">
-                                <?php echo _l('gdpr_terms_agree', site_url('purchase/vendors_portal/terms_and_conditions')); ?>
-                            </label>
-                        </div>
-                        <?php echo form_error('accept_terms_and_conditions'); ?>
-                    </div>
-                </div>
           
        </div>
 
@@ -250,6 +259,20 @@
             <div class="col-md-12">
                 <h4 class="mbot15 mtop20 company-profile-shipping-address-heading"><?php echo _l('attachment'); ?></h4>
                 <input type="file" name="file[]" multiple class="form-control" />
+            </div>
+        </div>
+
+        <div class="row mbot15">
+            <div class="col-md-12 register-terms-and-conditions-wrapper">
+                <div class="text-center">
+                    <div class="checkbox">
+                        <input type="checkbox" name="accept_terms_and_conditions" id="accept_terms_and_conditions" <?php echo set_checkbox('accept_terms_and_conditions', 'on'); ?>>
+                        <label for="accept_terms_and_conditions">
+                            <?php echo _l('gdpr_terms_agree', site_url('purchase/vendors_portal/terms_and_conditions')); ?>
+                        </label>
+                    </div>
+                    <?php echo form_error('accept_terms_and_conditions'); ?>
+                </div>
             </div>
         </div>
 

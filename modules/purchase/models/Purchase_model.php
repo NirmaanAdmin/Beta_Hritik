@@ -213,6 +213,7 @@ class Purchase_model extends App_Model
             $this->add_fresh_vendor_completed_items($newworkcompleteditems, $userid);
             $this->add_fresh_vendor_progress_items($newworkprogressitems, $userid);
             handle_pur_vendor_attachments_upload($userid, true);
+            handle_vendor_vat_attachments_upload($userid, true);
 
             hooks()->do_action('after_pur_vendor_created', [
                 'id'            => $userid,
