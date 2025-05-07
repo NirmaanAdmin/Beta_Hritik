@@ -18,13 +18,14 @@
 			opacity: 0.8;
 		}
 	</style>
-	<table class="table table-items scroll-responsive no-mtop">
+	<table class="table table-items scroll-responsive no-mtop tablechilditemssorter">
 		<thead class="bg-light-gray">
 			<tr>
+				<th scope="col"></th>
 				<th scope="col"><input type="checkbox" id="mass_select_all" data-to-table="checkout_managements"></th>
 				<th scope="col"><?php echo _l('dmg_name'); ?></th>
 				<th scope="col"><?php echo _l('dmg_date'); ?></th>
-				<th scope="col"><?php echo _l('dmg_option'); ?></th>
+				<th scope="col" align="right"><?php echo _l('dmg_option'); ?></th>
 			</tr>
 		</thead>
 		<tbody id="sortable-tbody">
