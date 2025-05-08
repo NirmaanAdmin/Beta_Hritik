@@ -11,6 +11,7 @@ class MinutesController extends AdminController
         $this->load->model('Meeting_model');
         $this->load->model('Task_model');
         $this->load->model('Clients_model');  // Load the default clients model
+        $this->load->model('Departments_model');
     }
 
     // View and manage the minutes of a meeting
@@ -47,7 +48,7 @@ class MinutesController extends AdminController
                 $index_order = 1;
                 foreach ($get_mom_detials as $mom_detail) {
                     $index_order++;
-                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id'], $mom_detail['section_break'], $mom_detail['serial_no']);
+                    $mom_row_template .= $this->Meeting_model->create_mom_row_template('items[' . $index_order . ']', $mom_detail['area'], $mom_detail['description'], $mom_detail['decision'], $mom_detail['action'], $mom_detail['staff'], $mom_detail['vendor'], $mom_detail['target_date'], $mom_detail, $mom_detail['id'], $mom_detail['section_break'], $mom_detail['serial_no'], $mom_detail['critical']);
                 }
             }
             $is_edit = true;
@@ -55,7 +56,7 @@ class MinutesController extends AdminController
         $data['is_edit'] = $is_edit;
         $data['mom_row_template'] = $mom_row_template;
         $data['projects'] = $this->projects_model->get_items();
-        
+
         // Load the minutes form view (with tasks form and task list added)
         $this->load->view('meeting_management/minutes_form', $data);
     }
@@ -464,7 +465,7 @@ class MinutesController extends AdminController
 
     public function assign_task_in_mom()
     {
-        
+
         $this->load->model('tasks_model');
 
         // Build the query to fetch task assignment data along with meeting title and minutes details.
@@ -491,7 +492,7 @@ class MinutesController extends AdminController
                     'rel_type'  => 'meeting_minutes',
                     'rel_id'    => $task->minute_id,
                 ];
-                
+
                 // Insert the new task and get the inserted task's ID.
                 $task_id = $this->tasks_model->add($taskData);
 
@@ -509,7 +510,7 @@ class MinutesController extends AdminController
 
                             $this->tasks_model->add_task_assignees([
                                 'taskid'   => $task_id,
-                                'assignee' => $staff_id, 
+                                'assignee' => $staff_id,
                             ]);
                         }
                     }
@@ -523,6 +524,189 @@ class MinutesController extends AdminController
             }
         } else {
             log_message('info', 'No records found in tbltask_assigned_mom to process in assign_task_in_mom()');
+        }
+    }
+
+    public function critical_agenda()
+    {
+
+        $data['critical_agenda'] = $this->Meeting_model->get_critical_agenda();
+        $data['department'] = $this->Departments_model->get();
+
+        $data['title'] = _l('meeting_critical_agenda');
+
+        $this->load->view('meeting_management/critical_agenda', $data);
+    }
+
+    public function change_status_mom($status, $id)
+    {
+        // Define an array of statuses with their corresponding labels and texts
+        $status_labels = [
+            1 => ['label' => 'label-danger', 'table' => 'open', 'text' => _l('Open')],
+            2 => ['label' => 'label-success', 'table' => 'close', 'text' => _l('close')],
+        ];
+        $success = $this->Meeting_model->change_status_mom($status, $id);
+        $message = $success ? _l('change_status_successfully') : _l('change_status_fail');
+
+        $html = '';
+        $status_str = $status_labels[$status]['text'] ?? '';
+        $class = $status_labels[$status]['label'] ?? '';
+
+
+        $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+        $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+        $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+        $html .= '</a>';
+
+        $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $id . '">';
+
+        // Generate the dropdown menu options dynamically
+        foreach ($status_labels as $key => $label) {
+            if ($key != $status) {
+                $html .= '<li>
+                    <a href="#" onclick="change_status_mom(' . $key . ', ' . $id . '); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+            }
+        }
+
+        $html .= '</ul>';
+        $html .= '</div>';
+
+
+        echo json_encode([
+            'success' => $success,
+            'status_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
+
+
+
+    public function change_priority_mom($status, $id)
+    {
+        // Define an array of statuses with their corresponding labels and texts
+        $priority_labels = [
+            1 => ['label' => 'label-warning', 'table' => 'high', 'text' => _l('High')],
+            2 => ['label' => 'label-default', 'table' => 'low', 'text' => _l('Low')],
+            3 => ['label' => 'label-info', 'table' => 'medium', 'text' => _l('Medium')],
+            4 => ['label' => 'label-danger', 'table' => 'urgent', 'text' => _l('Urgent')],
+        ];
+        $success = $this->Meeting_model->change_priority_mom($status, $id);
+        $message = $success ? _l('change_priority_successfully') : _l('change_priority_fail');
+
+        $html = '';
+        $status_str = $priority_labels[$status]['text'] ?? '';
+        $class = $priority_labels[$status]['label'] ?? '';
+
+
+        $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+        $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderPriority-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+        $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+        $html .= '</a>';
+
+        $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderPriority-' . $id . '">';
+
+        // Generate the dropdown menu options dynamically
+        foreach ($priority_labels as $key => $label) {
+            if ($key != $status) {
+                $html .= '<li>
+                    <a href="#" onclick="change_priority_mom(' . $key . ', ' . $id . '); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+            }
+        }
+
+        $html .= '</ul>';
+        $html .= '</div>';
+
+
+        echo json_encode([
+            'success' => $success,
+            'priority_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
+
+    public function change_department($department_id, $agenda_id)
+    {
+        // 1. Fetch and re-index departments by departmentid
+        $departments       = $this->Departments_model->get();                // your original fetch
+        $departments_by_id = array_column($departments, null, 'departmentid');
+
+        // 2. Update in database
+        $success = $this->Meeting_model->update_agenda_department($agenda_id, $department_id);
+        $message = $success
+            ? _l('department_changed_successfully')
+            : _l('department_change_failed');
+
+        // 3. Prepare response payload
+        $department_name = '';
+        $html            = '';
+
+        if (isset($departments_by_id[$department_id])) {
+            $department_name = $departments_by_id[$department_id]['name'];
+
+            // Build just the dropdown toggle HTML (you return department_name separately)
+            $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $html .= '<a href="#" class="dropdown-toggle text-dark"'
+                .  ' id="tableDepartment-' . $agenda_id . '"'
+                .  ' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+                .  '<span data-toggle="tooltip" title="' . _l('change_department') . '">'
+                .  '<i class="fa fa-caret-down"></i></span>'
+                .  '</a>';
+
+            $html .= '<ul class="dropdown-menu dropdown-menu-right"'
+                .  ' aria-labelledby="tableDepartment-' . $agenda_id . '">';
+
+            // Iterate the re-indexed list so the key is the true departmentid
+            foreach ($departments_by_id as $id => $dept) {
+                if ($id != $department_id) {
+                    $html .= '<li>'
+                        . '<a href="#" onclick="change_department('
+                        .   $id . ', ' . $agenda_id . '); return false;">'
+                        .   $dept['name']
+                        . '</a>'
+                        . '</li>';
+                }
+            }
+
+            $html .= '</ul></div>';
+        }
+
+        // 4. Output JSON for your AJAX success handler
+        echo json_encode([
+            'success'         => $success,
+            'department_name' => $department_name,
+            'message'         => $message,
+            'html'            => $html,
+        ]);
+    }
+
+    public function update_closed_date()
+    {
+        $id = $this->input->post('id');
+        $closedDate = $this->input->post('closedDate');
+
+        if (!$id || !$closedDate) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['date_closed' => $closedDate]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('closed_date_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
 }

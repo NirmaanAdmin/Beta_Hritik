@@ -62,7 +62,6 @@
       /* Adjust the size as needed */
       height: 100px;
    }
-
 </style>
 
 <!-- Add CKEditor and SweetAlert -->
@@ -74,7 +73,7 @@
          <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
       </div>
       <div class="row">
-         <input type="hidden" id="flag" value="<?php echo isset($agenda) && isset($agenda->flag) ? $agenda->flag :''; ?>">
+         <input type="hidden" id="flag" value="<?php echo isset($agenda) && isset($agenda->flag) ? $agenda->flag : ''; ?>">
          <?php
          if (isset($agenda)) {
             echo form_open_multipart(admin_url('meeting_management/minutesController/save_minutes_and_tasks/' . $agenda_id), array('id' => 'minutes-tasks-form'));
@@ -179,6 +178,7 @@
                            <tr>
                               <th width="1%"></th>
                               <th width="5%">No.</th>
+                              <th>Critical</th>
                               <th>
                                  <select name="area_head" id="area_head" class="form-control">
                                     <option value="">Select Option</option>
@@ -593,7 +593,7 @@
       var table_row = '';
       var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.mom-items-table tbody .item').length + 1;
       lastAddedItemKey = item_key;
-      mom_get_item_row_template('newitems[' + item_key + ']', data.area, data.description, data.decision, data.action, data.staff, data.vendor, data.target_date, data.attachments, item_key).done(function(output) {
+      mom_get_item_row_template('newitems[' + item_key + ']', data.area, data.description, data.decision, data.action, data.staff, data.vendor, data.target_date, data.attachments, item_key, data.critical).done(function(output) {
          table_row += output;
 
          $('.mom_body').append(table_row);
@@ -615,7 +615,7 @@
       return false;
    });
 
-   function mom_get_item_row_template(name, area, description, decision, action, staff, vendor, target_date, attachments, item_key) {
+   function mom_get_item_row_template(name, area, description, decision, action, staff, vendor, target_date, attachments, item_key, critical) {
       "use strict";
 
       jQuery.ajaxSetup({
@@ -631,7 +631,8 @@
          staff: staff,
          vendor: vendor,
          target_date: target_date,
-         item_key: item_key
+         item_key: item_key,
+         critical: critical
       });
       jQuery.ajaxSetup({
          async: true
@@ -650,6 +651,7 @@
       response.staff = $('.mom-items-table .main select[name="staff"]').val();
       response.vendor = $('.mom-items-table .main input[name="vendor"]').val();
       response.target_date = $('.mom-items-table .main input[name="target_date"]').val();
+      response.critical = $('.mom-items-table .main input[name="critical"]').val();
       return response;
    }
 
@@ -659,6 +661,7 @@
       var previewArea = $('.mom_body .main');
       previewArea.find('input').val('');
       previewArea.find('textarea').val('');
+      previewArea.find('input[type="checkbox"]').prop('checked', false);
       previewArea.find('select')
          .prop('disabled', false) // Remove the disabled attribute
          .val('') // Clear the value
@@ -702,4 +705,8 @@
       // Insert the new row right after the current row.
       $tr.before(sectionBreakRow);
    }
+   $('body').on('change', '.critical-checkbox', function() {
+      // when checked → value="1", when unchecked → value="0"
+      this.value = this.checked ? '1' : '0';
+   });
 </script>

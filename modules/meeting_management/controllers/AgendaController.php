@@ -129,8 +129,8 @@ class AgendaController extends AdminController
         $target_date = $this->input->post('target_date');
         $attachments = $this->input->post('attachments');
         $item_key = $this->input->post('item_key');
-
-        echo $this->Meeting_model->create_mom_row_template($name, $area, $description, $decision, $action, $staff, $vendor, $target_date, $attachments, $item_key);
+        $critical = $this->input->post('critical');
+        echo $this->Meeting_model->create_mom_row_template($name, $area, $description, $decision, $action, $staff, $vendor, $target_date, $attachments, $item_key, '','',$critical);
     }
     // Delete an agenda
     public function delete($id)

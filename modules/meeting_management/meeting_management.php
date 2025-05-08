@@ -91,6 +91,13 @@ function meeting_management_module_init_menu_items()
             'href'     => admin_url('meeting_management/minutesController/convert_to_minutes'), // Add module name in the URL
             'position' => 5, 
         ]);
+
+        $CI->app_menu->add_sidebar_children_item('meeting_management_menu', [
+            'slug'     => 'critical-agenda',
+            'name'     => _l('meeting_critical_agenda'), // Menu name from language file
+            'href'     => admin_url('meeting_management/minutesController/critical_agenda'), // Add module name in the URL
+            'position' => 5, 
+        ]);
     }
 
 

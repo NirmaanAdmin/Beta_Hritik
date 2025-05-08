@@ -148,10 +148,15 @@ class Meeting_model extends App_Model
         if (!empty($mom_detail) && is_array($mom_detail)) {
             foreach ($mom_detail as $key => $value) {
                 // Process the staff field if it is an array.
-                $staff = '';
+                $staff = $critical =  '';
                 if (isset($value['staff']) && !empty($value['staff']) && is_array($value['staff'])) {
                     $staff = implode(',', $value['staff']);
                 }
+
+                if (isset($value['critical']) && !empty($value['critical'])) {
+                    $critical = $value['critical'];
+                }
+
 
                 // Build and insert the record into the agendas_details table.
                 $agenda_detail = [
@@ -166,6 +171,7 @@ class Meeting_model extends App_Model
                     'section_break' => isset($value['section_break']) ? $value['section_break'] : '',
                     'serial_no' => isset($value['serial_no']) ? $value['serial_no'] : '',
                     'reorder' => isset($value['order']) ? $value['order'] : '',
+                    'critical' => $critical,
                 ];
 
                 $this->db->insert(db_prefix() . 'agendas_details', $agenda_detail);
@@ -198,6 +204,15 @@ class Meeting_model extends App_Model
                         'minutes_detail_id' => $minutes_detail_id
                     ];
                     $this->db->insert(db_prefix() . 'task_assigned_mom', $task_arr);
+                }
+                if ($critical > 0 && $critical != null) {
+                    unset(
+                        $minutes_detail['reorder'],
+                        $minutes_detail['section_break'],
+                        $minutes_detail['serial_no']
+                    );
+                    $minutes_detail['meeting_detail_id'] = $minutes_detail_id;
+                    $this->db->insert(db_prefix() . 'critical_mom', $minutes_detail);
                 }
 
                 // If an attachment was uploaded for the agenda detail,
@@ -281,7 +296,7 @@ class Meeting_model extends App_Model
         unset($data['staff']);
         unset($data['vendor']);
         unset($data['target_date']);
-        unset($data['isedit']);
+        unset($data['isedi+`t']);
 
         $new_mom = [];
         if (isset($data['newitems'])) {
@@ -575,6 +590,11 @@ class Meeting_model extends App_Model
                 } else {
                     $staff = '';
                 }
+                if (isset($value['critical']) && !empty($value['critical'])) {
+                    $critical = $value['critical'];
+                } else {
+                    $critical = '';
+                }
                 $mom_arr = [];
                 $mom_arr['minute_id'] = $agenda_id;
                 $mom_arr['area'] = $value['area'];
@@ -587,9 +607,18 @@ class Meeting_model extends App_Model
                 $mom_arr['section_break'] = $value['section_break'];
                 $mom_arr['serial_no'] = $value['serial_no'];
                 $mom_arr['reorder'] = isset($value['order']) ? $value['order'] : null;
+                $mom_arr['critical'] = $critical;
                 $this->db->insert(db_prefix() . 'minutes_details', $mom_arr);
                 $last_insert_id = $this->db->insert_id();
-
+                if ($critical > 0 && $critical != null) {
+                    unset(
+                        $mom_arr['reorder'],
+                        $mom_arr['section_break'],
+                        $mom_arr['serial_no'],
+                    );
+                    $mom_arr['meeting_detail_id'] = $last_insert_id;
+                    $this->db->insert(db_prefix() . 'critical_mom', $mom_arr);
+                }
                 $iuploadedFiles = handle_mom_item_attachment_array('minutes_attachments', $agenda_id, $last_insert_id, 'newitems', $key);
                 if ($iuploadedFiles && is_array($iuploadedFiles)) {
                     foreach ($iuploadedFiles as $ifile) {
@@ -609,6 +638,11 @@ class Meeting_model extends App_Model
                 } else {
                     $staff = '';
                 }
+                if (isset($value['critical']) && !empty($value['critical'])) {
+                    $critical = $value['critical'];
+                } else {
+                    $critical = '';
+                }
                 $mom_arr = [];
                 $mom_arr['minute_id'] = $agenda_id;
                 $mom_arr['area'] = $value['area'];
@@ -621,8 +655,21 @@ class Meeting_model extends App_Model
                 $mom_arr['section_break'] = $value['section_break'];
                 $mom_arr['serial_no'] = $value['serial_no'];
                 $mom_arr['reorder'] = isset($value['order']) ? $value['order'] : '';
+                $mom_arr['critical'] = $critical;
+
+
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'minutes_details', $mom_arr);
+
+                // if ($critical > 0 && $critical != null) {
+                unset(
+                    $mom_arr['reorder'],
+                    $mom_arr['section_break'],
+                    $mom_arr['serial_no'],
+                );
+                $this->db->where('meeting_detail_id', $value['id']);
+                $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
+                // }
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
                 }
@@ -809,7 +856,7 @@ class Meeting_model extends App_Model
         return true;
     }
 
-    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '', $section_break = '', $serial_no = '')
+    public function create_mom_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $attachments = [], $item_key = '', $section_break = '', $serial_no = '', $critical = '')
     {
         $row = '';
 
@@ -823,6 +870,7 @@ class Meeting_model extends App_Model
         $name_attachments = 'attachments';
         $name_section_break = 'section_break';
         $name_serial_no = 'serial_no';
+        $name_critical = 'critical';
         if ($name == '') {
             $row .= '<tr class="main"><td></td>';
             $manual = true;
@@ -839,6 +887,7 @@ class Meeting_model extends App_Model
             $name_attachments = $name . '[attachments]';
             $name_section_break = $name . '[section_break]';
             $name_serial_no = $name . '[serial_no]';
+            $name_critical = $name . '[critical]';
             if ($section_break) {
                 $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
             }
@@ -862,6 +911,15 @@ class Meeting_model extends App_Model
         } else {
             $row .= '<td class="serial_no"></td>';
         }
+        $value   = ($critical > 0 ? '1' : '');
+        $checked = ($critical > 0 ? 'checked' : '');
+        $row .= '<td class="critical">'
+            . '<input type="checkbox" '
+            . $checked
+            . ' class="form-check-input critical-checkbox" '
+            . 'name="' . $name_critical . '" '
+            . 'value="' . $value . '">'
+            . '</td>';
 
         $row .= '<td class="area" style="text-align:left">
         <div class="form-group" app-field-wrapper="Area/Head" style="margin-bottom:2px;">
@@ -901,5 +959,33 @@ class Meeting_model extends App_Model
         $row .= '</tr><div class="section-break-container"></div>';
 
         return $row;
+    }
+
+    public function get_critical_agenda()
+    {
+        $this->db->select('tblcritical_mom.*');
+        $this->db->from('tblcritical_mom');
+        $this->db->where('critical', 1);
+
+        return $query = $this->db->get()->result_array();
+    }
+    public function change_status_mom($status, $id)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'critical_mom', ['status' => $status]);
+        return true;
+    }
+
+    public function change_priority_mom($status, $id){
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'critical_mom', ['priority' => $status]);
+        return true;
+    }
+
+    public function update_agenda_department($id, $department_id){
+        $this->db->where('id', $id);    
+        $this->db->update(db_prefix() . 'critical_mom', ['department' => $department_id]);
+        return true;
+
     }
 }
