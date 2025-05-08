@@ -798,6 +798,7 @@
                             }
                             ?>
                             <div class="form-group" app-field-wrapper="<?php echo $overall_budget_area_name; ?>">
+                                <small class="req text-danger">* </small>
                                 <label for="<?php echo $overall_budget_area_name; ?>" class="control-label">Overall area (sqft)</label>
                                 <input type="number" id="overall_budget_area_id" name="<?php echo $overall_budget_area_name; ?>" class="form-control" style="width: 300px;" value="<?php echo $overall_budget_area_value; ?>">
                             </div>
