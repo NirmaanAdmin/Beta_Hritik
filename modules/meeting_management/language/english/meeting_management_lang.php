@@ -135,3 +135,4 @@ $lang['change_status_fail'] = 'Change Status Failed';
 $lang['change_priority_successfully'] = 'Priority Changed Successfully';
 $lang['change_priority_fail'] = 'Change Priority Failed';
 $lang['closed_date_updated'] = 'Closed Date Updated';  
+$lang['no_records_found'] = 'No Records Found';
