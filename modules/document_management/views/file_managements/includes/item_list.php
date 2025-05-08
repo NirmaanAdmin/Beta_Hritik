@@ -17,6 +17,21 @@
 		.draggerer:hover::after {
 			opacity: 0.8;
 		}
+
+		.column_sortable {
+			cursor: pointer;
+			user-select: none;
+			position: relative;
+			padding-right: 20px;
+		}
+		.column_sortable .sort-arrow {
+			position: absolute;
+			right: 5px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 12px;
+			opacity: 0.7;
+		}
 	</style>
 	<table class="table table-items scroll-responsive no-mtop tablechilditemssorter">
 		<thead class="bg-light-gray">
@@ -148,13 +163,27 @@
 				}
 			});
 
-			// Column Sorting with toggle
+			// Column Sorting with arrows
 			const sortState = {};
-			document.querySelectorAll('th.column_sortable').forEach(th => {
+			const headers = document.querySelectorAll('th.column_sortable');
+
+			headers.forEach(th => {
 				th.addEventListener('click', function () {
-					const sortKey = this.dataset.sort;
+					const sortKey = th.dataset.sort;
 					const isAsc = !sortState[sortKey];
 					sortState[sortKey] = isAsc;
+
+					// Clear existing arrows
+					headers.forEach(h => {
+						const arrow = h.querySelector('.sort-arrow');
+						if (arrow) arrow.remove();
+					});
+
+					// Add current arrow
+					const arrowSpan = document.createElement('span');
+					arrowSpan.className = 'sort-arrow';
+					arrowSpan.textContent = isAsc ? '▲' : '▼';
+					th.appendChild(arrowSpan);
 
 					const rows = Array.from(tbody.querySelectorAll('tr'));
 
