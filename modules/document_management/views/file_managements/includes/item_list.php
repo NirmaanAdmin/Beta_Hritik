@@ -23,7 +23,7 @@
 			<tr>
 				<th scope="col"></th>
 				<th scope="col"><input type="checkbox" id="mass_select_all" data-to-table="checkout_managements"></th>
-				<th scope="col"><?php echo _l('dmg_name'); ?></th>
+				<th scope="col" class="column_sortable" data-sort="name"><?php echo _l('dmg_name'); ?></th>
 				<th scope="col"><?php echo _l('dmg_date'); ?></th>
 				<th scope="col" align="right"><?php echo _l('dmg_option'); ?></th>
 			</tr>
@@ -146,6 +146,36 @@
 						}
 					});
 				}
+			});
+
+			// Column Sorting with toggle
+			const sortState = {};
+			document.querySelectorAll('th.column_sortable').forEach(th => {
+				th.addEventListener('click', function () {
+					const sortKey = this.dataset.sort;
+					const isAsc = !sortState[sortKey];
+					sortState[sortKey] = isAsc;
+
+					const rows = Array.from(tbody.querySelectorAll('tr'));
+
+					rows.sort((a, b) => {
+						let valA = '', valB = '';
+
+						if (sortKey === 'name') {
+							valA = a.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+							valB = b.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+						} else if (sortKey === 'date') {
+							valA = new Date(a.querySelector('td:nth-child(4)').textContent.trim());
+							valB = new Date(b.querySelector('td:nth-child(4)').textContent.trim());
+						}
+
+						if (valA < valB) return isAsc ? -1 : 1;
+						if (valA > valB) return isAsc ? 1 : -1;
+						return 0;
+					});
+
+					tbody.append(...rows);
+				});
 			});
 		});
 	</script>
