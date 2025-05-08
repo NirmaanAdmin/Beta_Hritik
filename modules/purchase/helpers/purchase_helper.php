@@ -4149,3 +4149,38 @@ function handle_vendor_vat_attachments_upload($id, $customer_upload = false)
 
     return (bool) $totalUploaded;
 }
+
+function pur_get_item_cost_selected_select($id, $name_item_name, $allItems = [])
+{
+    $select = '';
+    $id = !empty($id) ? $id : '';
+    
+    if (empty($allItems)) {
+        return '<select class="form-control selectpicker item-select" disabled><option>No items available</option></select>';
+    }
+
+    $filteredItems = [];
+    if ($id != '') {
+        $filteredItems = array_filter($allItems, function ($item) use ($id) {
+            return (stripos($item['id'], $id) !== false);
+        });
+    }
+
+    $preSelectedId = $id;
+    $select .= '<select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="' . $preSelectedId . '" class="form-control selectpicker item-select" data-live-search="true">';
+    $select .= '<option value="">Type at least 3 letters..</option>';
+
+    foreach ($filteredItems as $item) {
+        $isSelected = $preSelectedId == $item['id'] ? 'selected' : '';
+        $select .= '<option value="' . $item['id'] . '" ' . $isSelected . '
+            data-commodity-code="' . htmlspecialchars($item['commodity_code'], ENT_QUOTES, 'UTF-8') . '"
+            data-subtext="' . htmlspecialchars(substr($item['long_description'], 0, 200), ENT_QUOTES, 'UTF-8') . '">' .
+            htmlspecialchars($item['commodity_code'], ENT_QUOTES, 'UTF-8') . ' ' .
+            htmlspecialchars($item['description'], ENT_QUOTES, 'UTF-8') .
+            '</option>';
+    }
+
+    $select .= '</select>';
+    return $select;
+}
+

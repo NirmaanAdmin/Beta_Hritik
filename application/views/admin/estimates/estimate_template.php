@@ -633,6 +633,13 @@
             <?php
             $annexures = get_all_annexures(); 
             $i = 1;
+            $base_path = get_upload_path_by_type('item_json');
+            $jsonFilePath = $base_path . 'tblitems.json';
+            $allItems = [];
+            if (file_exists($jsonFilePath)) {
+                $jsonData = file_get_contents($jsonFilePath);
+                $allItems = json_decode($jsonData, true);
+            }
             foreach ($annexures as $key => $annexure) { ?>
                 <div role="tabpanel" class="tab-pane detailed-costing-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
                     <?php if($annexure['id'] == 7) { ?>
@@ -921,7 +928,7 @@
                                                 $table_row .= '<input type="hidden" class="annexure" name="' . $items_indicator . '[' . $i . '][annexure]" value="'.$item['annexure'].'">';
                                                 $table_row .= '</td>';
 
-                                                $get_selected_item = pur_get_item_selcted_select($item_name, $name_item_name);
+                                                $get_selected_item = pur_get_item_cost_selected_select($item_name, $name_item_name, $allItems);
                                                 if ($item_name == '') {
                                                     $table_row .= '<td class="pur_item_name">
                                                     <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
@@ -1110,7 +1117,7 @@
                                                             $sub_item_name = $sitem['item_name'];
                                                             $modals_html .= '</td>';
 
-                                                            $get_sub_selected_item = pur_get_item_selcted_select($sub_item_name, $sub_name_item_name);
+                                                            $get_sub_selected_item = pur_get_item_cost_selected_select($sub_item_name, $sub_name_item_name, $allItems);
                                                             if ($sub_item_name == '') {
                                                                 $modals_html .= '<td class="">
                                                                 <select id="' . $sub_name_item_name . '" name="' . $sub_name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
