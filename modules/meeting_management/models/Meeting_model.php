@@ -661,15 +661,33 @@ class Meeting_model extends App_Model
                 $this->db->where('id', $value['id']);
                 $this->db->update(db_prefix() . 'minutes_details', $mom_arr);
 
-                // if ($critical > 0 && $critical != null) {
-                unset(
-                    $mom_arr['reorder'],
-                    $mom_arr['section_break'],
-                    $mom_arr['serial_no'],
-                );
+                $this->db->select('tblcritical_mom.*');
+                $this->db->from('tblcritical_mom');
+                $this->db->where('critical', 1);
                 $this->db->where('meeting_detail_id', $value['id']);
-                $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
-                // }
+                $query = $this->db->get()->result_array();
+                if ($critical > 0 && $critical != null) {
+                    // Clean up the array before insert/update
+                    unset(
+                        $mom_arr['reorder'],
+                        $mom_arr['section_break'],
+                        $mom_arr['serial_no']
+                    );
+
+                    if (!empty($query)) {
+                        // Record exists - update it
+                        $this->db->where('meeting_detail_id', $value['id']);
+                        $this->db->where('critical', 1);
+                        $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
+                    } else {
+                        // Record doesn't exist - insert it
+                        $mom_arr['meeting_detail_id'] = $value['id'];
+                        $mom_arr['critical'] = 1; // Ensure critical flag is set
+                        $this->db->insert(db_prefix() . 'critical_mom', $mom_arr);
+                    }
+                }
+
+
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
                 }
@@ -976,16 +994,208 @@ class Meeting_model extends App_Model
         return true;
     }
 
-    public function change_priority_mom($status, $id){
+    /**
+     * Changes the priority of a critical agenda item
+     *
+     * @param int $status The new priority status
+     * @param int $id The ID of the critical agenda item to update
+     * @return bool
+     */
+    public function change_priority_mom($status, $id)
+    {
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'critical_mom', ['priority' => $status]);
         return true;
     }
 
-    public function update_agenda_department($id, $department_id){
-        $this->db->where('id', $id);    
+    /**
+     * Updates the department of a critical agenda item
+     *
+     * @param int $id The ID of the critical agenda item to update
+     * @param int $department_id The new department ID
+     * @return bool
+     */
+    public function update_agenda_department($id, $department_id)
+    {
+        $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'critical_mom', ['department' => $department_id]);
         return true;
+    }
 
+    /**
+     * Generates a template row for the critical minutes of a meeting
+     *
+     * @param string $name
+     * @param string $area
+     * @param string $description
+     * @param string $decision
+     * @param string $action
+     * @param string $staff
+     * @param string $vendor
+     * @param string $target_date
+     * @param string $item_key
+     * @param string $serial_no
+     * @param string $department
+     * @param string $date_closed
+     * @param string $status
+     * @param string $priority
+     * @return string
+     */
+    public function create_mom_critical_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $item_key = '', $serial_no = '', $department = '', $date_closed = '', $status = '', $priority = '')
+    {
+        $row = '';
+
+        $name_area = 'area';
+        $name_description = 'description';
+        $name_decision = 'decision';
+        $name_action = 'action';
+        $name_staff = 'staff';
+        $name_vendor = 'vendor';
+        $name_target_date  = 'target_date';
+        $name_serial_no = 'serial_no';
+        $name_department = 'department';
+        $name_date_closed = 'date_closed';
+        $name_status = 'status';
+        $name_priority = 'priority';
+        if ($name == '') {
+            $row .= '<tr class="main">';
+            $manual = true;
+        } else {
+            $row .= '<tr class="item">';
+            $name_area = $name . '[area]';
+            $name_description = $name . '[description]';
+            $name_decision = $name . '[decision]';
+            $name_action = $name . '[action]';
+            $name_staff = $name . '[staff][]';
+            $name_vendor = $name . '[vendor]';
+            $name_target_date = $name . '[target_date]';
+            $name_serial_no = $name . '[serial_no]';
+            $name_department = $name . '[department]';
+            $name_date_closed = $name . '[date_closed]';
+            $name_status = $name . '[status]';
+            $name_priority = $name . '[priority]';
+            $manual = false;
+        }
+
+        $getdept = getdeptmom();
+        $selectedepartment = !empty($department) ? $department : [];
+
+        if (!is_array($selectedepartment)) {
+            $selectedepartment = explode(",", $selectedepartment);
+        }
+
+        // Ensure $selectedepartment is an array of IDs (not names)
+        $selectedepartment = array_map('intval', $selectedepartment);
+
+        $row .= '<td class="action_by staff-vendor-group">' .
+            render_select($name_department, $getdept, ['departmentid', 'name'], '', $selectedepartment, [
+                'data-none-selected-text' => 'Department'
+            ], [], '', 'department-select') .
+            '</td>';
+        $row .= '<td class="area" style="text-align:left">
+        <div class="form-group" app-field-wrapper="Area/Head" style="margin-bottom:2px;">
+            <textarea name="' . $name_area . '" id="' . $name_area . '" class="form-control" rows="2" placeholder="Area/Head">' .
+            htmlspecialchars($area, ENT_QUOTES, 'UTF-8') .
+            '</textarea>
+        </div></td>';
+
+        $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')]) . '</td>';
+        $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('decision')]) . '</td>';
+        $row .= '<td class="action">' . render_textarea($name_action, '', $action, ['rows' => 2, 'placeholder' => _l('action')]) . '</td>';
+
+        $getstaff = getstafflist();
+        $selectedstaff = !empty($staff) ? $staff : [];
+        if (!is_array($selectedstaff)) {
+            $selectedstaff = explode(",", $selectedstaff);
+        }
+
+        $row .= '<td class="action_by staff-vendor-group">' .
+            render_select($name_staff, $getstaff, ['staffid', 'fullname'], '', $selectedstaff, ['multiple' => 'multiple', 'data-none-selected-text' => 'Staff'], [], '', 'staff-select') .
+            render_input($name_vendor, '', $vendor, '', ['placeholder' => 'Vendor/Customer Name']) .
+            '</td>';
+
+        $row .= '<td class="target_date">' . render_input($name_target_date, '', $target_date, 'date') . '</td>';
+        $row .= '<td class="date_closed">' . render_input($name_date_closed, '', $date_closed, 'date') . '</td>';
+        $status_arr = [
+            ['id' => 1, 'name' => 'Open'],
+            ['id' => 2, 'name' => 'Closed']
+        ];
+
+        $row .= '<td class="status">' . render_select($name_status, $status_arr, ['id', 'name'], '', $status) . '</td>';
+
+        $priority_arr = [
+            ['id' => 2, 'name' => 'Low'],
+            ['id' => 3, 'name' => 'Medium'],
+            ['id' => 1, 'name' => 'High'],
+            ['id' => 4, 'name' => 'Urgent']
+        ];
+
+        $row .= '<td class="priority">' . render_select($name_priority, $priority_arr, ['id', 'name'], '', $priority) . '</td>';
+
+        if ($name == '') {
+            $row .= '&nbsp;<td><button type="button" class="btn pull-right btn-info mom-critical-add-item-to-table"><i class="fa fa-check"></i></button></td>';
+        } else {
+            $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="mom_critical_delete_item(this,' . $item_key . ',\'.mom-items\'); return false;"><i class="fa fa-trash"></i></a></td>';
+        }
+
+        $row .= '</tr><div class="section-break-container"></div>';
+
+        return $row;
+    }
+
+    /**
+     * Add critical mom
+     *
+     * @param array $data Data for the critical mom
+     * @return int|false Insert ID if successful, false otherwise
+     */
+
+    public function add_critical_mom($data)
+    {
+
+        unset($data['department']);
+        unset($data['area']);
+        unset($data['description']);
+        unset($data['decision']);
+        unset($data['action']);
+        unset($data['staff']);
+        unset($data['vendor']);
+        unset($data['target_date']);
+        unset($data['date_closed']);
+        unset($data['status']);
+        unset($data['priority']);
+        $critical_arr = [];
+        if (isset($data['newitems'])) {
+            $critical_arr = $data['newitems'];
+            unset($data['newitems']);
+        }
+
+        $last_insert_id = [];
+        if (count($critical_arr) > 0) {
+            foreach ($critical_arr as $key => $rqd) {
+                if (isset($rqd['staff']) && !empty($rqd['staff']) && is_array($rqd['staff'])) {
+                    $staff = implode(',', $rqd['staff']);
+                }
+                $dt_data = [
+                    'department' => $rqd['department'],
+                    'area' => $rqd['area'],
+                    'description' => $rqd['description'],
+                    'decision' => $rqd['decision'],
+                    'action' => $rqd['action'],
+                    'staff' => $staff,
+                    'vendor' => $rqd['vendor'],
+                    'target_date' => $rqd['target_date'],
+                    'date_closed' => $rqd['date_closed'],
+                    'status' => $rqd['status'],
+                    'priority' => $rqd['priority'],
+                    'critical' => 1,
+                ];
+
+                $this->db->insert(db_prefix() . 'critical_mom', $dt_data);
+                $last_insert_id[] = $this->db->insert_id();
+            }
+            return $last_insert_id;
+        }
+        return false;
     }
 }

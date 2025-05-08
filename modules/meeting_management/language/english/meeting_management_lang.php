@@ -136,3 +136,6 @@ $lang['change_priority_successfully'] = 'Priority Changed Successfully';
 $lang['change_priority_fail'] = 'Change Priority Failed';
 $lang['closed_date_updated'] = 'Closed Date Updated';  
 $lang['no_records_found'] = 'No Records Found';
+$lang['change_department'] = 'Department';
+$lang['department_changed_successfully'] = 'Department Changed Successfully';
+$lang['department_change_failed'] = 'Department Change Failed';

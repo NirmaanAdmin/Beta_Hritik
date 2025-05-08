@@ -6,10 +6,14 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="panel_s">
+                <div class="panel_s invoice-item-table">
                     <div class="panel-body">
-                        <h4><?php echo _l('meeting_critical_agenda'); ?></h4>
-
+                        <div class="row" style="display: flex;">
+                            <h4><?php echo _l('meeting_critical_agenda'); ?></h4>
+                            <button class="btn btn-info pull-right mright10 display-block" style="margin-left: 10px;" data-toggle="modal" data-target="#addNewRowModal">
+                                <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
+                            </button>
+                        </div>
 
 
                         <table class="table table-bordered table-table_critical_tracker">
@@ -28,7 +32,7 @@
                                     <th>Priority</th>
                                 </tr>
                             </thead>
-                            <tbody id="minutes-tbody">
+                            <tbody id="critical-agenda-tbody">
                                 <?php if (!empty($critical_agenda)) : ?>
                                     <?php $serial = 1;
                                     $departments_by_id = array_column($department, null, 'departmentid');
@@ -196,217 +200,84 @@
     </div>
 </div>
 
+</div>
+<div class="modal fade" id="addNewRowModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width: 98%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><?php echo _l('Add New'); ?></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <!-- <div class="col-md-8 pull-right">
+                    <div class="col-md-2 pull-right">
+                        <div id="dowload_file_sample" style="margin-top: 22px;">
+                            <label for="file_csv" class="control-label"> </label>
+                            <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_import_order_tracker_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 pull-right" style="display: flex;align-items: end;padding: 0px;">
+                        <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_order_tracker_items'), array('id' => 'import_form')); ?>
+                        <?php echo form_hidden('leads_import', 'true'); ?>
+                        <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
 
+                        <div class="form-group" style="margin-left: 10px;">
+                            <button id="uploadfile" type="button" class="btn btn-info import" onclick="return uploadfilecsv(this);"><?php echo _l('import'); ?></button>
+                        </div>
+                        <?php echo form_close(); ?>
+                    </div>
+
+                </div> -->
+                <div class="col-md-12 ">
+                    <div class="form-group pull-right" id="file_upload_response">
+
+                    </div>
+
+                </div>
+                <div id="box-loading" class="pull-right">
+
+                </div>
+            </div>
+            <div class="modal-body invoice-item">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive" style="overflow-x: unset !important;">
+                            <?php
+                            echo form_open_multipart('', array('id' => 'critical_tracker-form'));
+                            ?>
+                            <table class="table critical-tracker-items-table items table-main-invoice-edit has-calculations no-mtop">
+                                <thead>
+                                    <tr>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Area/Head</th>
+                                        <th><strong>Description</strong></th>
+                                        <th><strong>Decision</strong></th>
+                                        <th><strong>Action</strong></th>
+                                        <th><strong>Action By</strong></th>
+                                        <th width="5%"><strong>Target Date</strong></th>
+                                        <th width="5%"><strong>Date Closed</strong></th>
+                                        <th width="5%"><strong>Status</strong></th>
+                                        <th width="5%"><strong>Priority</strong></th>
+                                        <th width="3%"></th>
+                                    </tr>
+                                    </tr>
+                                </thead>
+                                <tbody class="mom_body">
+                                    <?php echo pur_html_entity_decode($mom_row_template); ?>
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn btn-info pull-right"><?php echo _l('Save'); ?></button>
+                            </form>
+                        </div>
+                        <div id="removed-items"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <?php init_tail(); ?>
+<?php require 'modules/meeting_management/assets/js/critical_mom_js.php'; ?>
 </body>
 
 </html>
 
-<script>
-    $(document).ready(function() {
-        $('#project_filter').change(function() {
-            const selectedProject = $(this).val();
-
-            $.ajax({
-                url: '<?php echo admin_url('meeting_management/agendaController/filter_minutes'); ?>',
-                type: 'GET',
-                data: {
-                    project_filter: selectedProject
-                },
-                dataType: 'json',
-                success: function(response) {
-                    updateTableBody(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        });
-
-        function updateTableBody(data) {
-            const tbody = $('table tbody');
-            tbody.empty();
-
-            if (data.length > 0) {
-                $.each(data, function(index, agenda) {
-                    const row = `
-                    <tr>
-                        <td>${agenda.meeting_title}</td>
-                        <td>${agenda.project_name || 'N/A'}</td>
-                        <td>${formatDate(agenda.meeting_date)}</td>
-                        <td>
-                            <a href="<?php echo admin_url('meeting_management/minutesController/index/'); ?>${agenda.id}" class="btn btn-primary"><?php echo _l('edit_converted_metting'); ?></a>
-                            <a href="<?php echo admin_url('meeting_management/agendaController/delete/'); ?>${agenda.id}" class="btn btn-danger"><?php echo _l('delete'); ?></a>
-                            <a href="<?php echo admin_url('meeting_management/agendaController/view_meeting/'); ?>${agenda.id}" class="btn btn-secondary"><?php echo _l('view_meeting'); ?></a>
-                        </td>
-                    </tr>
-                `;
-                    tbody.append(row);
-                });
-            } else {
-                tbody.append('<tr><td colspan="4" class="text-center"><?php echo _l("no_agendas_found"); ?></td></tr>');
-            }
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-    });
-
-    function change_status_mom(status, id) {
-        "use strict";
-        if (id > 0) {
-            $.post(admin_url + 'meeting_management/minutesController/change_status_mom/' + status + '/' + id)
-                .done(function(response) {
-                    try {
-                        response = JSON.parse(response);
-
-                        if (response.success) {
-                            var $statusSpan = $('#status_span_' + id);
-
-                            // Debugging
-                            // console.log('Before:', $statusSpan.attr('class'));
-
-                            // Remove all status-related classes
-                            $statusSpan.removeClass('label-danger label-success label-info label-warning label-primary label-purple label-teal label-orange label-green label-defaul label-secondaryt');
-
-                            // Add the new class and update content
-                            if (response.class) {
-                                $statusSpan.addClass(response.class);
-                            }
-                            if (response.status_str) {
-                                $statusSpan.html(response.status_str + ' ' + (response.html || ''));
-                            }
-
-                            // Debugging
-                            // console.log('After:', $statusSpan.attr('class'));
-
-                            // Display success message
-                            // $(".table-table_order_tracker").DataTable().ajax.reload();
-                            alert_float('success', response.mess);
-                        } else {
-                            // Display warning message if the operation fails
-                            alert_float('warning', response.mess);
-                        }
-                    } catch (e) {
-                        console.error('Error parsing server response:', e);
-                        alert_float('danger', 'Invalid server response');
-                    }
-                })
-                .fail(function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    alert_float('danger', 'Failed to update status');
-                });
-        }
-    }
-
-
-    function change_priority_mom(status, id) {
-        "use strict";
-        if (id > 0) {
-            $.post(admin_url + 'meeting_management/minutesController/change_priority_mom/' + status + '/' + id)
-                .done(function(response) {
-                    try {
-                        response = JSON.parse(response);
-
-                        if (response.success) {
-                            var statusSpan = $('#priority_span_' + id);
-
-
-
-                            // Remove all status-related classes
-                            statusSpan.removeClass('label-danger label-success label-info label-warning label-primary label-purple label-teal label-orange label-green label-defaul label-secondaryt');
-
-                            // Add the new class and update content
-                            if (response.class) {
-                                statusSpan.addClass(response.class);
-                            }
-                            if (response.priority_str) {
-                                statusSpan.html(response.priority_str + ' ' + (response.html || ''));
-                            }
-
-
-
-                            // Display success message
-                            // $(".table-table_order_tracker").DataTable().ajax.reload();
-                            alert_float('success', response.mess);
-                        } else {
-                            // Display warning message if the operation fails
-                            alert_float('warning', response.mess);
-                        }
-                    } catch (e) {
-                        console.error('Error parsing server response:', e);
-                        alert_float('danger', 'Invalid server response');
-                    }
-                })
-                .fail(function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    alert_float('danger', 'Failed to update status');
-                });
-        }
-    }
-
-    function change_department(departmentId, agendaId) {
-        "use strict";
-        if (agendaId > 0) {
-            $.post(admin_url + 'meeting_management/minutesController/change_department/' + departmentId + '/' + agendaId)
-                .done(function(response) {
-                    try {
-                        response = JSON.parse(response);
-
-                        if (response.success) {
-                            var deptSpan = $('#department_span_' + agendaId);
-
-                            // Update the department name
-                            if (response.department_name) {
-                                // Remove the dropdown and keep just the department name
-                                deptSpan.html(response.department_name);
-
-                                // Re-add the dropdown HTML
-                                deptSpan.append(response.html);
-                            }
-
-                            alert_float('success', response.message);
-                        } else {
-                            alert_float('warning', response.message);
-                        }
-                    } catch (e) {
-                        console.error('Error parsing server response:', e);
-                        alert_float('danger', 'Invalid server response');
-                    }
-                })
-                .fail(function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    alert_float('danger', 'Failed to update department');
-                });
-        }
-    }
-    var table_critical_tracker = $('.table-table_critical_tracker');
-    $('body').on('change', '.closed-date-input', function(e) {
-            e.preventDefault();
-
-            var rowId = $(this).data('id');
-            var closedDate = $(this).val();
-
-            // Perform AJAX request to update the completion date
-            $.post(admin_url + 'meeting_management/minutesController/update_closed_date', {
-                id: rowId,
-                closedDate: closedDate
-            }).done(function(response) {
-                response = JSON.parse(response);
-                if (response.success) {
-                    alert_float('success', response.message);
-                    table_critical_tracker.reload(null, false); // Reload table without refreshing the page
-                } else {
-                    alert_float('danger', response.message);
-                }
-            });
-        });
-</script>

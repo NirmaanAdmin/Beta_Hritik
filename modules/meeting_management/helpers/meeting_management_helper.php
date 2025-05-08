@@ -11,10 +11,10 @@ function getstafflist()
 {
     $CI = &get_instance();
     $CI->load->model('staff_model');
-    
+
     // Retrieve active staff members.
     $get_staff = $CI->staff_model->get('', ['active' => 1]);
-    
+
     // Build an array with 'staffid' and concatenated 'fullname' for each staff member.
     $staff_list = [];
     foreach ($get_staff as $staff) {
@@ -24,7 +24,7 @@ function getstafflist()
             'fullname' => $fullname,
         ];
     }
-    
+
     return $staff_list;
 }
 /**
@@ -59,8 +59,33 @@ function getStaffNamesFromCSV($staff_ids_csv)
     // Return the names as a comma separated string.
     return implode(', ', $names);
 }
-function getvendorlist(){
+function getvendorlist()
+{
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     return $get_vendor = $CI->purchase_model->get_vendor();
+}
+
+function getdeptmom()
+{
+    $CI = &get_instance();
+
+    try {
+        if (!isset($CI->Departments_model)) {
+            $CI->load->model('Departments_model');
+        }
+
+        $departments = $CI->Departments_model->get();
+
+        if (empty($departments)) {
+            log_message('info', 'No departments found in getdeptmom()');
+            return [];
+        }
+
+        // Return the original array of department objects
+        return $departments;
+    } catch (Exception $e) {
+        log_message('error', 'Error in getdeptmom(): ' . $e->getMessage());
+        return [];
+    }
 }

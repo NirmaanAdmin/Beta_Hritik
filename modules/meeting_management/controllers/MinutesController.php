@@ -532,7 +532,7 @@ class MinutesController extends AdminController
 
         $data['critical_agenda'] = $this->Meeting_model->get_critical_agenda();
         $data['department'] = $this->Departments_model->get();
-
+        $data['mom_row_template'] = $this->Meeting_model->create_mom_critical_row_template();
         $data['title'] = _l('meeting_critical_agenda');
 
         $this->load->view('meeting_management/critical_agenda', $data);
@@ -708,5 +708,55 @@ class MinutesController extends AdminController
         } else {
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
+    }
+
+    public function get_mom_critical_row_template()
+    {
+        $name = $this->input->post('name');
+        $area = $this->input->post('area');
+        $description = $this->input->post('description');
+        $decision = $this->input->post('decision');
+        $action = $this->input->post('action');
+        $staff = $this->input->post('staff');
+        $vendor = $this->input->post('vendor');
+        $target_date = $this->input->post('target_date');
+        $item_key = $this->input->post('item_key');
+        $department = $this->input->post('department');
+        $date_closed = $this->input->post('date_closed');
+        $status = $this->input->post('status');
+        $priority = $this->input->post('priority');
+        echo $this->Meeting_model->create_mom_critical_row_template($name, $area, $description, $decision, $action, $staff, $vendor, $target_date, $item_key, '', $department, $date_closed, $status, $priority);
+    }
+
+    public function add_critical_mom()
+    {
+        $data = $this->input->post();
+
+        if ($data) {
+            $id = $this->Meeting_model->add_critical_mom($data);
+            if ($id) {
+
+                
+                // Return a JSON success response
+                echo json_encode([
+                    'success' => true,
+                    'row_template' => $this->Meeting_model->create_mom_critical_row_template(),
+                    'message' => _l('added_successfully', _l('critical_mom'))   
+                ]);
+            } else {
+                // Return a JSON error response if the insert failed
+                echo json_encode([
+                    'success' => false,
+                    'message' => _l('problem_adding_critical_mom')
+                ]);
+            }
+        } else {
+            // Return a JSON error response if no data was posted
+            echo json_encode([
+                'success' => false,
+                'message' => _l('no_data_received')
+            ]);
+        }
+        exit; // Stop further execution
     }
 }
