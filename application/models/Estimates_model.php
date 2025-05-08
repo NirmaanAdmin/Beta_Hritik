@@ -1762,16 +1762,12 @@ class Estimates_model extends App_Model
         $this->db->where('id', $estimateid);
         $estimate = $this->db->get(db_prefix() . 'estimates')->row();
         $items = get_items_by_type('estimate', $estimateid, $ignore_management_fess);
+        $budget_info = $this->get_estimate_budget_info($estimateid);
 
         $summary = array();
         $final_estimate = array();
 
-        $all_area_summary = $this->get_area_summary($estimateid);
         $multilevel_items = $this->get_multilevel_items($estimateid);
-        if(!empty($all_area_summary)) {
-            $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
-            $total_built_up_area = $total_built_up_area == 0 ? 1 : $total_built_up_area;
-        }
 
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
@@ -1781,10 +1777,10 @@ class Estimates_model extends App_Model
             $summary[$annexure]['qty'] += $value['qty'];
             $summary[$annexure]['rate'] += $value['rate'];
             $summary[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
-            $summary[$annexure]['tax'] = get_estimate_annexurewise_tax($estimate->id, $annexure);
+            $summary[$annexure]['tax'] = 0;
             $summary[$annexure]['amount'] = $summary[$annexure]['subtotal'] + $summary[$annexure]['tax'];
             $summary[$annexure]['annexure'] = $annexure;
-            $summary[$annexure]['total_bua'] = $summary[$annexure]['amount'] / $total_built_up_area;
+            $summary[$annexure]['total_bua'] = $this->get_overall_budget_area($budget_info, $annexure, $summary[$annexure]['amount']);
         }
         $summary = !empty($summary) ? array_values($summary) : array();
         if(!empty($summary)) {
@@ -1820,9 +1816,9 @@ class Estimates_model extends App_Model
                     $multilevel_estimate['rate'] += $value['total_int_rate'];
                     $multilevel_estimate['subtotal'] += $value['total_int_amount'];
                     $multilevel_estimate['tax'] = 0;
-                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'] + $all_area_summary['tax'];
+                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'];
                     $multilevel_estimate['annexure'] = $value['annexure'];
-                    $multilevel_estimate['total_bua'] = $multilevel_estimate['amount'] / $total_built_up_area;
+                    $multilevel_estimate['total_bua'] = 0;
                     $summary[] = $multilevel_estimate;
                 }
             }
@@ -2077,7 +2073,6 @@ class Estimates_model extends App_Model
     {
         $final_result = array();
         $annexure_estimate = array();
-        $total_built_up_area = 1;
 
         $this->db->where('id', $id);
         $estimate = $this->db->get(db_prefix() . 'estimates')->result_array();
@@ -2090,11 +2085,6 @@ class Estimates_model extends App_Model
         $multilevel_items = $this->get_multilevel_items($id);
         $sub_multilevel_items = $this->get_sub_multilevel_items($id);
 
-        if(!empty($all_area_summary)) {
-            $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
-            $total_built_up_area = $total_built_up_area == 0 ? 1 : $total_built_up_area;
-        }
-
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
             $items_group = $this->get_items_groups($annexure);
@@ -2104,9 +2094,9 @@ class Estimates_model extends App_Model
             $annexure_estimate[$annexure]['rate'] += $value['rate'];
             $annexure_estimate[$annexure]['subtotal'] += $value['qty'] * $value['rate'];
             $annexure_estimate[$annexure]['tax'] = 0;
-            $annexure_estimate[$annexure]['amount'] = $annexure_estimate[$annexure]['subtotal'] + $all_area_summary[$annexure]['tax'];
+            $annexure_estimate[$annexure]['amount'] = $annexure_estimate[$annexure]['subtotal'];
             $annexure_estimate[$annexure]['annexure'] = $annexure;
-            $annexure_estimate[$annexure]['total_bua'] = $annexure_estimate[$annexure]['amount'] / $total_built_up_area;
+            $annexure_estimate[$annexure]['total_bua'] = $this->get_overall_budget_area($budget_info, $annexure, $annexure_estimate[$annexure]['amount']);
         }
         $annexure_estimate = !empty($annexure_estimate) ? array_values($annexure_estimate) : array();
         if(!empty($annexure_estimate)) {
@@ -2142,9 +2132,9 @@ class Estimates_model extends App_Model
                     $multilevel_estimate['rate'] += $value['total_int_rate'];
                     $multilevel_estimate['subtotal'] += $value['total_int_amount'];
                     $multilevel_estimate['tax'] = 0;
-                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'] + $all_area_summary['tax'];
+                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'];
                     $multilevel_estimate['annexure'] = $value['annexure'];
-                    $multilevel_estimate['total_bua'] = $multilevel_estimate['amount'] / $total_built_up_area;
+                    $multilevel_estimate['total_bua'] = 0;
                     $annexure_estimate[] = $multilevel_estimate;
                 }
             }
@@ -2170,5 +2160,16 @@ class Estimates_model extends App_Model
         $final_result['sub_multilevel_items'] = $sub_multilevel_items;
         
         return $final_result;
+    }
+
+    public function get_overall_budget_area($budgetData, $budget_id, $amount) {
+        foreach ($budgetData as $entry) {
+            if ($entry['budget_id'] == $budget_id) {
+                if(!empty($entry['overall_budget_area'])) {
+                    return $amount / $entry['overall_budget_area'];
+                }
+            }
+        }
+        return 0;
     }
 }
