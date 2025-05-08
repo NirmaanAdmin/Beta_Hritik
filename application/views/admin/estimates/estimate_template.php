@@ -1027,6 +1027,7 @@
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         <div class="col-md-3" style="padding-left: 0px">
                                             <div class="form-group">
+                                                <small class="req text-danger">* </small>
                                                 <label class="control-label">Overall area</label>
                                                 <input type="number" data-oarea="multilevelExpand_'.$iitem['id'].'" name="sub_overall_budget_area['.$iitem['id'].'][sub_overall_budget_area]" class="form-control sub_overall_budget_area_id" style="width: 300px;" value="'.$iitem['sub_overall_budget_area'].'">
                                             </div>
@@ -1120,13 +1121,13 @@
 
                                                             $get_sub_selected_item = pur_get_item_cost_selected_select($sub_item_name, $sub_name_item_name, $allItems);
                                                             if ($sub_item_name == '') {
-                                                                $modals_html .= '<td class="">
+                                                                $modals_html .= '<td class="sub_pur_item_name">
                                                                 <select id="' . $sub_name_item_name . '" name="' . $sub_name_item_name . '" data-selected-id="" class="form-control selectpicker item-select" data-live-search="true" >
                                                                     <option value="">Type at least 3 letters...</option>
                                                                 </select>
                                                              </td>';
                                                             } else {
-                                                                $modals_html .= '<td class="">' . $get_sub_selected_item . '</td>';
+                                                                $modals_html .= '<td class="sub_pur_item_name">' . $get_sub_selected_item . '</td>';
                                                             }
 
                                                             $modals_html .= '<td><textarea name="' . $sub_items_indicator . '[' . $k . '][sub_long_description]" class="form-control" rows="5">' . clear_textarea_breaks($sitem['sub_long_description']) . '</textarea></td>';
