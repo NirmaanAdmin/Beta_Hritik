@@ -1828,6 +1828,14 @@ class Estimates_model extends App_Model
             }
         }
 
+        $summary = !empty($summary) ? array_values($summary) : array();
+        if(!empty($summary)) {
+            usort($summary, function($a, $b) {
+                return $a['annexure'] <=> $b['annexure'];
+            });
+            $summary = array_values($summary);
+        }
+
         foreach ($summary as $key => $value) {
             $final_estimate['name'] = _l('final_estimate_by_all_annexures');
             $final_estimate['description'] = '';
@@ -2140,6 +2148,14 @@ class Estimates_model extends App_Model
                     $annexure_estimate[] = $multilevel_estimate;
                 }
             }
+        }
+
+        $annexure_estimate = !empty($annexure_estimate) ? array_values($annexure_estimate) : array();
+        if(!empty($annexure_estimate)) {
+            usort($annexure_estimate, function($a, $b) {
+                return $a['annexure'] <=> $b['annexure'];
+            });
+            $annexure_estimate = array_values($annexure_estimate);
         }
 
         $final_result['estimate_detail'] = $estimate[0];

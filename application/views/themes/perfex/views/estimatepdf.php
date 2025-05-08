@@ -380,7 +380,7 @@ foreach ($annexures as $key => $annexure) {
                 }
                 $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
                     <td width="40%;" align="left">Total</td>
-                    <td width="20%;" align="center">'.number_format($fm_total_budget_area, 2).' (sqft)</td>
+                    <td width="20%;" align="center"></td>
                     <td width="20%;" align="center">'.app_format_money($fm_total_rate, $base_currency).'</td>
                     <td width="20%;" align="center">'.app_format_money($fm_total_amount, $base_currency).'</td>
                 </tr>';
@@ -409,12 +409,10 @@ foreach ($annexures as $key => $annexure) {
                             </thead>';
                             $detailedcosting .= '<tbody>';
                             $filtered_multilevel_qty = 0;
-                            $filtered_multilevel_rate = 0;
                             $filtered_multilevel_amount = 0;
                             foreach ($filtered_multilevel_items as $fmlkey => $fmlvalue) {
                                 $sub_amount = $fmlvalue['sub_rate'] * $fmlvalue['sub_qty'];
                                 $filtered_multilevel_qty = $filtered_multilevel_qty + $fmlvalue['sub_qty'];
-                                $filtered_multilevel_rate = $filtered_multilevel_rate + $fmlvalue['sub_rate'];
                                 $filtered_multilevel_amount = $filtered_multilevel_amount + $sub_amount;
                                 $purchase_unit_name = get_purchase_unit($fmlvalue['sub_unit_id']);
                                 $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
@@ -427,10 +425,24 @@ foreach ($annexures as $key => $annexure) {
                                     <td width="13%;" align="center">'.app_format_money($sub_amount, $base_currency).'</td>
                                 </tr>';
                             }
+                            $filtered_multilevel_rate = 0;
+                            $overall_budget_area = '';
+                            $filtered_master_area_detail = array_values(array_filter($multilevel_items, function($item) use ($parent_id) {
+                                return $item['id'] == $parent_id;
+                            }));
+                            if(!empty($filtered_master_area_detail)) {
+                                $filtered_master_area_detail = array_values($filtered_master_area_detail);
+                                $overall_budget_area = $filtered_master_area_detail[0]['sub_overall_budget_area'];
+                            }
+                            if(!empty($overall_budget_area)) {
+                                $filtered_multilevel_rate = $filtered_multilevel_amount / $overall_budget_area;
+                            } else {
+                                $filtered_multilevel_rate = $filtered_multilevel_amount;
+                            }
                             $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
                                 <td width="19%;" align="left">Total</td>
                                 <td width="32%;" align="center"></td>
-                                <td width="12%;" align="center"></td>
+                                <td width="12%;" align="center">'.$overall_budget_area.'</td>
                                 <td width="11%;" align="center"></td>
                                 <td width="13%;" align="center">'.app_format_money($filtered_multilevel_rate, $base_currency).'</td>
                                 <td width="13%;" align="center">'.app_format_money($filtered_multilevel_amount, $base_currency).'</td>
@@ -458,13 +470,11 @@ foreach ($annexures as $key => $annexure) {
         </thead>';
         if(!empty($estimate_items)) {
             $detailedcosting .= '<tbody>';
-            $total_rate = 0;
             $total_amount = 0;
             $overall_budget_area = '';
             foreach ($estimate_items as $item) {
                 if($item['annexure'] == $annexure['id']) { 
                     $amount = $item['rate'] * $item['qty'];
-                    $total_rate = $total_rate + $item['rate'];
                     $total_amount = $total_amount + $amount;
                     $purchase_unit_name = get_purchase_unit($item['unit_id']);
                     $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
@@ -485,10 +495,16 @@ foreach ($annexures as $key => $annexure) {
                     }
                 }
             }
+            $total_rate = 0;
+            if(!empty($overall_budget_area)) {
+                $total_rate = $total_amount / $overall_budget_area;
+            } else {
+                $total_rate = $total_amount;
+            }
             $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
                 <td width="19%;" align="left">Total</td>
                 <td width="32%;" align="center"></td>
-                <td width="12%;" align="center"></td>
+                <td width="12%;" align="center">'.$overall_budget_area.' (sqft)</td>
                 <td width="11%;" align="center"></td>
                 <td width="13%;" align="center">'.app_format_money($total_rate, $base_currency).'</td>
                 <td width="13%;" align="center">'.app_format_money($total_amount, $base_currency).'</td>
