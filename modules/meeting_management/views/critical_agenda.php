@@ -184,7 +184,7 @@
                                     <?php endforeach; ?>
                                 <?php else : ?>
                                     <tr>
-                                        <td colspan="11" class="text-center"><?php echo _l('no_agendas_found'); ?></td>
+                                        <td colspan="11" class="text-center"><?php echo _l('no_records_found'); ?></td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
