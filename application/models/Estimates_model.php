@@ -1766,6 +1766,13 @@ class Estimates_model extends App_Model
         $summary = array();
         $final_estimate = array();
 
+        $all_area_summary = $this->get_area_summary($estimateid);
+        $multilevel_items = $this->get_multilevel_items($estimateid);
+        if(!empty($all_area_summary)) {
+            $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
+            $total_built_up_area = $total_built_up_area == 0 ? 1 : $total_built_up_area;
+        }
+
         foreach ($items as $key => $value) {
             $annexure = $value['annexure'];
             $items_group = $this->get_items_groups($annexure);
@@ -1777,6 +1784,7 @@ class Estimates_model extends App_Model
             $summary[$annexure]['tax'] = get_estimate_annexurewise_tax($estimate->id, $annexure);
             $summary[$annexure]['amount'] = $summary[$annexure]['subtotal'] + $summary[$annexure]['tax'];
             $summary[$annexure]['annexure'] = $annexure;
+            $summary[$annexure]['total_bua'] = $summary[$annexure]['amount'] / $total_built_up_area;
         }
         $summary = !empty($summary) ? array_values($summary) : array();
         if(!empty($summary)) {
@@ -1784,6 +1792,40 @@ class Estimates_model extends App_Model
                 return $a['annexure'] <=> $b['annexure'];
             });
             $summary = array_values($summary);
+        }
+
+        if(!empty($multilevel_items)) {
+            $grouped = array_reduce($multilevel_items, function($carry, $item) {
+                $key = $item['annexure'];
+                if (!isset($carry[$key])) {
+                    $carry[$key] = [
+                        'annexure' => $key,
+                        'total_int_area' => 0,
+                        'total_int_rate' => 0,
+                    ];
+                }
+                $carry[$key]['total_int_area'] += $item['int_area'];
+                $carry[$key]['total_int_rate'] += $item['int_rate'];
+                $carry[$key]['total_int_amount'] += ($item['int_area'] * $item['int_rate']);
+                return $carry;
+            }, []);
+            $multilevel_grouped = array_values($grouped);
+            if(!empty($multilevel_grouped)) {
+                foreach ($multilevel_grouped as $key => $value) {
+                    $multilevel_estimate = array();
+                    $items_group = $this->get_items_groups($value['annexure']);
+                    $multilevel_estimate['name'] = $items_group->name;
+                    $multilevel_estimate['description'] = '';
+                    $multilevel_estimate['qty'] += $value['total_int_area'];
+                    $multilevel_estimate['rate'] += $value['total_int_rate'];
+                    $multilevel_estimate['subtotal'] += $value['total_int_amount'];
+                    $multilevel_estimate['tax'] = 0;
+                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'] + $all_area_summary['tax'];
+                    $multilevel_estimate['annexure'] = $value['annexure'];
+                    $multilevel_estimate['total_bua'] = $multilevel_estimate['amount'] / $total_built_up_area;
+                    $summary[] = $multilevel_estimate;
+                }
+            }
         }
 
         foreach ($summary as $key => $value) {
@@ -2064,6 +2106,40 @@ class Estimates_model extends App_Model
                 return $a['annexure'] <=> $b['annexure'];
             });
             $annexure_estimate = array_values($annexure_estimate);
+        }
+
+        if(!empty($multilevel_items)) {
+            $grouped = array_reduce($multilevel_items, function($carry, $item) {
+                $key = $item['annexure'];
+                if (!isset($carry[$key])) {
+                    $carry[$key] = [
+                        'annexure' => $key,
+                        'total_int_area' => 0,
+                        'total_int_rate' => 0,
+                    ];
+                }
+                $carry[$key]['total_int_area'] += $item['int_area'];
+                $carry[$key]['total_int_rate'] += $item['int_rate'];
+                $carry[$key]['total_int_amount'] += ($item['int_area'] * $item['int_rate']);
+                return $carry;
+            }, []);
+            $multilevel_grouped = array_values($grouped);
+            if(!empty($multilevel_grouped)) {
+                foreach ($multilevel_grouped as $key => $value) {
+                    $multilevel_estimate = array();
+                    $items_group = $this->get_items_groups($value['annexure']);
+                    $multilevel_estimate['name'] = $items_group->name;
+                    $multilevel_estimate['description'] = '';
+                    $multilevel_estimate['qty'] += $value['total_int_area'];
+                    $multilevel_estimate['rate'] += $value['total_int_rate'];
+                    $multilevel_estimate['subtotal'] += $value['total_int_amount'];
+                    $multilevel_estimate['tax'] = 0;
+                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'] + $all_area_summary['tax'];
+                    $multilevel_estimate['annexure'] = $value['annexure'];
+                    $multilevel_estimate['total_bua'] = $multilevel_estimate['amount'] / $total_built_up_area;
+                    $annexure_estimate[] = $multilevel_estimate;
+                }
+            }
         }
 
         $final_result['estimate_detail'] = $estimate[0];

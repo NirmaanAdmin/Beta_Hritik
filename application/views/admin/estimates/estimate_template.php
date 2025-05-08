@@ -442,21 +442,7 @@
                                             <?php echo app_format_money($svalue['amount'], $base_currency); ?>
                                         </td>
                                         <td align="right">
-                                            <?php 
-                                            $total_bua = 0;
-                                            if (isset($estimate) && isset($all_area_summary)) {
-                                                if(!empty($all_area_summary)) {
-                                                    foreach ($all_area_summary as $arkey => $asvalue) 
-                                                    {
-                                                        if($asvalue['area_id'] == 2) {
-                                                            $total_bua = $total_bua + $asvalue['area'];
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            $final_bua = $total_bua == 0 ? 1 : $total_bua;
-                                            echo app_format_money($svalue['amount'] / $final_bua, $base_currency); 
-                                            ?>
+                                            <?php echo app_format_money($svalue['total_bua'], $base_currency); ?>
                                         </td>
                                         <td align="right">
                                             <?php
