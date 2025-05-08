@@ -150,7 +150,7 @@ if(!empty($cost_planning_details['area_summary_tabs'])) {
             $areasummary .= '
             <tr style="font-size:12px; font-weight:bold;">
                 <td align="left">Total</td>
-                <td align="center">'.$total_area_summary.'</td>
+                <td align="center">'.$total_area_summary.' '.$show_as_unit_name.'</td>
             </tr>';
         }
         $areasummary .= '</tbody>';
@@ -209,8 +209,8 @@ if(!empty($cost_planning_details['area_statement_tabs'])) {
         $areastatement .= '
         <tr style="font-size:12px; font-weight:bold;">
             <td colspan="3" align="left">Total</td>
-            <td align="center">'.$total_carpet_area.'</td>
-        </tr>';
+            <td align="center">'.$total_carpet_area.' '.$show_aw_unit_name.'</td>
+        </tr><br>';
     }
     $areastatement .= '</tbody>';
     $areastatement .= '</table>';
@@ -363,11 +363,13 @@ foreach ($annexures as $key => $annexure) {
                 $detailedcosting .= '<tbody>';
                 $fm_total_rate = 0;
                 $fm_total_amount = 0;
+                $fm_total_budget_area = 0;
                 if(!empty($filtered_master_area)) {
                     foreach ($filtered_master_area as $fmkey => $fmvalue) {
                         $fm_amount = $fmvalue['int_area'] * $fmvalue['int_rate'];
                         $fm_total_rate = $fm_total_rate + $fmvalue['int_rate'];
                         $fm_total_amount = $fm_total_amount + $fm_amount;
+                        $fm_total_budget_area = $fm_total_budget_area + $fmvalue['int_area'];
                         $detailedcosting .= '<tr style="font-size:11px;">
                             <td width="40%;" align="left">'.get_functionality_area($fmvalue['int_fun_area']).'</td>
                             <td width="20%;" align="center">'.$fmvalue['int_area'].'</td>
@@ -378,7 +380,7 @@ foreach ($annexures as $key => $annexure) {
                 }
                 $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
                     <td width="40%;" align="left">Total</td>
-                    <td width="20%;" align="center"></td>
+                    <td width="20%;" align="center">'.number_format($fm_total_budget_area, 2).' (sqft)</td>
                     <td width="20%;" align="center">'.app_format_money($fm_total_rate, $base_currency).'</td>
                     <td width="20%;" align="center">'.app_format_money($fm_total_amount, $base_currency).'</td>
                 </tr>';
@@ -398,8 +400,7 @@ foreach ($annexures as $key => $annexure) {
                             <thead>
                               <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
                                  <th width="19%;" align="center">'._l('estimate_table_item_heading').'</th>
-                                 <th width="22%;" align="center">'._l('estimate_table_item_description').'</th>
-                                 <th width="10%;" align="center">'._l('unit').'</th>
+                                 <th width="32%;" align="center">'._l('estimate_table_item_description').'</th>
                                  <th width="12%;" align="center">'._l('area').' (sqft)</th>
                                  <th width="11%;" align="center">'._l('estimate_table_quantity_heading').'</th>
                                  <th width="13%;" align="center">'._l('estimate_table_rate_heading').' (INR)</th>
@@ -419,8 +420,7 @@ foreach ($annexures as $key => $annexure) {
                                 $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
                                 $detailedcosting .= '<tr style="font-size:11px;">
                                     <td width="19%;" align="left">'.get_purchase_items($fmlvalue['item_name']).'</td>
-                                    <td width="22%;" align="left">'.clear_textarea_breaks($fmlvalue['sub_long_description']).'</td>
-                                    <td width="10%;" align="center">'.get_purchase_unit($fmlvalue['sub_unit_id']).'</td>
+                                    <td width="32%;" align="left">'.clear_textarea_breaks($fmlvalue['sub_long_description']).'</td>
                                     <td width="12%;" align="center">'.$fmlvalue['sub_budget_area'].'</td>
                                     <td width="11%;" align="center">'.number_format($fmlvalue['sub_qty'], 2).$purchase_unit_name.'</td>
                                     <td width="13%;" align="center">'.app_format_money($fmlvalue['sub_rate'], $base_currency).'</td>
@@ -429,10 +429,9 @@ foreach ($annexures as $key => $annexure) {
                             }
                             $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
                                 <td width="19%;" align="left">Total</td>
-                                <td width="22%;" align="center"></td>
-                                <td width="10%;" align="center"></td>
+                                <td width="32%;" align="center"></td>
                                 <td width="12%;" align="center"></td>
-                                <td width="11%;" align="center">'.app_format_money($filtered_multilevel_qty, $base_currency).'</td>
+                                <td width="11%;" align="center"></td>
                                 <td width="13%;" align="center">'.app_format_money($filtered_multilevel_rate, $base_currency).'</td>
                                 <td width="13%;" align="center">'.app_format_money($filtered_multilevel_amount, $base_currency).'</td>
                             </tr>';
@@ -449,9 +448,8 @@ foreach ($annexures as $key => $annexure) {
         $detailedcosting .= '
         <thead>
           <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
-             <th width="19%;" align="center">'._l('estimate_table_item_heading').'</th>
-             <th width="22%;" align="center">'._l('estimate_table_item_description').'</th>
-             <th width="10%;" align="center">'._l('unit').'</th>
+             <th width="19%;" align="left">'._l('estimate_table_item_heading').'</th>
+             <th width="32%;" align="left">'._l('estimate_table_item_description').'</th>
              <th width="12%;" align="center">'._l('area').' (sqft)</th>
              <th width="11%;" align="center">'._l('estimate_table_quantity_heading').'</th>
              <th width="13%;" align="center">'._l('estimate_table_rate_heading').' (INR)</th>
@@ -472,8 +470,7 @@ foreach ($annexures as $key => $annexure) {
                     $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
                     $detailedcosting .= '<tr style="font-size:11px;">
                         <td width="19%;" align="left">'.get_purchase_items($item['item_code']).'</td>
-                        <td width="22%;" align="left">'.clear_textarea_breaks($item['long_description']).'</td>
-                        <td width="10%;" align="center">'.get_purchase_unit($item['unit_id']).'</td>
+                        <td width="32%;" align="left">'.clear_textarea_breaks($item['long_description']).'</td>
                         <td width="12%;" align="center">'.$item['budget_area'].'</td>
                         <td width="11%;" align="center">'.number_format($item['qty'], 2).$purchase_unit_name.'</td>
                         <td width="13%;" align="center">'.app_format_money($item['rate'], $base_currency).'</td>
@@ -490,9 +487,8 @@ foreach ($annexures as $key => $annexure) {
             }
             $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
                 <td width="19%;" align="left">Total</td>
-                <td width="22%;" align="center"></td>
-                <td width="10%;" align="center">sqft</td>
-                <td width="12%;" align="center">'.$overall_budget_area.'</td>
+                <td width="32%;" align="center"></td>
+                <td width="12%;" align="center"></td>
                 <td width="11%;" align="center"></td>
                 <td width="13%;" align="center">'.app_format_money($total_rate, $base_currency).'</td>
                 <td width="13%;" align="center">'.app_format_money($total_amount, $base_currency).'</td>
