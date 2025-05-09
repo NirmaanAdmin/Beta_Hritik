@@ -7,6 +7,7 @@ $from_date_filter_name = 'from_date';
 $to_date_filter_name = 'to_date';
 $vendors_filter_name = 'vendors';
 $budget_head_filter_name = 'budget_head';
+$billing_invoices_filter_name = 'billing_invoices';
 
 $aColumns = [
     1,
@@ -37,6 +38,8 @@ $join         = [
     'LEFT JOIN ' . db_prefix() . 'pur_contracts ON ' . db_prefix() . 'pur_contracts.id = ' . db_prefix() . 'pur_invoices.contract',
     'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'pur_invoices.project_id = ' . db_prefix() . 'projects.id',
     'LEFT JOIN ' . db_prefix() . 'items_groups ON ' . db_prefix() . 'pur_invoices.group_pur = ' . db_prefix() . 'items_groups.id',
+    'LEFT JOIN ' . db_prefix() . 'itemable AS itm ON itm.vbt_id = ' . db_prefix() . 'pur_invoices.id AND itm.rel_type = "invoice"',
+    'LEFT JOIN ' . db_prefix() . 'invoices AS ril ON ril.id = itm.rel_id'
 ];
 
 $where = [];
@@ -53,6 +56,14 @@ if (
     && $this->ci->input->post('to_date') != ''
 ) {
     array_push($where, 'AND invoice_date <= "' . to_sql_date($this->ci->input->post('to_date')) . '"');
+}
+
+if ($this->ci->input->post('billing_invoices') && $this->ci->input->post('billing_invoices') != '') {
+    if ($this->ci->input->post('billing_invoices') == "to_be_converted") {
+        array_push($where, 'AND (ril.id IS NULL)');
+    } else {
+        array_push($where, 'AND (ril.id IS NOT NULL)');
+    }
 }
 
 if (!has_permission('purchase_invoices', '', 'view')) {
@@ -105,12 +116,15 @@ update_module_filter($module_name, $vendors_filter_name, $vendors_filter_value);
 $budget_head_filter_name_value = !empty($this->ci->input->post('budget_head')) ? $this->ci->input->post('budget_head') : NULL;
 update_module_filter($module_name, $budget_head_filter_name, $budget_head_filter_name_value);
 
+$billing_invoices_filter_name_value = !empty($this->ci->input->post('billing_invoices')) ? $this->ci->input->post('billing_invoices') : NULL;
+update_module_filter($module_name, $billing_invoices_filter_name, $billing_invoices_filter_name_value);
+
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.id as id',
     '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'pur_invoices.id and rel_type="pur_invoice" ORDER by tag_order ASC) as tags',
     'contract_number',
     'invoice_number',
-    'currency',
+    db_prefix() . 'pur_invoices.currency',
     'expense_convert',
     db_prefix() . 'pur_invoices.wo_order',
     db_prefix() . 'items_groups.name',

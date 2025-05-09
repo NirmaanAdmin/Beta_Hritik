@@ -6,6 +6,7 @@
     "to_date": 'input[name="to_date"]',
     "vendors": "[name='vendor_ft[]']",
     "budget_head": "[name='budget_head']",
+    "billing_invoices": "[name='billing_invoices']",
   };
 
   initDataTable(table_invoice, admin_url + 'purchase/table_pur_invoice_payments', [], [], Params, [5, 'desc']);
@@ -33,6 +34,9 @@
   });
   $(document).on('change', 'select[name="budget_head"]', function () {
     $('select[name="budget_head"]').selectpicker('refresh');
+  });
+  $(document).on('change', 'select[name="billing_invoices"]', function () {
+    $('select[name="billing_invoices"]').selectpicker('refresh');
   });
 
   $(document).on('click', '.reset_vbt_all_filters', function () {
