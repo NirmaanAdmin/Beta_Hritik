@@ -222,8 +222,6 @@ class AgendaController extends AdminController
 
     public function import_file_xlsx_mom_items()
     {
-
-
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
         }

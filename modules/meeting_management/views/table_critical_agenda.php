@@ -201,9 +201,9 @@ foreach ($rResult as $aRow) {
 
     // vendor: if empty show input, else display text
     if (!empty($aRow['vendor'])) {
-        $vendor_html = '<div class="vendor-text vendor-display" data-id="' . $aRow['id'] . '">' . html_escape($aRow['vendor']) . '</div>';
+        $vendor_html = '<br><div class="vendor-text vendor-display" data-id="' . $aRow['id'] . '">' . html_escape($aRow['vendor']) . '</div>';
     } else {
-        $vendor_html = '<input type="text" class="form-control vendor-input" '
+        $vendor_html = '<br><input type="text" class="form-control vendor-input" '
             . 'style="margin-top:10px;" placeholder="Enter vendor" '
             . 'data-id="' . $aRow['id'] . '">';
     }

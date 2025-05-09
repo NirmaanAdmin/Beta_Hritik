@@ -6,10 +6,32 @@
         overflow-x: visible !important;
         scrollbar-width: none !important;
     }
+
+    .loader-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 9999999;
+    }
+
+    .loader-gif {
+        width: 100px;
+        /* Adjust the size as needed */
+        height: 100px;
+    }
 </style>
 <div id="wrapper">
     <div class="content">
         <div class="row">
+            <div class="loader-container hide" id="loader-container">
+                <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
+            </div>
             <div class="col-md-12">
                 <div class="panel_s invoice-item-table">
                     <div class="panel-body">
@@ -57,16 +79,16 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"><?php echo _l('Add New'); ?></h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <!-- <div class="col-md-8 pull-right">
+                <button type="button" class="close"  data-dismiss="modal">&times;</button>
+                <div class="col-md-8 pull-right">
                     <div class="col-md-2 pull-right">
                         <div id="dowload_file_sample" style="margin-top: 22px;">
                             <label for="file_csv" class="control-label"> </label>
-                            <a href="<?php echo site_url('modules/purchase/uploads/file_sample/Sample_import_order_tracker_en.xlsx') ?>" class="btn btn-primary">Template</a>
+                            <a href="<?php echo site_url('modules/meeting_management/uploads/file_sample/Sample_import_critical_tracker_en.xlsx') ?>" class="btn btn-primary">Template</a>
                         </div>
                     </div>
                     <div class="col-md-4 pull-right" style="display: flex;align-items: end;padding: 0px;">
-                        <?php echo form_open_multipart(admin_url('purchase/import_file_xlsx_order_tracker_items'), array('id' => 'import_form')); ?>
+                        <?php echo form_open_multipart(admin_url('meeting_management/minutesController/import_file_xlsx_critical_tracker_items'), array('id' => 'import_form')); ?>
                         <?php echo form_hidden('leads_import', 'true'); ?>
                         <?php echo render_input('file_csv', 'choose_excel_file', '', 'file'); ?>
 
@@ -76,7 +98,7 @@
                         <?php echo form_close(); ?>
                     </div>
 
-                </div> -->
+                </div>
                 <div class="col-md-12 ">
                     <div class="form-group pull-right" id="file_upload_response">
 
@@ -127,6 +149,7 @@
     </div>
 </div>
 <?php init_tail(); ?>
+<?php require 'modules/meeting_management/assets/js/import_excel_critical_items_mom_js.php'; ?>
 <?php require 'modules/meeting_management/assets/js/critical_mom_js.php'; ?>
 </body>
 
