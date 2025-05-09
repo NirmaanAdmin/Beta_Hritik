@@ -32,12 +32,12 @@ $join          = [
 $where         = [];
 
 // --- build filters ---
-if ($from = $this->ci->input->post('from_date')) {
-    $where[] = 'AND target_date >= "' . date('Y-m-d', strtotime($from)) . '"';
-}
-if ($to = $this->ci->input->post('to_date')) {
-    $where[] = 'AND target_date <= "' . date('Y-m-d', strtotime($to)) . '"';
-}
+// if ($from = $this->ci->input->post('from_date')) {
+//     $where[] = 'AND target_date >= "' . date('Y-m-d', strtotime($from)) . '"';
+// }
+// if ($to = $this->ci->input->post('to_date')) {
+//     $where[] = 'AND target_date <= "' . date('Y-m-d', strtotime($to)) . '"';
+// }
 if ($depts = $this->ci->input->post('department')) {
     $where[] = 'AND department IN (' . implode(',', $depts) . ')';
 }
@@ -52,8 +52,8 @@ if ($prios = $this->ci->input->post('priority')) {
 update_module_filter($module_name, $department_filter_name, !empty($depts) ? implode(',', $depts) : null);
 update_module_filter($module_name, $status_filter_name,     !empty($stats) ? implode(',', $stats) : null);
 update_module_filter($module_name, $priority_filter_name,   !empty($prios) ? implode(',', $prios) : null);
-update_module_filter($module_name, $from_date_filter_name,  !empty($from)  ? $from  : null);
-update_module_filter($module_name, $to_date_filter_name,    !empty($to)    ? $to    : null);
+// update_module_filter($module_name, $from_date_filter_name,  !empty($from)  ? $from  : null);
+// update_module_filter($module_name, $to_date_filter_name,    !empty($to)    ? $to    : null);
 
 // fetch data
 $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [

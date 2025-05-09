@@ -5,12 +5,9 @@
         table_rec_campaign = $('.table-table_critical_tracker');
 
         var Params = {
-            "type": "[name='type[]']",
-            "rli_filter": "[name='rli_filter']",
-            "vendors": "[name='vendors[]']",
-            "kind": "[name='kind']",
-            "budget_head": "[name='budget_head']",
-            "order_type_filter": "[name='order_type_filter']",
+            "department": "[name='department[]']",
+            "status": "[name='status[]']",
+            "priority": "[name='priority[]']",
         };
 
         initDataTable('.table-table_critical_tracker', admin_url + 'meeting_management/minutesController/table_critical_tracker', [], [], Params, [7, 'desc']);

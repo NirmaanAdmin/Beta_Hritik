@@ -1,6 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
-<?php init_head();  ?>
+<?php init_head();
+$module_name = 'critical_mom'; ?>
 <style>
     .table-responsive {
         overflow-x: visible !important;
@@ -25,26 +26,139 @@
         /* Adjust the size as needed */
         height: 100px;
     }
+
+    .show_hide_columns {
+        position: absolute;
+        z-index: 5000;
+        left: 204px
+    }
 </style>
 <div id="wrapper">
     <div class="content">
+        <div class="row" style="margin-bottom: 16px;">
+
+            <div class="col-md-4">
+                <button class="btn btn-info pull-left mright10 display-block" style="margin-left: 10px;" data-toggle="modal" data-target="#addNewRowModal">
+                    <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
+                </button>
+            </div>
+
+        </div>
         <div class="row">
             <div class="loader-container hide" id="loader-container">
                 <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
             </div>
             <div class="col-md-12">
+                <div class="row all_ot_filters">
+                    <div class="col-md-2 form-group">
+                        <?php
+                        $department_type_filter = get_module_filter($module_name, 'department');
+                        $department_type_filter_val = !empty($department_type_filter) ? explode(",", $department_type_filter->filter_value) : '';
+
+                        echo render_select('department[]', $department, array('departmentid', 'name'), '', $department_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('department'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                        ?>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <?php
+                        $status_type_filter = get_module_filter($module_name, 'status');
+                        $status_type_filter_val = !empty($status_type_filter) ? explode(",", $status_type_filter->filter_value) : '';
+                        $status_labels = [
+                            ['id' => '1', 'name' => 'Open'],
+                            ['id' => '2', 'name' => 'Close'],
+                        ];
+                        echo render_select('status[]', $status_labels, array('id', 'name'), '', $status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                        ?>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <?php
+                        $priority_type_filter = get_module_filter($module_name, 'priority');
+                        $priority_type_filter_val = !empty($priority_type_filter) ? explode(",", $priority_type_filter->filter_value) : '';
+
+                        $priorities_labels = [
+                            ['id' => '1', 'name' => 'High'],
+                            ['id' => '2', 'name' => 'Low'],
+                            ['id' => '3', 'name' => 'Medium'],
+                            ['id' => '4', 'name' => 'Urgent'],
+                        ];
+
+                        echo render_select('priority[]', $priorities_labels, array('id', 'name'), '', $priority_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Priority'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                        ?>
+                    </div>
+                    <!-- <div class="col-md-2 form-group">
+                        <?php
+
+                        ?>
+                    </div> -->
+
+
+                    <div class="col-md-1 form-group">
+                        <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
+                            <?php echo _l('reset_filter'); ?>
+                        </a>
+                    </div>
+                </div>
                 <div class="panel_s invoice-item-table">
                     <div class="panel-body">
-                        <div class="row" style="margin-bottom: 16px;">
-                            <div class="col-md-8">
-                                <h4><?php echo _l('meeting_critical_agenda'); ?></h4>
+
+                        <div class="row">
+                            <div class="_filters _hidden_inputs hidden tickets_filters"><input type="hidden" name="ticket_status_1" value="1"><input type="hidden" name="ticket_status_2" value="1"><input type="hidden" name="ticket_status_3"><input type="hidden" name="ticket_status_4" value="1"><input type="hidden" name="ticket_status_5"></div>
+                            <div class="col-md-12">
+                                <h4 class="tw-mt-0 tw-font-semibold tw-text-lg tw-flex tw-items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tw-w-5 tw-h-5 tw-text-neutral-500 tw-mr-1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path>
+                                    </svg><span> <?php echo _l('meeting_critical_agenda'); ?> </span></h4>
                             </div>
-                            <div class="col-md-4">
-                                <button class="btn btn-info pull-right mright10 display-block" style="margin-left: 10px;" data-toggle="modal" data-target="#addNewRowModal">
-                                    <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
-                                </button>
+                            <div class="col-md-2 col-xs-6 md:tw-border-r md:tw-border-solid md:tw-border-neutral-300 last:tw-border-r-0 tw-text-neutral-600 hover:tw-opacity-70 tw-inline-flex tw-items-center">
+                                <span class="tw-font-semibold tw-mr-3 rtl:tw-ml-3 tw-text-lg"><?php echo $open; ?></span>
+                                <span style="color: rgb(255, 45, 66);">Open</span>
                             </div>
 
+                            <div class="col-md-2 col-xs-6 md:tw-border-r md:tw-border-solid md:tw-border-neutral-300 last:tw-border-r-0 tw-text-neutral-600 hover:tw-opacity-70 tw-inline-flex tw-items-center">
+                                <span class="tw-font-semibold tw-mr-3 rtl:tw-ml-3 tw-text-lg"><?php echo $completed; ?></span>
+                                <span style="color: rgb(34, 197, 94);">Completed</span>
+                            </div>
+                            <div class="col-md-2 col-xs-6 md:tw-border-r md:tw-border-solid md:tw-border-neutral-300 last:tw-border-r-0 tw-text-neutral-600 hover:tw-opacity-70 tw-inline-flex tw-items-center">
+                                <span class="tw-font-semibold tw-mr-3 rtl:tw-ml-3 tw-text-lg"><?php echo $total; ?></span>
+                                <span style="color: rgb(3, 169, 244);">Total</span>
+                            </div>
+
+                        </div>
+                        <hr class="hr-panel-separator" />
+                        <div class="btn-group show_hide_columns" id="show_hide_columns">
+                            <!-- Settings Icon -->
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
+                                <i class="fa fa-cog"></i> <?php  ?> <span class="caret"></span>
+                            </button>
+                            <!-- Dropdown Menu with Checkboxes -->
+                            <div class="dropdown-menu" style="padding: 10px; min-width: 250px;">
+                                <!-- Select All / Deselect All -->
+                                <div>
+                                    <input type="checkbox" id="select-all-columns"> <strong><?php echo _l('select_all'); ?></strong>
+                                </div>
+                                <hr>
+                                <!-- Column Checkboxes -->
+                                <?php
+                                $columns = [
+                                    _l('No'),
+                                    _l('Department'),
+                                    _l('Area/Head'),
+                                    _l('Description'),
+                                    _l('Decision'),
+                                    _l('Action'),
+                                    _l('Action By'),
+                                    _l('Target Date'),
+                                    _l('Date Closed'),
+                                    _l('Status'),
+                                    _l('Priority'),
+                                ];
+                                ?>
+                                <div>
+                                    <?php foreach ($columns as $key => $label): ?>
+                                        <input type="checkbox" class="toggle-column" value="<?php echo $key; ?>" checked>
+                                        <?php echo $label; ?><br>
+                                    <?php endforeach; ?>
+                                </div>
+
+                            </div>
                         </div>
                         <table class="table table-bordered table-table_critical_tracker">
                             <thead>
@@ -79,7 +193,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"><?php echo _l('Add New'); ?></h4>
-                <button type="button" class="close"  data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <div class="col-md-8 pull-right">
                     <div class="col-md-2 pull-right">
                         <div id="dowload_file_sample" style="margin-top: 22px;">
@@ -154,3 +268,35 @@
 </body>
 
 </html>
+<script>
+    $(document).ready(function() {
+        var table = $('.table-table_critical_tracker').DataTable();
+
+        // Handle "Select All" checkbox
+        $('#select-all-columns').on('change', function() {
+            var isChecked = $(this).is(':checked');
+            $('.toggle-column').prop('checked', isChecked).trigger('change');
+        });
+
+        // Handle individual column visibility toggling
+        $('.toggle-column').on('change', function() {
+            var column = table.column($(this).val());
+            column.visible($(this).is(':checked'));
+
+            // Sync "Select All" checkbox state
+            var allChecked = $('.toggle-column').length === $('.toggle-column:checked').length;
+            $('#select-all-columns').prop('checked', allChecked);
+        });
+
+        // Sync checkboxes with column visibility on page load
+        table.columns().every(function(index) {
+            var column = this;
+            $('.toggle-column[value="' + index + '"]').prop('checked', column.visible());
+        });
+
+        // Prevent dropdown from closing when clicking inside
+        $('.dropdown-menu').on('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+</script>

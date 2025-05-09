@@ -536,6 +536,9 @@ class MinutesController extends AdminController
         $data['mom_row_template'] = $this->Meeting_model->create_mom_critical_row_template();
         $data['staff_list'] = $this->Staff_model->get();
         $data['title'] = _l('meeting_critical_agenda');
+        $data['total'] = $this->Meeting_model->get_total_critical_agenda('total');
+        $data['open'] = $this->Meeting_model->get_total_critical_agenda('open');
+        $data['completed'] = $this->Meeting_model->get_total_critical_agenda('completed');
 
         $this->load->view('meeting_management/critical_agenda', $data);
     }

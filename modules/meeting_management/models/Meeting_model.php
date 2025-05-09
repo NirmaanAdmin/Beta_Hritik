@@ -686,7 +686,7 @@ class Meeting_model extends App_Model
                     $mom_arr['serial_no']
                 );
 
-                if ($critical > 0 && $critical != null) {                   
+                if ($critical > 0 && $critical != null) {
                     if (!empty($query)) {
                         // Record exists - update it
                         // $this->db->where('meeting_detail_id', $value['id']);
@@ -699,10 +699,10 @@ class Meeting_model extends App_Model
                         $this->db->insert(db_prefix() . 'critical_mom', $mom_arr);
                     }
                 }
-                 // Record exists - update it
-                 $this->db->where('meeting_detail_id', $value['id']);
-                 $this->db->where('critical', 1);
-                 $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
+                // Record exists - update it
+                $this->db->where('meeting_detail_id', $value['id']);
+                $this->db->where('critical', 1);
+                $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
 
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
@@ -1213,5 +1213,23 @@ class Meeting_model extends App_Model
             return $last_insert_id;
         }
         return false;
+    }
+
+    public function get_total_critical_agenda($type = '')
+    {
+        // always count rows
+        $this->db->select('COUNT(*) AS total')
+            ->from(db_prefix() . 'critical_mom');
+
+        // filter by status if requested
+        if ($type === 'open') {
+            $this->db->where('status', 1);
+        } elseif ($type === 'completed') {
+            $this->db->where('status', 2);
+        }
+
+        $row = $this->db->get()->row();
+
+        return $row ? (int) $row->total : 0;
     }
 }
