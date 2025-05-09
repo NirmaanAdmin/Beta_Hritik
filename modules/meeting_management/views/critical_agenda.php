@@ -1,7 +1,12 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
 <?php init_head();  ?>
-
+<style>
+    .table-responsive {
+        overflow-x: visible !important;
+        scrollbar-width: none !important;
+    }
+</style>
 <div id="wrapper">
     <div class="content">
         <div class="row">
