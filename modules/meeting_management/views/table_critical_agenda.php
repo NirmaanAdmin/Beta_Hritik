@@ -66,10 +66,13 @@ $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
 $output  = $result['output'];
 $rResult = $result['rResult'];
 
-// load dept list
+// load models and lists
 $this->ci->load->model('departments_model');
-$departments       = $this->ci->departments_model->get();
+$this->ci->load->model('Staff_model');
+$departments  = $this->ci->departments_model->get();
+$staff_list   = $this->ci->Staff_model->get();
 $departments_by_id = array_column($departments, null, 'departmentid');
+$staff_by_id       = array_column($staff_list,  null, 'staffid');
 
 // label maps
 $status_labels = [
@@ -90,109 +93,133 @@ foreach ($rResult as $aRow) {
     // 1) Serial
     $row[] = $i++;
 
-    // 2) Department dropdown
+    // 2) Department dropdown (unchanged)
     $department_html = '';
     if (isset($departments_by_id[$aRow['department']])) {
         $dept = $departments_by_id[$aRow['department']];
         $department_html  = '<span class="inline-block label label-default"'
             . ' id="department_span_' . $aRow['id'] . '"'
             . ' data-task-status="department">'
-            . $dept['name'];
+            . html_escape($dept['name']);
     }
     $department_html .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
         . '<a href="#" class="dropdown-toggle text-dark" data-toggle="dropdown"'
         . ' aria-haspopup="true" aria-expanded="false">'
         . '<i class="fa fa-caret-down" data-toggle="tooltip" title="'
-        . _l('change_department') . '"></i></a>';
-    $department_html .= '<ul class="dropdown-menu dropdown-menu-right">';
+        . _l('change_department') . '"></i></a>'
+        . '<ul class="dropdown-menu dropdown-menu-right">';
     foreach ($departments_by_id as $id => $d) {
         if ($id != $aRow['department']) {
             $department_html .= '<li><a href="#"'
                 . ' onclick="change_department('
                 . $id . ', ' . $aRow['id']
                 . '); return false;">'
-                . $d['name'] . '</a></li>';
+                . html_escape($d['name']) . '</a></li>';
         }
     }
     $department_html .= '</ul></div></span>';
 
     $row[] = $department_html;
 
-    // 3) Area, 4) Description, 5) Decision, 6) Action
+    // 3) Area
     if (!empty($aRow['area'])) {
-        $area = '<span class="area-display" data-id="' . $aRow['id'] . '">' . $aRow['area'] . '</span>';
+        $area = '<span class="area-display" data-id="' . $aRow['id'] . '">'
+            . html_escape($aRow['area'])
+            . '</span>';
     } else {
-        $area = '<textarea '
-            . 'class="form-control area-input" '
-            . 'placeholder="Enter area" '
-            . 'data-id="' . $aRow['id'] . '" '
-            . 'rows="3"></textarea>';
+        $area = '<textarea class="form-control area-input" placeholder="Enter area" '
+            . 'data-id="' . $aRow['id'] . '" rows="3"></textarea>';
     }
-
     $row[] = $area;
 
+    // 4) Description
     if (!empty($aRow['description'])) {
         $description = '<span class="description-display" data-id="' . $aRow['id'] . '">'
             . html_escape($aRow['description'])
             . '</span>';
     } else {
-        $description = '<textarea '
-            . 'class="form-control description-input" '
-            . 'placeholder="Enter description" '
-            . 'data-id="' . $aRow['id'] . '" '
-            . 'rows="3" cols="80"></textarea>';
+        $description = '<textarea class="form-control description-input" placeholder="Enter description" '
+            . 'data-id="' . $aRow['id'] . '" rows="3" cols="80"></textarea>';
     }
     $row[] = $description;
 
-
+    // 5) Decision
     if (!empty($aRow['decision'])) {
         $decision = '<span class="decision-display" data-id="' . $aRow['id'] . '">'
             . html_escape($aRow['decision'])
             . '</span>';
     } else {
-        $decision = '<textarea '
-            . 'class="form-control decision-input" '
-            . 'placeholder="Enter decision" '
-            . 'data-id="' . $aRow['id'] . '" '
-            . 'rows="4" cols="80"></textarea>';
+        $decision = '<textarea class="form-control decision-input" placeholder="Enter decision" '
+            . 'data-id="' . $aRow['id'] . '" rows="4" cols="80"></textarea>';
     }
-
     $row[] = $decision;
 
+    // 6) Action
     if (!empty($aRow['action'])) {
         $action = '<span class="action-display" data-id="' . $aRow['id'] . '">'
             . html_escape($aRow['action'])
             . '</span>';
     } else {
-        $action = '<textarea '
-            . 'class="form-control action-input" '
-            . 'placeholder="Enter action" '
-            . 'data-id="' . $aRow['id'] . '" '
-            . 'rows="4" cols="80"></textarea>';
+        $action = '<textarea class="form-control action-input" placeholder="Enter action" '
+            . 'data-id="' . $aRow['id'] . '" rows="4" cols="80"></textarea>';
     }
-
-
     $row[] = $action;
 
-    // 7) Action By (staff + vendor)
-    $action_by = '';
-    if ($aRow['staff'] > 0) {
-        $action_by .= $aRow['firstname'] . ' ' . $aRow['lastname'] . '<br>';
+    // 7) STAFF + VENDOR (now supports comma-separated staff IDs)
+    // parse staff IDs
+    $staff_raw = trim($aRow['staff']); // e.g. "35,11,30"
+    if ($staff_raw !== '') {
+        // build display names
+        $ids   = array_filter(explode(',', $staff_raw));
+        $names = [];
+        foreach ($ids as $sid) {
+            if (isset($staff_by_id[$sid])) {
+                $u    = $staff_by_id[$sid];
+                $names[] = $u['firstname'] . ' ' . $u['lastname'];
+            }
+        }
+        $staff_html = '<span '
+            . 'class="staff-display" '
+            . 'data-id="' . $aRow['id'] . '" '
+            . 'data-staff="' . html_escape($staff_raw) . '">'
+            . html_escape(implode(', ', $names))
+            . '</span>';
+    } else {
+        // initial empty select
+        $staff_html  = '<select multiple '
+            . 'class="form-control staff-input selectpicker" '
+            . 'data-live-search="true" '
+            . 'data-width="100%" '
+            . 'data-id="' . $aRow['id'] . '">';
+        foreach ($staff_list as $st) {
+            $staff_html .= '<option value="' . $st['staffid'] . '">'
+                . html_escape($st['firstname'] . ' ' . $st['lastname'])
+                . '</option>';
+        }
+        $staff_html .= '</select>';
     }
-    $action_by .= $aRow['vendor'];
-    $row[] = $action_by;
+
+    // vendor: if empty show input, else display text
+    if (!empty($aRow['vendor'])) {
+        $vendor_html = '<div class="vendor-text vendor-display" data-id="' . $aRow['id'] . '">' . html_escape($aRow['vendor']) . '</div>';
+    } else {
+        $vendor_html = '<input type="text" class="form-control vendor-input" '
+            . 'style="margin-top:10px;" placeholder="Enter vendor" '
+            . 'data-id="' . $aRow['id'] . '">';
+    }
+
+    $row[] = $staff_html . $vendor_html;
 
     // 8) Target Date
     $row[] = !empty($aRow['target_date'])
         ? date('d M, Y', strtotime($aRow['target_date']))
         : '';
 
-    // 9) Date Closed (editable)
-    $row[] =  '<input type="date" class="form-control closed-date-input"'
+    // 9) Date Closed
+    $row[] = '<input type="date" class="form-control closed-date-input"'
         . ' value="' . $aRow['date_closed'] . '" data-id="' . $aRow['id'] . '">';
 
-
-    // 10) Status dropdown
+    // 10) Status dropdown (unchanged)
     $status_html = '';
     if (isset($status_labels[$aRow['status']])) {
         $s = $status_labels[$aRow['status']];
@@ -201,20 +228,16 @@ foreach ($rResult as $aRow) {
             . ' data-task-status="' . $s['table'] . '">'
             . $s['text'];
     }
-    $status_html .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
-        . '<a href="#" class="dropdown-toggle text-dark" id="tableStatus-'
-        . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true"'
-        . ' aria-expanded="false">'
+    $status_html  .=  '<div class="dropdown inline-block mleft5 table-export-exclude">'
+        . '<a href="#" class="dropdown-toggle text-dark" id="tableStatus-' . $aRow['id'] . '"'
+        . ' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         . '<i class="fa fa-caret-down" data-toggle="tooltip" title="'
-        . _l('change_status') . '"></i></a>';
-    $status_html .= '<ul class="dropdown-menu dropdown-menu-right"'
-        . ' aria-labelledby="tableStatus-' . $aRow['id'] . '">';
+        . _l('change_status') . '"></i></a>'
+        . '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableStatus-' . $aRow['id'] . '">';
     foreach ($status_labels as $key => $lbl) {
         if ($key != $aRow['status']) {
-            $status_html .= '<li><a href="#"'
-                . ' onclick="change_status_mom('
-                . $key . ', ' . $aRow['id']
-                . '); return false;">'
+            $status_html .= '<li><a href="#" onclick="change_status_mom('
+                . $key . ', ' . $aRow['id'] . ');return false;">'
                 . $lbl['text'] . '</a></li>';
         }
     }
@@ -222,7 +245,7 @@ foreach ($rResult as $aRow) {
 
     $row[] = $status_html;
 
-    // 11) Priority dropdown
+    // 11) Priority dropdown (unchanged)
     $priority_html = '';
     if (isset($priority_labels[$aRow['priority']])) {
         $p = $priority_labels[$aRow['priority']];
@@ -231,20 +254,16 @@ foreach ($rResult as $aRow) {
             . ' data-task-status="' . $p['table'] . '">'
             . $p['text'];
     }
-    $priority_html .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
-        . '<a href="#" class="dropdown-toggle text-dark" id="tablePriority-'
-        . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true"'
-        . ' aria-expanded="false">'
+    $priority_html  .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
+        . '<a href="#" class="dropdown-toggle text-dark" id="tablePriority-' . $aRow['id'] . '"'
+        . ' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         . '<i class="fa fa-caret-down" data-toggle="tooltip" title="'
-        . _l('change_priority') . '"></i></a>';
-    $priority_html .= '<ul class="dropdown-menu dropdown-menu-right"'
-        . ' aria-labelledby="tablePriority-' . $aRow['id'] . '">';
+        . _l('change_priority') . '"></i></a>'
+        . '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePriority-' . $aRow['id'] . '">';
     foreach ($priority_labels as $key => $lbl) {
         if ($key != $aRow['priority']) {
-            $priority_html .= '<li><a href="#"'
-                . ' onclick="change_priority_mom('
-                . $key . ', ' . $aRow['id']
-                . '); return false;">'
+            $priority_html .= '<li><a href="#" onclick="change_priority_mom('
+                . $key . ', ' . $aRow['id'] . ');return false;">'
                 . $lbl['text'] . '</a></li>';
         }
     }

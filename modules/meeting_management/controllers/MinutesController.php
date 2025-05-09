@@ -12,6 +12,7 @@ class MinutesController extends AdminController
         $this->load->model('Task_model');
         $this->load->model('Clients_model');  // Load the default clients model
         $this->load->model('Departments_model');
+        $this->load->model('Staff_model');
     }
 
     // View and manage the minutes of a meeting
@@ -26,7 +27,7 @@ class MinutesController extends AdminController
         $data['tasks'] = $this->Meeting_model->get_tasks_by_agenda($agenda_id);
 
         // Fetch the list of staff members for task assignment
-        $this->load->model('Staff_model');
+
         $data['staff_members'] = $this->Staff_model->get();  // Load all staff members
         // $data['clients'] = $this->Clients_model->get();      // Load all clients
 
@@ -533,6 +534,7 @@ class MinutesController extends AdminController
         $data['critical_agenda'] = $this->Meeting_model->get_critical_agenda();
         $data['department'] = $this->Departments_model->get();
         $data['mom_row_template'] = $this->Meeting_model->create_mom_critical_row_template();
+        $data['staff_list'] = $this->Staff_model->get();
         $data['title'] = _l('meeting_critical_agenda');
 
         $this->load->view('meeting_management/critical_agenda', $data);
@@ -736,12 +738,12 @@ class MinutesController extends AdminController
             $id = $this->Meeting_model->add_critical_mom($data);
             if ($id) {
 
-                
+
                 // Return a JSON success response
                 echo json_encode([
                     'success' => true,
                     'row_template' => $this->Meeting_model->create_mom_critical_row_template(),
-                    'message' => _l('added_successfully', _l('critical_mom'))   
+                    'message' => _l('added_successfully', _l('critical_mom'))
                 ]);
             } else {
                 // Return a JSON error response if the insert failed
@@ -764,7 +766,7 @@ class MinutesController extends AdminController
     {
         $this->app->get_table_data(module_views_path('meeting_management', 'table_critical_agenda'));
     }
-    
+
 
     public function update_critical_area()
     {
@@ -785,7 +787,7 @@ class MinutesController extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
-    
+
     public function update_critical_description()
     {
         $id = $this->input->post('id');
@@ -805,7 +807,7 @@ class MinutesController extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
-    
+
     public function update_critical_decision()
     {
         $id = $this->input->post('id');
@@ -845,5 +847,67 @@ class MinutesController extends AdminController
         }
     }
 
+    public function update_critical_vendor()
+    {
+        $id = $this->input->post('id');
+        $vendor = $this->input->post('vendor');
+
+        if (!$id  || !$vendor) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['vendor' => $vendor]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('vendor_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
     
+    public function change_staff()
+    {
+        $id        = $this->input->post('id');
+        $staffRaw  = $this->input->post('staff'); // may be array or string
+        // Basic validation
+        if (! $id || $staffRaw === null) {
+            echo json_encode([
+                'success' => false,
+                'message' => _l('invalid_request')
+            ]);
+            return;
+        }
+
+        // Normalize to CSV
+        if (is_array($staffRaw)) {
+            // cast each to int and filter out any empties just in case
+            $staffIds = array_filter(array_map('intval', $staffRaw));
+            $staffCsv = implode(',', $staffIds);
+        } else {
+            // already a string (e.g. "35,11,30")
+            $staffCsv = trim($staffRaw);
+        }
+
+        // Update
+        $this->db->where('id', $id);
+        $success = $this->db->update(
+            db_prefix() . 'critical_mom',
+            ['staff' => $staffCsv]
+        );
+
+        if ($success) {
+            echo json_encode([
+                'success' => true,
+                'message' => _l('staff_updated'),
+                'staff'   => $staffCsv
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => _l('update_failed')
+            ]);
+        }
+    }
 }

@@ -19,8 +19,6 @@
                             </div>
 
                         </div>
-
-
                         <table class="table table-bordered table-table_critical_tracker">
                             <thead>
                                 <tr>

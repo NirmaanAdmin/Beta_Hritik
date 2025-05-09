@@ -31,7 +31,9 @@
             table_rec_campaign.DataTable().ajax.reload().columns.adjust().responsive.recalc();
         });
 
-
+        table_rec_campaign.on('draw.dt', function() {
+            $('.selectpicker').selectpicker('refresh');
+        });
 
     })(jQuery);
     $(document).ready(function() {
@@ -90,7 +92,7 @@
             });
         }
     });
-
+    var table_critical_tracker = $('.table-table_critical_tracker');
     function change_status_mom(status, id) {
         "use strict";
         if (id > 0) {
@@ -120,7 +122,7 @@
                             // console.log('After:', $statusSpan.attr('class'));
 
                             // Display success message
-                            // $(".table-table_order_tracker").DataTable().ajax.reload();
+                            table_critical_tracker.DataTable().ajax.reload();
                             alert_float('success', response.mess);
                         } else {
                             // Display warning message if the operation fails
@@ -166,7 +168,7 @@
 
 
                             // Display success message
-                            $(".table-table_order_tracker").DataTable().ajax.reload();
+                            table_critical_tracker.DataTable().ajax.reload();
                             alert_float('success', response.mess);
                         } else {
                             // Display warning message if the operation fails
@@ -183,6 +185,7 @@
                 });
         }
     }
+   
 
     function change_department(departmentId, agendaId) {
         "use strict";
@@ -202,6 +205,7 @@
 
                                 // Re-add the dropdown HTML
                                 deptSpan.append(response.html);
+                                table_critical_tracker.DataTable().ajax.reload();
                             }
 
                             alert_float('success', response.message);
@@ -219,7 +223,7 @@
                 });
         }
     }
-    var table_critical_tracker = $('.table-table_critical_tracker');
+
     $('body').on('change', '.closed-date-input', function(e) {
         e.preventDefault();
 
@@ -566,4 +570,117 @@
             }
         });
     });
+    const STAFF_LIST = [
+        <?php foreach ($staff_list as $st): ?> {
+                staffid: <?php echo $st['staffid']; ?>,
+                name: "<?php echo addslashes($st['firstname'] . ' ' . $st['lastname']); ?>"
+            },
+        <?php endforeach; ?>
+    ];
+    const DATA = {
+        select_staff: "<?php echo addslashes(_l('select_staff')); ?>"
+    };
+
+    // click-to-edit: span → selectpicker
+    $('body').on('click', '.staff-display', function(e) {
+        e.preventDefault();
+        const $span = $(this);
+        const id = $span.data('id');
+        const staffRaw = ($span.data('staff') || '').toString();
+        const selectedIds = staffRaw.split(',').filter(Boolean);
+        // build select
+        let sel = '<select multiple ' +
+            'class="form-control staff-input selectpicker" ' +
+            'data-live-search="true" ' +
+            'data-width="100%" ' +
+            'data-id="' + id + '">';
+        STAFF_LIST.forEach(st => {
+            const selAttr = selectedIds.includes(st.staffid.toString()) ? ' selected' : '';
+            sel += '<option value="' + st.staffid + '"' + selAttr + '>' + st.name + '</option>';
+        });
+        sel += '</select>';
+        $span.replaceWith(sel);
+        // init the plugin
+        const $new = $('select.staff-input[data-id="' + id + '"]');
+        $new.selectpicker().focus();
+    });
+
+    // on change, post and swap back to span
+    // remove any previous handlers, then bind once to changed.bs.select
+    $('body')
+        .off('changed.bs.select', '.staff-input')
+        .on('changed.bs.select', '.staff-input', function(e, clickedIndex, isSelected, previousValue) {
+            const $sel = $(this);
+            const id = $sel.data('id');
+            const vals = $sel.val() || []; // array of IDs
+
+            $.post(admin_url + 'meeting_management/minutesController/change_staff', {
+                id: id,
+                staff: vals
+            }).done(function() {
+                // rebuild display span
+                const names = vals
+                    .map(sid => {
+                        const u = STAFF_LIST.find(u => u.staffid == sid);
+                        return u ? u.name : '';
+                    })
+                    .filter(Boolean)
+                    .join(', ');
+
+                const span = '<span class="staff-display" ' +
+                    'data-id="' + id + '" ' +
+                    'data-staff="' + vals.join(',') + '">' +
+                    names +
+                    '</span>';
+
+                // tear down the picker and swap in the span
+                $sel.selectpicker('destroy').replaceWith(span);
+                table_critical_tracker.DataTable().ajax.reload();
+            });
+        });
+
+    $('body').on('click', '.vendor-display', function(e) {
+        e.preventDefault();
+        const $span = $(this);
+        const id = $span.data('id');
+        const text = $span.text().trim();
+
+        const input = '<input type="text" ' +
+            'class="form-control vendor-input" ' +
+            'data-id="' + id + '" ' +
+            'value="' + text + '">';
+
+        $span.replaceWith(input);
+        $('input.vendor-input[data-id="' + id + '"]').focus();
+    });
+
+
+
+    $('body').on('change', '.vendor-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var vendor = $(this).val();
+
+        // Perform AJAX request to update the vendor
+        $.post(admin_url + 'meeting_management/minutesController/update_critical_vendor', {
+            id: rowId,
+            vendor: vendor
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+
+
+                $('.vendor-input[data-id="' + rowId + '"]').replaceWith('<br><span class="vendor-display" data-id="' + rowId + '">' + vendor + '</span>');
+
+                // Optionally reload the table if necessary
+                table_order_tracker.ajax.reload(null, false);
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
+    });
+
+    // $('.selectpicker').selectpicker();
 </script>
