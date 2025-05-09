@@ -851,7 +851,7 @@
                                             <?php
                                             $select = '';
                                             $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="unit_id" data-none-selected-text="' . _l('unit') . '">';
-                                            $select .= '<option value=""></option>';
+                                            // $select .= '<option value=""></option>';
                                             foreach ($units as $unit) {
                                                 $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
                                             }
@@ -948,7 +948,7 @@
                                                 
                                                 $select = '';
                                                 $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $items_indicator . '[' . $i . '][unit_id]" data-none-selected-text="' . _l('unit') . '">';
-                                                $select .= '<option value=""></option>';
+                                                // $select .= '<option value=""></option>';
                                                 foreach ($units as $unit) {
                                                     $selected = ($unit['unit_type_id'] == $item['unit_id']) ? ' selected' : '';
                                                     $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
@@ -1082,7 +1082,7 @@
                                                     <td>
                                                       <input type="number" name="sub_quantity" min="0" value="1" class="form-control" placeholder="'._l('item_quantity_placeholder').'">';
                                                       $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="sub_unit_id" data-none-selected-text="' . _l('unit') . '">';
-                                                      $select .= '<option value=""></option>';
+                                                      // $select .= '<option value=""></option>';
                                                       foreach ($units as $unit) {
                                                           $select .= '<option value="'.$unit['unit_type_id'].'">'.$unit['unit_name'].'</option>';
                                                       }
@@ -1138,7 +1138,7 @@
 
                                                             $select = '';
                                                             $select = '<select class="selectpicker display-block tax main-tax" data-width="100%" name="' . $sub_items_indicator . '[' . $k . '][sub_unit_id]" data-none-selected-text="' . _l('unit') . '">';
-                                                            $select .= '<option value=""></option>';
+                                                            // $select .= '<option value=""></option>';
                                                             foreach ($units as $unit) {
                                                                 $selected = ($unit['unit_type_id'] == $sitem['sub_unit_id']) ? ' selected' : '';
                                                                 $select .= '<option value="' . $unit['unit_type_id'] . '"' . $selected . '>' . $unit['unit_name'] . '</option>';
