@@ -483,7 +483,7 @@ class Meeting_model extends App_Model
         $client_query = $this->db->get_compiled_select();
 
         // Combine both queries using UNION
-        $query = $this->db->query($staff_query . ' UNION ' . $client_query);
+        $query = $this->db->query($staff_query);
 
         return $query->result_array();
     }

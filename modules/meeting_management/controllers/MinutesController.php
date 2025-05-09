@@ -759,4 +759,30 @@ class MinutesController extends AdminController
         }
         exit; // Stop further execution
     }
+
+    public function table_critical_tracker()
+    {
+        $this->app->get_table_data(module_views_path('meeting_management', 'table_critical_agenda'));
+    }
+    
+
+    public function update_critical_area()
+    {
+        $id = $this->input->post('id');
+        $area = $this->input->post('area');
+
+        if (!$id  || !$area) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['area' => $area]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('area_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
 }

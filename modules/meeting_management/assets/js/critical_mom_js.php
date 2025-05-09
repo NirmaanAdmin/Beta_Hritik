@@ -1,5 +1,40 @@
 <script>
-$(document).ready(function() {
+    var table_rec_campaign;
+    (function($) {
+        "use strict";
+        table_rec_campaign = $('.table-table_critical_tracker');
+
+        var Params = {
+            "type": "[name='type[]']",
+            "rli_filter": "[name='rli_filter']",
+            "vendors": "[name='vendors[]']",
+            "kind": "[name='kind']",
+            "budget_head": "[name='budget_head']",
+            "order_type_filter": "[name='order_type_filter']",
+        };
+
+        initDataTable('.table-table_critical_tracker', admin_url + 'meeting_management/minutesController/table_critical_tracker', [], [], Params, [0, 'desc']);
+        // [7, 'desc']
+        $.each(Params, function(i, obj) {
+            // console.log(obj);
+            $('select' + obj).on('change', function() {
+                table_rec_campaign.DataTable().ajax.reload()
+                    .columns.adjust()
+                    .responsive.recalc();
+            });
+        });
+
+        $(document).on('click', '.reset_all_ot_filters', function() {
+            var filterArea = $('.all_ot_filters');
+            filterArea.find('input').val("");
+            filterArea.find('select').selectpicker("val", "");
+            table_rec_campaign.DataTable().ajax.reload().columns.adjust().responsive.recalc();
+        });
+
+
+
+    })(jQuery);
+    $(document).ready(function() {
         $('#project_filter').change(function() {
             const selectedProject = $(this).val();
 
@@ -131,7 +166,7 @@ $(document).ready(function() {
 
 
                             // Display success message
-                            // $(".table-table_order_tracker").DataTable().ajax.reload();
+                            $(".table-table_order_tracker").DataTable().ajax.reload();
                             alert_float('success', response.mess);
                         } else {
                             // Display warning message if the operation fails
@@ -331,14 +366,15 @@ $(document).ready(function() {
                     // Hide the modal (if using one)
                     $("#addNewRowModal").modal("hide");
 
-                    
+                    // Reload DataTable
+                    $(".table-table_critical_tracker").DataTable().ajax.reload();
 
                     // Reset the form after successful submission
                     $('.invoice-item table.critical-tracker-items-table.items tbody').html('');
                     $('.invoice-item table.critical-tracker-items-table.items tbody').append(response.row_template);
 
                     // $('#critical-agenda-tbody').html('');
-                    
+
                     init_selectpicker();
                     critical_clear_item_preview_values('.invoice-item');
                     $('body').find('#items-warning').remove();
@@ -352,6 +388,7 @@ $(document).ready(function() {
         });
 
     });
+
     function critical_clear_item_preview_values(parent) {
         "use strict";
 
@@ -361,4 +398,40 @@ $(document).ready(function() {
         previewArea.find('textarea').val('');
         previewArea.find('select').val('').selectpicker('refresh');
     }
+
+    $('body').on('click', '.area-display', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var currentValue = $(this).text(); // Remove currency formatting
+
+        // Replace the span with an input field
+        $(this).replaceWith('<input type="text" class="form-control area-input" value="' + currentValue + '" data-id="' + rowId + '">');
+    });
+
+    $('body').on('change', '.area-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var area = $(this).val();
+
+        // Perform AJAX request to update the area
+        $.post(admin_url + 'meeting_management/minutesController/update_critical_area', {
+            id: rowId,
+            area: area
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+
+
+                $('.area-input[data-id="' + rowId + '"]').replaceWith('<span class="area-display" data-id="' + rowId + '">' + area + '</span>');
+
+                // Optionally reload the table if necessary
+                table_order_tracker.ajax.reload(null, false);
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
+    });
 </script>

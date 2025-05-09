@@ -139,3 +139,4 @@ $lang['no_records_found'] = 'No Records Found';
 $lang['change_department'] = 'Department';
 $lang['department_changed_successfully'] = 'Department Changed Successfully';
 $lang['department_change_failed'] = 'Department Change Failed';
+$lang['area_updated'] = 'Area Updated Successfully';
