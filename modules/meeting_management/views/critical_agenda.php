@@ -37,66 +37,66 @@ $module_name = 'critical_mom'; ?>
     <div class="content">
         <div class="row" style="margin-bottom: 16px;">
 
-            <div class="col-md-4">
-                <button class="btn btn-info pull-left mright10 display-block"  data-toggle="modal" data-target="#addNewRowModal">
+            <div class="col-md-1">
+                <button class="btn btn-info pull-left mright10 display-block" data-toggle="modal" data-target="#addNewRowModal">
                     <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
                 </button>
             </div>
+            <div class="row all_ot_filters">
+                <div class="col-md-2 form-group">
+                    <?php
+                    $department_type_filter = get_module_filter($module_name, 'department');
+                    $department_type_filter_val = !empty($department_type_filter) ? explode(",", $department_type_filter->filter_value) : '';
 
-        </div>
-        <div class="row">
-            <div class="loader-container hide" id="loader-container">
-                <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
-            </div>
-            <div class="col-md-12">
-                <div class="row all_ot_filters">
-                    <div class="col-md-2 form-group">
-                        <?php
-                        $department_type_filter = get_module_filter($module_name, 'department');
-                        $department_type_filter_val = !empty($department_type_filter) ? explode(",", $department_type_filter->filter_value) : '';
+                    echo render_select('department[]', $department, array('departmentid', 'name'), '', $department_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('department'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                    ?>
+                </div>
+                <div class="col-md-2 form-group">
+                    <?php
+                    $status_type_filter = get_module_filter($module_name, 'status');
+                    $status_type_filter_val = !empty($status_type_filter) ? explode(",", $status_type_filter->filter_value) : '';
+                    $status_labels = [
+                        ['id' => '1', 'name' => 'Open'],
+                        ['id' => '2', 'name' => 'Close'],
+                    ];
+                    echo render_select('status[]', $status_labels, array('id', 'name'), '', $status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                    ?>
+                </div>
+                <div class="col-md-2 form-group">
+                    <?php
+                    $priority_type_filter = get_module_filter($module_name, 'priority');
+                    $priority_type_filter_val = !empty($priority_type_filter) ? explode(",", $priority_type_filter->filter_value) : '';
 
-                        echo render_select('department[]', $department, array('departmentid', 'name'), '', $department_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('department'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
-                        ?>
-                    </div>
-                    <div class="col-md-2 form-group">
-                        <?php
-                        $status_type_filter = get_module_filter($module_name, 'status');
-                        $status_type_filter_val = !empty($status_type_filter) ? explode(",", $status_type_filter->filter_value) : '';
-                        $status_labels = [
-                            ['id' => '1', 'name' => 'Open'],
-                            ['id' => '2', 'name' => 'Close'],
-                        ];
-                        echo render_select('status[]', $status_labels, array('id', 'name'), '', $status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
-                        ?>
-                    </div>
-                    <div class="col-md-2 form-group">
-                        <?php
-                        $priority_type_filter = get_module_filter($module_name, 'priority');
-                        $priority_type_filter_val = !empty($priority_type_filter) ? explode(",", $priority_type_filter->filter_value) : '';
+                    $priorities_labels = [
+                        ['id' => '1', 'name' => 'High'],
+                        ['id' => '2', 'name' => 'Low'],
+                        ['id' => '3', 'name' => 'Medium'],
+                        ['id' => '4', 'name' => 'Urgent'],
+                    ];
 
-                        $priorities_labels = [
-                            ['id' => '1', 'name' => 'High'],
-                            ['id' => '2', 'name' => 'Low'],
-                            ['id' => '3', 'name' => 'Medium'],
-                            ['id' => '4', 'name' => 'Urgent'],
-                        ];
-
-                        echo render_select('priority[]', $priorities_labels, array('id', 'name'), '', $priority_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Priority'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
-                        ?>
-                    </div>
-                    <!-- <div class="col-md-2 form-group">
+                    echo render_select('priority[]', $priorities_labels, array('id', 'name'), '', $priority_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Priority'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                    ?>
+                </div>
+                <!-- <div class="col-md-2 form-group">
                         <?php
 
                         ?>
                     </div> -->
 
 
-                    <div class="col-md-1 form-group">
-                        <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
-                            <?php echo _l('reset_filter'); ?>
-                        </a>
-                    </div>
+                <div class="col-md-1 form-group">
+                    <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
+                        <?php echo _l('reset_filter'); ?>
+                    </a>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="loader-container hide" id="loader-container">
+                <img src="<?php echo site_url('modules/purchase/uploads/lodder/lodder.gif') ?>" alt="Loading..." class="loader-gif">
+            </div>
+            <div class="col-md-12">
+
                 <div class="panel_s invoice-item-table">
                     <div class="panel-body">
 
