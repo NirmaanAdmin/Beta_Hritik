@@ -38,7 +38,7 @@ $module_name = 'critical_mom'; ?>
         <div class="row" style="margin-bottom: 16px;">
 
             <div class="col-md-4">
-                <button class="btn btn-info pull-left mright10 display-block" style="margin-left: 10px;" data-toggle="modal" data-target="#addNewRowModal">
+                <button class="btn btn-info pull-left mright10 display-block"  data-toggle="modal" data-target="#addNewRowModal">
                     <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
                 </button>
             </div>
