@@ -666,19 +666,18 @@ class Meeting_model extends App_Model
                 $this->db->where('critical', 1);
                 $this->db->where('meeting_detail_id', $value['id']);
                 $query = $this->db->get()->result_array();
-                if ($critical > 0 && $critical != null) {
-                    // Clean up the array before insert/update
-                    unset(
-                        $mom_arr['reorder'],
-                        $mom_arr['section_break'],
-                        $mom_arr['serial_no']
-                    );
+                unset(
+                    $mom_arr['reorder'],
+                    $mom_arr['section_break'],
+                    $mom_arr['serial_no']
+                );
 
+                if ($critical > 0 && $critical != null) {                   
                     if (!empty($query)) {
                         // Record exists - update it
-                        $this->db->where('meeting_detail_id', $value['id']);
-                        $this->db->where('critical', 1);
-                        $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
+                        // $this->db->where('meeting_detail_id', $value['id']);
+                        // $this->db->where('critical', 1);
+                        // $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
                     } else {
                         // Record doesn't exist - insert it
                         $mom_arr['meeting_detail_id'] = $value['id'];
@@ -686,7 +685,10 @@ class Meeting_model extends App_Model
                         $this->db->insert(db_prefix() . 'critical_mom', $mom_arr);
                     }
                 }
-
+                 // Record exists - update it
+                 $this->db->where('meeting_detail_id', $value['id']);
+                 $this->db->where('critical', 1);
+                 $this->db->update(db_prefix() . 'critical_mom', $mom_arr);
 
                 if ($this->db->affected_rows() > 0) {
                     $affectedRows++;
