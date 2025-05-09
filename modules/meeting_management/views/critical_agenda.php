@@ -270,7 +270,51 @@ $module_name = 'critical_mom'; ?>
 </html>
 <script>
     $(document).ready(function() {
-        var table = $('.table-table_critical_tracker').DataTable();
+        let table = $('.table-table_critical_tracker').DataTable();
+
+        // On page load, fetch and apply saved preferences for the logged-in user
+        $.ajax({
+            url: admin_url + 'meeting_management/minutesController/getPreferences',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log("Retrieved preferences:", data);
+
+                // Ensure DataTable is initialized
+                let table = $('.table-table_critical_tracker').DataTable();
+
+                // Loop through each toggle checkbox to update column visibility
+                $('.toggle-column').each(function() {
+                    // Parse the column index (ensuring it's a number)
+                    let colIndex = parseInt($(this).val(), 10);
+
+                    // Use the saved preference if available; otherwise, default to visible ("true")
+                    let prefValue = data.preferences && data.preferences[colIndex] !== undefined ?
+                        data.preferences[colIndex] :
+                        "true";
+
+                    // Convert string to boolean if needed
+                    let isVisible = (typeof prefValue === "string") ?
+                        (prefValue.toLowerCase() === "true") :
+                        prefValue;
+
+                    // Set column visibility but prevent immediate redraw (redraw = false)
+                    table.column(colIndex).visible(isVisible, false);
+                    // Update the checkbox state accordingly
+                    $(this).prop('checked', isVisible);
+                });
+
+                // Finally, adjust columns and redraw the table once
+                table.columns.adjust().draw();
+
+                // Update the "Select All" checkbox based on individual toggle states
+                let allChecked = $('.toggle-column').length === $('.toggle-column:checked').length;
+                $('#select-all-columns').prop('checked', allChecked);
+            },
+            error: function() {
+                console.error('Could not retrieve column preferences.');
+            }
+        });
 
         // Handle "Select All" checkbox
         $('#select-all-columns').on('change', function() {
@@ -286,17 +330,37 @@ $module_name = 'critical_mom'; ?>
             // Sync "Select All" checkbox state
             var allChecked = $('.toggle-column').length === $('.toggle-column:checked').length;
             $('#select-all-columns').prop('checked', allChecked);
-        });
 
-        // Sync checkboxes with column visibility on page load
-        table.columns().every(function(index) {
-            var column = this;
-            $('.toggle-column[value="' + index + '"]').prop('checked', column.visible());
+            // Save updated preferences
+            saveColumnPreferences();
         });
 
         // Prevent dropdown from closing when clicking inside
         $('.dropdown-menu').on('click', function(e) {
             e.stopPropagation();
         });
+
+        // Function to collect and save preferences via AJAX
+        function saveColumnPreferences() {
+            var preferences = {};
+            $('.toggle-column').each(function() {
+                preferences[$(this).val()] = $(this).is(':checked');
+            });
+
+            $.ajax({
+
+                url: admin_url + 'meeting_management/minutesController/savePreferences',
+                type: 'POST',
+                data: {
+                    preferences: preferences
+                },
+                success: function(response) {
+                    console.log('Preferences saved successfully.');
+                },
+                error: function() {
+                    console.error('Failed to save preferences.');
+                }
+            });
+        }
     });
 </script>

@@ -1089,4 +1089,31 @@ class MinutesController extends AdminController
             'list_item' => $list_item
         ]);
     }
+
+    public function getPreferences()
+    {
+
+        // Retrieve user preferences using the model
+        $preferences = $this->Meeting_model->get_datatable_preferences_critical();
+        // If no preferences exist, return an empty array (or set defaults)
+        if (!$preferences) {
+            $preferences = array(); 
+        }
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode(['preferences' => $preferences]));
+    }
+
+    public function savePreferences()
+    {
+        $data = $this->input->post();
+
+        $id = $this->Meeting_model->add_update_preferences($data);
+        if ($id) {
+            set_alert('success', _l('added_successfully', _l('pur_order')));
+
+            redirect(admin_url('meeting_management/minutesController/critical_agenda'));
+        }
+    }
 }

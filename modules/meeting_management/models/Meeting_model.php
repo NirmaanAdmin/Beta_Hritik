@@ -1232,4 +1232,52 @@ class Meeting_model extends App_Model
 
         return $row ? (int) $row->total : 0;
     }
+
+    public function get_datatable_preferences_critical()
+    {
+        $this->db->select('datatable_preferences');
+        $this->db->from('tbluser_preferences_critical');
+        $this->db->where('staff_id', get_staff_user_id());
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            // Decode the JSON string into an associative array if it's not empty
+            if (!empty($row->datatable_preferences)) {
+                return json_decode($row->datatable_preferences, true);
+            }
+        }
+        // Return an empty array if no preferences are set
+        return array();
+    }
+    public function add_update_preferences($data)
+    {
+        // Get the preferences data and the current user's ID.
+        $preferences = $data['preferences'];
+        $user_id = get_staff_user_id();
+
+        // Convert the preferences to JSON if necessary.
+        $preferences_json = is_array($preferences) || is_object($preferences)
+            ? json_encode($preferences)
+            : $preferences;
+
+        // Prepare the data array for the query.
+        $data = array(
+            'staff_id' => $user_id, // Assuming the 'id' column holds the user ID.
+            'datatable_preferences' => $preferences_json
+        );
+
+        // Check if a record already exists for the user.
+        $this->db->where('staff_id', $user_id);
+        $query = $this->db->get('tbluser_preferences_critical');
+
+        if ($query->num_rows() > 0) {
+            // Record exists, so update it.
+            $this->db->where('staff_id', $user_id);
+            return $this->db->update('tbluser_preferences_critical', array('datatable_preferences' => $preferences_json));
+        } else {
+            // No record found, so insert a new one.
+            return $this->db->insert('tbluser_preferences_critical', $data);
+        }
+    }
 }
