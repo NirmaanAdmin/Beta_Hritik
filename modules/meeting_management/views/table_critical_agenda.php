@@ -122,15 +122,57 @@ foreach ($rResult as $aRow) {
     if (!empty($aRow['area'])) {
         $area = '<span class="area-display" data-id="' . $aRow['id'] . '">' . $aRow['area'] . '</span>';
     } else {
-        $area = '<input type="text" class="form-control area-input" 
-                     placeholder="Enter area" 
-                     data-id="' . $aRow['id'] . '" >';
+        $area = '<textarea '
+            . 'class="form-control area-input" '
+            . 'placeholder="Enter area" '
+            . 'data-id="' . $aRow['id'] . '" '
+            . 'rows="3"></textarea>';
     }
 
     $row[] = $area;
-    $row[] = $aRow['description'];
-    $row[] = $aRow['decision'];
-    $row[] = $aRow['action'];
+
+    if (!empty($aRow['description'])) {
+        $description = '<span class="description-display" data-id="' . $aRow['id'] . '">'
+            . html_escape($aRow['description'])
+            . '</span>';
+    } else {
+        $description = '<textarea '
+            . 'class="form-control description-input" '
+            . 'placeholder="Enter description" '
+            . 'data-id="' . $aRow['id'] . '" '
+            . 'rows="3" cols="80"></textarea>';
+    }
+    $row[] = $description;
+
+
+    if (!empty($aRow['decision'])) {
+        $decision = '<span class="decision-display" data-id="' . $aRow['id'] . '">'
+            . html_escape($aRow['decision'])
+            . '</span>';
+    } else {
+        $decision = '<textarea '
+            . 'class="form-control decision-input" '
+            . 'placeholder="Enter decision" '
+            . 'data-id="' . $aRow['id'] . '" '
+            . 'rows="4" cols="80"></textarea>';
+    }
+
+    $row[] = $decision;
+
+    if (!empty($aRow['action'])) {
+        $action = '<span class="action-display" data-id="' . $aRow['id'] . '">'
+            . html_escape($aRow['action'])
+            . '</span>';
+    } else {
+        $action = '<textarea '
+            . 'class="form-control action-input" '
+            . 'placeholder="Enter action" '
+            . 'data-id="' . $aRow['id'] . '" '
+            . 'rows="4" cols="80"></textarea>';
+    }
+
+
+    $row[] = $action;
 
     // 7) Action By (staff + vendor)
     $action_by = '';

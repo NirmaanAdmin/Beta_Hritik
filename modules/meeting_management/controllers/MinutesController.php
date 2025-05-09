@@ -785,4 +785,65 @@ class MinutesController extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+    
+    public function update_critical_description()
+    {
+        $id = $this->input->post('id');
+        $description = $this->input->post('description');
+
+        if (!$id  || !$description) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['description' => $description]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('description_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    
+    public function update_critical_decision()
+    {
+        $id = $this->input->post('id');
+        $decision = $this->input->post('decision');
+
+        if (!$id  || !$decision) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['decision' => $decision]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('decision_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_critical_action()
+    {
+        $id = $this->input->post('id');
+        $action = $this->input->post('action');
+
+        if (!$id  || !$action) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['action' => $action]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('action_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    
 }

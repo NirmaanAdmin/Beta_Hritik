@@ -140,3 +140,6 @@ $lang['change_department'] = 'Department';
 $lang['department_changed_successfully'] = 'Department Changed Successfully';
 $lang['department_change_failed'] = 'Department Change Failed';
 $lang['area_updated'] = 'Area Updated Successfully';
+$lang['description_updated'] = 'Description Updated Successfully';
+$lang['decision_updated'] = 'Decision Updated Successfully';
+$lang['action_updated'] = 'Action Updated Successfully';

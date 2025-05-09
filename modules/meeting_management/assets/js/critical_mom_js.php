@@ -403,11 +403,22 @@
         e.preventDefault();
 
         var rowId = $(this).data('id');
-        var currentValue = $(this).text(); // Remove currency formatting
+        var currentValue = $(this).text();
 
-        // Replace the span with an input field
-        $(this).replaceWith('<input type="text" class="form-control area-input" value="' + currentValue + '" data-id="' + rowId + '">');
+        // Create a <textarea> with the same class/data-id and prefill the text
+        var textarea = '<textarea ' +
+            'rows="3" ' +
+            'class="form-control area-input" ' +
+            'data-id="' + rowId + '">' +
+            currentValue +
+            '</textarea>';
+
+        $(this).replaceWith(textarea);
+
+        // Optional: immediately focus the new textarea
+        $('textarea.area-input[data-id="' + rowId + '"]').focus();
     });
+
 
     $('body').on('change', '.area-input', function(e) {
         e.preventDefault();
@@ -426,6 +437,127 @@
 
 
                 $('.area-input[data-id="' + rowId + '"]').replaceWith('<span class="area-display" data-id="' + rowId + '">' + area + '</span>');
+
+                // Optionally reload the table if necessary
+                table_order_tracker.ajax.reload(null, false);
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
+    });
+
+
+    $('body').on('click', '.description-display', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var text = $(this).text();
+        var ta = '<textarea rows="4" cols="80" ' +
+            'class="form-control description-input" ' +
+            'data-id="' + id + '">' +
+            text +
+            '</textarea>';
+        $(this).replaceWith(ta);
+        $('textarea.description-input[data-id="' + id + '"]').focus();
+    });
+
+
+    $('body').on('change', '.description-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var description = $(this).val();
+
+        // Perform AJAX request to update the description
+        $.post(admin_url + 'meeting_management/minutesController/update_critical_description', {
+            id: rowId,
+            description: description
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+
+
+                $('.description-input[data-id="' + rowId + '"]').replaceWith('<span class="description-display" data-id="' + rowId + '">' + description + '</span>');
+
+                // Optionally reload the table if necessary
+                table_order_tracker.ajax.reload(null, false);
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
+    });
+
+    $('body').on('click', '.decision-display', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var text = $(this).text();
+        var ta = '<textarea rows="4" cols="80" ' +
+            'class="form-control decision-input" ' +
+            'data-id="' + id + '">' +
+            text +
+            '</textarea>';
+        $(this).replaceWith(ta);
+        $('textarea.decision-input[data-id="' + id + '"]').focus();
+    });
+
+
+    $('body').on('change', '.decision-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var decision = $(this).val();
+
+        // Perform AJAX request to update the decision
+        $.post(admin_url + 'meeting_management/minutesController/update_critical_decision', {
+            id: rowId,
+            decision: decision
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+
+
+                $('.decision-input[data-id="' + rowId + '"]').replaceWith('<span class="decision-display" data-id="' + rowId + '">' + decision + '</span>');
+
+                // Optionally reload the table if necessary
+                table_order_tracker.ajax.reload(null, false);
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
+    });
+
+    $('body').on('click', '.action-display', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var text = $(this).text();
+        var ta = '<textarea rows="4" cols="80" ' +
+            'class="form-control action-input" ' +
+            'data-id="' + id + '">' +
+            text +
+            '</textarea>';
+        $(this).replaceWith(ta);
+        $('textarea.action-input[data-id="' + id + '"]').focus();
+    });
+
+
+    $('body').on('change', '.action-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var action = $(this).val();
+
+        // Perform AJAX request to update the action
+        $.post(admin_url + 'meeting_management/minutesController/update_critical_action', {
+            id: rowId,
+            action: action
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+
+
+                $('.action-input[data-id="' + rowId + '"]').replaceWith('<span class="action-display" data-id="' + rowId + '">' + action + '</span>');
 
                 // Optionally reload the table if necessary
                 table_order_tracker.ajax.reload(null, false);

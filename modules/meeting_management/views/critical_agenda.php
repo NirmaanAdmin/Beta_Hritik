@@ -8,11 +8,16 @@
             <div class="col-md-12">
                 <div class="panel_s invoice-item-table">
                     <div class="panel-body">
-                        <div class="row" style="display: flex;margin-bottom: 16px;">
-                            <h4><?php echo _l('meeting_critical_agenda'); ?></h4>
-                            <button class="btn btn-info pull-right mright10 display-block" style="margin-left: 10px;" data-toggle="modal" data-target="#addNewRowModal">
-                                <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
-                            </button>
+                        <div class="row" style="margin-bottom: 16px;">
+                            <div class="col-md-8">
+                                <h4><?php echo _l('meeting_critical_agenda'); ?></h4>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-info pull-right mright10 display-block" style="margin-left: 10px;" data-toggle="modal" data-target="#addNewRowModal">
+                                    <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
+                                </button>
+                            </div>
+
                         </div>
 
 
@@ -33,7 +38,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                         </table>
                     </div>
@@ -123,4 +128,3 @@
 </body>
 
 </html>
-
