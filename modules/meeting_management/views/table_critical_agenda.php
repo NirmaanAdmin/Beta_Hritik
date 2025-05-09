@@ -18,7 +18,6 @@ $aColumns      = [
     'decision',
     'action',
     'staff',
-    'vendor',
     'target_date',
     'date_closed',
     'status',
@@ -62,6 +61,7 @@ $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'departments.name as department_name',
     db_prefix() . 'staff.firstname',
     db_prefix() . 'staff.lastname',
+    'vendor',
 ]);
 $output  = $result['output'];
 $rResult = $result['rResult'];

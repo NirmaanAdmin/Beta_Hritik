@@ -13,8 +13,7 @@
             "order_type_filter": "[name='order_type_filter']",
         };
 
-        initDataTable('.table-table_critical_tracker', admin_url + 'meeting_management/minutesController/table_critical_tracker', [], [], Params, [0, 'desc']);
-        // [7, 'desc']
+        initDataTable('.table-table_critical_tracker', admin_url + 'meeting_management/minutesController/table_critical_tracker', [], [], Params, [7, 'desc']);
         $.each(Params, function(i, obj) {
             // console.log(obj);
             $('select' + obj).on('change', function() {
