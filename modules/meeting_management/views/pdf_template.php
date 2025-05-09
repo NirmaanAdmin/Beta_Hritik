@@ -156,7 +156,7 @@
             ?>
             <th style="width: 15%;">MOM No</th>
             <td>BIL-MOM-<?= $project_code ?>-<?php echo date('dmy', strtotime($meeting['meeting_date'])); ?></td>
-            
+
 
             <th style="width: 15%;">Project</th>
             <td style="width: 30%;"><?php echo isset($meeting['project_id']) ? get_project_name_by_id($meeting['project_id']) : 'N/A'; ?> </td>
@@ -229,7 +229,9 @@
                     }
                     ?>
                 </th>
-                <th>Description</th>
+                <?php if ($check_desc) { ?>
+                    <th>Description</th>
+                <?php } ?>
                 <th>Decision</th>
                 <th>Action</th>
                 <th>Action By</th>
@@ -275,8 +277,18 @@
                     <?php
                     // Check if a section break exists, and if so, display it.
                     if (!empty($data['section_break'])) {
-                        // Determine the colspan based on whether the attachment column exists.
-                        $colspan = $check_attachment ? 8 : 7;
+                        $colspan = 6;
+
+                        // +1 if the description column is present
+                        if ($check_desc) {
+                            $colspan += 1;
+                        }
+
+                        // +1 if the attachment column is present
+                        if ($check_attachment) {
+                            $colspan += 1;
+                        }
+
                         echo '<tr>
                                 <td colspan="' . $colspan . '" style="text-align:center;font-size:18px;font-weight:600">' . $data['section_break'] . '</td>
                             </tr>';
@@ -284,7 +296,11 @@
                     ?>
                     <td><?php echo $data['serial_no']; ?></td>
                     <td><?php echo $area; ?></td>
-                    <td><?php echo $data['description']; ?></td>
+                    <?php
+                    if ($check_desc) {
+                        echo '<td>' . $data['description'] . '</td>';
+                    }
+                    ?>
                     <td><?php echo $data['decision']; ?></td>
                     <td><?php echo $data['action']; ?></td>
                     <td>

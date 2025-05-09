@@ -184,6 +184,7 @@ class AgendaController extends AdminController
         $meeting_notes = $this->Meeting_model->get_meeting_notes($agenda_id);
         $get_minutes_detials = $this->Meeting_model->get_minutes_detials($agenda_id);
         $check_image = $this->Meeting_model->check_image($agenda_id);
+        $check_desc = $this->Meeting_model->check_desc($agenda_id);
         // Load your HTML view for the PDF content
         $data = [
             'meeting' => $meeting_details,
@@ -192,6 +193,7 @@ class AgendaController extends AdminController
             'meeting_notes' => $meeting_notes,
             'minutes_data' => $get_minutes_detials,
             'check_attachment' => $check_image,
+            'check_desc' => $check_desc,
             'attachments' => $attachments,
         ];
         $data['other_participants'] = $this->Meeting_model->get_participants($agenda_id);

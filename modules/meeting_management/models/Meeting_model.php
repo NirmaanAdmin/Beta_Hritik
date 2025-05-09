@@ -90,6 +90,20 @@ class Meeting_model extends App_Model
         return 0;
     }
 
+    public function check_desc($id)
+    {
+        $this->db->where('minute_id', $id);
+        $mom_details = $this->db->get(db_prefix() . 'minutes_details')->result_array();
+
+        // Check if any record has a non-empty attachments field.
+        foreach ($mom_details as $detail) {
+            if (!empty($detail['description'])) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
 
     // Create a new agenda
     public function create_agenda($data)
