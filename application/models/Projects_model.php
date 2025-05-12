@@ -2295,7 +2295,7 @@ class Projects_model extends App_Model
     //     }
 
     //     return $activities;
-    // }
+    // } 
     public function get_activity($id = '', $limit = '', $only_project_members_activity = false)
     {
         $activities = [];
@@ -2362,6 +2362,7 @@ class Projects_model extends App_Model
         ];
 
         foreach ($activity_sources as $source) {
+            $this->db->limit($limit);
             $this->db->order_by('date', 'desc');
             $rows = $this->db->get($source['table'])->result_array();
 

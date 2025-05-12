@@ -1099,9 +1099,9 @@ class drawing_management extends AdminController
 				if ($success) {
 					// Approve
 					$staff_id = get_staff_user_id();
-					$rel_type = 'document';
+					$rel_type = 'drawing';
 					$check_proccess = $this->drawing_management_model->get_approve_setting($rel_type, false);
-					$process = '';
+					$process = ''; 
 					if ($check_proccess) {
 						$this->drawing_management_model->send_request_approve($id, $rel_type, $staff_id);
 						set_alert('success', _l('dmg_successful_submission_of_approval_request'));
