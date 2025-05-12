@@ -113,7 +113,7 @@
                         <label for="vendor"><?php echo _l('vendor'); ?></label>
                         <select name="vendor" id="vendor" class="selectpicker" <?php if (isset($pur_order)) {
                                                                                   echo '';
-                                                                                } ?> onchange="estimate_by_vendor(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                                                                                } ?> onchange="estimate_by_vendor(this); return  false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <?php foreach ($vendors as $s) { ?>
                             <option value="<?php echo pur_html_entity_decode($s['userid']); ?>" <?php if (isset($pur_order) && $pur_order->vendor == $s['userid']) {
@@ -767,7 +767,7 @@
                 <strong>Rev. No.:</strong><br>
                 <strong>Rev. Date:</strong><br><br>
 
-                <strong>PAN No.:</strong><br>
+                <strong>PAN No.:</strong><span class="pan_number"></span><br>
                 <strong>Beneficiary name:</strong> <br>
                 <strong>GST No.:</strong> <span class="vendor_gst"></span><br>
                 <strong>Bank Details:</strong> <span class="vendor_bank_details"></span>

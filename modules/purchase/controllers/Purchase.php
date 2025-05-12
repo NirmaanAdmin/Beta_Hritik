@@ -1788,7 +1788,7 @@ class purchase extends AdminController
         $ven = $this->purchase_model->get_vendor($vendor);
 
         $currency = get_base_currency_pur();
-        $currency_id = $currency->id;
+        $currency_id = $currency->id; 
         if ($ven->default_currency != 0) {
             $currency_id = $ven->default_currency;
         }
@@ -1814,7 +1814,7 @@ class purchase extends AdminController
         if ($ven) {
             $vendor_data .= '<div class="col-md-6">';
             $vendor_data .= '<p class="bold p_style">' . _l('vendor_detail') . '</p>
-                            <hr class="hr_style"/>';
+                            <hr class="hr_style"/>'; 
             $vendor_data .= '<table class="table table-striped table-bordered"><tbody>';
             $vendor_data .= '<tr><td>' . _l('company') . '</td><td>' . $ven->company . '</td></tr>';
             $vendor_data .= '<tr><td>' . _l('client_vat_number') . '</td><td>' . $ven->vat . '</td></tr>';

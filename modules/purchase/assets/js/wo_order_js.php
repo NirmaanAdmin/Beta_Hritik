@@ -107,7 +107,7 @@ $(function(){
                             /<span class="vendor_address">.*?<\/span>/g,
                             '<span class="vendor_address">' + response.pur_vendor.address + '</span>'
                         );
-                    }
+                    } 
 
                     if (response.pur_vendor.city) {
                         currentContent = currentContent.replace(
@@ -146,19 +146,19 @@ $(function(){
                         );
                     }
 
-                    if (response.pur_contacts) {
-                        if(response.pur_contacts.phonenumber)
+                    if (response.pur_vendor) {
+                        if(response.pur_vendor.phonenumber)
                         currentContent = currentContent.replace(
                             /<span class="vendor_contact_phone">.*?<\/span>/g,
-                            '<span class="vendor_contact_phone">' + response.pur_contacts.phonenumber + '</span>'
+                            '<span class="vendor_contact_phone">' + response.pur_vendor.phonenumber + '</span>'
                         );
                     }
 
-                    if (response.pur_contacts) {
-                        if(response.pur_contacts.email)
+                    if (response.pur_vendor) {
+                        if(response.pur_vendor.com_email)
                         currentContent = currentContent.replace(
                             /<span class="vendor_contact_email">.*?<\/span>/g,
-                            '<span class="vendor_contact_email">' + response.pur_contacts.email + '</span>'
+                            '<span class="vendor_contact_email">' + response.pur_vendor.com_email + '</span>'
                         );
                     }
 
