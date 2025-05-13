@@ -39,6 +39,9 @@
    .mom_body td {
       border: 1px solid #ccc;
    }
+   p {
+      margin: 0px;
+   }
 </style>
 <div id="wrapper">
    <div class="content">
@@ -186,7 +189,7 @@
                                           // Determine the colspan based on whether the attachment column exists.
                                           $colspan = $check_attachment ? 8 : 7;
                                           echo '<tr>
-                                <td colspan="' . $colspan . '" style="text-align:center;font-size:18px;font-weight:600">' . $data['section_break'] . '</td>
+                                <td colspan="8" style="text-align:center;font-size:18px;font-weight:600">' . $data['section_break'] . '</td>
                             </tr>';
                                        }
                                        ?>

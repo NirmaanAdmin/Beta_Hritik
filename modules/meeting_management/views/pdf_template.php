@@ -105,6 +105,10 @@
         .mom_body td {
             border: 1px solid #ccc;
         }
+
+        p {
+            margin: 0px;
+        }
     </style>
 </head>
 

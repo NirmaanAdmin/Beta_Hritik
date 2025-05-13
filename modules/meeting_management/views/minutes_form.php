@@ -179,7 +179,7 @@
                               <th width="1%"></th>
                               <th width="5%">No.</th>
                               <th>Critical</th>
-                              <th>
+                              <th >
                                  <select name="area_head" id="area_head" class="form-control">
                                     <option value="">Select Option</option>
                                     <option value="1" <?php echo ($minutes->area_head == 1) ? 'selected="selected"' : ''; ?>><strong>Area</strong></option>
@@ -187,9 +187,9 @@
                                  </select>
                               </th>
 
-                              <th style="font-weight: 500;"><strong>Description</strong></th>
-                              <th><strong>Decision</strong></th>
-                              <th><strong>Action</strong></th>
+                              <th style="font-weight: 500;" width="15%"><strong>Description</strong></th>
+                              <th width="15%"><strong >Decision</strong></th>
+                              <th width="15%"><strong>Action</strong></th>
                               <th><strong>Action By</strong></th>
                               <th width="7%"><strong>Target Date</strong></th>
                               <th width="8%"><strong>Attachments</strong></th>
@@ -586,6 +586,7 @@
 </script>
 <script type="text/javascript">
    $(document).on('click', '.mom-add-item-to-table', function(event) {
+
       "use strict";
 
       var data = 'undefined';
@@ -597,6 +598,8 @@
          table_row += output;
 
          $('.mom_body').append(table_row);
+
+
          var sourceInput = $("input[name='attachments']")[0];
          var targetInput = $("input[name='newitems[" + lastAddedItemKey + "][attachments]']")[0];
          if (sourceInput.files.length > 0) {
@@ -610,6 +613,7 @@
          pur_clear_item_preview_values();
          $('body').find('#items-warning').remove();
          $("body").find('.dt-loader').remove();
+         initNewTinyMCE();
          return true;
       });
       return false;
@@ -642,7 +646,9 @@
 
    function mom_get_item_preview_values() {
       "use strict";
-
+      if (window.tinymce) {
+         tinymce.triggerSave();
+      }
       var response = {};
       response.area = $('.mom-items-table .main textarea[name="area"]').val();
       response.description = $('.mom-items-table .main textarea[name="description"]').val();
@@ -659,14 +665,35 @@
       "use strict";
 
       var previewArea = $('.mom_body .main');
+
+      // 1) Clear TinyMCE editor contents
+      if (window.tinymce) {
+         previewArea.find('textarea.tinymce').each(function() {
+            var ed = tinymce.get(this.id);
+            if (ed) {
+               ed.setContent(''); // clear the editor
+            }
+         });
+         // Push empty content back into <textarea>
+         tinymce.triggerSave();
+      }
+
+      // 2) Clear all plain inputs
       previewArea.find('input').val('');
-      previewArea.find('textarea').val('');
+
+      // 3) Clear all non-editor textareas
+      previewArea.find('textarea:not(.tinymce)').val('');
+
+      // 4) Uncheck all checkboxes
       previewArea.find('input[type="checkbox"]').prop('checked', false);
+
+      // 5) Reset selects
       previewArea.find('select')
-         .prop('disabled', false) // Remove the disabled attribute
-         .val('') // Clear the value
-         .selectpicker('refresh'); // Refresh the selectpicker UI
+         .prop('disabled', false) // ensure it's enabled
+         .val('') // clear value
+         .selectpicker('refresh'); // refresh bootstrap-select UI
    }
+
 
    function mom_delete_item(row, itemid, parent) {
       "use strict";
@@ -709,4 +736,32 @@
       // when checked → value="1", when unchecked → value="0"
       this.value = this.checked ? '1' : '0';
    });
+
+   function initNewTinyMCE() {
+      $('textarea.tinymce').each(function() {
+         var $ta = $(this);
+         // Skip if we already initialized TinyMCE on this textarea
+         if ($ta.data('mce-initialized')) {
+            return;
+         }
+         tinymce.init({
+            target: this, // initialize on this element, not via selector
+            menubar: false,
+            toolbar: false,
+            statusbar: false,
+            branding: false,
+            plugins: [],
+            height: 50,
+            setup: function(editor) {
+               editor.on('init', function() {
+                  // mark this textarea as done
+                  $ta.data('mce-initialized', true);
+               });
+            }
+         });
+      });
+   }
+
+   // Call once on page load
+   initNewTinyMCE();
 </script>

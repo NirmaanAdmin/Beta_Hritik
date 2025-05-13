@@ -905,12 +905,19 @@ class Meeting_model extends App_Model
         $name_section_break = 'section_break';
         $name_serial_no = 'serial_no';
         $name_critical = 'critical';
+
+        // Add section break row first if it exists
+        if ($section_break && $name != '') {
+            $name_section_break = $name . '[section_break]';
+            $row .= '<tr class="section-break-row"><td colspan="11" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr>';
+        }
+
         if ($name == '') {
             $row .= '<tr class="main"><td></td>';
             $manual = true;
         } else {
             $row .= '<tr class="sortable item">
-            <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
+        <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
             $name_area = $name . '[area]';
             $name_description = $name . '[description]';
             $name_decision = $name . '[decision]';
@@ -922,11 +929,9 @@ class Meeting_model extends App_Model
             $name_section_break = $name . '[section_break]';
             $name_serial_no = $name . '[serial_no]';
             $name_critical = $name . '[critical]';
-            if ($section_break) {
-                $row .=  '<div class="section-break-container"><tr class="section-break-row"><td colspan="8" style="text-align:center;"><input type="text" class="form-control" name="' . $name_section_break . '" value="' . $section_break . '" placeholder="Section Break" style="text-align:center;width:100%;" /></td></tr></div>';
-            }
             $manual = false;
         }
+
         $full_item_image = '';
         if (!empty($attachments['attachments']) && !empty($attachments['agenda_id'])) {
             $item_base_url = base_url('uploads/meetings/mom_attachments/' . $attachments['agenda_id'] . '/' . $attachments['id'] . '/' . $attachments['attachments']);
@@ -956,26 +961,24 @@ class Meeting_model extends App_Model
             . '</td>';
 
         $row .= '<td class="area" style="text-align:left">
-        <div class="form-group" app-field-wrapper="Area/Head" style="margin-bottom:2px;">
-            <textarea name="' . $name_area . '" id="' . $name_area . '" class="form-control" rows="2" placeholder="Area/Head">' .
+    <div class="form-group" app-field-wrapper="Area/Head" style="margin-bottom:2px;">
+        <textarea name="' . $name_area . '" id="' . $name_area . '" class="form-control " rows="2" placeholder="Area/Head">' .
             htmlspecialchars($area, ENT_QUOTES, 'UTF-8') .
             '</textarea>
-        </div>';
+    </div>';
         if ($name != '' && $section_break == '') {
             $row .= '<a href="javascript:void(0)" onclick="add_section_break(this, \'' . htmlspecialchars($name_section_break, ENT_QUOTES, 'UTF-8') . '\');">Section break</a></td>';
         }
 
-
-        $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')]) . '</td>';
-        $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('decision')]) . '</td>';
-        $row .= '<td class="action">' . render_textarea($name_action, '', $action, ['rows' => 2, 'placeholder' => _l('action')]) . '</td>';
+        $row .= '<td class="description">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('description')], [], '', 'tinymce') . '</td>';
+        $row .= '<td class="decision">' . render_textarea($name_decision, '', $decision, ['rows' => 2, 'placeholder' => _l('Decision')], [], '', 'tinymce') . '</td>';
+        $row .= '<td class="action">' . render_textarea($name_action, '', $action, ['rows' => 2, 'placeholder' => _l('action')], [], '', 'tinymce') . '</td>';
 
         $getstaff = getstafflist();
         $selectedstaff = !empty($staff) ? $staff : array();
         if (!is_array($selectedstaff)) {
             $selectedstaff = explode(",", $selectedstaff);
         }
-
 
         $row .= '<td class="action_by staff-vendor-group">' .
             render_select($name_staff, $getstaff, ['staffid', 'fullname'], '', $selectedstaff, ['multiple' => 'multiple', 'data-none-selected-text' => 'Staff'], [], '', 'staff-select') .
@@ -990,7 +993,7 @@ class Meeting_model extends App_Model
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="mom_delete_item(this,' . $item_key . ',\'.mom-items\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }
 
-        $row .= '</tr><div class="section-break-container"></div>';
+        $row .= '</tr>';
 
         return $row;
     }
