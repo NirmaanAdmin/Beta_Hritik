@@ -29,7 +29,16 @@
          <?php  } ?>
       </select>
    </div>
-
+   <div class="col-md-3 form-group">
+      <?php
+      $pruduction_statuses = [
+         0 => ['id' => '1', 'name' => _l('not_started')],
+         1 => ['id' => '2', 'name' => _l('on_going')],
+         2 => ['id' => '3', 'name' => _l('approved')],
+      ];
+      echo render_select('production_status[]', $pruduction_statuses, array('id', 'name'), '', [], array('data-width' => '100%', 'data-none-selected-text' => _l('production_status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+      ?>
+   </div>
    <div class="row">
       <div class="col-md-4">
          <div class="form-group">

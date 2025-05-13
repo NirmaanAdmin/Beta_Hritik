@@ -1788,7 +1788,7 @@ class purchase extends AdminController
         $ven = $this->purchase_model->get_vendor($vendor);
 
         $currency = get_base_currency_pur();
-        $currency_id = $currency->id; 
+        $currency_id = $currency->id;
         if ($ven->default_currency != 0) {
             $currency_id = $ven->default_currency;
         }
@@ -1814,7 +1814,7 @@ class purchase extends AdminController
         if ($ven) {
             $vendor_data .= '<div class="col-md-6">';
             $vendor_data .= '<p class="bold p_style">' . _l('vendor_detail') . '</p>
-                            <hr class="hr_style"/>'; 
+                            <hr class="hr_style"/>';
             $vendor_data .= '<table class="table table-striped table-bordered"><tbody>';
             $vendor_data .= '<tr><td>' . _l('company') . '</td><td>' . $ven->company . '</td></tr>';
             $vendor_data .= '<tr><td>' . _l('client_vat_number') . '</td><td>' . $ven->vat . '</td></tr>';
@@ -2886,6 +2886,7 @@ class purchase extends AdminController
 
         $this->load->model('currencies_model');
         $data['currencies'] = $this->currencies_model->get();
+        $data['departments'] = $this->departments_model->get();
         $data['title'] = _l('purchase_reports');
         $this->load->view('reports/manage_report', $data);
     }
@@ -4815,6 +4816,9 @@ class purchase extends AdminController
                 array_push($where, 'AND approve_status IN (' . implode(',', $this->input->post('pur_status')) . ')');
             }
 
+            if ($this->input->post('department') && count($this->input->post('department')) > 0) {
+                array_push($where, 'AND department IN (' . implode(',', $this->input->post('department')) . ')');
+            }
 
             $currency = $this->currencies_model->get_base_currency();
 
@@ -4927,6 +4931,10 @@ class purchase extends AdminController
 
             if ($this->input->post('wo_status') && count($this->input->post('wo_status')) > 0) {
                 array_push($where, 'AND approve_status IN (' . implode(',', $this->input->post('wo_status')) . ')');
+            }
+
+            if ($this->input->post('wo_department') && count($this->input->post('wo_department')) > 0) {
+                array_push($where, 'AND department IN (' . implode(',', $this->input->post('wo_department')) . ')');
             }
 
             $currency = $this->currencies_model->get_base_currency();
@@ -11143,11 +11151,15 @@ class purchase extends AdminController
                 'INNER JOIN ' . db_prefix() . 'goods_receipt ON ' . db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id',
             ];
 
+            // Initialize filter variables
+            $purOrdersVendor1 = [];
+            $purOrdersVendor2 = [];
+            $purOrdersReturn1 = [];
+            $purOrdersReturn0 = [];
+            $productionStatusFilters = [];
+
             if ($this->input->post('vendor')) {
                 $vendor_ids_filters = $this->input->post('vendor');
-
-                $purOrdersVendor1 = [];
-                $purOrdersVendor2 = [];
 
                 foreach ($vendor_ids_filters as $vendor_id) {
                     $status = get_vendor_goods_status($vendor_id);
@@ -11163,9 +11175,6 @@ class purchase extends AdminController
             if ($this->input->post('pur_order')) {
                 $pur_order_ids_filters = $this->input->post('pur_order');
 
-                $purOrdersReturn1 = [];
-                $purOrdersReturn0 = [];
-
                 foreach ($pur_order_ids_filters as $pur_order_id) {
                     $status = get_pur_order_goods_status($pur_order_id);
 
@@ -11176,22 +11185,30 @@ class purchase extends AdminController
                     }
                 }
             }
+
+            // Handle production_status filter similar to other filters
+            if ($this->input->post('production_status')) {
+                $production_status_filters = $this->input->post('production_status');
+                if (!empty($production_status_filters)) {
+                    $productionStatusFilters = is_array($production_status_filters) ? $production_status_filters : [$production_status_filters];
+                }
+            }
+
             // Handle Vendor Filter
             if ($purOrdersVendor1) {
                 array_push($where, 'AND ' . db_prefix() . 'goods_receipt.supplier_code IN (' . implode(',', $purOrdersVendor1) . ')');
             }
 
-
             if ($purOrdersReturn1) {
                 array_push($where, 'AND ' . db_prefix() . 'goods_receipt.pr_order_id IN (' . implode(',', $purOrdersReturn1) . ')');
             }
 
-            if (!empty($purOrdersReturn0) && !empty($purOrdersReturn1)) {
-                $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
-            } else {
-                $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
+            // Handle Production Status Filter for first query
+            if (!empty($productionStatusFilters)) {
+                array_push($where, 'AND ' . db_prefix() . 'goods_receipt_detail.production_status IN (' . implode(',', $productionStatusFilters) . ')');
             }
 
+            $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where);
 
             $select1 = [
                 db_prefix() . 'pur_order_detail.id as id',
@@ -11215,22 +11232,22 @@ class purchase extends AdminController
                 'INNER JOIN ' . db_prefix() . 'pur_orders ON ' . db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order',
             ];
             $where1[] = 'AND ' . db_prefix() . 'pur_orders.goods_id = 0';
+
             if ($purOrdersReturn0) {
                 array_push($where1, 'AND ' . db_prefix() . 'pur_orders.id IN (' . implode(',', $purOrdersReturn0) . ')');
             }
             if ($purOrdersVendor2) {
-                array_push($where1, 'AND ' . db_prefix() . 'pur_orders.vendor IN (' . implode(',', $purOrdersVendor1) . ')');
-            }
-            if (!empty($purOrdersVendor1) && empty($purOrdersVendor2)) {
-            } elseif (empty($purOrdersVendor1) && !empty($purOrdersVendor2)) {
-                $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
-            } else {
-                $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
+                array_push($where1, 'AND ' . db_prefix() . 'pur_orders.vendor IN (' . implode(',', $purOrdersVendor2) . ')');
             }
 
+            // Handle Production Status Filter for second query
+            if (!empty($productionStatusFilters)) {
+                array_push($where1, 'AND ' . db_prefix() . 'pur_order_detail.production_status IN (' . implode(',', $productionStatusFilters) . ')');
+            }
+
+            $result1 = data_tables_init($aColumns1, $sIndexColumn1, $sTable1, $join1, $where1);
 
             $output  = $result['output'];
-
 
             $rResult0 = isset($result['rResult']) && is_array($result['rResult']) ? $result['rResult'] : [];
             $rResult1 = isset($result1['rResult']) && is_array($result1['rResult']) ? $result1['rResult'] : [];
@@ -11242,9 +11259,8 @@ class purchase extends AdminController
             } elseif ($purOrdersReturn0) {
                 $rResult = $rResult1;
             } else {
-                $rResult = array_merge($rResult0, $rResult1); // Or [] if you want empty in fallback
+                $rResult = array_merge($rResult0, $rResult1);
             }
-
 
             $tracker = [];
 
@@ -11258,9 +11274,7 @@ class purchase extends AdminController
                     $row[] = get_pur_order_name($aRow['pur_order']);
                 }
 
-
                 $row[] = $aRow['commodity_name'];
-
                 $row[] = $aRow['description'];
 
                 if ($goods_receipt->pr_order_id > 0) {
@@ -11281,8 +11295,6 @@ class purchase extends AdminController
                     $remaining_quantities = isset($aRow['quantities']) && $aRow['quantities'] !== null ? app_format_number($aRow['quantities']) : '-';
                 }
 
-
-
                 $row[] = app_format_number($remaining_quantities);
 
                 $production_status = '';
@@ -11300,16 +11312,12 @@ class purchase extends AdminController
                 $row[] = $production_status;
 
                 $row[] = !empty($aRow['payment_date']) ? date('d M, Y', strtotime($aRow['payment_date'])) : '-';
-
                 $row[] = !empty($aRow['est_delivery_date']) ? date('d M, Y', strtotime($aRow['est_delivery_date'])) : '-';
-
                 $row[] = !empty($aRow['delivery_date']) ? date('d M, Y', strtotime($aRow['delivery_date'])) : '-';
 
                 $tracker[] = $row;
             }
-            // echo '<pre>';
-            // print_r($tracker);
-            // die;
+
             // Grouped data array
             $grouped_data = [];
             foreach ($tracker as $row) {
@@ -11965,7 +11973,7 @@ class purchase extends AdminController
         $preferences = $this->purchase_model->get_datatable_preferences();
         // If no preferences exist, return an empty array (or set defaults)
         if (!$preferences) {
-            $preferences = array(); 
+            $preferences = array();
         }
 
         $this->output

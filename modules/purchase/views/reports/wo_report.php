@@ -19,43 +19,48 @@
          2 => ['id' => '3', 'name' => _l('purchase_reject')],
          3 => ['id' => '4', 'name' => _l('cancelled')],
       ];
-      echo render_select('wo_status[]', $statuses, array('id', 'name'), '', [], array('data-width' => '100%', 'data-none-selected-text' => _l('approval_status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+      echo render_select('wo_status[]', $statuses, array('id', 'name'), '', [], array('data-width' => '100%', 'data-none-selected-text' => _l('approval_status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+      ?>
+   </div>
+   <div class="col-md-3 form-group">
+      <?php
+      echo render_select('wo_department[]', $departments, array('departmentid', 'name'), '', [], array('data-width' => '100%', 'data-none-selected-text' => _l('department'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
       ?>
    </div>
 
    <div class="row">
       <div class="col-md-4">
          <div class="form-group">
-            
+
          </div>
       </div>
       <div class="clearfix"></div>
    </div>
-<table class="table table-wo-report scroll-responsive">
-   <thead>
-      <tr>
-         <th><?php echo _l('work_order'); ?></th>
-         <th><?php echo _l('date'); ?></th>
-         <th><?php echo _l('department'); ?></th>
-         <th><?php echo _l('vendor'); ?></th>
-         <th><?php echo _l('approval_status'); ?></th>
-         <th><?php echo _l('wo_value'); ?></th>
-         <th><?php echo _l('tax_value'); ?></th>
-         <th><?php echo _l('wo_value_included_tax'); ?></th>
-      </tr>
-   </thead>
-   <tbody></tbody>
-   <tfoot>
-      <tr>
-         <td></td>
-         <td></td>
-         <td></td>
-         <td></td>
-         <td></td>
-         <td class="total_value"></td>
-         <td class="total_tax"></td>
-         <td class="total"></td>
-      </tr>
-   </tfoot>
-</table>
+   <table class="table table-wo-report scroll-responsive">
+      <thead>
+         <tr>
+            <th><?php echo _l('work_order'); ?></th>
+            <th><?php echo _l('date'); ?></th>
+            <th><?php echo _l('department'); ?></th>
+            <th><?php echo _l('vendor'); ?></th>
+            <th><?php echo _l('approval_status'); ?></th>
+            <th><?php echo _l('wo_value'); ?></th>
+            <th><?php echo _l('tax_value'); ?></th>
+            <th><?php echo _l('wo_value_included_tax'); ?></th>
+         </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+         <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="total_value"></td>
+            <td class="total_tax"></td>
+            <td class="total"></td>
+         </tr>
+      </tfoot>
+   </table>
 </div>

@@ -31,6 +31,9 @@
       "pur_status": '[name="pur_status[]"]',
       "wo_vendor": '[name="wo_vendor[]"]',
       "wo_status": '[name="wo_status[]"]',
+      "department": '[name="department[]"]',
+      "wo_department": '[name="wo_department[]"]',
+      "production_status": '[name="production_status[]"]',
     }
 
     $('select[name="products_services"]').on('change', function() {
@@ -68,6 +71,15 @@
       gen_reports();
     });
 
+    $('select[name="department[]"]').on('change', function() {
+      gen_reports();
+    });
+
+    $('select[name="wo_department[]"]').on('change', function() {
+      gen_reports();
+    })
+
+   
     report_from.on('change', function() {
       var val = $(this).val();
       var report_to_val = report_to.val();
