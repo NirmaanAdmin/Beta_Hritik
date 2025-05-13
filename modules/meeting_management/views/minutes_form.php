@@ -748,8 +748,9 @@
             target: this, // initialize on this element, not via selector
             menubar: false,
             toolbar: false,
-            statusbar: false,
+            statusbar: true,
             branding: false,
+            resize: 'both',
             plugins: [],
             height: 50,
             setup: function(editor) {
