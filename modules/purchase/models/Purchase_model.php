@@ -3561,7 +3561,7 @@ class Purchase_model extends App_Model
                     ];
                     $this->tasks_model->add_task_assignees([
                         'taskid'   => $task_id,
-                        'assignee' => $value['id'], 
+                        'assignee' => $value['id'],
                     ]);
                 }
             }
@@ -3971,7 +3971,7 @@ class Purchase_model extends App_Model
                     $pur_order = $this->get_pur_order($rel_id);
                     $vendor_name = get_vendor_name_by_id($pur_order->vendor);
                     $po_number_clean = str_replace('#', '', $pur_order->pur_order_number);
-                    $pdf_name = $po_number_clean . '-' . $vendor_name . '-' .$pur_order->pur_order_name.'.pdf';
+                    $pdf_name = $po_number_clean . '-' . $vendor_name . '-' . $pur_order->pur_order_name . '.pdf';
 
                     // Define the save path
                     $save_path = FCPATH . 'modules/document_management/uploads/files/3269/';
@@ -17800,12 +17800,37 @@ class Purchase_model extends App_Model
         $result['po_this_bill'] = 0;
         $result['po_comulative'] = 0;
 
+        $result = [];
+
+        // Fetch subtotal from purchase order
         $this->db->select('subtotal');
         $this->db->where('id', $po_id);
         $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->row();
-        if (!empty($pur_orders)) {
-            $result['po_contract_amount'] = $pur_orders->subtotal;
+
+        // Fetch all related change orders
+        $this->db->select('co_value');
+        $this->db->where('po_order_id', $po_id);
+        $change_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
+        // Initialize contract amount
+        $po_subtotal = 0;
+        $co_value = 0;
+
+        if ($pur_orders && isset($pur_orders->subtotal)) {
+            $po_subtotal =  $pur_orders->subtotal;
         }
+
+        // Sum up all change order subtotals
+        if (!empty($change_orders)) {
+            foreach ($change_orders as $change_order) {
+                if (isset($change_order['co_value'])) {
+                    $co_value +=  $change_order['co_value'];
+                }
+            }
+        }
+        
+        // Final contract amount = PO subtotal + Change Orders subtotal
+        $result['po_contract_amount'] = $po_subtotal + $co_value;
+
 
         if (empty($payment_certificate_id) && $cal == 1) {
             $this->db->select('id');
@@ -17836,7 +17861,7 @@ class Purchase_model extends App_Model
             $wo_number = $pur_order->wo_order_number;
         } else {
             $pur_order = $this->get_pur_order($data['po_id']);
-           
+
             $po_number = $pur_order->pur_order_number;
         }
         $data['order_date'] = $pur_order->order_date;
@@ -17848,7 +17873,7 @@ class Purchase_model extends App_Model
         $this->db->insert(db_prefix() . 'payment_certificate', $data);
         $insert_id = $this->db->insert_id();
         $this->log_pay_cer_activity($insert_id, 'pay_cert_activity_created');
-        
+
         $cron_email = array();
         $cron_email_options = array();
         $cron_email['type'] = "purchase";
@@ -18360,7 +18385,7 @@ class Purchase_model extends App_Model
                     ];
                     $this->tasks_model->add_task_assignees([
                         'taskid'   => $task_id,
-                        'assignee' => $value['id'], 
+                        'assignee' => $value['id'],
                     ]);
                 }
             }

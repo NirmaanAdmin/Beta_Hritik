@@ -16,7 +16,8 @@ function calculate_payment_certificate() {
 	        $('.po_name').html(response.po_name);
 
 	        var po_contract_amount = response.po_contract_amount;
-	        po_contract_amount = po_contract_amount.trim() != "" ? po_contract_amount : 0;
+	        po_contract_amount = po_contract_amount != "" ? po_contract_amount : 0;
+			
 	        $('.po_contract_amount').html(format_money_cert(po_contract_amount, true));
 
 	        if(response.po_previous) {
@@ -298,7 +299,7 @@ function calculate_payment_certificate() {
 	        $('.tot_app_tax_4').html(format_money_cert(tot_app_tax_4, true));
 
 	        var amount_rec_1 = parseFloat(sub_fg_1) + parseFloat(tot_app_tax_1);
-	        $('.amount_rec_1').html(format_money_cert(amount_rec_1, true));
+	        $('.amount_rec_1').html(format_money_cert(amount_rec_1, true)); 
 
 	        var amount_rec_2 = parseFloat(sub_fg_2) + parseFloat(tot_app_tax_2);
 	        $('.amount_rec_2').html(format_money_cert(amount_rec_2, true));
