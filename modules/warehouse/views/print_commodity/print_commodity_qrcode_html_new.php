@@ -34,7 +34,7 @@
 					<?php } ?>
 				</td> 
 				<td width="50%">
-					<p style="padding-top: 10px;"><strong><?php echo _l('Commoditys Code'); ?> : </strong><?php echo $item_data->commodity_code . "_" . $item_data->description; ?></p>
+					<p style="padding-top: 10px;"><strong><?php echo _l('Commodity Code'); ?> : </strong><?php echo $item_data->commodity_code . "_" . $item_data->description; ?></p>
 					<p><strong><?php echo _l('supplier_name'); ?> : </strong><?php echo $vendor; ?></p>
 					<p><strong><?php echo _l('Purchase Order'); ?> : </strong><?php echo $pur_order; ?></p>
 					<p><strong><?php echo _l('project'); ?> : </strong><?php echo $project_name; ?></p>
