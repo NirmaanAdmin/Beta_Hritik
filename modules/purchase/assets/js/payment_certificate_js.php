@@ -86,16 +86,16 @@ function calculate_payment_certificate() {
 	        var net_advance_4 = parseFloat(pay_cert_c1_4) + parseFloat(pay_cert_c2_4);
 	        $('.net_advance_4').html(format_money_cert(net_advance_4, true));
 
-	        var sub_total_ac_1 = parseFloat(po_contract_amount) + parseFloat(net_advance_1);
+	        var sub_total_ac_1 = parseFloat(po_contract_amount) - parseFloat(net_advance_1);
 	        $('.sub_total_ac_1').html(format_money_cert(sub_total_ac_1, true));
 
-	        var sub_total_ac_2 = parseFloat(po_previous) + parseFloat(net_advance_2);
+	        var sub_total_ac_2 = parseFloat(po_previous) - parseFloat(net_advance_2);
 	        $('.sub_total_ac_2').html(format_money_cert(sub_total_ac_2, true));
 
-	        var sub_total_ac_3 = parseFloat(po_this_bill) + parseFloat(net_advance_3);
+	        var sub_total_ac_3 = parseFloat(po_this_bill) - parseFloat(net_advance_3);
 	        $('.sub_total_ac_3').html(format_money_cert(sub_total_ac_3, true));
 
-	        var sub_total_ac_4 = parseFloat(sub_total_ac_2) + parseFloat(sub_total_ac_3);
+	        var sub_total_ac_4 = parseFloat(po_comulative) - parseFloat(net_advance_4);
 	        $('.sub_total_ac_4').html(format_money_cert(sub_total_ac_4, true));
 
 	        var works_exe_a_1 = $('input[name="works_exe_a_1"]').val();
@@ -151,16 +151,16 @@ function calculate_payment_certificate() {
 	        var less_ret_4 = parseFloat(ret_fund_4) + parseFloat(works_exe_a_4);
 	        $('.less_ret_4').html(format_money_cert(less_ret_4, true));
 
-	        var sub_t_de_1 = parseFloat(sub_total_ac_1) + parseFloat(less_ret_1);
+	        var sub_t_de_1 = parseFloat(sub_total_ac_1) - parseFloat(less_ret_1);
 	        $('.sub_t_de_1').html(format_money_cert(sub_t_de_1, true));
 
-	        var sub_t_de_2 = parseFloat(sub_total_ac_2) + parseFloat(less_ret_2);
+	        var sub_t_de_2 = parseFloat(sub_total_ac_2) - parseFloat(less_ret_2);
 	        $('.sub_t_de_2').html(format_money_cert(sub_t_de_2, true));
 
-	        var sub_t_de_3 = parseFloat(sub_total_ac_3) + parseFloat(less_ret_3);
+	        var sub_t_de_3 = parseFloat(sub_total_ac_3) - parseFloat(less_ret_3);
 	        $('.sub_t_de_3').html(format_money_cert(sub_t_de_3, true));
 
-	        var sub_t_de_4 = parseFloat(sub_t_de_2) + parseFloat(sub_t_de_3);
+	        var sub_t_de_4 = parseFloat(sub_total_ac_4) - parseFloat(less_ret_4);
 	        $('.sub_t_de_4').html(format_money_cert(sub_t_de_4, true));
 
 	        var less_1 = $('input[name="less_1"]').val();
@@ -197,16 +197,16 @@ function calculate_payment_certificate() {
 	        var less_aht_4 = parseFloat(less_aht_2) + parseFloat(less_aht_3);
 	        $('.less_aht_4').html(format_money_cert(less_aht_4, true));
 
-	        var sub_fg_1 = parseFloat(sub_t_de_1) + parseFloat(less_ded_1);
+	        var sub_fg_1 = parseFloat(sub_t_de_1) - parseFloat(less_ded_1);
 	        $('.sub_fg_1').html(format_money_cert(sub_fg_1, true));
 
-	        var sub_fg_2 = parseFloat(sub_t_de_2) + parseFloat(less_ded_2);
+	        var sub_fg_2 = parseFloat(sub_t_de_2) - parseFloat(less_ded_2);
 	        $('.sub_fg_2').html(format_money_cert(sub_fg_2, true));
 
-	        var sub_fg_3 = parseFloat(sub_t_de_3) + parseFloat(less_ded_3);
+	        var sub_fg_3 = parseFloat(sub_t_de_3) - parseFloat(less_ded_3);
 	        $('.sub_fg_3').html(format_money_cert(sub_fg_3, true));
 
-	        var sub_fg_4 = parseFloat(sub_fg_2) + parseFloat(sub_fg_3);
+	        var sub_fg_4 = parseFloat(sub_t_de_4) - parseFloat(less_ded_4);
 	        $('.sub_fg_4').html(format_money_cert(sub_fg_4, true));
 
 	        var cgst_on_a1 = 0;
