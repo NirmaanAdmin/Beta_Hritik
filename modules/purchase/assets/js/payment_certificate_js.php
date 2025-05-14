@@ -166,22 +166,42 @@ function calculate_payment_certificate() {
 	        var less_1 = $('input[name="less_1"]').val();
 	        less_1 = less_1.trim() != "" ? less_1 : 0;
 	        var less_ded_1 = less_1;
+			var less_ah_1 = $('input[name="less_ah_1"]').val();
+	        less_ah_1 = less_ah_1.trim() != "" ? less_ah_1 : 0;
+			less_ded_1 = parseFloat(less_ded_1) + parseFloat(less_ah_1);
+			var less_aht_1 = $('input[name="less_aht_1"]').val();
+	        less_aht_1 = less_aht_1.trim() != "" ? less_aht_1 : 0;
+			less_ded_1 = parseFloat(less_ded_1) + parseFloat(less_aht_1);
 	        $('.less_ded_1').html(format_money_cert(less_ded_1, true));
 
 	        var less_2 = $('input[name="less_2"]').val();
 	        less_2 = less_2.trim() != "" ? less_2 : 0;
 	        var less_ded_2 = less_2;
+			var less_ah_2 = $('input[name="less_ah_2"]').val();
+	        less_ah_2 = less_ah_2.trim() != "" ? less_ah_2 : 0;
+			less_ded_2 = parseFloat(less_ded_2) + parseFloat(less_ah_2);
+			var less_aht_2 = $('input[name="less_aht_2"]').val();
+	        less_aht_2 = less_aht_2.trim() != "" ? less_aht_2 : 0;
+			less_ded_2 = parseFloat(less_ded_2) + parseFloat(less_aht_2);
 	        $('.less_ded_2').html(format_money_cert(less_ded_2, true));
 
 	        var less_3 = $('input[name="less_3"]').val();
 	        less_3 = less_3.trim() != "" ? less_3 : 0;
 	        var less_ded_3 = less_3;
+			var less_ah_3 = $('input[name="less_ah_3"]').val();
+	        less_ah_3 = less_ah_3.trim() != "" ? less_ah_3 : 0;
+			less_ded_3 = parseFloat(less_ded_3) + parseFloat(less_ah_3);
+			var less_aht_3 = $('input[name="less_aht_3"]').val();
+	        less_aht_3 = less_aht_3.trim() != "" ? less_aht_3 : 0;
+			less_ded_3 = parseFloat(less_ded_3) + parseFloat(less_aht_3);
 	        $('.less_ded_3').html(format_money_cert(less_ded_3, true));
 
 	        var less_4 = parseFloat(less_2) + parseFloat(less_3);
 	        $('.less_4').html(format_money_cert(less_4, true));
 	        var less_ded_4 = less_4;
-	        $('.less_ded_4').html(format_money_cert(less_4, true));
+			less_ded_4 =  parseFloat(less_ded_4) + parseFloat(less_ah_2) + parseFloat(less_ah_3);
+			less_ded_4 =  parseFloat(less_ded_4) + parseFloat(less_aht_2) + parseFloat(less_aht_3);
+	        $('.less_ded_4').html(format_money_cert(less_ded_4, true));
 
 	        var less_ah_2 = $('input[name="less_ah_2"]').val();
 	        less_ah_2 = less_ah_2.trim() != "" ? less_ah_2 : 0;
