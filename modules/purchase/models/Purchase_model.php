@@ -17952,6 +17952,7 @@ class Purchase_model extends App_Model
 
         $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;
         $sgst_tax = !empty($result['sgst_tax']) ? str_replace("%", "", $result['sgst_tax']) : 0;
+        $igst_tax = !empty($result['igst_tax']) ? str_replace("%", "", $result['igst_tax']) : 0;
 
         $result['po_contract_amount'] = $po_contract_amount;
         $result['po_comulative'] = $result['po_previous'] + $result['po_this_bill'];
@@ -17995,10 +17996,14 @@ class Purchase_model extends App_Model
         $result['sgst_on_a2'] = $result['sgst_prev_bill'];
         $result['sgst_on_a3'] = $result['sgst_this_bill'];
         $result['sgst_on_a4'] = $result['sgst_on_a2'] + $result['sgst_on_a3'];
+        $result['igst_on_a1'] = $po_contract_amount * ($igst_tax / 100);
+        $result['igst_on_a2'] = $result['igst_prev_bill'];
+        $result['igst_on_a3'] = $result['igst_this_bill'];
+        $result['igst_on_a4'] = $result['igst_on_a2'] + $result['igst_on_a3'];
         $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
-        $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['labour_cess_1'];
-        $result['tot_app_tax_2'] = $result['cgst_on_a2'] + $result['sgst_on_a2'] + $result['labour_cess_2'];
-        $result['tot_app_tax_3'] = $result['cgst_on_a3'] + $result['sgst_on_a3'] + $result['labour_cess_3'];
+        $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['igst_on_a1'] + $result['labour_cess_1'];
+        $result['tot_app_tax_2'] = $result['cgst_on_a2'] + $result['sgst_on_a2'] + $result['igst_on_a2'] + $result['labour_cess_2'];
+        $result['tot_app_tax_3'] = $result['cgst_on_a3'] + $result['sgst_on_a3']  + $result['igst_on_a3']+ $result['labour_cess_3'];
         $result['tot_app_tax_4'] = $result['tot_app_tax_2'] + $result['tot_app_tax_3'];
         $result['amount_rec_1'] = $result['sub_fg_1'] + $result['tot_app_tax_1'];
         $result['amount_rec_2'] = $result['sub_fg_2'] + $result['tot_app_tax_2'];
@@ -18024,7 +18029,7 @@ class Purchase_model extends App_Model
         $payment_clause = !empty($pay_cert_data->payment_clause) ? $pay_cert_data->payment_clause : '14.2';
         $cgst_tax = !empty($pay_cert_data->cgst_tax) ? $pay_cert_data->cgst_tax : '0%';
         $sgst_tax = !empty($pay_cert_data->sgst_tax) ? $pay_cert_data->sgst_tax : '0%';
-
+        $igst_tax = !empty($pay_cert_data->igst_tax) ? $pay_cert_data->igst_tax : '0%';
         $logo = '';
         $company_logo = get_option('company_logo_dark');
         if (!empty($company_logo)) {
@@ -18239,7 +18244,7 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I2</td>
-                  <td>SGST @ ' . $cgst_tax . ' on A</td>
+                  <td>SGST @ ' . $sgst_tax . ' on A</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a1) . '</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a2) . '</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->sgst_on_a3) . '</td>
@@ -18247,6 +18252,14 @@ class Purchase_model extends App_Model
                 </tr>
                 <tr class="pay_cert_value">
                   <td>I3</td>
+                  <td>IGST @ ' . $igst_tax . ' on A</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->igst_on_a1) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->igst_on_a2) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->igst_on_a3) . '</td>
+                  <td>' . check_value_pay_cert_pdf($pay_cert_data->igst_on_a4) . '</td>
+                </tr>
+                <tr class="pay_cert_value">
+                  <td>I4</td>
                   <td>' . _l('labour_cess') . ' ' . $pay_cert_data->labour_cess . '</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->labour_cess_1) . '</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->labour_cess_2) . '</td>

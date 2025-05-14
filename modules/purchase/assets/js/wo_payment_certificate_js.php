@@ -261,6 +261,24 @@
 				var sgst_on_a4 = parseFloat(sgst_on_a2) + parseFloat(sgst_on_a3);
 				$('.sgst_on_a4').html(format_money_cert(sgst_on_a4, true));
 
+				var igst_on_a1 = 0;
+				var igst_tax_1 = $('select[name="igst_tax"]').val();
+				if (igst_tax_1) {
+					igst_tax_1 = igst_tax_1.replace('%', '');
+					igst_on_a1 = wo_contract_amount * (igst_tax_1 / 100);
+				}
+				$('.igst_on_a1').html(format_money_cert(igst_on_a1, true));
+
+				var igst_on_a2 = $('input[name="igst_prev_bill"]').val();
+				igst_on_a2 = igst_on_a2.trim() != "" ? igst_on_a2 : 0;
+
+				var igst_on_a3 = $('input[name="igst_this_bill"]').val();
+				igst_on_a3 = igst_on_a3.trim() != "" ? igst_on_a3 : 0;
+
+				var igst_on_a4 = parseFloat(igst_on_a2) + parseFloat(igst_on_a3);
+				$('.igst_on_a4').html(format_money_cert(igst_on_a4, true));
+
+
 				var labour_cess_1 = $('input[name="labour_cess_1"]').val();
 				var labour_cess = $('select[name="labour_cess"]').val();
 				if (labour_cess) {
@@ -294,13 +312,13 @@
 				var labour_cess_4 = parseFloat(labour_cess_2) + parseFloat(labour_cess_3);
 				$('.labour_cess_4').html(format_money_cert(labour_cess_4, true));
 
-				var tot_app_tax_1 = parseFloat(cgst_on_a1) + parseFloat(sgst_on_a1) + parseFloat(labour_cess_1);
+				var tot_app_tax_1 = parseFloat(cgst_on_a1) + parseFloat(sgst_on_a1) + parseFloat(igst_on_a1) + parseFloat(labour_cess_1);
 				$('.tot_app_tax_1').html(format_money_cert(tot_app_tax_1, true));
 
-				var tot_app_tax_2 = parseFloat(cgst_on_a2) + parseFloat(sgst_on_a2) + parseFloat(labour_cess_2);
+				var tot_app_tax_2 = parseFloat(cgst_on_a2) + parseFloat(sgst_on_a2) + parseFloat(igst_on_a2) + parseFloat(labour_cess_2);
 				$('.tot_app_tax_2').html(format_money_cert(tot_app_tax_2, true));
 
-				var tot_app_tax_3 = parseFloat(cgst_on_a3) + parseFloat(sgst_on_a3) + parseFloat(labour_cess_3);
+				var tot_app_tax_3 = parseFloat(cgst_on_a3) + parseFloat(sgst_on_a3) + parseFloat(igst_on_a3) + parseFloat(labour_cess_3);
 				$('.tot_app_tax_3').html(format_money_cert(tot_app_tax_3, true));
 
 				var tot_app_tax_4 = parseFloat(tot_app_tax_2) + parseFloat(tot_app_tax_3);

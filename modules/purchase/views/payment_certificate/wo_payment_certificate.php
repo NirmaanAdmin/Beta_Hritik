@@ -50,6 +50,9 @@
   .sgst_tax_class .bootstrap-select {
     width: 100px !important;
   }
+  .igst_tax_class .bootstrap-select {
+    width: 100px !important;
+  }
 </style>
 <div id="wrapper">
   <div class="content">
@@ -597,6 +600,39 @@
                             </tr>
                             <tr>
                               <td>I3</td>
+                              <td class="igst_tax_class">
+                                IGST @
+                                <select name="igst_tax" id="igst_tax" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
+                                  <?php
+                                  $taxes = get_taxes_list();
+                                  if (!empty($taxes)) {
+                                    foreach ($taxes as $key => $value) { ?>
+                                      <option value="<?php echo $value['name']; ?>" <?php if (isset($payment_certificate) && $payment_certificate->igst_tax == $value['name']) {
+                                                                                      echo 'selected';
+                                                                                    } ?>><?php echo $value['name']; ?></option>
+                                  <?php }
+                                  } ?>
+                                </select>
+                                on A
+                              </td>
+                              <td class="igst_on_a1"></td>
+                              <td class="igst_on_a2">
+                                <?php
+                                $igst_prev_bill = (isset($payment_certificate) ? $payment_certificate->igst_prev_bill : '');
+                                echo render_input('igst_prev_bill', '', $igst_prev_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
+                                ?>
+                              </td>
+                              <td class="igst_on_a3">
+                                <?php
+                                $igst_this_bill = (isset($payment_certificate) ? $payment_certificate->igst_this_bill : '');
+                                echo render_input('igst_this_bill', '', $igst_this_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
+                                ?>
+                              </td>
+                              <td class="igst_on_a4"></td>
+                            </tr>
+                            <tr>
+                            <tr>
+                              <td>I4</td>
                               <td class="labour_cess_class">
                                 <?php echo _l('labour_cess'); ?>
                                 <select name="labour_cess" id="labour_cess" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" onchange="calculate_payment_certificate()">
