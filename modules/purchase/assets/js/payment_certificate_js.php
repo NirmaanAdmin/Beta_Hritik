@@ -237,13 +237,10 @@ function calculate_payment_certificate() {
 	        }
 	        $('.cgst_on_a1').html(format_money_cert(cgst_on_a1, true));
 
-	        var cgst_on_a2 = 0;
-        	var cgst_tax_2 = $('select[name="cgst_tax"]').val();
-	        if(cgst_tax_2) {
-	        	cgst_tax_2 = cgst_tax_2.replace('%', '');
-	        	cgst_on_a2 = po_previous * (cgst_tax_2 / 100);
-	        }
-	        $('.cgst_on_a2').html(format_money_cert(cgst_on_a2, true));
+
+			var cgst_on_a2 = $('input[name="cgst_prev_bill"]').val();
+	        cgst_on_a2 = cgst_on_a2.trim() != "" ? cgst_on_a2 : 0;
+        	
 
 	        var cgst_on_a3 = $('input[name="cgst_this_bill"]').val();
 	        cgst_on_a3 = cgst_on_a3.trim() != "" ? cgst_on_a3 : 0;
@@ -259,13 +256,8 @@ function calculate_payment_certificate() {
 	        }
 	        $('.sgst_on_a1').html(format_money_cert(sgst_on_a1, true));
 
-	        var sgst_on_a2 = 0;
-        	var sgst_tax_2 = $('select[name="sgst_tax"]').val();
-	        if(sgst_tax_2) {
-	        	sgst_tax_2 = sgst_tax_2.replace('%', '');
-	        	sgst_on_a2 = po_previous * (sgst_tax_2 / 100);
-	        }
-	        $('.sgst_on_a2').html(format_money_cert(sgst_on_a2, true));
+			var sgst_on_a2 = $('input[name="sgst_prev_bill"]').val();
+	        sgst_on_a2 = sgst_on_a2.trim() != "" ? sgst_on_a2 : 0;
 
 	        var sgst_on_a3 = $('input[name="sgst_this_bill"]').val();
 	        sgst_on_a3 = sgst_on_a3.trim() != "" ? sgst_on_a3 : 0;

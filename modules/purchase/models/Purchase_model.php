@@ -17961,10 +17961,10 @@ class Purchase_model extends App_Model
         $result['net_advance_2'] = $result['pay_cert_c1_2'] + $result['pay_cert_c2_2'];
         $result['net_advance_3'] = $result['pay_cert_c1_3'] + $result['pay_cert_c2_3'];
         $result['net_advance_4'] = $result['pay_cert_c1_4'] + $result['pay_cert_c2_4'];
-        $result['sub_total_ac_1'] = $po_contract_amount + $result['net_advance_1'];
-        $result['sub_total_ac_2'] = $result['po_previous'] + $result['net_advance_2'];
-        $result['sub_total_ac_3'] = $result['po_this_bill'] + $result['net_advance_3'];
-        $result['sub_total_ac_4'] = $result['sub_total_ac_2'] + $result['sub_total_ac_3'];
+        $result['sub_total_ac_1'] = $po_contract_amount - $result['net_advance_1'];
+        $result['sub_total_ac_2'] = $result['po_previous'] - $result['net_advance_2'];
+        $result['sub_total_ac_3'] = $result['po_this_bill'] - $result['net_advance_3'];
+        $result['sub_total_ac_4'] = $result['po_comulative'] - $result['net_advance_4'];
         $result['works_exe_a_4'] = $result['works_exe_a_2'] + $result['works_exe_a_3'];
         $result['works_exe_a_4'] = $result['works_exe_a_2'] + $result['works_exe_a_3'];
         $result['ret_fund_4'] = $result['ret_fund_2'] + $result['ret_fund_3'];
@@ -17972,27 +17972,27 @@ class Purchase_model extends App_Model
         $result['less_ret_2'] = $result['ret_fund_2'] + $result['works_exe_a_2'];
         $result['less_ret_3'] = $result['ret_fund_3'] + $result['works_exe_a_3'];
         $result['less_ret_4'] = $result['less_ret_2'] + $result['less_ret_3'];
-        $result['sub_t_de_1'] = $result['sub_total_ac_1'] + $result['less_ret_1'];
-        $result['sub_t_de_2'] = $result['sub_total_ac_2'] + $result['less_ret_2'];
-        $result['sub_t_de_3'] = $result['sub_total_ac_3'] + $result['less_ret_3'];
-        $result['sub_t_de_4'] = $result['sub_t_de_2'] + $result['sub_t_de_3'];
+        $result['sub_t_de_1'] = $result['sub_total_ac_1'] - $result['less_ret_1'];
+        $result['sub_t_de_2'] = $result['sub_total_ac_2'] - $result['less_ret_2'];
+        $result['sub_t_de_3'] = $result['sub_total_ac_3'] - $result['less_ret_3'];
+        $result['sub_t_de_4'] = $result['sub_total_ac_4'] - $result['less_ret_4'];
         $result['less_4'] = $result['less_2'] + $result['less_3'];
         $result['less_ah_4'] = $result['less_ah_2'] + $result['less_ah_3'];
         $result['less_aht_4'] = $result['less_aht_2'] + $result['less_aht_3'];
-        $result['less_ded_1'] = $result['less_1'];
-        $result['less_ded_2'] = $result['less_2'];
-        $result['less_ded_3'] = $result['less_3'];
-        $result['less_ded_4'] = $result['less_4'];
-        $result['sub_fg_1'] = $result['sub_t_de_1'] + $result['less_ded_1'];
-        $result['sub_fg_2'] = $result['sub_t_de_2'] + $result['less_ded_2'];
-        $result['sub_fg_3'] = $result['sub_t_de_3'] + $result['less_ded_3'];
-        $result['sub_fg_4'] = $result['sub_fg_2'] + $result['sub_fg_3'];
+        $result['less_ded_1'] = $result['less_1'] + $result['less_ah_1'] + $result['less_aht_1'];
+        $result['less_ded_2'] = $result['less_2'] + $result['less_ah_2'] + $result['less_aht_2'];
+        $result['less_ded_3'] = $result['less_3'] + $result['less_ah_3'] + $result['less_aht_3'];
+        $result['less_ded_4'] = $result['less_4'] + $result['less_ah_4'] + $result['less_aht_4'] ;
+        $result['sub_fg_1'] = $result['sub_t_de_1'] - $result['less_ded_1'];
+        $result['sub_fg_2'] = $result['sub_t_de_2'] - $result['less_ded_2'];
+        $result['sub_fg_3'] = $result['sub_t_de_3'] - $result['less_ded_3'];
+        $result['sub_fg_4'] = $result['sub_t_de_4'] - $result['less_ded_4'];
         $result['cgst_on_a1'] = $po_contract_amount * ($cgst_tax / 100);
-        $result['cgst_on_a2'] = $result['po_previous'] * ($cgst_tax / 100);
+        $result['cgst_on_a2'] = $result['cgst_prev_bill'];
         $result['cgst_on_a3'] = $result['cgst_this_bill'];
         $result['cgst_on_a4'] = $result['cgst_on_a2'] + $result['cgst_on_a3'];
         $result['sgst_on_a1'] = $po_contract_amount * ($sgst_tax / 100);
-        $result['sgst_on_a2'] = $result['po_previous'] * ($sgst_tax / 100);
+        $result['sgst_on_a2'] = $result['sgst_prev_bill'];
         $result['sgst_on_a3'] = $result['sgst_this_bill'];
         $result['sgst_on_a4'] = $result['sgst_on_a2'] + $result['sgst_on_a3'];
         $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
@@ -18206,7 +18206,7 @@ class Purchase_model extends App_Model
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->less_ah_4) . '</td>
                 </tr>
                 <tr class="pay_cert_value">
-                  <td>G2</td>
+                  <td>G3</td>
                   <td>' . _l('less_amount_hold_for_testing_and_comissioning') . '</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->less_aht_1) . '</td>
                   <td>' . check_value_pay_cert_pdf($pay_cert_data->less_aht_2) . '</td>

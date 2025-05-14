@@ -224,7 +224,7 @@
                   <?php echo '</div>';
                     }
                   } ?>
-                </div> 
+                </div>
 
                 <div id="paymentcert_file_data"></div>
                 <div class="col-md-10 pull-right" style="z-index: 999;display: flex;justify-content: end;">
@@ -549,7 +549,12 @@
                                 on A
                               </td>
                               <td class="cgst_on_a1"></td>
-                              <td class="cgst_on_a2"></td>
+                              <td class="cgst_on_a2">
+                                <?php
+                                $cgst_prev_bill = (isset($payment_certificate) ? $payment_certificate->cgst_prev_bill : '');
+                                echo render_input('cgst_prev_bill', '', $cgst_prev_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
+                                ?>
+                              </td>
                               <td class="cgst_on_a3">
                                 <?php
                                 $cgst_this_bill = (isset($payment_certificate) ? $payment_certificate->cgst_this_bill : '');
@@ -576,7 +581,12 @@
                                 on A
                               </td>
                               <td class="sgst_on_a1"></td>
-                              <td class="sgst_on_a2"></td>
+                              <td class="sgst_on_a2">
+                                <?php
+                                $sgst_prev_bill = (isset($payment_certificate) ? $payment_certificate->sgst_prev_bill : '');
+                                echo render_input('sgst_prev_bill', '', $sgst_prev_bill, 'number', ['oninput' => "calculate_payment_certificate()"], [], '', 'text-right');
+                                ?>
+                              </td>
                               <td class="sgst_on_a3">
                                 <?php
                                 $sgst_this_bill = (isset($payment_certificate) ? $payment_certificate->sgst_this_bill : '');
