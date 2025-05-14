@@ -17803,7 +17803,7 @@ class Purchase_model extends App_Model
         $result = [];
 
         // Fetch subtotal from purchase order
-        $this->db->select('subtotal');
+        $this->db->select('*');
         $this->db->where('id', $po_id);
         $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->row();
 
@@ -17816,7 +17816,11 @@ class Purchase_model extends App_Model
         $co_value = 0;
 
         if ($pur_orders && isset($pur_orders->subtotal)) {
-            $po_subtotal =  $pur_orders->subtotal;
+            if($pur_orders->discount_total > 0){
+                $po_subtotal =  $pur_orders->subtotal - $pur_orders->discount_total; 
+            }else{
+                $po_subtotal =  $pur_orders->subtotal;
+            }            
         }
 
         // Sum up all change order subtotals
