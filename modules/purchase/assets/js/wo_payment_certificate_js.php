@@ -16,7 +16,7 @@ function calculate_payment_certificate() {
 	        $('.po_name').html(response.po_name);
 
 	        var wo_contract_amount = response.wo_contract_amount;
-	        wo_contract_amount = wo_contract_amount.trim() != "" ? wo_contract_amount : 0;
+	        wo_contract_amount = wo_contract_amount != "" ? wo_contract_amount : 0;
 	        $('.wo_contract_amount').html(format_money_cert(wo_contract_amount, true));
 
 	        if(response.po_previous) {

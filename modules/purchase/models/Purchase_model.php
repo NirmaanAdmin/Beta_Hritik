@@ -17827,7 +17827,7 @@ class Purchase_model extends App_Model
                 }
             }
         }
-        
+
         // Final contract amount = PO subtotal + Change Orders subtotal
         $result['po_contract_amount'] = $po_subtotal + $co_value;
 
@@ -18504,12 +18504,44 @@ class Purchase_model extends App_Model
         $result['po_this_bill'] = 0;
         $result['po_comulative'] = 0;
 
-        $this->db->select('subtotal');
+        $result = [];
+
+        // Fetch subtotal from work order
+        $this->db->select('*');
         $this->db->where('id', $wo_id);
         $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
-        if (!empty($wo_orders)) {
-            $result['wo_contract_amount'] = $wo_orders->subtotal;
+
+        // Fetch all related change orders for this WO
+        $this->db->select('co_value');
+        $this->db->where('wo_order_id', $wo_id);
+        $wo_change_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
+
+        // Initialize subtotal values
+        $wo_subtotal = 0;
+        $wo_co_subtotal = 0;
+
+        if ($wo_orders && isset($wo_orders->subtotal)) {
+
+            if($wo_orders->discount_total > 0){
+                $wo_subtotal = $wo_orders->subtotal - $wo_orders->discount_total;
+            }else{
+                $wo_subtotal = $wo_orders->subtotal;
+            }
+            
         }
+
+        // Sum up change order subtotals (if any)
+        if (!empty($wo_change_orders)) {
+            foreach ($wo_change_orders as $co) {
+                if (isset($co['co_value'])) {
+                    $wo_co_subtotal +=  $co['co_value'];
+                }
+            }
+        }
+
+        // Final work order contract amount = WO subtotal + change orders
+        $result['wo_contract_amount'] = $wo_subtotal + $wo_co_subtotal;
+
 
         if (empty($payment_certificate_id) && $cal == 1) {
             $this->db->select('id');
