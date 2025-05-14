@@ -493,7 +493,7 @@
                               <td class="less_ah_4"></td>
                             </tr>
                             <tr>
-                              <td>G2</td>
+                              <td>G3</td>
                               <td><?php echo _l('less_amount_hold_for_testing_and_comissioning'); ?></td>
                               <td>
                                 <?php
