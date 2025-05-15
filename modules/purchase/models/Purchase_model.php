@@ -17947,7 +17947,7 @@ class Purchase_model extends App_Model
             $po_contract_data['po_contract_amount'] = $po_contract_data['wo_contract_amount'];
         } else {
             $po_contract_data = $this->get_po_contract_data($result['po_id'], '', 0);
-        }
+        } 
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
         $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;

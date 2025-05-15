@@ -97,8 +97,8 @@
 										<option value=""></option>
 										<?php foreach ($pur_orders as $ct) { ?>
 											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->pur_order == $ct['id']) {
-												echo 'selected';
-											} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
+																													echo 'selected';
+																												} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
@@ -127,7 +127,18 @@
 										<?php } ?>
 									</select>
 								</div>
-
+								<div class="col-md-6  pad_right_0" style="margin-bottom: 14px;">
+									<label for="order_tracker"><?php echo _l('Base Order'); ?></label>
+									<?php $order_tracker_list = get_order_tracker_list(); ?>
+									<select name="order_tracker_id" id="order_tracker_id" class="selectpicker" data-live-search="true" data-width="100%"  data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+										<option value=""></option>
+										<?php foreach ($order_tracker_list as $s) { ?>
+											<option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_invoice) && $s['id'] == $pur_invoice->order_tracker_id) {
+												echo 'selected';
+											} ?>> ( <?php echo pur_html_entity_decode($s['vendor']); ?> ) - ( <?php echo pur_html_entity_decode($s['order_name']); ?> )</option>
+										<?php } ?>
+									</select>
+								</div>
 								<div class="col-md-6 pad_left_0" style="clear: both;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('amount_without_tax'); ?> ( ₹ )</label>
@@ -495,62 +506,62 @@
 		// Attach the function to the keypress event of the second input
 		$('#vendor_submitted_amount_without_tax,#vendor_submitted_tax_amount').on('input', calculateSum);
 
-		$("body").on('change', 'select[name="pur_order"]', function () {
-	      "use strict";
-	      var pur_order = $(this).val();
-	      if(pur_order != '') {
-	        $.post(admin_url + 'purchase/get_pur_order/'+pur_order).done(function(response){
-	          response = JSON.parse(response);
-	          var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
-	          $('select[name="wo_order"]').val('').trigger('change');
-	          $('select[name="vendor"]').val(response.vendor).trigger('change');
-	          $('select[name="group_pur"]').val(response.group_pur).trigger('change');
-	          $('select[name="project_id"]').val(response.project).trigger('change');
-	          $('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
-	          $('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
-	          $('textarea[name="description_services"]').val(response.pur_order_name);
-	          calculateSum();
-	          init_selectpicker();
-	        });
-	      } else {
-	      	$('select[name="vendor"]').val('').trigger('change');
-	        $('select[name="group_pur"]').val('').trigger('change');
-	        $('select[name="project_id"]').val('').trigger('change');
-	        $('input[name="vendor_submitted_amount_without_tax"]').val('').trigger('change');
-	        $('input[name="vendor_submitted_tax_amount"]').val('').trigger('change');
-	        $('textarea[name="description_services"]').val('');
-	        calculateSum();
-	        init_selectpicker();
-	      }
-	    });
+		$("body").on('change', 'select[name="pur_order"]', function() {
+			"use strict";
+			var pur_order = $(this).val();
+			if (pur_order != '') {
+				$.post(admin_url + 'purchase/get_pur_order/' + pur_order).done(function(response) {
+					response = JSON.parse(response);
+					var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
+					$('select[name="wo_order"]').val('').trigger('change');
+					$('select[name="vendor"]').val(response.vendor).trigger('change');
+					$('select[name="group_pur"]').val(response.group_pur).trigger('change');
+					$('select[name="project_id"]').val(response.project).trigger('change');
+					$('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
+					$('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
+					$('textarea[name="description_services"]').val(response.pur_order_name);
+					calculateSum();
+					init_selectpicker();
+				});
+			} else {
+				$('select[name="vendor"]').val('').trigger('change');
+				$('select[name="group_pur"]').val('').trigger('change');
+				$('select[name="project_id"]').val('').trigger('change');
+				$('input[name="vendor_submitted_amount_without_tax"]').val('').trigger('change');
+				$('input[name="vendor_submitted_tax_amount"]').val('').trigger('change');
+				$('textarea[name="description_services"]').val('');
+				calculateSum();
+				init_selectpicker();
+			}
+		});
 
-	    $("body").on('change', 'select[name="wo_order"]', function () {
-	      "use strict";
-	      var wo_order = $(this).val();
-	      if(wo_order != '') {
-	        $.post(admin_url + 'purchase/get_wo_order/'+wo_order).done(function(response){
-	          response = JSON.parse(response);
-	          var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
-	          $('select[name="pur_order"]').val('').trigger('change');
-	          $('select[name="vendor"]').val(response.vendor).trigger('change');
-	          $('select[name="group_pur"]').val(response.group_pur).trigger('change');
-	          $('select[name="project_id"]').val(response.project).trigger('change');
-	          $('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
-	          $('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
-	          $('textarea[name="description_services"]').val(response.wo_order_name);
-	          calculateSum();
-	          init_selectpicker();
-	        });
-	      } else {
-	      	$('select[name="vendor"]').val('').trigger('change');
-	        $('select[name="group_pur"]').val('').trigger('change');
-	        $('select[name="project_id"]').val('').trigger('change');
-	        $('input[name="vendor_submitted_amount_without_tax"]').val('').trigger('change');
-	        $('input[name="vendor_submitted_tax_amount"]').val('').trigger('change');
-	        $('textarea[name="description_services"]').val('');
-	        calculateSum();
-	        init_selectpicker();
-	      }
-	    });
+		$("body").on('change', 'select[name="wo_order"]', function() {
+			"use strict";
+			var wo_order = $(this).val();
+			if (wo_order != '') {
+				$.post(admin_url + 'purchase/get_wo_order/' + wo_order).done(function(response) {
+					response = JSON.parse(response);
+					var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
+					$('select[name="pur_order"]').val('').trigger('change');
+					$('select[name="vendor"]').val(response.vendor).trigger('change');
+					$('select[name="group_pur"]').val(response.group_pur).trigger('change');
+					$('select[name="project_id"]').val(response.project).trigger('change');
+					$('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
+					$('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
+					$('textarea[name="description_services"]').val(response.wo_order_name);
+					calculateSum();
+					init_selectpicker();
+				});
+			} else {
+				$('select[name="vendor"]').val('').trigger('change');
+				$('select[name="group_pur"]').val('').trigger('change');
+				$('select[name="project_id"]').val('').trigger('change');
+				$('input[name="vendor_submitted_amount_without_tax"]').val('').trigger('change');
+				$('input[name="vendor_submitted_tax_amount"]').val('').trigger('change');
+				$('textarea[name="description_services"]').val('');
+				calculateSum();
+				init_selectpicker();
+			}
+		});
 	});
 </script>

@@ -949,7 +949,7 @@ function get_pur_order_by_id_pur_request($pur_request)
     $wo = $CI->db->get(db_prefix() . 'wo_orders')->row();
 
     if ($wo) {
-        $url = admin_url('purchase/work_order/' . $wo->id); 
+        $url = admin_url('purchase/work_order/' . $wo->id);
         $wo_order = '<a href="' . $url . '">' . $wo->wo_order_number . ' - ' . $wo->wo_order_name . '</a>';
 
         return '<span class="bold">' . _l('work_order') . ' :</span>
@@ -4154,7 +4154,7 @@ function pur_get_item_cost_selected_select($id, $name_item_name, $allItems = [])
 {
     $select = '';
     $id = !empty($id) ? $id : '';
-    
+
     if (empty($allItems)) {
         return '<select class="form-control selectpicker item-select" disabled><option>No items available</option></select>';
     }
@@ -4184,3 +4184,39 @@ function pur_get_item_cost_selected_select($id, $name_item_name, $allItems = [])
     return $select;
 }
 
+function get_order_tracker_list()
+{
+    $CI = &get_instance();
+
+    $query = $CI->db->query("
+        SELECT 
+            po.id,
+            po.pur_order_name AS order_name,
+            'pur_orders' AS source_table,
+            pv.company AS vendor
+        FROM " . db_prefix() . "pur_orders po
+        LEFT JOIN " . db_prefix() . "pur_vendor pv ON pv.userid = po.vendor
+        
+        UNION ALL
+        
+        SELECT 
+            wo.id,
+            wo.wo_order_name AS order_name,
+            'wo_orders' AS source_table,
+            pv.company AS vendor
+        FROM " . db_prefix() . "wo_orders wo
+        LEFT JOIN " . db_prefix() . "pur_vendor pv ON pv.userid = wo.vendor
+        
+        UNION ALL
+        
+        SELECT 
+            t.id,
+            t.pur_order_name AS order_name,
+            'order_tracker' AS source_table,
+            pv.company AS vendor
+        FROM " . db_prefix() . "pur_order_tracker t
+        LEFT JOIN " . db_prefix() . "pur_vendor pv ON pv.userid = t.vendor
+    ");
+
+    return $query->result_array();
+}
