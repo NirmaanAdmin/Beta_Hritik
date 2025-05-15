@@ -591,7 +591,7 @@
         if (co_value) {
           currentContent = currentContent.replace(
             /<span class="subtotal_in_value">.*?<\/span>/g,
-            '<span class="subtotal_in_value">' + co_value + '</span>'
+            '<span class="subtotal_in_value"><strong>' + accounting.toFixed(co_value, app.options.decimal_places) + '</strong></span>'
           );
         }
         editor.setContent(currentContent);
@@ -609,7 +609,7 @@
         if (subtotal) {
           currentContent = currentContent.replace(
             /<span class="grand_sub_total">.*?<\/span>/g,
-            '<span class="grand_sub_total">' + subtotal + '</span>'
+            '<span class="grand_sub_total"><strong>' + Math.round(subtotal) + '</strong></span>'
           );
         }
         editor.setContent(currentContent);
@@ -621,7 +621,7 @@
 
 
   function grand_sub_total_in_words(subtotal) {
-    var subtotal_word = numberToWords(subtotal);
+    var subtotal_word = numberToWords(Math.round(subtotal));
     setTimeout(function() {
       var editor = tinymce.get('order_summary');
       if (editor) {
@@ -629,7 +629,7 @@
         if (subtotal_word) {
           currentContent = currentContent.replace(
             /<span class="grand_sub_total_in_words">.*?<\/span>/g,
-            '<span class="grand_sub_total_in_words">' + subtotal_word + '</span>'
+            '<span class="grand_sub_total_in_words"><strong>' + subtotal_word + '</strong></span>'
           );
         }
         editor.setContent(currentContent);
@@ -946,9 +946,9 @@
               /Dear Sir\/Madam/gi,
               `Dear Sir/Madam, <br><br>
         
-This Change Order refers to our purchase order issued for the "${itemDesc}" dated ${order_dateed}.<br><br>
+This Change Order refers to our purchase order issued for the "<strong>${itemDesc}</strong>" dated <strong>${order_dateed}</strong>.<br><br>
 
-The original amount of INR ${originalAmount} is hereby revised by amount INR <span class="subtotal_in_value">0</span>. The revised contract value is INR <span class="grand_sub_total"></span> (<span class="grand_sub_total_in_words"></span>), exclusive of GST.`)
+The original amount of INR <strong>${originalAmount}</strong> is hereby revised by amount INR <span class="subtotal_in_value">0</span>. The revised contract value is INR <span class="grand_sub_total"></span> (<span class="grand_sub_total_in_words"></span>), exclusive of GST.`)
             .replace(/This is with reference to your final[\s\S]*?for the same as annexed\./g, "");
           // Set order_summary content (with TinyMCE check)
           if (tinymce.get('order_summary')) {
