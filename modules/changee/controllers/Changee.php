@@ -9012,6 +9012,13 @@ class changee extends AdminController
 
         $get_terms = $purchase_order->terms;
 
+        $item_description = $purchase_order->pur_order_name;
+
+        $order_date = date('jS F Y', strtotime($purchase_order->order_date));
+;
+
+        $subtotal = $purchase_order->subtotal;
+        
         echo json_encode([
             'result' => $pur_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -9032,6 +9039,9 @@ class changee extends AdminController
             'vendernote' => $get_vendor_note,
             'order_summary' => $get_order_summary,
             'terms' => $get_terms,
+            'item_description' => $item_description,
+            'order_dateed' => $order_date,
+            'original_amount' => $subtotal
         ]);
     }
     public function coppy_wo_order_for_po($wo_order)

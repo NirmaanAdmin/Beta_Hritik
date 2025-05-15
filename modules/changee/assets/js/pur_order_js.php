@@ -431,6 +431,7 @@
       $(this).find('td.original_quantities span').html('Amendment: ' + variation_unit);
 
       subtotal += _amount;
+      var order_summary_subtoal = subtotal;
       row = $(this);
       item_taxes = $(this).find('select.taxes').val();
 
@@ -576,7 +577,8 @@
     $('.wh-non-tender-total').html(format_money(non_tender_total) + hidden_input('non_tender_total', accounting.toFixed(non_tender_total, app.options.decimal_places)));
     co_value_order_detail(co_value);
     co_amount_order_detail(co_value);
-
+    co_grand_sub_total(subtotal);
+    grand_sub_total_in_words(subtotal);
     $(document).trigger('changee-quotation-total-calculated');
 
   }
@@ -598,6 +600,45 @@
       }
     }, 500);
   }
+
+  function co_grand_sub_total(subtotal) {
+    setTimeout(function() {
+      var editor = tinymce.get('order_summary');
+      if (editor) {
+        var currentContent = editor.getContent();
+        if (subtotal) {
+          currentContent = currentContent.replace(
+            /<span class="grand_sub_total">.*?<\/span>/g,
+            '<span class="grand_sub_total">' + subtotal + '</span>'
+          );
+        }
+        editor.setContent(currentContent);
+      } else {
+        console.error("TinyMCE is not initialized yet.");
+      }
+    }, 500);
+  }
+
+
+  function grand_sub_total_in_words(subtotal) {
+    var subtotal_word = numberToWords(subtotal);
+    setTimeout(function() {
+      var editor = tinymce.get('order_summary');
+      if (editor) {
+        var currentContent = editor.getContent();
+        if (subtotal_word) {
+          currentContent = currentContent.replace(
+            /<span class="grand_sub_total_in_words">.*?<\/span>/g,
+            '<span class="grand_sub_total_in_words">' + subtotal_word + '</span>'
+          );
+        }
+        editor.setContent(currentContent);
+      } else {
+        console.error("TinyMCE is not initialized yet.");
+      }
+    }, 500);
+  }
+
 
   function co_amount_order_detail(co_value) {
     var co_value_word = numberToWords(co_value);
@@ -890,11 +931,25 @@
           }
           var order_date = $('#order_date').val();
           // Process order_summary content
+          const itemDesc = response.item_description; // e.g. Supply of Al. Powder Coated Designer Grille
+          const originalAmount = response.original_amount; // e.g. INR 32,91,860/-
+          const originalAmtWords = numberToWords(originalAmount); // e.g. Thirty Two Lakh Ninety One Thousand Eight Hundred Sixty Only
+          const revisionAmount = response.revision_amount; // e.g. INR 2,02,325
+          const revisedTotal = response.revised_contract_value; // e.g. INR 28,93,593.50/-
+          const revisedTotalWords = response.revised_contract_value_in_words;
+          const order_dateed = response.order_dateed;
           let updatedContent = response.order_summary
             .replace(/<strong>PURCHASE ORDER<\/strong>/g, '<strong>CHANGE ORDER</strong>')
             .replace(/<strong>P\.O\. Number:<\/strong>\s*[^<]+/g, `<strong>C.O. Number:</strong> ${final_po_number}`)
-            .replace(/<strong>P\.O\. Date:<\/strong>\s*(<[^>]+>[^<]*<\/[^>]+>)/g, `<strong>C.O. Date:</strong> ${order_date}`);
+            .replace(/<strong>P\.O\. Date:<\/strong>\s*(<[^>]+>[^<]*<\/[^>]+>)/g, `<strong>C.O. Date:</strong> ${order_date}`)
+            .replace(
+              /Dear Sir\/Madam/gi,
+              `Dear Sir/Madam, <br><br>
+        
+This Change Order refers to our purchase order issued for the "${itemDesc}" dated ${order_dateed}.<br><br>
 
+The original amount of INR ${originalAmount} is hereby revised by amount INR <span class="subtotal_in_value">0</span>. The revised contract value is INR <span class="grand_sub_total"></span> (<span class="grand_sub_total_in_words"></span>), exclusive of GST.`)
+            .replace(/This is with reference to your final[\s\S]*?for the same as annexed\./g, "");
           // Set order_summary content (with TinyMCE check)
           if (tinymce.get('order_summary')) {
             tinymce.get('order_summary').setContent(updatedContent);
@@ -955,6 +1010,11 @@
     } else {
       $("#wo_order_id").prop("disabled", false).selectpicker('refresh');
       $('#vendor_name, #vendor, #pur_order_number').val('');
+      if (tinymce.get('order_summary')) {
+        // pull the raw <textarea> value back into the editor
+        const raw = $('#order_summary').val();
+        tinymce.get('order_summary').setContent(raw);
+      }
     }
   }
 
@@ -1055,6 +1115,11 @@
     } else {
       $("#po_order_id").prop("disabled", false).selectpicker('refresh');
       $('#vendor_name, #vendor, #pur_order_number').val('');
+      if (tinymce.get('order_summary')) {
+        // pull the raw <textarea> value back into the editor
+        const raw = $('#order_summary').val();
+        tinymce.get('order_summary').setContent(raw);
+      }
     }
   }
 </script>
