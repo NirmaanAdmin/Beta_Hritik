@@ -893,6 +893,39 @@
 </script>
 <?php require 'modules/purchase/assets/js/payment_certificate_js.php'; ?>
 <script>
+    $('#cgst_tax').on('change', function() {
+        var prev_bill = $('#po_previous').val();
+        var cgst_tax_new = $('#cgst_tax').val();
+        var cgst_on_tax_new = prev_bill * (cgst_tax_new / 100);
+        $('#cgst_prev_bill').val(cgst_on_tax_new);
+
+        var this_bill = $('#po_this_bill').val();
+        var cgst_tax_new1 = $('#cgst_tax').val();
+        var cgst_on_this_tax_new = this_bill * (cgst_tax_new1 / 100);
+        $('#cgst_this_bill').val(cgst_on_this_tax_new);
+    });
+    $('#sgst_tax').on('change', function() {
+        var prev_bill = $('#po_previous').val();
+        var sgst_tax_new = $('#sgst_tax').val();
+        var sgst_on_tax_new = prev_bill * (sgst_tax_new / 100);
+        $('#sgst_prev_bill').val(sgst_on_tax_new);
+
+        var this_bill = $('#po_this_bill').val();
+        var sgst_tax_new1 = $('#sgst_tax').val();
+        var sgst_on_this_tax_new = this_bill * (sgst_tax_new1 / 100);
+        $('#sgst_this_bill').val(sgst_on_this_tax_new);
+    });
+     $('#igst_tax').on('change', function() {
+        var prev_bill = $('#po_previous').val();
+        var igst_tax_new = $('#igst_tax').val();
+        var igst_on_tax_new = prev_bill * (igst_tax_new / 100);
+        $('#igst_prev_bill').val(igst_on_tax_new);
+
+        var this_bill = $('#po_this_bill').val();
+        var igst_tax_new1 = $('#igst_tax').val();
+        var igst_on_this_tax_new = this_bill * (igst_tax_new1 / 100);
+        $('#igst_this_bill').val(igst_on_this_tax_new);
+    });
   $(document).ready(function() {
     "use strict";
     var is_view = <?php echo $is_view; ?>;

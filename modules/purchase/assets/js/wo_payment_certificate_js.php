@@ -225,55 +225,98 @@
 
 				var sub_fg_4 = parseFloat(sub_t_de_4) - parseFloat(less_ded_4);
 				$('.sub_fg_4').html(format_money_cert(sub_fg_4, true));
-
-				var cgst_on_a1 = 0;
+				
+				var cgst_on_a1, cgst_on_tax, cgst_on_tax_2 = 0;
 				var cgst_tax_1 = $('select[name="cgst_tax"]').val();
 				if (cgst_tax_1) {
 					cgst_tax_1 = cgst_tax_1.replace('%', '');
 					cgst_on_a1 = wo_contract_amount * (cgst_tax_1 / 100);
+					cgst_on_tax = po_previous * (cgst_tax_1 / 100);
+					cgst_on_tax_2 = po_this_bill * (cgst_tax_1 / 100);
+
 				}
 				$('.cgst_on_a1').html(format_money_cert(cgst_on_a1, true));
 
 				var cgst_on_a2 = $('input[name="cgst_prev_bill"]').val();
-				cgst_on_a2 = cgst_on_a2.trim() != "" ? cgst_on_a2 : 0;
+
+				if ((cgst_on_a2 == cgst_on_tax) || (cgst_on_a2 == 0)) {
+					$('input[name="cgst_prev_bill"]').val(cgst_on_tax);
+					cgst_on_a2 = cgst_on_tax;
+				} else {
+					cgst_on_a2 = cgst_on_a2.trim() != "" ? cgst_on_a2 : 0;
+				}
 
 				var cgst_on_a3 = $('input[name="cgst_this_bill"]').val();
-				cgst_on_a3 = cgst_on_a3.trim() != "" ? cgst_on_a3 : 0;
+
+				if ((cgst_on_a3 == cgst_on_tax_2) || (cgst_on_a3 == 0)) {
+					$('input[name="cgst_this_bill"]').val(cgst_on_tax_2);
+					cgst_on_a3 = cgst_on_tax_2;
+				} else {
+					cgst_on_a3 = cgst_on_a3.trim() != "" ? cgst_on_a3 : 0;
+				}
 
 				var cgst_on_a4 = parseFloat(cgst_on_a2) + parseFloat(cgst_on_a3);
 				$('.cgst_on_a4').html(format_money_cert(cgst_on_a4, true));
 
-				var sgst_on_a1 = 0;
+				var sgst_on_a1, sgst_on_tax, sgst_on_tax_2 = 0;
 				var sgst_tax_1 = $('select[name="sgst_tax"]').val();
 				if (sgst_tax_1) {
 					sgst_tax_1 = sgst_tax_1.replace('%', '');
 					sgst_on_a1 = wo_contract_amount * (sgst_tax_1 / 100);
+					sgst_on_tax = po_previous * (sgst_tax_1 / 100);
+					sgst_on_tax_2 = po_this_bill * (sgst_tax_1 / 100);
 				}
 				$('.sgst_on_a1').html(format_money_cert(sgst_on_a1, true));
 
 				var sgst_on_a2 = $('input[name="sgst_prev_bill"]').val();
-				sgst_on_a2 = sgst_on_a2.trim() != "" ? sgst_on_a2 : 0;
 
+				if ((sgst_on_a2 == sgst_on_tax) || (sgst_on_a2 == 0)) {
+					$('input[name="sgst_prev_bill"]').val(sgst_on_tax);
+					sgst_on_a2 = sgst_on_tax;
+				} else {
+					sgst_on_a2 = sgst_on_a2.trim() != "" ? sgst_on_a2 : 0;
+				}
 
 				var sgst_on_a3 = $('input[name="sgst_this_bill"]').val();
-				sgst_on_a3 = sgst_on_a3.trim() != "" ? sgst_on_a3 : 0;
+
+				if ((sgst_on_a3 == sgst_on_tax_2) || (sgst_on_a3 == 0)) {
+					$('input[name="sgst_this_bill"]').val(sgst_on_tax_2);
+					sgst_on_a3 = sgst_on_tax_2;
+				} else {
+					sgst_on_a3 = sgst_on_a3.trim() != "" ? sgst_on_a3 : 0;
+				}
 
 				var sgst_on_a4 = parseFloat(sgst_on_a2) + parseFloat(sgst_on_a3);
 				$('.sgst_on_a4').html(format_money_cert(sgst_on_a4, true));
 
-				var igst_on_a1 = 0;
+				var igst_on_a1, igst_on_tax, igst_on_tax_2 = 0;
 				var igst_tax_1 = $('select[name="igst_tax"]').val();
 				if (igst_tax_1) {
 					igst_tax_1 = igst_tax_1.replace('%', '');
 					igst_on_a1 = wo_contract_amount * (igst_tax_1 / 100);
+					igst_on_tax = po_previous * (igst_tax_1 / 100);
+					igst_on_tax_2 = po_this_bill * (igst_tax_1 / 100);
 				}
 				$('.igst_on_a1').html(format_money_cert(igst_on_a1, true));
 
 				var igst_on_a2 = $('input[name="igst_prev_bill"]').val();
-				igst_on_a2 = igst_on_a2.trim() != "" ? igst_on_a2 : 0;
+				// igst_on_a2 = igst_on_a2.trim() != "" ? igst_on_a2 : 0;
+				if ((igst_on_a2 == igst_on_tax) || (igst_on_a2 == 0)) {
+					$('input[name="igst_prev_bill"]').val(igst_on_tax);
+					igst_on_a2 = igst_on_tax;
+				} else {
+					igst_on_a2 = igst_on_a2.trim() != "" ? igst_on_a2 : 0;
+				}
 
 				var igst_on_a3 = $('input[name="igst_this_bill"]').val();
-				igst_on_a3 = igst_on_a3.trim() != "" ? igst_on_a3 : 0;
+				// igst_on_a3 = igst_on_a3.trim() != "" ? igst_on_a3 : 0;
+
+				if ((igst_on_a3 == igst_on_tax_2) || (igst_on_a3 == 0)) {
+					$('input[name="igst_this_bill"]').val(igst_on_tax_2);
+					igst_on_a3 = igst_on_tax_2;
+				} else {
+					igst_on_a3 = igst_on_a3.trim() != "" ? igst_on_a3 : 0;
+				}
 
 				var igst_on_a4 = parseFloat(igst_on_a2) + parseFloat(igst_on_a3);
 				$('.igst_on_a4').html(format_money_cert(igst_on_a4, true));
