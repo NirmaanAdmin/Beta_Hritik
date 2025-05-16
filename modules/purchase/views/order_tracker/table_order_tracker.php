@@ -12,10 +12,10 @@ $order_type_filter_name = 'order_type_filter';
 
 // Define common columns for both tables
 $aColumns = [
+   'aw_unw_order_status',
    'order_name', // Will represent 'pur_order_name' or 'wo_order_name'
-   
    'vendor',
-   'order_date', 
+   'order_date',
    'completion_date',
    'budget',
    'order_value',
@@ -80,104 +80,104 @@ if (isset($type)) {
 
 $orderType = $this->ci->input->post('order_type_filter');
 if (isset($orderType)) {
-    $where_order_type = '';
-    if ($orderType == 'created') {
-        if ($where_order_type == '') {
-            $where_order_type .= ' AND (source_table  = "order_tracker"';
-        }
-    }
-    if ($orderType == 'fetched') {
-        if ($where_order_type == '') {
-            $where_order_type .= ' AND (source_table  = "pur_orders"';
-            $where_order_type .= ' or source_table = "wo_orders"';
-        }
-    }
-    if ($where_order_type != '') {
-        $where_order_type .= ')';
-        array_push($where, $where_order_type);
-    }
+   $where_order_type = '';
+   if ($orderType == 'created') {
+      if ($where_order_type == '') {
+         $where_order_type .= ' AND (source_table  = "order_tracker"';
+      }
+   }
+   if ($orderType == 'fetched') {
+      if ($where_order_type == '') {
+         $where_order_type .= ' AND (source_table  = "pur_orders"';
+         $where_order_type .= ' or source_table = "wo_orders"';
+      }
+   }
+   if ($where_order_type != '') {
+      $where_order_type .= ')';
+      array_push($where, $where_order_type);
+   }
 }
 
 $vendors = $this->ci->input->post('vendors');
 if (isset($vendors)) {
-    $where_vendors = '';
-    foreach ($vendors as $t) {
-        if ($t != '') {
-            if ($where_vendors == '') {
-                $where_vendors .= ' AND (vendor_id = "' . $t . '"';
-            } else {
-                $where_vendors .= ' or vendor_id = "' . $t . '"';
-            }
-        }
-    }
-    if ($where_vendors != '') {
-        $where_vendors .= ')';
-        array_push($where, $where_vendors);
-    }
+   $where_vendors = '';
+   foreach ($vendors as $t) {
+      if ($t != '') {
+         if ($where_vendors == '') {
+            $where_vendors .= ' AND (vendor_id = "' . $t . '"';
+         } else {
+            $where_vendors .= ' or vendor_id = "' . $t . '"';
+         }
+      }
+   }
+   if ($where_vendors != '') {
+      $where_vendors .= ')';
+      array_push($where, $where_vendors);
+   }
 }
 
 $budget_head = $this->ci->input->post('budget_head');
 if (isset($budget_head)) {
-    $where_budget_head = '';
-    if ($budget_head != '') {
-        if ($where_budget_head == '') {
-            $where_budget_head .= ' AND (group_pur = "' . $budget_head . '"';
-        } else {
-            $where_budget_head .= ' or group_pur = "' . $budget_head . '"';
-        }
-    }
-    if ($where_budget_head != '') {
-        $where_budget_head .= ')';
-        array_push($where, $where_budget_head);
-    }
+   $where_budget_head = '';
+   if ($budget_head != '') {
+      if ($where_budget_head == '') {
+         $where_budget_head .= ' AND (group_pur = "' . $budget_head . '"';
+      } else {
+         $where_budget_head .= ' or group_pur = "' . $budget_head . '"';
+      }
+   }
+   if ($where_budget_head != '') {
+      $where_budget_head .= ')';
+      array_push($where, $where_budget_head);
+   }
 }
 
 $budget_head = $this->ci->input->post('budget_head');
 if (isset($budget_head)) {
-    $where_budget_head = '';
-    if ($budget_head != '') {
-        if ($where_budget_head == '') {
-            $where_budget_head .= ' AND (group_pur = "' . $budget_head . '"';
-        } else {
-            $where_budget_head .= ' or group_pur = "' . $budget_head . '"';
-        }
-    }
-    if ($where_budget_head != '') {
-        $where_budget_head .= ')';
-        array_push($where, $where_budget_head);
-    }
+   $where_budget_head = '';
+   if ($budget_head != '') {
+      if ($where_budget_head == '') {
+         $where_budget_head .= ' AND (group_pur = "' . $budget_head . '"';
+      } else {
+         $where_budget_head .= ' or group_pur = "' . $budget_head . '"';
+      }
+   }
+   if ($where_budget_head != '') {
+      $where_budget_head .= ')';
+      array_push($where, $where_budget_head);
+   }
 }
 
 $rli_filter = $this->ci->input->post('rli_filter');
 if (isset($rli_filter)) {
-    $where_rli_filter = '';
-    if ($rli_filter != '') {
-        if ($where_rli_filter == '') {
-            $where_rli_filter .= ' AND (rli_filter = "' . $rli_filter . '"';
-        } else {
-            $where_rli_filter .= ' or rli_filter = "' . $rli_filter . '"';
-        }
-    }
-    if ($where_rli_filter != '') {
-        $where_rli_filter .= ')';
-        array_push($where, $where_rli_filter);
-    }
+   $where_rli_filter = '';
+   if ($rli_filter != '') {
+      if ($where_rli_filter == '') {
+         $where_rli_filter .= ' AND (rli_filter = "' . $rli_filter . '"';
+      } else {
+         $where_rli_filter .= ' or rli_filter = "' . $rli_filter . '"';
+      }
+   }
+   if ($where_rli_filter != '') {
+      $where_rli_filter .= ')';
+      array_push($where, $where_rli_filter);
+   }
 }
 
 $kind = $this->ci->input->post('kind');
 if (isset($kind)) {
-    $where_kind = '';
-    if ($kind != '') {
-        if ($where_kind == '') {
-            $where_kind .= ' AND (kind = "' . $kind . '"';
-        } else {
-            $where_kind .= ' or kind = "' . $kind . '"';
-        }
-    }
-    if ($where_kind != '') {
-        $where_kind .= ')';
-        array_push($where, $where_kind);
-    }
+   $where_kind = '';
+   if ($kind != '') {
+      if ($where_kind == '') {
+         $where_kind .= ' AND (kind = "' . $kind . '"';
+      } else {
+         $where_kind .= ' or kind = "' . $kind . '"';
+      }
+   }
+   if ($where_kind != '') {
+      $where_kind .= ')';
+      array_push($where, $where_kind);
+   }
 }
 
 $having = '';
@@ -229,14 +229,14 @@ $output  = $result['output'];
 $rResult = $result['rResult'];
 
 $footer_data = [
-    'total_budget_ro_projection' => 0,
-    'total_order_value' => 0,
-    'total_committed_contract_amount' => 0,
-    'total_change_order_amount' => 0,
-    'total_rev_contract_value' => 0,
-    'total_anticipate_variation' => 0,
-    'total_cost_to_complete' => 0,
-    'total_final_certified_amount' => 0,
+   'total_budget_ro_projection' => 0,
+   'total_order_value' => 0,
+   'total_committed_contract_amount' => 0,
+   'total_change_order_amount' => 0,
+   'total_rev_contract_value' => 0,
+   'total_anticipate_variation' => 0,
+   'total_cost_to_complete' => 0,
+   'total_final_certified_amount' => 0,
 ];
 
 $sr = 1;
@@ -251,9 +251,9 @@ foreach ($rResult as $aRow) {
          $_data = app_format_money($aRow['subtotal'], $base_currency->symbol);
       } elseif ($column == 'order_name') {
          if ($aRow['source_table'] == "pur_orders") {
-            $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' .$aRow['order_number'] .'-'. $aRow['order_name'] . '</a>';
+            $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_number'] . '-' . $aRow['order_name'] . '</a>';
          } elseif ($aRow['source_table'] == "wo_orders") {
-            $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' .$aRow['order_number'] .'-'. $aRow['order_name'] . '</a>';
+            $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_number'] . '-' . $aRow['order_name'] . '</a>';
          } elseif ($aRow['source_table'] == "order_tracker") {
             $name = $aRow['order_name'];
             $name .= '<div class="row-options">';
@@ -396,7 +396,45 @@ foreach ($rResult as $aRow) {
          }
       } elseif ($column == 'order_value') {
          $base_currency = get_base_currency_pur();
-         $_data = '<span class="order-value-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .app_format_money($aRow['order_value'], $base_currency->symbol) .'</span>';
+         $_data = '<span class="order-value-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' . app_format_money($aRow['order_value'], $base_currency->symbol) . '</span>';
+      } elseif ($column == 'aw_unw_order_status') {
+         $status_labels_aw_uw = [
+            1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
+            2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
+            
+         ];
+         // Start generating the HTML
+         $aw_uw = '';
+         if (isset($status_labels_aw_uw[$aRow['aw_unw_order_status']])) {
+            $status = $status_labels_aw_uw[$aRow['aw_unw_order_status']];
+            $aw_uw = '<span class="inline-block label label-' . $status['label'] . '" id="status_aw_uw_span_' . $aRow['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+         }
+
+         if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+            $aw_uw .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $aw_uw .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $aw_uw .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+            $aw_uw .= '</a>';
+
+            $aw_uw .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $aRow['id'] . '">';
+
+            foreach ($status_labels_aw_uw as $key => $status) {
+               if ($key != $aRow['aw_unw_order_status']) {
+                  $aw_uw .= '<li>
+                       <a href="#" onclick="change_aw_unw_order_status(' . $key . ', ' . $aRow['id'] . ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES) . '\'); return false;">
+                           ' . $status['text'] . '
+                       </a>
+                   </li>';
+               }
+            }
+
+
+            $aw_uw .= '</ul>';
+            $aw_uw .= '</div>';
+         }
+
+         $aw_uw .= '</span>';
+         $_data = $aw_uw;
       }
 
       $row[] = $_data;
@@ -415,6 +453,6 @@ foreach ($rResult as $aRow) {
 }
 
 foreach ($footer_data as $key => $total) {
-    $footer_data[$key] = app_format_money($total, $base_currency->symbol);
+   $footer_data[$key] = app_format_money($total, $base_currency->symbol);
 }
 $output['sums'] = $footer_data;

@@ -2833,7 +2833,7 @@ class purchase extends AdminController
     {
         if (!$id) {
             redirect(admin_url('purchase/purchase_request'));
-        } 
+        }
 
         $pur_request = $this->purchase_model->get_purorder_pdf_html($id);
 
@@ -6655,6 +6655,52 @@ class purchase extends AdminController
         ]);
     }
 
+    public function change_aw_unw_order_status($status, $id, $table_name)
+    {
+
+        // Define an array of statuses with their corresponding labels and texts
+        $status_labels_aw_uw = [
+            1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
+            2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
+         ];
+        $success = $this->purchase_model->change_aw_unw_order_status($status, $id, $table_name);
+        $message = $success ? _l('change_aw_unw_order_status_successfully') : _l('changeaw_unw_order_status_fail');
+
+        $html = '';
+        $status_str = $status_labels_aw_uw[$status]['text'] ?? '';
+        $class = $status_labels_aw_uw[$status]['label'] ?? '';
+
+        if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+            $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+            $html .= '</a>';
+
+            $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $id . '">';
+
+            // Generate the dropdown menu options dynamically
+            foreach ($status_labels_aw_uw as $key => $label) {
+                if ($key != $status) {
+                    $html .= '<li>
+                    <a href="#" onclick="change_aw_unw_order_status(' . $key . ', ' . $id . ', \'' . htmlspecialchars($table_name, ENT_QUOTES) . '\'); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+                }
+            }
+
+            $html .= '</ul>';
+            $html .= '</div>';
+        }
+
+        echo json_encode([
+            'success' => $success,
+            'status_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
     /**
      * { change payment status }
      *
@@ -10051,7 +10097,7 @@ class purchase extends AdminController
 
         try {
             $pdf = $this->purchase_model->woorder_pdf($wo_order, $id);
-             $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+            $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
         } catch (Exception $e) {
             echo pur_html_entity_decode($e->getMessage());
             die;

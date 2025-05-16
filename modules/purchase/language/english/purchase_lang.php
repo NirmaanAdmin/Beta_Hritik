@@ -907,3 +907,6 @@ $lang['discount_remarks'] = 'Remarks';
 $lang['discount_remarks_note'] = 'This remarks section for discount field';
 $lang['pur_closed'] = 'Closed';
 $lang['mobilization_advance'] = 'Mobilization Advance payment';
+$lang['order_status'] = 'Order Status';
+$lang['change_aw_unw_order_status_successfully'] = 'Order status updated successfully';
+$lang['changeaw_unw_order_status_fail'] = 'Failed to update order status';

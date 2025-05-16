@@ -212,6 +212,7 @@
                         <table class="dt-table-loading table table-table_order_tracker">
                            <thead>
                               <tr>
+                                 <th><?php echo _l('order_status'); ?></th>
                                  <th><?php echo _l('order_scope'); ?></th>
                                  <th><?php echo _l('contractor'); ?></th>
                                  <th><?php echo _l('order_date'); ?></th>
@@ -236,7 +237,8 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                              <td></td>                              
+                              <td></td>     
+                              <td></td>                         
                               <td class="total_budget_ro_projection"></td>
                               <td class="total_order_value"></td>
                               <td class="total_committed_contract_amount"></td>
@@ -245,7 +247,6 @@
                               <td class="total_anticipate_variation"></td>
                               <td class="total_cost_to_complete"></td>
                               <td class="total_final_certified_amount"></td>
-                              <td></td>
                               <td></td>
                               <td></td>
                               <td></td>

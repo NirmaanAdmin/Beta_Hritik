@@ -8133,6 +8133,19 @@ class Purchase_model extends App_Model
         $this->db->update(db_prefix() . $tableName, ['rli_filter' => $status]);
         return true;
     }
+    public function change_aw_unw_order_status($status, $id, $table_name)
+    {
+        if ($table_name === 'pur_orders') {
+            $tableName = 'pur_orders';
+        } elseif ($table_name === 'wo_orders') {
+            $tableName = 'wo_orders';
+        } elseif ($table_name === 'order_tracker') {
+            $tableName = 'pur_order_tracker';
+        }
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . $tableName, ['aw_unw_order_status' => $status]);
+        return true;
+    }
 
     public function change_payment_status($status, $id)
     {

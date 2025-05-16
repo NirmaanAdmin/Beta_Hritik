@@ -327,6 +327,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     $sTable = "(
         SELECT DISTINCT
             po.id,
+            po.aw_unw_order_status as aw_unw_order_status,
             po.pur_order_number AS order_number,
             po.pur_order_name AS order_name,
             po.rli_filter,
@@ -364,6 +365,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     
         SELECT DISTINCT
             wo.id,
+            wo.aw_unw_order_status as aw_unw_order_status,
             wo.wo_order_number AS order_number,
             wo.wo_order_name AS order_name,
             wo.rli_filter,
@@ -401,6 +403,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     
         SELECT DISTINCT
             t.id,
+            t.aw_unw_order_status as aw_unw_order_status,
             t.pur_order_number AS order_number,
             t.pur_order_name AS order_name,
             t.rli_filter,
