@@ -15192,6 +15192,7 @@ class Purchase_model extends App_Model
 
     public function check_approval_setting($project, $related, $response = 0, $user_id = 1)
     {
+        
         $user_id = !empty(get_staff_user_id()) ? get_staff_user_id() : $user_id;
         $check_status = false;
         $intersect = array();
@@ -15199,7 +15200,7 @@ class Purchase_model extends App_Model
         $this->db->where('related', $related);
         $this->db->where('project_id', $project);
         $project_members = $this->db->get(db_prefix() . 'pur_approval_setting')->row();
-
+        
         if (!empty($project_members)) {
             if (!empty($project_members->approver)) {
                 $approver = $project_members->approver;
