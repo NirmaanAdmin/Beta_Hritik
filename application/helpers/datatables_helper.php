@@ -345,7 +345,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.group_pur,
             po.kind,
             po.remarks AS remarks,
-            
+            po.subtotal as subtotal,
             'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
@@ -382,7 +382,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.group_pur,
             wo.kind,
             wo.remarks AS remarks,
-            
+            wo.subtotal as subtotal,
             'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
@@ -419,7 +419,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             t.group_pur,
             t.kind,
             t.remarks AS remarks,
-           
+            t.subtotal as subtotal,
             'order_tracker' AS source_table
         FROM tblpur_order_tracker t
         LEFT JOIN tblpur_vendor pv ON pv.userid = t.vendor

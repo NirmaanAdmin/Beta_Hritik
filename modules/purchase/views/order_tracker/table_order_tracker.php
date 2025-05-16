@@ -221,7 +221,8 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'remarks',
    'group_pur',
    'source_table',
-   'order_number'
+   'order_number',
+   'subtotal',
 ]);
 
 $output  = $result['output'];
@@ -247,7 +248,7 @@ foreach ($rResult as $aRow) {
       // Process specific columns
       if ($column == 'total') {
          $base_currency = get_base_currency_pur();
-         $_data = app_format_money($aRow['total'], $base_currency->symbol);
+         $_data = app_format_money($aRow['subtotal'], $base_currency->symbol);
       } elseif ($column == 'order_name') {
          if ($aRow['source_table'] == "pur_orders") {
             $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' .$aRow['order_number'] .'-'. $aRow['order_name'] . '</a>';
@@ -403,7 +404,7 @@ foreach ($rResult as $aRow) {
 
    $footer_data['total_budget_ro_projection'] += $aRow['budget'];
    $footer_data['total_order_value'] += $aRow['order_value'];
-   $footer_data['total_committed_contract_amount'] += $aRow['total'];
+   $footer_data['total_committed_contract_amount'] += $aRow['subtotal'];
    $footer_data['total_change_order_amount'] += $aRow['co_total'];
    $footer_data['total_rev_contract_value'] += $aRow['total_rev_contract_value'];
    $footer_data['total_anticipate_variation'] += $aRow['anticipate_variation'];

@@ -187,7 +187,7 @@
                               _l('budget_ro_projection'),
                               _l('order_value'),
                               _l('committed_contract_amount'),
-                              _l('change_order_amount'),
+                              _l('change_order_amount'), 
                               _l('total_rev_contract_value'),
                               _l('anticipate_variation'),
                               _l('cost_to_complete'),
@@ -236,8 +236,7 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                              <td></td>
-                              <td></td>
+                              <td></td>                              
                               <td class="total_budget_ro_projection"></td>
                               <td class="total_order_value"></td>
                               <td class="total_committed_contract_amount"></td>
@@ -246,6 +245,7 @@
                               <td class="total_anticipate_variation"></td>
                               <td class="total_cost_to_complete"></td>
                               <td class="total_final_certified_amount"></td>
+                              <td></td>
                               <td></td>
                               <td></td>
                               <td></td>
