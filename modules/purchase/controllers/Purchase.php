@@ -12782,6 +12782,27 @@ class purchase extends AdminController
         die;
     }
 
+    public function order_tracker_id($order_tracker)
+    {
+        $parts = explode('-', $order_tracker);
+
+        if ($parts[1] === 'pur_orders') {
+            $result = $this->purchase_model->get_pur_order($parts[0]);
+            echo json_encode($result);
+            die;
+        } elseif ($parts[1] === 'wo_orders') {
+            $result = $this->purchase_model->get_wo_order($parts[0]);
+            echo json_encode($result);
+            die;
+        } elseif ($parts[1] === 'order_tracker') {
+            $result = $this->purchase_model->get_order_tracker($parts[0]);
+            echo json_encode($result);
+            die;
+        }
+
+        die;
+    }
+
     public function view_paymentcert_file($id, $rel_id)
     {
         $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());

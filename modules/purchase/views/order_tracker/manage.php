@@ -75,7 +75,7 @@
                <div class="row">
                   <div class="_buttons col-md-12">
                      <button class="btn btn-info pull-left mright10 display-block" style="margin-right: 10px;" data-toggle="modal" data-target="#addNewRowModal">
-                     <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
+                        <i class="fa fa-plus"></i> <?php echo _l('New'); ?>
                      </button>
 
                      <div class="all_ot_filters">
@@ -119,11 +119,11 @@
                            $order_tracker_kind_filter = get_module_filter($module_name, 'order_tracker_kind');
                            $order_tracker_kind_filter_val = !empty($order_tracker_kind_filter) ? $order_tracker_kind_filter->filter_value : '';
                            ?>
-                          <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
+                           <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('cat'); ?>">
                               <option value=""></option>
                               <option value="Client Supply" <?php echo ($order_tracker_kind_filter_val == "Client Supply") ? 'selected' : ''; ?>><?php echo _l('client_supply'); ?></option>
                               <option value="Bought out items" <?php echo ($order_tracker_kind_filter_val == "Bought out items") ? 'selected' : ''; ?>><?php echo _l('bought_out_items'); ?></option>
-                          </select>
+                           </select>
                         </div>
 
                         <div class="col-md-3 form-group" style="padding-left: 0px;">
@@ -140,7 +140,7 @@
                            </select>
                         </div>
 
-                         <div class="col-md-3 form-group" style="padding-left: 0px;">
+                        <div class="col-md-3 form-group" style="padding-left: 0px;">
                            <select name="order_type_filter" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('Order Type'); ?>" data-actions-box="true">
                               <option value=""></option>
                               <option value="None">None</option>
@@ -181,7 +181,6 @@
                            <?php
                            $columns = [
                               _l('order_scope'),
-                              _l('rli_filter'),
                               _l('contractor'),
                               _l('order_date'),
                               _l('completion_date'),
@@ -193,6 +192,7 @@
                               _l('anticipate_variation'),
                               _l('cost_to_complete'),
                               _l('final_certified_amount'),
+                              _l('rli_filter'),
                               _l('category'),
                               _l('group_pur'),
                               _l('remarks')
@@ -207,13 +207,12 @@
 
                         </div>
                      </div>
-                     
+
                      <div class="">
                         <table class="dt-table-loading table table-table_order_tracker">
                            <thead>
                               <tr>
                                  <th><?php echo _l('order_scope'); ?></th>
-                                 <th><?php echo _l('rli_filter'); ?></th>
                                  <th><?php echo _l('contractor'); ?></th>
                                  <th><?php echo _l('order_date'); ?></th>
                                  <th><?php echo _l('completion_date'); ?></th>
@@ -225,6 +224,7 @@
                                  <th><?php echo _l('anticipate_variation'); ?></th>
                                  <th><?php echo _l('cost_to_complete'); ?></th>
                                  <th><?php echo _l('final_certified_amount'); ?></th>
+                                 <th><?php echo _l('rli_filter'); ?></th>
                                  <th><?php echo _l('category'); ?></th>
                                  <th><?php echo _l('group_pur'); ?></th>
                                  <th><?php echo _l('remarks'); ?></th>

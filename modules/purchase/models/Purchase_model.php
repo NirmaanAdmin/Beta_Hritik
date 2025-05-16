@@ -6922,9 +6922,19 @@ class Purchase_model extends App_Model
         $data['date_add'] = date('Y-m-d');
         $data['payment_status'] = 0;
         $prefix = get_purchase_option('pur_inv_prefix');
-
+        
         $this->db->where('invoice_number', $data['invoice_number']);
         $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+
+        $order_tracker_number = explode('-', $data['order_tracker_id']);
+
+        $order_tracker_id = $order_tracker_number[0];
+        $order_tracker_table = $order_tracker_number[1];
+
+        if ($order_tracker_table === 'order_tracker') {
+            $this->db->where('id', $order_tracker_id);
+            $this->db->update('tblpur_order_tracker', ['final_certified_amount' => $data['final_certified_amount']]);
+        } 
 
         while ($check_exist_number) {
             $data['number'] = $data['number'] + 1;
@@ -16768,6 +16778,12 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         return $this->db->get(db_prefix() . 'wo_orders')->row();
     }
+
+    public function get_order_tracker($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get(db_prefix() . 'pur_order_tracker')->row();
+    }
     public function get_wo_order_new($id)
     {
 
@@ -17816,11 +17832,11 @@ class Purchase_model extends App_Model
         $co_value = 0;
 
         if ($pur_orders && isset($pur_orders->subtotal)) {
-            if($pur_orders->discount_total > 0){
-                $po_subtotal =  $pur_orders->subtotal - $pur_orders->discount_total; 
-            }else{
+            if ($pur_orders->discount_total > 0) {
+                $po_subtotal =  $pur_orders->subtotal - $pur_orders->discount_total;
+            } else {
                 $po_subtotal =  $pur_orders->subtotal;
-            }            
+            }
         }
 
         // Sum up all change order subtotals
@@ -17947,7 +17963,7 @@ class Purchase_model extends App_Model
             $po_contract_data['po_contract_amount'] = $po_contract_data['wo_contract_amount'];
         } else {
             $po_contract_data = $this->get_po_contract_data($result['po_id'], '', 0);
-        } 
+        }
         $po_contract_amount = $po_contract_data['po_contract_amount'];
 
         $cgst_tax = !empty($result['cgst_tax']) ? str_replace("%", "", $result['cgst_tax']) : 0;
@@ -17983,7 +17999,7 @@ class Purchase_model extends App_Model
         $result['less_ded_1'] = $result['less_1'] + $result['less_ah_1'] + $result['less_aht_1'];
         $result['less_ded_2'] = $result['less_2'] + $result['less_ah_2'] + $result['less_aht_2'];
         $result['less_ded_3'] = $result['less_3'] + $result['less_ah_3'] + $result['less_aht_3'];
-        $result['less_ded_4'] = $result['less_4'] + $result['less_ah_4'] + $result['less_aht_4'] ;
+        $result['less_ded_4'] = $result['less_4'] + $result['less_ah_4'] + $result['less_aht_4'];
         $result['sub_fg_1'] = $result['sub_t_de_1'] - $result['less_ded_1'];
         $result['sub_fg_2'] = $result['sub_t_de_2'] - $result['less_ded_2'];
         $result['sub_fg_3'] = $result['sub_t_de_3'] - $result['less_ded_3'];
@@ -18003,7 +18019,7 @@ class Purchase_model extends App_Model
         $result['labour_cess_4'] = $result['labour_cess_2'] + $result['labour_cess_3'];
         $result['tot_app_tax_1'] = $result['cgst_on_a1'] + $result['sgst_on_a1'] + $result['igst_on_a1'] + $result['labour_cess_1'];
         $result['tot_app_tax_2'] = $result['cgst_on_a2'] + $result['sgst_on_a2'] + $result['igst_on_a2'] + $result['labour_cess_2'];
-        $result['tot_app_tax_3'] = $result['cgst_on_a3'] + $result['sgst_on_a3']  + $result['igst_on_a3']+ $result['labour_cess_3'];
+        $result['tot_app_tax_3'] = $result['cgst_on_a3'] + $result['sgst_on_a3']  + $result['igst_on_a3'] + $result['labour_cess_3'];
         $result['tot_app_tax_4'] = $result['tot_app_tax_2'] + $result['tot_app_tax_3'];
         $result['amount_rec_1'] = $result['sub_fg_1'] + $result['tot_app_tax_1'];
         $result['amount_rec_2'] = $result['sub_fg_2'] + $result['tot_app_tax_2'];
@@ -18539,12 +18555,11 @@ class Purchase_model extends App_Model
 
         if ($wo_orders && isset($wo_orders->subtotal)) {
 
-            if($wo_orders->discount_total > 0){
+            if ($wo_orders->discount_total > 0) {
                 $wo_subtotal = $wo_orders->subtotal - $wo_orders->discount_total;
-            }else{
+            } else {
                 $wo_subtotal = $wo_orders->subtotal;
             }
-            
         }
 
         // Sum up change order subtotals (if any)

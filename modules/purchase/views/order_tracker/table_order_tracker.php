@@ -13,9 +13,9 @@ $order_type_filter_name = 'order_type_filter';
 // Define common columns for both tables
 $aColumns = [
    'order_name', // Will represent 'pur_order_name' or 'wo_order_name'
-   'rli_filter',
+   
    'vendor',
-   'order_date',
+   'order_date', 
    'completion_date',
    'budget',
    'order_value',
@@ -25,6 +25,7 @@ $aColumns = [
    'anticipate_variation',
    'cost_to_complete',
    'final_certified_amount',
+   'rli_filter',
    'kind',
    'group_name',
    'remarks',
@@ -220,6 +221,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'remarks',
    'group_pur',
    'source_table',
+   'order_number'
 ]);
 
 $output  = $result['output'];
@@ -248,9 +250,9 @@ foreach ($rResult as $aRow) {
          $_data = app_format_money($aRow['total'], $base_currency->symbol);
       } elseif ($column == 'order_name') {
          if ($aRow['source_table'] == "pur_orders") {
-            $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+            $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' .$aRow['order_number'] .'-'. $aRow['order_name'] . '</a>';
          } elseif ($aRow['source_table'] == "wo_orders") {
-            $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_name'] . '</a>';
+            $_data = '<a href="' . admin_url('purchase/wo_order/' . $aRow['id']) . '" target="_blank">' .$aRow['order_number'] .'-'. $aRow['order_name'] . '</a>';
          } elseif ($aRow['source_table'] == "order_tracker") {
             $name = $aRow['order_name'];
             $name .= '<div class="row-options">';
@@ -375,7 +377,7 @@ foreach ($rResult as $aRow) {
 
          if (!empty($aRow['final_certified_amount'])) {
             // Display as plain text
-            $_data = '<span class="final-certified-amount-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+            $_data = '<span  data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
                app_format_money($aRow['final_certified_amount'], '₹') .
                '</span>';
          } else {

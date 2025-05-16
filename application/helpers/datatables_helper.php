@@ -84,7 +84,7 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', 'CAST(' . $columnName . ' as DATE)', $sTable);
                 } elseif ($type === 'date_picker_time') {
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', 'CAST(' . $columnName . ' as DATETIME)', $sTable);
-                } elseif($module == 'vendor_billing_tracker' && $columnName == 'tblpur_vendor.company') {
+                } elseif ($module == 'vendor_billing_tracker' && $columnName == 'tblpur_vendor.company') {
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', 'TRIM(LOWER(' . $columnName . '))', $sTable);
                 } else {
                     $sOrder .= hooks()->apply_filters('datatables_query_order_column', $columnName, $sTable);
@@ -253,14 +253,14 @@ function data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where 
             $where = 'WHERE ' . $where;
         }
     }
-   
+
     $join = implode(' ', $join);
 
     $havingSet = '';
     if (!empty($having)) {
         $havingSet = 'HAVING ' . $having;
     }
-   
+
     $resultQuery = '
     SELECT ' . str_replace(' , ', ' ', implode(', ', $allColumns)) . ' ' . $additionalColumns . "
     FROM $sTable
@@ -327,6 +327,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     $sTable = "(
         SELECT DISTINCT
             po.id,
+            po.pur_order_number AS order_number,
             po.pur_order_name AS order_name,
             po.rli_filter,
             pv.company AS vendor,
@@ -340,7 +341,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             (po.total + IFNULL(co.total, 0)) AS total_rev_contract_value, 
             po.anticipate_variation,
             (IFNULL(po.anticipate_variation, 0) + (po.total + IFNULL(co.total, 0))) AS cost_to_complete,
-            inv.final_certified_amount AS final_certified_amount,
+            COALESCE(inv_po_sum.final_certified_amount, 0) AS final_certified_amount,
             po.group_pur,
             po.kind,
             po.remarks AS remarks,
@@ -349,12 +350,21 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
         LEFT JOIN tblco_request co ON co.po_order_id = po.id
-        LEFT JOIN tblpur_invoices inv ON inv.pur_order = po.id
+        LEFT JOIN (
+        SELECT
+            pur_order,
+            SUM(final_certified_amount) AS final_certified_amount
+            FROM tblpur_invoices
+            WHERE pur_order IS NOT NULL
+            GROUP BY pur_order
+        ) AS inv_po_sum
+            ON inv_po_sum.pur_order = po.id
     
         UNION ALL
     
         SELECT DISTINCT
             wo.id,
+            wo.wo_order_number AS order_number,
             wo.wo_order_name AS order_name,
             wo.rli_filter,
             pv.company AS vendor,
@@ -368,7 +378,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             (wo.total + IFNULL(co.total, 0)) AS total_rev_contract_value,
             wo.anticipate_variation,
             (IFNULL(wo.anticipate_variation, 0) + (wo.total + IFNULL(co.total, 0))) AS cost_to_complete,
-            inv.final_certified_amount AS final_certified_amount,
+            COALESCE(inv_wo_sum.final_certified_amount, 0) AS final_certified_amount,
             wo.group_pur,
             wo.kind,
             wo.remarks AS remarks,
@@ -377,12 +387,21 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
         LEFT JOIN tblco_request co ON co.wo_order_id = wo.id
-        LEFT JOIN tblpur_invoices inv ON inv.wo_order = wo.id
+        LEFT JOIN (
+        SELECT
+            wo_order,
+            SUM(final_certified_amount) AS final_certified_amount
+            FROM tblpur_invoices
+            WHERE wo_order IS NOT NULL
+            GROUP BY wo_order
+        ) AS inv_wo_sum
+            ON inv_wo_sum.wo_order = wo.id
     
         UNION ALL
     
         SELECT DISTINCT
             t.id,
+            t.pur_order_number AS order_number,
             t.pur_order_name AS order_name,
             t.rli_filter,
             pv.company AS vendor,
