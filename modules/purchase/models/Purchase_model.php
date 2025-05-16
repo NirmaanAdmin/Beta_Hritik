@@ -5170,7 +5170,7 @@ class Purchase_model extends App_Model
                 <td>
                     ' . $logo . '
                 </td>
-                <td style="position: absolute; float: right;">
+                <td align="right" >
                     <span style="text-align: right; font-size: 25px"><b>' . mb_strtoupper(_l('purchase_order')) . '</b></span><br />
                     <span style="text-align: right;">' . $pur_order->pur_order_number . ' - ' . $pur_order->pur_order_name . '</span><br /><br />   
                     ' . $order_date . '                
@@ -5186,7 +5186,7 @@ class Purchase_model extends App_Model
                 ' . format_organization_info() . '
                  ' . $project_detail . '
             </td>
-            <td style="position: absolute; float: right;">
+            <td align="right">
                 <span style="text-align: right;">' . format_pdf_vendor_info($pur_order->vendor) . '</span><br />
                 ' . $ship_to_detail . '
                 ' . $delivery_date . '
@@ -5268,7 +5268,7 @@ class Purchase_model extends App_Model
             }
             // $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $serial_no = $row['serial_no'];
-            $html .= '<tr nobr="true" class="sortable">
+            $html .= '<tr class="sortable">
             <td style="width: 3%">' . $serial_no . '</td>
             <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
             <td align="left" style="' . $width . '">' . str_replace("<br />", " ", $row['description']) . '</td>

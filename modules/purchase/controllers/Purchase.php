@@ -2833,12 +2833,13 @@ class purchase extends AdminController
     {
         if (!$id) {
             redirect(admin_url('purchase/purchase_request'));
-        }
+        } 
 
         $pur_request = $this->purchase_model->get_purorder_pdf_html($id);
 
         try {
             $pdf = $this->purchase_model->purorder_pdf($pur_request, $id);
+            $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
         } catch (Exception $e) {
             echo pur_html_entity_decode($e->getMessage());
             die;
