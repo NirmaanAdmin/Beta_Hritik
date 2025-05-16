@@ -180,6 +180,7 @@
                            <!-- Column Checkboxes -->
                            <?php
                            $columns = [
+                              _l('order_status'),
                               _l('order_scope'),
                               _l('contractor'),
                               _l('order_date'),

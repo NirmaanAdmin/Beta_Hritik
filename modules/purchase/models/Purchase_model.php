@@ -6922,7 +6922,7 @@ class Purchase_model extends App_Model
         $data['date_add'] = date('Y-m-d');
         $data['payment_status'] = 0;
         $prefix = get_purchase_option('pur_inv_prefix');
-        
+
         $this->db->where('invoice_number', $data['invoice_number']);
         $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
 
@@ -6934,7 +6934,7 @@ class Purchase_model extends App_Model
         if ($order_tracker_table === 'order_tracker') {
             $this->db->where('id', $order_tracker_id);
             $this->db->update('tblpur_order_tracker', ['final_certified_amount' => $data['final_certified_amount']]);
-        } 
+        }
 
         while ($check_exist_number) {
             $data['number'] = $data['number'] + 1;
@@ -15205,7 +15205,7 @@ class Purchase_model extends App_Model
 
     public function check_approval_setting($project, $related, $response = 0, $user_id = 1)
     {
-        
+
         $user_id = !empty(get_staff_user_id()) ? get_staff_user_id() : $user_id;
         $check_status = false;
         $intersect = array();
@@ -15213,7 +15213,7 @@ class Purchase_model extends App_Model
         $this->db->where('related', $related);
         $this->db->where('project_id', $project);
         $project_members = $this->db->get(db_prefix() . 'pur_approval_setting')->row();
-        
+
         if (!empty($project_members)) {
             if (!empty($project_members->approver)) {
                 $approver = $project_members->approver;
@@ -17227,6 +17227,11 @@ class Purchase_model extends App_Model
         return $this->db->get('tblvendor_ratings')->row_array();
     }
 
+    /**
+     * Find the corresponding expenses category id for a given budget head id
+     * @param int $group_pur
+     * @return int
+     */
     public function find_budget_head_value($group_pur)
     {
         $this->db->where('id', $group_pur);
@@ -17241,16 +17246,41 @@ class Purchase_model extends App_Model
         return '';
     }
 
+    /**
+     * Retrieve all changes made to a purchase order.
+     *
+     * @param int $id The ID of the purchase order.
+     * @return array An array of changes related to the specified purchase order.
+     */
+
     public function get_po_changes($id)
     {
         $this->db->where('po_order_id', $id);
         return $this->db->get('tblco_orders')->result_array();
     }
+    /**
+     * Get all changes made to a given work order.
+     *
+     * @param int $id The ID of the work order.
+     * @return array An array of all changes made to the work order.
+     */
     public function get_change_wo_order($id)
     {
         $this->db->where('wo_order_id', $id);
         return $this->db->get('tblco_orders')->result_array();
     }
+
+    /**
+     * Update the budget head for a given purchase invoice.
+     *
+     * This function updates the 'group_pur' field for a specific purchase invoice
+     * identified by its ID with the provided budget ID. If the update is successful,
+     * it returns true; otherwise, it returns false.
+     *
+     * @param int $budgetid The ID of the budget head to set.
+     * @param int $id The ID of the purchase invoice to update.
+     * @return bool True if the update was successful, false otherwise.
+     */
 
     public function change_budget_head($budgetid, $id)
     {
@@ -17262,6 +17292,10 @@ class Purchase_model extends App_Model
         return false;
     }
 
+    /**
+     * Return billing invoices
+     * @return array
+     */
     public function get_billing_invoices()
     {
         $this->db->select('id, title');
@@ -17281,10 +17315,17 @@ class Purchase_model extends App_Model
         return $result;
     }
 
+    /**
+     * Add or update user preferences for a specific module.
+     *
+     * @param array $data Array containing the preferences data, module name, and user ID.
+     * @return bool True if the record was successfully added or updated, false otherwise.
+     */
     public function add_update_preferences($data)
     {
         // Get the preferences data and the current user's ID.
         $preferences = $data['preferences'];
+        $module = $data['module'];
         $user_id = get_staff_user_id();
 
         // Convert the preferences to JSON if necessary.
@@ -17295,16 +17336,19 @@ class Purchase_model extends App_Model
         // Prepare the data array for the query.
         $data = array(
             'staff_id' => $user_id, // Assuming the 'id' column holds the user ID.
-            'datatable_preferences' => $preferences_json
+            'datatable_preferences' => $preferences_json,
+            'module' => $module
         );
 
         // Check if a record already exists for the user.
         $this->db->where('staff_id', $user_id);
+        $this->db->where('module', $module);
         $query = $this->db->get('tbluser_preferences');
 
         if ($query->num_rows() > 0) {
             // Record exists, so update it.
             $this->db->where('staff_id', $user_id);
+            $this->db->where('module', $module);
             return $this->db->update('tbluser_preferences', array('datatable_preferences' => $preferences_json));
         } else {
             // No record found, so insert a new one.
@@ -17312,11 +17356,12 @@ class Purchase_model extends App_Model
         }
     }
 
-    public function get_datatable_preferences()
+    public function get_datatable_preferences($module)
     {
         $this->db->select('datatable_preferences');
         $this->db->from('tbluser_preferences');
         $this->db->where('staff_id', get_staff_user_id());
+        $this->db->where('module', $module);
         $query = $this->db->get();
 
         if ($query->num_rows() > 0) {
@@ -18042,6 +18087,13 @@ class Purchase_model extends App_Model
         return $result;
     }
 
+
+    /**
+     * Function to get payment certificate in pdf format
+     *
+     * @param int $id id of payment certificate
+     * @return string html string of payment certificate
+     */
     public function get_paymentcertificate_pdf_html($id)
     {
         $html = '';
@@ -18540,6 +18592,13 @@ class Purchase_model extends App_Model
         return $this->db->get(db_prefix() . 'payment_certificate')->result_array();
     }
 
+    /**
+     * Fetches the contract data for the given Work Order ID and Payment Certificate ID (if given)
+     * @param  int    $wo_id
+     * @param  string $payment_certificate_id
+     * @param  int    $cal
+     * @return array
+     */
     public function get_wo_contract_data($wo_id, $payment_certificate_id = '', $cal = 1)
     {
         $result = array();
@@ -18604,6 +18663,12 @@ class Purchase_model extends App_Model
 
         return $result;
     }
+    /**
+     * Delete order tracker by id
+     *
+     * @param int $id order tracker id
+     * @return bool
+     */
     public function delete_order_tracker($id)
     {
 
@@ -18618,6 +18683,13 @@ class Purchase_model extends App_Model
         return false;
     }
 
+    /**
+     * Get items shared to current vendor contact
+     *
+     * @param  boolean $parse_string   Whether to return the list as a string
+     * @param  string  $type           Type of share
+     * @return mixed
+     */
     public function get_item_share_to_me($parse_string = false, $type = 'staff')
     {
         $current_date = date('Y-m-d H:i:s');
@@ -18639,6 +18711,13 @@ class Purchase_model extends App_Model
         }
     }
 
+    /**
+     * Get DMS item by id or where condition
+     * @param  integer|string $id        DMS item id
+     * @param  string         $where      Where condition
+     * @param  string         $select     Select columns
+     * @return object|array              DMS item object or array of objects
+     */
     public function get_dms_item($id, $where = '', $select = '')
     {
         if ($select != '') {
@@ -18655,6 +18734,12 @@ class Purchase_model extends App_Model
         }
     }
 
+    /**
+     * breadcrum array
+     * @param  integer $id 
+     * @param  string $creator_type 
+     * @return array     
+     */
     public function breadcrum_array2($id, $creator_type = 'staff')
     {
         $array = [];
@@ -18664,6 +18749,20 @@ class Purchase_model extends App_Model
         }
         return $array;
     }
+
+    /**
+     * Recursively builds a breadcrumb array for a shared item.
+     *
+     * This function retrieves the details of a document management item based on its ID,
+     * and constructs a breadcrumb trail leading up to the root element. It will only
+     * include parent elements that are part of the share_id list.
+     *
+     * @param integer $id The ID of the current item.
+     * @param array $share_id An array of IDs that are shared and should be included in the breadcrumb.
+     * @param array $array The breadcrumb array being constructed.
+     *
+     * @return array The constructed breadcrumb array containing item details.
+     */
 
     public function breadcrum_array_for_share($id, $share_id, $array = [])
     {
@@ -18680,6 +18779,15 @@ class Purchase_model extends App_Model
         return $array;
     }
 
+    /**
+     * Add vendor attachments upload
+     *
+     * @param  array   $uploadedFiles     Array of files that were uploaded
+     * @param  string  $related           Table name of the item that the files are related to.
+     * @param  integer $id                ID of the item that the files are related to.
+     *
+     * @return boolean
+     */
     public function add_vendor_attachments_upload($uploadedFiles, $related, $id)
     {
         if ($uploadedFiles && is_array($uploadedFiles)) {
@@ -18699,6 +18807,18 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Adds completed items for a vendor.
+     *
+     * Iterates over the provided data array and inserts each item into the 
+     * 'vendor_work_completed' database table. The vendor ID is automatically 
+     * retrieved and added to each item before insertion.
+     *
+     * @param array $data An array of completed items data to be added.
+     *
+     * @return bool True on successful insertion of all items.
+     */
+
     public function add_vendor_completed_items($data)
     {
         if (!empty($data)) {
@@ -18710,11 +18830,26 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Retrieves an array of completed items for a given vendor ID.
+     * 
+     * @param int $id The vendor ID.
+     * @return array An array of completed items.
+     */
     public function get_vendor_work_completed($id)
     {
         $this->db->where('vendorid', $id);
         return $this->db->get(db_prefix() . 'vendor_work_completed')->result_array();
     }
+
+    /**
+     * Updates vendor completed items.
+     *
+     * @param array $data An array of completed items data to update. 
+     *                    Each element must contain an 'id' key for identifying the record.
+     *
+     * @return bool Returns true after updating the records.
+     */
 
     public function update_vendor_completed_items($data)
     {
@@ -18727,6 +18862,12 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Delete vendor completed items from the database
+     *
+     * @param array $data array of ids to delete
+     * @return boolean
+     */
     public function delete_vendor_completed_items($data)
     {
         if (!empty($data)) {
@@ -18736,6 +18877,12 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Add vendor work progress items
+     *
+     * @param array $data
+     * @return boolean
+     */
     public function add_vendor_progress_items($data)
     {
         if (!empty($data)) {
@@ -18747,12 +18894,26 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Retrieves a list of vendor work progress items.
+     *
+     * @param int $id The vendor ID.
+     *
+     * @return array An array of vendor work progress items.
+     */
     public function get_vendor_work_progress($id)
     {
         $this->db->where('vendorid', $id);
         return $this->db->get(db_prefix() . 'vendor_work_progress')->result_array();
     }
 
+    /**
+     * Updates vendor progress items.
+     *
+     * @param array $data An array of items to update. Each item should have at least an 'id' key.
+     *
+     * @return bool True if successful.
+     */
     public function update_vendor_progress_items($data)
     {
         if (!empty($data)) {
@@ -18764,6 +18925,13 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Delete vendor progress items
+     *
+     * @param array $data Ids of the items to delete
+     *
+     * @return boolean
+     */
     public function delete_vendor_progress_items($data)
     {
         if (!empty($data)) {
@@ -18772,6 +18940,14 @@ class Purchase_model extends App_Model
         }
         return true;
     }
+
+    /**
+     * Add new vendor completed items for a specific vendor.
+     *
+     * @param array $data The data of the completed items to be added.
+     * @param int $id The ID of the vendor for whom the completed items are being added.
+     * @return bool Returns true if the operation is successful.
+     */
 
     public function add_fresh_vendor_completed_items($data, $id)
     {
@@ -18784,6 +18960,14 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Add new vendor progress items for a specific vendor.
+     *
+     * @param array $data The data of the progress items to be added.
+     * @param int $id The ID of the vendor for whom the progress items are being added.
+     * @return bool Returns true if the operation is successful.
+     */
+
     public function add_fresh_vendor_progress_items($data, $id)
     {
         if (!empty($data)) {
@@ -18795,6 +18979,12 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Get purchase order dashboard
+     *
+     * @param  array  $data  Dashboard filter data
+     * @return array
+     */
     public function get_purchase_order_dashboard($data)
     {
         $response = array();
@@ -18961,6 +19151,12 @@ class Purchase_model extends App_Model
         return $response;
     }
 
+    /**
+     * Get work order dashboard
+     *
+     * @param array $data
+     * @return array
+     */
     public function get_work_order_dashboard($data)
     {
         $response = array();
@@ -19094,6 +19290,14 @@ class Purchase_model extends App_Model
         return $response;
     }
 
+
+    /**
+     * Gets the purchase order attachment with given id.
+     *
+     * @param int $id The id of the attachment
+     *
+     * @return object The attachment
+     */
     public function get_purchase_attachments_with_id($id)
     {
         $this->db->where('id', $id);
@@ -19101,6 +19305,13 @@ class Purchase_model extends App_Model
         $attachments = $this->db->get(db_prefix() . 'purchase_files')->row();
         return $attachments;
     }
+    /**
+     * Gets the work order attachment with given id.
+     *
+     * @param int $id The id of the attachment
+     *
+     * @return object The attachment
+     */
 
     public function get_work_attachments_with_id($id)
     {
@@ -19110,6 +19321,13 @@ class Purchase_model extends App_Model
         return $attachments;
     }
 
+    /**
+     * Gets the estimate attachment with given id.
+     *
+     * @param int $id The id of the attachment
+     *
+     * @return object The attachment
+     */
     public function get_estimate_attachments_with_id($id)
     {
         $this->db->where('id', $id);
@@ -19118,6 +19336,12 @@ class Purchase_model extends App_Model
         return $attachments;
     }
 
+    /**
+     * Save payment certificate files to database
+     *
+     * @param  mixed $id payment certificate id
+     * @return bool
+     */
     public function save_payment_certificate_files($id)
     {
         $uploadedFiles = handle_payment_certificate_attachments_array($id);
@@ -19136,6 +19360,15 @@ class Purchase_model extends App_Model
         return true;
     }
 
+    /**
+     * Retrieves the payment certificate attachments for a given ID.
+     *
+     * @param int $id The ID of the payment certificate.
+     *
+     * @return array An array of attachments associated with the payment certificate,
+     *               ordered by date added in descending order.
+     */
+
     public function get_payment_certificate_attachments($id)
     {
         $this->db->where('rel_id', $id);
@@ -19144,6 +19377,13 @@ class Purchase_model extends App_Model
         return $attachments;
     }
 
+    /**
+     * Deletes a payment certificate file by its ID.
+     *
+     * @param int $id The ID of the payment certificate file to delete.
+     *
+     * @return bool True if the file was deleted successfully, false otherwise.
+     */
     public function delete_payment_certificate_files($id)
     {
         $deleted = false;
@@ -19166,6 +19406,15 @@ class Purchase_model extends App_Model
         return $deleted;
     }
 
+    /**
+     * Retrieve a payment certificate file by its ID.
+     *
+     * @param int  $id     The ID of the payment certificate file.
+     * @param bool $rel_id Optional. The related ID to validate against the file's rel_id.
+     *
+     * @return object|bool The payment certificate file object if found and valid, false otherwise.
+     */
+
     public function get_paymentcert_file($id, $rel_id = false)
     {
         $this->db->where('id', $id);
@@ -19179,6 +19428,12 @@ class Purchase_model extends App_Model
         return $file;
     }
 
+    /**
+     * Get all areas for a project
+     *
+     * @param mixed $project
+     * @return array
+     */
     public function get_areas_by_project($project)
     {
         $this->db->where('project', $project);

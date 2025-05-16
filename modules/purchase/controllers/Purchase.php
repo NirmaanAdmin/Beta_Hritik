@@ -12016,9 +12016,9 @@ class purchase extends AdminController
 
     public function getPreferences()
     {
-
+        $module = $this->input->get('module');
         // Retrieve user preferences using the model
-        $preferences = $this->purchase_model->get_datatable_preferences();
+        $preferences = $this->purchase_model->get_datatable_preferences($module);
         // If no preferences exist, return an empty array (or set defaults)
         if (!$preferences) {
             $preferences = array();

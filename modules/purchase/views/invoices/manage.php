@@ -448,6 +448,9 @@
       $.ajax({
          url: admin_url + 'purchase/getPreferences',
          type: 'GET',
+         data: {
+            module: 'vendor_billing_tracker'
+         },
          dataType: 'json',
          success: function(data) {
             console.log("Retrieved preferences:", data);
@@ -526,7 +529,9 @@
             url: admin_url + 'purchase/savePreferences',
             type: 'POST',
             data: {
-               preferences: preferences
+               preferences: preferences,
+               module: 'vendor_billing_tracker'
+
             },
             success: function(response) {
                console.log('Preferences saved successfully.');
