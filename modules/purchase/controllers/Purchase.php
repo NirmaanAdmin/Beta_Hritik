@@ -10051,6 +10051,7 @@ class purchase extends AdminController
 
         try {
             $pdf = $this->purchase_model->woorder_pdf($wo_order, $id);
+             $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
         } catch (Exception $e) {
             echo pur_html_entity_decode($e->getMessage());
             die;

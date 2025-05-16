@@ -5,5 +5,5 @@ $html = <<<EOF
 $wo_order
 </div>
 EOF;
-
+$html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
 $pdf->writeHTML($html, true, false, true, false, '');
