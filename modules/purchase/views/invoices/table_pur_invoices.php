@@ -33,6 +33,7 @@ $aColumns = [
     'vendor_submitted_tax_amount',
     // 'vendor_submitted_amount',
     'final_certified_amount',
+    'order_tracker_id',
     'vendor_note',
     db_prefix() . 'pur_invoices.id as inv_id',
     'adminnote',
@@ -215,7 +216,7 @@ $billing_status = $this->ci->input->post('billing_status');
 if (isset($billing_status)) {
 
     $where_billing_status = '';
-    if($billing_status == 8) {
+    if ($billing_status == 8) {
         $billing_status = 0;
     }
 
@@ -298,7 +299,7 @@ foreach ($rResult as $aRow) {
         }
         if ($aColumns[$i] == 1) {
             $_data = $sr++;
-        } elseif($aColumns[$i] == '0') {
+        } elseif ($aColumns[$i] == '0') {
             $_data = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';
         } else if ($aColumns[$i] == 'invoice_number') {
             $numberOutput = '';
@@ -346,24 +347,38 @@ foreach ($rResult as $aRow) {
                 $_data = $aRow['invoice_number'];
             }
         } elseif ($aColumns[$i] == db_prefix() . 'pur_invoices.id as inv_id') {
-       
+
             $this->ci->load->model('purchase/purchase_model');
             $attachments = $this->ci->purchase_model->get_purchase_invoice_attachments($aRow['id']);
             $file_html = '';
-        
+
             if (!empty($attachments)) {
-                
+
                 // URL for downloading the attachments as a ZIP file.
                 // Ensure that you have a controller method at purchase/download_invoice_attachments/ that creates the ZIP.
                 $zip_download_url = admin_url('purchase/download_invoice_attachments/' . $aRow['id']);
-                
+
                 $file_html .= '<a href="' . $zip_download_url . '" class="btn btn-primary" download>' . _l('Zip') . '</a>';
                 $file_html .= '<hr>';
             }
-        
+
             $_data = $file_html;
-        }
-        elseif ($aColumns[$i] == 'vendor_note') {
+        } elseif ($aColumns[$i] == 'order_tracker_id') {
+            $order_data = '';
+            $get_order_tracker_detials = get_order_tracker_detials($aRow['order_tracker_id']);
+            list($order_id, $order_type) = explode('-', $aRow['order_tracker_id']);
+
+            if ($order_type === 'pur_orders') {
+                $order_data =  '<span class="inline-block label"><a href="' . admin_url('purchase/pur_order/' . $order_id) . '" target="_blank">' . $get_order_tracker_detials->order_number . '-' . $get_order_tracker_detials->order_name . '</a></span>';
+            } elseif ($order_type === 'wo_orders') {
+                $order_data = '<span class="inline-block label"><a href="' . admin_url('purchase/wo_order/' . $order_id) . '" target="_blank">' . $get_order_tracker_detials->order_number . '-' . $get_order_tracker_detials->order_name . '</a><span>';
+            } elseif ($order_type === 'order_tracker') {
+                $order_data = $get_order_tracker_detials->order_name;
+            } else {
+                $order_data = '';
+            }
+            $_data = $order_data;
+        } elseif ($aColumns[$i] == 'vendor_note') {
             $_data = render_tags($aRow['tags']);
         } elseif ($aColumns[$i] == 'invoice_date') {
             $_data = '<input type="date" class="form-control invoice-date-input" value="' . $aRow['invoice_date'] . '" data-id="' . $aRow['id'] . '">';

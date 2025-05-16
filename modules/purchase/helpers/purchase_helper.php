@@ -4220,3 +4220,36 @@ function get_order_tracker_list()
 
     return $query->result_array();
 }
+
+
+function get_order_tracker_detials($tracker_id)
+{
+    $CI = &get_instance();
+    list($order_id, $order_type) = explode('-', $tracker_id);
+
+    switch ($order_type) {
+        case 'pur_orders':
+            $table   = 'pur_orders';
+            $numCol  = 'pur_order_number';
+            $nameCol = 'pur_order_name';
+            break;
+
+        case 'wo_orders':
+            $table   = 'wo_orders';
+            $numCol  = 'wo_order_number';
+            $nameCol = 'wo_order_name';
+            break;
+
+        default:
+            $table   = 'pur_order_tracker';
+            $numCol  = 'pur_order_number';
+            $nameCol = 'pur_order_name';
+            break;
+    }
+
+    // only select the two aliased fields we care about
+    $CI->db->select("{$numCol} AS order_number, {$nameCol} AS order_name, id");
+    $CI->db->where('id', $order_id);
+
+    return $CI->db->get(db_prefix() . $table)->row();
+}

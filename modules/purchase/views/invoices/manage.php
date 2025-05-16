@@ -49,6 +49,7 @@
    .label-tag .tag {
       display: inline;
    }
+
    .bulk-title {
       text-align: center;
       font-weight: bold;
@@ -233,6 +234,7 @@
                            'amount_without_tax',
                            'vendor_submitted_tax_amount',
                            'certified_amount',
+                           'Base Order',
                            'tag',
                            'attachment',
                            'adminnote',
@@ -251,7 +253,9 @@
                      <table class="dt-table-loading table table-table_pur_invoices">
                         <thead>
                            <tr>
-                              <th style="width: 5px"><span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="table_pur_invoices"><label></label></div></th>
+                              <th style="width: 5px"><span class="hide"> - </span>
+                                 <div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="table_pur_invoices"><label></label></div>
+                              </th>
                               <th>#</th>
                               <th><?php echo _l('invoice_code'); ?></th>
                               <th><?php echo _l('invoice_number'); ?></th>
@@ -264,6 +268,7 @@
                               <th><?php echo _l('amount_without_tax'); ?></th>
                               <th><?php echo _l('vendor_submitted_tax_amount'); ?></th>
                               <th><?php echo _l('final_certified_amount'); ?></th>
+                              <th class="base-order-col"><?php echo _l('Base Order'); ?></th>
                               <th><?php echo _l('tag'); ?></th>
                               <th><?php echo _l('attachment'); ?></th>
                               <th><?php echo _l('adminnote'); ?></th>
