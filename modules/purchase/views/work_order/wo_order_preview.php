@@ -624,7 +624,7 @@ if ($estimate->currency != 0) {
 
                                  <tr id="subtotal">
                                     <?php
-                                    $discount_remarks = !empty($estimate->discount_remarks) ? ' '.$estimate->discount_remarks : ''; 
+                                    $discount_remarks = !empty($estimate->discount_remarks) ? ' ' . $estimate->discount_remarks : '';
                                     ?>
                                     <td><span class="bold">Total Discount<?php echo $discount_remarks; ?>(money)</span>
                                     </td>
@@ -653,18 +653,18 @@ if ($estimate->currency != 0) {
                               </tr>
 
                               <?php
-                              if(!empty($changes)) {
+                              if (!empty($changes)) {
                                  $grand_total = 0;
-                                 foreach ($changes as $ckey => $cvalue) { 
+                                 foreach ($changes as $ckey => $cvalue) {
                                     $grand_total = $grand_total + $cvalue['co_value'];
-                                 ?>
-                                 <tr id="subtotal">
-                                    <td><span class="bold">CO Total for <?php echo $cvalue['pur_order_number']; ?></span>
-                                    </td>
-                                    <td class="subtotal bold">
-                                       <?php echo app_format_money($cvalue['co_value'], $base_currency->symbol); ?>
-                                    </td>
-                                 </tr>
+                              ?>
+                                    <tr id="subtotal">
+                                       <td><span class="bold">CO Total for <?php echo $cvalue['pur_order_number']; ?></span>
+                                       </td>
+                                       <td class="subtotal bold">
+                                          <?php echo app_format_money($cvalue['co_value'], $base_currency->symbol); ?>
+                                       </td>
+                                    </tr>
                                  <?php }
                                  $grand_total = $grand_total + $estimate->total;
                                  ?>
@@ -747,7 +747,7 @@ if ($estimate->currency != 0) {
 
                      // Preview button for images
                      // if ($is_image) {
-                        $file_html .= '<a name="preview-work-order-btn" 
+                     $file_html .= '<a name="preview-work-order-btn" 
                 onclick="preview_work_order_attachment(this); return false;" 
                 rel_id="' . $value['rel_id'] . '" 
                 id="' . $value['id'] . '" 
@@ -1178,38 +1178,62 @@ if ($estimate->currency != 0) {
          });
       });
    });
-   document.getElementById('export-csv').addEventListener('click', function() {
-      // Select the table
-      const table = document.querySelector('.items-preview');
-      const rows = Array.from(table.querySelectorAll('tr'));
+   document.getElementById('export-csv')?.addEventListener('click', function() {
+      try {
+         // Select the table
+         const table = document.querySelector('.items-preview');
+         if (!table) {
+            console.error('Table not found');
+            return;
+         }
 
-      // Initialize CSV content
-      let csvContent = '';
+         // Get all rows (including header if it has th elements)
+         const rows = Array.from(table.querySelectorAll('tr')).filter(row => {
+            // Filter out empty rows
+            return row.querySelector('th, td');
+         });
 
-      // Loop through each row
-      rows.forEach(row => {
-         const cells = Array.from(row.querySelectorAll('th, td'));
-         const rowContent = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
-         csvContent += rowContent + '\n';
-      });
+         if (rows.length === 0) {
+            console.error('No data rows found');
+            return;
+         }
 
-      // Add UTF-8 BOM
-      const bom = '\uFEFF';
+         // Process each row into CSV format
+         const csvContent = rows.map(row => {
+            const cells = Array.from(row.querySelectorAll('th, td'));
+            return cells.map(cell => {
+               // Escape quotes by doubling them and wrap in quotes
+               const text = cell.textContent.trim();
+               return `"${text.replace(/"/g, '""')}"`;
+            }).join(',');
+         }).join('\r\n'); // Using \r\n for proper Windows line endings
 
-      // Create a Blob and downloadable link
-      const blob = new Blob([bom + csvContent], {
-         type: 'text/csv;charset=utf-8;'
-      });
-      const url = URL.createObjectURL(blob);
+         // Create CSV blob with UTF-8 BOM for Excel compatibility
+         const blob = new Blob(['\uFEFF' + csvContent], {
+            type: 'text/csv;charset=utf-8;'
+         });
 
-      // Create a temporary link and trigger download
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'items_export.csv');
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+         // Create download link
+         const url = URL.createObjectURL(blob);
+         const link = document.createElement('a');
+         link.href = url;
+         link.download = 'items_export.csv';
+         link.style.display = 'none';
+
+         // Trigger download
+         document.body.appendChild(link);
+         link.click();
+
+         // Cleanup
+         setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url); // Free up memory
+         }, 100);
+
+      } catch (error) {
+         console.error('CSV export failed:', error);
+         alert('Could not export CSV. Please check console for details.');
+      }
    });
 </script>
 <script>
