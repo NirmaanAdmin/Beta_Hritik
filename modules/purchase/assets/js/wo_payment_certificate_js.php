@@ -239,7 +239,7 @@
 
 				var cgst_on_a2 = $('input[name="cgst_prev_bill"]').val();
 
-				if ((cgst_on_a2 == cgst_on_tax) || (cgst_on_a2 == 0)) {
+				if ((cgst_on_a2 == cgst_on_tax) || (cgst_on_a2 == '')) {
 					$('input[name="cgst_prev_bill"]').val(cgst_on_tax);
 					cgst_on_a2 = cgst_on_tax;
 				} else {
@@ -248,7 +248,7 @@
 
 				var cgst_on_a3 = $('input[name="cgst_this_bill"]').val();
 
-				if ((cgst_on_a3 == cgst_on_tax_2) || (cgst_on_a3 == 0)) {
+				if ((cgst_on_a3 == cgst_on_tax_2) || (cgst_on_a3 == '')) {
 					$('input[name="cgst_this_bill"]').val(cgst_on_tax_2);
 					cgst_on_a3 = cgst_on_tax_2;
 				} else {
@@ -270,7 +270,7 @@
 
 				var sgst_on_a2 = $('input[name="sgst_prev_bill"]').val();
 
-				if ((sgst_on_a2 == sgst_on_tax) || (sgst_on_a2 == 0)) {
+				if ((sgst_on_a2 == sgst_on_tax) || (sgst_on_a2 == '')) {
 					$('input[name="sgst_prev_bill"]').val(sgst_on_tax);
 					sgst_on_a2 = sgst_on_tax;
 				} else {
@@ -279,7 +279,7 @@
 
 				var sgst_on_a3 = $('input[name="sgst_this_bill"]').val();
 
-				if ((sgst_on_a3 == sgst_on_tax_2) || (sgst_on_a3 == 0)) {
+				if ((sgst_on_a3 == sgst_on_tax_2) || (sgst_on_a3 == '')) {
 					$('input[name="sgst_this_bill"]').val(sgst_on_tax_2);
 					sgst_on_a3 = sgst_on_tax_2;
 				} else {
@@ -301,7 +301,7 @@
 
 				var igst_on_a2 = $('input[name="igst_prev_bill"]').val();
 				// igst_on_a2 = igst_on_a2.trim() != "" ? igst_on_a2 : 0;
-				if ((igst_on_a2 == igst_on_tax) || (igst_on_a2 == 0)) {
+				if ((igst_on_a2 == igst_on_tax) || (igst_on_a2 == '')) {
 					$('input[name="igst_prev_bill"]').val(igst_on_tax);
 					igst_on_a2 = igst_on_tax;
 				} else {
@@ -311,7 +311,7 @@
 				var igst_on_a3 = $('input[name="igst_this_bill"]').val();
 				// igst_on_a3 = igst_on_a3.trim() != "" ? igst_on_a3 : 0;
 
-				if ((igst_on_a3 == igst_on_tax_2) || (igst_on_a3 == 0)) {
+				if ((igst_on_a3 == igst_on_tax_2) || (igst_on_a3 == '')) {
 					$('input[name="igst_this_bill"]').val(igst_on_tax_2);
 					igst_on_a3 = igst_on_tax_2;
 				} else {

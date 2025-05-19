@@ -150,7 +150,7 @@
                            </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                            <?php
                            $projects_filter = get_module_filter($module_name, 'projects');
                            $projects_filter_val = !empty($projects_filter) ? explode(",", $projects_filter->filter_value) : '';
