@@ -12,6 +12,7 @@ var expenseDropzone;
         "kind": "[name='kind']",
         "budget_head": "[name='budget_head']",
         "order_type_filter": "[name='order_type_filter']",
+        "projects": "[name='projects[]']"
     };
 
     initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[3, 'desc']);
@@ -31,6 +32,9 @@ var expenseDropzone;
 
     $(document).on('change', 'select[name="vendors[]"]', function () {
         $('select[name="vendors[]"]').selectpicker('refresh');
+    });
+     $(document).on('change', 'select[name="projects[]"]', function () {
+        $('select[name="projects[]"]').selectpicker('refresh');
     });
 
     $(document).on('change', 'select[name="rli_filter"]', function () {

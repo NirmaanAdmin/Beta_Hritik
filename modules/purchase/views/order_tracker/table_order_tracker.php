@@ -9,6 +9,7 @@ $vendors_filter_name = 'vendors';
 $kind_filter_name = 'order_tracker_kind';
 $budget_head_filter_name = 'budget_head';
 $order_type_filter_name = 'order_type_filter';
+$project_filter_name = 'projects';
 
 // Define common columns for both tables
 $aColumns = [
@@ -181,6 +182,25 @@ if (isset($kind)) {
    }
 }
 
+$project = $this->ci->input->post('projects');
+if (isset($project)) {
+   $where_project = '';
+   foreach ($project as $t) {
+      if ($t != '') {
+         if ($where_project == '') {
+            $where_project .= ' AND (project_id = "' . $t . '"';
+         } else {
+            $where_project .= ' or project_id = "' . $t . '"';
+         }
+      }
+   }
+   if ($where_project != '') {
+      $where_project .= ')';
+      array_push($where, $where_project);
+   }
+}
+
+
 $having = '';
 
 $type_filter_value = !empty($this->ci->input->post('type')) ? implode(',', $this->ci->input->post('type')) : NULL;
@@ -200,6 +220,9 @@ update_module_filter($module_name, $budget_head_filter_name, $budget_head_filter
 
 $order_type_filter_name_value = !empty($this->ci->input->post('order_type_filter')) ? $this->ci->input->post('order_type_filter') : NULL;
 update_module_filter($module_name, $order_type_filter_name, $order_type_filter_name_value);
+
+$projects_filter_value = !empty($this->ci->input->post('projects')) ? implode(',', $this->ci->input->post('projects')) : NULL;
+update_module_filter($module_name, $project_filter_name, $projects_filter_value);
 
 // Query and process data
 $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $where, [

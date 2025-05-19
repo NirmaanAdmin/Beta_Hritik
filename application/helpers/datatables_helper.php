@@ -348,6 +348,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.remarks AS remarks,
             po.subtotal as subtotal,
             pr.name as project,
+            pr.id as project_id,
             'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
@@ -388,6 +389,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.remarks AS remarks,
             wo.subtotal as subtotal,
             pr.name as project,
+            pr.id as project_id,
             'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
@@ -428,6 +430,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             t.remarks AS remarks,
             t.subtotal as subtotal,
             pr.name as project,
+            pr.id as project_id,
             'order_tracker' AS source_table
         FROM tblpur_order_tracker t
         LEFT JOIN tblpur_vendor pv ON pv.userid = t.vendor
@@ -540,7 +543,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     $sOrder
     $sLimit
     ";
-    
+
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),
