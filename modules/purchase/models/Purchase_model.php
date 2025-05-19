@@ -1277,7 +1277,36 @@ class Purchase_model extends App_Model
         }
 
         $data['hash'] = app_generate_hash();
+        if ($data['pur_rq_code'] != '' && $data['project'] > 0) {
+            // Get project name
+            $this->db->where('id', $data['project']);
+            $project = $this->db->get(db_prefix() . 'projects')->row();
 
+            if ($project) {
+                // Extract clean 3-letter project code
+                $project_code = strtoupper(preg_replace('/[^a-zA-Z]/', '', substr($project->name, 0, 3)));
+
+                // Split PO number into parts
+                $po_parts = explode('-', $data['pur_rq_code']);
+
+                // Ensure we have at least the base parts (#PO, 00080)
+                if (count($po_parts) >= 2) {
+                    // Reconstruct with project code inserted after sequential number
+                    $new_po_parts = [
+                        $po_parts[0],  // #WO
+                        $po_parts[1],  // 00080
+                        $project_code  // SUR
+                    ];
+
+                    // Add remaining parts if they exist
+                    if (count($po_parts) > 2) {
+                        $new_po_parts = array_merge($new_po_parts, array_slice($po_parts, 2));
+                    }
+
+                    $data['pur_rq_code'] = implode('-', $new_po_parts);
+                }
+            }
+        }
         $this->db->insert(db_prefix() . 'pur_request', $data);
         $insert_id = $this->db->insert_id();
 
@@ -2699,6 +2728,37 @@ class Purchase_model extends App_Model
         if (isset($data['pur_request']) && $data['pur_request'] > 0) {
             $this->db->where('id', $data['pur_request']);
             $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
+        }
+
+        if ($data['pur_order_number'] != '' && $data['project'] > 0) {
+            // Get project name
+            $this->db->where('id', $data['project']);
+            $project = $this->db->get(db_prefix() . 'projects')->row();
+
+            if ($project) {
+                // Extract clean 3-letter project code
+                $project_code = strtoupper(preg_replace('/[^a-zA-Z]/', '', substr($project->name, 0, 3)));
+
+                // Split PO number into parts
+                $po_parts = explode('-', $data['pur_order_number']);
+
+                // Ensure we have at least the base parts (#PO, 00080)
+                if (count($po_parts) >= 2) {
+                    // Reconstruct with project code inserted after sequential number
+                    $new_po_parts = [
+                        $po_parts[0],  // #PO
+                        $po_parts[1],  // 00080
+                        $project_code  // SUR
+                    ];
+
+                    // Add remaining parts if they exist
+                    if (count($po_parts) > 2) {
+                        $new_po_parts = array_merge($new_po_parts, array_slice($po_parts, 2));
+                    }
+
+                    $data['pur_order_number'] = implode('-', $new_po_parts);
+                }
+            }
         }
 
         $this->db->insert(db_prefix() . 'pur_orders', $data);
@@ -16211,6 +16271,37 @@ class Purchase_model extends App_Model
             $this->db->where('id', $data['pur_request']);
             $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
         }
+
+        if ($data['wo_order_number'] != '' && $data['project'] > 0) {
+            // Get project name
+            $this->db->where('id', $data['project']);
+            $project = $this->db->get(db_prefix() . 'projects')->row();
+
+            if ($project) {
+                // Extract clean 3-letter project code
+                $project_code = strtoupper(preg_replace('/[^a-zA-Z]/', '', substr($project->name, 0, 3)));
+
+                // Split PO number into parts
+                $po_parts = explode('-', $data['wo_order_number']);
+
+                // Ensure we have at least the base parts (#PO, 00080)
+                if (count($po_parts) >= 2) {
+                    // Reconstruct with project code inserted after sequential number
+                    $new_po_parts = [
+                        $po_parts[0],  // #WO
+                        $po_parts[1],  // 00080
+                        $project_code  // SUR
+                    ];
+
+                    // Add remaining parts if they exist
+                    if (count($po_parts) > 2) {
+                        $new_po_parts = array_merge($new_po_parts, array_slice($po_parts, 2));
+                    }
+
+                    $data['wo_order_number'] = implode('-', $new_po_parts);
+                }
+            }
+        }
         $this->db->insert(db_prefix() . 'wo_orders', $data);
         $insert_id = $this->db->insert_id();
 
@@ -17512,7 +17603,7 @@ class Purchase_model extends App_Model
         $this->db->update('tblpur_invoices', array('bil_total' => $total));
         return true;
     }
-    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value = '',$project = '')
+    public function create_order_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value = '', $project = '')
     {
         $row = '';
         $name_order_scope = 'order_scope';
