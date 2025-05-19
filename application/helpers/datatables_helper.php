@@ -347,10 +347,12 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.kind,
             po.remarks AS remarks,
             po.subtotal as subtotal,
+            pr.name as project,
             'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
         LEFT JOIN tblco_orders co ON co.po_order_id = po.id
+        LEFT JOIN tblprojects pr ON pr.id = po.project
         LEFT JOIN (
         SELECT
             pur_order,
@@ -385,10 +387,12 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.kind,
             wo.remarks AS remarks,
             wo.subtotal as subtotal,
+            pr.name as project,
             'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
         LEFT JOIN tblco_orders co ON co.wo_order_id = wo.id
+        LEFT JOIN tblprojects pr ON pr.id = wo.project
         LEFT JOIN (
         SELECT
             wo_order,
@@ -412,7 +416,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             t.order_date,
             t.completion_date,
             t.budget,
-             t.order_value,
+            t.order_value,
             t.total AS total,
             t.co_total AS co_total,
             (t.total + IFNULL(t.co_total, 0)) AS total_rev_contract_value,
@@ -423,9 +427,11 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             t.kind,
             t.remarks AS remarks,
             t.subtotal as subtotal,
+            pr.name as project,
             'order_tracker' AS source_table
         FROM tblpur_order_tracker t
         LEFT JOIN tblpur_vendor pv ON pv.userid = t.vendor
+        LEFT JOIN tblprojects pr ON pr.id = t.project
     ) AS combined_orders";
 
 
@@ -534,7 +540,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
     $sOrder
     $sLimit
     ";
-
+    
     $rResult = hooks()->apply_filters(
         'datatables_sql_query_results',
         $CI->db->query($resultQuery)->result_array(),

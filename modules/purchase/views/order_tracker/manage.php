@@ -150,6 +150,15 @@
                            </select>
                         </div>
 
+                        <div class="col-md-3">
+                           <?php
+                           $projects_filter = get_module_filter($module_name, 'projects');
+                           $projects_filter_val = !empty($projects_filter) ? explode(",", $projects_filter->filter_value) : '';
+                           echo render_select('projects[]', $projects, array('id', 'name'), '', $projects_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('project'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
+                           ?>
+                        </div>
+
+
                         <div class="col-md-1 form-group">
                            <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
                               <?php echo _l('reset_filter'); ?>
@@ -188,11 +197,12 @@
                               _l('budget_ro_projection'),
                               _l('order_value'),
                               _l('committed_contract_amount'),
-                              _l('change_order_amount'), 
+                              _l('change_order_amount'),
                               _l('total_rev_contract_value'),
                               _l('anticipate_variation'),
                               _l('cost_to_complete'),
                               _l('final_certified_amount'),
+                              _l('project'),
                               _l('rli_filter'),
                               _l('category'),
                               _l('group_pur'),
@@ -226,6 +236,7 @@
                                  <th><?php echo _l('anticipate_variation'); ?></th>
                                  <th><?php echo _l('cost_to_complete'); ?></th>
                                  <th><?php echo _l('final_certified_amount'); ?></th>
+                                 <th><?php echo _l('project'); ?></th>
                                  <th><?php echo _l('rli_filter'); ?></th>
                                  <th><?php echo _l('category'); ?></th>
                                  <th><?php echo _l('group_pur'); ?></th>
@@ -238,8 +249,8 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                              <td></td>     
-                              <td></td>                         
+                              <td></td>
+                              <td></td>
                               <td class="total_budget_ro_projection"></td>
                               <td class="total_order_value"></td>
                               <td class="total_committed_contract_amount"></td>
@@ -248,6 +259,7 @@
                               <td class="total_anticipate_variation"></td>
                               <td class="total_cost_to_complete"></td>
                               <td class="total_final_certified_amount"></td>
+                              <td></td>
                               <td></td>
                               <td></td>
                               <td></td>
@@ -318,6 +330,7 @@
                               <th align="left"><?php echo _l('change_order_amount'); ?></th>
                               <th align="left"><?php echo _l('anticipate_variation'); ?></th>
                               <th align="left"><?php echo _l('final_certified_amount'); ?></th>
+                              <th align="left"><?php echo _l('project'); ?></th>
                               <th align="left"><?php echo _l('category'); ?></th>
                               <th align="left"><?php echo _l('group_pur'); ?></th>
                               <th align="left"><?php echo _l('remarks'); ?></th>

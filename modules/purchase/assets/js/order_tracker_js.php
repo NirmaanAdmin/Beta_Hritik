@@ -390,7 +390,7 @@
         var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.order-tracker-items-table tbody .item').length + 1;
         lastAddedItemKey = item_key;
         // $("body").append('<div class="dt-loader"></div>');
-        order_get_item_row_template('newitems[' + item_key + ']', data.order_scope, data.vendor, data.order_date, data.completion_date, data.budget_ro_projection, data.committed_contract_amount, data.change_order_amount, data.anticipate_variation, data.final_certified_amount, data.kind, data.group_pur, data.remarks, data.order_value).done(function(output) {
+        order_get_item_row_template('newitems[' + item_key + ']', data.order_scope, data.vendor, data.order_date, data.completion_date, data.budget_ro_projection, data.committed_contract_amount, data.change_order_amount, data.anticipate_variation, data.final_certified_amount, data.kind, data.project,data.group_pur, data.remarks, data.order_value).done(function(output) {
             table_row += output;
 
             $('.invoice-item table.order-tracker-items-table.items tbody').append(table_row);
@@ -422,6 +422,7 @@
         response.change_order_amount = $('.invoice-item .main input[name="change_order_amount"]').val();
         response.anticipate_variation = $('.invoice-item .main input[name="anticipate_variation"]').val();
         response.final_certified_amount = $('.invoice-item .main input[name="final_certified_amount"]').val();
+        response.project = $('.invoice-item .main select[name="project"]').val();
         response.kind = $('.invoice-item .main select[name="kind"]').val();
         response.group_pur = $('.invoice-item .main select[name="group_pur"]').val();
         response.remarks = $('.invoice-item .main textarea[name="remarks"]').val();
@@ -439,7 +440,7 @@
         previewArea.find('select').val('').selectpicker('refresh');
     }
 
-    function order_get_item_row_template(name, order_scope, vendor, order_date, completion_date, budget_ro_projection, committed_contract_amount, change_order_amount, anticipate_variation, final_certified_amount, kind, group_pur, remarks, order_value) {
+    function order_get_item_row_template(name, order_scope, vendor, order_date, completion_date, budget_ro_projection, committed_contract_amount, change_order_amount, anticipate_variation, final_certified_amount, kind,project, group_pur, remarks, order_value) {
         "use strict";
 
         jQuery.ajaxSetup({
@@ -457,6 +458,7 @@
             change_order_amount: change_order_amount,
             anticipate_variation: anticipate_variation,
             final_certified_amount: final_certified_amount,
+            project: project,
             kind: kind,
             group_pur: group_pur,
             remarks: remarks,

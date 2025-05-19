@@ -3552,6 +3552,17 @@ function get_budget_head_list($name_kind, $category)
     }
     return render_select($name_kind, $get_buget_head, array('id', 'name'), '', $selected, array(), array(), '', '', true);
 }
+
+function get_projects_list($name_project,$project){
+    $CI = &get_instance();
+    $CI->load->model('projects_model');
+    $get_project = $CI->projects_model->get();
+    $selected = !empty($project) ? $project : array();
+    if (!is_array($selected)) {
+        $selected = explode(",", $selected);
+    }
+    return render_select($name_project, $get_project, array('id', 'name'), '', $selected, array(), array(), '', '', true);
+}
 function get_sub_head_list($name_sub_head, $sub_head)
 {
     $CI = &get_instance();
@@ -4253,3 +4264,4 @@ function get_order_tracker_detials($tracker_id)
 
     return $CI->db->get(db_prefix() . $table)->row();
 }
+

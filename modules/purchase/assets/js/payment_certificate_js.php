@@ -240,7 +240,7 @@
 
 				var cgst_on_a2 = $('input[name="cgst_prev_bill"]').val();
 
-				if ((cgst_on_a2 == cgst_on_tax) || (cgst_on_a2 == 0)) {
+				if ((cgst_on_a2 == cgst_on_tax) || (cgst_on_a2 == '')) {
 					$('input[name="cgst_prev_bill"]').val(cgst_on_tax);
 					cgst_on_a2 = cgst_on_tax;
 				} else {
@@ -249,7 +249,7 @@
 
 				var cgst_on_a3 = $('input[name="cgst_this_bill"]').val();
 
-				if ((cgst_on_a3 == cgst_on_tax_2) || (cgst_on_a3 == 0)) {
+				if ((cgst_on_a3 == cgst_on_tax_2) || (cgst_on_a3 == '')) {
 					$('input[name="cgst_this_bill"]').val(cgst_on_tax_2);
 					cgst_on_a3 = cgst_on_tax_2;
 				} else {

@@ -25,6 +25,7 @@ $aColumns = [
    'anticipate_variation',
    'cost_to_complete',
    'final_certified_amount',
+   'project',
    'rli_filter',
    'kind',
    'group_name',
@@ -223,6 +224,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'source_table',
    'order_number',
    'subtotal',
+   'project',
 ]);
 
 $output  = $result['output'];
@@ -468,6 +470,8 @@ foreach ($rResult as $aRow) {
 
          $aw_uw .= '</span>';
          $_data = $aw_uw;
+      }elseif ($column == 'project') {
+         $_data = $aRow['project'];
       }
 
       $row[] = $_data;

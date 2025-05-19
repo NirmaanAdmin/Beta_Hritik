@@ -10975,7 +10975,7 @@ class purchase extends AdminController
         $data['title'] = _l('order_tracker');
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
-
+        $data['projects'] = $this->projects_model->get();
         $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
         $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['rli_filters'] = $this->purchase_model->get_all_rli_filters();
@@ -12248,12 +12248,13 @@ class purchase extends AdminController
         $change_order_amount = $this->input->post('change_order_amount');
         $anticipate_variation = $this->input->post('anticipate_variation');
         $final_certified_amount = $this->input->post('final_certified_amount');
+        $project = $this->input->post('project');
         $kind = $this->input->post('kind');
         $group_pur = $this->input->post('group_pur');
         $remarks = $this->input->post('remarks');
         $order_value = $this->input->post('order_value');
 
-        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value);
+        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value,$project);
     }
 
     public function update_billing_remarks()
