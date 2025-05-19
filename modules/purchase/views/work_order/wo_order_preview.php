@@ -656,7 +656,10 @@ if ($estimate->currency != 0) {
                               if (!empty($changes)) {
                                  $grand_total = 0;
                                  foreach ($changes as $ckey => $cvalue) {
-                                    $total_co_value = $cvalue['co_value'] + $cvalue['total_tax'];
+                                    $taxRate = (($cvalue['total_tax'] - $cvalue['subtotal']) / $cvalue['subtotal']) * 100;
+                                    $taxRate = round($taxRate);
+                                    $taxRate = (100 + (float)$taxRate) / 100;
+                                    $total_co_value = $cvalue['co_value'] + ($cvalue['co_value'] * $taxRate);
                                     $grand_total = $grand_total + $total_co_value;
                               ?>
                                     <tr id="subtotal">
@@ -667,7 +670,7 @@ if ($estimate->currency != 0) {
                                        </td>
                                     </tr>
                                  <?php }
-                                 $grand_total = $grand_total + $estimate->subtotal;
+                                 $grand_total = $grand_total + $estimate->total;
                                  ?>
                                  <tr id="subtotal">
                                     <td><span class="bold"><?php echo _l('grand_total'); ?></span>
