@@ -354,7 +354,7 @@
 
                 url: admin_url + 'purchase/savePreferences',
                 type: 'POST',
-                data: { 
+                data: {
                     preferences: preferences,
                     module: 'order_tracker'
 
@@ -528,5 +528,39 @@
             });
         });
 
+    });
+    
+    $('body').on('click', '.contract-amount-display', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var tableType = $(this).data('type');
+        var currentAmount = $(this).text().replace(/[^\d.-]/g, ''); // Remove currency formatting
+
+        // Replace the span with an input field
+        $(this).replaceWith('<input type="number" class="form-control contract-amount-input" value="' + currentAmount + '" data-id="' + rowId + '" data-type="' + tableType + '">');
+    });
+    $('body').on('change', '.contract-amount-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var tableType = $(this).data('type'); // wo_order or pur_order
+        var total = $(this).val();
+
+        // Perform AJAX request to update the budget
+        $.post(admin_url + 'purchase/update_order_tracker_contract_amount', {
+            id: rowId,
+            table: tableType,
+            total: total
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+                let table_order_tracker1 = $('.table-table_order_tracker').DataTable();
+                table_order_tracker1.ajax.reload(null, false); // Reload table without refreshing the page
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
     });
 </script>

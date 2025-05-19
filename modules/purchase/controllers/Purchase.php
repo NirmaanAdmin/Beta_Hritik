@@ -6662,7 +6662,7 @@ class purchase extends AdminController
         $status_labels_aw_uw = [
             1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
             2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
-         ];
+        ];
         $success = $this->purchase_model->change_aw_unw_order_status($status, $id, $table_name);
         $message = $success ? _l('change_aw_unw_order_status_successfully') : _l('changeaw_unw_order_status_fail');
 
@@ -11044,6 +11044,33 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    public function update_order_tracker_contract_amount()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $total = $this->input->post('total');
+
+        if (!$id || !$table || !$total) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        if ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['total' => $total]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('amount_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
     public function update_anticipate_variation()
     {
         $id = $this->input->post('id');

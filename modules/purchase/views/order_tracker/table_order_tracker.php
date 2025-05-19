@@ -247,8 +247,27 @@ foreach ($rResult as $aRow) {
 
       // Process specific columns
       if ($column == 'total') {
-         $base_currency = get_base_currency_pur();
-         $_data = app_format_money($aRow['subtotal'], $base_currency->symbol);
+         if ($aRow['source_table']  == "order_tracker") {
+            $base_currency = get_base_currency_pur();
+            $_data = app_format_money($aRow['total'], $base_currency->symbol);
+
+            // Check if total exists in the database
+            if (!empty($aRow['total'])) {
+               // Display as plain text
+               $_data = '<span class="contract-amount-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+                  app_format_money($aRow['total'], '₹') .
+                  '</span>';
+            } else {
+               // Render as an editable input if no total exists
+               $_data = '<input type="number" class="form-control contract-amount-input" 
+                         placeholder="Enter Conatact Amount" 
+                         data-id="' . $aRow['id'] . '" 
+                         data-type="' . $aRow['source_table'] . '">';
+            }
+         } else {
+            $base_currency = get_base_currency_pur();
+            $_data = app_format_money($aRow['subtotal'], $base_currency->symbol);
+         }
       } elseif ($column == 'order_name') {
          if ($aRow['source_table'] == "pur_orders") {
             $_data = '<a href="' . admin_url('purchase/pur_order/' . $aRow['id']) . '" target="_blank">' . $aRow['order_number'] . '-' . $aRow['order_name'] . '</a>';
@@ -378,9 +397,23 @@ foreach ($rResult as $aRow) {
 
          if (!empty($aRow['final_certified_amount'])) {
             // Display as plain text
-            $_data = '<span  data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
-               app_format_money($aRow['final_certified_amount'], '₹') .
-               '</span>';
+            if ($aRow['source_table'] == 'order_tracker') {
+               if (!empty($aRow['final_certified_amount'])) {
+                  $_data = '<span class="final-certified-amount-display"   data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+                  app_format_money($aRow['final_certified_amount'], '₹') .
+                  '</span>';
+               }else{
+                  $_data = '<input type="number" class="form-control final-certified-amount-input" 
+                     placeholder="Enter Toral Certified Amount" 
+                     data-id="' . $aRow['id'] . '" 
+                     data-type="' . $aRow['source_table'] . '">';
+               }
+               
+            } else {
+               $_data = '<span   data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+                  app_format_money($aRow['final_certified_amount'], '₹') .
+                  '</span>';
+            }
          } else {
             // Render as an editable input if no value exists
             $_data = '<span style="font-style: italic;font-size: 12px;">Please enter the certified amount in Vendor Billing Tracker</span>';
@@ -401,7 +434,7 @@ foreach ($rResult as $aRow) {
          $status_labels_aw_uw = [
             1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
             2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
-            
+
          ];
          // Start generating the HTML
          $aw_uw = '';
@@ -442,7 +475,12 @@ foreach ($rResult as $aRow) {
 
    $footer_data['total_budget_ro_projection'] += $aRow['budget'];
    $footer_data['total_order_value'] += $aRow['order_value'];
-   $footer_data['total_committed_contract_amount'] += $aRow['subtotal'];
+   if ($aRow['source_table'] === 'order_tracker') {
+      $footer_data['total_committed_contract_amount'] += $aRow['total'];
+   } else {
+      $footer_data['total_committed_contract_amount'] += $aRow['subtotal'];
+   }
+
    $footer_data['total_change_order_amount'] += $aRow['co_total'];
    $footer_data['total_rev_contract_value'] += $aRow['total_rev_contract_value'];
    $footer_data['total_anticipate_variation'] += $aRow['anticipate_variation'];

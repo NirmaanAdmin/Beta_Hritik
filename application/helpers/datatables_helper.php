@@ -339,7 +339,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.order_value,
             po.total AS total,
             co.total AS co_total,
-            (po.total + IFNULL(co.total, 0)) AS total_rev_contract_value, 
+            (po.subtotal + IFNULL(co.total, 0)) AS total_rev_contract_value, 
             po.anticipate_variation,
             (IFNULL(po.anticipate_variation, 0) + (po.total + IFNULL(co.total, 0))) AS cost_to_complete,
             COALESCE(inv_po_sum.final_certified_amount, 0) AS final_certified_amount,
@@ -350,7 +350,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
-        LEFT JOIN tblco_request co ON co.po_order_id = po.id
+        LEFT JOIN tblco_orders co ON co.po_order_id = po.id
         LEFT JOIN (
         SELECT
             pur_order,
@@ -377,7 +377,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.order_value,
             wo.total AS total,
             co.total AS co_total,
-            (wo.total + IFNULL(co.total, 0)) AS total_rev_contract_value,
+            (wo.subtotal + IFNULL(co.total, 0)) AS total_rev_contract_value,
             wo.anticipate_variation,
             (IFNULL(wo.anticipate_variation, 0) + (wo.total + IFNULL(co.total, 0))) AS cost_to_complete,
             COALESCE(inv_wo_sum.final_certified_amount, 0) AS final_certified_amount,
@@ -388,7 +388,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
-        LEFT JOIN tblco_request co ON co.wo_order_id = wo.id
+        LEFT JOIN tblco_orders co ON co.wo_order_id = wo.id
         LEFT JOIN (
         SELECT
             wo_order,
