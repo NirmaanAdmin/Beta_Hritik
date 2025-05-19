@@ -13024,4 +13024,223 @@ class purchase extends AdminController
 
         ]);
     }
+
+    /**
+     * import file xlsx vendor payment tracker
+     * @return json
+     */
+    public function import_file_xlsx_vendor_payment_tracker()
+    {
+        $this->load->model('invoices_model');
+        if (!is_admin() && !has_permission('purchase_items', '', 'create')) {
+            access_denied(_l('purchase'));
+        }
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(PURCHASE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(PURCHASE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+
+            /*delete file old before export file*/
+            $path_before = COMMODITY_ERROR_PUR . 'FILE_ERROR_VENDOR_PAYMENT_TRACKER' . get_staff_user_id() . '.xlsx';
+            if (file_exists($path_before)) {
+                unlink(COMMODITY_ERROR_PUR . 'FILE_ERROR_VENDOR_PAYMENT_TRACKER' . get_staff_user_id() . '.xlsx');
+            }
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        $writer_header = array(
+                            _l('invoice_code') => 'string',
+                            _l('bil_payment_date') => 'string',
+                            _l('bil_payment_made') => 'string',
+                            _l('bil_tds') => 'string',
+                            _l('ril_previous') => 'string',
+                            _l('ril_this_bill') => 'string',
+                            _l('ril_date') => 'string',
+                            _l('remarks') => 'string',
+                            _l('error') => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+                        $writer->writeSheetHeader('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr]);
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+
+                        $total_rows = 0;
+                        $total_row_false = 0;
+
+                        for ($row = 1; $row < count($data); $row++) {
+                            $total_rows++;
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+                            $string_error = '';
+                            $flag_id_invoice_id = '';
+                            $pur_invoice_payment_id = '';
+                            $ril_invoice_id = '';
+
+                            $value_invoice_code = isset($data[$row][0]) ? $data[$row][0] : '';
+                            $value_bil_payment_date = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_bil_payment_made = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_bil_tds = isset($data[$row][3]) ? $data[$row][3] : '';
+                            $value_ril_upto_previous = isset($data[$row][4]) ? $data[$row][4] : '';
+                            $value_ril_this_bill = isset($data[$row][5]) ? $data[$row][5] : '';
+                            $value_ril_payment_date = isset($data[$row][6]) ? $data[$row][6] : '';
+                            $value_remarks = isset($data[$row][7]) ? $data[$row][7] : '';
+
+                            if (!empty($value_invoice_code)) {
+                                $this->db->like('invoice_number', $value_invoice_code);
+                                $result = $this->db->get(db_prefix() . 'pur_invoices')->row();
+                                if (empty($result)) {
+                                    $string_error .= _l('invoice_code') . ' ' . _l('does_not_exist');
+                                    $flag2 = 1;
+                                } else {
+                                    $flag_id_invoice_id = $result->id;
+                                }
+                            }
+
+                            if(!empty($value_bil_payment_date) && !empty($flag_id_invoice_id)) {
+                                $value_bil_payment_date = date('Y-m-d', strtotime($value_bil_payment_date));
+                                $bil_payment_date_array = array();
+                                $bil_payment_date_array['id'] = !empty($pur_invoice_payment_id) ? $pur_invoice_payment_id : 0;
+                                $bil_payment_date_array['vbt_id'] = $flag_id_invoice_id;
+                                $bil_payment_date_array['payment_date'] = $value_bil_payment_date;
+                                $pur_invoice_payment_id = $this->purchase_model->update_bil_payment_date($bil_payment_date_array);
+                            }
+
+                            if(!empty($value_bil_payment_made) && !empty($flag_id_invoice_id)) {
+                                $value_bil_payment_made = str_replace(['₹', ','], '', $value_bil_payment_made);
+                                $value_bil_payment_made = (float)$value_bil_payment_made;
+                                $bil_payment_made_array = array();
+                                $bil_payment_made_array['id'] = !empty($pur_invoice_payment_id) ? $pur_invoice_payment_id : 0;
+                                $bil_payment_made_array['vbt_id'] = $flag_id_invoice_id;
+                                $bil_payment_made_array['payment_made'] = $value_bil_payment_made;
+                                $pur_invoice_payment_id = $this->purchase_model->update_bil_payment_made($bil_payment_made_array);
+                                $this->purchase_model->update_final_bil_total($flag_id_invoice_id);
+                            }
+
+                            if(!empty($value_bil_tds) && !empty($flag_id_invoice_id)) {
+                                $value_bil_tds = str_replace(['₹', ','], '', $value_bil_tds);
+                                $value_bil_tds = (float)$value_bil_tds;
+                                $bil_tds_array = array();
+                                $bil_tds_array['id'] = !empty($pur_invoice_payment_id) ? $pur_invoice_payment_id : 0;
+                                $bil_tds_array['vbt_id'] = $flag_id_invoice_id;
+                                $bil_tds_array['payment_tds'] = $value_bil_tds;
+                                $pur_invoice_payment_id = $this->purchase_model->update_bil_payment_tds($bil_tds_array);
+                                $this->purchase_model->update_final_bil_total($flag_id_invoice_id);
+                            }
+
+                            if(!empty($flag_id_invoice_id)) {
+                                $ril_invoice_item = get_ril_invoice_item($flag_id_invoice_id);
+                                if(!empty($ril_invoice_item)) {
+                                    $invoice_data = get_invoice_data($ril_invoice_item->rel_id);
+                                    if(!empty($invoice_data)) {
+                                        // Upto previous (RIL)
+                                        if(!empty($value_ril_upto_previous)) {
+                                            $value_ril_upto_previous = str_replace(['₹', ','], '', $value_ril_upto_previous);
+                                            $value_ril_upto_previous = (float)$value_ril_upto_previous;
+                                            $this->purchase_model->update_ril_payment_details($flag_id_invoice_id, 'ril_previous', $value_ril_upto_previous);
+                                            $this->purchase_model->update_final_ril_total($flag_id_invoice_id);
+                                        }
+
+                                        // This bill (RIL)
+                                        if(!empty($value_ril_this_bill)) {
+                                            $value_ril_this_bill = str_replace(['₹', ','], '', $value_ril_this_bill);
+                                            $value_ril_this_bill = (float)$value_ril_this_bill;
+                                            $this->purchase_model->update_ril_payment_details($flag_id_invoice_id, 'amount', $value_ril_this_bill);
+                                            $this->purchase_model->update_final_ril_total($flag_id_invoice_id);
+                                        }
+
+                                        // RIL Payment date
+                                        if(!empty($value_ril_payment_date)) {
+                                            $value_ril_payment_date = date('Y-m-d', strtotime($value_ril_payment_date));
+                                            $this->purchase_model->update_ril_payment_details($flag_id_invoice_id, 'date', $value_ril_payment_date);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (($flag == 1) || $flag2 == 1) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_invoice_code,
+                                    $value_bil_payment_date,
+                                    $value_bil_payment_made,
+                                    $value_bil_tds,
+                                    $value_ril_upto_previous,
+                                    $value_ril_this_bill,
+                                    $value_ril_payment_date,
+                                    $value_remarks,
+                                    $string_error,
+                                ]);
+                                $total_row_false++;
+                            }
+
+                            if ($flag == 0 && $flag2 == 0) {
+                                $rd = array();
+                                if (!empty($flag_id_invoice_id)) {
+                                    $rd['payment_remarks'] = !empty($value_remarks) ? $value_remarks : '';
+                                    $rows[] = $rd;
+                                    $this->db->where('id', $flag_id_invoice_id);
+                                    $this->db->update(db_prefix() . 'pur_invoices', $rd);
+                                }
+                            }
+                        }
+
+                        $total_rows = $total_rows;
+                        $total_row_success = isset($rows) ? count($rows) : 0;
+                        $dataerror = '';
+                        $message = 'Not enought rows for importing';
+
+                        if ($total_row_false != 0) {
+                            if (!file_exists(FCPATH . PURCHASE_IMPORT_VENDOR_PAYMENT_TRACKER_ERROR)) {
+                                mkdir(FCPATH . PURCHASE_IMPORT_VENDOR_PAYMENT_TRACKER_ERROR, 0755, true);
+                            }
+                            $filename = 'Import_item_error_' . get_staff_user_id() . '_' . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, PURCHASE_IMPORT_VENDOR_PAYMENT_TRACKER_ERROR . $filename, $filename));
+                        }
+                    }
+                } else {
+                    set_alert('warning', _l('import_upload_failed'));
+                }
+            }
+        }
+        echo json_encode([
+            'message'           => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false'   => $total_row_false,
+            'total_rows'        => $total_rows,
+            'site_url'          => site_url(),
+            'staff_id'          => get_staff_user_id(),
+            'filename'          => PURCHASE_IMPORT_VENDOR_PAYMENT_TRACKER_ERROR . $filename,
+
+        ]);
+    }
 }
