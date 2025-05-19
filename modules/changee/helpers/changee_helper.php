@@ -3355,6 +3355,7 @@ function check_any_order_exitsin_po($id, $type)
             $CI->db->select('*');
             $CI->db->from(db_prefix() . 'co_orders');
             $CI->db->where('po_order_id', $id);
+            $CI->db->order_by('id', 'DESC');
             $result = $CI->db->get()->result_array();
             
         }elseif ($type == 'wo_order') {
@@ -3362,6 +3363,7 @@ function check_any_order_exitsin_po($id, $type)
             $CI->db->select('*');
             $CI->db->from(db_prefix() . 'co_orders');
             $CI->db->where('wo_order_id', $id);
+            $CI->db->order_by('id', 'DESC');
             $result = $CI->db->get()->result_array();
         }
 

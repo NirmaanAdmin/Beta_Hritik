@@ -8835,52 +8835,101 @@ class changee extends AdminController
         $pur_order_detail = $this->changee_model->get_pur_order_detail_in_po($pur_order);
         $purchase_order = $this->changee_model->get_purchase_order($pur_order);
         $base_currency = $this->currencies_model->get_base_currency();
-        $taxes = [];
-        $tax_val = [];
-        $tax_name = [];
-        $subtotal = 0;
-        $total = 0;
-        $data_rs = [];
-        $tax_html = '';
-        $estimate_html = '';
-        if (count($pur_order_detail) > 0) {
-            foreach ($pur_order_detail as $key => $item) {
-                $subtotal += $item['into_money'];
-                $total += $item['total'];
-            }
-        }
-
-        $list_item = $this->changee_model->create_changee_order_row_template();
-
-        $currency_rate = 1;
-        $to_currency = $base_currency->id;
-        if ($purchase_order->currency != 0 && $purchase_order->currency_rate != null) {
-            $currency_rate = $purchase_order->currency_rate;
-            $to_currency = $purchase_order->currency;
-        }
-
-        if (count($pur_order_detail) > 0) {
-            $index_quote = 0;
-            foreach ($pur_order_detail as $key => $item) {
-                $index_quote++;
-                $unit_name = pur_get_unit_name($item['unit_id']);
-                $taxname = $item['tax_name'];
-                $item_name = $item['item_text'];
-                if (strlen($item_name) == 0) {
-                    $item_name = pur_get_item_variatiom($item['item_code']);
-                }
-                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $item['unit_id'], $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
-            }
-        }
-
-        $taxes_data = $this->purchase_model->get_html_tax_pur_request($pur_order);
-        $tax_html = $taxes_data['html'];
         $check_pur_existing_in_co = check_any_order_exitsin_po($pur_order, 'pur_order');
         if (!empty($check_pur_existing_in_co)) {
             $true = true;
+            $co_order_details = $this->changee_model->get_co_order_detail($check_pur_existing_in_co[0]['id']);
         } else {
             $true = false;
         }
+
+
+        if ($true) {
+            $taxes = [];
+            $tax_val = [];
+            $tax_name = [];
+            $subtotal = 0;
+            $total = 0;
+            $data_rs = [];
+            $tax_html = '';
+            $estimate_html = '';
+            if (count($co_order_details) > 0) {
+                foreach ($co_order_details as $key => $item) {
+                    $subtotal += $item['into_money'];
+                    $total += $item['total'];
+                }
+            }
+
+            $list_item = $this->changee_model->create_changee_order_row_template();
+
+            $currency_rate = 1;
+            $to_currency = $base_currency->id;
+            if ($purchase_order->currency != 0 && $purchase_order->currency_rate != null) {
+                $currency_rate = $purchase_order->currency_rate;
+                $to_currency = $purchase_order->currency;
+            }
+
+            if (count($co_order_details) > 0) {
+                $index_quote = 0;
+                foreach ($co_order_details as $key => $item) {
+                    $index_quote++;
+                    $unit_name = pur_get_unit_name($item['unit_id']);
+                    $taxname = $item['tax_name'];
+                    $item_name = $item['item_text'];
+                    if (strlen($item_name) == 0) {
+                        $item_name = pur_get_item_variatiom($item['item_code']);
+                    }
+                    $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $item['unit_id'], $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
+                }
+            }
+
+            // $taxes_data = $this->purchase_model->get_html_tax_pur_request($pur_order);
+            // $tax_html = $taxes_data['html'];
+        } else {
+            $taxes = [];
+            $tax_val = [];
+            $tax_name = [];
+            $subtotal = 0;
+            $total = 0;
+            $data_rs = [];
+            $tax_html = '';
+            $estimate_html = '';
+            if (count($pur_order_detail) > 0) {
+                foreach ($pur_order_detail as $key => $item) {
+                    $subtotal += $item['into_money'];
+                    $total += $item['total'];
+                }
+            }
+
+            $list_item = $this->changee_model->create_changee_order_row_template();
+
+            $currency_rate = 1;
+            $to_currency = $base_currency->id;
+            if ($purchase_order->currency != 0 && $purchase_order->currency_rate != null) {
+                $currency_rate = $purchase_order->currency_rate;
+                $to_currency = $purchase_order->currency;
+            }
+
+            if (count($pur_order_detail) > 0) {
+                $index_quote = 0;
+                foreach ($pur_order_detail as $key => $item) {
+                    $index_quote++;
+                    $unit_name = pur_get_unit_name($item['unit_id']);
+                    $taxname = $item['tax_name'];
+                    $item_name = $item['item_text'];
+                    if (strlen($item_name) == 0) {
+                        $item_name = pur_get_item_variatiom($item['item_code']);
+                    }
+                    $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $item['unit_id'], $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
+                }
+            }
+
+            $taxes_data = $this->purchase_model->get_html_tax_pur_request($pur_order);
+            $tax_html = $taxes_data['html'];
+        }
+
+
+
 
         $common_items = [];
         $new_items = [];
@@ -9014,11 +9063,10 @@ class changee extends AdminController
 
         $item_description = $purchase_order->pur_order_name;
 
-        $order_date = date('jS F Y', strtotime($purchase_order->order_date));
-;
+        $order_date = date('jS F Y', strtotime($purchase_order->order_date));;
 
         $subtotal = $purchase_order->subtotal;
-        
+
         echo json_encode([
             'result' => $pur_order_detail,
             'subtotal' => app_format_money(round($subtotal, 2), ''),
@@ -9050,51 +9098,101 @@ class changee extends AdminController
         $wo_order_detail = $this->changee_model->get_wo_order_detail_in_po($wo_order);
         $work_order = $this->changee_model->get_work_order($wo_order);
         $base_currency = $this->currencies_model->get_base_currency();
-        $taxes = [];
-        $tax_val = [];
-        $tax_name = [];
-        $subtotal = 0;
-        $total = 0;
-        $data_rs = [];
-        $tax_html = '';
-        $estimate_html = '';
-        if (count($wo_order_detail) > 0) {
-            foreach ($wo_order_detail as $key => $item) {
-                $subtotal += $item['into_money'];
-                $total += $item['total'];
-            }
-        }
-
-        $list_item = $this->changee_model->create_changee_order_row_template();
-
-        $currency_rate = 1;
-        $to_currency = $base_currency->id;
-        if ($work_order->currency != 0 && $work_order->currency_rate != null) {
-            $currency_rate = $work_order->currency_rate;
-            $to_currency = $work_order->currency;
-        }
-
-        if (count($wo_order_detail) > 0) {
-            $index_quote = 0;
-            foreach ($wo_order_detail as $key => $item) {
-                $index_quote++;
-                $unit_name = pur_get_unit_name($item['unit_id']);
-                $taxname = $item['tax_name'];
-                $item_name = $item['item_text'];
-                if (strlen($item_name) == 0) {
-                    $item_name = pur_get_item_variatiom($item['item_code']);
-                }
-                $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $item['unit_id'], $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
-            }
-        }
-
-        $taxes_data = $this->purchase_model->get_html_tax_pur_request($wo_order);
-        $tax_html = $taxes_data['html'];
         $check_pur_existing_in_co = check_any_order_exitsin_po($wo_order, 'wo_order');
+
         if (!empty($check_pur_existing_in_co)) {
             $true = true;
+            $co_order_details = $this->changee_model->get_co_order_detail($check_pur_existing_in_co[0]['id']);
         } else {
             $true = false;
+        }
+
+        if ($true) {
+
+            $taxes = [];
+            $tax_val = [];
+            $tax_name = [];
+            $subtotal = 0;
+            $total = 0;
+            $data_rs = [];
+            $tax_html = '';
+            $estimate_html = '';
+
+            if (count($co_order_details) > 0) {
+                foreach ($co_order_details as $key => $item) {
+                    $subtotal += $item['into_money'];
+                    $total += $item['total'];
+                }
+            }
+
+            $list_item = $this->changee_model->create_changee_order_row_template();
+
+            $currency_rate = 1;
+            $to_currency = $base_currency->id;
+            if ($work_order->currency != 0 && $work_order->currency_rate != null) {
+                $currency_rate = $work_order->currency_rate;
+                $to_currency = $work_order->currency;
+            }
+
+            if (count($co_order_details) > 0) {
+                $index_quote = 0;
+                foreach ($co_order_details as $key => $item) {
+                    $index_quote++;
+                    $unit_name = pur_get_unit_name($item['unit_id']);
+                    $taxname = $item['tax_name'];
+                    $item_name = $item['item_text'];
+                    if (strlen($item_name) == 0) {
+                        $item_name = pur_get_item_variatiom($item['item_code']);
+                    }
+                    $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $item['unit_id'], $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
+                }
+            }
+
+            // $taxes_data = $this->purchase_model->get_html_tax_pur_request($wo_order);
+
+            // $tax_html = $taxes_data['html'];
+
+        } else {
+            $taxes = [];
+            $tax_val = [];
+            $tax_name = [];
+            $subtotal = 0;
+            $total = 0;
+            $data_rs = [];
+            $tax_html = '';
+            $estimate_html = '';
+            if (count($wo_order_detail) > 0) {
+                foreach ($wo_order_detail as $key => $item) {
+                    $subtotal += $item['into_money'];
+                    $total += $item['total'];
+                }
+            }
+
+            $list_item = $this->changee_model->create_changee_order_row_template();
+
+            $currency_rate = 1;
+            $to_currency = $base_currency->id;
+            if ($work_order->currency != 0 && $work_order->currency_rate != null) {
+                $currency_rate = $work_order->currency_rate;
+                $to_currency = $work_order->currency;
+            }
+
+            if (count($wo_order_detail) > 0) {
+                $index_quote = 0;
+                foreach ($wo_order_detail as $key => $item) {
+                    $index_quote++;
+                    $unit_name = pur_get_unit_name($item['unit_id']);
+                    $taxname = $item['tax_name'];
+                    $item_name = $item['item_text'];
+                    if (strlen($item_name) == 0) {
+                        $item_name = pur_get_item_variatiom($item['item_code']);
+                    }
+                    $list_item .= $this->changee_model->create_changee_order_row_template('newitems[' . $index_quote . ']', $item['item_code'], $item_name, $item['description'], $item['unit_price'], $item['unit_price'], $item['quantity'], $item['quantity'], $item['unit_id'], $item['unit_id'], $item['into_money'], $item['into_money_updated'], $item['prd_id'], $item['tax_value'], $item['total'], $item['tax_name'], $item['tax_rate'], $item['tax'], true, $currency_rate, $to_currency, $item['remarks'], 0);
+                }
+            }
+
+            $taxes_data = $this->purchase_model->get_html_tax_pur_request($wo_order);
+            $tax_html = $taxes_data['html'];
         }
 
         $common_items = [];
