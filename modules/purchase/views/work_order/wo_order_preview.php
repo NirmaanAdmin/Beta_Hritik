@@ -656,17 +656,18 @@ if ($estimate->currency != 0) {
                               if (!empty($changes)) {
                                  $grand_total = 0;
                                  foreach ($changes as $ckey => $cvalue) {
-                                    $grand_total = $grand_total + $cvalue['co_value'];
+                                    $total_co_value = $cvalue['co_value'] + $cvalue['total_tax'];
+                                    $grand_total = $grand_total + $total_co_value;
                               ?>
                                     <tr id="subtotal">
-                                       <td><span class="bold">CO Total for <?php echo $cvalue['pur_order_number']; ?></span>
+                                       <td><span class="bold">CO Total for <?php echo $cvalue['pur_order_number']; ?> with Tax</span>
                                        </td>
                                        <td class="subtotal bold">
-                                          <?php echo app_format_money($cvalue['co_value'], $base_currency->symbol); ?>
+                                          <?php echo app_format_money($total_co_value, $base_currency->symbol); ?>
                                        </td>
                                     </tr>
                                  <?php }
-                                 $grand_total = $grand_total + $estimate->total;
+                                 $grand_total = $grand_total + $estimate->subtotal;
                                  ?>
                                  <tr id="subtotal">
                                     <td><span class="bold"><?php echo _l('grand_total'); ?></span>
