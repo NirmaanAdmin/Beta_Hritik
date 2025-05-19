@@ -1,8 +1,8 @@
-var hidden_columns = [2,3,4,5], table_rec_campaign;
+var hidden_columns = [2, 3, 4, 5], table_rec_campaign;
 Dropzone.autoDiscover = false;
 var expenseDropzone;
-(function($) {
-"use strict";
+(function ($) {
+    "use strict";
     table_rec_campaign = $('.table-table_order_tracker');
 
     var Params = {
@@ -12,14 +12,15 @@ var expenseDropzone;
         "kind": "[name='kind']",
         "budget_head": "[name='budget_head']",
         "order_type_filter": "[name='order_type_filter']",
-        "projects": "[name='projects[]']"
+        "projects": "[name='projects[]']",
+        "aw_unw_order_status": "[name='aw_unw_order_status[]']"
     };
 
-    initDataTable('.table-table_order_tracker', admin_url+'purchase/table_order_tracker', [], [], Params,[3, 'desc']);
+    initDataTable('.table-table_order_tracker', admin_url + 'purchase/table_order_tracker', [], [], Params, [3, 'desc']);
 
-    $.each(Params, function(i, obj) {
+    $.each(Params, function (i, obj) {
         // console.log(obj);
-        $('select' + obj).on('change', function() {
+        $('select' + obj).on('change', function () {
             table_rec_campaign.DataTable().ajax.reload()
                 .columns.adjust()
                 .responsive.recalc();
@@ -33,8 +34,11 @@ var expenseDropzone;
     $(document).on('change', 'select[name="vendors[]"]', function () {
         $('select[name="vendors[]"]').selectpicker('refresh');
     });
-     $(document).on('change', 'select[name="projects[]"]', function () {
+    $(document).on('change', 'select[name="projects[]"]', function () {
         $('select[name="projects[]"]').selectpicker('refresh');
+    });
+    $(document).on('change', 'select[name="aw_unw_order_status[]"]', function () {
+        $('select[name="aw_unw_order_status[]"]').selectpicker('refresh');
     });
 
     $(document).on('change', 'select[name="rli_filter"]', function () {
@@ -81,7 +85,7 @@ function change_rli_filter(status, id, table_name) {
     "use strict";
     if (id > 0) {
         $.post(admin_url + 'purchase/change_rli_filter/' + status + '/' + id + '/' + table_name)
-            .done(function(response) {
+            .done(function (response) {
                 try {
                     response = JSON.parse(response);
 
@@ -117,7 +121,7 @@ function change_rli_filter(status, id, table_name) {
                     alert_float('danger', 'Invalid server response');
                 }
             })
-            .fail(function(xhr, status, error) {
+            .fail(function (xhr, status, error) {
                 console.error('AJAX Error:', error);
                 alert_float('danger', 'Failed to update status');
             });
@@ -128,7 +132,7 @@ function change_aw_unw_order_status(status, id, table_name) {
     "use strict";
     if (id > 0) {
         $.post(admin_url + 'purchase/change_aw_unw_order_status/' + status + '/' + id + '/' + table_name)
-            .done(function(response) {
+            .done(function (response) {
                 try {
                     response = JSON.parse(response);
 
@@ -153,7 +157,7 @@ function change_aw_unw_order_status(status, id, table_name) {
                         // console.log('After:', $statusSpan.attr('class'));
 
                         // Display success message
-                        var table_critical_tracker =$(".table-table_order_tracker");
+                        var table_critical_tracker = $(".table-table_order_tracker");
                         table_critical_tracker.DataTable().ajax.reload();
                         alert_float('success', response.mess);
                     } else {
@@ -165,7 +169,7 @@ function change_aw_unw_order_status(status, id, table_name) {
                     alert_float('danger', 'Invalid server response');
                 }
             })
-            .fail(function(xhr, status, error) {
+            .fail(function (xhr, status, error) {
                 console.error('AJAX Error:', error);
                 alert_float('danger', 'Failed to update status');
             });

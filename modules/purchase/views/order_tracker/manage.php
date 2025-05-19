@@ -106,7 +106,7 @@
                            </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                            <?php
                            $vendors_filter = get_module_filter($module_name, 'vendors');
                            $vendors_filter_val = !empty($vendors_filter) ? explode(",", $vendors_filter->filter_value) : '';
@@ -114,7 +114,7 @@
                            ?>
                         </div>
 
-                        <div class="col-md-3 form-group">
+                        <div class="col-md-2 form-group">
                            <?php
                            $order_tracker_kind_filter = get_module_filter($module_name, 'order_tracker_kind');
                            $order_tracker_kind_filter_val = !empty($order_tracker_kind_filter) ? $order_tracker_kind_filter->filter_value : '';
@@ -126,7 +126,7 @@
                            </select>
                         </div>
 
-                        <div class="col-md-3 form-group" style="padding-left: 0px;">
+                        <div class="col-md-2 form-group" style="padding-left: 0px;">
                            <?php
                            $budget_head_filter = get_module_filter($module_name, 'budget_head');
                            $budget_head_filter_val = !empty($budget_head_filter) ? $budget_head_filter->filter_value : '';
@@ -140,7 +140,7 @@
                            </select>
                         </div>
 
-                        <div class="col-md-3 form-group" style="padding-left: 0px;">
+                        <div class="col-md-2 form-group" style="padding-left: 0px;">
                            <select name="order_type_filter" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('Order Type'); ?>" data-actions-box="true">
                               <option value=""></option>
                               <option value="None">None</option>
@@ -153,11 +153,28 @@
                         <div class="col-md-2">
                            <?php
                            $projects_filter = get_module_filter($module_name, 'projects');
-                           $projects_filter_val = !empty($projects_filter) ? explode(",", $projects_filter->filter_value) : '';
+                           if (!empty($projects_filter) && $projects_filter->filter_value != '') {
+                              $projects_filter_val = !empty($projects_filter) ? explode(",", $projects_filter->filter_value) : '';
+                           } else {
+                              $projects_filter_val = explode(",", 1);
+                           }
+
                            echo render_select('projects[]', $projects, array('id', 'name'), '', $projects_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('project'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
                            ?>
                         </div>
 
+                        <div class="col-md-2 form-group">
+
+                           <?php
+                           $aw_unw_order_status_type_filter = get_module_filter($module_name, 'aw_unw_order_status');
+                           $aw_unw_order_status_type_filter_val = !empty($aw_unw_order_status_type_filter) ? explode(",", $aw_unw_order_status_type_filter->filter_value) : [];
+                           $order_status = [
+                              0 => ['id' => '1', 'name' => _l('Awarded')],
+                              1 => ['id' => '2', 'name' => _l('Unawarded')],
+                           ];
+
+                           echo render_select('aw_unw_order_status[]', $order_status, array('id', 'name'), '', $aw_unw_order_status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Order Status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
+                        </div>
 
                         <div class="col-md-1 form-group">
                            <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">

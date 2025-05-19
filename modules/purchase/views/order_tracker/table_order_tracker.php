@@ -10,6 +10,7 @@ $kind_filter_name = 'order_tracker_kind';
 $budget_head_filter_name = 'budget_head';
 $order_type_filter_name = 'order_type_filter';
 $project_filter_name = 'projects';
+$aw_unw_order_status_filter_name = 'aw_unw_order_status';
 
 // Define common columns for both tables
 $aColumns = [
@@ -201,6 +202,24 @@ if (isset($project)) {
 }
 
 
+$aw_unw_order_status = $this->ci->input->post('aw_unw_order_status');
+if (isset($aw_unw_order_status)) {
+   $where_aw_unw_order_status = '';
+   foreach ($aw_unw_order_status as $t) {
+      if ($t != '') {
+         if ($where_aw_unw_order_status == '') {
+            $where_aw_unw_order_status .= ' AND (aw_unw_order_status = "' . $t . '"';
+         } else {
+            $where_aw_unw_order_status .= ' or aw_unw_order_status = "' . $t . '"';
+         }
+      }
+   }
+   if ($where_aw_unw_order_status != '') {
+      $where_aw_unw_order_status .= ')';
+      array_push($where, $where_aw_unw_order_status);
+   }
+}
+
 $having = '';
 
 $type_filter_value = !empty($this->ci->input->post('type')) ? implode(',', $this->ci->input->post('type')) : NULL;
@@ -223,6 +242,9 @@ update_module_filter($module_name, $order_type_filter_name, $order_type_filter_n
 
 $projects_filter_value = !empty($this->ci->input->post('projects')) ? implode(',', $this->ci->input->post('projects')) : NULL;
 update_module_filter($module_name, $project_filter_name, $projects_filter_value);
+
+$aw_unw_order_status_filter_value = !empty($this->ci->input->post('aw_unw_order_status')) ? implode(',', $this->ci->input->post('aw_unw_order_status')) : NULL;
+update_module_filter($module_name, $aw_unw_order_status_filter_name, $aw_unw_order_status_filter_value);
 
 // Query and process data
 $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $where, [
@@ -493,7 +515,7 @@ foreach ($rResult as $aRow) {
 
          $aw_uw .= '</span>';
          $_data = $aw_uw;
-      }elseif ($column == 'project') {
+      } elseif ($column == 'project') {
          $_data = $aRow['project'];
       }
 
