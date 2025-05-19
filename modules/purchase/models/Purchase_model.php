@@ -17520,17 +17520,19 @@ class Purchase_model extends App_Model
             $this->db->where('id', $id);
             $this->db->where('pur_invoice', $pur_invoice);
             $this->db->update('tblpur_invoice_payment', array('date' => $date));
-            return $id;
+            $pur_invoice_payment_id = $id;
         } else {
             $input = array();
             $input['pur_invoice'] = $pur_invoice;
             $input['date'] = $date;
-            $input['approval_status'] = 1;
+            $input['approval_status'] = 2;
             $input['requester'] = get_staff_user_id();
             $input['daterecorded'] = date('Y-m-d H:i:s');
             $this->db->insert('tblpur_invoice_payment', $input);
-            return $this->db->insert_id();
+            $pur_invoice_payment_id = $this->db->insert_id();
         }
+        $this->update_pur_invoice_payment_status($pur_invoice);
+        return $pur_invoice_payment_id;
     }
 
     public function update_bil_payment_made($data)
@@ -17547,17 +17549,19 @@ class Purchase_model extends App_Model
             $this->db->where('id', $id);
             $this->db->where('pur_invoice', $pur_invoice);
             $this->db->update('tblpur_invoice_payment', array('amount' => $amount));
-            return $id;
+            $pur_invoice_payment_id = $id;
         } else {
             $input = array();
             $input['pur_invoice'] = $pur_invoice;
             $input['amount'] = $amount;
-            $input['approval_status'] = 1;
+            $input['approval_status'] = 2;
             $input['requester'] = get_staff_user_id();
             $input['daterecorded'] = date('Y-m-d H:i:s');
             $this->db->insert('tblpur_invoice_payment', $input);
-            return $this->db->insert_id();
+            $pur_invoice_payment_id = $this->db->insert_id();
         }
+        $this->update_pur_invoice_payment_status($pur_invoice);
+        return $pur_invoice_payment_id;
     }
 
     public function update_bil_payment_tds($data)
@@ -17574,17 +17578,19 @@ class Purchase_model extends App_Model
             $this->db->where('id', $id);
             $this->db->where('pur_invoice', $pur_invoice);
             $this->db->update('tblpur_invoice_payment', array('tds' => $tds));
-            return $id;
+            $pur_invoice_payment_id = $id;
         } else {
             $input = array();
             $input['pur_invoice'] = $pur_invoice;
             $input['tds'] = $tds;
-            $input['approval_status'] = 1;
+            $input['approval_status'] = 2;
             $input['requester'] = get_staff_user_id();
             $input['daterecorded'] = date('Y-m-d H:i:s');
             $this->db->insert('tblpur_invoice_payment', $input);
-            return $this->db->insert_id();
+            $pur_invoice_payment_id = $this->db->insert_id();
         }
+        $this->update_pur_invoice_payment_status($pur_invoice);
+        return $pur_invoice_payment_id;
     }
 
     public function update_final_bil_total($id)
@@ -19538,5 +19544,23 @@ class Purchase_model extends App_Model
         $this->db->where('project', $project);
         $query = $this->db->get(db_prefix() . 'area');
         return $query->result_array();
+    }
+
+    public function update_pur_invoice_payment_status($invoice)
+    {
+        $pur_invoice = $this->get_pur_invoice($invoice);
+        if ($pur_invoice) {
+            $status_inv = $pur_invoice->payment_status;
+            if (purinvoice_left_to_pay($invoice) > 0) {
+                $status_inv = 'partially_paid';
+                if (purinvoice_left_to_pay($invoice) == $pur_invoice->total) {
+                    $status_inv = 'unpaid';
+                }
+            } else {
+                $status_inv = 'paid';
+            }
+            $this->db->where('id', $invoice);
+            $this->db->update(db_prefix() . 'pur_invoices', ['payment_status' => $status_inv]);
+        }
     }
 }
