@@ -1024,11 +1024,12 @@
                                     <div class="modal-content">
                                       <div class="modal-header">
                                         <h4 class="modal-title">Add New Item</h4>
+                                        <h4 class="modal-title">'.get_master_area($iitem['int_master_area']).' - '.get_functionality_area($iitem['int_fun_area']).'</h4>
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         <div class="col-md-3" style="padding-left: 0px">
                                             <div class="form-group">
                                                 <small class="req text-danger">* </small>
-                                                <label class="control-label">Overall area</label>
+                                                <label class="control-label">Overall area (sqft)</label>
                                                 <input type="number" data-oarea="multilevelExpand_'.$iitem['id'].'" name="sub_overall_budget_area['.$iitem['id'].'][sub_overall_budget_area]" class="form-control sub_overall_budget_area_id" style="width: 300px;" value="'.$iitem['sub_overall_budget_area'].'">
                                             </div>
                                         </div>

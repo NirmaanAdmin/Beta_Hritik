@@ -887,9 +887,10 @@
                                     <div class="modal-content">
                                       <div class="modal-header">
                                         <h4 class="modal-title">View Items</h4>
+                                        <h4 class="modal-title">'.get_master_area($iitem['int_master_area']).' - '.get_functionality_area($iitem['int_fun_area']).'</h4>
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         <div class="col-md-3" style="padding-left: 0px">
-                                            <p>Overall area: '.$iitem['sub_overall_budget_area'].'</p>
+                                            <p>Overall area (sqft): '.$iitem['sub_overall_budget_area'].'</p>
                                         </div>
                                         <div class="col-md-9">
                                         </div>
