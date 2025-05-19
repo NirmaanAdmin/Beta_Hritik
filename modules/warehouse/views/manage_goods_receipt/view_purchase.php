@@ -201,7 +201,7 @@
                         $receipt_key++;
                         $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : 0);
                         $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : 0);
-                        $remaining_quantities = $po_quantities - $quantities;
+                        $remaining_quantities = app_format_number($po_quantities - $quantities, true);
                         $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                         $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
                         $goods_money = (isset($receipt_value) ? $receipt_value['goods_money'] : '');

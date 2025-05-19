@@ -1479,7 +1479,40 @@ class Warehouse_model extends App_Model
 		$warehouse_data = $this->warehouse_model->get_warehouse();
 		foreach ($results as $key => $value) {
 
-			if ((float)$value['quantities'] - (float)$value['wh_quantity_received'] > 0) {
+			$available_quantity = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
+			$commodity_code = $value['commodity_code'];
+			$duplicates = array_filter($results, function ($item) use ($commodity_code) {
+				return $item['commodity_code'] == $commodity_code;
+			});
+			if (count($duplicates) > 1) {
+				$non_break_description = $value['description'];
+				$this->db->select(db_prefix() . 'pur_order_detail.quantity');
+				$this->db->like(db_prefix() . 'pur_order_detail.description', $non_break_description);
+				$this->db->where(db_prefix() . 'pur_orders.approve_status', 2);
+				$this->db->where('pur_order', $pur_order);
+				$this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order', 'left');
+				$pur_order_description = $this->db->get(db_prefix() . 'pur_order_detail')->row();
+				if (!empty($pur_order_description)) {
+					$available_quantity = $pur_order_description->quantity;
+				}
+
+				$non_break_description = str_replace("<br />", "", $value['description']);
+				$this->db->select(db_prefix() . 'goods_receipt_detail.quantities');
+				$this->db->like(db_prefix() . 'goods_receipt_detail.description', $non_break_description);
+				$this->db->where(db_prefix() . 'goods_receipt.approval', 1);
+				$this->db->where('pr_order_id', $pur_order);
+				$this->db->join(db_prefix() . 'goods_receipt', db_prefix() . 'goods_receipt.id = ' . db_prefix() . 'goods_receipt_detail.goods_receipt_id', 'left');
+				$goods_receipt_description = $this->db->get(db_prefix() . 'goods_receipt_detail')->result_array();
+				if (!empty($goods_receipt_description)) {
+					$total_quantity = 0;
+					foreach ($goods_receipt_description as $qitem) {
+						$total_quantity += $qitem['quantities'];
+					}
+					$available_quantity = $available_quantity - $total_quantity;
+				}
+			}
+			$available_quantity = app_format_number($available_quantity, true);
+			if ($available_quantity > 0) {
 
 				$unit_price = round((float)$value['unit_price'] / $currency_rate, 5);
 
@@ -1496,15 +1529,15 @@ class Warehouse_model extends App_Model
 				$production_status = $value['production_status'];
 				$note = null;
 				$commodity_name = wh_get_item_variatiom($value['commodity_code']);
-				$quantities = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
+				$quantities = $available_quantity;
 				$sub_total = 0;
 
 				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, 0, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'], $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true, '', $value['description'], $payment_date, $est_delivery_date, $production_status);
 				$production_approval_item .= $this->create_goods_receipt_production_approvals_template('approvalsitems[' . $index . ']', $value['description'], $commodity_name, '', '', '', '', $value['commodity_code']);
-				$total_goods_money_temp = ((float)$value['quantities'] - (float)$value['wh_quantity_received']) * (float)$unit_price;
+				$total_goods_money_temp = $available_quantity * (float)$unit_price;
 				$total_goods_money += $total_goods_money_temp;
-				$arr_results[$index]['quantities'] = (float)$value['quantities'] - (float)$value['wh_quantity_received'];
-				$arr_results[$index]['goods_money'] = ((float)$value['quantities'] - (float)$value['wh_quantity_received']) * (float)$unit_price;
+				$arr_results[$index]['quantities'] = $available_quantity;
+				$arr_results[$index]['goods_money'] = $available_quantity * (float)$unit_price;
 
 
 				//get tax value
@@ -14634,7 +14667,7 @@ class Warehouse_model extends App_Model
 		$clients_attr = ["onchange" => "get_vehicle('" . $name_commodity_code . "','" . $name_unit_id . "','" . $name_warehouse_id . "');", "data-none-selected-text" => _l('customer_name'), 'data-customer_id' => 'invoice'];
 
 		$row .= '<td class="">' . render_textarea($name_commodity_name, '', $commodity_name, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
-		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description_placeholder')]) . '</td>';
+		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
 		$row .= '<td class="warehouse_select">' .
 			// render_select_with_input_group($name_warehouse_id, $warehouse_data,array('warehouse_id','warehouse_name'),'',$warehouse_id,'<a href="javascript:void(0)" onclick="new_vehicle_reg(this,\''.$name_commodity_code.'\', \''.$name_warehouse_id.'\');return false;"><i class="fa fa-plus"></i></a>', ["data-none-selected-text" => _l('warehouse_name')]).
 			render_select($name_warehouse_id, $warehouse_data, array('warehouse_id', 'warehouse_name'), '', $warehouse_id, [], ["data-none-selected-text" => _l('warehouse_name')], 'no-margin') .
