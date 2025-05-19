@@ -406,10 +406,24 @@ foreach ($rResult as $aRow) {
 
          // Check if anticipate_variation exists in the database
          if (!empty($aRow['co_total'])) {
-            // Display as plain text
-            $_data = '<span class="co-total-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
-               app_format_money($aRow['co_total'], '₹') .
-               '</span>';
+            if ($aRow['source_table'] == "order_tracker") {
+               if (!empty($aRow['co_total'])) {
+                  // Display as plain text
+                  $_data = '<span class="co-total-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+                     app_format_money($aRow['co_total'], '₹') .
+                     '</span>';
+               } else {
+                  $_data = '<input type="number" class="form-control co-total-input"
+                           placeholder="Enter Change Order"
+                           data-id="' . $aRow['id'] . '"
+                           data-type="' . $aRow['source_table'] . '">';
+               }
+            } else {
+               // Display as plain text
+               $_data = '<span class="" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+                  app_format_money($aRow['co_total'], '₹') .
+                  '</span>';
+            }
          } else {
             // Render as an editable input if no value exists
             // $_data = '<input type="number" class="form-control co-total-input"
@@ -447,15 +461,14 @@ foreach ($rResult as $aRow) {
             if ($aRow['source_table'] == 'order_tracker') {
                if (!empty($aRow['final_certified_amount'])) {
                   $_data = '<span class="final-certified-amount-display"   data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
-                  app_format_money($aRow['final_certified_amount'], '₹') .
-                  '</span>';
-               }else{
+                     app_format_money($aRow['final_certified_amount'], '₹') .
+                     '</span>';
+               } else {
                   $_data = '<input type="number" class="form-control final-certified-amount-input" 
                      placeholder="Enter Toral Certified Amount" 
                      data-id="' . $aRow['id'] . '" 
                      data-type="' . $aRow['source_table'] . '">';
                }
-               
             } else {
                $_data = '<span   data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
                   app_format_money($aRow['final_certified_amount'], '₹') .
