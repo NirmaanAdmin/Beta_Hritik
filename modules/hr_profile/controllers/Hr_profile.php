@@ -2166,6 +2166,7 @@ class Hr_profile extends AdminController {
 			$this->app->get_table_data(module_views_path('hr_profile', 'table_staff'));
 		}
 		$data['departments'] = $this->departments_model->get();
+		
 		$data['staff_members'] = $this->hr_profile_model->get_staff('', ['active' => 1]);
 		$data['title'] = _l('hr_hr_profile');
 		$data['dep_tree'] = json_encode($this->hr_profile_model->get_department_tree());
@@ -3423,7 +3424,7 @@ class Hr_profile extends AdminController {
 					$training_temp['training_program_point'] = $training_results['training_program_point'];
 					$training_temp['staff_training_result'] = $training_results['staff_training_result'];
 
-					//have not done the test data 
+					//have not done the test data
 					$staff_training_result = [];
 					foreach ($training_temp['list_training'] as $key => $value) {
 						$staff_training_result[$value['training_id']] = [
@@ -5627,7 +5628,7 @@ class Hr_profile extends AdminController {
 
 		$data['hr_profile_member_add'] = true;
 		$title = _l('add_new', _l('staff_member_lowercase'));
-
+ 
 		$this->load->model('currencies_model');
 		$data['positions'] = $this->hr_profile_model->get_job_position();
 		$data['workplace'] = $this->hr_profile_model->get_workplace();
@@ -5688,7 +5689,7 @@ class Hr_profile extends AdminController {
 				$manage_staff = false;
 				if (isset($data['manage_staff'])) {
 					$manage_staff = true;
-					unset($data['manage_staff']);
+					unset($data['manage_staff']); 
 				}
 				hr_profile_handle_staff_profile_image_upload($id);
 				$response = $this->hr_profile_model->update_staff($data, $id);
@@ -6154,7 +6155,7 @@ class Hr_profile extends AdminController {
 
 			$months_report = $months_report;
 			if ($months_report == '' || !isset($months_report)) {
-				$staff_list = $this->staff_model->get();
+				$staff_list = $this->staff_model->get('',['active' => 1]);
 			}
 			if ($months_report == 'this_month') {
 

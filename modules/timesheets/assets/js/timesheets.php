@@ -5,6 +5,7 @@
   var dataCol = <?php echo html_entity_decode($set_col_tk); ?>;
   var dataHeader = <?php echo html_entity_decode($day_by_month_tk); ?>;
   var dataCellBackground = <?php echo json_encode($cell_background); ?>;
+  var height_window = $(window).height();
   var show_popup_when_cell_click = false;
   (function() {
     "use strict";
@@ -16,6 +17,7 @@
       data: dataObject,
       columns: dataCol,
       licenseKey: 'non-commercial-and-evaluation',
+      height: height_window - 200,
       stretchH: 'all',
       autoWrapRow: true,
       headerTooltips: true,
@@ -62,11 +64,6 @@
       }
     };
     var hot = new Handsontable(hotElement, hotSettings);
-
-
-
-
-
 
     appValidateForm($('#import-timesheets-form'), {
       file_timesheets: 'required',
@@ -291,7 +288,7 @@
       if ($('input[name="is_edit"]').val() == 0) {
         var month = $("#month_timesheets").val();
         if (typeof month == 'undefined') {
-          month = $('input[name="current_month"]').val();
+          month = $('input[name="current_month"]').val(); 
         }
         data.month = month;
         $.post(admin_url + 'timesheets/show_detail_timesheets', data).done(function(response) {
