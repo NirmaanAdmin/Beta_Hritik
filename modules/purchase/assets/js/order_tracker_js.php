@@ -390,7 +390,7 @@
         var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.order-tracker-items-table tbody .item').length + 1;
         lastAddedItemKey = item_key;
         // $("body").append('<div class="dt-loader"></div>');
-        order_get_item_row_template('newitems[' + item_key + ']', data.order_scope, data.vendor, data.order_date, data.completion_date, data.budget_ro_projection, data.committed_contract_amount, data.change_order_amount, data.anticipate_variation, data.final_certified_amount, data.kind, data.project,data.group_pur, data.remarks, data.order_value).done(function(output) {
+        order_get_item_row_template('newitems[' + item_key + ']', data.order_scope, data.vendor, data.order_date, data.completion_date, data.budget_ro_projection, data.committed_contract_amount, data.change_order_amount, data.anticipate_variation, data.final_certified_amount, data.kind, data.project, data.group_pur, data.remarks, data.order_value).done(function(output) {
             table_row += output;
 
             $('.invoice-item table.order-tracker-items-table.items tbody').append(table_row);
@@ -440,7 +440,7 @@
         previewArea.find('select').val('').selectpicker('refresh');
     }
 
-    function order_get_item_row_template(name, order_scope, vendor, order_date, completion_date, budget_ro_projection, committed_contract_amount, change_order_amount, anticipate_variation, final_certified_amount, kind,project, group_pur, remarks, order_value) {
+    function order_get_item_row_template(name, order_scope, vendor, order_date, completion_date, budget_ro_projection, committed_contract_amount, change_order_amount, anticipate_variation, final_certified_amount, kind, project, group_pur, remarks, order_value) {
         "use strict";
 
         jQuery.ajaxSetup({
@@ -531,7 +531,7 @@
         });
 
     });
-    
+
     $('body').on('click', '.contract-amount-display', function(e) {
         e.preventDefault();
 
@@ -565,4 +565,71 @@
             }
         });
     });
+
+    const VENDORS_LIST = [
+        <?php foreach ($vendors as $st): ?> {
+                userid: <?php echo $st['userid']; ?>,
+                name: "<?php echo addslashes($st['company']); ?>"
+            },
+        <?php endforeach; ?>
+    ];
+    const DATA = {
+        select_vendor: "<?php echo addslashes(_l('')); ?>"
+    };
+
+    // click-to-edit: span → selectpicker
+    $('body').on('click', '.vendor-display', function(e) {
+        e.preventDefault();
+        const $span = $(this);
+        const id = $span.data('id');
+        const vendorId = ($span.data('vendor') || '').toString();
+
+        // build select for single selection
+        let sel = '<select ' +
+            'class="form-control vendor-input selectpicker" ' +
+            'data-live-search="true" ' +
+            'data-width="100%" ' +
+            'data-id="' + id + '">' +
+            '<option value="">' + DATA.select_vendor + '</option>';
+
+        VENDORS_LIST.forEach(st => {
+            const selAttr = vendorId === st.userid.toString() ? ' selected' : '';
+            sel += '<option value="' + st.userid + '"' + selAttr + '>' + st.name + '</option>';
+        });
+        sel += '</select>';
+
+        $span.replaceWith(sel);
+
+        // init the plugin
+        const $new = $('select.vendor-input[data-id="' + id + '"]');
+        $new.selectpicker().focus();
+    });
+
+    // on change, post and swap back to span
+    $('body')
+        .off('change', '.vendor-input')
+        .on('change', '.vendor-input', function() {
+            const $sel = $(this);
+            const id = $sel.data('id');
+            const val = $sel.val(); // single ID
+
+            $.post(admin_url + 'purchase/change_vendor', {
+                id: id,
+                vendor: val
+            }).done(function() {
+                // rebuild display span
+                const selectedVendor = VENDORS_LIST.find(u => u.userid == val);
+                const name = selectedVendor ? selectedVendor.name : '';
+
+                const span = '<span class="vendor-display" ' +
+                    'data-id="' + id + '" ' +
+                    'data-vendor="' + (val || '') + '">' +
+                    name +
+                    '</span>';
+
+                // tear down the picker and swap in the span
+                $sel.selectpicker('destroy').replaceWith(span);
+                table_order_tracker.DataTable().ajax.reload();
+            });
+        });
 </script>

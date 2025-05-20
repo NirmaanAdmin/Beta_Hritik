@@ -285,6 +285,9 @@ $footer_data = [
    'total_cost_to_complete' => 0,
    'total_final_certified_amount' => 0,
 ];
+$this->ci->load->model('purchase/purchase_model');
+$vendor_list  = $this->ci->purchase_model->get_vendor();
+$vendor_by_id       = array_column($vendor_list,  null, 'userid');
 
 $sr = 1;
 foreach ($rResult as $aRow) {
@@ -330,7 +333,47 @@ foreach ($rResult as $aRow) {
             $_data = $name;
          }
       } elseif ($column == 'vendor') {
-         $_data = '<a href="#">' . $aRow['vendor'] . '</a>';
+
+         if ($aRow['source_table'] == "order_tracker") {
+            $vendor_raw = trim($aRow['vendor_id']);
+            if ($vendor_raw !== '') {
+               // Vendor is already selected
+               $name = '';
+               if (isset($vendor_by_id[$vendor_raw])) {
+                  $u = $vendor_by_id[$vendor_raw];
+                  $name = $u['company'];
+               }
+               $_data = '<span class="vendor-display" 
+                           data-id="' . $aRow['id'] . '" 
+                           data-vendor="' . html_escape($vendor_raw) . '">'
+                  . html_escape($name) .
+                  '</span>';
+            } else {
+               // No vendor selected - show dropdown
+               $_data = '<select class="form-control vendor-input selectpicker" 
+                           data-live-search="true" 
+                           data-width="100%" 
+                           data-id="' . $aRow['id'] . '">
+                           <option value="">' . _l('') . '</option>';
+
+               foreach ($vendor_by_id as $vendor) {
+                  $_data .= '<option value="' . $vendor['userid'] . '">'
+                     . html_escape($vendor['company'])
+                     . '</option>';
+               }
+
+               $_data .= '</select>';
+
+               // Initialize selectpicker if it exists
+               $_data .= '<script>
+                           if($.fn.selectpicker) {
+                              $(".vendor-input").selectpicker();
+                           }
+                        </script>';
+            }
+         } else {
+            $_data = $aRow['vendor'];
+         }
       } elseif ($column == 'order_date') {
          $_data = _d($aRow['order_date']);
       } elseif ($column == 'completion_date') {
@@ -542,7 +585,6 @@ foreach ($rResult as $aRow) {
    } else {
       $footer_data['total_committed_contract_amount'] += $aRow['subtotal'];
    }
-
    $footer_data['total_change_order_amount'] += $aRow['co_total'];
    $footer_data['total_rev_contract_value'] += $aRow['total_rev_contract_value'];
    $footer_data['total_anticipate_variation'] += $aRow['anticipate_variation'];

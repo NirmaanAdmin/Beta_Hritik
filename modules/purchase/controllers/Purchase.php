@@ -10848,7 +10848,7 @@ class purchase extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
-                                $list_item .= $this->purchase_model->create_order_tracker_row_template('newitems[' . $index_quote . ']', $value_cell_order_scope, '', $value_cell_order_date, $value_cell_completion_date, $value_cell_budget, $value_cell_contract_amount, $value_cell_change_order, $value_cell_anticipate_variation, $value_cell_total_certified_amount, '', '', $value_cell_total_remaks,$value_cell_order_value,'');
+                                $list_item .= $this->purchase_model->create_order_tracker_row_template('newitems[' . $index_quote . ']', $value_cell_order_scope, '', $value_cell_order_date, $value_cell_completion_date, $value_cell_budget, $value_cell_contract_amount, $value_cell_change_order, $value_cell_anticipate_variation, $value_cell_total_certified_amount, '', '', $value_cell_total_remaks, $value_cell_order_value, '');
 
                                 $index_quote++;
                                 $total_rows_data++;
@@ -12254,7 +12254,7 @@ class purchase extends AdminController
         $remarks = $this->input->post('remarks');
         $order_value = $this->input->post('order_value');
 
-        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value,$project);
+        echo $this->purchase_model->create_order_tracker_row_template($name, $order_scope, $vendor, $order_date, $completion_date, $budget_ro_projection, $committed_contract_amount, $change_order_amount, $anticipate_variation, $final_certified_amount, $kind, $group_pur, $remarks, $order_value, $project);
     }
 
     public function update_billing_remarks()
@@ -13126,7 +13126,7 @@ class purchase extends AdminController
                                 }
                             }
 
-                            if(!empty($value_bil_payment_date) && !empty($flag_id_invoice_id)) {
+                            if (!empty($value_bil_payment_date) && !empty($flag_id_invoice_id)) {
                                 $value_bil_payment_date = date('Y-m-d', strtotime($value_bil_payment_date));
                                 $bil_payment_date_array = array();
                                 $bil_payment_date_array['id'] = !empty($pur_invoice_payment_id) ? $pur_invoice_payment_id : 0;
@@ -13135,7 +13135,7 @@ class purchase extends AdminController
                                 $pur_invoice_payment_id = $this->purchase_model->update_bil_payment_date($bil_payment_date_array);
                             }
 
-                            if(!empty($value_bil_payment_made) && !empty($flag_id_invoice_id)) {
+                            if (!empty($value_bil_payment_made) && !empty($flag_id_invoice_id)) {
                                 $value_bil_payment_made = str_replace(['₹', ','], '', $value_bil_payment_made);
                                 $value_bil_payment_made = (float)$value_bil_payment_made;
                                 $bil_payment_made_array = array();
@@ -13146,7 +13146,7 @@ class purchase extends AdminController
                                 $this->purchase_model->update_final_bil_total($flag_id_invoice_id);
                             }
 
-                            if(!empty($value_bil_tds) && !empty($flag_id_invoice_id)) {
+                            if (!empty($value_bil_tds) && !empty($flag_id_invoice_id)) {
                                 $value_bil_tds = str_replace(['₹', ','], '', $value_bil_tds);
                                 $value_bil_tds = (float)$value_bil_tds;
                                 $bil_tds_array = array();
@@ -13157,13 +13157,13 @@ class purchase extends AdminController
                                 $this->purchase_model->update_final_bil_total($flag_id_invoice_id);
                             }
 
-                            if(!empty($flag_id_invoice_id)) {
+                            if (!empty($flag_id_invoice_id)) {
                                 $ril_invoice_item = get_ril_invoice_item($flag_id_invoice_id);
-                                if(!empty($ril_invoice_item)) {
+                                if (!empty($ril_invoice_item)) {
                                     $invoice_data = get_invoice_data($ril_invoice_item->rel_id);
-                                    if(!empty($invoice_data)) {
+                                    if (!empty($invoice_data)) {
                                         // Upto previous (RIL)
-                                        if(!empty($value_ril_upto_previous)) {
+                                        if (!empty($value_ril_upto_previous)) {
                                             $value_ril_upto_previous = str_replace(['₹', ','], '', $value_ril_upto_previous);
                                             $value_ril_upto_previous = (float)$value_ril_upto_previous;
                                             $this->purchase_model->update_ril_payment_details($flag_id_invoice_id, 'ril_previous', $value_ril_upto_previous);
@@ -13171,7 +13171,7 @@ class purchase extends AdminController
                                         }
 
                                         // This bill (RIL)
-                                        if(!empty($value_ril_this_bill)) {
+                                        if (!empty($value_ril_this_bill)) {
                                             $value_ril_this_bill = str_replace(['₹', ','], '', $value_ril_this_bill);
                                             $value_ril_this_bill = (float)$value_ril_this_bill;
                                             $this->purchase_model->update_ril_payment_details($flag_id_invoice_id, 'amount', $value_ril_this_bill);
@@ -13179,7 +13179,7 @@ class purchase extends AdminController
                                         }
 
                                         // RIL Payment date
-                                        if(!empty($value_ril_payment_date)) {
+                                        if (!empty($value_ril_payment_date)) {
                                             $value_ril_payment_date = date('Y-m-d', strtotime($value_ril_payment_date));
                                             $this->purchase_model->update_ril_payment_details($flag_id_invoice_id, 'date', $value_ril_payment_date);
                                         }
@@ -13242,5 +13242,43 @@ class purchase extends AdminController
             'filename'          => PURCHASE_IMPORT_VENDOR_PAYMENT_TRACKER_ERROR . $filename,
 
         ]);
+    }
+
+    public function change_vendor()
+    {
+        $id = $this->input->post('id');
+        $vendorId = $this->input->post('vendor'); // Expecting single vendor ID
+
+        // Basic validation
+        if (!$id || $vendorId === null) {
+            echo json_encode([
+                'success' => false,
+                'message' => _l('invalid_request')
+            ]);
+            return;
+        }
+
+        // Convert to integer (empty string becomes 0)
+        $vendorId = (int)trim($vendorId);
+
+        // Update database with single vendor ID (or empty if 0)
+        $this->db->where('id', $id);
+        $success = $this->db->update(
+            db_prefix() . 'pur_order_tracker',
+            ['vendor' => $vendorId ? $vendorId : null] // Store NULL if 0
+        );
+
+        if ($success) {
+            echo json_encode([
+                'success' => true,
+                'message' => _l('vendor_updated_successfully'),
+                'vendor_id' => $vendorId
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => _l('update_failed')
+            ]);
+        }
     }
 }
