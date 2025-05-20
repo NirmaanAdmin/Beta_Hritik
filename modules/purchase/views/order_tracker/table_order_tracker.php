@@ -334,46 +334,46 @@ foreach ($rResult as $aRow) {
          }
       } elseif ($column == 'vendor') {
 
-         if ($aRow['source_table'] == "order_tracker") {
-            $vendor_raw = trim($aRow['vendor_id']);
-            if ($vendor_raw !== '') {
-               // Vendor is already selected
-               $name = '';
-               if (isset($vendor_by_id[$vendor_raw])) {
-                  $u = $vendor_by_id[$vendor_raw];
-                  $name = $u['company'];
-               }
-               $_data = '<span class="vendor-display" 
-                           data-id="' . $aRow['id'] . '" 
-                           data-vendor="' . html_escape($vendor_raw) . '">'
-                  . html_escape($name) .
-                  '</span>';
-            } else {
-               // No vendor selected - show dropdown
-               $_data = '<select class="form-control vendor-input selectpicker" 
-                           data-live-search="true" 
-                           data-width="100%" 
-                           data-id="' . $aRow['id'] . '">
-                           <option value="">' . _l('') . '</option>';
+         // if ($aRow['source_table'] == "order_tracker") {
+         //    $vendor_raw = trim($aRow['vendor_id']);
+         //    if ($vendor_raw !== '') {
+         //       // Vendor is already selected
+         //       $name = '';
+         //       if (isset($vendor_by_id[$vendor_raw])) {
+         //          $u = $vendor_by_id[$vendor_raw];
+         //          $name = $u['company'];
+         //       }
+         //       $_data = '<span class="vendor-display" 
+         //                   data-id="' . $aRow['id'] . '" 
+         //                   data-vendor="' . html_escape($vendor_raw) . '">'
+         //          . html_escape($name) .
+         //          '</span>';
+         //    } else {
+         //       // No vendor selected - show dropdown
+         //       $_data = '<select class="form-control vendor-input selectpicker" 
+         //                   data-live-search="true" 
+         //                   data-width="100%" 
+         //                   data-id="' . $aRow['id'] . '">
+         //                   <option value="">' . _l('') . '</option>';
 
-               foreach ($vendor_by_id as $vendor) {
-                  $_data .= '<option value="' . $vendor['userid'] . '">'
-                     . html_escape($vendor['company'])
-                     . '</option>';
-               }
+         //       foreach ($vendor_by_id as $vendor) {
+         //          $_data .= '<option value="' . $vendor['userid'] . '">'
+         //             . html_escape($vendor['company'])
+         //             . '</option>';
+         //       }
 
-               $_data .= '</select>';
+         //       $_data .= '</select>';
 
-               // Initialize selectpicker if it exists
-               $_data .= '<script>
-                           if($.fn.selectpicker) {
-                              $(".vendor-input").selectpicker();
-                           }
-                        </script>';
-            }
-         } else {
+         //       // Initialize selectpicker if it exists
+         //       $_data .= '<script>
+         //                   if($.fn.selectpicker) {
+         //                      $(".vendor-input").selectpicker();
+         //                   }
+         //                </script>';
+         //    }
+         // } else {
             $_data = $aRow['vendor'];
-         }
+         // }
       } elseif ($column == 'order_date') {
         
          if($aRow['source_table'] == "order_tracker") {
@@ -409,6 +409,7 @@ foreach ($rResult as $aRow) {
          ];
          // Start generating the HTML
          $rli_filter = '';
+         
          if (isset($status_labels[$aRow['rli_filter']])) {
             $status = $status_labels[$aRow['rli_filter']];
             $rli_filter = '<span class="inline-block label label-' . $status['label'] . '" id="status_span_' . $aRow['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
