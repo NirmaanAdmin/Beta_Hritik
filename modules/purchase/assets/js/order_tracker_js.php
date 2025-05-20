@@ -605,14 +605,20 @@
         $new.selectpicker().focus();
     });
 
-    // on change, post and swap back to span
+
     $('body')
-        .off('change', '.vendor-input')
         .on('change', '.vendor-input', function() {
             const $sel = $(this);
             const id = $sel.data('id');
             const val = $sel.val(); // single ID
-
+            var html = '';
+            html += '<div class="Box">';
+            html += '<span>';
+            html += '<span></span>';
+            html += '</span>';
+            html += '</div>';
+            $('#box-loading').html(html);
+            $('#loader-container').removeClass('hide');
             $.post(admin_url + 'purchase/change_vendor', {
                 id: id,
                 vendor: val
@@ -628,8 +634,15 @@
                     '</span>';
 
                 // tear down the picker and swap in the span
-                $sel.selectpicker('destroy').replaceWith(span);
-                table_order_tracker.DataTable().ajax.reload();
+                // $sel.selectpicker('destroy').replaceWith(span);
+                let table_order_tracker2 = $('.table-table_order_tracker').DataTable();
+
+                // Reload table and hide loading when complete
+                table_order_tracker2.ajax.reload(function() {
+                    // This callback runs after the table has finished reloading
+                    $('#box-loading').html('');
+                    $('#loader-container').addClass('hide');
+                }, false); // The false parameter prevents resetting pagination
             });
         });
 </script>

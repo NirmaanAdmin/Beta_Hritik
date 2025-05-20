@@ -139,13 +139,16 @@
                               <?php } ?>
                            </select>
                         </div>
-
+                        <?php
+                        $order_type_filter_filter = get_module_filter($module_name, 'order_type_filter');
+                        $order_type_filter_val = !empty($order_type_filter_filter) ? $order_type_filter_filter->filter_value : '';
+                        ?>
                         <div class="col-md-2 form-group" style="padding-left: 0px;">
                            <select name="order_type_filter" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('Order Type'); ?>" data-actions-box="true">
                               <option value=""></option>
                               <option value="None">None</option>
-                              <option value="fetched">Fetched</option>
-                              <option value="created">Created</option>
+                              <option value="fetched" <?php echo ($order_type_filter_val == "fetched") ? 'selected' : ''; ?>>Fetched</option>
+                              <option value="created" <?php echo ($order_type_filter_val == "created") ? 'selected' : ''; ?>>Created</option>
 
                            </select>
                         </div>

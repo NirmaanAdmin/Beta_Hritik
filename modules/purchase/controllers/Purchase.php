@@ -13272,7 +13272,7 @@ class purchase extends AdminController
             echo json_encode([
                 'success' => true,
                 'message' => _l('vendor_updated_successfully'),
-                'vendor_id' => $vendorId
+                'vendor' => $vendorId
             ]);
         } else {
             echo json_encode([
