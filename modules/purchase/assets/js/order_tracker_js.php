@@ -28,6 +28,28 @@
                 }
             });
         });
+        $('body').on('change', '.order-date-input', function(e) {
+            e.preventDefault();
+
+            var rowId = $(this).data('id');
+            var tableType = $(this).data('type'); // wo_order or pur_order
+            var orderDate = $(this).val();
+
+            // Perform AJAX request to update the oder date
+            $.post(admin_url + 'purchase/update_order_date', {
+                id: rowId,
+                table: tableType,
+                orderDate: orderDate
+            }).done(function(response) {
+                response = JSON.parse(response);
+                if (response.success) {
+                    alert_float('success', response.message);
+                    table_order_tracker.ajax.reload(null, false); // Reload table without refreshing the page
+                } else {
+                    alert_float('danger', response.message);
+                }
+            });
+        });
         // Inline editing for "budget"
         $('body').on('change', '.budget-input', function(e) {
             e.preventDefault();

@@ -6662,6 +6662,7 @@ class purchase extends AdminController
         $status_labels_aw_uw = [
             1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
             2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
+            3 => ['label' => 'warning', 'table' => 'awarded_by_ril', 'text' => _l('Awarded by RIL')],
         ];
         $success = $this->purchase_model->change_aw_unw_order_status($status, $id, $table_name);
         $message = $success ? _l('change_aw_unw_order_status_successfully') : _l('changeaw_unw_order_status_fail');
@@ -11009,6 +11010,37 @@ class purchase extends AdminController
 
         if ($success) {
             echo json_encode(['success' => true, 'message' => _l('completion_date_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_order_date()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $order_date = $this->input->post('orderDate');
+
+        if (!$id || !$table || !$order_date) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Determine the table to update
+        // $tableName = $table === 'wo_orders' ? 'tblwo_orders' : 'tblpur_orders';
+        if ($table === 'pur_orders') {
+            $tableName = 'tblpur_orders';
+        } elseif ($table === 'wo_orders') {
+            $tableName = 'tblwo_orders';
+        } elseif ($table === 'order_tracker') {
+            $tableName = 'tblpur_order_tracker';
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update($tableName, ['order_date' => $order_date]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('order_date_updated')]);
         } else {
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }

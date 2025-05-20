@@ -174,6 +174,7 @@
                            $order_status = [
                               0 => ['id' => '1', 'name' => _l('Awarded')],
                               1 => ['id' => '2', 'name' => _l('Unawarded')],
+                              2 => ['id' => '3', 'name' => _l('Awarded by RIL')],
                            ];
 
                            echo render_select('aw_unw_order_status[]', $order_status, array('id', 'name'), '', $aw_unw_order_status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Order Status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>

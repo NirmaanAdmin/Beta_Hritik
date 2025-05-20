@@ -375,7 +375,17 @@ foreach ($rResult as $aRow) {
             $_data = $aRow['vendor'];
          }
       } elseif ($column == 'order_date') {
-         $_data = _d($aRow['order_date']);
+        
+         if($aRow['source_table'] == "order_tracker") {
+            // Inline editable input for Order Date
+            $_data = '<input type="date" class="form-control order-date-input" 
+                        value="' . $aRow['order_date'] . '" 
+                        data-id="' . $aRow['id'] . '" 
+                        data-type="' . $aRow['source_table'] . '">';
+
+         }else{
+             $_data = _d($aRow['order_date']);
+         }
       } elseif ($column == 'completion_date') {
          // Inline editable input for Completion Date
          $_data = '<input type="date" class="form-control completion-date-input" 
@@ -537,7 +547,7 @@ foreach ($rResult as $aRow) {
          $status_labels_aw_uw = [
             1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
             2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
-
+            3 => ['label' => 'warning', 'table' => 'awarded_by_ril', 'text' => _l('Awarded by RIL')],
          ];
          // Start generating the HTML
          $aw_uw = '';
