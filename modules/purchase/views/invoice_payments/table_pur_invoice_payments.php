@@ -143,6 +143,8 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.wo_order',
     db_prefix() . 'items_groups.name',
     db_prefix() . 'pur_invoices.description_services',
+    'ril.id as ril_invoice_id',
+    'ril.title as ril_invoice_title',
 ]);
 
 $output  = $result['output'];
@@ -175,10 +177,13 @@ foreach ($rResult as $aRow) {
         }
 
         $ril_invoice_link = '';
-        $ril_invoice_item = get_ril_invoice_item($aRow['id']);
-        if(!empty($ril_invoice_item)) {
-            $invoice_data = get_invoice_data($ril_invoice_item->rel_id);
-            $ril_invoice_link = '<a href="' . admin_url('invoices/list_invoices/' . $invoice_data->id) . '">' . $invoice_data->title . '</a>';
+        // $ril_invoice_item = get_ril_invoice_item($aRow['id']);
+        // if(!empty($ril_invoice_item)) {
+        //     $invoice_data = get_invoice_data($ril_invoice_item->rel_id);
+        //     $ril_invoice_link = '<a href="' . admin_url('invoices/list_invoices/' . $invoice_data->id) . '">' . $invoice_data->title . '</a>';
+        // }
+        if(!empty($aRow['ril_invoice_id'])) {
+            $ril_invoice_link = '<a href="' . admin_url('invoices/list_invoices/' . $aRow['ril_invoice_id']) . '">' . $aRow['ril_invoice_title'] . '</a>';
         }
 
         if (strpos($aColumns[$i], 'as') !== false && !isset($aRow[$aColumns[$i]])) {
