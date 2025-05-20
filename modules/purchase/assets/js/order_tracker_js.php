@@ -566,83 +566,68 @@
         });
     });
 
+    // Build a JS array of all vendors (no trailing comma)
     const VENDORS_LIST = [
         <?php foreach ($vendors as $st): ?> {
-                userid: <?php echo $st['userid']; ?>,
+                userid: "<?php echo $st['userid']; ?>",
                 name: "<?php echo addslashes($st['company']); ?>"
-            },
+            }
+            <?php if (end($vendors) !== $st) echo ','; ?>
         <?php endforeach; ?>
     ];
+
+    // Provide a human-friendly default
     const DATA = {
-        select_vendor: "<?php echo addslashes(_l('')); ?>"
+        select_vendor: "<?php echo addslashes(_l('select_vendor', 'Select vendor')); ?>"
     };
 
-    // click-to-edit: span → selectpicker
+    // On click, swap the span for a selectpicker
     $('body').on('click', '.vendor-display', function(e) {
         e.preventDefault();
         const $span = $(this);
         const id = $span.data('id');
-        const vendorId = ($span.data('vendor') || '').toString();
+        const selId = ($span.data('vendor') || '').toString();
 
-        // build select for single selection
-        let sel = '<select ' +
-            'class="form-control vendor-input selectpicker" ' +
-            'data-live-search="true" ' +
-            'data-width="100%" ' +
-            'data-id="' + id + '">' +
-            '<option value="">' + DATA.select_vendor + '</option>';
+        // Build <select>
+        let sel = `<select
+                   class="form-control vendor-input selectpicker"
+                   data-live-search="true"
+                   data-width="100%"
+                   data-id="${id}">
+                   <option value="">${DATA.select_vendor}</option>`;
 
-        VENDORS_LIST.forEach(st => {
-            const selAttr = vendorId === st.userid.toString() ? ' selected' : '';
-            sel += '<option value="' + st.userid + '"' + selAttr + '>' + st.name + '</option>';
+        VENDORS_LIST.forEach(v => {
+            const selected = (v.userid.toString() === selId) ? ' selected' : '';
+            sel += `<option value="${v.userid}"${selected}>${v.name}</option>`;
         });
         sel += '</select>';
 
+        // Replace span → select and init
         $span.replaceWith(sel);
-
-        // init the plugin
-        const $new = $('select.vendor-input[data-id="' + id + '"]');
+        const $new = $(`select.vendor-input[data-id="${id}"]`);
         $new.selectpicker().focus();
     });
 
+    // On change, post the new vendor, then reload the row via DataTables
+    $('body').on('changed.bs.select', '.vendor-input', function(e, clickedIndex, isSelected, previousValue) {
+        const $sel = $(this);
+        const id = $sel.data('id');
+        const val = $sel.val();
 
-    $('body')
-        .on('change', '.vendor-input', function() {
-            const $sel = $(this);
-            const id = $sel.data('id');
-            const val = $sel.val(); // single ID
-            var html = '';
-            html += '<div class="Box">';
-            html += '<span>';
-            html += '<span></span>';
-            html += '</span>';
-            html += '</div>';
-            $('#box-loading').html(html);
-            $('#loader-container').removeClass('hide');
-            $.post(admin_url + 'purchase/change_vendor', {
-                id: id,
+        // show loader…
+        $('#box-loading').html('<div class="Box"><span><span></span></span></div>');
+        $('#loader-container').removeClass('hide');
+
+        $.post(admin_url + 'purchase/change_vendor', {
+                id,
                 vendor: val
-            }).done(function() {
-                // rebuild display span
-                const selectedVendor = VENDORS_LIST.find(u => u.userid == val);
-                const name = selectedVendor ? selectedVendor.name : '';
-
-                const span = '<span class="vendor-display" ' +
-                    'data-id="' + id + '" ' +
-                    'data-vendor="' + (val || '') + '">' +
-                    name +
-                    '</span>';
-
-                // tear down the picker and swap in the span
-                // $sel.selectpicker('destroy').replaceWith(span);
-                let table_order_tracker2 = $('.table-table_order_tracker').DataTable();
-
-                // Reload table and hide loading when complete
-                table_order_tracker2.ajax.reload(function() {
-                    // This callback runs after the table has finished reloading
-                    $('#box-loading').html('');
+            })
+            .done(function() {
+                const table = $('.table-table_order_tracker').DataTable();
+                table.ajax.reload(function() {
+                    $('#box-loading').empty();
                     $('#loader-container').addClass('hide');
-                }, false); // The false parameter prevents resetting pagination
+                }, false);
             });
-        });
+    });
 </script>
