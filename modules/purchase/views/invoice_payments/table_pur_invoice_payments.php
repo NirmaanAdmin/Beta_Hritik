@@ -8,6 +8,7 @@ $to_date_filter_name = 'to_date';
 $vendors_filter_name = 'vendors';
 $budget_head_filter_name = 'budget_head';
 $billing_invoices_filter_name = 'billing_invoices';
+$bil_payment_status_filter_name = 'bil_payment_status';
 
 $aColumns = [
     1,
@@ -66,6 +67,16 @@ if ($this->ci->input->post('billing_invoices') && $this->ci->input->post('billin
     }
 }
 
+if ($this->ci->input->post('bil_payment_status') && $this->ci->input->post('bil_payment_status') != '') {
+    if ($this->ci->input->post('bil_payment_status') == "paid") {
+        array_push($where, 'AND (payment_status = "paid")');
+    } else if ($this->ci->input->post('bil_payment_status') == "partially_paid") {
+        array_push($where, 'AND (payment_status = "partially_paid")');
+    } else {
+        array_push($where, 'AND (payment_status != "partially_paid" AND payment_status != "paid")');
+    }
+}
+
 if (!has_permission('purchase_invoices', '', 'view')) {
     array_push($where, 'AND (' . db_prefix() . 'pur_invoices.add_from = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_invoices.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
 }
@@ -118,6 +129,9 @@ update_module_filter($module_name, $budget_head_filter_name, $budget_head_filter
 
 $billing_invoices_filter_name_value = !empty($this->ci->input->post('billing_invoices')) ? $this->ci->input->post('billing_invoices') : NULL;
 update_module_filter($module_name, $billing_invoices_filter_name, $billing_invoices_filter_name_value);
+
+$bil_payment_status_filter_name_value = !empty($this->ci->input->post('bil_payment_status')) ? $this->ci->input->post('bil_payment_status') : NULL;
+update_module_filter($module_name, $bil_payment_status_filter_name, $bil_payment_status_filter_name_value);
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'pur_invoices.id as id',

@@ -910,3 +910,4 @@ $lang['mobilization_advance'] = 'Mobilization Advance payment';
 $lang['order_status'] = 'Order Status';
 $lang['change_aw_unw_order_status_successfully'] = 'Order status updated successfully';
 $lang['changeaw_unw_order_status_fail'] = 'Failed to update order status';
+$lang['bil_payment_status'] = 'BIL Payment Status';

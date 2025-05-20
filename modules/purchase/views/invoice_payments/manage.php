@@ -132,6 +132,19 @@
                               </select>
                            </div>
 
+                           <div class="col-md-3 form-group">
+                              <?php
+                              $bil_payment_status_filter = get_module_filter($module_name, 'bil_payment_status');
+                              $bil_payment_status_filter_val = !empty($bil_payment_status_filter) ? $bil_payment_status_filter->filter_value : '';
+                              ?>
+                              <select name="bil_payment_status" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('bil_payment_status'); ?>" data-actions-box="true">
+                                 <option value=""></option>
+                                 <option value="unpaid" <?php echo ($bil_payment_status_filter_val == 'unpaid') ? 'selected' : ''; ?>><?php echo _l('unpaid'); ?></option>
+                                 <option value="partially_paid" <?php echo ($bil_payment_status_filter_val == 'partially_paid') ? 'selected' : ''; ?>><?php echo _l('partially_paid'); ?></option>
+                                 <option value="paid" <?php echo ($bil_payment_status_filter_val == 'paid') ? 'selected' : ''; ?>><?php echo _l('paid'); ?></option>
+                              </select>
+                           </div>
+
                            <div class="col-md-1 form-group">
                               <a href="javascript:void(0)" class="btn btn-info btn-icon reset_vbt_all_filters">
                                  <?php echo _l('reset_filter'); ?>
