@@ -10848,7 +10848,7 @@ class purchase extends AdminController
                             if (($flag == 0) && ($flag2 == 0)) {
 
                                 $rows[] = $row;
-                                $list_item .= $this->purchase_model->create_order_tracker_row_template('newitems[' . $index_quote . ']', $value_cell_order_scope, '', $value_cell_order_date, $value_cell_completion_date, $value_cell_budget, $value_cell_order_value, $value_cell_contract_amount, $value_cell_change_order, $value_cell_anticipate_variation, $value_cell_total_certified_amount, '', '', $value_cell_total_remaks);
+                                $list_item .= $this->purchase_model->create_order_tracker_row_template('newitems[' . $index_quote . ']', $value_cell_order_scope, '', $value_cell_order_date, $value_cell_completion_date, $value_cell_budget, $value_cell_contract_amount, $value_cell_change_order, $value_cell_anticipate_variation, $value_cell_total_certified_amount, '', '', $value_cell_total_remaks,$value_cell_order_value,'');
 
                                 $index_quote++;
                                 $total_rows_data++;
