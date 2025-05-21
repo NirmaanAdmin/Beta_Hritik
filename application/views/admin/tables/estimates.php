@@ -63,6 +63,8 @@ return App_table::find('estimates')
             array_push($where, $userWhere);
         }
 
+        array_push($where, 'AND ' . db_prefix() . 'estimates.active = 1');
+
         $aColumns = hooks()->apply_filters('estimates_table_sql_columns', $aColumns);
 
         // Fix for big queries. Some hosting have max_join_limit

@@ -437,3 +437,40 @@ function get_purchase_unit($id)
     }
     return '';
 }
+
+function get_estimate_revision_no($estimate_id, $count = 0)
+{
+    $CI =& get_instance();
+    $CI->db->select('parent_id');
+    $CI->db->from(db_prefix() . 'estimates');
+    $CI->db->where('id', $estimate_id);
+    $parent = $CI->db->get()->row();
+    if ($parent && $parent->parent_id != 0) {
+        return get_estimate_revision_no($parent->parent_id, $count + 1);
+    }
+    return ' - Revision ' . $count;
+}
+
+function get_estimate_revision_chain($estimate_id, $chain = [])
+{
+    $CI =& get_instance();
+    $CI->db->select('parent_id');
+    $CI->db->from(db_prefix() . 'estimates');
+    $CI->db->where('id', $estimate_id);
+    $parent = $CI->db->get()->row();
+    if ($parent && $parent->parent_id != 0) {
+        $chain = get_estimate_revision_chain($parent->parent_id, $chain);
+        $chain[] = $parent->parent_id;
+    }
+    return $chain;
+}
+
+function render_estimate_revision_template($id)
+{
+    $CI =& get_instance();
+    $CI->load->model('estimates_model');
+    $data = $CI->estimates_model->get_cost_planning_details($id);
+    $estimate = $CI->estimates_model->get($id);
+    return $CI->load->view('admin/estimates/estimate_revision_template', ['cost_planning_details' => $data, 'estimate' => $estimate], true);
+}
+

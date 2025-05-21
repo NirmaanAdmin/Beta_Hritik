@@ -4,9 +4,9 @@
 <div class="col-md-12 no-padding">
     <div class="panel_s">
         <div class="panel-body">
-            <div class="horizontal-scrollable-tabs preview-tabs-top panel-full-width-tabs">
-                <div class="scroller arrow-left"><i class="fa fa-angle-left"></i></div>
-                <div class="scroller arrow-right"><i class="fa fa-angle-right"></i></div>
+            <div class="preview-tabs-top panel-full-width-tabs">
+                <!-- <div class="scroller arrow-left"><i class="fa fa-angle-left"></i></div>
+                <div class="scroller arrow-right"><i class="fa fa-angle-right"></i></div> -->
                 <div class="horizontal-tabs">
                     <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
                         <li role="presentation" class="active">
@@ -14,6 +14,27 @@
                                 <?php echo _l('estimate'); ?>
                             </a>
                         </li>
+
+                        <?php
+                        $revisions = get_estimate_revision_chain($estimate->id);
+                        if(!empty($revisions)) { ?>
+                            <li role="presentation" class="dropdown">
+                                <a href="#" class="dropdown-toggle" id="tab_child_items" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <?php echo _l('revisions'); ?>
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="tab_child_items" style="width: max-content;">
+                                    <?php
+                                    foreach ($revisions as $key => $revision) { ?>
+                                        <li>
+                                            <a href="#tab_revisions_<?php echo $revision; ?>" aria-controls="tab_revisions_<?php echo $revision; ?>" role="tab" data-toggle="tab">Revision <?php echo $key; ?>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <?php } ?>
+
                         <li role="presentation">
                             <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
                             <?php echo _l('attachment'); ?>
@@ -96,179 +117,182 @@
                     </ul>
                 </div>
             </div>
-            <div class="row mtop20">
-                <div class="col-md-3">
-                    <?php echo format_estimate_status($estimate->status, 'mtop5 inline-block'); ?>
-                </div>
-                <div class="col-md-9">
-                    <div class="visible-xs">
-                        <div class="mtop10"></div>
-                    </div>
-                    <div class="pull-right _buttons">
-                        <?php if (staff_can('edit', 'estimates')) { ?>
-                        <a href="<?php echo admin_url('estimates/estimate/' . $estimate->id); ?>"
-                            class="btn btn-default btn-with-tooltip" data-toggle="tooltip"
-                            title="<?php echo _l('edit_estimate_tooltip'); ?>" data-placement="bottom"><i
-                                class="fa-regular fa-pen-to-square"></i></a>
-                        <?php } ?>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false"><i class="fa-regular fa-file-pdf"></i><?php if (is_mobile()) {
-                            echo ' PDF';
-                        } ?> <span class="caret"></span></a>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <li class="hidden-xs">
-                                    <a
-                                        href="<?php echo admin_url('estimates/pdf/' . $estimate->id . '?output_type=I'); ?>">
-                                        <?php echo _l('view_pdf'); ?>
-                                    </a>
-                                </li>
-                                <li class="hidden-xs">
-                                    <a
-                                        href="<?php echo admin_url('estimates/pdf/' . $estimate->id . '?output_type=I'); ?>"
-                                        target="_blank">
-                                        <?php echo _l('view_pdf_in_new_window'); ?>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="<?php echo admin_url('estimates/pdf/' . $estimate->id); ?>">
-                                        <?php echo _l('download'); ?>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo admin_url('estimates/pdf/' . $estimate->id . '?print=true'); ?>"
-                                        target="_blank">
-                                        <?php echo _l('print'); ?>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <?php
-                     $_tooltip              = _l('estimate_sent_to_email_tooltip');
-                     $_tooltip_already_send = '';
-                     if ($estimate->sent == 1) {
-                         $_tooltip_already_send = _l('estimate_already_send_to_client_tooltip', time_ago($estimate->datesend));
-                     }
-                     ?>
-                        <?php if (!empty($estimate->clientid)) { ?>
-                        <a href="#" class="estimate-send-to-client btn btn-default btn-with-tooltip"
-                            data-toggle="tooltip" title="<?php echo e($_tooltip); ?>" data-placement="bottom"><span
-                                data-toggle="tooltip" data-title="<?php echo e($_tooltip_already_send); ?>"><i
-                                    class="fa-regular fa-envelope"></i></span></a>
-                        <?php } ?>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default pull-left dropdown-toggle"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?php echo _l('more'); ?> <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <?php /*
-                                <li>
-                                    <a href="<?php echo site_url('estimate/' . $estimate->id . '/' . $estimate->hash) ?>"
-                                        target="_blank">
-                                        <?php echo _l('view_estimate_as_client'); ?>
-                                    </a>
-                                </li>
-                                */ ?>
-                                <?php hooks()->do_action('after_estimate_view_as_client_link', $estimate); ?>
-                                <?php if ((!empty($estimate->expirydate) && date('Y-m-d') < $estimate->expirydate && ($estimate->status == 2 || $estimate->status == 5)) && is_estimates_expiry_reminders_enabled()) { ?>
-                                <li>
-                                    <a
-                                        href="<?php echo admin_url('estimates/send_expiry_reminder/' . $estimate->id); ?>">
-                                        <?php echo _l('send_expiry_reminder'); ?>
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                <li>
-                                    <a href="#" data-toggle="modal"
-                                        data-target="#sales_attach_file"><?php echo _l('invoice_attach_file'); ?></a>
-                                </li>
-                                <?php if (staff_can('create', 'projects') && $estimate->project_id == 0) { ?>
-                                <li>
-                                    <a
-                                        href="<?php echo admin_url("projects/project?via_estimate_id={$estimate->id}&customer_id={$estimate->clientid}") ?>">
-                                        <?php echo _l('estimate_convert_to_project'); ?>
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($estimate->invoiceid == null) {
-                         if (staff_can('edit', 'estimates')) {
-                             foreach ($estimate_statuses as $status) {
-                                 if ($estimate->status != $status) { ?>
-                                <li>
-                                    <a
-                                        href="<?php echo admin_url() . 'estimates/mark_action_status/' . $status . '/' . $estimate->id; ?>">
-                                        <?php echo e(_l('estimate_mark_as', format_estimate_status($status, '', false))); ?></a>
-                                </li>
-                                <?php }
-                             } ?>
-                                <?php } ?>
-                                <?php } ?>
-                                <?php if (staff_can('create', 'estimates')) { ?>
-                                <li>
-                                    <a href="<?php echo admin_url('estimates/copy/' . $estimate->id); ?>">
-                                        <?php echo _l('copy_estimate'); ?>
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                <?php if (!empty($estimate->signature) && staff_can('delete', 'estimates')) { ?>
-                                <li>
-                                    <a href="<?php echo admin_url('estimates/clear_signature/' . $estimate->id); ?>"
-                                        class="_delete">
-                                        <?php echo _l('clear_signature'); ?>
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                <?php if (staff_can('delete', 'estimates')) { ?>
-                                <?php
-                                if ((get_option('delete_only_on_last_estimate') == 1 && is_last_estimate($estimate->id)) || 
-                                    (get_option('delete_only_on_last_estimate') == 0)) { ?>
-                                    <li>
-                                        <a href="<?php echo admin_url('estimates/delete/' . $estimate->id); ?>"
-                                        class="text-danger delete-text _delete">
-                                            <?php echo _l('delete_estimate_tooltip'); ?>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php } ?>
-                            </ul>
-                        </div>
-                        <?php if ($estimate->invoiceid == null) { ?>
-                        <?php if (staff_can('create', 'invoices') && !empty($estimate->clientid)) { ?>
-                        <div class="btn-group pull-right mleft5 hide">
-                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <?php echo _l('estimate_convert_to_invoice'); ?> <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a
-                                        href="<?php echo admin_url('estimates/convert_to_invoice/' . $estimate->id . '?save_as_draft=true'); ?>"><?php echo _l('convert_and_save_as_draft'); ?>
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a
-                                        href="<?php echo admin_url('estimates/convert_to_invoice/' . $estimate->id); ?>"><?php echo _l('convert'); ?>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <?php } ?>
-                        <?php } else { ?>
-                        <a href="<?php echo admin_url('invoices/list_invoices/' . $estimate->invoice->id); ?>"
-                            data-placement="bottom" data-toggle="tooltip"
-                            title="<?php echo e(_l('estimate_invoiced_date', _dt($estimate->invoiced_date))); ?>"
-                            class="btn btn-primary mleft10"><?php echo e(format_invoice_number($estimate->invoice->id)); ?></a>
-                        <?php } ?>
-                    </div>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <hr class="hr-panel-separator" />
+
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane ptop10 active" id="tab_estimate">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <?php echo format_estimate_status($estimate->status, 'mtop5 inline-block'); ?>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="visible-xs">
+                                <div class="mtop10"></div>
+                            </div>
+                            <div class="pull-right _buttons">
+                                <a href="#" class="btn btn-primary" onclick="create_new_revision(<?php echo $estimate->id; ?>); return false;"><i class="fa-regular fa-plus tw-mr-1"></i><?php echo _l('create_new_revision'); ?></a>
+                                <?php if (staff_can('edit', 'estimates')) { ?>
+                                <a href="<?php echo admin_url('estimates/estimate/' . $estimate->id); ?>"
+                                    class="btn btn-default btn-with-tooltip" data-toggle="tooltip"
+                                    title="<?php echo _l('edit_estimate_tooltip'); ?>" data-placement="bottom"><i
+                                        class="fa-regular fa-pen-to-square"></i></a>
+                                <?php } ?>
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false"><i class="fa-regular fa-file-pdf"></i><?php if (is_mobile()) {
+                                    echo ' PDF';
+                                } ?> <span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li class="hidden-xs">
+                                            <a
+                                                href="<?php echo admin_url('estimates/pdf/' . $estimate->id . '?output_type=I'); ?>">
+                                                <?php echo _l('view_pdf'); ?>
+                                            </a>
+                                        </li>
+                                        <li class="hidden-xs">
+                                            <a
+                                                href="<?php echo admin_url('estimates/pdf/' . $estimate->id . '?output_type=I'); ?>"
+                                                target="_blank">
+                                                <?php echo _l('view_pdf_in_new_window'); ?>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a
+                                                href="<?php echo admin_url('estimates/pdf/' . $estimate->id); ?>">
+                                                <?php echo _l('download'); ?>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo admin_url('estimates/pdf/' . $estimate->id . '?print=true'); ?>"
+                                                target="_blank">
+                                                <?php echo _l('print'); ?>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <?php
+                             $_tooltip              = _l('estimate_sent_to_email_tooltip');
+                             $_tooltip_already_send = '';
+                             if ($estimate->sent == 1) {
+                                 $_tooltip_already_send = _l('estimate_already_send_to_client_tooltip', time_ago($estimate->datesend));
+                             }
+                             ?>
+                                <?php if (!empty($estimate->clientid)) { ?>
+                                <a href="#" class="estimate-send-to-client btn btn-default btn-with-tooltip"
+                                    data-toggle="tooltip" title="<?php echo e($_tooltip); ?>" data-placement="bottom"><span
+                                        data-toggle="tooltip" data-title="<?php echo e($_tooltip_already_send); ?>"><i
+                                            class="fa-regular fa-envelope"></i></span></a>
+                                <?php } ?>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default pull-left dropdown-toggle"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <?php echo _l('more'); ?> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <?php /*
+                                        <li>
+                                            <a href="<?php echo site_url('estimate/' . $estimate->id . '/' . $estimate->hash) ?>"
+                                                target="_blank">
+                                                <?php echo _l('view_estimate_as_client'); ?>
+                                            </a>
+                                        </li>
+                                        */ ?>
+                                        <?php hooks()->do_action('after_estimate_view_as_client_link', $estimate); ?>
+                                        <?php if ((!empty($estimate->expirydate) && date('Y-m-d') < $estimate->expirydate && ($estimate->status == 2 || $estimate->status == 5)) && is_estimates_expiry_reminders_enabled()) { ?>
+                                        <li>
+                                            <a
+                                                href="<?php echo admin_url('estimates/send_expiry_reminder/' . $estimate->id); ?>">
+                                                <?php echo _l('send_expiry_reminder'); ?>
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+                                        <li>
+                                            <a href="#" data-toggle="modal"
+                                                data-target="#sales_attach_file"><?php echo _l('invoice_attach_file'); ?></a>
+                                        </li>
+                                        <?php if (staff_can('create', 'projects') && $estimate->project_id == 0) { ?>
+                                        <li>
+                                            <a
+                                                href="<?php echo admin_url("projects/project?via_estimate_id={$estimate->id}&customer_id={$estimate->clientid}") ?>">
+                                                <?php echo _l('estimate_convert_to_project'); ?>
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+                                        <?php if ($estimate->invoiceid == null) {
+                                 if (staff_can('edit', 'estimates')) {
+                                     foreach ($estimate_statuses as $status) {
+                                         if ($estimate->status != $status) { ?>
+                                        <li>
+                                            <a
+                                                href="<?php echo admin_url() . 'estimates/mark_action_status/' . $status . '/' . $estimate->id; ?>">
+                                                <?php echo e(_l('estimate_mark_as', format_estimate_status($status, '', false))); ?></a>
+                                        </li>
+                                        <?php }
+                                     } ?>
+                                        <?php } ?>
+                                        <?php } ?>
+                                        <?php if (staff_can('create', 'estimates')) { ?>
+                                        <li>
+                                            <a href="<?php echo admin_url('estimates/copy/' . $estimate->id); ?>">
+                                                <?php echo _l('copy_estimate'); ?>
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+                                        <?php if (!empty($estimate->signature) && staff_can('delete', 'estimates')) { ?>
+                                        <li>
+                                            <a href="<?php echo admin_url('estimates/clear_signature/' . $estimate->id); ?>"
+                                                class="_delete">
+                                                <?php echo _l('clear_signature'); ?>
+                                            </a>
+                                        </li>
+                                        <?php } ?>
+                                        <?php if (staff_can('delete', 'estimates')) { ?>
+                                        <?php
+                                        if ((get_option('delete_only_on_last_estimate') == 1 && is_last_estimate($estimate->id)) || 
+                                            (get_option('delete_only_on_last_estimate') == 0)) { ?>
+                                            <li>
+                                                <a href="<?php echo admin_url('estimates/delete/' . $estimate->id); ?>"
+                                                class="text-danger delete-text _delete">
+                                                    <?php echo _l('delete_estimate_tooltip'); ?>
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+                                        <?php } ?>
+                                    </ul>
+                                </div>
+                                <?php if ($estimate->invoiceid == null) { ?>
+                                <?php if (staff_can('create', 'invoices') && !empty($estimate->clientid)) { ?>
+                                <div class="btn-group pull-right mleft5 hide">
+                                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        <?php echo _l('estimate_convert_to_invoice'); ?> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a
+                                                href="<?php echo admin_url('estimates/convert_to_invoice/' . $estimate->id . '?save_as_draft=true'); ?>"><?php echo _l('convert_and_save_as_draft'); ?>
+                                            </a>
+                                        </li>
+                                        <li class="divider"></li>
+                                        <li>
+                                            <a
+                                                href="<?php echo admin_url('estimates/convert_to_invoice/' . $estimate->id); ?>"><?php echo _l('convert'); ?>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <?php } ?>
+                                <?php } else { ?>
+                                <a href="<?php echo admin_url('invoices/list_invoices/' . $estimate->invoice->id); ?>"
+                                    data-placement="bottom" data-toggle="tooltip"
+                                    title="<?php echo e(_l('estimate_invoiced_date', _dt($estimate->invoiced_date))); ?>"
+                                    class="btn btn-primary mleft10"><?php echo e(format_invoice_number($estimate->invoice->id)); ?></a>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <hr class="hr-panel-separator" />
+
                     <?php if (isset($estimate->scheduled_email) && $estimate->scheduled_email) { ?>
                     <div class="alert alert-warning">
                         <?php echo e(_l('invoice_will_be_sent_at', _dt($estimate->scheduled_email->scheduled_at))); ?>
@@ -321,6 +345,7 @@
                                                 echo " (".$estimate->budget_description.")";
                                             }
                                             ?>
+                                            <?php echo get_estimate_revision_no($estimate->id); ?>
                                         </span>
                                     </a>
                                 </h4>
@@ -1034,6 +1059,16 @@
                     <?php } ?>
                     <?php } ?>
                 </div>
+
+                <?php
+                $revisions = get_estimate_revision_chain($estimate->id);
+                if(!empty($revisions)) {
+                    foreach ($revisions as $key => $revision) { ?>
+                        <div role="tabpanel" class="tab-pane" id="tab_revisions_<?php echo $revision; ?>">
+                        <?php echo render_estimate_revision_template($revision); ?>
+                        </div>
+                    <?php } 
+                } ?>
 
                 <div role="tabpanel" class="tab-pane" id="tab_tasks">
                     <?php init_relation_tasks_table(['data-new-rel-id' => $estimate->id, 'data-new-rel-type' => 'estimate'], 'tasksFilters'); ?>

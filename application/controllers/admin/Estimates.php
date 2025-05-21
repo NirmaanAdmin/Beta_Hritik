@@ -695,4 +695,12 @@ class Estimates extends AdminController
         $value = $this->input->post('value');
         echo pur_get_item_selcted_select($name, $value);
     }
+
+    public function create_new_revision()
+    {
+        $data = $this->input->post();
+        $new_revision_id = $this->estimates_model->create_new_revision($data);
+        echo json_encode(['new_revision_id' => $new_revision_id]);
+        exit;
+    }
 }

@@ -2183,4 +2183,115 @@ class Estimates_model extends App_Model
         }
         return 0;
     }
+
+    public function create_new_revision($data) 
+    {
+        $new_estimate_id = '';
+        $id = $data['id'];
+
+        $this->db->where('id', $id);
+        $estimates = $this->db->get(db_prefix() . 'estimates')->row();
+        if(!empty($estimates)) {
+            $estimates = json_decode(json_encode($estimates), true);
+            unset($estimates['id']);
+            $this->db->insert(db_prefix() . 'estimates', $estimates);
+            $new_estimate_id = $this->db->insert_id();
+
+            $area_summary = $this->get_area_summary($id);
+            if(!empty($area_summary)) {
+                foreach ($area_summary as $key => $value) {
+                    unset($value['id']);
+                    unset($value['estimate_id']);
+                    $value['estimate_id'] = $new_estimate_id;
+                    $this->db->insert(db_prefix() . 'costarea_summary', $value);
+                }
+            }
+
+            $area_statement = $this->get_area_statement_tabs($id);
+            if(!empty($area_statement)) {
+                foreach ($area_statement as $key => $value) {
+                    if(isset($value['id'])) {
+                        $old_area_statement_tab_id = $value['id'];
+                        unset($value['id']);
+                    }
+                    unset($value['estimate_id']);
+                    $value['estimate_id'] = $new_estimate_id;
+                    $this->db->insert(db_prefix() . 'area_statement_tabs', $value);
+                    $new_area_statement_tab_id = $this->db->insert_id();
+
+                    $this->db->where('estimate_id', $id);
+                    $this->db->where('area_id', $old_area_statement_tab_id);
+                    $costarea_working = $this->db->get(db_prefix() . 'costarea_working')->result_array();
+                    if(!empty($costarea_working)) {
+                        foreach ($costarea_working as $ckey => $cvalue) {
+                            unset($cvalue['id']);
+                            unset($cvalue['estimate_id']);
+                            unset($cvalue['area_id']);
+                            $cvalue['estimate_id'] = $new_estimate_id;
+                            $cvalue['area_id'] = $new_area_statement_tab_id;
+                            $this->db->insert(db_prefix() . 'costarea_working', $cvalue);
+                        }
+                    }
+                }
+            }
+
+            $estimate_budget_info = $this->get_estimate_budget_info($id);
+            if(!empty($estimate_budget_info)) {
+                foreach ($estimate_budget_info as $key => $value) {
+                    unset($value['id']);
+                    unset($value['estimate_id']);
+                    $value['estimate_id'] = $new_estimate_id;
+                    $this->db->insert(db_prefix() . 'estimate_budget_info', $value);
+                }
+            }
+
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'estimate');
+            $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
+            if(!empty($itemable)) {
+                foreach ($itemable as $key => $value) {
+                    unset($value['id']);
+                    unset($value['rel_id']);
+                    $value['rel_id'] = $new_estimate_id;
+                    $this->db->insert(db_prefix() . 'itemable', $value);
+                }
+            }
+
+            $multilevel_items = $this->get_multilevel_items($id);
+            if(!empty($multilevel_items)) {
+                foreach ($multilevel_items as $key => $value) {
+                    if(isset($value['id'])) {
+                        $old_estimate_multilevel_item_id = $value['id'];
+                        unset($value['id']);
+                    }
+                    unset($value['estimate_id']);
+                    $value['estimate_id'] = $new_estimate_id;
+                    $this->db->insert(db_prefix() . 'estimate_multilevel_items', $value);
+                    $new_estimate_multilevel_item_id = $this->db->insert_id();
+
+                    $this->db->where('estimate_id', $id);
+                    $this->db->where('parent_id', $old_estimate_multilevel_item_id);
+                    $estimate_sub_multilevel_items = $this->db->get(db_prefix() . 'estimate_sub_multilevel_items')->result_array();
+                    if(!empty($estimate_sub_multilevel_items)) {
+                        foreach ($estimate_sub_multilevel_items as $ckey => $cvalue) {
+                            unset($cvalue['id']);
+                            unset($cvalue['estimate_id']);
+                            unset($cvalue['parent_id']);
+                            $cvalue['estimate_id'] = $new_estimate_id;
+                            $cvalue['parent_id'] = $new_estimate_multilevel_item_id;
+                            $this->db->insert(db_prefix() . 'estimate_sub_multilevel_items', $cvalue);
+                        }
+                    }
+                }
+            }
+
+            $this->db->where('id', $id);
+            $this->db->update(db_prefix() . 'estimates', ['active' => 0]);
+
+            $this->db->where('id', $new_estimate_id);
+            $this->db->update(db_prefix() . 'estimates', ['parent_id' => $id]);
+        }
+
+        return $new_estimate_id;
+    }
 }

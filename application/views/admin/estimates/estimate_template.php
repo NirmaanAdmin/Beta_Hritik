@@ -356,7 +356,7 @@
         <div class="horizontal-tabs">
             <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
 
-                <li role="presentation" class="">
+                <li role="presentation" class="active">
                     <a href="#final_estimate" aria-controls="final_estimate" role="tab" id="tab_final_estimate" data-toggle="tab">
                         <?php echo _l('project_brief'); ?>
                     </a>
@@ -409,7 +409,7 @@
         </div>
 
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane" id="final_estimate">
+            <div role="tabpanel" class="tab-pane active" id="final_estimate">
                 <?php
                 $project_brief = (isset($estimate) ? $estimate->project_brief : '');
                 echo render_textarea('project_brief', '', $project_brief, [], [], '', 'tinymce'); 

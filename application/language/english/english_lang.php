@@ -4235,3 +4235,5 @@ $lang['total_area'] = 'Total Area';
 $lang['show_unit_as'] = 'Show unit as:';
 $lang['cost_overall_area'] = 'Cost/overall area';
 $lang['cost'] = 'Cost';
+$lang['create_new_revision'] = 'Create New Revision';
+$lang['revisions'] = 'Revisions';
