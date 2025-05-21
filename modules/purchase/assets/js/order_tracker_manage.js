@@ -157,8 +157,8 @@ function change_aw_unw_order_status(status, id, table_name) {
                         // console.log('After:', $statusSpan.attr('class'));
 
                         // Display success message
-                        var table_critical_tracker = $(".table-table_order_tracker");
-                        table_critical_tracker.DataTable().ajax.reload();
+                        // var table_critical_tracker = $(".table-table_order_tracker");
+                        // table_critical_tracker.DataTable().ajax.reload();
                         alert_float('success', response.mess);
                     } else {
                         // Display warning message if the operation fails

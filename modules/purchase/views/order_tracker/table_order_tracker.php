@@ -413,6 +413,8 @@ foreach ($rResult as $aRow) {
          if (isset($status_labels[$aRow['rli_filter']])) {
             $status = $status_labels[$aRow['rli_filter']];
             $rli_filter = '<span class="inline-block label label-' . $status['label'] . '" id="status_span_' . $aRow['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+         }else{
+            $rli_filter = '<span class="inline-block label " id="status_span_' . $aRow['id'] . '" >';
          }
 
          if (has_permission('order_tracker', '', 'edit') || is_admin()) {
@@ -557,6 +559,8 @@ foreach ($rResult as $aRow) {
          if (isset($status_labels_aw_uw[$aRow['aw_unw_order_status']])) {
             $status = $status_labels_aw_uw[$aRow['aw_unw_order_status']];
             $aw_uw = '<span class="inline-block label label-' . $status['label'] . '" id="status_aw_uw_span_' . $aRow['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+         }else{
+            $aw_uw = '<span class="inline-block label " id="status_aw_uw_span_' . $aRow['id'] . '" >';
          }
 
          if (has_permission('order_tracker', '', 'edit') || is_admin()) {
