@@ -19563,4 +19563,222 @@ class Purchase_model extends App_Model
             $this->db->update(db_prefix() . 'pur_invoices', ['payment_status' => $status_inv]);
         }
     }
+
+    public function get_order_tracker_pdf_html()
+    {
+        $get_order_tracker = $this->get_order_tracker_pdf();
+
+        $html = '';
+        $html .=  '<table class="table purorder-item" style="width: 100%">
+        <thead>
+          <tr>
+            <th class="thead-dark" align="left" style="width: 3%" >' . _l('#') . '</th>
+            <th class="thead-dark" align="left" style="width: 4%">' . _l('order_status') . '</th>
+            <th class="thead-dark" align="left" style="width: 10.2%">' . _l('order_scope') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('contractor') . '</th>
+            <th class="thead-dark" align="left" style="width: 4.6%">' . _l('order_date') . '</th>
+            <th class="thead-dark" align="left" style="width: 4.6%">' . _l('completion_date') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('budget_ro_projection') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('committed_contract_amount') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('change_order_amount') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('total_rev_contract_value') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('anticipate_variation') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('cost_to_complete') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('final_certified_amount') . '</th>
+            <th class="thead-dark" align="left" style="width: 4.6%">' . _l('project') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('rli_filter') . '</th>
+            <th class="thead-dark" align="left" style="width: 3.6%">' . _l('category') . '</th>
+            <th class="thead-dark" align="left" style="width: 5.6%">' . _l('group_pur') . '</th>
+            <th class="thead-dark" align="left" style="width: 10.2%">' . _l('remarks') . '</th>
+            
+          </tr>
+          </thead>
+          <tbody>';
+        $serial_no = 1;
+        foreach ($get_order_tracker as $row) {
+            // Handle completion_date - fixed logic and validation
+            $completion_date = $aw_unw_order_status = '';
+            if (!empty($row['completion_date']) && $row['completion_date'] != '0000-00-00') {
+                $completion_date = date('d M, Y', strtotime($row['completion_date']));
+            }
+
+            // Handle order_date
+            $order_date = '';
+            if (!empty($row['order_date']) && $row['order_date'] != '0000-00-00') {
+                $order_date = date('d M, Y', strtotime($row['order_date']));
+            }
+
+            if (!empty($row['aw_unw_order_status'])) {
+                if ($row['aw_unw_order_status'] == 1) {
+                    $aw_unw_order_status = _l('Awarded');
+                } elseif ($row['aw_unw_order_status'] == 2) {
+                    $aw_unw_order_status = _l('Unawarded');
+                } elseif ($row['aw_unw_order_status'] == 3) {
+                    $aw_unw_order_status = _l('Awarded by RIL');
+                }
+            }
+            $status_labels = [
+                0 => ['label' => 'danger', 'table' => 'provided_by_ril', 'text' => _l('provided_by_ril')],
+                1 => ['label' => 'success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
+                2 => ['label' => 'info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
+                3 => ['label' => 'warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
+                4 => ['label' => 'primary', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+                5 => ['label' => 'secondary', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+                6 => ['label' => 'purple', 'table' => 'event_expense', 'text' => _l('event_expense')],
+                7 => ['label' => 'teal', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+                8 => ['label' => 'orange', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ghj_scope')],
+                9 => ['label' => 'green', 'table' => 'common_services_in_ril_scope', 'text' => _l('common_services_in_ril_scope')],
+                10 => ['label' => 'default', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+            ];
+            $html .= '<tr>
+                <td style="width: 3%">' . $serial_no . '</td>
+                <td style="width: 4%">' . $aw_unw_order_status . '</td>
+                <td style="width: 10.2%">' . $row['order_name'] . '</td>
+                <td style="width: 5.6%">' . $row['vendor'] . '</td>
+                <td style="width: 4.6%">' . $order_date . '</td>
+                <td style="width: 4.6%">' . $completion_date . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['budget'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['subtotal'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['co_total'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['total_rev_contract_value'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['anticipate_variation'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['cost_to_complete'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['final_certified_amount'], '₹') . '</td>
+                <td style="width: 4.6%">' . $row['project'] . '</td>
+                <td style="width: 5.6%">' . $status_labels[$row['rli_filter']]['text'] . '</td>
+                <td style="width: 3.6%">' . $row['kind'] . '</td>
+                <td style="width: 5.6%">' . get_group_name_by_id($row['group_pur']) . '</td>
+                <td style="width: 10.2%">' . $row['remarks'] . '</td>
+            </tr>';
+            $serial_no++;
+        }
+        $html .=  '</tbody>
+      </table>';
+        $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/order_tracker_pdf.css') . '"  rel="stylesheet" type="text/css" />';
+
+        return $html;
+    }
+
+    public function get_order_tracker_pdf()
+    {
+        $sql = "
+            SELECT DISTINCT
+                po.id,
+                po.aw_unw_order_status                         AS aw_unw_order_status,
+                po.pur_order_number                             AS order_number,
+                po.pur_order_name                               AS order_name,
+                po.rli_filter,
+                po.group_pur                                    AS group_pur,
+                pv.company                                      AS vendor,
+                pv.userid                                       AS vendor_id,
+                po.order_date,
+                po.completion_date,
+                po.budget,
+                po.order_value,
+                po.total                                        AS total,
+                co.co_value                                     AS co_total,
+                (po.subtotal + IFNULL(co.co_value, 0))          AS total_rev_contract_value, 
+                po.anticipate_variation,
+                (IFNULL(po.anticipate_variation,0) + (po.subtotal + IFNULL(co.co_value,0))) AS cost_to_complete,
+                COALESCE(inv_po_sum.final_certified_amount,0)   AS final_certified_amount,
+                po.kind,
+                po.remarks                                      AS remarks,
+                po.subtotal                                     AS subtotal,
+                pr.name                                         AS project,
+                pr.id                                           AS project_id,
+                'pur_orders'                                    AS source_table
+            FROM tblpur_orders po
+            LEFT JOIN tblpur_vendor pv   ON pv.userid = po.vendor
+            LEFT JOIN tblco_orders co    ON co.po_order_id = po.id
+            LEFT JOIN tblprojects pr     ON pr.id = po.project
+            LEFT JOIN (
+                SELECT
+                    pur_order,
+                    SUM(final_certified_amount) AS final_certified_amount
+                FROM tblpur_invoices
+                WHERE pur_order IS NOT NULL
+                GROUP BY pur_order
+            ) AS inv_po_sum ON inv_po_sum.pur_order = po.id
+
+            UNION ALL
+
+            SELECT DISTINCT
+                wo.id,
+                wo.aw_unw_order_status                         AS aw_unw_order_status,
+                wo.wo_order_number                              AS order_number,
+                wo.wo_order_name                                AS order_name,
+                wo.rli_filter,
+                wo.group_pur                                    AS group_pur,
+                pv.company                                      AS vendor,
+                pv.userid                                       AS vendor_id,
+                wo.order_date,
+                wo.completion_date,
+                wo.budget,
+                wo.order_value,
+                wo.total                                        AS total,
+                co.co_value                                     AS co_total,
+                (wo.subtotal + IFNULL(co.co_value, 0))          AS total_rev_contract_value,
+                wo.anticipate_variation,
+                (IFNULL(wo.anticipate_variation,0) + (wo.subtotal + IFNULL(co.co_value,0))) AS cost_to_complete,
+                COALESCE(inv_wo_sum.final_certified_amount,0)   AS final_certified_amount,
+                wo.kind,
+                wo.remarks                                      AS remarks,
+                wo.subtotal                                     AS subtotal,
+                pr.name                                         AS project,
+                pr.id                                           AS project_id,
+                'wo_orders'                                     AS source_table
+            FROM tblwo_orders wo
+            LEFT JOIN tblpur_vendor pv   ON pv.userid = wo.vendor
+            LEFT JOIN tblco_orders co    ON co.wo_order_id = wo.id
+            LEFT JOIN tblprojects pr     ON pr.id = wo.project
+            LEFT JOIN (
+                SELECT
+                    wo_order,
+                    SUM(final_certified_amount) AS final_certified_amount
+                FROM tblpur_invoices
+                WHERE wo_order IS NOT NULL
+                GROUP BY wo_order
+            ) AS inv_wo_sum ON inv_wo_sum.wo_order = wo.id
+
+            UNION ALL
+
+            SELECT DISTINCT
+                t.id,
+                t.aw_unw_order_status                          AS aw_unw_order_status,
+                t.pur_order_number                              AS order_number,
+                t.pur_order_name                                AS order_name,
+                t.rli_filter,
+                t.group_pur                                     AS group_pur,
+                pv.company                                      AS vendor,
+                pv.userid                                       AS vendor_id,
+                t.order_date,
+                t.completion_date,
+                t.budget,
+                t.order_value,
+                t.total                                         AS total,
+                t.co_total                                      AS co_total,
+                (t.total + IFNULL(t.co_total, 0))               AS total_rev_contract_value,
+                t.anticipate_variation,
+                (IFNULL(t.anticipate_variation,0) + (t.total + IFNULL(t.co_total,0))) AS cost_to_complete,
+                t.final_certified_amount                        AS final_certified_amount,
+                t.kind,
+                t.remarks                                       AS remarks,
+                t.subtotal                                      AS subtotal,
+                pr.name                                         AS project,
+                pr.id                                           AS project_id,
+                'order_tracker'                                 AS source_table
+            FROM tblpur_order_tracker t
+            LEFT JOIN tblpur_vendor pv   ON pv.userid = t.vendor
+            LEFT JOIN tblprojects pr     ON pr.id = t.project
+            ";
+
+        return $this->db->query($sql)->result_array();
+    }
+
+
+
+    public function order_tracker_pdf($order_tracker)
+    {
+        return app_pdf('order_tracker', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Order_tracker_pdf'), $order_tracker);
+    }
 }

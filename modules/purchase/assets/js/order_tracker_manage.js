@@ -78,7 +78,7 @@ var expenseDropzone;
         $(this).find('tfoot td.total_cost_to_complete').html(sums.total_cost_to_complete);
         $(this).find('tfoot td.total_final_certified_amount').html(sums.total_final_certified_amount);
     });
-
+    $('.buttons-collection').hide()
 })(jQuery);
 
 function change_rli_filter(status, id, table_name) {
