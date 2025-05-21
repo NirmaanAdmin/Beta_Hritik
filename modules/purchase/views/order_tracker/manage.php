@@ -216,7 +216,7 @@
                               _l('order_date'),
                               _l('completion_date'),
                               _l('budget_ro_projection'),
-                              _l('order_value'),
+                              // _l('order_value'),
                               _l('committed_contract_amount'),
                               _l('change_order_amount'),
                               _l('total_rev_contract_value'),
@@ -250,7 +250,7 @@
                                  <th><?php echo _l('order_date'); ?></th>
                                  <th><?php echo _l('completion_date'); ?></th>
                                  <th><?php echo _l('budget_ro_projection'); ?></th>
-                                 <th><?php echo _l('order_value'); ?></th>
+                                 <!-- <th><?php echo _l('order_value'); ?></th> -->
                                  <th><?php echo _l('committed_contract_amount'); ?></th>
                                  <th><?php echo _l('change_order_amount'); ?></th>
                                  <th><?php echo _l('total_rev_contract_value'); ?></th>
@@ -273,7 +273,7 @@
                               <td></td>
                               <td></td>
                               <td class="total_budget_ro_projection"></td>
-                              <td class="total_order_value"></td>
+                              <!-- <td class="total_order_value"></td> -->
                               <td class="total_committed_contract_amount"></td>
                               <td class="total_change_order_amount"></td>
                               <td class="total_rev_contract_value"></td>

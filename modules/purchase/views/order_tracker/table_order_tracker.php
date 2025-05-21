@@ -20,7 +20,7 @@ $aColumns = [
    'order_date',
    'completion_date',
    'budget',
-   'order_value',
+   // 'order_value',
    'total',
    'co_total',
    'total_rev_contract_value',
@@ -255,7 +255,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'order_date',
    'completion_date',
    'budget',
-   'order_value',
+   // 'order_value',
    'co_total',
    'total',
    'total_rev_contract_value',
@@ -541,10 +541,12 @@ foreach ($rResult as $aRow) {
          if (empty($aRow['remarks'])) {
             $_data = '<textarea class="form-control remarks-input" placeholder="Enter remarks" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '"></textarea>';
          }
-      } elseif ($column == 'order_value') {
-         $base_currency = get_base_currency_pur();
-         $_data = '<span class="order-value-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' . app_format_money($aRow['order_value'], $base_currency->symbol) . '</span>';
-      } elseif ($column == 'aw_unw_order_status') {
+      }
+      //  elseif ($column == 'order_value') {
+      //    $base_currency = get_base_currency_pur();
+      //    $_data = '<span class="order-value-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' . app_format_money($aRow['order_value'], $base_currency->symbol) . '</span>';
+      // }
+       elseif ($column == 'aw_unw_order_status') {
          $status_labels_aw_uw = [
             1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
             2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
@@ -590,7 +592,7 @@ foreach ($rResult as $aRow) {
    }
 
    $footer_data['total_budget_ro_projection'] += $aRow['budget'];
-   $footer_data['total_order_value'] += $aRow['order_value'];
+   // $footer_data['total_order_value'] += $aRow['order_value'];
    if ($aRow['source_table'] === 'order_tracker') {
       $footer_data['total_committed_contract_amount'] += $aRow['total'];
    } else {
