@@ -2,6 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
+$pdf->SetPageOrientation('L', true);
 $dimensions = $pdf->getPageDimensions();
 
 $info_right_column = '';
