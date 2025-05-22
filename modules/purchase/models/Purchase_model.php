@@ -19637,9 +19637,13 @@ class Purchase_model extends App_Model
                 <td style="width: 5.6%">' . $row['vendor'] . '</td>
                 <td style="width: 4.6%">' . $order_date . '</td>
                 <td style="width: 4.6%">' . $completion_date . '</td>
-                <td style="width: 5.6%">' . app_format_money($row['budget'], '₹') . '</td>
-                <td style="width: 5.6%">' . app_format_money($row['subtotal'], '₹') . '</td>
-                <td style="width: 5.6%">' . app_format_money($row['co_total'], '₹') . '</td>
+                <td style="width: 5.6%">' . app_format_money($row['budget'], '₹') . '</td>';
+            if ($row['source_table'] == "order_tracker") {
+                $html .= '<td style="width: 5.6%">' . app_format_money($row['total'], '₹') . '</td>';
+            } else {
+                $html .= '<td style="width: 5.6%">' . app_format_money($row['subtotal'], '₹') . '</td>';
+            }
+            $html .= '<td style="width: 5.6%">' . app_format_money($row['co_total'], '₹') . '</td>
                 <td style="width: 5.6%">' . app_format_money($row['total_rev_contract_value'], '₹') . '</td>
                 <td style="width: 5.6%">' . app_format_money($row['anticipate_variation'], '₹') . '</td>
                 <td style="width: 5.6%">' . app_format_money($row['cost_to_complete'], '₹') . '</td>
