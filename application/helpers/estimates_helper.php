@@ -465,12 +465,40 @@ function get_estimate_revision_chain($estimate_id, $chain = [])
     return $chain;
 }
 
+function get_root_estimate_id($estimate_id)
+{
+    $CI =& get_instance();
+    $CI->db->select('parent_id');
+    $CI->db->from(db_prefix() . 'estimates');
+    $CI->db->where('id', $estimate_id);
+    $parent = $CI->db->get()->row();
+    if ($parent && $parent->parent_id != 0) {
+        return get_root_estimate_id($parent->parent_id);
+    }
+    return $estimate_id;
+}
+
+
 function render_estimate_revision_template($id)
 {
     $CI =& get_instance();
     $CI->load->model('estimates_model');
     $data = $CI->estimates_model->get_cost_planning_details($id);
     $estimate = $CI->estimates_model->get($id);
-    return $CI->load->view('admin/estimates/estimate_revision_template', ['cost_planning_details' => $data, 'estimate' => $estimate], true);
+    $root_estimate = get_root_estimate_id($id);
+    $root_estimate_data = $CI->estimates_model->get_cost_planning_details($root_estimate);
+    return $CI->load->view('admin/estimates/estimate_revision_template', ['cost_planning_details' => $data, 'estimate' => $estimate, 'unique_id' => $id, 'root_estimate_data' => $root_estimate_data], true);
+}
+
+function find_estimate_revision_bold($val1, $val2) {
+    if(empty($val1)) {
+        return '';
+    } else if(empty($val2)) {
+        return '';
+    } else if($val1 != $val2) {
+        return ' class="revision_bold"';
+    } else {
+        return '';
+    }
 }
 
