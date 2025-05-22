@@ -13376,7 +13376,7 @@ class purchase extends AdminController
         $serial_no = 1;
         foreach ($get_order_tracker as $row) {
             // Format dates (same logic as PDF)
-            $completion_date = $aw_unw_order_status = $contract_amount = '';
+            $completion_date = $aw_unw_order_status = $contract_amount = $order_name = '';
             if (!empty($row['completion_date']) && $row['completion_date'] != '0000-00-00') {
                 $completion_date = date('d M, Y', strtotime($row['completion_date']));
             }
@@ -13409,13 +13409,15 @@ class purchase extends AdminController
             ];
             if ($row['source_table'] == "order_tracker") {
                 $contract_amount =  app_format_money($row['total'] ?? 0, '');
+                $order_name = $row['order_name'] ?? '';
             } else {
                 $contract_amount = app_format_money($row['subtotal'] ?? 0, '');
+                $order_name = $row['order_number'].'-'.$row['order_name'] ?? '';
             }
             // Write row data
             fputcsv($output, [
                 $aw_unw_order_status,
-                $row['order_name'] ?? '',
+                $order_name,
                 $row['vendor'] ?? '',
                 $order_date,
                 $completion_date,

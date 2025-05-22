@@ -1,6 +1,7 @@
 .table * {
-    font-size: 9px !important; /* Force 10px font size */
-    line-height: 11px !important; /* Slightly reduced line height */
+    font-size: 10px !important; /* Force 10px font size */
+    /* line-height: 11px !important;  */
+	/* Slightly reduced line height */
 }
 .table {
     table-layout: fixed !important;

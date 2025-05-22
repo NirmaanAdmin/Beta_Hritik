@@ -36,11 +36,13 @@
       z-index: 999;
       left: 140px;
    }
+
    .export-btn-div {
       position: absolute;
       z-index: 999;
       left: 189px;
-   }  
+   }
+
    .loader-container {
       display: flex;
       justify-content: center;
@@ -86,15 +88,31 @@
 
                         <div class="col-md-2 form-group">
                            <?php
+                           // Fetch saved filter; ensure we end up with an array
                            $order_tracker_type_filter = get_module_filter($module_name, 'order_tracker_type');
-                           $order_tracker_type_filter_val = !empty($order_tracker_type_filter) ? explode(",", $order_tracker_type_filter->filter_value) : '';
+                           if (!empty($order_tracker_type_filter) && $order_tracker_type_filter->filter_value !== '') {
+                              $selected_types = explode(',', $order_tracker_type_filter->filter_value);
+                           } else {
+                              $selected_types = [];
+                           }
                            ?>
-                           <select name="type[]" id="type" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('type'); ?>">
-                              <option value=""></option>
-                              <option value="pur_orders" <?php echo ($order_tracker_type_filter_val == "pur_orders") ? 'selected' : ''; ?>><?php echo _l('pur_order'); ?></option>
-                              <option value="wo_orders" <?php echo ($order_tracker_type_filter_val == "wo_orders") ? 'selected' : ''; ?>><?php echo _l('wo_order'); ?></option>
+                           <select
+                              name="type[]"
+                              id="order_tracker_type"
+                              class="selectpicker"
+                              multiple
+                              data-live-search="true"
+                              data-width="100%"
+                              data-none-selected-text="<?php echo _l('type'); ?>">
+                              <option value="pur_orders" <?php echo in_array('pur_orders', $selected_types) ? 'selected' : ''; ?>>
+                                 <?php echo _l('pur_order'); ?>
+                              </option>
+                              <option value="wo_orders" <?php echo in_array('wo_orders', $selected_types) ? 'selected' : ''; ?>>
+                                 <?php echo _l('wo_order'); ?>
+                              </option>
                            </select>
                         </div>
+
 
                         <div class="col-md-3 form-group">
                            <?php

@@ -19632,9 +19632,14 @@ class Purchase_model extends App_Model
             ];
             $html .= '<tr>
                 <td style="width: 3%">' . $serial_no . '</td>
-                <td style="width: 4%">' . $aw_unw_order_status . '</td>
-                <td style="width: 10.2%">' . $row['order_name'] . '</td>
-                <td style="width: 5.6%">' . $row['vendor'] . '</td>
+                <td style="width: 4%">' . $aw_unw_order_status . '</td>';
+            if ($row['source_table'] == "order_tracker") {
+                $html .= '<td style="width: 10.2%">' . $row['order_name'] . '</td>';
+            } else {
+                $html .= '<td style="width: 10.2%">' . $row['order_number'].'-'.$row['order_name'] . '</td>';
+            }
+
+            $html .= '<td style="width: 5.6%">' . $row['vendor'] . '</td>
                 <td style="width: 4.6%">' . $order_date . '</td>
                 <td style="width: 4.6%">' . $completion_date . '</td>
                 <td style="width: 5.6%">' . app_format_money($row['budget'], '₹') . '</td>';
@@ -19665,122 +19670,174 @@ class Purchase_model extends App_Model
 
     public function get_order_tracker_pdf()
     {
-        $sql = "
-            SELECT DISTINCT
-                po.id,
-                po.aw_unw_order_status                         AS aw_unw_order_status,
-                po.pur_order_number                             AS order_number,
-                po.pur_order_name                               AS order_name,
-                po.rli_filter,
-                po.group_pur                                    AS group_pur,
-                pv.company                                      AS vendor,
-                pv.userid                                       AS vendor_id,
-                po.order_date,
-                po.completion_date,
-                po.budget,
-                po.order_value,
-                po.total                                        AS total,
-                co.co_value                                     AS co_total,
-                (po.subtotal + IFNULL(co.co_value, 0))          AS total_rev_contract_value, 
-                po.anticipate_variation,
-                (IFNULL(po.anticipate_variation,0) + (po.subtotal + IFNULL(co.co_value,0))) AS cost_to_complete,
-                COALESCE(inv_po_sum.final_certified_amount,0)   AS final_certified_amount,
-                po.kind,
-                po.remarks                                      AS remarks,
-                po.subtotal                                     AS subtotal,
-                pr.name                                         AS project,
-                pr.id                                           AS project_id,
-                'pur_orders'                                    AS source_table
-            FROM tblpur_orders po
-            LEFT JOIN tblpur_vendor pv   ON pv.userid = po.vendor
-            LEFT JOIN tblco_orders co    ON co.po_order_id = po.id
-            LEFT JOIN tblprojects pr     ON pr.id = po.project
-            LEFT JOIN (
-                SELECT
-                    pur_order,
-                    SUM(final_certified_amount) AS final_certified_amount
-                FROM tblpur_invoices
-                WHERE pur_order IS NOT NULL
-                GROUP BY pur_order
-            ) AS inv_po_sum ON inv_po_sum.pur_order = po.id
+        // 1) Build the base UNION ALL query
+        $baseSql = "
+        SELECT DISTINCT
+            po.id,
+            po.aw_unw_order_status AS aw_unw_order_status,
+            po.pur_order_number     AS order_number,
+            po.pur_order_name       AS order_name,
+            po.rli_filter,
+            po.group_pur            AS group_pur,
+            pv.company              AS vendor,
+            pv.userid               AS vendor_id,
+            po.order_date,
+            po.completion_date,
+            po.budget,
+            po.order_value,
+            po.total                AS total,
+            co.co_value             AS co_total,
+            (po.subtotal + IFNULL(co.co_value, 0)) AS total_rev_contract_value, 
+            po.anticipate_variation,
+            (IFNULL(po.anticipate_variation,0) + (po.subtotal + IFNULL(co.co_value,0))) AS cost_to_complete,
+            COALESCE(inv_po_sum.final_certified_amount,0) AS final_certified_amount,
+            po.kind,
+            po.remarks              AS remarks,
+            po.subtotal             AS subtotal,
+            pr.name                 AS project,
+            pr.id                   AS project_id,
+            'pur_orders'            AS source_table
+        FROM tblpur_orders po
+        LEFT JOIN tblpur_vendor pv   ON pv.userid = po.vendor
+        LEFT JOIN tblco_orders co    ON co.po_order_id = po.id
+        LEFT JOIN tblprojects pr     ON pr.id = po.project
+        LEFT JOIN (
+            SELECT pur_order, SUM(final_certified_amount) AS final_certified_amount
+            FROM tblpur_invoices
+            WHERE pur_order IS NOT NULL
+            GROUP BY pur_order
+        ) AS inv_po_sum ON inv_po_sum.pur_order = po.id
 
-            UNION ALL
+        UNION ALL
 
-            SELECT DISTINCT
-                wo.id,
-                wo.aw_unw_order_status                         AS aw_unw_order_status,
-                wo.wo_order_number                              AS order_number,
-                wo.wo_order_name                                AS order_name,
-                wo.rli_filter,
-                wo.group_pur                                    AS group_pur,
-                pv.company                                      AS vendor,
-                pv.userid                                       AS vendor_id,
-                wo.order_date,
-                wo.completion_date,
-                wo.budget,
-                wo.order_value,
-                wo.total                                        AS total,
-                co.co_value                                     AS co_total,
-                (wo.subtotal + IFNULL(co.co_value, 0))          AS total_rev_contract_value,
-                wo.anticipate_variation,
-                (IFNULL(wo.anticipate_variation,0) + (wo.subtotal + IFNULL(co.co_value,0))) AS cost_to_complete,
-                COALESCE(inv_wo_sum.final_certified_amount,0)   AS final_certified_amount,
-                wo.kind,
-                wo.remarks                                      AS remarks,
-                wo.subtotal                                     AS subtotal,
-                pr.name                                         AS project,
-                pr.id                                           AS project_id,
-                'wo_orders'                                     AS source_table
-            FROM tblwo_orders wo
-            LEFT JOIN tblpur_vendor pv   ON pv.userid = wo.vendor
-            LEFT JOIN tblco_orders co    ON co.wo_order_id = wo.id
-            LEFT JOIN tblprojects pr     ON pr.id = wo.project
-            LEFT JOIN (
-                SELECT
-                    wo_order,
-                    SUM(final_certified_amount) AS final_certified_amount
-                FROM tblpur_invoices
-                WHERE wo_order IS NOT NULL
-                GROUP BY wo_order
-            ) AS inv_wo_sum ON inv_wo_sum.wo_order = wo.id
+        SELECT DISTINCT
+            wo.id,
+            wo.aw_unw_order_status AS aw_unw_order_status,
+            wo.wo_order_number     AS order_number,
+            wo.wo_order_name       AS order_name,
+            wo.rli_filter,
+            wo.group_pur           AS group_pur,
+            pv.company             AS vendor,
+            pv.userid              AS vendor_id,
+            wo.order_date,
+            wo.completion_date,
+            wo.budget,
+            wo.order_value,
+            wo.total               AS total,
+            co.co_value            AS co_total,
+            (wo.subtotal + IFNULL(co.co_value, 0)) AS total_rev_contract_value,
+            wo.anticipate_variation,
+            (IFNULL(wo.anticipate_variation,0) + (wo.subtotal + IFNULL(co.co_value,0))) AS cost_to_complete,
+            COALESCE(inv_wo_sum.final_certified_amount,0) AS final_certified_amount,
+            wo.kind,
+            wo.remarks             AS remarks,
+            wo.subtotal            AS subtotal,
+            pr.name                AS project,
+            pr.id                  AS project_id,
+            'wo_orders'            AS source_table
+        FROM tblwo_orders wo
+        LEFT JOIN tblpur_vendor pv   ON pv.userid = wo.vendor
+        LEFT JOIN tblco_orders co    ON co.wo_order_id = wo.id
+        LEFT JOIN tblprojects pr     ON pr.id = wo.project
+        LEFT JOIN (
+            SELECT wo_order, SUM(final_certified_amount) AS final_certified_amount
+            FROM tblpur_invoices
+            WHERE wo_order IS NOT NULL
+            GROUP BY wo_order
+        ) AS inv_wo_sum ON inv_wo_sum.wo_order = wo.id
 
-            UNION ALL
+        UNION ALL
 
-            SELECT DISTINCT
-                t.id,
-                t.aw_unw_order_status                          AS aw_unw_order_status,
-                t.pur_order_number                              AS order_number,
-                t.pur_order_name                                AS order_name,
-                t.rli_filter,
-                t.group_pur                                     AS group_pur,
-                pv.company                                      AS vendor,
-                pv.userid                                       AS vendor_id,
-                t.order_date,
-                t.completion_date,
-                t.budget,
-                t.order_value,
-                t.total                                         AS total,
-                t.co_total                                      AS co_total,
-                (t.total + IFNULL(t.co_total, 0))               AS total_rev_contract_value,
-                t.anticipate_variation,
-                (IFNULL(t.anticipate_variation,0) + (t.total + IFNULL(t.co_total,0))) AS cost_to_complete,
-                t.final_certified_amount                        AS final_certified_amount,
-                t.kind,
-                t.remarks                                       AS remarks,
-                t.subtotal                                      AS subtotal,
-                pr.name                                         AS project,
-                pr.id                                           AS project_id,
-                'order_tracker'                                 AS source_table
-            FROM tblpur_order_tracker t
-            LEFT JOIN tblpur_vendor pv   ON pv.userid = t.vendor
-            LEFT JOIN tblprojects pr     ON pr.id = t.project
-            ";
+        SELECT DISTINCT
+            t.id,
+            t.aw_unw_order_status  AS aw_unw_order_status,
+            t.pur_order_number     AS order_number,
+            t.pur_order_name       AS order_name,
+            t.rli_filter,
+            t.group_pur            AS group_pur,
+            pv.company             AS vendor,
+            pv.userid              AS vendor_id,
+            t.order_date,
+            t.completion_date,
+            t.budget,
+            t.order_value,
+            t.total                AS total,
+            t.co_total             AS co_total,
+            (t.total + IFNULL(t.co_total, 0)) AS total_rev_contract_value,
+            t.anticipate_variation,
+            (IFNULL(t.anticipate_variation,0) + (t.total + IFNULL(t.co_total,0))) AS cost_to_complete,
+            t.final_certified_amount                AS final_certified_amount,
+            t.kind,
+            t.remarks             AS remarks,
+            t.subtotal            AS subtotal,
+            pr.name                AS project,
+            pr.id                  AS project_id,
+            'order_tracker'       AS source_table
+        FROM tblpur_order_tracker t
+        LEFT JOIN tblpur_vendor pv   ON pv.userid = t.vendor
+        LEFT JOIN tblprojects pr     ON pr.id = t.project
+    ";
 
-        return $this->db->query($sql)->result_array();
+        // 2) Load any user‑saved filters
+        $CI = &get_instance();
+        $filters = $CI->db
+            ->select('*')
+            ->from(db_prefix() . 'module_filter')
+            ->where('module_name', 'order_tracker')
+            ->where('staff_id', get_staff_user_id())
+            ->get()
+            ->result_array();
+
+        // 3) Build WHERE clauses
+        $whereClauses = [];
+        foreach ($filters as $f) {
+            $name  = $f['filter_name'];
+            $value = trim($f['filter_value']);
+            if ($value === '') {
+                continue;
+            }
+            $val = $CI->db->escape_str($value);
+            switch ($name) {
+                case 'order_tracker_type':
+                    $whereClauses[] = "source_table = '{$val}'";
+                    break;
+                case 'aw_unw_order_status':
+                    $whereClauses[] = "aw_unw_order_status = '{$val}'";
+                    break;
+                case 'vendors':
+                    $whereClauses[] = "vendor_id = '{$val}'";
+                    break;
+                case 'rli_filter':
+                    $whereClauses[] = "rli_filter = '{$val}'";
+                    break;
+                case 'order_tracker_kind':
+                    $whereClauses[] = "kind = '{$val}'";
+                    break;
+                case 'budget_head':
+                    $whereClauses[] = "group_pur = '{$val}'";
+                    break;
+                case 'projects':
+                    $whereClauses[] = "project_id = '{$val}'";
+                    break;
+                    // add more cases if needed...
+            }
+        }
+
+        // 4) If there are filters, wrap the base query and apply them
+        if (!empty($whereClauses)) {
+            $sql = "
+            SELECT *
+            FROM (
+                {$baseSql}
+            ) AS combined_results
+            WHERE " . implode(' AND ', $whereClauses);
+        } else {
+            $sql = $baseSql;
+        }
+
+        // 5) Execute and return
+        return $CI->db->query($sql)->result_array();
     }
-
-
-
     public function order_tracker_pdf($order_tracker)
     {
         return app_pdf('order_tracker', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Order_tracker_pdf'), $order_tracker);
