@@ -288,6 +288,8 @@ class Estimates extends AdminController
         $data['totalNotes']        = total_rows(db_prefix() . 'notes', ['rel_id' => $id, 'rel_type' => 'estimate']);
         $data['co_total']          = $this->estimates_model->get_co_total_for_estimate($id);
         $data['cost_planning_details'] = $this->estimates_model->get_cost_planning_details($id);
+        $root_estimate = get_root_estimate_id($id);
+        $data['root_estimate_data'] = $this->estimates_model->get_cost_planning_details($root_estimate);
         $this->load->model('currencies_model');
         $data['base_currency'] = $this->currencies_model->get_base_currency();
 
