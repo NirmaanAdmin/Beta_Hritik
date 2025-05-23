@@ -18020,7 +18020,7 @@ class Purchase_model extends App_Model
                 if (isset($change_order['co_value'])) {
                     $co_value +=  $change_order['co_value'];
                 }
-                if (isset($co['id'])) {
+                if (isset($change_order['id'])) {
                     $this->db->select('*');
                     $this->db->where('tender_item', 1);
                     $this->db->where('pur_order', $co['id']);
