@@ -18000,12 +18000,11 @@ class Purchase_model extends App_Model
         $pur_orders = $this->db->get(db_prefix() . 'pur_orders')->row();
 
         // Fetch all related change orders
-        $this->db->select('co_value');
+        $this->db->select('co_value,id');
         $this->db->where('po_order_id', $po_id);
         $change_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
         // Initialize contract amount
-        $po_subtotal = 0;
-        $co_value = 0;
+        $po_subtotal = $co_value = $po_co_non_tender_subtotal = 0;
 
         if ($pur_orders && isset($pur_orders->subtotal)) {
             if ($pur_orders->discount_total > 0) {
@@ -18021,11 +18020,22 @@ class Purchase_model extends App_Model
                 if (isset($change_order['co_value'])) {
                     $co_value +=  $change_order['co_value'];
                 }
+                if (isset($co['id'])) {
+                    $this->db->select('*');
+                    $this->db->where('tender_item', 1);
+                    $this->db->where('pur_order', $co['id']);
+                    $change_orders_tender_items = $this->db->get(db_prefix() . 'co_order_detail')->result_array();
+                    if (!empty($change_orders_tender_items)) {
+                        foreach ($change_orders_tender_items as $co_tender_item) {
+                            $po_co_non_tender_subtotal += $co_tender_item['into_money_updated'];
+                        }
+                    }
+                }
             }
         }
 
         // Final contract amount = PO subtotal + Change Orders subtotal
-        $result['po_contract_amount'] = $po_subtotal + $co_value;
+        $result['po_contract_amount'] = $po_subtotal + $co_value + $po_co_non_tender_subtotal;
 
 
         if (empty($payment_certificate_id) && $cal == 1) {
@@ -18735,13 +18745,12 @@ class Purchase_model extends App_Model
         $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
 
         // Fetch all related change orders for this WO
-        $this->db->select('co_value');
+        $this->db->select('co_value, id');
         $this->db->where('wo_order_id', $wo_id);
         $wo_change_orders = $this->db->get(db_prefix() . 'co_orders')->result_array();
 
         // Initialize subtotal values
-        $wo_subtotal = 0;
-        $wo_co_subtotal = 0;
+        $wo_subtotal = $wo_co_subtotal = $wo_co_non_tender_subtotal = 0;
 
         if ($wo_orders && isset($wo_orders->subtotal)) {
 
@@ -18758,11 +18767,22 @@ class Purchase_model extends App_Model
                 if (isset($co['co_value'])) {
                     $wo_co_subtotal +=  $co['co_value'];
                 }
+                if (isset($co['id'])) {
+                    $this->db->select('*');
+                    $this->db->where('tender_item', 1);
+                    $this->db->where('pur_order', $co['id']);
+                    $change_orders_tender_items = $this->db->get(db_prefix() . 'co_order_detail')->result_array();
+                    if (!empty($change_orders_tender_items)) {
+                        foreach ($change_orders_tender_items as $co_tender_item) {
+                            $wo_co_non_tender_subtotal += $co_tender_item['into_money_updated'];
+                        }
+                    }
+                }
             }
         }
 
         // Final work order contract amount = WO subtotal + change orders
-        $result['wo_contract_amount'] = $wo_subtotal + $wo_co_subtotal;
+        $result['wo_contract_amount'] = $wo_subtotal + $wo_co_subtotal + $wo_co_non_tender_subtotal;
 
 
         if (empty($payment_certificate_id) && $cal == 1) {
@@ -19648,7 +19668,7 @@ class Purchase_model extends App_Model
             if ($row['source_table'] == "order_tracker") {
                 $html .= '<td style="width: 10.2%">' . $row['order_name'] . '</td>';
             } else {
-                $html .= '<td style="width: 10.2%">' . $row['order_number'].'-'.$row['order_name'] . '</td>';
+                $html .= '<td style="width: 10.2%">' . $row['order_number'] . '-' . $row['order_name'] . '</td>';
             }
 
             $html .= '<td style="width: 5.6%">' . $row['vendor'] . '</td>
@@ -19869,31 +19889,31 @@ class Purchase_model extends App_Model
         $estimate_id = $data['estimate_id'];
         $budget_head_id = $data['budget_head_id'];
         $base_currency = $this->currencies_model->get_base_currency();
-        
+
         $this->db->where('rel_id', $estimate_id);
         $this->db->where('rel_type', 'estimate');
         $this->db->where('annexure', $budget_head_id);
         $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
 
-        if(!empty($itemable)) {
+        if (!empty($itemable)) {
             $response .= '<div class="table-responsive s_table">';
             $response .= '<table class="table items">';
             $response .= '<thead>
                 <tr>
-                    <th width="18%" align="left">'._l('estimate_table_item_heading').'</th>
-                    <th width="24%" align="left">'._l('estimate_table_item_description').'</th>
-                    <th width="13%" class="qty" align="right">'._l('estimate_table_quantity_heading').'</th>
-                    <th width="13%" class="qty" align="right">'._l('remaining_qty').'</th>
-                    <th width="15%" align="right">'._l('estimate_table_rate_heading').'</th>
-                    <th width="17%" align="right">'._l('control_remarks').'</th>
+                    <th width="18%" align="left">' . _l('estimate_table_item_heading') . '</th>
+                    <th width="24%" align="left">' . _l('estimate_table_item_description') . '</th>
+                    <th width="13%" class="qty" align="right">' . _l('estimate_table_quantity_heading') . '</th>
+                    <th width="13%" class="qty" align="right">' . _l('remaining_qty') . '</th>
+                    <th width="15%" align="right">' . _l('estimate_table_rate_heading') . '</th>
+                    <th width="17%" align="right">' . _l('control_remarks') . '</th>
                 </tr>
             </thead>';
             $response .= '<tbody style="border: 1px solid #ddd;">';
             foreach ($itemable as $key => $item) {
                 $item_qty = number_format($item['qty'], 2);
                 $purchase_unit_name = get_purchase_unit($item['unit_id']);
-                $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
-                $cost_control_remarks_name = 'cost_control_remarks['.$item['id'].']';
+                $purchase_unit_name = !empty($purchase_unit_name) ? ' ' . $purchase_unit_name : '';
+                $cost_control_remarks_name = 'cost_control_remarks[' . $item['id'] . ']';
 
                 $this->db->select('SUM(' . db_prefix() . 'pur_order_detail.quantity) as total_qty');
                 $this->db->from(db_prefix() . 'pur_order_detail');
@@ -19910,22 +19930,22 @@ class Purchase_model extends App_Model
 
                 $response .= '<tr>';
                 $response .= '<td>
-                    '.get_purchase_items($item['item_code']).'
+                    ' . get_purchase_items($item['item_code']) . '
                     <br>
                     <br>
-                    <button type="button" class="btn btn-info pull-left mright10 display-block cost_fetch_pur_item" data-itemcode="'.$item['item_code'].'" data-longdescription="'.$item['long_description'].'">Fetch</button>
+                    <button type="button" class="btn btn-info pull-left mright10 display-block cost_fetch_pur_item" data-itemcode="' . $item['item_code'] . '" data-longdescription="' . $item['long_description'] . '">Fetch</button>
                     </td>';
-                $response .= '<td>'.clear_textarea_breaks($item['long_description']).'</td>';
+                $response .= '<td>' . clear_textarea_breaks($item['long_description']) . '</td>';
                 $response .= '<td align="right">
-                    <span>'.$item_qty.'</span>
-                    <span>'.$purchase_unit_name.'</span>
+                    <span>' . $item_qty . '</span>
+                    <span>' . $purchase_unit_name . '</span>
                 </td>';
                 $response .= '<td align="right">
-                    <span>'.$remaining_qty.'</span>
-                    <span>'.$purchase_unit_name.'</span>
+                    <span>' . $remaining_qty . '</span>
+                    <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right">'.app_format_money($item['rate'], $base_currency).'</td>';
-                $response .= '<td align="right">'.render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']).'</td>';
+                $response .= '<td align="right">' . app_format_money($item['rate'], $base_currency) . '</td>';
+                $response .= '<td align="right">' . render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']) . '</td>';
                 $response .= '</tr>';
             }
             $response .= '</tbody>';
@@ -19945,16 +19965,16 @@ class Purchase_model extends App_Model
         $output = fopen('php://output', 'w');
 
         $all_revisions = get_estimate_all_revision_chain($estimate_id);
-        
+
         // CSV Headers (same as PDF table columns)
         $headers = [
             'Item',
             'Description'
         ];
-        if(!empty($all_revisions)) {
+        if (!empty($all_revisions)) {
             foreach ($all_revisions as $key => $revision) {
-               $headers[] = 'R'.$key.' Qty';
-               $headers[] = 'R'.$key.' Rate';
+                $headers[] = 'R' . $key . ' Qty';
+                $headers[] = 'R' . $key . ' Rate';
             }
         }
         // Write headers to CSV
@@ -19964,7 +19984,7 @@ class Purchase_model extends App_Model
         $this->db->where('rel_type', 'estimate');
         $this->db->where('annexure', $budget_head_id);
         $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
-        if(!empty($itemable)) {
+        if (!empty($itemable)) {
             foreach ($itemable as $key => $item) {
                 $item_name = get_purchase_items($item['item_code']);
                 $item_description = clear_textarea_breaks($item['long_description']);
@@ -19972,21 +19992,21 @@ class Purchase_model extends App_Model
                 $item_output = array();
                 $item_output[] = $item_name;
                 $item_output[] = $item_description;
-                if(!empty($all_revisions)) {
+                if (!empty($all_revisions)) {
                     foreach ($all_revisions as $key => $revision) {
-                       $this->db->where('rel_id', $revision);
-                       $this->db->where('rel_type', 'estimate');
-                       $this->db->where('annexure', $budget_head_id);
-                       $this->db->where('item_code', $item['item_code']);
-                       $this->db->where('long_description', $item['long_description']);
-                       $revision_itemable = $this->db->get(db_prefix() . 'itemable')->row();
-                       if(!empty($revision_itemable)) {
+                        $this->db->where('rel_id', $revision);
+                        $this->db->where('rel_type', 'estimate');
+                        $this->db->where('annexure', $budget_head_id);
+                        $this->db->where('item_code', $item['item_code']);
+                        $this->db->where('long_description', $item['long_description']);
+                        $revision_itemable = $this->db->get(db_prefix() . 'itemable')->row();
+                        if (!empty($revision_itemable)) {
                             $item_output[] = $revision_itemable->qty;
                             $item_output[] = $revision_itemable->rate;
-                       } else {
+                        } else {
                             $item_output[] = '';
                             $item_output[] = '';
-                       }
+                        }
                     }
                 }
 
@@ -20001,7 +20021,7 @@ class Purchase_model extends App_Model
 
     public function update_cost_control_remarks($data, $insert_id)
     {
-        if(!empty($data)) {
+        if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $this->db->where('id', $key);
                 $this->db->update(db_prefix() . 'itemable', ['cost_control_remarks' => $value]);
