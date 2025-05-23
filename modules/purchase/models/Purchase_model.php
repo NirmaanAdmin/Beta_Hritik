@@ -18023,7 +18023,7 @@ class Purchase_model extends App_Model
                 if (isset($change_order['id'])) {
                     $this->db->select('*');
                     $this->db->where('tender_item', 1);
-                    $this->db->where('pur_order', $co['id']);
+                    $this->db->where('pur_order', $change_order['id']);
                     $change_orders_tender_items = $this->db->get(db_prefix() . 'co_order_detail')->result_array();
                     if (!empty($change_orders_tender_items)) {
                         foreach ($change_orders_tender_items as $co_tender_item) {
