@@ -6920,7 +6920,7 @@ class timesheets_model extends app_model
 						$total_lack = $ts_lack;
 						if ($total_lack) {
 							$total_lack = rtrim($total_lack, '; ');
-						}						
+						}
 						$result_lack = $this->merge_ts($total_lack, $max_hour, $type_valid);
 					} else {
 						if ($check_holiday == 'holiday') {
@@ -6941,8 +6941,8 @@ class timesheets_model extends app_model
 
 				$dt_cell_bg[$date_s] = $list_color[$value];
 			}
-			
-			
+
+
 			$data['staff_row_tk'][] = $dt_ts;
 			$data['staff_row_tk_detailt'][] = $dt_ts_detail;
 			$data['cell_background'][] = $dt_cell_bg;
@@ -8734,7 +8734,7 @@ class timesheets_model extends app_model
 		foreach ($list_date as $date) {
 			$result = 0;
 			$data_shift_list = $this->get_shift_work_staff_by_date($staff_id, $date);
-			
+
 			foreach ($data_shift_list as $ss) {
 				$data_shift_type = $this->get_shift_type($ss);
 				if ($data_shift_type) {
@@ -8843,4 +8843,40 @@ class timesheets_model extends app_model
 			return false;
 		}
 	}
+
+	public function get_emp_code()
+	{
+		$this->db->select('concat(firstname, " ", lastname) as Staff,staff_identifi');
+		$this->db->from('tblstaff');
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+
+	public function get_emp_position()
+	{
+		$this->db->select('CONCAT(tblstaff.firstname, " ", tblstaff.lastname) AS Staff, tblhr_job_position.position_name AS job_position, tblstaff.staffid');
+		$this->db->from('tblstaff');
+		$this->db->join('tblhr_job_position', 'tblhr_job_position.position_id = tblstaff.job_position', 'left');
+		$this->db->where('tblstaff.active', 1); // Only active staff if needed
+		$query = $this->db->get();
+
+		return $query->result_array();
+	}
+
+	public function get_emp_date_of_joining()
+	{
+		$this->db->select('concat(firstname, " ", lastname) as Staff,joining_date');
+		$this->db->from('tblstaff');
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+	
+	public function get_emp_active_status()
+	{
+		$this->db->select('concat(firstname, " ", lastname) as Staff,active');
+		$this->db->from('tblstaff');
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+	
 }

@@ -249,7 +249,7 @@ class timesheets extends AdminController
 				$data['staff_row_tk'] = $result['staff_row_tk'];
 				$data['cell_background'] = $result['cell_background'];
 			}
-		} 
+		}
 
 		$data_lack = [];
 		$data['data_lack'] = $data_lack;
@@ -5806,10 +5806,41 @@ class timesheets extends AdminController
 			$month = date('m');
 			$month_year = date('Y');
 			$days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, $month_year);
+			$get_emp_code = $this->timesheets_model->get_emp_code();
+			// Create a mapping array for quick lookup of emp codes by staff name
+			$emp_code_map = [];
+			foreach ($get_emp_code as $emp) {
+				$emp_code_map[trim($emp['Staff'])] = $emp['staff_identifi'];
+			}
+			$get_emp_position = $this->timesheets_model->get_emp_position();
+			// Create a mapping array for quick lookup of emp positions by staff name
+			$emp_position_map = [];
+			foreach ($get_emp_position as $emp) {
+				$emp_position_map[trim($emp['Staff'])] = $emp['job_position'];
+			}
 
+			$get_emp_date_of_joining = $this->timesheets_model->get_emp_date_of_joining();
+			// Create a mapping array for quick lookup of emp date of joining by staff name
+
+			$emp_date_of_joining_map = [];
+			foreach ($get_emp_date_of_joining as $emp) {
+				$emp_date_of_joining_map[trim($emp['Staff'])] = $emp['joining_date'];
+			}
+
+			$get_emp_active_status = $this->timesheets_model->get_emp_active_status();
+			// Create a mapping array for quick lookup of emp active status by staff name
+			$emp_active_status_map = [];
+			foreach ($get_emp_active_status as $emp) {
+				$emp_active_status_map[trim($emp['Staff'])] = $emp['active'];
+			}
 			$set_col_tk = [];
-			$set_col_tk[_l('staff_id')] = 'string';
-			$set_col_tk[_l('staff')] = 'string';
+			$set_col_tk[_l('S.NO')] = 'string';
+			$set_col_tk[_l('Status')] = 'string';
+			$set_col_tk["Employee's Name as per Aadhar"] = 'string';
+			$set_col_tk["Emp. Code"] = 'string';
+			$set_col_tk['Designation'] = 'string';
+			$set_col_tk['SITE'] = 'string';
+			$set_col_tk['DOJ (JAMNAGAR SITE)'] = 'string';
 			$widthst = [];
 			$widthst[] = 10;
 			$widthst[] = 40;
@@ -5826,17 +5857,74 @@ class timesheets extends AdminController
 			$writer->writeSheetHeader('Sheet1', $writer_header, $col_options = ['widths' => $widthst, 'fill' => '#C65911', 'font-style' => 'bold', 'color' => '#FFFFFF', 'border' => 'left,right,top,bottom', 'height' => 25, 'border-color' => '#FFFFFF', 'font-size' => 13, 'font' => 'Calibri']);
 			$style1 = array('fill' => '#F8CBAD', 'height' => 25, 'border' => 'left,right,top,bottom', 'border-color' => '#FFFFFF', 'font-size' => 12, 'font' => 'Calibri', 'color' => '#000000');
 			$style2 = array('fill' => '#FCE4D6', 'height' => 25, 'border' => 'left,right,top,bottom', 'border-color' => '#FFFFFF', 'font-size' => 12, 'font' => 'Calibri', 'color' => '#000000');
+
 			foreach ($list as $k => $value) {
-				$list_add = [];
-				foreach ($value as $i => $item) {
-					$list_add[] = $item;
+				if (isset($value['HR code'])) {
+					unset($value['HR code']);
 				}
+
+				$list_add = [];
+				$serial = $k + 1;
+				$list_add = [$serial];
+
+				// Get the status from the current row
+				$status = isset($emp_active_status_map[$value['Staff']]) ? $emp_active_status_map[$value['Staff']] : '';
+				// Add the status to the row
+				if ($status == 1) {
+					$list_add[] = 'CONTINUING';
+				} else {
+					$list_add[] = 'DISCONTINUED';
+				}
+				// Get the staff name from the current row
+				$staff_name = trim($value['Staff']);
+				if ($staff_name === 'Admin N360' || $staff_name === 'Trial Demo ID') {
+					continue;
+				}
+				// Find the corresponding emp code
+				$emp_code = isset($emp_code_map[$staff_name]) ? $emp_code_map[$staff_name] : '';
+
+				// Find the corresponding emp position
+				$emp_position = isset($emp_position_map[$staff_name]) ? $emp_position_map[$staff_name] : '';
+
+				// Find the corresponding emp date of joining
+				$emp_date_of_joining = isset($emp_date_of_joining_map[$staff_name]) ? date('d M, Y', strtotime($emp_date_of_joining_map[$staff_name])) : '';
+
+				// Add the staff name and emp code to the row
+				$list_add[] = $staff_name; // Employee's Name as per Aadhar
+				$list_add[] = $emp_code;   // Emp. Code
+				$list_add[] = $emp_position; // Designation
+				$list_add[] = ''; // SITE
+				$list_add[] = $emp_date_of_joining; // DOJ (JAMNAGAR SITE)
+
+				// Process day values
+				foreach ($value as $i => $item) {
+					if ($i !== 'Staff') { // Skip the Staff field as we've already added it
+						// Check if it's a day field (contains space, like "Thu 24")
+						if (strpos($i, ' ') !== false) {
+							// Replace W:9.5 with P
+							if (strpos($item, 'W:') === 0) {
+								$item = 'P';
+							}
+							// Replace empty with L
+							elseif (empty($item)) {
+								$item = 'L';
+							}
+							// Keep NS as is
+							elseif ($item === 'NS') {
+								$item = 'NS';
+							}
+						}
+						$list_add[] = $item;
+					}
+				}
+
 				if (($k % 2) == 0) {
 					$writer->writeSheetRow('Sheet1', $list_add, $style1);
 				} else {
 					$writer->writeSheetRow('Sheet1', $list_add, $style2);
 				}
 			}
+
 			$files = glob(TIMESHEETS_PATH_EXPORT_FILE . '*');
 			foreach ($files as $file) {
 				if (is_file($file)) {
@@ -7146,9 +7234,9 @@ class timesheets extends AdminController
 			$scheduled_hours = ($scheduled_end - $scheduled_start) / 3600;
 
 			$actual_hours = (float) $timesheet['value'];
-			if($scheduled_hours < $actual_hours){
+			if ($scheduled_hours < $actual_hours) {
 				$overtime_difference = $actual_hours - $scheduled_hours;
-			}else{
+			} else {
 				$overtime_difference = 0;
 			}
 			// 6. Apply only if overtime is 2.5 hours or more
@@ -7184,5 +7272,4 @@ class timesheets extends AdminController
 			}
 		}
 	}
-
 }
