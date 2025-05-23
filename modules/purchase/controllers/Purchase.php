@@ -1723,6 +1723,7 @@ class purchase extends AdminController
         $data['area_pur'] = $this->purchase_model->get_area();
         $this->load->model('invoices_model');
         $data['get_hsn_sac_code'] = $this->invoices_model->get_hsn_sac_code();
+        $data['budgets'] = $this->purchase_model->get_all_estimates();
         $data['ajaxItems'] = false;
 
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
@@ -13439,5 +13440,20 @@ class purchase extends AdminController
         // Close output stream
         fclose($output);
         exit;
+    }
+
+    public function get_cost_control_sheet()
+    {
+        $data = $this->input->post();
+        $result = $this->purchase_model->get_cost_control_sheet($data);
+        echo json_encode(['result' => $result]);
+        exit;
+    }
+
+    public function download_revision_historical_data()
+    {
+        $estimate_id = $this->input->get('estimate_id');
+        $budget_head_id = $this->input->get('budget_head_id');
+        $this->purchase_model->download_revision_historical_data($estimate_id, $budget_head_id);
     }
 }

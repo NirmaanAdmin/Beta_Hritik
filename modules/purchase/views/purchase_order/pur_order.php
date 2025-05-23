@@ -151,29 +151,21 @@
                     </div>
 
                     <div class="row">
-                      <?php if (get_purchase_option('purchase_order_setting') == 0) { ?>
                         <div class="col-md-6 form-group">
-                          <label for="estimate"><?php echo _l('estimates'); ?></label>
-                          <select name="estimate" id="estimate" class="selectpicker  <?php if (isset($pur_order)) {
-                                                                                        echo 'disabled';
-                                                                                      } ?>" onchange="coppy_pur_estimate(); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                            <?php if (isset($pur_order)) { ?>
+                          <label for="budget"><?php echo _l('budget'); ?></label>
+                          <select name="estimate" id="estimate" class="selectpicker  <?php if (isset($pur_order)) { echo 'disabled';} ?>" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                               <option value=""></option>
-                              <?php foreach ($estimates as $s) { ?>
-                                <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $pur_order->estimate != '' && $pur_order->estimate == $s['id']) {
-                                                                                                  echo 'selected';
-                                                                                                } ?>><?php echo format_pur_estimate_number($s['id']); ?></option>
+                              <?php foreach ($budgets as $s) { ?>
+                                <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_order) && $pur_order->estimate != '' && $pur_order->estimate == $s['id']) { echo 'selected';} ?>>
+                                <?php echo format_estimate_number($s['id']); ?>
+                                <?php echo !empty($s['budget_description']) ? ' - '.$s['budget_description'] : ''; ?>
+                                </option>
                               <?php } ?>
-                            <?php } ?>
                           </select>
 
                         </div>
-                      <?php } ?>
-                      <div class="col-md-<?php if (get_purchase_option('purchase_order_setting') == 1) {
-                                            echo '12';
-                                          } else {
-                                            echo '6';
-                                          }; ?> form-group">
+
+                      <div class="col-md-6 form-group">
                         <label for="department"><?php echo _l('department'); ?></label>
                         <select name="department" id="department" class="selectpicker" <?php if (isset($pur_order)) {
                                                                                           echo 'disabled';
@@ -558,6 +550,30 @@
             <?php echo '</div>';
               }
             } ?>
+          </div>
+
+          <div class="cost_complete_sheet" style="display: none;">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-3 pull-right">
+                  <button type="button" class="btn btn-info pull-right" id="download_historical_data" style="margin-left: 7px;"><?php echo _l('download_historical_data'); ?></button>
+                  <button type="button" class="btn btn-info pull-right" id="cost_control_sheet"><?php echo _l('cost_control_sheet'); ?></button>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+              <div class="row">
+                <div class="col-md-12 view_cost_control_sheet">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <button type="button" class="btn btn-info enable_item_select mbot5">
+                    <?php echo _l('add_non_budgeted_items'); ?>
+                  </button>
+                  <?php $this->load->view('purchase/item_include/main_item_select'); ?>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="panel-body mtop10 invoice-item">
@@ -1138,8 +1154,8 @@
     $.post(admin_url + 'purchase/coppy_pur_request_for_po/' + pur_request + '/' + vendor).done(function(response) {
       response = JSON.parse(response);
       if (response) {
-        $('select[name="estimate"]').html(response.estimate_html);
-        $('select[name="estimate"]').selectpicker('refresh');
+        // $('select[name="estimate"]').html(response.estimate_html);
+        // $('select[name="estimate"]').selectpicker('refresh');
 
         $('select[name="currency"]').val(response.currency).change();
         $('input[name="currency_rate"]').val(response.currency_rate).change();

@@ -2725,6 +2725,11 @@ class Purchase_model extends App_Model
             unset($data['grand_total']);
         }
 
+        if (isset($data['cost_control_remarks'])) {
+            $cost_control_remarks = $data['cost_control_remarks'];
+            unset($data['cost_control_remarks']);
+        }
+
         if (isset($data['pur_request']) && $data['pur_request'] > 0) {
             $this->db->where('id', $data['pur_request']);
             $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
@@ -2784,6 +2789,7 @@ class Purchase_model extends App_Model
         $cron_email['options'] = json_encode($cron_email_options, true);
         $this->db->insert(db_prefix() . 'cron_email', $cron_email);
         $this->save_purchase_files('pur_order', $insert_id);
+        $this->update_cost_control_remarks($cost_control_remarks, $insert_id);
         if ($insert_id) {
             // Update next purchase order number in settings
             $next_number = $data['number'] + 1;
@@ -2987,9 +2993,15 @@ class Purchase_model extends App_Model
             unset($data['custom_fields']);
         }
 
+        if (isset($data['cost_control_remarks'])) {
+            $cost_control_remarks = $data['cost_control_remarks'];
+            unset($data['cost_control_remarks']);
+        }
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_orders', $data);
         $this->save_purchase_files('pur_order', $id);
+        $this->update_cost_control_remarks($cost_control_remarks, $insert_id);
 
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
@@ -19841,5 +19853,160 @@ class Purchase_model extends App_Model
     public function order_tracker_pdf($order_tracker)
     {
         return app_pdf('order_tracker', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Order_tracker_pdf'), $order_tracker);
+    }
+
+    public function get_all_estimates()
+    {
+        $this->db->select('id, budget_description');
+        $this->db->where('active', 1);
+        return $this->db->get(db_prefix() . 'estimates')->result_array();
+    }
+
+    public function get_cost_control_sheet($data)
+    {
+        $this->load->model('currencies_model');
+        $response = '';
+        $estimate_id = $data['estimate_id'];
+        $budget_head_id = $data['budget_head_id'];
+        $base_currency = $this->currencies_model->get_base_currency();
+        
+        $this->db->where('rel_id', $estimate_id);
+        $this->db->where('rel_type', 'estimate');
+        $this->db->where('annexure', $budget_head_id);
+        $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
+
+        if(!empty($itemable)) {
+            $response .= '<div class="table-responsive s_table">';
+            $response .= '<table class="table items">';
+            $response .= '<thead>
+                <tr>
+                    <th width="18%" align="left">'._l('estimate_table_item_heading').'</th>
+                    <th width="24%" align="left">'._l('estimate_table_item_description').'</th>
+                    <th width="13%" class="qty" align="right">'._l('estimate_table_quantity_heading').'</th>
+                    <th width="13%" class="qty" align="right">'._l('remaining_qty').'</th>
+                    <th width="15%" align="right">'._l('estimate_table_rate_heading').'</th>
+                    <th width="17%" align="right">'._l('control_remarks').'</th>
+                </tr>
+            </thead>';
+            $response .= '<tbody style="border: 1px solid #ddd;">';
+            foreach ($itemable as $key => $item) {
+                $item_qty = number_format($item['qty'], 2);
+                $purchase_unit_name = get_purchase_unit($item['unit_id']);
+                $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
+                $cost_control_remarks_name = 'cost_control_remarks['.$item['id'].']';
+
+                $this->db->select('SUM(' . db_prefix() . 'pur_order_detail.quantity) as total_qty');
+                $this->db->from(db_prefix() . 'pur_order_detail');
+                $this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order', 'left');
+                $this->db->where(db_prefix() . 'pur_order_detail.item_code', $item['item_code']);
+                $this->db->where(db_prefix() . 'pur_order_detail.description', $item['long_description']);
+                $this->db->where(db_prefix() . 'pur_orders.estimate', $estimate_id);
+                $this->db->where(db_prefix() . 'pur_orders.group_pur', $budget_head_id);
+                $this->db->where(db_prefix() . 'pur_orders.approve_status', 2);
+                $pur_order_detail_qty = $this->db->get()->row();
+                $pur_order_detail_qty = !empty($pur_order_detail_qty->total_qty) ? $pur_order_detail_qty->total_qty : 0;
+                $remaining_qty = $item['qty'] - $pur_order_detail_qty;
+                $remaining_qty = number_format($remaining_qty, 2);
+
+                $response .= '<tr>';
+                $response .= '<td>
+                    '.get_purchase_items($item['item_code']).'
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-info pull-left mright10 display-block cost_fetch_pur_item" data-itemcode="'.$item['item_code'].'" data-longdescription="'.$item['long_description'].'">Fetch</button>
+                    </td>';
+                $response .= '<td>'.clear_textarea_breaks($item['long_description']).'</td>';
+                $response .= '<td align="right">
+                    <span>'.$item_qty.'</span>
+                    <span>'.$purchase_unit_name.'</span>
+                </td>';
+                $response .= '<td align="right">
+                    <span>'.$remaining_qty.'</span>
+                    <span>'.$purchase_unit_name.'</span>
+                </td>';
+                $response .= '<td align="right">'.app_format_money($item['rate'], $base_currency).'</td>';
+                $response .= '<td align="right">'.render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']).'</td>';
+                $response .= '</tr>';
+            }
+            $response .= '</tbody>';
+            $response .= '</table>';
+            $response .= '</div>';
+        }
+
+        return $response;
+    }
+
+    public function download_revision_historical_data($estimate_id, $budget_head_id)
+    {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="Download_Historical_Data.csv"');
+
+        // Open output stream
+        $output = fopen('php://output', 'w');
+
+        $all_revisions = get_estimate_all_revision_chain($estimate_id);
+        
+        // CSV Headers (same as PDF table columns)
+        $headers = [
+            'Item',
+            'Description'
+        ];
+        if(!empty($all_revisions)) {
+            foreach ($all_revisions as $key => $revision) {
+               $headers[] = 'R'.$key.' Qty';
+               $headers[] = 'R'.$key.' Rate';
+            }
+        }
+        // Write headers to CSV
+        fputcsv($output, $headers);
+
+        $this->db->where('rel_id', $estimate_id);
+        $this->db->where('rel_type', 'estimate');
+        $this->db->where('annexure', $budget_head_id);
+        $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
+        if(!empty($itemable)) {
+            foreach ($itemable as $key => $item) {
+                $item_name = get_purchase_items($item['item_code']);
+                $item_description = clear_textarea_breaks($item['long_description']);
+
+                $item_output = array();
+                $item_output[] = $item_name;
+                $item_output[] = $item_description;
+                if(!empty($all_revisions)) {
+                    foreach ($all_revisions as $key => $revision) {
+                       $this->db->where('rel_id', $revision);
+                       $this->db->where('rel_type', 'estimate');
+                       $this->db->where('annexure', $budget_head_id);
+                       $this->db->where('item_code', $item['item_code']);
+                       $this->db->where('long_description', $item['long_description']);
+                       $revision_itemable = $this->db->get(db_prefix() . 'itemable')->row();
+                       if(!empty($revision_itemable)) {
+                            $item_output[] = $revision_itemable->qty;
+                            $item_output[] = $revision_itemable->rate;
+                       } else {
+                            $item_output[] = '';
+                            $item_output[] = '';
+                       }
+                    }
+                }
+
+                fputcsv($output, $item_output);
+            }
+        }
+
+        // Close output stream
+        fclose($output);
+        exit;
+    }
+
+    public function update_cost_control_remarks($data, $insert_id)
+    {
+        if(!empty($data)) {
+            foreach ($data as $key => $value) {
+                $this->db->where('id', $key);
+                $this->db->update(db_prefix() . 'itemable', ['cost_control_remarks' => $value]);
+            }
+        }
+        return true;
     }
 }

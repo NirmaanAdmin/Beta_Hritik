@@ -502,3 +502,18 @@ function find_estimate_revision_bold($val1, $val2) {
     }
 }
 
+function get_estimate_all_revision_chain($estimate_id, $chain = [])
+{
+    $CI =& get_instance();
+    $CI->db->select('id, parent_id');
+    $CI->db->from(db_prefix() . 'estimates');
+    $CI->db->where('id', $estimate_id);
+    $CI->db->order_by('id', 'asc');
+    $parent = $CI->db->get()->row();
+    if (!empty($parent)) {
+        $chain = get_estimate_all_revision_chain($parent->parent_id, $chain);
+        $chain[] = $parent->id;
+    }
+    return $chain;
+}
+

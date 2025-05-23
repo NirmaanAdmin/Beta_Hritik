@@ -290,9 +290,88 @@
       get_order_date(order_date);
     });
 
+    toggleCostDownloadButtons();
+
+    $("body").on('change', 'select[name="estimate"], select[name="group_pur"]', function() {
+      toggleCostDownloadButtons();
+    });
+
+    function toggleCostDownloadButtons() {
+      var estimate = $('select[name="estimate"]').val();
+      var budgetHead = $('select[name="group_pur"]').val();
+
+      if (estimate && budgetHead) {
+        $('.cost_complete_sheet').show();
+      } else {
+        $('.cost_complete_sheet').hide();
+      }
+    }
+
+    get_cost_control_sheet();
+
+    $("body").on('click', '#cost_control_sheet', function() {
+      get_cost_control_sheet();
+    });
+
+    function get_cost_control_sheet() {
+      var estimate_id = $('select[name="estimate"]').val();
+      var budget_head_id = $('select[name="group_pur"]').val();
+      if(estimate_id != '' && budget_head_id != '') {
+        $.post(admin_url + 'purchase/get_cost_control_sheet', {
+          estimate_id: estimate_id,
+          budget_head_id: budget_head_id
+        }).done(function(response) {
+          response = JSON.parse(response);
+          if(response.result) {
+            $('.view_cost_control_sheet').html('');
+            $('.view_cost_control_sheet').html(response.result);
+          } else {
+            $('.view_cost_control_sheet').html('');
+          }
+        });
+      }
+    }
+
+    $("body").on('click', '#download_historical_data', function() {
+      var estimate_id = $('select[name="estimate"]').val();
+      var budget_head_id = $('select[name="group_pur"]').val();
+      if (estimate_id !== '' && budget_head_id !== '') {
+        var url = admin_url + 'purchase/download_revision_historical_data?estimate_id='+encodeURIComponent(estimate_id)+'&budget_head_id=' + encodeURIComponent(budget_head_id);
+        window.location.href = url;
+      }
+    });
+
+    $("body").on('click', '.cost_fetch_pur_item', function() {
+      var itemcode = $(this).data('itemcode');
+      var longdescription = $(this).data('longdescription');
+      var itemData = {
+        area: [],
+        description: longdescription,
+        discount: undefined,
+        item_code: itemcode,
+        item_name: undefined,
+        quantity: "",
+        sub_groups_pur: "",
+        tax_rate: undefined,
+        taxname: [],
+        unit_id: "",
+        unit_name: "",
+        unit_price: ""
+      };
+      pur_add_item_to_table(itemData, 'undefined');
+      alert_float('success', "Cost item have added in below table");
+    });
+
+    $("body").on('click', '.enable_item_select', function() {
+      $('select[name="item_select"]').prop('disabled', false);
+      $('select[name="item_select"]').selectpicker('refresh');
+    });
+
   });
 
   var lastAddedItemKey = null;
+  $('select[name="item_select"]').prop('disabled', true);
+  $('select[name="item_select"]').selectpicker('refresh');
 
   function estimate_by_vendor(invoker) {
     "use strict";
@@ -300,9 +379,9 @@
     if (invoker.value != 0) {
       $.post(admin_url + 'purchase/estimate_by_vendor/' + invoker.value).done(function(response) {
         response = JSON.parse(response);
-        $('select[name="estimate"]').html('');
-        $('select[name="estimate"]').append(response.result);
-        $('select[name="estimate"]').selectpicker('refresh');
+        // $('select[name="estimate"]').html('');
+        // $('select[name="estimate"]').append(response.result);
+        // $('select[name="estimate"]').selectpicker('refresh');
         $('#vendor_data').html('');
         $('#vendor_data').append(response.ven_html);
         $('select[name="currency"]').val(response.currency_id).change();
@@ -323,37 +402,6 @@
     }
   }
 
-  function coppy_pur_estimate() {
-    "use strict";
-    var pur_estimate = $('select[name="estimate"]').val();
-    if (pur_estimate != '') {
-      $.post(admin_url + 'purchase/coppy_pur_estimate/' + pur_estimate).done(function(response) {
-        response = JSON.parse(response);
-        if (response) {
-          $('select[name="currency"]').val(response.currency).change();
-          $('input[name="currency_rate"]').val(response.currency_rate).change();
-          $('input[name="shipping_fee"]').val(response.shipping_fee).change();
-
-          $('select[name="discount_type"]').val(response.discount_type).change();
-
-          $('.invoice-item table.invoice-items-table.items tbody').html('');
-          $('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
-
-          setTimeout(function() {
-            pur_calculate_total();
-          }, 15);
-
-          init_selectpicker();
-          pur_reorder_items('.invoice-item');
-          pur_clear_item_preview_values('.invoice-item');
-          $('body').find('#items-warning').remove();
-          $("body").find('.dt-loader').remove();
-          $('#item_select').selectpicker('val', '');
-        }
-      });
-    }
-  }
-
   function coppy_pur_request() {
     "use strict";
     var pur_request = $('select[name="pur_request"]').val();
@@ -362,8 +410,8 @@
       $.post(admin_url + 'purchase/coppy_pur_request_for_po/' + pur_request + '/' + vendor).done(function(response) {
         response = JSON.parse(response);
         if (response) {
-          $('select[name="estimate"]').html(response.estimate_html);
-          $('select[name="estimate"]').selectpicker('refresh');
+          // $('select[name="estimate"]').html(response.estimate_html);
+          // $('select[name="estimate"]').selectpicker('refresh');
 
           $('select[name="currency"]').val(response.currency).change();
           $('input[name="currency_rate"]').val(response.currency_rate).change();
