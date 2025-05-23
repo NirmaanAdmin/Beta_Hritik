@@ -6906,6 +6906,7 @@ class timesheets_model extends app_model
 					$list_dtts[$day] = $val;
 				}
 			}
+			
 			foreach ($list_date as $key => $value) {
 				$date_s = date('D d', strtotime($value));
 				$max_hour = isset($list_hour_shift[$value]) ? $list_hour_shift[$value] : 0;
@@ -6913,6 +6914,7 @@ class timesheets_model extends app_model
 				$result_lack = '';
 				if ($max_hour > 0) {
 					if (!$check_holiday) {
+						
 						$ts_lack = '';
 						if (isset($list_dtts[$date_s])) {
 							$ts_lack = $list_dtts[$date_s] . '; ';
@@ -6921,6 +6923,7 @@ class timesheets_model extends app_model
 						if ($total_lack) {
 							$total_lack = rtrim($total_lack, '; ');
 						}
+						
 						$result_lack = $this->merge_ts($total_lack, $max_hour, $type_valid);
 					} else {
 						if ($check_holiday == 'holiday') {
@@ -6934,15 +6937,39 @@ class timesheets_model extends app_model
 						}
 					}
 				} else {
-					$result_lack = 'NS';
+					// $result_lack = 'NS';
+					if (!$check_holiday) {
+						
+						$ts_lack = '';
+						if (isset($list_dtts[$date_s])) {
+							$ts_lack = $list_dtts[$date_s] . '; ';
+						}
+						$total_lack = $ts_lack;
+						if ($total_lack) {
+							$total_lack = rtrim($total_lack, '; ');
+						}
+						
+						$result_lack = $this->merge_ts($total_lack, $max_hour, $type_valid);
+						if(empty($result_lack)){
+							$result_lack = 'NS';
+						}
+					} else {
+						if ($check_holiday == 'holiday') {
+							$result_lack = "HO";
+						}
+						if ($check_holiday == 'event_break') {
+							$result_lack = "EB";
+						}
+						if ($check_holiday == 'unexpected_break') {
+							$result_lack = "UB";
+						}
+					}
 				}
 				$dt_ts[$date_s] = $result_lack;
 				$dt_ts_detail[$value] = $result_lack;
 
 				$dt_cell_bg[$date_s] = $list_color[$value];
 			}
-
-
 			$data['staff_row_tk'][] = $dt_ts;
 			$data['staff_row_tk_detailt'][] = $dt_ts_detail;
 			$data['cell_background'][] = $dt_cell_bg;
@@ -7401,6 +7428,7 @@ class timesheets_model extends app_model
 	{
 		$data = $this->input->post();
 		$date_ts = $this->format_date($month_filter . '-01');
+		
 		$date_ts_end = $this->format_date($month_filter . '-' . date('t'));
 		$year = date('Y', strtotime($date_ts));
 		$g_month = date('m', strtotime($date_ts));
@@ -7509,7 +7537,7 @@ class timesheets_model extends app_model
 		$data['set_col_tk'] = [];
 		$data['set_col_tk'][] = ['data' => _l('staff_id'), 'type' => 'text'];
 		$data['set_col_tk'][] = ['data' => _l('staff'), 'type' => 'text', 'readOnly' => true, 'width' => 200];
-
+		
 		for ($d = 1; $d <= $days_in_month; $d++) {
 			$time = mktime(12, 0, 0, $g_month, $d, (int) $year);
 			if (date('m', $time) == $g_month) {
@@ -8870,7 +8898,7 @@ class timesheets_model extends app_model
 		$query = $this->db->get();
 		return $query->result_array();
 	}
-	
+
 	public function get_emp_active_status()
 	{
 		$this->db->select('concat(firstname, " ", lastname) as Staff,active');
@@ -8878,5 +8906,4 @@ class timesheets_model extends app_model
 		$query = $this->db->get();
 		return $query->result_array();
 	}
-	
 }

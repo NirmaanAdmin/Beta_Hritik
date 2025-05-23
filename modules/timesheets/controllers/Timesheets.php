@@ -250,7 +250,6 @@ class timesheets extends AdminController
 				$data['cell_background'] = $result['cell_background'];
 			}
 		}
-
 		$data_lack = [];
 		$data['data_lack'] = $data_lack;
 		$data['set_col_tk'] = json_encode($data['set_col_tk']);
@@ -1196,7 +1195,6 @@ class timesheets extends AdminController
 
 		$data['value'] = explode('; ', $data['value']);
 		$html = '';
-
 		foreach ($data['value'] as $key => $value) {
 			$value = explode(':', $value);
 			if (isset($value[1]) && $value[1] > 0 || $value[0] == 'M' || $value[0] == 'HO' || $value[0] == 'B') {
@@ -5803,8 +5801,9 @@ class timesheets extends AdminController
 			}
 
 			$list = $this->timesheets_model->get_data_attendance_export($month_filter, $department_filter, $role_filter, $staff_filter);
-			$month = date('m');
-			$month_year = date('Y');
+			$get_month_year = explode('-', $month_filter);
+			$month = $get_month_year[1];
+			$month_year = $get_month_year[0];
 			$days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, $month_year);
 			$get_emp_code = $this->timesheets_model->get_emp_code();
 			// Create a mapping array for quick lookup of emp codes by staff name
@@ -5834,29 +5833,102 @@ class timesheets extends AdminController
 				$emp_active_status_map[trim($emp['Staff'])] = $emp['active'];
 			}
 			$set_col_tk = [];
-			$set_col_tk[_l('S.NO')] = 'string';
-			$set_col_tk[_l('Status')] = 'string';
-			$set_col_tk["Employee's Name as per Aadhar"] = 'string';
-			$set_col_tk["Emp. Code"] = 'string';
-			$set_col_tk['Designation'] = 'string';
-			$set_col_tk['SITE'] = 'string';
-			$set_col_tk['DOJ (JAMNAGAR SITE)'] = 'string';
+			$set_col_tk['S.NO'] = 'S.NO';
+			$set_col_tk['Status'] = 'Status';
+			$set_col_tk["Employee's Name as per Aadhar"] = "Employee's Name as per Aadhar";
+			$set_col_tk["Emp. Code"] = "Emp. Code";
+			$set_col_tk['Designation'] = 'Designation';
+			$set_col_tk['SITE'] = 'SITE';
+			$set_col_tk['DOJ'] = 'DOJ';
 			$widthst = [];
 			$widthst[] = 10;
 			$widthst[] = 40;
 			for ($d = 1; $d <= $days_in_month; $d++) {
 				$time = mktime(12, 0, 0, $month, $d, $month_year);
 				if (date('m', $time) == $month) {
-					$set_col_tk[date('D d', $time)] = 'string';
+					$set_col_tk[date('D d', $time)] = date('D d', $time);
 					$widthst[] = 10;
 				}
 			}
+			$set_col_tk['TOTAL "P"'] = 'TOTAL "P"';
+			$set_col_tk['TOTAL "L"'] = 'TOTAL "L"';
+			$set_col_tk['TOTAL S/L'] = 'TOTAL S/L';
+			$set_col_tk['TOTAL OFF'] = 'TOTAL OFF';
+			$set_col_tk['TOTAL "H"'] = 'TOTAL "H"';
+			$set_col_tk['TOTAL C/OFF'] = 'TOTAL C/OFF';
+			$set_col_tk['TOTAL H/F'] = 'TOTAL H/F';
+			$set_col_tk['TOTAL W/H'] = 'TOTAL W/H';
+			$set_col_tk['TOTAL N/A'] = 'TOTAL N/A';
+			$set_col_tk['TOTAL'] = 'TOTAL';
 			$writer_header = $set_col_tk;
 
 			$writer = new XLSXWriter();
-			$writer->writeSheetHeader('Sheet1', $writer_header, $col_options = ['widths' => $widthst, 'fill' => '#C65911', 'font-style' => 'bold', 'color' => '#FFFFFF', 'border' => 'left,right,top,bottom', 'height' => 25, 'border-color' => '#FFFFFF', 'font-size' => 13, 'font' => 'Calibri']);
-			$style1 = array('fill' => '#F8CBAD', 'height' => 25, 'border' => 'left,right,top,bottom', 'border-color' => '#FFFFFF', 'font-size' => 12, 'font' => 'Calibri', 'color' => '#000000');
-			$style2 = array('fill' => '#FCE4D6', 'height' => 25, 'border' => 'left,right,top,bottom', 'border-color' => '#FFFFFF', 'font-size' => 12, 'font' => 'Calibri', 'color' => '#000000');
+
+			// Total columns for merging
+			$total_columns = count($writer_header);
+			$get_company_name = get_company_name_for_attendance();
+			$writer->writeSheetRow(
+				'Sheet1',
+				[$get_company_name],
+				[
+					// just styling here; no merge key
+					'height'    => 30,
+					'font-size' => 16,
+					'font'      => 'Calibri',
+					'bold'      => true,
+					'halign'    => 'center',
+				]
+			);
+			// now merge that first row across all columns:
+			$writer->markMergedCell('Sheet1', 0, 0, 0, count($writer_header) - 1);
+
+			$month_name    = strtoupper(date('F', mktime(0, 0, 0, $month, 10)));
+			$heading_text  = "STAFF ATTENDANCE FOR THE MONTH OF {$month_name} - {$month_year}";
+			$writer->writeSheetRow(
+				'Sheet1',
+				[$heading_text],
+				[
+					'height'    => 25,
+					'font-size' => 14,
+					'font-weight' => '500',
+					'font'      => 'Calibri',
+					'bold'      => true,
+					'halign'    => 'center',
+				]
+			);
+			$writer->markMergedCell('Sheet1', 1, 0, 1, count($writer_header) - 1);
+
+			// 2. Write the headers row with styling
+			$writer->writeSheetRow('Sheet1', $writer_header, [
+				'fill' => '#C65911',
+				'font-style' => 'bold',
+				'color' => '#FFFFFF',
+				'border' => 'left,right,top,bottom',
+				'height' => 25,
+				'border-color' => '#FFFFFF',
+				'font-size' => 13,
+				'font' => 'Calibri'
+			]);
+
+
+			$style1 = array(
+				'fill' => '#F8CBAD',
+				'height' => 25,
+				'border' => 'left,right,top,bottom',
+				'border-color' => '#FFFFFF',
+				'font-size' => 12,
+				'font' => 'Calibri',
+				'color' => '#000000'
+			);
+			$style2 = array(
+				'fill' => '#FCE4D6',
+				'height' => 25,
+				'border' => 'left,right,top,bottom',
+				'border-color' => '#FFFFFF',
+				'font-size' => 12,
+				'font' => 'Calibri',
+				'color' => '#000000'
+			);
 
 			foreach ($list as $k => $value) {
 				if (isset($value['HR code'])) {
@@ -5875,11 +5947,13 @@ class timesheets extends AdminController
 				} else {
 					$list_add[] = 'DISCONTINUED';
 				}
+
 				// Get the staff name from the current row
 				$staff_name = trim($value['Staff']);
 				if ($staff_name === 'Admin N360' || $staff_name === 'Trial Demo ID') {
 					continue;
 				}
+
 				// Find the corresponding emp code
 				$emp_code = isset($emp_code_map[$staff_name]) ? $emp_code_map[$staff_name] : '';
 
@@ -5896,6 +5970,17 @@ class timesheets extends AdminController
 				$list_add[] = ''; // SITE
 				$list_add[] = $emp_date_of_joining; // DOJ (JAMNAGAR SITE)
 
+				// Initialize counters
+				$count_p = 0;
+				$count_l = 0;
+				$count_sl = 0; // Assuming S/L is for something else
+				$count_ns = 0;
+				$count_h = 0;
+				$count_coff = 0;
+				$count_hf = 0;
+				$count_wh = 0;
+				$count_na = 0;
+
 				// Process day values
 				foreach ($value as $i => $item) {
 					if ($i !== 'Staff') { // Skip the Staff field as we've already added it
@@ -5904,19 +5989,51 @@ class timesheets extends AdminController
 							// Replace W:9.5 with P
 							if (strpos($item, 'W:') === 0) {
 								$item = 'P';
+								$count_p++;
 							}
 							// Replace empty with L
 							elseif (empty($item)) {
 								$item = 'L';
+								$count_l++;
 							}
-							// Keep NS as is
+							// Count NS (OFF days)
 							elseif ($item === 'NS') {
-								$item = 'NS';
+								$item = 'OFF';
+								$count_ns++;
+							}
+							// Add other conditions for H, C/OFF, H/F, W/H, N/A as needed
+							// Example:
+							elseif ($item === 'H') {
+								$count_h++;
+							} elseif ($item === 'C/OFF') {
+								$count_coff++;
+							} elseif ($item === 'H/F') {
+								$count_hf++;
+							} elseif ($item === 'W/H') {
+								$count_wh++;
+							} elseif ($item === 'N/A') {
+								$count_na++;
 							}
 						}
 						$list_add[] = $item;
 					}
 				}
+
+				// Add the totals to the row
+				$list_add[] = $count_p;          // TOTAL "P"
+				$list_add[] = $count_l;          // TOTAL "L"
+				$list_add[] = $count_sl;         // TOTAL S/L
+				$list_add[] = $count_ns;         // TOTAL OFF (NS)
+				$list_add[] = $count_h;          // TOTAL "H"
+				$list_add[] = $count_coff;       // TOTAL C/OFF
+				$list_add[] = $count_hf;         // TOTAL H/F
+				$list_add[] = $count_wh;         // TOTAL W/H
+				$list_add[] = $count_na;         // TOTAL N/A
+
+				// Calculate grand total (sum of all counts)
+				$grand_total = $count_p + $count_l + $count_sl + $count_ns + $count_h +
+					$count_coff + $count_hf + $count_wh + $count_na;
+				$list_add[] = $grand_total;      // TOTAL
 
 				if (($k % 2) == 0) {
 					$writer->writeSheetRow('Sheet1', $list_add, $style1);
@@ -5924,7 +6041,6 @@ class timesheets extends AdminController
 					$writer->writeSheetRow('Sheet1', $list_add, $style2);
 				}
 			}
-
 			$files = glob(TIMESHEETS_PATH_EXPORT_FILE . '*');
 			foreach ($files as $file) {
 				if (is_file($file)) {

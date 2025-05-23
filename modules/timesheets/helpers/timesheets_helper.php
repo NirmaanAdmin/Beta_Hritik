@@ -525,3 +525,15 @@ function get_staff_id($staff_code)
 		return false;
 	}
 }
+
+function get_company_name_for_attendance()
+{
+	$CI = &get_instance();
+	$CI->db->select('value');
+	$CI->db->where('name', 'companyname');
+	$company = $CI->db->get(db_prefix() . 'options')->row();
+	if ($company) {
+		return $company->value;
+	}
+	return '';
+}
