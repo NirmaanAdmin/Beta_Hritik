@@ -660,7 +660,7 @@ if ($estimate->currency != 0) {
                                     $taxRate = (($cvalue['total_tax'] - $cvalue['subtotal']) / $cvalue['subtotal']) * 100;
                                     $taxRate = round($taxRate);
                                     $taxRate = (100 + (float)$taxRate) / 100;
-                                    $total_co_value = $cvalue['co_value'] + ($cvalue['co_value'] * $taxRate);
+                                    $total_co_value = $cvalue['co_value'] + ($cvalue['co_value'] * $taxRate) + $cvalue['non_tender_total'];
                                     $grand_total = $grand_total + $total_co_value;
                               ?>
                                     <tr id="subtotal">
