@@ -307,30 +307,30 @@
       }
     }
 
-    get_cost_control_sheet();
+    $("body").on('click', '#cost_control_sheet', function () {
+      var sheetContainer = $(".view_cost_control_sheet");
 
-    $("body").on('click', '#cost_control_sheet', function() {
-      get_cost_control_sheet();
-    });
+      if (sheetContainer.is(":visible")) {
+        sheetContainer.slideUp("fast");
+      } else {
+        var estimate_id = $('select[name="estimate"]').val();
+        var budget_head_id = $('select[name="group_pur"]').val();
 
-    function get_cost_control_sheet() {
-      var estimate_id = $('select[name="estimate"]').val();
-      var budget_head_id = $('select[name="group_pur"]').val();
-      if(estimate_id != '' && budget_head_id != '') {
-        $.post(admin_url + 'purchase/get_cost_control_sheet', {
-          estimate_id: estimate_id,
-          budget_head_id: budget_head_id
-        }).done(function(response) {
-          response = JSON.parse(response);
-          if(response.result) {
-            $('.view_cost_control_sheet').html('');
-            $('.view_cost_control_sheet').html(response.result);
-          } else {
-            $('.view_cost_control_sheet').html('');
-          }
-        });
+        if (estimate_id !== '' && budget_head_id !== '') {
+          $.post(admin_url + 'purchase/get_cost_control_sheet', {
+            estimate_id: estimate_id,
+            budget_head_id: budget_head_id
+          }).done(function (response) {
+            response = JSON.parse(response);
+            if (response.result) {
+              sheetContainer.html(response.result).slideDown("fast");
+            } else {
+              sheetContainer.html('').slideDown("fast");
+            }
+          });
+        }
       }
-    }
+    });
 
     $("body").on('click', '#download_historical_data', function() {
       var estimate_id = $('select[name="estimate"]').val();

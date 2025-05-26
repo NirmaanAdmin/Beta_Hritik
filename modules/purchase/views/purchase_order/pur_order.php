@@ -562,7 +562,7 @@
               </div>
               <div class="clearfix"></div>
               <div class="row">
-                <div class="col-md-12 view_cost_control_sheet">
+                <div class="col-md-12 view_cost_control_sheet" style="display: none;">
                 </div>
               </div>
               <div class="row">
