@@ -608,12 +608,22 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 		$('#searchBox').on('keyup', function() {
 			let query = $(this).val();
 
+			// Function to get URL parameters
+		    function getUrlParameter(name) {
+		        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+		        let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+		        let results = regex.exec(location.search);
+		        return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+		    }
+		    let folderId = getUrlParameter('id'); // Get 'id' from current URL
+
 			if (query.length >= 3) {
 				$.ajax({
 					url: '<?= base_url("document_management/get_file_and_folder") ?>',
 					type: 'GET',
 					data: {
-						query: query
+						query: query,
+						id: folderId // Pass folder ID if exists
 					},
 					dataType: 'json',
 					success: function(data) {

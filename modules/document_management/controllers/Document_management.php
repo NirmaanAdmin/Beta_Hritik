@@ -1237,10 +1237,12 @@ class document_management extends AdminController
 	public function get_file_and_folder()
 	{
 		$query = $this->input->get('query');  // Get the search term from AJAX
+		$folder_id = $this->input->get('id');
+		$folder_id = is_numeric($folder_id) ? (int)$folder_id : null;
 
 		if (strlen($query) >= 3) {  // Only search if the query is at least 3 characters
 
-			$results = $this->document_management_model->searchFilesAndFolders($query);
+			$results = $this->document_management_model->searchFilesAndFolders($query, $folder_id);
 			echo json_encode($results);  // Return results as JSON
 		} else {
 			echo json_encode([]);  // Return an empty array if query is too short

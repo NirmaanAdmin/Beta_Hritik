@@ -1786,9 +1786,15 @@ class document_management_model extends app_model
 		$API->start($from_path, 'docx')->wait()->download($to_path)->delete();
 	}
 
-	public function searchFilesAndFolders($query) {
-	
-        // Fetch all items matching the search query
+	public function searchFilesAndFolders($query, $folder_id = null) {
+		
+		$allDescendantIds = array();
+		if($folder_id) {
+			$allDescendantIds = $this->getAllDescendantIds($folder_id);
+		}
+        if($allDescendantIds) {
+        	$this->db->where_in('parent_id', $allDescendantIds);
+        }
         $this->db->like('name', $query);
         $query = $this->db->get(db_prefix() . 'dmg_items');
         $results = $query->result();
@@ -1833,4 +1839,30 @@ class document_management_model extends app_model
 
         return array_reverse($breadcrumb);  // Reverse to show root first
     }
+
+    private function getAllDescendantIds($root_id)
+	{
+	    $all_ids = [];
+	    $queue = [$root_id];
+
+	    while (!empty($queue)) {
+	        $this->db->reset_query();
+	        $this->db->select('id');
+	        $this->db->from(db_prefix() . 'dmg_items');
+	        $this->db->where_in('parent_id', $queue);
+	        $this->db->where('filetype', 'folder');
+	        $query = $this->db->get();
+
+	        $children = $query->result();
+	        $queue = []; // Reset queue for next loop
+
+	        foreach ($children as $child) {
+	            $all_ids[] = $child->id;
+	            $queue[] = $child->id; // Queue next level
+	        }
+	    }
+
+	    return $all_ids;
+	}
+
 }
