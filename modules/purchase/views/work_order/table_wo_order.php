@@ -1,6 +1,16 @@
 <?php
 
 defined('BASEPATH') or exit('No direct script access allowed');
+$module_name = 'work_order';
+$purchase_request_filter_name = 'purchase_request';
+$status_filter_name = 'pur_approval_status';
+$vendor_filter_name = 'pur_vendor_filter';
+$group_pur_filter_name = 'group_pur';
+$project_filter_name = 'project';
+$department_filter_name = 'department';
+$delivery_status_filter_name = 'delivery_status';
+$from_date_filter_name = 'from_date';
+$to_date_filter_name = 'to_date';
 
 $custom_fields = get_custom_fields('pur_order', [
     'show_on_table' => 1,
@@ -72,12 +82,12 @@ if(isset($project)){
 
 if ($this->ci->input->post('from_date')
     && $this->ci->input->post('from_date') != '') {
-    array_push($where, 'AND order_date >= "'.$this->ci->input->post('from_date').'"');
+    array_push($where, 'AND order_date >= "'.date('Y-m-d', strtotime($this->ci->input->post('from_date'))).'"');
 }
 
 if ($this->ci->input->post('to_date')
     && $this->ci->input->post('to_date') != '') {
-    array_push($where, 'AND order_date <= "'.$this->ci->input->post('to_date').'"');
+    array_push($where, 'AND order_date <= "'.date('Y-m-d', strtotime($this->ci->input->post('to_date'))).'"');
 }
 
 
@@ -155,6 +165,33 @@ $having = '';
 if(!is_admin()) {
     $having = "FIND_IN_SET('".get_staff_user_id()."', member_list) != 0";
 }
+
+$purchase_request_filter_name_value = !empty($this->ci->input->post('purchase_request')) ? implode(',', $this->ci->input->post('purchase_request')) : NULL;
+update_module_filter($module_name, $purchase_request_filter_name, $purchase_request_filter_name_value);
+
+$status_filter_name_value = !empty($this->ci->input->post('status')) ? implode(',', $this->ci->input->post('status')) : NULL;
+update_module_filter($module_name, $status_filter_name, $status_filter_name_value);
+
+$vendor_filter_name_value = !empty($this->ci->input->post('vendor')) ? implode(',', $this->ci->input->post('vendor')) : NULL;
+update_module_filter($module_name, $vendor_filter_name, $vendor_filter_name_value);
+
+$group_pur_filter_name_value = !empty($this->ci->input->post('group_pur')) ? implode(',', $this->ci->input->post('group_pur')) : NULL;
+update_module_filter($module_name, $group_pur_filter_name, $group_pur_filter_name_value);
+
+$project_filter_name_value = !empty($this->ci->input->post('project')) ? implode(',', $this->ci->input->post('project')) : NULL;
+update_module_filter($module_name, $project_filter_name, $project_filter_name_value);
+
+$department_filter_name_value = !empty($this->ci->input->post('department')) ? implode(',', $this->ci->input->post('department')) : NULL;
+update_module_filter($module_name, $department_filter_name, $department_filter_name_value);
+
+$delivery_status_filter_name_value = !empty($this->ci->input->post('delivery_status')) ? implode(',', $this->ci->input->post('delivery_status')) : NULL;
+update_module_filter($module_name, $delivery_status_filter_name, $delivery_status_filter_name_value);
+
+$from_date_filter_name_value = !empty($this->ci->input->post('from_date')) ? $this->ci->input->post('from_date') : NULL;
+update_module_filter($module_name, $from_date_filter_name, $from_date_filter_name_value);
+
+$to_date_filter_name_value = !empty($this->ci->input->post('to_date')) ? $this->ci->input->post('to_date') : NULL;
+update_module_filter($module_name, $to_date_filter_name, $to_date_filter_name_value);
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'wo_orders.id as id','company','wo_order_number','expense_convert',db_prefix().'projects.name as project_name',db_prefix().'departments.name as department_name', 'currency', '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'wo_orders.project) as member_list'], '', [], $having);
 
