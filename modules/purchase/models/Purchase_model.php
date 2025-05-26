@@ -2516,6 +2516,7 @@ class Purchase_model extends App_Model
 
             $this->db->where('rel_id', $id);
             $this->db->where('rel_type', 'pur_order');
+            $this->db->where('staffid', get_staff_user_id());
             $this->db->order_by('id', 'asc');
             $this->db->limit(1);
             $pur_approval = $this->db->get(db_prefix() . 'pur_approval_details')->row();
@@ -15840,6 +15841,7 @@ class Purchase_model extends App_Model
 
             $this->db->where('rel_id', $id);
             $this->db->where('rel_type', 'wo_order');
+            $this->db->where('staffid', get_staff_user_id());
             $this->db->order_by('id', 'asc');
             $this->db->limit(1);
             $pur_approval = $this->db->get(db_prefix() . 'pur_approval_details')->row();
