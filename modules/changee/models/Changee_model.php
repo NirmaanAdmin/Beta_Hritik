@@ -3232,6 +3232,7 @@ class Changee_model extends App_Model
         }
         if ($data['rel_type'] == 'pur_order') {
             $module = $this->get_pur_order($data['rel_id']);
+            $project = $module->project;
         }
         if ($data['rel_type'] == 'pur_quotation') {
             $project = $this->get_estimate($data['rel_id'])->project;
