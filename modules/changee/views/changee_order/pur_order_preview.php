@@ -182,7 +182,9 @@ if ($estimate->currency != 0) {
                if($pur_order->buyer > 0){ ?>
                   <p class="bold p_mar"><?php echo _l('buyer') . ': ' ?> <?php echo get_staff_full_name($pur_order->buyer); ?> </p>
                <?php }
-               ?>
+               if($pur_order->project > 0){ ?>
+                  <p class="bold p_mar"><?php echo _l('project') . ': ' ?> <?php echo get_project_name_by_id($pur_order->project); ?> </p>
+               <?php } ?>
 
                
 
