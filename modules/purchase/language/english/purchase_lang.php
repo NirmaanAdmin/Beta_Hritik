@@ -918,3 +918,6 @@ $lang['download_historical_data'] = 'Download Historical Data';
 $lang['remaining_qty'] = 'Remaining Qty';
 $lang['control_remarks'] = 'Control Remarks';
 $lang['add_non_budgeted_items'] = 'Add non budgeted items';
+$lang['change_budget_head'] = 'Change budget head';
+$lang['update_budget_head_successfully'] = 'Update budget head successfully';
+$lang['update_budget_head_fail'] = 'Update budget head fail';

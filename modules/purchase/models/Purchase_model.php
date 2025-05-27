@@ -8219,6 +8219,19 @@ class Purchase_model extends App_Model
         $this->db->update(db_prefix() . $tableName, ['aw_unw_order_status' => $status]);
         return true;
     }
+     public function update_budget_head($status, $id, $table_name)
+    {
+        if ($table_name === 'pur_orders') {
+            $tableName = 'pur_orders';
+        } elseif ($table_name === 'wo_orders') {
+            $tableName = 'wo_orders';
+        } elseif ($table_name === 'order_tracker') {
+            $tableName = 'pur_order_tracker';
+        }
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . $tableName, ['group_pur' => $status]);
+        return true;
+    }
 
     public function change_payment_status($status, $id)
     {
@@ -18744,7 +18757,7 @@ class Purchase_model extends App_Model
         $this->db->where('id', $wo_id);
         $wo_orders = $this->db->get(db_prefix() . 'wo_orders')->row();
 
-        
+
         // 1) Fetch just the latest change order
         $recent_co = $this->db
             ->select('co_value, id, subtotal')
@@ -19818,7 +19831,6 @@ class Purchase_model extends App_Model
             ->where('staff_id', get_staff_user_id())
             ->get()
             ->result_array();
-
         // 3) Build WHERE clauses
         $whereClauses = [];
         foreach ($filters as $f) {
@@ -19829,9 +19841,16 @@ class Purchase_model extends App_Model
             }
             $val = $CI->db->escape_str($value);
             switch ($name) {
-                case 'order_tracker_type':
-                    $whereClauses[] = "source_table = '{$val}'";
+                case 'order_type_filter':
+                    if ($val === 'created') {
+                        // only records newly created in your tracker
+                        $whereClauses[] = "source_table = 'order_tracker'";
+                    } elseif ($val === 'fetched') {
+                        // records fetched from either work orders or purchase orders
+                        $whereClauses[] = "(source_table = 'wo_orders' OR source_table = 'pur_orders')";
+                    }
                     break;
+
                 case 'aw_unw_order_status':
                     $whereClauses[] = "aw_unw_order_status = '{$val}'";
                     break;
@@ -19850,10 +19869,11 @@ class Purchase_model extends App_Model
                 case 'projects':
                     $whereClauses[] = "project_id = '{$val}'";
                     break;
-                    // add more cases if needed...
+                case 'order_tracker_type':
+                    $whereClauses[] = "source_table = '{$val}'";
+                    break;
             }
         }
-
         // 4) If there are filters, wrap the base query and apply them
         if (!empty($whereClauses)) {
             $sql = "

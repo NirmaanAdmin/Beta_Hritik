@@ -270,6 +270,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'order_number',
    'subtotal',
    'project',
+
 ]);
 
 $output  = $result['output'];
@@ -375,16 +376,15 @@ foreach ($rResult as $aRow) {
             $_data = $aRow['vendor'];
          }
       } elseif ($column == 'order_date') {
-        
-         if($aRow['source_table'] == "order_tracker") {
+
+         if ($aRow['source_table'] == "order_tracker") {
             // Inline editable input for Order Date
             $_data = '<input type="date" class="form-control order-date-input" 
                         value="' . $aRow['order_date'] . '" 
                         data-id="' . $aRow['id'] . '" 
                         data-type="' . $aRow['source_table'] . '">';
-
-         }else{
-             $_data = _d($aRow['order_date']);
+         } else {
+            $_data = _d($aRow['order_date']);
          }
       } elseif ($column == 'completion_date') {
          // Inline editable input for Completion Date
@@ -409,11 +409,11 @@ foreach ($rResult as $aRow) {
          ];
          // Start generating the HTML
          $rli_filter = '';
-         
+
          if (isset($status_labels[$aRow['rli_filter']])) {
             $status = $status_labels[$aRow['rli_filter']];
             $rli_filter = '<span class="inline-block label label-' . $status['label'] . '" id="status_span_' . $aRow['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
-         }else{
+         } else {
             $rli_filter = '<span class="inline-block label " id="status_span_' . $aRow['id'] . '" >';
          }
 
@@ -548,7 +548,7 @@ foreach ($rResult as $aRow) {
       //    $base_currency = get_base_currency_pur();
       //    $_data = '<span class="order-value-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' . app_format_money($aRow['order_value'], $base_currency->symbol) . '</span>';
       // }
-       elseif ($column == 'aw_unw_order_status') {
+      elseif ($column == 'aw_unw_order_status') {
          $status_labels_aw_uw = [
             1 => ['label' => 'success', 'table' => 'awarded', 'text' => _l('Awarded')],
             2 => ['label' => 'default', 'table' => 'unawarded', 'text' => _l('Unawarded')],
@@ -559,7 +559,7 @@ foreach ($rResult as $aRow) {
          if (isset($status_labels_aw_uw[$aRow['aw_unw_order_status']])) {
             $status = $status_labels_aw_uw[$aRow['aw_unw_order_status']];
             $aw_uw = '<span class="inline-block label label-' . $status['label'] . '" id="status_aw_uw_span_' . $aRow['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
-         }else{
+         } else {
             $aw_uw = '<span class="inline-block label " id="status_aw_uw_span_' . $aRow['id'] . '" >';
          }
 
@@ -574,7 +574,7 @@ foreach ($rResult as $aRow) {
             foreach ($status_labels_aw_uw as $key => $status) {
                if ($key != $aRow['aw_unw_order_status']) {
                   $aw_uw .= '<li>
-                       <a href="#" onclick="change_aw_unw_order_status(' . $key . ', ' . $aRow['id'] . ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES) . '\'); return false;">
+                       <a href="javascript:void(0);" onclick="change_aw_unw_order_status(' . $key . ', ' . $aRow['id'] . ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES) . '\'); return false;">
                            ' . $status['text'] . '
                        </a>
                    </li>';
@@ -590,7 +590,85 @@ foreach ($rResult as $aRow) {
          $_data = $aw_uw;
       } elseif ($column == 'project') {
          $_data = $aRow['project'];
+      } elseif ($column == 'group_name') {
+         if ($aRow['source_table'] == "order_tracker") {
+            // 1) Raw budget-head list
+            $raw_heads = get_group_name_item(); // e.g. [ ['id'=>5,'name'=>'Foo'], … ]
+
+            // 2) Your 11-item label palette
+            $label_palette = [
+               'danger',
+               'success',
+               'info',
+               'warning',
+               'primary',
+               'secondary',
+               'purple',
+               'teal',
+               'orange',
+               'green',
+               'default',
+            ];
+
+            // 3) Build status_labels_budget_head, cycling labels
+            $status_labels_budget_head = [];
+            $i = 0;
+            foreach ($raw_heads as $h) {
+               $label = $label_palette[$i % count($label_palette)];
+               $status_labels_budget_head[$h['id']] = [
+                  'label' => $label,
+                  'name'  => $h['name'],
+               ];
+               $i++;
+            }
+
+            // 4) Render exactly like your aw_unw_order_status block but for group_pur
+            $budget_head_html = '';
+            if (isset($status_labels_budget_head[$aRow['group_pur']])) {
+               $bh = $status_labels_budget_head[$aRow['group_pur']];
+               $budget_head_html = '<span class="inline-block label label-' . $bh['label'] . '" '
+                  . 'id="budget_head_span_' . $aRow['id'] . '">'
+                  . $bh['name'];
+            } else {
+               $budget_head_html = '<span class="inline-block label " '
+                  . 'id="budget_head_span_' . $aRow['id'] . '">';
+            }
+
+            if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+               $budget_head_html .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
+                  . '<a href="#" class="dropdown-toggle text-dark" '
+                  .    'id="tableBudgetHead-' . $aRow['id'] . '" '
+                  .    'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+                  .    '<span data-toggle="tooltip" title="' . _l('change_budget_head') . '">'
+                  .        '<i class="fa fa-caret-down"></i>'
+                  .    '</span>'
+                  . '</a>'
+                  . '<ul class="dropdown-menu dropdown-menu-right" '
+                  .     'aria-labelledby="tableBudgetHead-' . $aRow['id'] . '">';
+               foreach ($status_labels_budget_head as $id => $bh) {
+                  if ($id != $aRow['group_pur']) {
+                     $budget_head_html .= '<li>'
+                        .   '<a href="javascript:void(0);" '
+                        .      'onclick="update_budget_head(' . $id . ', ' . $aRow['id']
+                        .      ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES)
+                        .      '\'); return false;">'
+                        .          $bh['name']
+                        .   '</a>'
+                        . '</li>';
+                  }
+               }
+               $budget_head_html .= '</ul>'
+                  . '</div>';
+            }
+
+            $budget_head_html .= '</span>';
+            $_data = $budget_head_html;
+         } else {
+            // For other source tables, just display the group name
+            $_data = $aRow['group_name'];
+         }
       }
+
 
       $row[] = $_data;
    }
