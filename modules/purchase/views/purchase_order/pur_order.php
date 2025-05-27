@@ -32,6 +32,12 @@
     /* Adjust the size as needed */
     height: 100px;
   }
+  .cost_fetch_pur_item {
+    cursor: pointer;
+  }
+  .remaining_qty_red_class {
+    color: red !important;
+  }
 </style>
 <div id="wrapper">
   <div class="content">
@@ -561,16 +567,29 @@
                 </div>
               </div>
               <div class="clearfix"></div>
-              <div class="row">
-                <div class="col-md-12 view_cost_control_sheet" style="display: none;">
+            </div>
+          </div>
+
+          <div class="modal fade" id="cost_complete_modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document" style="width: 98%;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">View Items</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <div class="col-md-3" style="padding-left: 0px; padding-top: 5px;">
+                    <?php
+                    echo render_select('cost_sub_head', $sub_groups_pur, array('id', 'sub_group_name'), 'Sub Head');
+                    ?>
+                  </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4">
-                  <button type="button" class="btn btn-info enable_item_select mbot5">
-                    <?php echo _l('add_non_budgeted_items'); ?>
-                  </button>
-                  <?php $this->load->view('purchase/item_include/main_item_select'); ?>
+
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="view_cost_control_sheet">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -580,7 +599,11 @@
 
             <div class="row">
               <div class="col-md-4">
-                <!-- <?php $this->load->view('purchase/item_include/main_item_select'); ?> -->
+                <div class="cost_complete_sheet" style="display: none;">
+                  <button type="button" class="btn btn-info enable_item_select mbot5">
+                    <?php echo _l('add_non_budgeted_items'); ?>
+                  </button>
+                </div>
               </div>
               <?php if (!$is_edit) { ?>
                 <div class="col-md-8">

@@ -2731,6 +2731,10 @@ class Purchase_model extends App_Model
             unset($data['cost_control_remarks']);
         }
 
+        if (isset($data['cost_sub_head'])) {
+            unset($data['cost_sub_head']);
+        }
+
         if (isset($data['pur_request']) && $data['pur_request'] > 0) {
             $this->db->where('id', $data['pur_request']);
             $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
@@ -2997,6 +3001,10 @@ class Purchase_model extends App_Model
         if (isset($data['cost_control_remarks'])) {
             $cost_control_remarks = $data['cost_control_remarks'];
             unset($data['cost_control_remarks']);
+        }
+
+        if (isset($data['cost_sub_head'])) {
+            unset($data['cost_sub_head']);
         }
 
         $this->db->where('id', $id);
@@ -19907,11 +19915,15 @@ class Purchase_model extends App_Model
         $response = '';
         $estimate_id = $data['estimate_id'];
         $budget_head_id = $data['budget_head_id'];
+        $cost_sub_head = isset($data['cost_sub_head']) ? $data['cost_sub_head'] : NULL;
         $base_currency = $this->currencies_model->get_base_currency();
 
         $this->db->where('rel_id', $estimate_id);
         $this->db->where('rel_type', 'estimate');
         $this->db->where('annexure', $budget_head_id);
+        if(!empty($cost_sub_head)) {
+            $this->db->where('sub_head', $cost_sub_head);
+        }
         $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
 
         if (!empty($itemable)) {
@@ -19946,24 +19958,28 @@ class Purchase_model extends App_Model
                 $pur_order_detail_qty = !empty($pur_order_detail_qty->total_qty) ? $pur_order_detail_qty->total_qty : 0;
                 $remaining_qty = $item['qty'] - $pur_order_detail_qty;
                 $remaining_qty = number_format($remaining_qty, 2);
+                $remaining_qty_class = '';
+                if($remaining_qty < 0) {
+                    $remaining_qty_class = 'remaining_qty_red_class';
+                }
 
                 $response .= '<tr>';
                 $response .= '<td>
-                    ' . get_purchase_items($item['item_code']) . '
-                    <br>
-                    <br>
-                    <button type="button" class="btn btn-info pull-left mright10 display-block cost_fetch_pur_item" data-itemcode="' . $item['item_code'] . '" data-longdescription="' . $item['long_description'] . '">Fetch</button>
+                        <span class="'.$remaining_qty_class.'">' . get_purchase_items($item['item_code']) . '</span>
+                        <div>
+                            <a class="cost_fetch_pur_item" data-itemcode="' . $item['item_code'] . '" data-longdescription="' . $item['long_description'] . '" data-subhead="' . $item['sub_head'] . '">Fetch</a>
+                        </div>
                     </td>';
-                $response .= '<td>' . clear_textarea_breaks($item['long_description']) . '</td>';
-                $response .= '<td align="right">
+                $response .= '<td class="'.$remaining_qty_class.'">' . clear_textarea_breaks($item['long_description']) . '</td>';
+                $response .= '<td align="right" class="'.$remaining_qty_class.'">
                     <span>' . $item_qty . '</span>
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right">
+                $response .= '<td align="right" class="'.$remaining_qty_class.'">
                     <span>' . $remaining_qty . '</span>
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right">' . app_format_money($item['rate'], $base_currency) . '</td>';
+                $response .= '<td align="right" class="'.$remaining_qty_class.'">' . app_format_money($item['rate'], $base_currency) . '</td>';
                 $response .= '<td align="right">' . render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']) . '</td>';
                 $response .= '</tr>';
             }
@@ -19988,7 +20004,8 @@ class Purchase_model extends App_Model
         // CSV Headers (same as PDF table columns)
         $headers = [
             'Item',
-            'Description'
+            'Description',
+            'Sub Head'
         ];
         if (!empty($all_revisions)) {
             foreach ($all_revisions as $key => $revision) {
@@ -20007,10 +20024,12 @@ class Purchase_model extends App_Model
             foreach ($itemable as $key => $item) {
                 $item_name = get_purchase_items($item['item_code']);
                 $item_description = clear_textarea_breaks($item['long_description']);
+                $sub_head = get_sub_head($item['sub_head']);
 
                 $item_output = array();
                 $item_output[] = $item_name;
                 $item_output[] = $item_description;
+                $item_output[] = $sub_head;
                 if (!empty($all_revisions)) {
                     foreach ($all_revisions as $key => $revision) {
                         $this->db->where('rel_id', $revision);

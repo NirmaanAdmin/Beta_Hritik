@@ -308,29 +308,35 @@
     }
 
     $("body").on('click', '#cost_control_sheet', function () {
-      var sheetContainer = $(".view_cost_control_sheet");
-
-      if (sheetContainer.is(":visible")) {
-        sheetContainer.slideUp("fast");
-      } else {
-        var estimate_id = $('select[name="estimate"]').val();
-        var budget_head_id = $('select[name="group_pur"]').val();
-
-        if (estimate_id !== '' && budget_head_id !== '') {
-          $.post(admin_url + 'purchase/get_cost_control_sheet', {
-            estimate_id: estimate_id,
-            budget_head_id: budget_head_id
-          }).done(function (response) {
-            response = JSON.parse(response);
-            if (response.result) {
-              sheetContainer.html(response.result).slideDown("fast");
-            } else {
-              sheetContainer.html('').slideDown("fast");
-            }
-          });
-        }
-      }
+      cost_control_sheet();
     });
+
+    $("body").on('change', 'select[name="cost_sub_head"]', function () {
+      cost_control_sheet();
+    });
+
+    function cost_control_sheet() {
+      var estimate_id = $('select[name="estimate"]').val();
+      var budget_head_id = $('select[name="group_pur"]').val();
+      var cost_sub_head = $('select[name="cost_sub_head"]').val();
+      if (estimate_id !== '' && budget_head_id !== '') {
+        $.post(admin_url + 'purchase/get_cost_control_sheet', {
+          estimate_id: estimate_id,
+          budget_head_id: budget_head_id,
+          cost_sub_head: cost_sub_head
+        }).done(function (response) {
+          response = JSON.parse(response);
+          if (response.result) {
+            $('.view_cost_control_sheet').html('');
+            $('.view_cost_control_sheet').html(response.result);
+            $('#cost_complete_modal').modal('show');
+          } else {
+            $('.view_cost_control_sheet').html('');
+            alert_float('warning', "No any items have found");
+          }
+        });
+      }
+    }
 
     $("body").on('click', '#download_historical_data', function() {
       var estimate_id = $('select[name="estimate"]').val();
@@ -344,6 +350,10 @@
     $("body").on('click', '.cost_fetch_pur_item', function() {
       var itemcode = $(this).data('itemcode');
       var longdescription = $(this).data('longdescription');
+      var subhead = $(this).data('subhead');
+      if(empty(subhead) || subhead == 0) {
+        subhead = '';
+      }
       var itemData = {
         area: [],
         description: longdescription,
@@ -351,7 +361,7 @@
         item_code: itemcode,
         item_name: undefined,
         quantity: "",
-        sub_groups_pur: "",
+        sub_groups_pur: subhead,
         tax_rate: undefined,
         taxname: [],
         unit_id: "",
