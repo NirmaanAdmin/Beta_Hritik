@@ -517,3 +517,16 @@ function get_estimate_all_revision_chain($estimate_id, $chain = [])
     return $chain;
 }
 
+function get_sub_head($id)
+{
+    if(!empty($id)) {
+        $CI = &get_instance();
+        $CI->db->where('id', $id);
+        $sub_head = $CI->db->get(db_prefix() . 'wh_sub_group')->row();
+        if(!empty($sub_head)) {
+            return $sub_head->sub_group_name;
+        }
+    }
+    return '';
+}
+

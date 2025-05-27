@@ -565,34 +565,8 @@ class Estimates_model extends App_Model
             unset($data['item_code']);
         }
 
-        if (isset($data['budget_area'])) {
-            unset($data['budget_area']);
-        }
-
-        if (isset($data['int_master_area'])) {
-            unset($data['int_master_area']);
-        }
-
-        if (isset($data['int_fun_area'])) {
-            unset($data['int_fun_area']);
-        }
-
-        if (isset($data['int_area'])) {
-            unset($data['int_area']);
-        }
-
-        if (isset($data['int_rate'])) {
-            unset($data['int_rate']);
-        }
-
-        if (isset($data['int_remarks'])) {
-            unset($data['int_remarks']);
-        }
-
-        $newintitems = [];
-        if (isset($data['newintitems'])) {
-            $newintitems = $data['newintitems'];
-            unset($data['newintitems']);
+        if (isset($data['sub_head'])) {
+            unset($data['sub_head']);
         }
 
         if (isset($data['area_working_file_csv'])) {
@@ -632,12 +606,6 @@ class Estimates_model extends App_Model
             if(!empty($newareasummaryitems)) {
                 foreach ($newareasummaryitems as $akey => $aitem) {
                     $this->add_new_area_summary_item_post($aitem, $insert_id);
-                }
-            }
-
-            if(!empty($newintitems)) {
-                foreach ($newintitems as $ikey => $iitem) {
-                    $this->add_new_multilevel_item_post($iitem, $insert_id);
                 }
             }
 
@@ -830,111 +798,8 @@ class Estimates_model extends App_Model
             unset($data['item_code']);
         }
 
-        if (isset($data['budget_area'])) {
-            unset($data['budget_area']);
-        }
-
-        if (isset($data['int_master_area'])) {
-            unset($data['int_master_area']);
-        }
-
-        if (isset($data['int_fun_area'])) {
-            unset($data['int_fun_area']);
-        }
-
-        if (isset($data['int_area'])) {
-            unset($data['int_area']);
-        }
-
-        if (isset($data['int_rate'])) {
-            unset($data['int_rate']);
-        }
-
-        if (isset($data['int_remarks'])) {
-            unset($data['int_remarks']);
-        }
-
-        if (isset($data['sub_overall_budget_area'])) {
-            $sub_overall_budget_area = $data['sub_overall_budget_area'];
-            unset($data['sub_overall_budget_area']);
-        }
-
-        $newintitems = [];
-        if (isset($data['newintitems'])) {
-            $newintitems = $data['newintitems'];
-            unset($data['newintitems']);
-        }
-
-        $intitems = [];
-        if (isset($data['intitems'])) {
-            $intitems = $data['intitems'];
-            unset($data['intitems']);
-        }
-
-        if (isset($data['removed_multilevel_items'])) {
-            if(!empty($data['removed_multilevel_items'])) {
-                foreach ($data['removed_multilevel_items'] as $remove_multilevel_item_id) {
-                    $this->delete_multilevel_item($remove_multilevel_item_id);
-                }
-            }
-            unset($data['removed_multilevel_items']);
-        }
-
-        if (isset($data['sub_item_name'])) {
-            unset($data['sub_item_name']);
-        }
-
-        if (isset($data['sub_item_code'])) {
-            unset($data['sub_item_code']);
-        }
-
-        if (isset($data['sub_long_description'])) {
-            unset($data['sub_long_description']);
-        }
-
-        if (isset($data['sub_budget_area'])) {
-            unset($data['sub_budget_area']);
-        }
-
-        if (isset($data['sub_quantity'])) {
-            unset($data['sub_quantity']);
-        }
-
-        if (isset($data['sub_unit_id'])) {
-            unset($data['sub_unit_id']);
-        }
-
-        if (isset($data['sub_rate'])) {
-            unset($data['sub_rate']);
-        }
-
-        if (isset($data['sub_remarks'])) {
-            unset($data['sub_remarks']);
-        }
-
-        $newsubintitems = [];
-        if (isset($data['newsubintitems'])) {
-            $newsubintitems = $data['newsubintitems'];
-            unset($data['newsubintitems']);
-        }
-
-        $subintitems = [];
-        if (isset($data['subintitems'])) {
-            $subintitems = $data['subintitems'];
-            unset($data['subintitems']);
-        }
-
-        if (isset($data['removed_sub_multilevel_items'])) {
-            if(!empty($data['removed_sub_multilevel_items'])) {
-                foreach ($data['removed_sub_multilevel_items'] as $remove_sub_multilevel_item_id) {
-                    $this->delete_sub_multilevel_item($remove_sub_multilevel_item_id);
-                }
-            }
-            unset($data['removed_sub_multilevel_items']);
-        }
-
-        if (isset($data['sub_file_csv'])) {
-            unset($data['sub_file_csv']);
+        if (isset($data['sub_head'])) {
+            unset($data['sub_head']);
         }
 
         if (isset($data['area_working_file_csv'])) {
@@ -972,7 +837,7 @@ class Estimates_model extends App_Model
                 $affectedRows++;
             }
 
-            if (update_sales_item_post($item['itemid'], $item, 'budget_area')) {
+            if (update_sales_item_post($item['itemid'], $item, 'sub_head')) {
                 $affectedRows++;
             }
 
@@ -1090,40 +955,6 @@ class Estimates_model extends App_Model
                 $asid = $asitem['itemid'];
                 unset($asitem['itemid']);
                 $this->update_area_summary_item_post($asitem, $asid);
-            }
-        }
-
-        if(!empty($newintitems)) {
-            foreach ($newintitems as $ikey => $iitem) {
-                $this->add_new_multilevel_item_post($iitem, $id);
-            }
-        }
-
-        if(!empty($intitems)) {
-            foreach ($intitems as $ikey => $iitem) {
-                $iid = $iitem['itemid'];
-                unset($iitem['itemid']);
-                $this->update_multilevel_item_post($iitem, $iid);
-            }
-        }
-
-        if(!empty($newsubintitems)) {
-            foreach ($newsubintitems as $sikey => $siitem) {
-                $this->add_new_sub_multilevel_item_post($siitem, $id);
-            }
-        }
-
-        if(!empty($subintitems)) {
-            foreach ($subintitems as $sikey => $siitem) {
-                $siid = $siitem['itemid'];
-                unset($siitem['itemid']);
-                $this->update_sub_multilevel_item_post($siitem, $siid);
-            }
-        }
-
-        if(!empty($sub_overall_budget_area)) {
-            foreach ($sub_overall_budget_area as $okey => $oitem) {
-                $this->update_sub_overall_budget_area($oitem, $okey);
             }
         }
 
@@ -1768,7 +1599,6 @@ class Estimates_model extends App_Model
         $final_estimate = array();
 
         $all_area_summary = $this->get_area_summary($estimateid);
-        $multilevel_items = $this->get_multilevel_items($estimateid);
         if(!empty($all_area_summary)) {
             $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
             $total_built_up_area = $total_built_up_area == 0 ? 1 : $total_built_up_area;
@@ -1793,40 +1623,6 @@ class Estimates_model extends App_Model
                 return $a['annexure'] <=> $b['annexure'];
             });
             $summary = array_values($summary);
-        }
-
-        if(!empty($multilevel_items)) {
-            $grouped = array_reduce($multilevel_items, function($carry, $item) {
-                $key = $item['annexure'];
-                if (!isset($carry[$key])) {
-                    $carry[$key] = [
-                        'annexure' => $key,
-                        'total_int_area' => 0,
-                        'total_int_rate' => 0,
-                    ];
-                }
-                $carry[$key]['total_int_area'] += $item['int_area'];
-                $carry[$key]['total_int_rate'] += $item['int_rate'];
-                $carry[$key]['total_int_amount'] += ($item['int_area'] * $item['int_rate']);
-                return $carry;
-            }, []);
-            $multilevel_grouped = array_values($grouped);
-            if(!empty($multilevel_grouped)) {
-                foreach ($multilevel_grouped as $key => $value) {
-                    $multilevel_estimate = array();
-                    $items_group = $this->get_items_groups($value['annexure']);
-                    $multilevel_estimate['name'] = $items_group->name;
-                    $multilevel_estimate['description'] = '';
-                    $multilevel_estimate['qty'] += $value['total_int_area'];
-                    $multilevel_estimate['rate'] += $value['total_int_rate'];
-                    $multilevel_estimate['subtotal'] += $value['total_int_amount'];
-                    $multilevel_estimate['tax'] = 0;
-                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'];
-                    $multilevel_estimate['annexure'] = $value['annexure'];
-                    $multilevel_estimate['total_bua'] = $multilevel_estimate['amount'] / $total_built_up_area;
-                    $summary[] = $multilevel_estimate;
-                }
-            }
         }
 
         $summary = !empty($summary) ? array_values($summary) : array();
@@ -2000,69 +1796,6 @@ class Estimates_model extends App_Model
         return $this->db->get(db_prefix() . 'estimate_budget_info')->result_array();
     }
 
-    public function add_new_multilevel_item_post($data, $id)
-    {
-        $data['estimate_id'] = $id;
-        $this->db->insert(db_prefix() . 'estimate_multilevel_items', $data);
-        return true;
-    }
-
-    public function update_multilevel_item_post($data, $id)
-    {
-        $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'estimate_multilevel_items', $data);
-        return true;
-    }
-
-    public function delete_multilevel_item($id)
-    {
-        $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'estimate_multilevel_items');
-        $this->db->where('parent_id', $id);
-        $this->db->delete(db_prefix() . 'estimate_sub_multilevel_items');
-        return true;
-    }
-
-    public function get_multilevel_items($id)
-    {
-        $this->db->where('estimate_id', $id);
-        return $this->db->get(db_prefix() . 'estimate_multilevel_items')->result_array();
-    }
-
-    public function add_new_sub_multilevel_item_post($data, $id)
-    {
-        $data['estimate_id'] = $id;
-        $this->db->insert(db_prefix() . 'estimate_sub_multilevel_items', $data);
-        return true;
-    }
-
-    public function update_sub_multilevel_item_post($data, $id)
-    {
-        $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'estimate_sub_multilevel_items', $data);
-        return true;
-    }
-
-    public function delete_sub_multilevel_item($id)
-    {
-        $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'estimate_sub_multilevel_items');
-        return true;
-    }
-
-    public function get_sub_multilevel_items($id)
-    {
-        $this->db->where('estimate_id', $id);
-        return $this->db->get(db_prefix() . 'estimate_sub_multilevel_items')->result_array();
-    }
-
-    public function update_sub_overall_budget_area($data, $id)
-    {
-        $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'estimate_multilevel_items', $data);
-        return true;
-    }
-
     public function get_area_summary_tabs()
     {
         return $this->db->get(db_prefix() . 'area_summary_tabs')->result_array();
@@ -2088,8 +1821,6 @@ class Estimates_model extends App_Model
         $area_summary_tabs = $this->get_area_summary_tabs();
         $area_statement_tabs = $this->get_area_statement_tabs($id);
         $area_working = $this->get_area_working($id);
-        $multilevel_items = $this->get_multilevel_items($id);
-        $sub_multilevel_items = $this->get_sub_multilevel_items($id);
 
         if(!empty($all_area_summary)) {
             $total_built_up_area = array_sum(array_column(array_filter($all_area_summary, fn($item) => $item['area_id'] == 2), 'area'));
@@ -2117,40 +1848,6 @@ class Estimates_model extends App_Model
             $annexure_estimate = array_values($annexure_estimate);
         }
 
-        if(!empty($multilevel_items)) {
-            $grouped = array_reduce($multilevel_items, function($carry, $item) {
-                $key = $item['annexure'];
-                if (!isset($carry[$key])) {
-                    $carry[$key] = [
-                        'annexure' => $key,
-                        'total_int_area' => 0,
-                        'total_int_rate' => 0,
-                    ];
-                }
-                $carry[$key]['total_int_area'] += $item['int_area'];
-                $carry[$key]['total_int_rate'] += $item['int_rate'];
-                $carry[$key]['total_int_amount'] += ($item['int_area'] * $item['int_rate']);
-                return $carry;
-            }, []);
-            $multilevel_grouped = array_values($grouped);
-            if(!empty($multilevel_grouped)) {
-                foreach ($multilevel_grouped as $key => $value) {
-                    $multilevel_estimate = array();
-                    $items_group = $this->get_items_groups($value['annexure']);
-                    $multilevel_estimate['name'] = $items_group->name;
-                    $multilevel_estimate['description'] = '';
-                    $multilevel_estimate['qty'] += $value['total_int_area'];
-                    $multilevel_estimate['rate'] += $value['total_int_rate'];
-                    $multilevel_estimate['subtotal'] += $value['total_int_amount'];
-                    $multilevel_estimate['tax'] = 0;
-                    $multilevel_estimate['amount'] = $multilevel_estimate['subtotal'];
-                    $multilevel_estimate['annexure'] = $value['annexure'];
-                    $multilevel_estimate['total_bua'] = $multilevel_estimate['amount'] / $total_built_up_area;
-                    $annexure_estimate[] = $multilevel_estimate;
-                }
-            }
-        }
-
         $annexure_estimate = !empty($annexure_estimate) ? array_values($annexure_estimate) : array();
         if(!empty($annexure_estimate)) {
             usort($annexure_estimate, function($a, $b) {
@@ -2167,8 +1864,6 @@ class Estimates_model extends App_Model
         $final_result['area_statement_tabs'] = $area_statement_tabs;
         $final_result['area_working'] = $area_working;
         $final_result['estimate_items'] = $items;
-        $final_result['multilevel_items'] = $multilevel_items;
-        $final_result['sub_multilevel_items'] = $sub_multilevel_items;
         
         return $final_result;
     }
@@ -2254,34 +1949,6 @@ class Estimates_model extends App_Model
                     unset($value['rel_id']);
                     $value['rel_id'] = $new_estimate_id;
                     $this->db->insert(db_prefix() . 'itemable', $value);
-                }
-            }
-
-            $multilevel_items = $this->get_multilevel_items($id);
-            if(!empty($multilevel_items)) {
-                foreach ($multilevel_items as $key => $value) {
-                    if(isset($value['id'])) {
-                        $old_estimate_multilevel_item_id = $value['id'];
-                        unset($value['id']);
-                    }
-                    unset($value['estimate_id']);
-                    $value['estimate_id'] = $new_estimate_id;
-                    $this->db->insert(db_prefix() . 'estimate_multilevel_items', $value);
-                    $new_estimate_multilevel_item_id = $this->db->insert_id();
-
-                    $this->db->where('estimate_id', $id);
-                    $this->db->where('parent_id', $old_estimate_multilevel_item_id);
-                    $estimate_sub_multilevel_items = $this->db->get(db_prefix() . 'estimate_sub_multilevel_items')->result_array();
-                    if(!empty($estimate_sub_multilevel_items)) {
-                        foreach ($estimate_sub_multilevel_items as $ckey => $cvalue) {
-                            unset($cvalue['id']);
-                            unset($cvalue['estimate_id']);
-                            unset($cvalue['parent_id']);
-                            $cvalue['estimate_id'] = $new_estimate_id;
-                            $cvalue['parent_id'] = $new_estimate_multilevel_item_id;
-                            $this->db->insert(db_prefix() . 'estimate_sub_multilevel_items', $cvalue);
-                        }
-                    }
                 }
             }
 

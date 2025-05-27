@@ -700,95 +700,6 @@
             $annexures = get_all_annexures(); 
             foreach ($annexures as $key => $annexure) { ?>
                 <div role="tabpanel" class="tab-pane detailed-costing-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
-                    <?php if($annexure['id'] == 7) { ?>
-                        <div class="col-md-4">
-                            <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
-                        </div>
-                        <div class="col-md-8">
-                        </div>
-                        <div class="table-responsive s_table">
-                            <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
-                                <thead>
-                                    <tr>
-                                        <th width="15%" align="left"><?php echo _l('master_area'); ?></th>
-                                        <th width="18%" align="left"><?php echo _l('functionality_area'); ?></th>
-                                        <th width="15%" align="right"><?php echo _l('area'); ?> (sqft)</th>
-                                        <th width="17%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
-                                        <th width="17%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
-                                        <th width="18%" align="right"><?php echo _l('remarks'); ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $estimate_item_rate = 0;
-                                    $estimate_item_amount = 0;
-                                    if(!empty($cost_planning_details['multilevel_items'])) {
-                                        foreach ($cost_planning_details['multilevel_items'] as $mkey => $iitem) {
-                                            $int_amount = $iitem['int_area'] * $iitem['int_rate'];
-                                            $estimate_item_rate = $estimate_item_rate + $iitem['int_rate'];
-                                            $estimate_item_amount = $estimate_item_amount + $int_amount;
-                                            $old_int_master_area = isset($root_estimate_data['multilevel_items'][$mkey]['int_master_area']) ? $root_estimate_data['multilevel_items'][$mkey]['int_master_area'] : '';
-                                            $old_int_fun_area = isset($root_estimate_data['multilevel_items'][$mkey]['int_fun_area']) ? $root_estimate_data['multilevel_items'][$mkey]['int_fun_area'] : '';
-                                            $old_int_area = isset($root_estimate_data['multilevel_items'][$mkey]['int_area']) ? $root_estimate_data['multilevel_items'][$mkey]['int_area'] : '';
-                                            $old_int_rate = isset($root_estimate_data['multilevel_items'][$mkey]['int_rate']) ? $root_estimate_data['multilevel_items'][$mkey]['int_rate'] : '';
-                                            $old_int_remarks = isset($root_estimate_data['multilevel_items'][$mkey]['int_remarks']) ? $root_estimate_data['multilevel_items'][$mkey]['int_remarks'] : '';
-                                            ?>
-                                            <tr>
-                                                <td <?php echo find_estimate_revision_bold($old_int_master_area, $iitem['int_master_area']); ?>>
-                                                    <?php echo get_master_area($iitem['int_master_area']); ?>
-                                                    <br><br>
-                                                    <button type="button" class="btn btn-info pull-left mright10 display-block" data-toggle="modal" data-target="#multilevelExpand_<?php echo $iitem['id']; ?>">Expand</button>
-                                                </td>
-                                                <td <?php echo find_estimate_revision_bold($old_int_fun_area, $iitem['int_fun_area']); ?>>
-                                                    <?php echo get_functionality_area($iitem['int_fun_area']); ?>
-                                                </td>
-                                                <td align="right" <?php echo find_estimate_revision_bold($old_int_area, $iitem['int_area']); ?>>
-                                                    <?php echo $iitem['int_area']; ?>
-                                                </td>
-                                                <td align="right" <?php echo find_estimate_revision_bold($old_int_rate, $iitem['int_rate']); ?>>
-                                                    <?php echo app_format_money($iitem['int_rate'], $base_currency); ?>
-                                                </td>
-                                                <td align="right">
-                                                    <?php echo app_format_money($int_amount, $base_currency); ?>
-                                                </td>
-                                                <td align="right" <?php echo find_estimate_revision_bold($old_int_remarks, $iitem['int_remarks']); ?>>
-                                                    <?php echo clear_textarea_breaks($iitem['int_remarks']); ?>
-                                                </td>
-                                            </tr>
-                                        <?php }
-                                    } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-md-8 col-md-offset-4">
-                            <table class="table text-right">
-                                <tbody>
-                                    <tr>
-                                        <td><span class="bold tw-text-neutral-700"><?php echo _l('cost'); ?> :</span>
-                                        </td>
-                                        <td>
-                                            <?php 
-                                            echo app_format_money($estimate_item_amount, $base_currency);
-                                            ?>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-md-12">
-                            <?php
-                            $detailed_costing_value = '';
-                            if(!empty($cost_planning_details['budget_info'])) {
-                                foreach ($cost_planning_details['budget_info'] as $ekey => $evalue) {
-                                    if($evalue['budget_id'] == $annexure['id']) {
-                                        $detailed_costing_value = $evalue['detailed_costing'];
-                                    }
-                                }
-                            }
-                            echo $detailed_costing_value; 
-                            ?>
-                        </div>
-                    <?php } else { ?>
                         <div class="col-md-4">
                             <p><?php echo _l('budget_head').': '.$annexure['name']; ?></p>
                             <p>Overall area (sqft):
@@ -817,7 +728,7 @@
                                     <tr>
                                         <th width="13%" align="left"><?php echo _l('estimate_table_item_heading'); ?></th>
                                         <th width="18%" align="left"><?php echo _l('estimate_table_item_description'); ?></th>
-                                        <th width="10%" class="qty" align="right"><?php echo e(_l('area')); ?> (sqft)</th>
+                                        <th width="10%" class="qty" align="right"><?php echo _l('sub_head'); ?></th>
                                         <th width="10%" class="qty" align="right"><?php echo e(_l('estimate_table_quantity_heading')); ?></th>
                                         <th width="16%" align="right"><?php echo _l('estimate_table_rate_heading'); ?></th>
                                         <th width="16%" align="right"><?php echo _l('estimate_table_amount_heading'); ?></th>
@@ -835,7 +746,7 @@
                                                     $estimate_item_amount = $estimate_item_amount + $amount;
                                                     $old_item_code = isset($root_estimate_data['estimate_items'][$ankey]['item_code']) ? $root_estimate_data['estimate_items'][$ankey]['item_code'] : '';
                                                     $old_long_description = isset($root_estimate_data['estimate_items'][$ankey]['long_description']) ? $root_estimate_data['estimate_items'][$ankey]['long_description'] : '';
-                                                    $old_budget_area = isset($root_estimate_data['estimate_items'][$ankey]['budget_area']) ? $root_estimate_data['estimate_items'][$ankey]['budget_area'] : '';
+                                                    $old_sub_head = isset($root_estimate_data['estimate_items'][$ankey]['sub_head']) ? $root_estimate_data['estimate_items'][$ankey]['sub_head'] : '';
                                                     $old_unit_id = isset($root_estimate_data['estimate_items'][$ankey]['unit_id']) ? $root_estimate_data['estimate_items'][$ankey]['unit_id'] : '';
                                                     $old_qty = isset($root_estimate_data['estimate_items'][$ankey]['qty']) ? $root_estimate_data['estimate_items'][$ankey]['qty'] : '';
                                                     $old_rate = isset($root_estimate_data['estimate_items'][$ankey]['rate']) ? $root_estimate_data['estimate_items'][$ankey]['rate'] : '';
@@ -848,16 +759,20 @@
                                                     <td <?php echo find_estimate_revision_bold($old_long_description, $item['long_description']); ?>>
                                                         <?php echo clear_textarea_breaks($item['long_description']); ?>
                                                     </td>
-                                                    <td align="right" <?php echo find_estimate_revision_bold($old_budget_area, $item['budget_area']); ?>>
-                                                        <?php echo $item['budget_area']; ?>
+                                                    <td align="right" <?php echo find_estimate_revision_bold($old_sub_head, $item['sub_head']); ?>>
+                                                        <?php echo get_sub_head($item['sub_head']); ?>
                                                     </td>
                                                     <td align="right">
                                                         <?php 
                                                         $purchase_unit_name = get_purchase_unit($item['unit_id']);
                                                         $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
                                                         ?>
-                                                        <span <?php echo find_estimate_revision_bold(number_format($old_qty, 2), number_format($item['qty'], 2)); ?>><?php echo number_format($item['qty'], 2); ?></span>
-                                                        <span <?php echo find_estimate_revision_bold($old_unit_id, $item['unit_id']); ?>><?php echo $purchase_unit_name; ?></span>
+                                                        <span <?php echo find_estimate_revision_bold(number_format((float)$old_qty, 2), number_format((float)$item['qty'], 2)); ?>>
+                                                            <?php echo number_format((float)$item['qty'], 2); ?>
+                                                        </span>
+                                                        <span <?php echo find_estimate_revision_bold((int)$old_unit_id, (int)$item['unit_id']); ?>>
+                                                            <?php echo $purchase_unit_name; ?>
+                                                        </span>
                                                     </td>
                                                     <td align="right" <?php echo find_estimate_revision_bold($old_rate, $item['rate']); ?>>
                                                         <?php echo app_format_money($item['rate'], $base_currency); ?>
@@ -913,130 +828,6 @@
                             echo $detailed_costing_value; 
                             ?>
                         </div>
-                    <?php } ?>
-                </div>
-            <?php } ?>
-
-            <?php
-            foreach ($annexures as $key => $annexure) { ?>
-                <div class="multilevel-sub-items-tab" id="<?php echo $annexure['annexure_key']; ?>" data-id="<?php echo $annexure['id']; ?>">
-                    <?php if ($annexure['id'] == 7) {
-                        if (!empty($cost_planning_details['multilevel_items'])) {
-                            foreach ($cost_planning_details['multilevel_items'] as $iitem) {
-                                $modals_html = '';
-                                $modals_html .= '
-                                <div class="modal fade" id="multilevelExpand_'.$iitem['id'].'" tabindex="-1" role="dialog">
-                                  <div class="modal-dialog" role="document" style="width: 98%;">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h4 class="modal-title">View Items</h4>
-                                        <h4 class="modal-title">'.get_master_area($iitem['int_master_area']).' - '.get_functionality_area($iitem['int_fun_area']).'</h4>
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <div class="col-md-3" style="padding-left: 0px">
-                                            <p>Overall area (sqft): '.$iitem['sub_overall_budget_area'].'</p>
-                                        </div>
-                                        <div class="col-md-9">
-                                        </div>
-                                      </div>
-                                      <div class="modal-body multilevel-sub-item">
-                                        <div class="row">
-                                          <div class="col-md-12">
-                                            <div class="table-responsive s_table">
-                                              <table class="table estimate-sub-items-table items table-main-estimate-edit has-calculations no-mtop">
-                                                <thead>
-                                                  <tr>
-                                                    <th width="13%" align="left">'._l('estimate_table_item_heading').'</th>
-                                                    <th width="18%" align="left">'._l('estimate_table_item_description').'</th>
-                                                    <th width="10%" class="qty" align="right">'._l('area').' (sqft)</th>
-                                                    <th width="10%" class="qty" align="right">'._l('estimate_table_quantity_heading').'</th>
-                                                    <th width="16%" align="right">'._l('estimate_table_rate_heading').'</th>
-                                                    <th width="16%" align="right">'._l('estimate_table_amount_heading').'</th>
-                                                    <th width="17%" align="right">'._l('remarks').'</th>
-                                                  </tr>
-                                                </thead>
-                                                <tbody>';
-                                                $estimate_item_rate = 0;
-                                                $estimate_item_amount = 0;
-                                                if (!empty($cost_planning_details['sub_multilevel_items'])) {
-                                                foreach ($cost_planning_details['sub_multilevel_items'] as $smkey => $sitem) {
-                                                if($sitem['parent_id'] == $iitem['id']) {
-                                                    $sub_amount = $sitem['sub_rate'] * $sitem['sub_qty'];
-                                                    $estimate_item_rate = $estimate_item_rate + $sitem['sub_rate'];
-                                                    $estimate_item_amount = $estimate_item_amount + $sub_amount;
-                                                    $purchase_unit_name = get_purchase_unit($sitem['sub_unit_id']);
-                                                    $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
-                                                    $old_sub_item_name = isset($root_estimate_data['sub_multilevel_items'][$smkey]['item_name']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['item_name'] : '';
-                                                    $old_sub_long_description = isset($root_estimate_data['sub_multilevel_items'][$smkey]['sub_long_description']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['sub_long_description'] : '';
-                                                    $old_sub_budget_area = isset($root_estimate_data['sub_multilevel_items'][$smkey]['sub_budget_area']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['sub_budget_area'] : '';
-                                                    $old_sub_qty = isset($root_estimate_data['sub_multilevel_items'][$smkey]['sub_qty']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['sub_qty'] : '';
-                                                    $old_sub_unit_id = isset($root_estimate_data['sub_multilevel_items'][$smkey]['sub_unit_id']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['sub_unit_id'] : '';
-                                                    $old_sub_rate = isset($root_estimate_data['sub_multilevel_items'][$smkey]['sub_rate']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['sub_rate'] : '';
-                                                    $old_sub_remarks = isset($root_estimate_data['sub_multilevel_items'][$smkey]['sub_remarks']) ? $root_estimate_data['sub_multilevel_items'][$smkey]['sub_remarks'] : '';
-
-                                                   $modals_html .= '<tr>
-                                                        <td '.find_estimate_revision_bold($old_sub_item_name, $sitem['item_name']).'>
-                                                            '.get_purchase_items($sitem['item_name']).'
-                                                        </td>
-                                                        <td '.find_estimate_revision_bold($old_sub_long_description, $sitem['sub_long_description']).'>
-                                                            '.clear_textarea_breaks($sitem['sub_long_description']).'
-                                                        </td>
-                                                        <td align="right" '.find_estimate_revision_bold($old_sub_budget_area, $sitem['sub_budget_area']).'>
-                                                            '.$sitem['sub_budget_area'].'
-                                                        </td>
-                                                        <td align="right">
-                                                            <span '.find_estimate_revision_bold(number_format($old_sub_qty, 2), number_format($sitem['sub_qty'], 2)).'>'.number_format($sitem['sub_qty'], 2).'</span>
-                                                            <span '.find_estimate_revision_bold($old_sub_unit_id, $sitem['sub_unit_id']).'>'.$purchase_unit_name.'</span>
-                                                        </td>
-                                                        <td align="right" '.find_estimate_revision_bold($old_sub_rate, $sitem['sub_rate']).'>
-                                                            '.app_format_money($sitem['sub_rate'], $base_currency).'
-                                                        </td>
-                                                        <td align="right">
-                                                            '.app_format_money($sub_amount, $base_currency).'
-                                                        </td>
-                                                        <td align="right" '.find_estimate_revision_bold($old_sub_remarks, $sitem['sub_remarks']).'>
-                                                            '.clear_textarea_breaks($sitem['sub_remarks']).'
-                                                        </td>
-                                                    </tr>';
-                                                } } }
-                                                $sub_overall_budget_area = $iitem['sub_overall_budget_area'];
-                                                if($sub_overall_budget_area == 0 || empty($sub_overall_budget_area)) {
-                                                    $sub_overall_budget_area = 1;
-                                                }
-                                                $cost_overall_area = $estimate_item_amount / $sub_overall_budget_area;
-                                                $modal_amount = $estimate_item_amount;
-                                                $modals_html .= '</tbody>
-                                              </table>
-                                            </div>
-                                            <div class="col-md-8 col-md-offset-4">
-                                                <table class="table text-right">
-                                                    <tbody>
-                                                        <tr id="subtotal">
-                                                            <td><span class="bold tw-text-neutral-700">'._l('cost_overall_area').' :</span>
-                                                            </td>
-                                                            <td>
-                                                                '.app_format_money($cost_overall_area, $base_currency).'
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><span class="bold tw-text-neutral-700">'._l('cost').' :</span>
-                                                            </td>
-                                                            <td>
-                                                                '.app_format_money($modal_amount, $base_currency).'
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>';
-                              echo $modals_html;
-                            }
-                        }
-                    } ?>
                 </div>
             <?php } ?>
 

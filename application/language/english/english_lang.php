@@ -4237,3 +4237,4 @@ $lang['cost_overall_area'] = 'Cost/overall area';
 $lang['cost'] = 'Cost';
 $lang['create_new_revision'] = 'Create New Revision';
 $lang['revisions'] = 'Revisions';
+$lang['sub_head'] = 'Sub Head';

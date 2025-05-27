@@ -745,7 +745,7 @@ function add_new_sales_item_post($item, $rel_id, $rel_type)
                     'expense_id'       => isset($item['expense_id']) ? $item['expense_id'] : NULL,
                     'remarks'          => isset($item['remarks']) ? $item['remarks'] : NULL,
                     'item_code'        => isset($item['item_name']) ? $item['item_name'] : NULL,
-                    'budget_area'      => isset($item['budget_area']) ? $item['budget_area'] : NULL,
+                    'sub_head'         => isset($item['sub_head']) ? $item['sub_head'] : NULL,
                 ]);
 
     $id = $CI->db->insert_id();
@@ -789,7 +789,7 @@ function update_sales_item_post($item_id, $data, $field = '')
             'unit'             => $data['unit'],
             'unit_id'          => isset($data['unit_id']) ? $data['unit_id'] : NULL,
             'item_code'        => isset($data['item_name']) ? $data['item_name'] : NULL,
-            'budget_area'      => isset($data['budget_area']) ? $data['budget_area'] : NULL,
+            'sub_head'         => isset($data['sub_head']) ? $data['sub_head'] : NULL,
         ];
     }
 

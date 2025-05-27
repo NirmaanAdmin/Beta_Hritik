@@ -281,10 +281,7 @@ $detailedcosting .= '<p style="font-weight:bold;">5. '.strtoupper(_l('detailed_c
 
 $annexures = get_all_annexures();
 $main_annexure_items = array();
-$sub_annexure_items = array();
 $estimate_items = $cost_planning_details['estimate_items'];
-$multilevel_items = $cost_planning_details['multilevel_items'];
-$sub_multilevel_items = $cost_planning_details['sub_multilevel_items'];
 if(!empty($estimate_items)) {
     foreach ($estimate_items as $item) {
         if (!isset($main_annexure_items[$item['annexure']])) {
@@ -297,223 +294,69 @@ if(!empty($estimate_items)) {
     }));
     $main_annexure_items = array_values($main_annexure_items);
 }
-if(!empty($multilevel_items)) {
-    $sub_annexure_items = array_column($multilevel_items, 'annexure');
-    $sub_annexure_items = array_values(array_filter($annexures, function($annexure) use ($sub_annexure_items) {
-        return in_array($annexure['id'], $sub_annexure_items, true);
-    }));
-    $sub_annexure_items = array_values($sub_annexure_items);
-}
-$annexures = array_merge($main_annexure_items, $sub_annexure_items);
+$annexures = $main_annexure_items;
 usort($annexures, function($a, $b) {
     return $a['id'] <=> $b['id'];
 });
 
-$unique_multilevel_items = array();
-if(!empty($multilevel_items)) {
-    $unique_multilevel_items = array_values(array_intersect_key($multilevel_items, array_unique(array_column($multilevel_items, 'int_master_area'))
-));
-}
-
-function alphaCounter($index) {
-    $result = '';
-    while ($index >= 0) {
-        $result = chr($index % 26 + 97) . $result;
-        $index = floor($index / 26) - 1;
-    }
-    return $result;
-}
-
-function toRoman($number) {
-    $map = [
-        'm' => 1000, 'cm' => 900, 'd' => 500, 'cd' => 400,
-        'c' => 100, 'xc' => 90, 'l' => 50, 'xl' => 40,
-        'x' => 10, 'ix' => 9, 'v' => 5, 'iv' => 4, 'i' => 1
-    ];
-    $roman = '';
-    foreach ($map as $romanChar => $value) {
-        while ($number >= $value) {
-            $roman .= $romanChar;
-            $number -= $value;
-        }
-    }
-    return $roman;
-}
-
 foreach ($annexures as $key => $annexure) {
-    if($annexure['id'] == 7) {
-        $detailedcosting .= '<p style="font-weight:bold; font-size:13px;">' . strtoupper($annexure['name']) . '</p>';
-        if(!empty($unique_multilevel_items)) {
-            foreach ($unique_multilevel_items as $ukey => $uvalue) {
-                $detailedcosting .= '<p style="font-weight:bold; font-size:11px;">' . alphaCounter($ukey). '. ' . get_master_area($uvalue['int_master_area']) . '</p>';
-                $detailedcosting .= '<p style="font-size:11px;">Summary of ' . get_master_area($uvalue['int_master_area']) . '</p>';
-                $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
-                $detailedcosting .= '
-                <thead>
-                  <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
-                     <th width="40%;" align="left">'._l('estimate_table_item_description').'</th>
-                     <th width="20%;" align="center">'._l('area').' (sqft)</th>
-                     <th width="20%;" align="center">'._l('estimate_table_rate_heading').'</th>
-                     <th width="20%;" align="center">'._l('estimate_table_amount_heading').'</th>
-                  </tr>
-                </thead>';
-                $master_id = $uvalue['int_master_area'];
-                $filtered_master_area = array_values(array_filter($multilevel_items, function($item) use ($master_id) {
-                    return $item['int_master_area'] == $master_id;
-                }));
-                $detailedcosting .= '<tbody>';
-                $fm_total_rate = 0;
-                $fm_total_amount = 0;
-                $fm_total_budget_area = 0;
-                if(!empty($filtered_master_area)) {
-                    foreach ($filtered_master_area as $fmkey => $fmvalue) {
-                        $fm_amount = $fmvalue['int_area'] * $fmvalue['int_rate'];
-                        $fm_total_rate = $fm_total_rate + $fmvalue['int_rate'];
-                        $fm_total_amount = $fm_total_amount + $fm_amount;
-                        $fm_total_budget_area = $fm_total_budget_area + $fmvalue['int_area'];
-                        $detailedcosting .= '<tr style="font-size:11px;">
-                            <td width="40%;" align="left">'.get_functionality_area($fmvalue['int_fun_area']).'</td>
-                            <td width="20%;" align="center">'.$fmvalue['int_area'].'</td>
-                            <td width="20%;" align="center">'.app_format_money($fmvalue['int_rate'], $base_currency).'</td>
-                            <td width="20%;" align="center">'.app_format_money($fm_amount, $base_currency).'</td>
-                        </tr>';
-                    }
-                }
-                $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
-                    <td width="40%;" align="left">Total</td>
-                    <td width="20%;" align="center"></td>
-                    <td width="20%;" align="center">'.app_format_money($fm_total_rate, $base_currency).'</td>
-                    <td width="20%;" align="center">'.app_format_money($fm_total_amount, $base_currency).'</td>
+    $detailedcosting .= '<p style="font-weight:bold; font-size:13px; padding-bottom: 5px;">' . strtoupper($annexure['name']) . '</p>';
+    $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
+    $detailedcosting .= '
+    <thead>
+      <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
+         <th width="19%;" align="left">'._l('estimate_table_item_heading').'</th>
+         <th width="32%;" align="left">'._l('estimate_table_item_description').'</th>
+         <th width="12%;" align="center">'._l('sub_head').'</th>
+         <th width="11%;" align="center">'._l('estimate_table_quantity_heading').'</th>
+         <th width="13%;" align="center">'._l('estimate_table_rate_heading').' (INR)</th>
+         <th width="13%;" align="center">'._l('estimate_table_amount_heading').' (INR)</th>
+      </tr>
+    </thead>';
+    if(!empty($estimate_items)) {
+        $detailedcosting .= '<tbody>';
+        $total_amount = 0;
+        $overall_budget_area = '';
+        foreach ($estimate_items as $item) {
+            if($item['annexure'] == $annexure['id']) { 
+                $amount = $item['rate'] * $item['qty'];
+                $total_amount = $total_amount + $amount;
+                $purchase_unit_name = get_purchase_unit($item['unit_id']);
+                $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
+                $detailedcosting .= '<tr style="font-size:11px;">
+                    <td width="19%;" align="left">'.get_purchase_items($item['item_code']).'</td>
+                    <td width="32%;" align="left">'.clear_textarea_breaks($item['long_description']).'</td>
+                    <td width="12%;" align="center">'.get_sub_head($item['sub_head']).'</td>
+                    <td width="11%;" align="center">'.number_format($item['qty'], 2).$purchase_unit_name.'</td>
+                    <td width="13%;" align="center">'.app_format_money($item['rate'], $base_currency).'</td>
+                    <td width="13%;" align="center">'.app_format_money($amount, $base_currency).'</td>
                 </tr>';
-                $detailedcosting .= '</tbody>';
-                $detailedcosting .= '</table>';
-
-                if(!empty($filtered_master_area)) {
-                    foreach ($filtered_master_area as $fmkey => $fmvalue) {
-                        $parent_id = $fmvalue['id'];
-                        $filtered_multilevel_items = array_values(array_filter($sub_multilevel_items, function($item) use ($parent_id) {
-                            return $item['parent_id'] == $parent_id;
-                        }));
-                        if(!empty($filtered_multilevel_items)) {
-                            $detailedcosting .= '<p style="font-weight:bold; font-size:11px;">' . toRoman($fmkey+1). '. ' . get_functionality_area($fmvalue['int_fun_area']) . '</p>';
-                            $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
-                            $detailedcosting .= '
-                            <thead>
-                              <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
-                                 <th width="19%;" align="center">'._l('estimate_table_item_heading').'</th>
-                                 <th width="32%;" align="center">'._l('estimate_table_item_description').'</th>
-                                 <th width="12%;" align="center">'._l('area').' (sqft)</th>
-                                 <th width="11%;" align="center">'._l('estimate_table_quantity_heading').'</th>
-                                 <th width="13%;" align="center">'._l('estimate_table_rate_heading').' (INR)</th>
-                                 <th width="13%;" align="center">'._l('estimate_table_amount_heading').' (INR)</th>
-                              </tr>
-                            </thead>';
-                            $detailedcosting .= '<tbody>';
-                            $filtered_multilevel_qty = 0;
-                            $filtered_multilevel_amount = 0;
-                            foreach ($filtered_multilevel_items as $fmlkey => $fmlvalue) {
-                                $sub_amount = $fmlvalue['sub_rate'] * $fmlvalue['sub_qty'];
-                                $filtered_multilevel_qty = $filtered_multilevel_qty + $fmlvalue['sub_qty'];
-                                $filtered_multilevel_amount = $filtered_multilevel_amount + $sub_amount;
-                                $purchase_unit_name = get_purchase_unit($fmlvalue['sub_unit_id']);
-                                $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
-                                $detailedcosting .= '<tr style="font-size:11px;">
-                                    <td width="19%;" align="left">'.get_purchase_items($fmlvalue['item_name']).'</td>
-                                    <td width="32%;" align="left">'.clear_textarea_breaks($fmlvalue['sub_long_description']).'</td>
-                                    <td width="12%;" align="center">'.$fmlvalue['sub_budget_area'].'</td>
-                                    <td width="11%;" align="center">'.number_format($fmlvalue['sub_qty'], 2).$purchase_unit_name.'</td>
-                                    <td width="13%;" align="center">'.app_format_money($fmlvalue['sub_rate'], $base_currency).'</td>
-                                    <td width="13%;" align="center">'.app_format_money($sub_amount, $base_currency).'</td>
-                                </tr>';
-                            }
-                            $filtered_multilevel_rate = 0;
-                            $overall_budget_area = '';
-                            $filtered_master_area_detail = array_values(array_filter($multilevel_items, function($item) use ($parent_id) {
-                                return $item['id'] == $parent_id;
-                            }));
-                            if(!empty($filtered_master_area_detail)) {
-                                $filtered_master_area_detail = array_values($filtered_master_area_detail);
-                                $overall_budget_area = $filtered_master_area_detail[0]['sub_overall_budget_area'];
-                            }
-                            if(!empty($overall_budget_area)) {
-                                $filtered_multilevel_rate = $filtered_multilevel_amount / $overall_budget_area;
-                            } else {
-                                $filtered_multilevel_rate = $filtered_multilevel_amount;
-                            }
-                            $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
-                                <td width="19%;" align="left">Total</td>
-                                <td width="32%;" align="center"></td>
-                                <td width="12%;" align="center">'.$overall_budget_area.'</td>
-                                <td width="11%;" align="center"></td>
-                                <td width="13%;" align="center">'.app_format_money($filtered_multilevel_rate, $base_currency).'</td>
-                                <td width="13%;" align="center">'.app_format_money($filtered_multilevel_amount, $base_currency).'</td>
-                            </tr>';
-                            $detailedcosting .= '</tbody>';
-                            $detailedcosting .= '</table>';
-                        }
-                    }
+            }
+        }
+        if(!empty($cost_planning_details['budget_info'])) {
+            foreach ($cost_planning_details['budget_info'] as $cpkey => $cpvalue) {
+                if($cpvalue['budget_id'] == $annexure['id']) {
+                    $overall_budget_area = $cpvalue['overall_budget_area'];
                 }
             }
         }
-    } else {
-        $detailedcosting .= '<p style="font-weight:bold; font-size:13px; padding-bottom: 5px;">' . strtoupper($annexure['name']) . '</p>';
-        $detailedcosting .= '<table width="100%" cellspacing="0" cellpadding="3" border="0">';
-        $detailedcosting .= '
-        <thead>
-          <tr bgcolor="#323a45" style="color:#ffffff; font-size:12px;">
-             <th width="19%;" align="left">'._l('estimate_table_item_heading').'</th>
-             <th width="32%;" align="left">'._l('estimate_table_item_description').'</th>
-             <th width="12%;" align="center">'._l('area').' (sqft)</th>
-             <th width="11%;" align="center">'._l('estimate_table_quantity_heading').'</th>
-             <th width="13%;" align="center">'._l('estimate_table_rate_heading').' (INR)</th>
-             <th width="13%;" align="center">'._l('estimate_table_amount_heading').' (INR)</th>
-          </tr>
-        </thead>';
-        if(!empty($estimate_items)) {
-            $detailedcosting .= '<tbody>';
-            $total_amount = 0;
-            $overall_budget_area = '';
-            foreach ($estimate_items as $item) {
-                if($item['annexure'] == $annexure['id']) { 
-                    $amount = $item['rate'] * $item['qty'];
-                    $total_amount = $total_amount + $amount;
-                    $purchase_unit_name = get_purchase_unit($item['unit_id']);
-                    $purchase_unit_name = !empty($purchase_unit_name) ? ' '.$purchase_unit_name : '';
-                    $detailedcosting .= '<tr style="font-size:11px;">
-                        <td width="19%;" align="left">'.get_purchase_items($item['item_code']).'</td>
-                        <td width="32%;" align="left">'.clear_textarea_breaks($item['long_description']).'</td>
-                        <td width="12%;" align="center">'.$item['budget_area'].'</td>
-                        <td width="11%;" align="center">'.number_format($item['qty'], 2).$purchase_unit_name.'</td>
-                        <td width="13%;" align="center">'.app_format_money($item['rate'], $base_currency).'</td>
-                        <td width="13%;" align="center">'.app_format_money($amount, $base_currency).'</td>
-                    </tr>';
-                }
-            }
-            if(!empty($cost_planning_details['budget_info'])) {
-                foreach ($cost_planning_details['budget_info'] as $cpkey => $cpvalue) {
-                    if($cpvalue['budget_id'] == $annexure['id']) {
-                        $overall_budget_area = $cpvalue['overall_budget_area'];
-                    }
-                }
-            }
-            $total_rate = 0;
-            if(!empty($overall_budget_area)) {
-                $total_rate = $total_amount / $overall_budget_area;
-            } else {
-                $total_rate = $total_amount;
-            }
-            $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
-                <td width="19%;" align="left">Total</td>
-                <td width="32%;" align="center"></td>
-                <td width="12%;" align="center">'.$overall_budget_area.' (sqft)</td>
-                <td width="11%;" align="center"></td>
-                <td width="13%;" align="center">'.app_format_money($total_rate, $base_currency).'</td>
-                <td width="13%;" align="center">'.app_format_money($total_amount, $base_currency).'</td>
-            </tr>';
-            $detailedcosting .= '</tbody>';
+        $total_rate = 0;
+        if(!empty($overall_budget_area)) {
+            $total_rate = $total_amount / $overall_budget_area;
+        } else {
+            $total_rate = $total_amount;
         }
-        $detailedcosting .= '</table>';
+        $detailedcosting .= '<tr style="font-size:11px; font-weight:bold;">
+            <td width="19%;" align="left">Total</td>
+            <td width="32%;" align="center"></td>
+            <td width="12%;" align="center"></td>
+            <td width="11%;" align="center"></td>
+            <td width="13%;" align="center">'.app_format_money($total_rate, $base_currency).'</td>
+            <td width="13%;" align="center">'.app_format_money($total_amount, $base_currency).'</td>
+        </tr>';
+        $detailedcosting .= '</tbody>';
     }
+    $detailedcosting .= '</table>';
 
     $detailed_costing_editor = '';
     if(!empty($cost_planning_details['budget_info'])) {

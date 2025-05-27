@@ -131,8 +131,6 @@ class Estimates extends AdminController
 
             $data['estimate'] = $estimate;
             $data['estimate_budget_info'] = $this->estimates_model->get_estimate_budget_info($id);
-            $data['multilevel_items'] = $this->estimates_model->get_multilevel_items($id);
-            $data['sub_multilevel_items'] = $this->estimates_model->get_sub_multilevel_items($id);
             $data['edit']     = true;
             $data['annexure_estimate'] = $this->estimates_model->get_annexure_estimate_details($id);
             $data['all_area_working'] = $this->estimates_model->get_area_working($id);
@@ -175,6 +173,7 @@ class Estimates extends AdminController
         $data['functionality_area'] = $this->costplanning_model->get_functionality_area();
         $data['units'] = $this->costplanning_model->get_units();
         $data['area_summary_tabs'] = $this->estimates_model->get_area_summary_tabs();
+        $data['sub_head'] = $this->costplanning_model->get_sub_group();
         $data['title']             = $title;
         $this->load->view('admin/estimates/estimate', $data);
     }
