@@ -13,7 +13,7 @@ class warehouse extends AdminController
 		$this->load->model('warehouse_model');
 		hooks()->do_action('warehouse_init');
 	}
-
+ 
 	/**
 	 * setting 
 	 * @return view
@@ -9311,6 +9311,7 @@ class warehouse extends AdminController
 		$pur_order = $this->input->get('pur_order');
 		$project_name = $this->input->get('project_name');
 		$commodity_descriptions = $this->input->get('commodity_descriptions');
+		$purchase_id = $this->input->get('purchase_id');
 		if ($vendor) {
 			$vendor = rawurldecode($vendor); // Safely decode vendor name
 		} else {
@@ -9340,7 +9341,8 @@ class warehouse extends AdminController
 		$data['project_name'] = $project_name;
 		$data['commodity_descriptions'] = $commodity_descriptions;
 		$data['list_id'] = explode(',', urldecode($id_s));
-
+		$data['purchase_id'] = $purchase_id; // Send purchase ID to the view
+ 
 		// Load the HTML view and pass vendor name
 		$html = $this->load->view('print_commodity/print_commodity_qrcode_html_new', $data, true);
 		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/sign_document_pdf.css') . '" rel="stylesheet" type="text/css" />';
