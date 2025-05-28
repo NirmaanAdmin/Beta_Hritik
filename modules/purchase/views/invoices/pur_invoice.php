@@ -91,14 +91,26 @@
 									?>
 								</div>
 
-								<div class="col-md-12 form-group pad_left_0 pad_right_0">
+								<div class="col-md-6 form-group pad_left_0">
 									<label for="pur_order"><?php echo _l('pur_order'); ?></label>
 									<select name="pur_order" id="pur_order" class="selectpicker" onchange="pur_order_change(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
 										<?php foreach ($pur_orders as $ct) { ?>
 											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->pur_order == $ct['id']) {
-																													echo 'selected';
-																												} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . $ct['pur_order_name']); ?></option>
+												echo 'selected';
+											} ?>><?php echo html_entity_decode($ct['pur_order_number'] . ' - ' . get_vendor_company_name($ct['vendor']) . ' - ' . $ct['pur_order_name']); ?></option>
+										<?php } ?>
+									</select>
+								</div>
+
+								<div class="col-md-6 form-group pad_right_0">
+									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
+									<select name="wo_order" id="wo_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+										<option value=""></option>
+										<?php foreach ($wo_orders as $ct) { ?>
+											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
+												echo 'selected';
+											} ?>><?php echo html_entity_decode($ct['wo_order_number'] . ' - ' . get_vendor_company_name($ct['vendor']) . ' - ' . $ct['wo_order_name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
@@ -114,34 +126,20 @@
 									<?php $duedate = (isset($pur_invoice) ? _d($pur_invoice->duedate) : '');
 									echo render_date_input('duedate', '', $duedate); ?>
 								</div>
-								<div class="col-md-6  pad_left_0" style="margin-bottom: 14px;">
+								<div class="col-md-12 pad_left_0 pad_right_0" style="margin-bottom: 14px;">
 									<label for="project"><span class="text-danger">* </span><?php echo _l('project'); ?></label>
 									<select name="project_id" id="project" class="selectpicker" data-live-search="true" data-width="100%" required="true" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
 										<?php foreach ($projects as $s) { ?>
 											<option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_invoice) && $s['id'] == $pur_invoice->project_id) {
-																												echo 'selected';
-																											} else if (!isset($pur_invoice) && $s['id'] == $project_id) {
-																												echo 'selected';
-																											} ?>><?php echo pur_html_entity_decode($s['name']); ?></option>
+												echo 'selected';
+											} else if (!isset($pur_invoice) && $s['id'] == $project_id) {
+												echo 'selected';
+											} ?>><?php echo pur_html_entity_decode($s['name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
-								<div class="col-md-6  pad_right_0" style="margin-bottom: 14px;">
-									<label for="order_tracker"><?php echo _l('Base Order'); ?></label>
-									<?php $order_tracker_list = get_order_tracker_list(); ?>
-									<select name="order_tracker_id" id="order_tracker_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-										<option value=""></option>
-										<?php foreach ($order_tracker_list as $s) {
-											if (isset($pur_invoice)) {
-												$parts = explode('-', $pur_invoice->order_tracker_id);
-												$selected = ($s['id'] == $parts[0] && $s['source_table'] == $parts[1]);
-											}
-										?>
-											<option value="<?php echo $s['id'] . '-' . $s['source_table']; ?>" <?php if (isset($selected) && $selected) echo 'selected'; ?>> ( <?php echo pur_html_entity_decode($s['vendor']); ?> ) - ( <?php echo pur_html_entity_decode($s['order_name']); ?> )</option>
-										<?php } ?>
-									</select>
-								</div>
+
 								<div class="col-md-6 pad_left_0" style="clear: both;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('amount_without_tax'); ?> ( ₹ )</label>
@@ -257,16 +255,21 @@
 
 
 								<div class="col-md-12 form-group pad_left_0 pad_right_0">
-									<label for="wo_order"><?php echo _l('wo_order'); ?></label>
-									<select name="wo_order" id="wo_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+									<label for="get_from_order_tracker"><?php echo _l('get_from_order_tracker'); ?></label>
+									<?php $order_tracker_list = get_order_tracker_list(); ?>
+									<select name="order_tracker_id" id="order_tracker_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
-										<?php foreach ($wo_orders as $ct) { ?>
-											<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->wo_order == $ct['id']) {
-																													echo 'selected';
-																												} ?>><?php echo html_entity_decode($ct['wo_order_number'] . ' - ' . $ct['wo_order_name']); ?></option>
+										<?php foreach ($order_tracker_list as $s) {
+											if (isset($pur_invoice)) {
+												$parts = explode('-', $pur_invoice->order_tracker_id);
+												$order_selected = ($s['id'] == $parts[0] && $s['source_table'] == $parts[1]);
+											}
+										?>
+											<option value="<?php echo $s['id'] . '-' . $s['source_table']; ?>" <?php if (isset($order_selected) && $order_selected) echo 'selected'; ?>> <?php echo pur_html_entity_decode($s['vendor']); ?> - <?php echo pur_html_entity_decode($s['order_name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
+
 								<div class="col-md-6 pad_left_0 hide" style="margin-top: 0%;">
 									<div class="form-group">
 										<label for="vendor submitted amount" class="control-label"> <?php echo _l('vendor_submitted_amount'); ?> ( ₹ )</label>
@@ -516,7 +519,8 @@
 				$.post(admin_url + 'purchase/get_pur_order/' + pur_order).done(function(response) {
 					response = JSON.parse(response);
 					var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
-					$('select[name="wo_order"]').val('').trigger('change');
+					$('select[name="wo_order"]').prop('disabled', true).selectpicker('refresh');
+					$('select[name="order_tracker_id"]').prop('disabled', true).selectpicker('refresh');
 					$('select[name="vendor"]').val(response.vendor).trigger('change');
 					$('select[name="group_pur"]').val(response.group_pur).trigger('change');
 					$('select[name="project_id"]').val(response.project).trigger('change');
@@ -527,6 +531,8 @@
 					init_selectpicker();
 				});
 			} else {
+				$('select[name="wo_order"]').prop('disabled', false).selectpicker('refresh');
+				$('select[name="order_tracker_id"]').prop('disabled', false).selectpicker('refresh');
 				$('select[name="vendor"]').val('').trigger('change');
 				$('select[name="group_pur"]').val('').trigger('change');
 				$('select[name="project_id"]').val('').trigger('change');
@@ -545,7 +551,8 @@
 				$.post(admin_url + 'purchase/get_wo_order/' + wo_order).done(function(response) {
 					response = JSON.parse(response);
 					var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
-					$('select[name="pur_order"]').val('').trigger('change');
+					$('select[name="pur_order"]').prop('disabled', true).selectpicker('refresh');
+					$('select[name="order_tracker_id"]').prop('disabled', true).selectpicker('refresh');
 					$('select[name="vendor"]').val(response.vendor).trigger('change');
 					$('select[name="group_pur"]').val(response.group_pur).trigger('change');
 					$('select[name="project_id"]').val(response.project).trigger('change');
@@ -556,6 +563,8 @@
 					init_selectpicker();
 				});
 			} else {
+				$('select[name="pur_order"]').prop('disabled', false).selectpicker('refresh');
+				$('select[name="order_tracker_id"]').prop('disabled', false).selectpicker('refresh');
 				$('select[name="vendor"]').val('').trigger('change');
 				$('select[name="group_pur"]').val('').trigger('change');
 				$('select[name="project_id"]').val('').trigger('change');
@@ -576,6 +585,8 @@
 				var source_table = parts[1]; // "pur_orders" (the source table part)
 				$.post(admin_url + 'purchase/order_tracker_id/' + order_tracker).done(function(response) {
 					response = JSON.parse(response);
+					$('select[name="pur_order"]').prop('disabled', true).selectpicker('refresh');
+					$('select[name="wo_order"]').prop('disabled', true).selectpicker('refresh');
 					if (source_table === 'order_tracker') {
 						
 						$('select[name="vendor"]').val(response.vendor).trigger('change');
@@ -603,6 +614,8 @@
 
 				});
 			} else {
+				$('select[name="pur_order"]').prop('disabled', false).selectpicker('refresh');
+				$('select[name="wo_order"]').prop('disabled', false).selectpicker('refresh');
 				$('select[name="vendor"]').val('').trigger('change');
 				$('select[name="group_pur"]').val('').trigger('change');
 				$('select[name="project_id"]').val('').trigger('change');
@@ -613,5 +626,21 @@
 				init_selectpicker();
 			}
 		});
+
+		var pur_order_value = $('select[name="pur_order"]').val();
+		var wo_order_value = $('select[name="wo_order"]').val();
+		var order_tracker_id_value = $('select[name="order_tracker_id"]').val();
+		if(!empty(pur_order_value)) {
+			$('select[name="wo_order"]').prop('disabled', true).selectpicker('refresh');
+			$('select[name="order_tracker_id"]').prop('disabled', true).selectpicker('refresh');
+		}
+		if(!empty(wo_order_value)) {
+			$('select[name="pur_order"]').prop('disabled', true).selectpicker('refresh');
+			$('select[name="order_tracker_id"]').prop('disabled', true).selectpicker('refresh');
+		}
+		if(!empty(order_tracker_id_value)) {
+			$('select[name="pur_order"]').prop('disabled', true).selectpicker('refresh');
+			$('select[name="wo_order"]').prop('disabled', true).selectpicker('refresh');
+		}
 	});
 </script>

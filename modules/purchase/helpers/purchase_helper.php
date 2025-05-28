@@ -4201,26 +4201,6 @@ function get_order_tracker_list()
 
     $query = $CI->db->query("
         SELECT 
-            po.id,
-            po.pur_order_name AS order_name,
-            'pur_orders' AS source_table,
-            pv.company AS vendor
-        FROM " . db_prefix() . "pur_orders po
-        LEFT JOIN " . db_prefix() . "pur_vendor pv ON pv.userid = po.vendor
-        
-        UNION ALL
-        
-        SELECT 
-            wo.id,
-            wo.wo_order_name AS order_name,
-            'wo_orders' AS source_table,
-            pv.company AS vendor
-        FROM " . db_prefix() . "wo_orders wo
-        LEFT JOIN " . db_prefix() . "pur_vendor pv ON pv.userid = wo.vendor
-        
-        UNION ALL
-        
-        SELECT 
             t.id,
             t.pur_order_name AS order_name,
             'order_tracker' AS source_table,

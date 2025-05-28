@@ -922,3 +922,4 @@ $lang['change_budget_head'] = 'Change budget head';
 $lang['update_budget_head_successfully'] = 'Update budget head successfully';
 $lang['update_budget_head_fail'] = 'Update budget head fail';
 $lang['this_is_non_budgeted_item'] = 'This is non budgeted item';
+$lang['get_from_order_tracker'] = 'Get from order tracker';
