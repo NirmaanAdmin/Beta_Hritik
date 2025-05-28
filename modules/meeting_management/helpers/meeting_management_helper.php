@@ -1,4 +1,7 @@
 <?php
+
+use function Clue\StreamFilter\fun;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 // Example helper function (You can define any reusable function here)
@@ -88,4 +91,118 @@ function getdeptmom()
         log_message('error', 'Error in getdeptmom(): ' . $e->getMessage());
         return [];
     }
+}
+
+function get_meeting_name_by_id($meeting_id)
+{
+    $CI = &get_instance();
+
+    $meeting = $CI->db->select('meeting_title')
+        ->where('id', $meeting_id)
+        ->from(db_prefix() . 'meeting_management')
+        ->get()
+        ->row();
+    if ($meeting) {
+        return $meeting->meeting_title;
+    }
+
+    return '';
+}
+
+function get_project_name_by_id_mom($project_id)
+{
+    $CI = &get_instance();
+
+    $project = $CI->db->select('name')
+        ->where('id', $project_id)
+        ->from(db_prefix() . 'projects')
+        ->get()
+        ->row();
+    if ($project) {
+        return $project->name;
+    }
+
+    return '';
+}
+
+function get_critical_tracker_pdf()
+{
+    $CI = &get_instance();
+
+    // 1) Build the base query
+    $baseSql = "
+    SELECT 
+        cm.id,
+        cm.department,
+        cm.area,
+        cm.description,
+        cm.decision,
+        cm.action,
+        cm.staff,
+        cm.project_id,
+        cm.target_date,
+        cm.date_closed,
+        cm.status,
+        cm.priority,
+        cm.minute_id,
+        cm.vendor,
+        d.name as department_name,
+        s.firstname,
+        s.lastname,
+        'critical_mom' as source_table
+    FROM tblcritical_mom cm
+    LEFT JOIN tbldepartments d ON d.departmentid = cm.department
+    LEFT JOIN tblstaff s ON s.staffid = cm.staff
+    ";
+
+    // 2) Load any user-saved filters
+    $filters = $CI->db
+        ->select('*')
+        ->from(db_prefix() . 'module_filter')
+        ->where('module_name', 'critical_mom')
+        ->where('staff_id', get_staff_user_id())
+        ->get()
+        ->result_array();
+
+    // 3) Build WHERE clauses
+    $whereClauses = [];
+    foreach ($filters as $f) {
+        $name = $f['filter_name'];
+        $value = trim($f['filter_value']);
+
+        if ($value === '') {
+            continue;
+        }
+
+        $val = $CI->db->escape_str($value);
+
+        switch ($name) {
+            case 'priority':
+                $whereClauses[] = "cm.priority = '{$val}'";
+                break;
+
+            case 'status':
+                $whereClauses[] = "cm.status = '{$val}'";
+                break;
+
+            case 'department':
+                $whereClauses[] = "cm.department = '{$val}'";
+                break;
+
+
+        }
+    }
+
+    // 4) If there are filters, apply them
+    if (!empty($whereClauses)) {
+        $sql = $baseSql . " WHERE " . implode(' AND ', $whereClauses);
+    } else {
+        $sql = $baseSql;
+    }
+
+    // Add sorting
+    $sql .= " ORDER BY cm.target_date DESC";
+
+    // 5) Execute and return
+    return $CI->db->query($sql)->result_array();
 }

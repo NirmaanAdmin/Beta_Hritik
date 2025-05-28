@@ -32,6 +32,7 @@
                   <table class="table table-bordered">
                      <thead>
                         <tr>
+                           <th><?php echo _l('No'); ?></th>
                            <th><?php echo _l('meeting_title'); ?></th>
                            <th><?php echo _l('project'); ?></th>
                            <th><?php echo _l('meeting_date'); ?></th>
@@ -39,9 +40,11 @@
                         </tr>
                      </thead>
                      <tbody id="minutes-tbody">
-                        <?php if (!empty($agendas)) : ?>
+                        <?php $sr = 1; if (!empty($agendas)) : ?>
+
                            <?php foreach ($agendas as $agenda) : ?>
                               <tr>
+                                 <td><?php echo $sr++; ?></td>
                                  <td><?php echo $agenda['meeting_title']; ?></td>
                                  <td><?php echo isset($agenda['project_id']) ? get_project_name_by_id($agenda['project_id']) : 'N/A'; ?></td>
                                  <td><?php echo date('d M, Y h:i A', strtotime($agenda['meeting_date'])); ?></td>

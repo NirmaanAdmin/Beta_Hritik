@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use Dompdf\Dompdf;
+
 class MinutesController extends AdminController
 {
     public function __construct()
@@ -417,6 +419,8 @@ class MinutesController extends AdminController
         $this->pdf->render();
         $this->pdf->stream('meeting_details.pdf', array('Attachment' => 1)); // Force download PDF
     }
+
+
     public function view_meeting($agenda_id)
     {
         // Fetch meeting details
@@ -715,6 +719,26 @@ class MinutesController extends AdminController
         }
     }
 
+    public function update_target_date()
+    {
+        $id = $this->input->post('id');
+        $targetDate = $this->input->post('targetDate');
+
+        if (!$id || !$targetDate) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update(db_prefix() . 'critical_mom', ['target_date' => $targetDate]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('Target Date Updated Successfully')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
     public function get_mom_critical_row_template()
     {
         $name = $this->input->post('name');
@@ -730,7 +754,8 @@ class MinutesController extends AdminController
         $date_closed = $this->input->post('date_closed');
         $status = $this->input->post('status');
         $priority = $this->input->post('priority');
-        echo $this->Meeting_model->create_mom_critical_row_template($name, $area, $description, $decision, $action, $staff, $vendor, $target_date, $item_key, '', $department, $date_closed, $status, $priority);
+        $project_id = $this->input->post('project_id');
+        echo $this->Meeting_model->create_mom_critical_row_template($name, $area, $description, $decision, $action, $staff, $vendor, $target_date, $item_key, '', $department, $date_closed, $status, $priority, $project_id);
     }
 
     public function add_critical_mom()
@@ -1097,7 +1122,7 @@ class MinutesController extends AdminController
         $preferences = $this->Meeting_model->get_datatable_preferences_critical();
         // If no preferences exist, return an empty array (or set defaults)
         if (!$preferences) {
-            $preferences = array(); 
+            $preferences = array();
         }
 
         $this->output
@@ -1115,5 +1140,31 @@ class MinutesController extends AdminController
 
             redirect(admin_url('meeting_management/minutesController/critical_agenda'));
         }
+    }
+    public function critical_tracker_pdf()
+    {
+        // Initialize Dompdf
+        $pdf = new Dompdf();
+
+        // Enable remote files and HTML5 parser
+        $options = $pdf->getOptions();
+        $options->setIsRemoteEnabled(true);
+        $options->setIsHtml5ParserEnabled(true);
+        $pdf->setOptions($options);
+
+        // Get HTML content
+        $html_content = $this->load->view('meeting_management/pdf_template_critical', null, true);
+
+        // Load HTML
+        $pdf->loadHtml($html_content);
+
+        // Set paper size to A4 landscape
+        $pdf->setPaper('A4', 'landscape');
+
+        // Render the PDF
+        $pdf->render();
+
+        // Output the PDF to the browser
+        $pdf->stream("Critical Tracker.pdf", ["Attachment" => false]);
     }
 }

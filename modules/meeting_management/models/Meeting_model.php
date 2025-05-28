@@ -223,9 +223,10 @@ class Meeting_model extends App_Model
                     unset(
                         $minutes_detail['reorder'],
                         $minutes_detail['section_break'],
-                        $minutes_detail['serial_no']
+                        $minutes_detail['serial_no'],
                     );
                     $minutes_detail['meeting_detail_id'] = $minutes_detail_id;
+                    $minutes_detail['project_id'] = $data['project_id'];
                     $this->db->insert(db_prefix() . 'critical_mom', $minutes_detail);
                 }
 
@@ -596,7 +597,9 @@ class Meeting_model extends App_Model
             $this->db->update(db_prefix() . 'meeting_management', $minutes_data);
         }
 
-
+        // echo '<pre>';
+        // print_r($minutes_data);
+        // die;
         if (count($new_mom) > 0) {
             foreach ($new_mom as $key => $value) {
                 if (!empty($value['staff']) && isset($value['staff'])) {
@@ -631,6 +634,7 @@ class Meeting_model extends App_Model
                         $mom_arr['serial_no'],
                     );
                     $mom_arr['meeting_detail_id'] = $last_insert_id;
+                    $mom_arr['project_id'] = $minutes_data['project_id'];
                     $this->db->insert(db_prefix() . 'critical_mom', $mom_arr);
                 }
                 $iuploadedFiles = handle_mom_item_attachment_array('minutes_attachments', $agenda_id, $last_insert_id, 'newitems', $key);
@@ -696,6 +700,7 @@ class Meeting_model extends App_Model
                         // Record doesn't exist - insert it
                         $mom_arr['meeting_detail_id'] = $value['id'];
                         $mom_arr['critical'] = 1; // Ensure critical flag is set
+                        $mom_arr['project_id'] = $minutes_data['project_id'];
                         $this->db->insert(db_prefix() . 'critical_mom', $mom_arr);
                     }
                 }
@@ -1060,7 +1065,7 @@ class Meeting_model extends App_Model
      * @param string $priority
      * @return string
      */
-    public function create_mom_critical_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $item_key = '', $serial_no = '', $department = '', $date_closed = '', $status = '', $priority = '')
+    public function create_mom_critical_row_template($name = '', $area = '', $description = '', $decision = '', $action = '', $staff = '', $vendor = '', $target_date = '', $item_key = '', $serial_no = '', $department = '', $date_closed = '', $status = '', $priority = '', $project_id = '')
     {
         $row = '';
 
@@ -1076,6 +1081,7 @@ class Meeting_model extends App_Model
         $name_date_closed = 'date_closed';
         $name_status = 'status';
         $name_priority = 'priority';
+        $name_project_id = 'project_id';
         if ($name == '') {
             $row .= '<tr class="main">';
             $manual = true;
@@ -1093,6 +1099,7 @@ class Meeting_model extends App_Model
             $name_date_closed = $name . '[date_closed]';
             $name_status = $name . '[status]';
             $name_priority = $name . '[priority]';
+            $name_project_id = $name . '[project_id]';
             $manual = false;
         }
 
@@ -1150,7 +1157,7 @@ class Meeting_model extends App_Model
         ];
 
         $row .= '<td class="priority">' . render_select($name_priority, $priority_arr, ['id', 'name'], '', $priority) . '</td>';
-
+        $row .= '<td class="project_id">' . render_select($name_project_id, $this->projects_model->get_items(), ['id', 'name'], '', $project_id) . '</td>';
         if ($name == '') {
             $row .= '&nbsp;<td><button type="button" class="btn pull-right btn-info mom-critical-add-item-to-table"><i class="fa fa-check"></i></button></td>';
         } else {
@@ -1208,6 +1215,7 @@ class Meeting_model extends App_Model
                     'status' => $rqd['status'],
                     'priority' => $rqd['priority'],
                     'critical' => 1,
+                    'project_id' => isset($rqd['project_id']) ? $rqd['project_id'] : null,
                 ];
 
                 $this->db->insert(db_prefix() . 'critical_mom', $dt_data);
@@ -1282,5 +1290,9 @@ class Meeting_model extends App_Model
             // No record found, so insert a new one.
             return $this->db->insert('tbluser_preferences_critical', $data);
         }
+    }
+
+    public function get_critical_tracker_pdf_content(){
+        
     }
 }

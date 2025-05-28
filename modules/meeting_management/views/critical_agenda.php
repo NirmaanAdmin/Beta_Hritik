@@ -4,7 +4,6 @@
 $module_name = 'critical_mom'; ?>
 <style>
     .table-responsive {
-        overflow-x: visible !important;
         scrollbar-width: none !important;
     }
 
@@ -29,8 +28,14 @@ $module_name = 'critical_mom'; ?>
 
     .show_hide_columns {
         position: absolute;
-        z-index: 5000;
-        left: 204px
+        z-index: 999;
+        left: 140px;
+    }
+
+    .export-btn-div {
+        position: absolute;
+        z-index: 999;
+        left: 189px;
     }
 </style>
 <div id="wrapper">
@@ -145,10 +150,12 @@ $module_name = 'critical_mom'; ?>
                                     _l('Decision'),
                                     _l('Action'),
                                     _l('Action By'),
+                                    _l('Project'),
                                     _l('Target Date'),
                                     _l('Date Closed'),
                                     _l('Status'),
                                     _l('Priority'),
+                                    _l('Fetched From'),
                                 ];
                                 ?>
                                 <div>
@@ -160,6 +167,20 @@ $module_name = 'critical_mom'; ?>
 
                             </div>
                         </div>
+                        <div class="btn-group export-btn-div" id="export-btn-div">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 4px 7px;">
+                                <i class="fa fa-download"></i> <?php echo _l('Export'); ?> <span class="caret"></span>
+                            </button>
+                            <div class="dropdown-menu" style="padding: 10px;min-width: 94px;">
+                                <a class="dropdown-item export-btn" href="<?php echo admin_url('meeting_management/minutesController/critical_tracker_pdf'); ?>" data-type="pdf">
+                                    <i class="fa fa-file-pdf text-danger"></i> PDF
+                                </a><br>
+                                <a class="dropdown-item export-btn" href="<?php echo admin_url('meeting_management/minutesController/critical_tracker_excel'); ?>" data-type="excel">
+                                    <i class="fa fa-file-excel text-success"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+
                         <table class="table table-bordered table-table_critical_tracker">
                             <thead>
                                 <tr>
@@ -170,10 +191,12 @@ $module_name = 'critical_mom'; ?>
                                     <th>Decision</th>
                                     <th>Action</th>
                                     <th>Action By</th>
+                                    <th>Project</th>
                                     <th>Target Date</th>
                                     <th>Date Closed</th>
                                     <th>Status</th>
                                     <th>Priority</th>
+                                    <th>Fetched From</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -244,6 +267,7 @@ $module_name = 'critical_mom'; ?>
                                         <th width="5%"><strong>Date Closed</strong></th>
                                         <th width="5%"><strong>Status</strong></th>
                                         <th width="5%"><strong>Priority</strong></th>
+                                        <th width="5%"><strong>Project</strong></th>
                                         <th width="3%"></th>
                                     </tr>
                                     </tr>

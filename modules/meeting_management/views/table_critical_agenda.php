@@ -18,10 +18,12 @@ $aColumns      = [
     'decision',
     'action',
     'staff',
+    'project_id',
     'target_date',
     'date_closed',
     'status',
     'priority',
+    'minute_id',
 ];
 $sIndexColumn  = 'id';
 $sTable        = db_prefix() . 'critical_mom';
@@ -62,6 +64,7 @@ $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'staff.firstname',
     db_prefix() . 'staff.lastname',
     'vendor',
+    'minute_id',
 ]);
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -135,7 +138,7 @@ foreach ($rResult as $aRow) {
     // 4) Description
     if (!empty($aRow['description'])) {
         $description = '<span class="description-display" data-id="' . $aRow['id'] . '">'
-            . html_escape($aRow['description'])
+            . $aRow['description']
             . '</span>';
     } else {
         $description = '<textarea class="form-control description-input" placeholder="Enter description" '
@@ -146,7 +149,7 @@ foreach ($rResult as $aRow) {
     // 5) Decision
     if (!empty($aRow['decision'])) {
         $decision = '<span class="decision-display" data-id="' . $aRow['id'] . '">'
-            . html_escape($aRow['decision'])
+            . $aRow['decision']
             . '</span>';
     } else {
         $decision = '<textarea class="form-control decision-input" placeholder="Enter decision" '
@@ -157,7 +160,7 @@ foreach ($rResult as $aRow) {
     // 6) Action
     if (!empty($aRow['action'])) {
         $action = '<span class="action-display" data-id="' . $aRow['id'] . '">'
-            . html_escape($aRow['action'])
+            . $aRow['action']
             . '</span>';
     } else {
         $action = '<textarea class="form-control action-input" placeholder="Enter action" '
@@ -209,11 +212,20 @@ foreach ($rResult as $aRow) {
     }
 
     $row[] = $staff_html . $vendor_html;
-
+    $row[] = get_project_name_by_id_mom($aRow['project_id']);
     // 8) Target Date
-    $row[] = !empty($aRow['target_date'])
-        ? date('d M, Y', strtotime($aRow['target_date']))
-        : '';
+    if ($aRow['minute_id'] > 0) {
+        if ($aRow['target_date'] == '0000-00-00' || $aRow['target_date'] == '') {
+            $target_date = '';
+        } else {
+            $target_date = date('d M, Y', strtotime($aRow['target_date'])); //$aRow['target_date'];  
+        }
+        $row[] = $target_date;
+    } else {
+        $row[] = '<input type="date" class="form-control target-date-input"'
+            . ' value="' . $aRow['target_date'] . '" data-id="' . $aRow['id'] . '">';
+    }
+
 
     // 9) Date Closed
     $row[] = '<input type="date" class="form-control closed-date-input"'
@@ -270,6 +282,7 @@ foreach ($rResult as $aRow) {
     $priority_html .= '</ul></div></span>';
 
     $row[] = $priority_html;
+    $row[] = get_meeting_name_by_id($aRow['minute_id']);
 
     $output['aaData'][] = $row;
 }
