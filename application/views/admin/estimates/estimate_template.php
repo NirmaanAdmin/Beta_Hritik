@@ -706,14 +706,7 @@
                                         </td>
                                         <td>
                                             <?php
-                                            $select = '';
-                                            $select = '<select class="selectpicker display-block sub_head" data-width="100%" name="sub_head" data-none-selected-text="' . _l('sub_head') . '">';
-                                            $select .= '<option value=""></option>';
-                                            foreach ($sub_head as $suvalue) {
-                                                $select .= '<option value="'.$suvalue['id'].'">'.$suvalue['sub_group_name'].'</option>';
-                                            }
-                                            $select .= '</select>';
-                                            echo $select;
+                                            echo render_select('sub_head', $sub_head, array('id', 'sub_group_name'));
                                             ?>
                                         </td>
                                         <td>
@@ -795,15 +788,8 @@
 
                                                 $table_row .= '<td><textarea name="' . $items_indicator . '[' . $i . '][long_description]" class="form-control" rows="5">' . clear_textarea_breaks($item['long_description']) . '</textarea></td>';
 
-                                                $select = '';
-                                                $select = '<select class="selectpicker display-block sub_head" data-width="100%" name="' . $items_indicator . '[' . $i . '][sub_head]" data-none-selected-text="' . _l('sub_head') . '">';
-                                                $select .= '<option value=""></option>';
-                                                foreach ($sub_head as $suvalue) {
-                                                    $selected = ($suvalue['id'] == $item['sub_head']) ? ' selected' : '';
-                                                    $select .= '<option value="' . $suvalue['id'] . '"' . $selected . '>' . $suvalue['sub_group_name'] . '</option>';
-                                                }
-                                                $select .= '</select>';
-                                                $table_row .= '<td>'.$select.'</td>';
+                                                $sub_head_name = $items_indicator . '[' . $i . '][sub_head]';
+                                                $table_row .= '<td>' . render_select($sub_head_name, $sub_head, array('id', 'sub_group_name'), '', $item['sub_head']) . '</td>';
 
                                                 $table_row .= '<td><input type="number" min="0" onblur="calculate_estimate_total();" onchange="calculate_estimate_total();" data-quantity name="' . $items_indicator . '[' . $i . '][qty]" value="' . $item['qty'] . '" class="form-control">';
                                                 

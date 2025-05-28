@@ -361,17 +361,8 @@ class Costplanning_model extends App_Model
 
     public function get_sub_head_dropdown($name, $value)
     {
-        $select = '';
-        $select = '<select class="selectpicker display-block sub_head" data-width="100%" name="'.$name.'" data-none-selected-text="' . _l('sub_head') . '">';
-        $select .= '<option value=""></option>';
         $sub_head = $this->get_sub_group();
-        foreach ($sub_head as $head) {
-            $selected = ($head['id'] == $value) ? ' selected' : '';
-            $select .= '<option value="' . $head['id'] . '"' . $selected . '>' . $head['sub_group_name'] . '</option>';
-
-        }
-        $select .= '</select>';
-        return $select;
+        return render_select($name, $sub_head, array('id', 'sub_group_name'), '', $value);
     }
 }
 
