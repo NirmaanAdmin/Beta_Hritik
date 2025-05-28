@@ -515,6 +515,8 @@
 		$("body").on('change', 'select[name="pur_order"]', function() {
 			"use strict";
 			var pur_order = $(this).val();
+			$('select[name="wo_order"]').val('').selectpicker('refresh');
+			$('select[name="order_tracker_id"]').val('').selectpicker('refresh');
 			if (pur_order != '') {
 				$.post(admin_url + 'purchase/get_pur_order/' + pur_order).done(function(response) {
 					response = JSON.parse(response);
@@ -547,6 +549,8 @@
 		$("body").on('change', 'select[name="wo_order"]', function() {
 			"use strict";
 			var wo_order = $(this).val();
+			$('select[name="pur_order"]').val('').selectpicker('refresh');
+			$('select[name="order_tracker_id"]').val('').selectpicker('refresh');
 			if (wo_order != '') {
 				$.post(admin_url + 'purchase/get_wo_order/' + wo_order).done(function(response) {
 					response = JSON.parse(response);
@@ -579,6 +583,8 @@
 		$("body").on('change', 'select[name="order_tracker_id"]', function() {
 			"use strict";
 			var order_tracker = $(this).val();
+			$('select[name="pur_order"]').val('').selectpicker('refresh');
+			$('select[name="wo_order"]').val('').selectpicker('refresh');
 			if (order_tracker != '') {
 				var parts = order_tracker.split('-');
 				var id = parts[0]; // "2" (the ID part)

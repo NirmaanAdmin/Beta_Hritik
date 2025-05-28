@@ -21,42 +21,20 @@ $aColumns = [
     'invoice_number',
     'vendor_invoice_number',
     db_prefix() . 'pur_vendor.company',
-    db_prefix() . 'items_groups.name',
-    // db_prefix() . 'projects.name',
+    3,
+    4,
     db_prefix() . 'pur_invoices.pur_order',
-    // db_prefix() . 'pur_invoices.wo_order',
-    'invoice_date',
-    // 'payment_request_status',
-    'payment_status',
     'expense_convert',
     'vendor_submitted_amount_without_tax',
     'vendor_submitted_tax_amount',
-    // 'vendor_submitted_amount',
     'final_certified_amount',
-    'order_tracker_id',
+    'payment_status',
+    'invoice_date',
+    db_prefix() . 'items_groups.name',
     'vendor_note',
     db_prefix() . 'pur_invoices.id as inv_id',
     'adminnote',
-    // 'billing_remarks'
 ];
-if (isset($vendor) || isset($project)) {
-    $aColumns = [
-        'invoice_number',
-        'vendor_invoice_number',
-        db_prefix() . 'pur_vendor.company',
-        db_prefix() . 'items_groups.name',
-        // db_prefix() . 'projects.name',
-        db_prefix() . 'pur_invoices.pur_order',
-        'invoice_date',
-        // 'payment_request_status',
-        'payment_status',
-        'vendor_submitted_amount_without_tax',
-        'vendor_submitted_tax_amount',
-        'vendor_submitted_amount',
-        'final_certified_amount',
-        'vendor_note',
-    ];
-}
 
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'pur_invoices';
@@ -265,6 +243,8 @@ $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     db_prefix() . 'items_groups.name',
     db_prefix() . 'pur_invoices.description_services',
     db_prefix() . 'pur_invoices.vendor as vendor_id',
+    db_prefix() . 'pur_invoices.pur_order',
+    db_prefix() . 'pur_invoices.order_tracker_id',
 ], '', [], '', 'vendor_billing_tracker');
 
 $output  = $result['output'];
@@ -363,17 +343,37 @@ foreach ($rResult as $aRow) {
             }
 
             $_data = $file_html;
-        } elseif ($aColumns[$i] == 'order_tracker_id') {
+        } elseif ($aColumns[$i] == 3) {
             $order_data = '';
             $get_order_tracker_detials = get_order_tracker_detials($aRow['order_tracker_id']);
             list($order_id, $order_type) = explode('-', $aRow['order_tracker_id']);
 
-            if ($order_type === 'pur_orders') {
-                $order_data =  '<span class="inline-block label"><a href="' . admin_url('purchase/pur_order/' . $order_id) . '" target="_blank">' . $get_order_tracker_detials->order_number . '-' . $get_order_tracker_detials->order_name . '</a></span>';
-            } elseif ($order_type === 'wo_orders') {
-                $order_data = '<span class="inline-block label"><a href="' . admin_url('purchase/wo_order/' . $order_id) . '" target="_blank">' . $get_order_tracker_detials->order_number . '-' . $get_order_tracker_detials->order_name . '</a><span>';
-            } elseif ($order_type === 'order_tracker') {
+            if ($order_type === 'order_tracker') {
                 $order_data = $get_order_tracker_detials->order_name;
+            } else if (!empty($aRow['pur_order'])) {
+                $pur_order_detail = get_pur_order_main_detail($aRow['pur_order']);
+                $order_data =  '<span class="inline-block label"><a href="' . admin_url('purchase/pur_order/' . $pur_order_detail->id) . '" target="_blank">' . $pur_order_detail->pur_order_number . ' - ' . $pur_order_detail->pur_order_name . '</a></span>';
+            } else if (!empty($aRow['wo_order'])) {
+                $wo_order_detail = get_wo_order_main_detail($aRow['wo_order']);
+                $order_data = '<span class="inline-block label"><a href="' . admin_url('purchase/wo_order/' . $wo_order_detail->id) . '" target="_blank">' . $wo_order_detail->wo_order_number . ' - ' . $wo_order_detail->wo_order_name . '</a><span>';
+            } else {
+                $order_data = '';
+            }
+            $_data = $order_data;
+        } elseif ($aColumns[$i] == 4) {
+            $order_data = '';
+            $get_order_tracker_detials = get_order_tracker_detials($aRow['order_tracker_id']);
+            list($order_id, $order_type) = explode('-', $aRow['order_tracker_id']);
+
+            if ($order_type === 'order_tracker') {
+                $order_tracker_detail = get_order_tracker_main_detail($order_id);
+                $order_data = app_format_money($order_tracker_detail->total, $base_currency->symbol);
+            } else if (!empty($aRow['pur_order'])) {
+                $pur_order_detail = get_pur_order_main_detail($aRow['pur_order']);
+                $order_data = app_format_money($pur_order_detail->total, $base_currency->symbol);
+            } else if (!empty($aRow['wo_order'])) {
+                $wo_order_detail = get_wo_order_main_detail($aRow['wo_order']);
+                $order_data = app_format_money($wo_order_detail->total, $base_currency->symbol);
             } else {
                 $order_data = '';
             }

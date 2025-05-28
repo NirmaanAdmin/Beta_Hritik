@@ -4245,3 +4245,21 @@ function get_order_tracker_detials($tracker_id)
     return $CI->db->get(db_prefix() . $table)->row();
 }
 
+function get_pur_order_main_detail($id) {
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+    return $CI->purchase_model->get_pur_order($id);
+}
+
+function get_wo_order_main_detail($id) {
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+    return $CI->purchase_model->get_wo_order($id);
+}
+
+function get_order_tracker_main_detail($id) {
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+    return $CI->purchase_model->get_order_tracker($id);
+}
+
