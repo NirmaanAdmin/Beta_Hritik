@@ -1794,7 +1794,9 @@ class document_management_model extends app_model
 		}
         if($allDescendantIds) {
         	$this->db->where_in('parent_id', $allDescendantIds);
-        }
+        }else {
+			$this->db->where('parent_id', $folder_id); // If no folder_id, search in root
+		}
         $this->db->like('name', $query);
         $query = $this->db->get(db_prefix() . 'dmg_items');
         $results = $query->result();
