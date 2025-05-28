@@ -13414,7 +13414,7 @@ class purchase extends AdminController
                 $order_name = $row['order_name'] ?? '';
             } else {
                 $contract_amount = app_format_money($row['subtotal'] ?? 0, '');
-                $order_name = $row['order_number'].'-'.$row['order_name'] ?? '';
+                $order_name = $row['order_number'] . '-' . $row['order_name'] ?? '';
             }
             // Write row data
             fputcsv($output, [
@@ -13456,5 +13456,95 @@ class purchase extends AdminController
         $estimate_id = $this->input->get('estimate_id');
         $budget_head_id = $this->input->get('budget_head_id');
         $this->purchase_model->download_revision_historical_data($estimate_id, $budget_head_id);
+    }
+    public function update_budget_head($budget_head_id, $id, $table_name)
+    {
+        // 1) Get all budget heads
+        $budget_heads = get_group_name_item();
+
+        // 2) Define your 11-item label palette
+        $label_palette = [
+            'danger',
+            'success',
+            'info',
+            'warning',
+            'primary',
+            'secondary',
+            'purple',
+            'teal',
+            'orange',
+            'green',
+            'default',
+        ];
+
+        // 3) Build a map id => label, cycling through the palette
+        $status_labels = [];
+        $i = 0;
+        foreach ($budget_heads as $h) {
+            $status_labels[$h['id']] = $label_palette[$i % count($label_palette)];
+            $i++;
+        }
+
+        // 4) Lookup the chosen head’s name
+        $current_budget_head_name = '';
+        foreach ($budget_heads as $h) {
+            if ($h['id'] == $budget_head_id) {
+                $current_budget_head_name = $h['name'];
+                break;
+            }
+        }
+
+        // 5) Do the DB update
+        $success = $this->purchase_model->update_budget_head($budget_head_id, $id, $table_name);
+        $message = $success ? _l('update_budget_head_successfully') : _l('update_budget_head_fail');
+
+        // 6) Determine this head’s label‐class
+        $label_key = isset($status_labels[$budget_head_id]) ? $status_labels[$budget_head_id] : 'default';
+        $class = 'label label-' . $label_key;
+
+        // 7) Build the replacement <span> with dropdown
+        $span = '<span>'
+            .  $current_budget_head_name;
+
+        if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+            $span .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
+                .  '<a href="#" class="dropdown-toggle text-dark" '
+                .     'id="tableBudgetHead-' . $id . '" data-toggle="dropdown">'
+                .     '<span data-toggle="tooltip" title="' . _l('change_budget_head') . '">'
+                .         '<i class="fa fa-caret-down"></i>'
+                .     '</span>'
+                .  '</a>'
+                .  '<ul class="dropdown-menu dropdown-menu-right" '
+                .      'aria-labelledby="tableBudgetHead-' . $id . '">';
+            foreach ($budget_heads as $h) {
+                if ($h['id'] != $budget_head_id) {
+                    $other_label = isset($status_labels[$h['id']])
+                        ? $status_labels[$h['id']]
+                        : 'default';
+                    $span .= '<li>'
+                        .   '<a href="javascript:void(0);" '
+                        .      'onclick="update_budget_head('
+                        .         $h['id'] . ',' . $id . ',\'' .
+                        htmlspecialchars($table_name, ENT_QUOTES) .
+                        '\');return false;">'
+                        .          $h['name']
+                        .   '</a>'
+                        . '</li>';
+                }
+            }
+            $span .=   '</ul>'
+                .   '</div>';
+        }
+
+        $span .= '</span>';
+
+        // 8) Return JSON
+        echo json_encode([
+            'success'    => $success,
+            'status_str' => $span,
+            'class'      => $class,
+            'mess'       => $message,
+
+        ]);
     }
 }
