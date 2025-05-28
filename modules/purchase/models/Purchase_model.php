@@ -2735,6 +2735,10 @@ class Purchase_model extends App_Model
             unset($data['cost_sub_head']);
         }
 
+        if (isset($data['non_budget_item'])) {
+            unset($data['non_budget_item']);
+        }
+
         if (isset($data['pur_request']) && $data['pur_request'] > 0) {
             $this->db->where('id', $data['pur_request']);
             $this->db->update(db_prefix() . 'pur_request', ['status' => 4]);
@@ -2823,6 +2827,7 @@ class Purchase_model extends App_Model
                     $dt_data['discount_%'] = $rqd['discount'];
                     $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
                     $dt_data['serial_no'] = $rqd['serial_no'];
+                    $dt_data['non_budget_item'] = !empty($rqd['non_budget_item']) ? $rqd['non_budget_item'] : 0;
 
                     $tax_money = 0;
                     $tax_rate_value = 0;
@@ -3007,6 +3012,10 @@ class Purchase_model extends App_Model
             unset($data['cost_sub_head']);
         }
 
+        if (isset($data['non_budget_item'])) {
+            unset($data['non_budget_item']);
+        }
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'pur_orders', $data);
         $this->save_purchase_files('pur_order', $id);
@@ -3046,6 +3055,7 @@ class Purchase_model extends App_Model
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
                 $dt_data['serial_no'] = $rqd['serial_no'];
+                $dt_data['non_budget_item'] = !empty($rqd['non_budget_item']) ? $rqd['non_budget_item'] : 0;
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -3106,6 +3116,7 @@ class Purchase_model extends App_Model
                 $dt_data['description'] = nl2br($rqd['item_description']);
                 $dt_data['sub_groups_pur'] = $rqd['sub_groups_pur'];
                 $dt_data['serial_no'] = $rqd['serial_no'];
+                $dt_data['non_budget_item'] = !empty($rqd['non_budget_item']) ? $rqd['non_budget_item'] : 0;
 
                 $tax_money = 0;
                 $tax_rate_value = 0;
@@ -5349,9 +5360,13 @@ class Purchase_model extends App_Model
             }
             // $serial_no = !empty($row['serial_no']) ? $row['serial_no'] : $sr++;
             $serial_no = $row['serial_no'];
+            $non_budget_item = '';
+            if ($row['non_budget_item'] == 1) {
+                $non_budget_item = '<br><span style="display: block;font-size: 10px;font-style: italic;">' . _l('this_is_non_budgeted_item') . '</span>';
+            }
             $html .= '<tr class="sortable">
             <td style="width: 3%">' . $serial_no . '</td>
-            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . '</td>
+            <td style="width: 15%">' . $items->commodity_code . ' - ' . $items->description . $non_budget_item . '</td>
             <td align="left" style="' . $width . '">' . str_replace("<br />", " ", $row['description']) . '</td>
             <td align="left" style="width: 10%">' . $get_sub_head . '</td>
             <td align="left" style="width: 10%">' . get_area_name_by_id($row['area']) . '</td>';
@@ -11835,7 +11850,7 @@ class Purchase_model extends App_Model
      *
      * @return     string
      */
-    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '', $serial_no = '')
+    public function create_purchase_order_row_template($name = '', $item_name = '', $item_description = '', $area = '', $image = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $order_detail = array(), $hide_add_button = false, $sub_groups_pur = '', $serial_no = '', $non_budget_item = 0)
     {
 
         $this->load->model('invoice_items_model');
@@ -11887,7 +11902,7 @@ class Purchase_model extends App_Model
             $sub_total = 0;
         } else {
             $row .= '<tr class="sortable item">
-                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
+                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"><input type="hidden" class="non_budget_item" name="' . $name . '[non_budget_item]" value="' . $non_budget_item . '"></td>';
             $name_item_code = $name . '[item_code]';
             $name_item_name = $name . '[item_name]';
             $name_item_description = $name . '[item_description]';
@@ -11974,11 +11989,14 @@ class Purchase_model extends App_Model
             $row .= '<td class="">
             <select id="' . $name_item_name . '" name="' . $name_item_name . '" data-selected-id="' . $item_code . '" class="form-control selectpicker item-select" data-live-search="true" >
                 <option value="">Type at least 3 letters...</option>
-            </select>
-         </td>';
+            </select>';
         } else {
-            $row .= '<td class="">' . $get_selected_item . '</td>';
+            $row .= '<td class="">' . $get_selected_item;
         }
+        if ($non_budget_item == 1) {
+            $row .= '<span>' . _l('this_is_non_budgeted_item') . '</span>';
+        }
+        $row .= '</td>';
 
         $style_description = '';
         if ($is_edit) {
@@ -12038,7 +12056,7 @@ class Purchase_model extends App_Model
             } else {
                 $add_class = '';
             }
-            $row .= '<td class="' . $add_class . '"><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info "><i class="fa fa-check"></i></button></td>';
+            $row .= '<td class="' . $add_class . '"><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\',\'0\'); return false;" class="btn pull-right btn-info "><i class="fa fa-check"></i></button></td>';
         } else {
             $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
         }

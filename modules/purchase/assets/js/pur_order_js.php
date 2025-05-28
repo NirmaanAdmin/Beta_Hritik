@@ -302,9 +302,12 @@
 
       if (estimate && budgetHead) {
         $('.cost_complete_sheet').show();
+        $('select[name="item_name"]').prop('disabled', true);
       } else {
         $('.cost_complete_sheet').hide();
+        $('select[name="item_name"]').prop('disabled', false);
       }
+      $('select[name="item_name"]').selectpicker('refresh');
     }
 
     $("body").on('click', '#cost_control_sheet', function () {
@@ -368,20 +371,23 @@
         unit_name: "",
         unit_price: ""
       };
-      pur_add_item_to_table(itemData, 'undefined');
+      pur_add_item_to_table(itemData, 'undefined', '0');
       alert_float('success', "Cost item have added in below table");
     });
 
     $("body").on('click', '.enable_item_select', function() {
-      $('select[name="item_select"]').prop('disabled', false);
-      $('select[name="item_select"]').selectpicker('refresh');
+      $('select[name="item_name"]').prop('disabled', false);
+      $('select[name="item_name"]').selectpicker('refresh');
+      if ($('select[name="item_name"]').prop('disabled')) {
+        $('button[onclick*="pur_add_item_to_table"]').attr('onclick', "pur_add_item_to_table('undefined','undefined','0'); return false;");
+      } else {
+        $('button[onclick*="pur_add_item_to_table"]').attr('onclick', "pur_add_item_to_table('undefined','undefined','1'); return false;");
+      }
     });
 
   });
 
   var lastAddedItemKey = null;
-  $('select[name="item_select"]').prop('disabled', true);
-  $('select[name="item_select"]').selectpicker('refresh');
 
   function estimate_by_vendor(invoker) {
     "use strict";
@@ -917,7 +923,7 @@
     });
   }
 
-  function pur_add_item_to_table(data, itemid) {
+  function pur_add_item_to_table(data, itemid, non_budget_item) {
 
     "use strict";
 
@@ -937,7 +943,7 @@
     var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
     lastAddedItemKey = item_key;
     $("body").append('<div class="dt-loader"></div>');
-    pur_get_item_row_template('newitems[' + item_key + ']', data.item_name, data.description, data.area, data.image, data.quantity, data.unit_name, data.unit_price, data.taxname, data.item_code, data.unit_id, data.tax_rate, data.discount, itemid, currency_rate, to_currency, data.sub_groups_pur).done(function(output) {
+    pur_get_item_row_template('newitems[' + item_key + ']', data.item_name, data.description, data.area, data.image, data.quantity, data.unit_name, data.unit_price, data.taxname, data.item_code, data.unit_id, data.tax_rate, data.discount, itemid, currency_rate, to_currency, data.sub_groups_pur, non_budget_item).done(function(output) {
       table_row += output;
 
       $('.invoice-item table.invoice-items-table.items tbody').append(table_row);
@@ -1022,7 +1028,7 @@
     }
   }
 
-  function pur_get_item_row_template(name, item_name, description, area, image, quantity, unit_name, unit_price, taxname, item_code, unit_id, tax_rate, discount, item_key, currency_rate, to_currency, sub_groups_pur) {
+  function pur_get_item_row_template(name, item_name, description, area, image, quantity, unit_name, unit_price, taxname, item_code, unit_id, tax_rate, discount, item_key, currency_rate, to_currency, sub_groups_pur, non_budget_item) {
     "use strict";
 
     jQuery.ajaxSetup({
@@ -1046,7 +1052,8 @@
       item_key: item_key,
       currency_rate: currency_rate,
       to_currency: to_currency,
-      sub_groups_pur: sub_groups_pur
+      sub_groups_pur: sub_groups_pur,
+      non_budget_item: non_budget_item,
     });
     jQuery.ajaxSetup({
       async: true
