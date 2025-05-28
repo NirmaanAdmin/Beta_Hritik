@@ -49,7 +49,7 @@
     <hr class="hr-panel-separator" />
 </div>
 <?php  echo form_hidden('isedit'); ?>
-<div class="col-md-12">
+<div class="col-md-12 invoice-item">
     <div class="table-responsive">
         <table class="table qcr-items-table items table-main-dpr-edit has-calculations no-mtop">
             <thead>
@@ -132,7 +132,7 @@
                 }
                 targetInput1.files = dataTransfer1.files;
             }
-            init_selectpicker();
+            init_selectpicker(); 
             pur_clear_item_preview_values();
             $('body').find('#items-warning').remove();
             $("body").find('.dt-loader').remove();
