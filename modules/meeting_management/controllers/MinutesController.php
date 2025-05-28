@@ -1165,6 +1165,6 @@ class MinutesController extends AdminController
         $pdf->render();
 
         // Output the PDF to the browser
-        $pdf->stream("Critical Tracker.pdf", ["Attachment" => false]);
+        $pdf->stream("Critical Tracker.pdf", ["Attachment" => true]);
     }
 }
