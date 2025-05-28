@@ -10,7 +10,7 @@
             "priority": "[name='priority[]']",
         };
 
-        initDataTable('.table-table_critical_tracker', admin_url + 'meeting_management/minutesController/table_critical_tracker', [], [], Params, [7, 'desc']);
+        initDataTable('.table-table_critical_tracker', admin_url + 'meeting_management/minutesController/table_critical_tracker', [], [], Params, [8, 'desc']);
         $.each(Params, function(i, obj) {
             // console.log(obj);
             $('select' + obj).on('change', function() {
@@ -30,7 +30,7 @@
         table_rec_campaign.on('draw.dt', function() {
             $('.selectpicker').selectpicker('refresh');
         });
-
+        $('.buttons-collection').hide()
     })(jQuery);
     $(document).ready(function() {
         $('#project_filter').change(function() {
@@ -89,6 +89,7 @@
         }
     });
     var table_critical_tracker = $('.table-table_critical_tracker');
+
     function change_status_mom(status, id) {
         "use strict";
         if (id > 0) {
@@ -181,7 +182,7 @@
                 });
         }
     }
-   
+
 
     function change_department(departmentId, agendaId) {
         "use strict";
@@ -241,6 +242,27 @@
         });
     });
 
+    $('body').on('change', '.target-date-input', function(e) {
+        e.preventDefault();
+
+        var rowId = $(this).data('id');
+        var targetDate = $(this).val();
+
+        // Perform AJAX request to update the target date
+        $.post(admin_url + 'meeting_management/minutesController/update_target_date', {
+            id: rowId,
+            targetDate: targetDate
+        }).done(function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                alert_float('success', response.message);
+                table_critical_tracker.reload(null, false); // Reload table without refreshing the page
+            } else {
+                alert_float('danger', response.message);
+            }
+        });
+    });
+
     $(document).on('click', '.mom-critical-add-item-to-table', function(event) {
         "use strict";
 
@@ -249,7 +271,7 @@
         var table_row = '';
         var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.critical-tracker-items-table tbody .item').length + 1;
         lastAddedItemKey = item_key;
-        mom_critical_get_item_row_template('newitems[' + item_key + ']', data.area, data.description, data.decision, data.action, data.staff, data.vendor, data.target_date, item_key, data.department, data.date_closed, data.status, data.priority).done(function(output) {
+        mom_critical_get_item_row_template('newitems[' + item_key + ']', data.area, data.description, data.decision, data.action, data.staff, data.vendor, data.target_date, item_key, data.department, data.date_closed, data.status, data.priority, data.project_id).done(function(output) {
             table_row += output;
 
             $('.mom_body').append(table_row);
@@ -262,7 +284,7 @@
         return false;
     });
 
-    function mom_critical_get_item_row_template(name, area, description, decision, action, staff, vendor, target_date, item_key, department, date_closed, status, priority) {
+    function mom_critical_get_item_row_template(name, area, description, decision, action, staff, vendor, target_date, item_key, department, date_closed, status, priority, project_id) {
         "use strict";
 
         jQuery.ajaxSetup({
@@ -282,7 +304,8 @@
             department: department,
             date_closed: date_closed,
             status: status,
-            priority: priority
+            priority: priority,
+            project_id: project_id
         });
         jQuery.ajaxSetup({
             async: true
@@ -305,6 +328,7 @@
         response.date_closed = $('.critical-tracker-items-table .main input[name="date_closed"]').val();
         response.status = $('.critical-tracker-items-table .main select[name="status"]').val();
         response.priority = $('.critical-tracker-items-table .main select[name="priority"]').val();
+        response.project_id = $('.critical-tracker-items-table .main select[name="project_id"]').val();
         return response;
     }
 
