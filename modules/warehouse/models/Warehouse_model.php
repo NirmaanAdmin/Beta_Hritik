@@ -20693,14 +20693,14 @@ class Warehouse_model extends App_Model
 				$tempDir = WAREHOUSE_PATH . 'qrcodes/';
 				$commodity_code = $data_items->commodity_code . '_' . $data_items->description;
 				$qr_code = md5($commodity_code);
-				$unit_name = (get_unit_type($unit_id) != null && isset(get_unit_type($unit_id)->unit_name)) ? get_unit_type($unit_id)->unit_name : '';
+				// $unit_name = (get_unit_type($unit_id) != null && isset(get_unit_type($unit_id)->unit_name)) ? get_unit_type($unit_id)->unit_name : '';
 				$html = '';
 				$html .= "\n" . _l('commodity_code') . ': ' . $commodity_code . "\n";
 				$html .= "\n" . _l('supplier_name') . ': ' . $vendor . "\n";
 				$html .= "\n" . _l('Purchase Order') . ': ' . $pur_order . "\n";
 				$html .= "\n" . _l('project') . ': ' . $project_name . "\n";
 				$html .= "\n" . _l('Description') . ': ' . $log_desc . "\n";
-				$html .= "\n" . _l('Quantity') . ': ' . $quantities . ' ' . $unit_name . "\n";
+				$html .= "\n" . _l('Quantity') . ': ' . $quantities . ' ' . $unit_id . "\n";
 				$codeContents = $html;
 				$fileName = $qr_code;
 				$pngAbsoluteFilePath = $tempDir . $fileName;
