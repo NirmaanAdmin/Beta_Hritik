@@ -12390,33 +12390,54 @@ class purchase extends AdminController
     {
         $input = $this->input->post();
         if (!empty($input)) {
-            unset($data['convert_expense_name']);
-            unset($data['convert_category']);
-            unset($data['convert_date']);
-            unset($data['convert_select_invoice']);
-            unset($data['convert_applied_to_invoice']);
+            unset($input['convert_expense_name']);
+            unset($input['convert_category']);
+            unset($input['convert_date']);
+            unset($input['convert_select_invoice']);
+            unset($input['convert_applied_to_invoice']);
+            unset($input['bulk_pur_order']);
+            unset($input['bulk_wo_order']);
+            unset($input['bulk_order_tracker']);
+            $neworderitems = array();
+            if(isset($input['neworderitems'])) {
+                $neworderitems = $input['neworderitems'];
+                unset($input['neworderitems']);
+            }
+            if(isset($input['bulk_active_tab'])) {
+                $bulk_active_tab = $input['bulk_active_tab'];
+                unset($input['bulk_active_tab']);
+            }
             $this->load->model('expenses_model');
             $input = $input['newitems'];
-            foreach ($input as $ikey => $data) {
-                if (isset($data['pur_invoice'])) {
-                    $pur_invoice = $data['pur_invoice'];
-                    $select_invoice = $data['select_invoice'];
-                    $applied_to_invoice = $data['applied_to_invoice'];
-                    $data['vbt_id'] = $pur_invoice;
-                    unset($data['pur_invoice']);
-                    unset($data['select_invoice']);
-                    unset($data['applied_to_invoice']);
+            if($bulk_active_tab == 'bulk_action') {
+                foreach ($input as $ikey => $data) {
+                    if (isset($data['pur_invoice'])) {
+                        $pur_invoice = $data['pur_invoice'];
+                        $select_invoice = $data['select_invoice'];
+                        $applied_to_invoice = $data['applied_to_invoice'];
+                        $data['vbt_id'] = $pur_invoice;
+                        unset($data['pur_invoice']);
+                        unset($data['select_invoice']);
+                        unset($data['applied_to_invoice']);
+                    }
+                    $id = $this->expenses_model->add($data);
+                    if ($id) {
+                        $this->purchase_model->mark_converted_pur_invoice($pur_invoice, $id);
+                        if ($select_invoice == "create_invoice") {
+                            $invoiceid = $this->expenses_model->convert_to_invoice($id);
+                        } else {
+                            $applied = array();
+                            $applied['invoice_id'] = $applied_to_invoice;
+                            $applied['expense_id'] = $id;
+                            $invoiceid = $this->expenses_model->applied_to_invoice($applied);
+                        }
+                    }
                 }
-                $id = $this->expenses_model->add($data);
-                if ($id) {
-                    $this->purchase_model->mark_converted_pur_invoice($pur_invoice, $id);
-                    if ($select_invoice == "create_invoice") {
-                        $invoiceid = $this->expenses_model->convert_to_invoice($id);
-                    } else {
-                        $applied = array();
-                        $applied['invoice_id'] = $applied_to_invoice;
-                        $applied['expense_id'] = $id;
-                        $invoiceid = $this->expenses_model->applied_to_invoice($applied);
+            }
+            if($bulk_active_tab == 'bulk_assign') {
+                if(!empty($neworderitems)) {
+                    foreach ($neworderitems as $key => $value) {
+                        $this->purchase_model->update_vbt_bulk_assign_order($value);
                     }
                 }
             }

@@ -247,6 +247,87 @@ var expenseDropzone;
     }
   });
 
+  $('body').on('change', '#single_pur_order', function (e) {
+    e.preventDefault();
+    var container = $(this).closest('.row');
+    var woSelect = container.find('#single_wo_order');
+    var ordertrackerSelect = container.find('#single_order_tracker');
+    woSelect.val('').prop('disabled', true).selectpicker('refresh');
+    ordertrackerSelect.val('').prop('disabled', true).selectpicker('refresh');
+  });
+
+  $('body').on('change', '#single_wo_order', function (e) {
+    e.preventDefault();
+    var container = $(this).closest('.row');
+    var poSelect = container.find('#single_pur_order');
+    var ordertrackerSelect = container.find('#single_order_tracker');
+    poSelect.val('').prop('disabled', true).selectpicker('refresh');
+    ordertrackerSelect.val('').prop('disabled', true).selectpicker('refresh');
+  });
+
+  $('body').on('change', '#single_order_tracker', function (e) {
+    e.preventDefault();
+    var container = $(this).closest('.row');
+    var poSelect = container.find('#single_pur_order');
+    var woSelect = container.find('#single_wo_order');
+    poSelect.val('').prop('disabled', true).selectpicker('refresh');
+    woSelect.val('').prop('disabled', true).selectpicker('refresh');
+  });
+
+  $('body').on('change', '#bulk_pur_order', function (e) {
+    e.preventDefault();
+    var container = $(this).closest('.row');
+    var woSelect = container.find('#bulk_wo_order');
+    var ordertrackerSelect = container.find('#bulk_order_tracker');
+    woSelect.val('').prop('disabled', true).selectpicker('refresh');
+    ordertrackerSelect.val('').prop('disabled', true).selectpicker('refresh');
+  });
+
+  $('body').on('change', '#bulk_wo_order', function (e) {
+    e.preventDefault();
+    var container = $(this).closest('.row');
+    var poSelect = container.find('#bulk_pur_order');
+    var ordertrackerSelect = container.find('#bulk_order_tracker');
+    poSelect.val('').prop('disabled', true).selectpicker('refresh');
+    ordertrackerSelect.val('').prop('disabled', true).selectpicker('refresh');
+  });
+
+  $('body').on('change', '#bulk_order_tracker', function (e) {
+    e.preventDefault();
+    var container = $(this).closest('.row');
+    var poSelect = container.find('#bulk_pur_order');
+    var woSelect = container.find('#bulk_wo_order');
+    poSelect.val('').prop('disabled', true).selectpicker('refresh');
+    woSelect.val('').prop('disabled', true).selectpicker('refresh');
+  });
+
+  $('body').on('click', '.update_bulk_assign', function (e) {
+    e.preventDefault();
+    var bulk_pur_order = $('#bulk_pur_order').val();
+    var bulk_wo_order = $('#bulk_wo_order').val();
+    var bulk_order_tracker = $('#bulk_order_tracker').val();
+    if ($('#bulk_pur_order').prop('disabled')) {
+      $('.all_pur_order select').val('').prop('disabled', true).selectpicker('refresh');
+    } else {
+      $('.all_pur_order select').val(bulk_pur_order).selectpicker('refresh');
+    }
+    if ($('#bulk_wo_order').prop('disabled')) {
+      $('.all_wo_order select').val('').prop('disabled', true).selectpicker('refresh');
+    } else {
+      $('.all_wo_order select').val(bulk_wo_order).selectpicker('refresh');
+    }
+    if ($('#bulk_order_tracker').prop('disabled')) {
+      $('.all_order_tracker select').val('').prop('disabled', true).selectpicker('refresh');
+    } else {
+      $('.all_order_tracker select').val(bulk_order_tracker).selectpicker('refresh');
+    }
+  });
+
+  $('body').on('shown.bs.tab', '#tab_bulk_action, #tab_bulk_assign', function (e) {
+    var target = $(e.target).attr("href").replace('#', '');
+    $('#bulk_active_tab').val(target);
+  });
+
   appValidateForm($('#pur_invoice-expense-form'), {
     expense_name: 'required',
     category: 'required',

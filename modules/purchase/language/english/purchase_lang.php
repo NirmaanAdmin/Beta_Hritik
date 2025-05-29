@@ -925,3 +925,5 @@ $lang['this_is_non_budgeted_item'] = 'This is non budgeted item';
 $lang['get_from_order_tracker'] = 'Get from order tracker';
 $lang['vbt_order_name'] = 'Order Name';
 $lang['vbt_order_amount'] = 'Order Amount';
+$lang['bulk_action'] = 'Bulk Action';
+$lang['bulk_assign'] = 'Bulk Assign';
