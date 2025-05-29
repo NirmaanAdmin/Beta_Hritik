@@ -350,14 +350,14 @@ foreach ($rResult as $aRow) {
                 $order_data = $order_tracker_detail->pur_order_name;
             } else if (!empty($aRow['pur_order'])) {
                 $pur_order_detail = get_pur_order_main_detail($aRow['pur_order']);
-                $order_data =  '<span class="inline-block label"><a href="' . admin_url('purchase/pur_order/' . $pur_order_detail->id) . '" target="_blank">' . $pur_order_detail->pur_order_number . ' - ' . $pur_order_detail->pur_order_name . '</a></span>';
+                $order_data =  '<span><a href="' . admin_url('purchase/pur_order/' . $pur_order_detail->id) . '" target="_blank">' . $pur_order_detail->pur_order_number . ' - ' . $pur_order_detail->pur_order_name . '</a></span>';
             } else if (!empty($aRow['wo_order'])) {
                 $wo_order_detail = get_wo_order_main_detail($aRow['wo_order']);
-                $order_data = '<span class="inline-block label"><a href="' . admin_url('purchase/wo_order/' . $wo_order_detail->id) . '" target="_blank">' . $wo_order_detail->wo_order_number . ' - ' . $wo_order_detail->wo_order_name . '</a><span>';
+                $order_data = '<span><a href="' . admin_url('purchase/wo_order/' . $wo_order_detail->id) . '" target="_blank">' . $wo_order_detail->wo_order_number . ' - ' . $wo_order_detail->wo_order_name . '</a><span>';
             } else {
                 $order_data = '';
             }
-            $_data = $order_data;
+            $_data = '<div style="width: 200px;">'.$order_data.'</div>';
         } elseif ($aColumns[$i] == 4) {
             $order_data = '';
             if (!empty($aRow['order_tracker_id'])) {
