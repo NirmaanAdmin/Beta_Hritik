@@ -34,7 +34,7 @@
 
   #scroll-thumb {
     width: 15px;
-    height: 15px; 
+    height: 15px;
     background-color: #bca455;
     border-radius: 15px;
     position: relative;
@@ -124,7 +124,9 @@
                 <?php if ($data_timekeeping_form == 'timekeeping_manually') { ?>
                   <button type="button" onclick="open_check_in_out();" class="btn btn-info pull-right display-block mtop5 check_in_out_timesheet" data-toggle="tooltip" title="" data-original-title="<?php echo _l('check_in') . ' / ' . _l('check_out'); ?>"><?php echo _l('check_in'); ?> / <?php echo _l('check_out'); ?></button>
                 <?php } elseif ($data_timekeeping_form == 'csv_clsx') { ?>
-                  <button type="button" class="btn btn-info pull-right display-block mtop5 check_in_out_timesheet" data-toggle="modal" data-target="#import_timesheets_modal" data-original-title="<?php echo _l('import_timesheets'); ?>"><?php echo _l('import_timesheets'); ?></button>
+                  <button type="button" class="btn btn-info pull-right display-block mtop5 check_in_out_timesheet" onclick="window.location.href='<?php echo admin_url('timesheets/import_xlsx_attendance'); ?>'" title="<?php echo _l('import_timesheets'); ?>">
+                    <?php echo _l('import_timesheets'); ?>
+                  </button>
                 <?php } ?>
               </div>
               <div class="clearfix"></div>

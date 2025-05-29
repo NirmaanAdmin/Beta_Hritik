@@ -855,6 +855,14 @@ class MinutesController extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+    /**
+     * Updates the action of a critical MOM item via AJAX request.
+     *
+     * Retrieves the item ID and the new action from the POST data,
+     * performs validation, and updates the action in the database.
+     * Responds with a JSON object indicating success or failure.
+     */
+
     public function update_critical_action()
     {
         $id = $this->input->post('id');
@@ -875,6 +883,14 @@ class MinutesController extends AdminController
         }
     }
 
+    /**
+     * AJAX endpoint to update the vendor on a critical MOM item
+     *
+     * @param int|string $id   The ID of the critical MOM item to update
+     * @param array|string $vendorRaw  The new vendor: either an array of IDs or a CSV string
+     *
+     * @return JSON with success status and message
+     */
     public function update_critical_vendor()
     {
         $id = $this->input->post('id');
@@ -895,6 +911,14 @@ class MinutesController extends AdminController
         }
     }
 
+    /**
+     * AJAX endpoint to update the staff on a critical MOM item
+     *
+     * @param int|string $id   The ID of the critical MOM item to update
+     * @param array|string $staffRaw  The new staff: either an array of IDs or a CSV string
+     *
+     * @return JSON with success status and message
+     */
     public function change_staff()
     {
         $id        = $this->input->post('id');
@@ -940,6 +964,11 @@ class MinutesController extends AdminController
     }
 
 
+    /**
+     * Import xlsx critical tracker items
+     *
+     * @return void
+     */
     public function import_file_xlsx_critical_tracker_items()
     {
         if (!class_exists('XLSXReader_fin')) {
@@ -1115,6 +1144,11 @@ class MinutesController extends AdminController
         ]);
     }
 
+    /**
+     * Get user preferences for critical agenda
+     *
+     * @return void
+     */
     public function getPreferences()
     {
 
@@ -1130,6 +1164,11 @@ class MinutesController extends AdminController
             ->set_output(json_encode(['preferences' => $preferences]));
     }
 
+    /**
+     * Save user preferences for critical agenda
+     *
+     * @return void
+     */
     public function savePreferences()
     {
         $data = $this->input->post();
@@ -1141,6 +1180,11 @@ class MinutesController extends AdminController
             redirect(admin_url('meeting_management/minutesController/critical_agenda'));
         }
     }
+    /**
+     * Generates a PDF of the critical tracker
+     *
+     * @return void
+     */
     public function critical_tracker_pdf()
     {
         // Initialize Dompdf
@@ -1167,6 +1211,22 @@ class MinutesController extends AdminController
         // Output the PDF to the browser
         $pdf->stream("Critical Tracker.pdf", ["Attachment" => true]);
     }
+    /**
+     * Exports critical tracker data to a CSV file.
+     *
+     * This function generates a CSV file containing critical tracker data
+     * including details such as department, area, description, decision,
+     * action, responsible staff/vendor, project, target and closed dates,
+     * status, priority, and meeting name. The data is retrieved from the
+     * database and formatted for CSV export, with HTML tags stripped from
+     * text fields and special characters decoded.
+     *
+     * The CSV file is output directly to the browser with specific headers
+     * for download as an attachment.
+     *
+     * @return void
+     */
+
     public function critical_tracker_excel()
     {
         header('Content-Type: text/csv');

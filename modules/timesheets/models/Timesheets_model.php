@@ -6906,7 +6906,7 @@ class timesheets_model extends app_model
 					$list_dtts[$day] = $val;
 				}
 			}
-			
+
 			foreach ($list_date as $key => $value) {
 				$date_s = date('D d', strtotime($value));
 				$max_hour = isset($list_hour_shift[$value]) ? $list_hour_shift[$value] : 0;
@@ -6914,7 +6914,7 @@ class timesheets_model extends app_model
 				$result_lack = '';
 				if ($max_hour > 0) {
 					if (!$check_holiday) {
-						
+
 						$ts_lack = '';
 						if (isset($list_dtts[$date_s])) {
 							$ts_lack = $list_dtts[$date_s] . '; ';
@@ -6923,7 +6923,7 @@ class timesheets_model extends app_model
 						if ($total_lack) {
 							$total_lack = rtrim($total_lack, '; ');
 						}
-						
+
 						$result_lack = $this->merge_ts($total_lack, $max_hour, $type_valid);
 					} else {
 						if ($check_holiday == 'holiday') {
@@ -6939,7 +6939,7 @@ class timesheets_model extends app_model
 				} else {
 					// $result_lack = 'NS';
 					if (!$check_holiday) {
-						
+
 						$ts_lack = '';
 						if (isset($list_dtts[$date_s])) {
 							$ts_lack = $list_dtts[$date_s] . '; ';
@@ -6948,9 +6948,9 @@ class timesheets_model extends app_model
 						if ($total_lack) {
 							$total_lack = rtrim($total_lack, '; ');
 						}
-						
+
 						$result_lack = $this->merge_ts($total_lack, $max_hour, $type_valid);
-						if(empty($result_lack)){
+						if (empty($result_lack)) {
 							$result_lack = 'NS';
 						}
 					} else {
@@ -7428,7 +7428,7 @@ class timesheets_model extends app_model
 	{
 		$data = $this->input->post();
 		$date_ts = $this->format_date($month_filter . '-01');
-		
+
 		$date_ts_end = $this->format_date($month_filter . '-' . date('t'));
 		$year = date('Y', strtotime($date_ts));
 		$g_month = date('m', strtotime($date_ts));
@@ -7537,7 +7537,7 @@ class timesheets_model extends app_model
 		$data['set_col_tk'] = [];
 		$data['set_col_tk'][] = ['data' => _l('staff_id'), 'type' => 'text'];
 		$data['set_col_tk'][] = ['data' => _l('staff'), 'type' => 'text', 'readOnly' => true, 'width' => 200];
-		
+
 		for ($d = 1; $d <= $days_in_month; $d++) {
 			$time = mktime(12, 0, 0, $g_month, $d, (int) $year);
 			if (date('m', $time) == $g_month) {
@@ -8905,5 +8905,52 @@ class timesheets_model extends app_model
 		$this->db->from('tblstaff');
 		$query = $this->db->get();
 		return $query->result_array();
+	}
+
+	public function import_attendance_data($timesheet_entries)
+	{
+		$affectedRows = 0;
+
+		// 1) Flatten nested arrays
+		$all_entries = [];
+		foreach ($timesheet_entries as $e) {
+			if (is_array($e) && isset($e[0]) && is_array($e[0])) {
+				$all_entries = array_merge($all_entries, $e);
+			} else {
+				$all_entries[] = $e;
+			}
+		}
+
+		// 2) Loop and insert/update per exact date_work
+		foreach ($all_entries as $row) {
+			// — check for THIS exact day
+			$exists = (bool) $this->db
+				->where('staff_id',  $row['staff_id'])
+				->where('date_work', $row['date_work'])
+				->count_all_results(db_prefix() . 'timesheets_timesheet');
+
+			if ($exists) {
+				// update the existing record for this staff + this date
+				$this->db
+					->where('staff_id',  $row['staff_id'])
+					->where('date_work', $row['date_work'])
+					->update(db_prefix() . 'timesheets_timesheet', [
+						'value'       => $row['value'],
+						'type'        => $row['type'],
+						'add_from'    => $row['add_from'],
+						'relate_id'   => $row['relate_id']   ?? null,
+						'relate_type' => $row['relate_type'] ?? null,
+					]);
+			} else {
+				// insert a brand new row for THIS date
+				$this->db->insert(db_prefix() . 'timesheets_timesheet', $row);
+			}
+
+			if ($this->db->affected_rows() > 0) {
+				$affectedRows++;
+			}
+		}
+
+		return $affectedRows > 0;
 	}
 }

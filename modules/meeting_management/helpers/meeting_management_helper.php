@@ -109,6 +109,13 @@ function get_meeting_name_by_id($meeting_id)
     return '';
 }
 
+/**
+ * Returns the name of a project by its ID from the 'projects' table.
+ *
+ * @param int $project_id The ID of the project to retrieve.
+ *
+ * @return string The name of the project, or an empty string if not found.
+ */
 function get_project_name_by_id_mom($project_id)
 {
     $CI = &get_instance();
@@ -125,6 +132,14 @@ function get_project_name_by_id_mom($project_id)
     return '';
 }
 
+/**
+ * Returns an array of critical tracker items suitable for use in a PDF.
+ *
+ * The function will apply any user-saved filters for the critical tracker
+ * module, using the current staff member's ID.
+ *
+ * @return array Critical tracker items.
+ */
 function get_critical_tracker_pdf()
 {
     $CI = &get_instance();

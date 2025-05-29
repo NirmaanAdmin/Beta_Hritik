@@ -11,6 +11,7 @@ class timesheets extends AdminController
 		parent::__construct();
 		$this->load->model('timesheets_model');
 		$this->load->model('departments_model');
+		$this->load->model('hr_payroll/hr_payroll_model');
 		hooks()->do_action('timesheets_init');
 		if (!class_exists('qrstr')) {
 			include_once(TIMESHEETS_PATH_PLUGIN . '/phpqrcode/qrlib.php');
@@ -7387,5 +7388,458 @@ class timesheets extends AdminController
 				}
 			}
 		}
+	}
+
+	/**
+	 * import xlsx attendance
+	 * @return [type]
+	 */
+	public function import_xlsx_attendance()
+	{
+		$this->load->model('staff_model');
+		$data_staff = $this->staff_model->get(get_staff_user_id());
+		/*get language active*/
+		if ($data_staff) {
+			if ($data_staff->default_language != '') {
+				$data['active_language'] = $data_staff->default_language;
+			} else {
+				$data['active_language'] = get_option('active_language');
+			}
+		} else {
+			$data['active_language'] = get_option('active_language');
+		}
+
+		$this->load->view('timekeeping/import_attendance', $data);
+	}
+
+	/**
+	 * import attendance excel
+	 * @return [type]
+	 */
+	public function import_attendance_excel()
+	{
+		if (
+			!has_permission('hrp_employee', '', 'create')
+			&& !has_permission('hrp_employee', '', 'edit')
+			&& !is_admin()
+		) {
+			access_denied('hrp_employee');
+		}
+
+		if (!class_exists('XLSXReader_fin')) {
+			require_once module_dir_path(HR_PAYROLL_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php';
+		}
+		require_once module_dir_path(HR_PAYROLL_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php';
+
+		$filename           = '';
+		$message            = '';
+		$total_rows         = 0;
+		$total_row_success  = 0;
+		$total_row_false    = 0;
+
+		if ($this->input->post() && !empty($_FILES['file_csv']['tmp_name'])) {
+			$this->delete_error_file_day_before();
+
+			// prepare error-writer
+			$writer = new XLSXWriter();
+			$writer->writeSheetHeader('Sheet1', [
+				_l('staffid')    => 'string',
+				_l('id')         => 'string',
+				_l('hr_code')    => 'string',
+				_l('staff_name') => 'string',
+				_l('department') => 'string',
+				_l('month')      => 'string',
+				_l('error')      => 'string',
+			], ['widths' => [40, 40, 40, 50, 40, 50, 50]]);
+
+			// move upload to temp
+			$tmpDir    = TEMP_FOLDER . '/' . time() . uniqid();
+			@mkdir($tmpDir, 0755, true);
+			$newPath   = $tmpDir . '/' . basename($_FILES['file_csv']['name']);
+			move_uploaded_file($_FILES['file_csv']['tmp_name'], $newPath);
+
+			// read sheet
+			$xlsx       = new XLSXReader_fin($newPath);
+			$sheetNames = $xlsx->getSheetNames();
+			$data       = $xlsx->getSheetData($sheetNames[1]);
+			@unlink($newPath);
+
+			$arr_insert = [];
+
+			// ensure header exists
+			if (empty($data) || !isset($data[0]) || !is_array($data[0])) {
+				echo json_encode(['message' => 'No data or invalid sheet.']);
+				return;
+			}
+			$column_key = $data[0];
+
+			// loop each row
+			for ($r = 1; $r < count($data); $r++) {
+				// skip null or empty rows
+				if (!isset($data[$r]) || !is_array($data[$r]) || count(array_filter($data[$r])) === 0) {
+					continue;
+				}
+
+				$total_rows++;
+				$row    = $data[$r];
+				$errors = '';
+
+				// safely pull each column (use ?? '' so no offset warning)
+				$staff_id_raw   = $row[0] ?? '';
+				$id_raw         = $row[1] ?? '';
+				$hr_code_raw    = $row[2] ?? '';
+				$month_raw      = $row[3] ?? '';
+				$staff_name_raw = $row[4] ?? '';
+				$dept_raw       = $row[5] ?? '';
+				$rel_type_raw   = $row[6] ?? 'hr_timesheets';
+
+				// validation
+				if (trim($staff_id_raw) === '') {
+					$errors .= _l('staff_id') . ' ' . _l('not_empty') . '; ';
+				}
+				if (trim($month_raw) === '') {
+					$errors .= _l('month') . ' ' . _l('not_empty') . '; ';
+				}
+
+				// if errors, write row to error sheet
+				if ($errors !== '') {
+					$writer->writeSheetRow('Sheet1', [
+						$staff_id_raw,
+						$id_raw,
+						$hr_code_raw,
+						$staff_name_raw,
+						$dept_raw,
+						$month_raw,
+						$errors
+					]);
+					$total_row_false++;
+					continue;
+				}
+
+				// parse month, ensure valid date
+				$base_date = date('Y-m-d', strtotime($month_raw));
+				if ($base_date === false) {
+					$writer->writeSheetRow('Sheet1', [
+						$staff_id_raw,
+						$id_raw,
+						$hr_code_raw,
+						$staff_name_raw,
+						$dept_raw,
+						$month_raw,
+						_l('invalid_date_format')
+					]);
+					$total_row_false++;
+					continue;
+				}
+
+				// fetch shift; guard against missing record
+				$this->db->select('st.time_start_work, st.time_end_work')
+					->from(db_prefix() . 'work_shift_detail_number_day d')
+					->join(db_prefix() . 'shift_type st', 'st.id = d.shift_id', 'left')
+					->where('d.staff_id', $staff_id_raw);
+				$shift = $this->db->get()->row_array();
+
+				if (empty($shift['time_start_work']) || empty($shift['time_end_work'])) {
+					// skip or set default hours (here skipping)
+					continue;
+				}
+
+				$start_ts = strtotime($shift['time_start_work']);
+				$end_ts   = strtotime($shift['time_end_work']);
+				$hours    = $end_ts > $start_ts ? ($end_ts - $start_ts) / 3600 : 0;
+
+				// collect day-columns (index 7 onward)
+				for ($i = 7; $i < count($column_key); $i++) {
+					$cell = strtoupper($row[$i] ?? '');
+					if (!in_array($cell, ['P', 'L'], true)) {
+						continue;
+					}
+					$day_number = $i - 6; // index 7 → day 1
+					$date_work  = date('Y-m-d', strtotime("$base_date +" . ($day_number - 1) . " days"));
+
+					$arr_insert[] = [
+						'staff_id'    => $staff_id_raw,
+						'date_work'   => $date_work,
+						'value'       => $cell === 'P' ? $hours : '',
+						'type'        => $cell === 'P' ? 'W' : 'L',
+						'add_from'    => get_staff_user_id(),
+					];
+				}
+			}
+
+			// bulk insert if any
+			if (!empty($arr_insert)) {
+				$this->timesheets_model->import_attendance_data($arr_insert);
+				$total_row_success = count($arr_insert);
+				$message           = 'Import completed';
+			}
+
+			// write error file if needed
+			if ($total_row_false > 0) {
+				$filename = 'Import_attendance_error_'
+					. get_staff_user_id() . '_' . time() . '.xlsx';
+				$writer->writeToFile(TIMESHEETS_ERROR . $filename);
+			}
+		}
+
+		echo json_encode([
+			'message'           => $message,
+			'total_row_success' => $total_row_success ?? 0,
+			'total_row_false'   => $total_row_false,
+			'total_rows'        => $total_rows,
+			'site_url'          => site_url(),
+			'staff_id'          => get_staff_user_id(),
+			'filename'          => $filename ?? '',
+		]);
+	}
+
+
+
+	/**
+	 * delete_error file day before
+	 * @return [type]
+	 */
+	public function delete_error_file_day_before($before_day = '', $folder_name = '')
+	{
+		if ($before_day != '') {
+			$day = $before_day;
+		} else {
+			$day = '7';
+		}
+
+		if ($folder_name != '') {
+			$folder = $folder_name;
+		} else {
+			$folder = HR_PAYROLL_ERROR;
+		}
+
+		//Delete old file before 7 day
+		$date = date_create(date('Y-m-d H:i:s'));
+		date_sub($date, date_interval_create_from_date_string($day . " days"));
+		$before_7_day = strtotime(date_format($date, "Y-m-d H:i:s"));
+
+		foreach (glob($folder . '*') as $file) {
+
+			$file_arr = new_explode("/", $file);
+			$filename = array_pop($file_arr);
+
+			if (file_exists($file)) {
+				//don't delete index.html file
+				if ($filename != 'index.html') {
+					$file_name_arr = new_explode("_", $filename);
+					$date_create_file = array_pop($file_name_arr);
+					$date_create_file = new_str_replace('.xlsx', '', $date_create_file);
+
+					if ((float) $date_create_file <= (float) $before_7_day) {
+						unlink($folder . $filename);
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * create attendance sample file
+	 * @return [type]
+	 */
+	public function create_attendance_sample_file()
+	{
+		$this->load->model('staff_model');
+		$this->load->model('departments_model');
+
+		$month_attendance = $this->input->post('month_attendance');
+
+		if (!class_exists('XLSXReader_fin')) {
+			require_once module_dir_path(HR_PAYROLL_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php';
+		}
+		require_once module_dir_path(HR_PAYROLL_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php';
+
+		$this->delete_error_file_day_before('1', TIMESHEETS_CREATE_ATTENDANCE_SAMPLE);
+
+		$rel_type = hrp_get_timesheets_status();
+		//get attendance data
+		$current_month = date('Y-m-d', strtotime($month_attendance . '-01'));
+		//get day header in month
+		$days_header_in_month = $this->hr_payroll_model->get_day_header_in_month($current_month, $rel_type);
+
+		// Define headers and data keys to remove
+		$headers_to_remove = [
+			'Actual working time of probation contract (hours)',
+			'Actual working time of formal contract (hours)',
+			'Paid leave time (hours)',
+			'Unpaid leave time (hours)',
+			'Standard working time of the month (hours)'
+		];
+
+		$data_keys_to_remove = [
+			'actual_workday_probation',
+			'actual_workday',
+			'paid_leave',
+			'unpaid_leave',
+			'standard_workday'
+		];
+
+		// 1. Remove from headers array
+		$days_header_in_month['headers'] = array_values(array_diff($days_header_in_month['headers'], $headers_to_remove));
+
+		// 2. Remove from attendance_key array
+		$days_header_in_month['attendance_key'] = array_values(array_diff($days_header_in_month['attendance_key'], $data_keys_to_remove));
+
+		// 3. Remove from columns_type array
+		foreach ($days_header_in_month['columns_type'] as $index => $column) {
+			if (in_array($column['data'], $data_keys_to_remove)) {
+				unset($days_header_in_month['columns_type'][$index]);
+			}
+		}
+		// Re-index the columns_type array
+		$days_header_in_month['columns_type'] = array_values($days_header_in_month['columns_type']);
+
+		// 4. Remove from days_header array
+		foreach ($data_keys_to_remove as $key) {
+			if (isset($days_header_in_month['days_header'][$key])) {
+				unset($days_header_in_month['days_header'][$key]);
+			}
+		}
+
+		// Update header_key
+		$header_key = array_merge(
+			$days_header_in_month['staff_key'],
+			$days_header_in_month['days_key'],
+			$days_header_in_month['attendance_key']  // This now excludes the removed keys
+		);
+
+		$attendances = $this->hr_payroll_model->get_hrp_attendance($current_month);
+		$attendances_value = [];
+		foreach ($attendances as $key => $value) {
+			$attendances_value[$value['staff_id'] . '_' . $value['month']] = $value;
+		}
+
+		//load staff
+		if (!is_admin() && !has_permission('hrp_employee', '', 'view')) {
+			//View own
+			$staffs = $this->hr_payroll_model->get_staff_timekeeping_applicable_object(get_staffid_by_permission());
+		} else {
+			//admin or view global
+			$staffs = $this->hr_payroll_model->get_staff_timekeeping_applicable_object();
+		}
+
+		//Writer file
+		$writer_header = [];
+		$widths = [];
+		foreach ($days_header_in_month['headers'] as $value) {
+			$writer_header[$value] = 'string';
+			$widths[] = 30;
+		}
+
+		$writer = new XLSXWriter();
+		$col_style1 = [0, 1, 2, 3, 4, 5, 6];
+		$style1 = ['widths' => $widths, 'fill' => '#ff9800', 'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
+
+		$writer->writeSheetHeader_v2(
+			'Sheet1',
+			$writer_header,
+			$col_options = ['widths' => $widths, 'fill' => '#03a9f46b', 'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13],
+			$col_style1,
+			$style1
+		);
+
+		$data_object_kpi = [];
+		foreach ($staffs as $staff_key => $staff_value) {
+			$data_object_kpi = [];
+			$staffid = 0;
+			$hr_code = '';
+			$id = 0;
+			$staff_name = '';
+			$staff_departments = '';
+
+			/*check value from database*/
+			$staffid = $staff_value['staffid'];
+
+			/*check value from database*/
+			$staff_i = $this->hr_payroll_model->get_staff_info($staff_value['staffid']);
+			if ($staff_i) {
+				if (isset($staff_i->staff_identifi)) {
+					$data_object_kpi['hr_code'] = $staff_i->staff_identifi;
+				} else {
+					$data_object_kpi['hr_code'] = $this->hr_payroll_model->hrp_format_code('EXS', $staff_i->staffid, 5);
+				}
+
+				$data_object_kpi['staff_name'] = $staff_i->firstname . ' ' . $staff_i->lastname;
+
+				$arr_department = $this->hr_payroll_model->get_staff_departments($staff_i->staffid, true);
+
+				$list_department = '';
+				if (count($arr_department) > 0) {
+					foreach ($arr_department as $key => $department) {
+						$department_value = $this->departments_model->get($department);
+
+						if ($department_value) {
+							if (new_strlen($list_department) != 0) {
+								$list_department .= ', ' . $department_value->name;
+							} else {
+								$list_department .= $department_value->name;
+							}
+						}
+					}
+				}
+
+				$data_object_kpi['staff_departments'] = $list_department;
+			} else {
+				$data_object_kpi['hr_code'] = '';
+				$data_object_kpi['staff_name'] = '';
+				$data_object_kpi['staff_departments'] = '';
+			}
+
+			if (isset($attendances_value[$staff_value['staffid'] . '_' . $current_month])) {
+				$data_object_kpi['id'] = $attendances_value[$staff_value['staffid'] . '_' . $current_month]['id'];
+				$data_object_kpi = array_merge($data_object_kpi, $attendances_value[$staff_value['staffid'] . '_' . $current_month]);
+			} else {
+				$data_object_kpi['id'] = 0;
+				$data_object_kpi = array_merge($data_object_kpi, $days_header_in_month['days_header']);
+			}
+
+			// Remove the unwanted data keys if they exist
+			foreach ($data_keys_to_remove as $key) {
+				if (isset($data_object_kpi[$key])) {
+					unset($data_object_kpi[$key]);
+				}
+			}
+
+			$data_object_kpi['rel_type'] = $rel_type;
+			$data_object_kpi['month'] = $current_month;
+			$data_object_kpi['staff_id'] = $staff_value['staffid'];
+
+			if ($staff_key == 0) {
+				$writer->writeSheetRow('Sheet1', $header_key);
+			}
+
+			$get_values_for_keys = $this->get_values_for_keys($data_object_kpi, $header_key);
+			$writer->writeSheetRow('Sheet1', $get_values_for_keys);
+		}
+
+		$filename = 'attendance_sample_file' . get_staff_user_id() . '_' . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+		$writer->writeToFile(new_str_replace($filename, TIMESHEETS_CREATE_ATTENDANCE_SAMPLE . $filename, $filename));
+
+		echo json_encode([
+			'success' => true,
+			'site_url' => site_url(),
+			'staff_id' => get_staff_user_id(),
+			'filename' => TIMESHEETS_CREATE_ATTENDANCE_SAMPLE . $filename,
+		]);
+	}
+	/**
+	 * get values for keys
+	 * @param  [type] $mapping
+	 * @param  [type] $keys
+	 * @return [type]
+	 */
+	function get_values_for_keys($data, $keys)
+	{
+		$result = [];
+		foreach ($keys as $key) {
+			$result[] = isset($data[$key]) ? $data[$key] : '';
+		}
+		return $result;
 	}
 }

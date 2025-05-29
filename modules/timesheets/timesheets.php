@@ -15,6 +15,8 @@ define('TIMESHEETS_MODULE_NAME', 'timesheets');
 define('TIMESHEETS_MODULE_UPLOAD_FOLDER', module_dir_path(TIMESHEETS_MODULE_NAME, 'uploads'));
 define('TIMESHEETS_CONTRACT_ATTACHMENTS_UPLOAD_FOLDER', module_dir_path(TIMESHEETS_MODULE_NAME, 'uploads/contracts/'));
 define('TIMESHEETS_JOB_POSIITON_ATTACHMENTS_UPLOAD_FOLDER', module_dir_path(TIMESHEETS_MODULE_NAME, 'uploads/job_position/'));
+define('TIMESHEETS_CREATE_ATTENDANCE_SAMPLE', 'modules/timesheets/uploads/attendance_sample_file/');
+define('TIMESHEETS_ERROR', 'modules/timesheets/uploads/file_error_response/');
 define('TIMESHEETS_PATH', 'modules/timesheets/uploads/');
 define('TIMESHEETS_PAYSLIPS', 'modules/timesheets/uploads/payslips/');
 define('TIMESHEETS_REVISION', 120);
