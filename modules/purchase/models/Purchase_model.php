@@ -7022,15 +7022,7 @@ class Purchase_model extends App_Model
         $this->db->where('invoice_number', $data['invoice_number']);
         $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
 
-        if(isset($data['order_tracker_id'])) {
-            $order_tracker_number = explode('-', $data['order_tracker_id']);
-            $order_tracker_id = $order_tracker_number[0];
-            $order_tracker_table = $order_tracker_number[1];
-            if ($order_tracker_table === 'order_tracker') {
-                $this->db->where('id', $order_tracker_id);
-                $this->db->update('tblpur_order_tracker', ['final_certified_amount' => $data['final_certified_amount']]);
-            }
-        } else {
+        if(!isset($data['order_tracker_id'])) {
             $data['order_tracker_id'] = NULL;
         }
         if(!isset($data['pur_order'])) {
@@ -7385,15 +7377,7 @@ class Purchase_model extends App_Model
             }
         }
 
-        if(isset($data['order_tracker_id'])) {
-            $order_tracker_number = explode('-', $data['order_tracker_id']);
-            $order_tracker_id = $order_tracker_number[0];
-            $order_tracker_table = $order_tracker_number[1];
-            if ($order_tracker_table === 'order_tracker') {
-                $this->db->where('id', $order_tracker_id);
-                $this->db->update('tblpur_order_tracker', ['final_certified_amount' => $data['final_certified_amount']]);
-            }
-        } else {
+        if(!isset($data['order_tracker_id'])) {
             $data['order_tracker_id'] = NULL;
         }
         if(!isset($data['pur_order'])) {

@@ -259,13 +259,10 @@
 									<?php $order_tracker_list = get_order_tracker_list(); ?>
 									<select name="order_tracker_id" id="order_tracker_id" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 										<option value=""></option>
-										<?php foreach ($order_tracker_list as $s) {
-											if (isset($pur_invoice)) {
-												$parts = explode('-', $pur_invoice->order_tracker_id);
-												$order_selected = ($s['id'] == $parts[0] && $s['source_table'] == $parts[1]);
-											}
-										?>
-											<option value="<?php echo $s['id'] . '-' . $s['source_table']; ?>" <?php if (isset($order_selected) && $order_selected) echo 'selected'; ?>> <?php echo pur_html_entity_decode($s['vendor']); ?> - <?php echo pur_html_entity_decode($s['order_name']); ?></option>
+										<?php foreach ($order_tracker_list as $s) { ?>
+											<option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if (isset($pur_invoice) && $pur_invoice->order_tracker_id == $s['id']) {
+												echo 'selected';
+											} ?>> <?php echo pur_html_entity_decode($s['vendor']); ?> - <?php echo pur_html_entity_decode($s['order_name']); ?></option>
 										<?php } ?>
 									</select>
 								</div>
@@ -586,37 +583,15 @@
 			$('select[name="pur_order"]').val('').selectpicker('refresh');
 			$('select[name="wo_order"]').val('').selectpicker('refresh');
 			if (order_tracker != '') {
-				var parts = order_tracker.split('-');
-				var id = parts[0]; // "2" (the ID part)
-				var source_table = parts[1]; // "pur_orders" (the source table part)
 				$.post(admin_url + 'purchase/order_tracker_id/' + order_tracker).done(function(response) {
 					response = JSON.parse(response);
 					$('select[name="pur_order"]').prop('disabled', true).selectpicker('refresh');
 					$('select[name="wo_order"]').prop('disabled', true).selectpicker('refresh');
-					if (source_table === 'order_tracker') {
-						
-						$('select[name="vendor"]').val(response.vendor).trigger('change');
-						$('select[name="group_pur"]').val(response.group_pur).trigger('change');
-						$('input[name="vendor_submitted_amount_without_tax"]').val(parseFloat(response.total)).trigger('change');
-						calculateSum();
-						init_selectpicker();
-					} else {
-						var vendor_submitted_amount_without_tax = (parseFloat(response.total) - parseFloat(response.total_tax)).toFixed(2);
-						if(source_table === 'pur_orders'){
-							$('select[name="pur_order"]').val(id).trigger('change');
-						}else if(source_table === 'wo_orders'){
-							$('select[name="wo_order"]').val(id).trigger('change');
-						}
-						
-						$('select[name="vendor"]').val(response.vendor).trigger('change');
-						$('select[name="group_pur"]').val(response.group_pur).trigger('change');
-						$('select[name="project_id"]').val(response.project).trigger('change');
-						$('input[name="vendor_submitted_amount_without_tax"]').val(vendor_submitted_amount_without_tax).trigger('change');
-						$('input[name="vendor_submitted_tax_amount"]').val(response.total_tax).trigger('change');
-						$('textarea[name="description_services"]').val(response.wo_order_name);
-						calculateSum();
-						init_selectpicker();
-					}
+					$('select[name="vendor"]').val(response.vendor).trigger('change');
+					$('select[name="group_pur"]').val(response.group_pur).trigger('change');
+					$('input[name="vendor_submitted_amount_without_tax"]').val(parseFloat(response.total)).trigger('change');
+					calculateSum();
+					init_selectpicker();
 
 				});
 			} else {

@@ -345,11 +345,9 @@ foreach ($rResult as $aRow) {
             $_data = $file_html;
         } elseif ($aColumns[$i] == 3) {
             $order_data = '';
-            $get_order_tracker_detials = get_order_tracker_detials($aRow['order_tracker_id']);
-            list($order_id, $order_type) = explode('-', $aRow['order_tracker_id']);
-
-            if ($order_type === 'order_tracker') {
-                $order_data = $get_order_tracker_detials->order_name;
+            if (!empty($aRow['order_tracker_id'])) {
+                $order_tracker_detail = get_order_tracker_main_detail($aRow['order_tracker_id']);
+                $order_data = $order_tracker_detail->pur_order_name;
             } else if (!empty($aRow['pur_order'])) {
                 $pur_order_detail = get_pur_order_main_detail($aRow['pur_order']);
                 $order_data =  '<span class="inline-block label"><a href="' . admin_url('purchase/pur_order/' . $pur_order_detail->id) . '" target="_blank">' . $pur_order_detail->pur_order_number . ' - ' . $pur_order_detail->pur_order_name . '</a></span>';
@@ -362,11 +360,8 @@ foreach ($rResult as $aRow) {
             $_data = $order_data;
         } elseif ($aColumns[$i] == 4) {
             $order_data = '';
-            $get_order_tracker_detials = get_order_tracker_detials($aRow['order_tracker_id']);
-            list($order_id, $order_type) = explode('-', $aRow['order_tracker_id']);
-
-            if ($order_type === 'order_tracker') {
-                $order_tracker_detail = get_order_tracker_main_detail($order_id);
+            if (!empty($aRow['order_tracker_id'])) {
+                $order_tracker_detail = get_order_tracker_main_detail($aRow['order_tracker_id']);
                 $order_data = app_format_money($order_tracker_detail->total, $base_currency->symbol);
             } else if (!empty($aRow['pur_order'])) {
                 $pur_order_detail = get_pur_order_main_detail($aRow['pur_order']);
