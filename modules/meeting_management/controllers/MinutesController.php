@@ -1167,4 +1167,108 @@ class MinutesController extends AdminController
         // Output the PDF to the browser
         $pdf->stream("Critical Tracker.pdf", ["Attachment" => true]);
     }
+    public function critical_tracker_excel()
+    {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="Critical_Tracker_Export_' . date('Y-m-d') . '.csv"');
+
+        // Open output stream
+        $output = fopen('php://output', 'w');
+        $get_critical_tracker = get_critical_tracker_pdf();
+
+        // CSV Headers (same as PDF table columns)
+        $headers = [
+            'Department',
+            'Area/Head',
+            'Description',
+            'Decision',
+            'Action',
+            'Action By',
+            'Project',
+            'Target Date',
+            'Date Closed',
+            'Status',
+            'Priority',
+            'Fetched From'
+        ];
+
+        // Write headers to CSV
+        fputcsv($output, $headers);
+
+        // Status and Priority labels
+        $status_labels = [
+            1 => ['text' => _l('Open')],
+            2 => ['text' => _l('Close')]
+        ];
+
+        $priority_labels = [
+            1 => ['text' => _l('High')],
+            2 => ['text' => _l('Low')],
+            3 => ['text' => _l('Medium')],
+            4 => ['text' => _l('Urgent')]
+        ];
+
+        // Data rows
+        foreach ($get_critical_tracker as $key => $item) {
+            // Format dates
+            $target_date = '';
+            if (!empty($item['target_date']) && $item['target_date'] != '0000-00-00') {
+                $target_date = date('d M, Y', strtotime($item['target_date']));
+            }
+
+            $date_closed = '';
+            if (!empty($item['date_closed']) && $item['date_closed'] != '0000-00-00') {
+                $date_closed = date('d M, Y', strtotime($item['date_closed']));
+            }
+
+            // Format staff name and vendor
+            $staff_name = trim(($item['firstname'] ?? '') . ' ' . ($item['lastname'] ?? ''));
+            $action_by = $staff_name;
+            if (!empty($item['vendor'])) {
+                $action_by .= "\n" . $item['vendor'];
+            }
+
+            // Get status and priority text
+            $status_text = $status_labels[$item['status']]['text'] ?? '';
+            $priority_text = $priority_labels[$item['priority']]['text'] ?? '';
+
+            // Get project name and meeting name
+            $project_name = get_project_name_by_id_mom($item['project_id'] ?? '');
+            $meeting_name = get_meeting_name_by_id($item['minute_id'] ?? '');
+            // Clean HTML from description, decision, and action fields
+            $description = strip_tags($item['description'] ?? '');
+            $decision = strip_tags($item['decision'] ?? '');
+            $action = strip_tags($item['action'] ?? '');
+
+            // Replace any remaining HTML entities
+            $description = html_entity_decode($description);
+            $decision = html_entity_decode($decision);
+            $action = html_entity_decode($action);
+
+            // Remove multiple spaces and trim
+            $description = trim(preg_replace('/\s+/', ' ', $description));
+            $decision = trim(preg_replace('/\s+/', ' ', $decision));
+            $action = trim(preg_replace('/\s+/', ' ', $action));
+
+            // Write row data
+            fputcsv($output, [
+                $item['department_name'] ?? '',
+                $item['area'] ?? '',
+                $description,
+                $decision,
+                $action,
+                $action_by,
+                $project_name,
+                $target_date,
+                $date_closed,
+                $status_text,
+                $priority_text,
+                $meeting_name
+            ]);
+        }
+
+        // Close output stream
+        fclose($output);
+        exit;
+    }
 }
