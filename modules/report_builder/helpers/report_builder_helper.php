@@ -816,7 +816,29 @@ function rb_related_table($table='')
 			'pur_request' => ['primary_key' => ['id'], 'foreign_key' => ['requester', 'department', 'project', 'sale_invoice'], 'operator_str' => db_prefix().'pur_orders.pur_request = '.db_prefix().'pur_request.id'],
 			'departments' => ['primary_key' => ['departmentid'], 'foreign_key' => ['role'], 'operator_str' => db_prefix().'pur_orders.department = '.db_prefix().'departments.departmentid'],
 			'invoices' => ['primary_key' => ['id'], 'foreign_key' => ['clientid', 'currency', 'sale_agent', 'project_id'], 'operator_str' => db_prefix().'pur_orders.sale_invoice = '.db_prefix().'invoices.id'],
+			
 
+		]];
+
+		// wo_orders
+		$tables[]=['name' => 'wo_orders', 'label' => _l('tblwo_orders'), 'value' => [
+			'wo_orders' => ['primary_key' => ['id'], 'foreign_key' => ['vendor', 'estimate', 'addedfrom', 'buyer', 'clients', 'project', 'pur_request', 'department', 'sale_invoice']],
+			
+			'pur_vendor' => ['primary_key' => ['userid'], 'foreign_key' => ['addedfrom', 'category'], 'operator_str' => db_prefix().'wo_orders.vendor = '.db_prefix().'pur_vendor.userid'],
+
+			'pur_estimates' => ['primary_key' => ['id'], 'foreign_key' => ['vendor', 'pur_request', 'addedfrom', 'buyer'], 'operator_str' => db_prefix().'wo_orders.estimate = '.db_prefix().'pur_estimates.id'],
+
+			'staff' => ['primary_key' => ['staffid'], 'foreign_key' => ['role'], 'operator_str' => [0 => db_prefix().'wo_orders.buyer = '.db_prefix().'staff.staffid', 1 => db_prefix().'wo_orders.buyer = '.db_prefix().'staff.staffid' ]],
+
+			'clients' => ['primary_key' => ['userid'], 'foreign_key' => ['country', 'leadid', 'addedfrom', 'default_currency'], 'operator_str' => db_prefix().'wo_orders.clients = '.db_prefix().'clients.userid'],
+
+			'projects' => ['primary_key' => ['id'], 'foreign_key' => ['clientid', 'addedfrom', 'contact_notification'], 'operator_str' => db_prefix().'wo_orders.project = '.db_prefix().'projects.id'],
+
+			'pur_request' => ['primary_key' => ['id'], 'foreign_key' => ['requester', 'department', 'project', 'sale_invoice'], 'operator_str' => db_prefix().'wo_orders.pur_request = '.db_prefix().'pur_request.id'],
+
+			'departments' => ['primary_key' => ['departmentid'], 'foreign_key' => ['role'], 'operator_str' => db_prefix().'wo_orders.department = '.db_prefix().'departments.departmentid'],
+			
+			'invoices' => ['primary_key' => ['id'], 'foreign_key' => ['clientid', 'currency', 'sale_agent', 'project_id'], 'operator_str' => db_prefix().'wo_orders.sale_invoice = '.db_prefix().'invoices.id'],
 
 		]];
 
