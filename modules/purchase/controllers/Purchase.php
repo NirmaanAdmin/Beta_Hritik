@@ -13582,4 +13582,16 @@ class purchase extends AdminController
             die;
         }
     }
+
+    public function view_order_tracker_file($id)
+    {
+        $data['discussion_user_profile_image_url'] = staff_profile_image_url(get_staff_user_id());
+        $data['current_user_is_admin']             = is_admin();
+        $data['file'] = $this->purchase_model->get_order_tracker_file($id);
+        if (!$data['file']) {
+            header('HTTP/1.0 404 Not Found');
+            die;
+        }
+        $this->load->view('order_tracker/preview_order_tracker_file', $data);
+    }
 }

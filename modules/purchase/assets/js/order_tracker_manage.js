@@ -288,4 +288,25 @@ function delete_order_tracker_attachment(id) {
     }
 }
 
+function preview_order_tracker_btn(invoker) {
+  "use strict"; 
+  var id = $(invoker).attr('id');
+  view_order_tracker_file(id);
+}
+
+function view_order_tracker_file(id) {
+  "use strict"; 
+  $('#order_tracker_file_data').empty();
+  $("#order_tracker_file_data").load(admin_url + 'purchase/view_order_tracker_file/' + id, function(response, status, xhr) {
+      if (status == "error") {
+          alert_float('danger', xhr.statusText);
+      }
+  });
+}
+
+function close_modal_preview(){
+  "use strict"; 
+   $('._project_file').modal('hide');
+}
+
 

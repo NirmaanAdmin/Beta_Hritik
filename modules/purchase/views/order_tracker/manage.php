@@ -429,6 +429,7 @@
       </div>
    </div>
 </div>
+<div id="order_tracker_file_data"></div>
 
    <?php init_tail(); ?>
    <?php require 'modules/purchase/assets/js/import_excel_items_order_tracker_js.php'; ?>
