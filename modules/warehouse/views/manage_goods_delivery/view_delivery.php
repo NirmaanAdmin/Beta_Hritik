@@ -177,6 +177,7 @@
                                     <th align="center">#</th>
                                     <th  colspan="1"><?php echo _l('commodity_code') ?></th>
                                      <th colspan="1"><?php echo _l('item_description') ?></th>
+                                     <th colspan="1"><?php echo _l('area') ?></th>
                                      <th colspan="1"><?php echo _l('warehouse_name') ?></th>
                                      <th colspan="1"><?php echo _l('available_quantity') ?></th>
                                      <th  colspan="1"><?php echo _l('unit_name') ?></th>
@@ -316,6 +317,7 @@
                               <td ><?php echo html_entity_decode($delivery) ?></td>
                                   <td ><?php echo html_entity_decode($commodity_name) ?></td>
                                   <td ><?php echo html_entity_decode($delivery_value['description']) ?></td>
+                                  <td><?php echo get_area_name_by_id($delivery_value['area']); ?></td>
                                   <td ><?php echo html_entity_decode($warehouse_name) ?></td>
                                   <td ><?php echo html_entity_decode($available_quantity) ?></td>
                                   <td ><?php echo html_entity_decode($unit_name) ?></td>

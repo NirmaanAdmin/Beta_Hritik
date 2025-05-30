@@ -3630,6 +3630,7 @@ class Warehouse_model extends App_Model
 		unset($data['vendor_id']);
 		unset($data['lot_number']);
 		unset($data['issued_date']);
+		unset($data['area']);
 		if (isset($data['onoffswitch'])) {
 			if ($data['onoffswitch'] == 'on') {
 				$switch_barcode_scanners = true;
@@ -3725,6 +3726,7 @@ class Warehouse_model extends App_Model
 				if (isset($goods_delivery['without_checking_warehouse'])) {
 					unset($goods_delivery['without_checking_warehouse']);
 				}
+				$goods_delivery['area'] = !empty($goods_delivery['area']) ? implode(',', $goods_delivery['area']) : NULL;
 				$this->db->insert(db_prefix() . 'goods_delivery_detail', $goods_delivery);
 			}
 
@@ -4078,12 +4080,13 @@ class Warehouse_model extends App_Model
 
 
 
-		$html .= '<table class="table" style="font-size: 14px">
+		$html .= '<table class="table" style="font-size: 13px">
 		<tbody>
 
 		<tr>
 		<th  class=" thead-dark">' . _l('commodity_name') . '</th>
-		<th  class=" thead-dark">' . _l('description') . '</th>';
+		<th  class=" thead-dark">' . _l('description') . '</th>
+		<th  class=" thead-dark">' . _l('area') . '</th>';
 		if ($warehouse_lotnumber_bottom_infor_option == 1) {
 			$html .= '<th  class=" thead-dark">' . _l('warehouse_name') . '</th>';
 		}
@@ -4219,6 +4222,7 @@ class Warehouse_model extends App_Model
 			$html .= '<tr>';
 			$html .= '<td class="td_style_r_ep_l"><b>' . $get_commodity_name . '</b></td>';
 			$html .= '<td align="left" style="font-size: 12px">' . $delivery_value['description'] . '</td>';
+			$html .= '<td align="left" style="font-size: 12px">' . get_area_name_by_id($delivery_value['area']) . '</td>';
 			if ($warehouse_lotnumber_bottom_infor_option == 1) {
 				$html .= '<td class="td_style_r_ep_l"><b>' . $warehouse_name . '</b></td>';
 			}
@@ -7560,6 +7564,7 @@ class Warehouse_model extends App_Model
 		unset($data['lot_number']);
 		unset($data['vendor_id']);
 		unset($data['issued_date']);
+		unset($data['area']);
 
 		$check_appr = $this->get_approve_setting('2');
 		$data['approval'] = 0;
@@ -7662,7 +7667,7 @@ class Warehouse_model extends App_Model
 			if (isset($goods_delivery['without_checking_warehouse'])) {
 				unset($goods_delivery['without_checking_warehouse']);
 			}
-
+			$goods_delivery['area'] = !empty($goods_delivery['area']) ? implode(',', $goods_delivery['area']) : NULL;
 
 			$this->db->where('id', $goods_delivery['id']);
 			if ($this->db->update(db_prefix() . 'goods_delivery_detail', $goods_delivery)) {
@@ -7730,6 +7735,7 @@ class Warehouse_model extends App_Model
 			if (isset($goods_delivery['without_checking_warehouse'])) {
 				unset($goods_delivery['without_checking_warehouse']);
 			}
+			$goods_delivery['area'] = !empty($goods_delivery['area']) ? implode(',', $goods_delivery['area']) : NULL;
 
 			$this->db->insert(db_prefix() . 'goods_delivery_detail', $goods_delivery);
 			if ($this->db->insert_id()) {
@@ -15372,7 +15378,7 @@ class Warehouse_model extends App_Model
 	 * @param  boolean $is_edit              
 	 * @return [type]                        
 	 */
-	public function create_goods_delivery_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $available_quantity = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '',  $commodity_code = '', $unit_id = '', $vendor_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total_after_discount = '', $guarantee_period = '', $issued_date = '', $lot_number = '', $note = '',  $sub_total = '', $tax_name = '', $tax_id = '', $item_key = '', $is_edit = false, $is_purchase_order = false, $serial_number = '', $without_checking_warehouse = 0, $description = '', $quantities_json = '')
+	public function create_goods_delivery_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $available_quantity = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '',  $commodity_code = '', $unit_id = '', $vendor_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total_after_discount = '', $guarantee_period = '', $issued_date = '', $lot_number = '', $note = '',  $sub_total = '', $tax_name = '', $tax_id = '', $item_key = '', $is_edit = false, $is_purchase_order = false, $serial_number = '', $without_checking_warehouse = 0, $description = '', $quantities_json = '', $area = '')
 	{
 
 		$this->load->model('invoice_items_model');
@@ -15405,6 +15411,7 @@ class Warehouse_model extends App_Model
 		$name_serial_number = 'serial_number';
 		$name_without_checking_warehouse = 'without_checking_warehouse';
 		$name_description = 'description';
+		$name_area = 'area';
 
 		$array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
 		$array_qty_attr = ['min' => '0.0', 'step' => 'any'];
@@ -15455,6 +15462,7 @@ class Warehouse_model extends App_Model
 			$name_serial_number = $name . '[serial_number]';
 			$name_without_checking_warehouse = $name . '[without_checking_warehouse]';
 			$name_description = $name . '[description]';
+			$name_area = $name . '[area][]';
 
 			$warehouse_id_name_attr = ["onchange" => "get_available_quantity('" . $name_commodity_code . "','" . $name_warehouse_id . "','" . $name_available_quantity . "');", "data-none-selected-text" => _l('warehouse_name'), 'data-from_stock_id' => 'invoice'];
 			$array_available_quantity_attr = ['onblur' => 'wh_calculate_total();', 'onchange' => 'wh_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-available_quantity' => (float)$available_quantity, 'readonly' => true];
@@ -15504,6 +15512,7 @@ class Warehouse_model extends App_Model
 
 		$row .= '<td class="">' . render_textarea($name_commodity_name, '', $commodity_name, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
 		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description'), 'readonly' => true]) . '</td>';
+		$row .= '<td class="area">' . get_inventory_area_list($name_area, $area) . '</td>';
 		$row .= '<td class="warehouse_select">' .
 			render_select($name_warehouse_id, $warehouse_data, array('warehouse_id', 'warehouse_name'), '', $warehouse_id, $warehouse_id_name_attr, ["data-none-selected-text" => _l('warehouse_name')], 'no-margin') .
 			render_input($name_note, '', $note, 'text', ['placeholder' => _l('commodity_notes')], [], 'no-margin', 'input-transparent text-left') .
@@ -20104,7 +20113,7 @@ class Warehouse_model extends App_Model
 		$goods_delivery_row_template = '';
 		$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
 
-		$this->db->select('item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'pur_order_detail.unit_id , unit_price as rate, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax_id, ' . db_prefix() . 'pur_order_detail.total as total_money, ' . db_prefix() . 'pur_order_detail.total, ' . db_prefix() . 'pur_order_detail.discount_% as discount, ' . db_prefix() . 'pur_order_detail.discount_money, ' . db_prefix() . 'pur_order_detail.total_money as total_after_discount, ' . db_prefix() . 'items.guarantee, ' . db_prefix() . 'pur_order_detail.tax_rate');
+		$this->db->select('item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'pur_order_detail.unit_id , unit_price as rate, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax_id, ' . db_prefix() . 'pur_order_detail.total as total_money, ' . db_prefix() . 'pur_order_detail.total, ' . db_prefix() . 'pur_order_detail.discount_% as discount, ' . db_prefix() . 'pur_order_detail.discount_money, ' . db_prefix() . 'pur_order_detail.total_money as total_after_discount, ' . db_prefix() . 'items.guarantee, , ' . db_prefix() . 'pur_order_detail.area as area, ' . db_prefix() . 'pur_order_detail.tax_rate');
 		$this->db->join(db_prefix() . 'items', '' . db_prefix() . 'pur_order_detail.item_code = ' . db_prefix() . 'items.id', 'left');
 		$this->db->where(db_prefix() . 'pur_order_detail.pur_order = ' . $pur_order);
 		$arr_results = $this->db->get(db_prefix() . 'pur_order_detail')->result_array();
@@ -20207,7 +20216,7 @@ class Warehouse_model extends App_Model
 									$quantities = 1;
 									$name = 'newitems[' . $item_index . ']';
 									$goods_delivery_exist++;
-									$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
+									$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $temporaty_commodity_name, $warehouse_id, $temporaty_available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description, '', $value['area']);
 									$temporaty_quantity--;
 									$temporaty_available_quantity--;
 									$item_index++;
@@ -20262,7 +20271,7 @@ class Warehouse_model extends App_Model
 									}
 								}
 								$goods_delivery_exist++;
-								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description);
+								$goods_delivery_row_template .= $this->create_goods_delivery_row_template([], $name, $commodity_name, $warehouse_id, $available_quantity, 0, $unit_name, $unit_price, $taxname, $commodity_code, $unit_id, '', $tax_rate, '', '', '', $total_after_discount, $guarantee_period, $issued_date, $lot_number, $note, $sub_total, $tax_name, $tax_id, 'undefined', false, false, $value['serial_number'], 0, $description, '', $value['area']);
 								$item_index++;
 							}
 						}
