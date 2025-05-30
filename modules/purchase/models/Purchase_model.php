@@ -20070,6 +20070,7 @@ class Purchase_model extends App_Model
         $estimate_id = $data['estimate_id'];
         $budget_head_id = $data['budget_head_id'];
         $cost_sub_head = isset($data['cost_sub_head']) ? $data['cost_sub_head'] : NULL;
+        $module = isset($data['module']) ? $data['module'] : NULL;
         $base_currency = $this->currencies_model->get_base_currency();
 
         $this->db->where('rel_id', $estimate_id);
@@ -20086,11 +20087,12 @@ class Purchase_model extends App_Model
             $response .= '<thead>
                 <tr>
                     <th width="18%" align="left">' . _l('estimate_table_item_heading') . '</th>
-                    <th width="24%" align="left">' . _l('estimate_table_item_description') . '</th>
-                    <th width="13%" class="qty" align="right">' . _l('estimate_table_quantity_heading') . '</th>
-                    <th width="13%" class="qty" align="right">' . _l('remaining_qty') . '</th>
-                    <th width="15%" align="right">' . _l('estimate_table_rate_heading') . '</th>
-                    <th width="17%" align="right">' . _l('control_remarks') . '</th>
+                    <th width="18%" align="left">' . _l('estimate_table_item_description') . '</th>
+                    <th width="12%" align="left">' . _l('sub_groups_pur') . '</th>
+                    <th width="12%" class="qty" align="right">' . _l('budgeted_qty') . '</th>
+                    <th width="12%" class="qty" align="right">' . _l('remaining_qty') . '</th>
+                    <th width="13%" align="right">' . _l('budgeted_rate') . '</th>
+                    <th width="15%" align="right">' . _l('control_remarks') . '</th>
                 </tr>
             </thead>';
             $response .= '<tbody style="border: 1px solid #ddd;">';
@@ -20099,41 +20101,42 @@ class Purchase_model extends App_Model
                 $purchase_unit_name = get_purchase_unit($item['unit_id']);
                 $purchase_unit_name = !empty($purchase_unit_name) ? ' ' . $purchase_unit_name : '';
                 $cost_control_remarks_name = 'cost_control_remarks[' . $item['id'] . ']';
+                $remaining_qty = 0;
+                $budgeted_amount_class = '';
 
-                $this->db->select('SUM(' . db_prefix() . 'pur_order_detail.quantity) as total_qty');
-                $this->db->from(db_prefix() . 'pur_order_detail');
-                $this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order', 'left');
-                $this->db->where(db_prefix() . 'pur_order_detail.item_code', $item['item_code']);
-                $this->db->where(db_prefix() . 'pur_order_detail.description', $item['long_description']);
-                $this->db->where(db_prefix() . 'pur_orders.estimate', $estimate_id);
-                $this->db->where(db_prefix() . 'pur_orders.group_pur', $budget_head_id);
-                $this->db->where(db_prefix() . 'pur_orders.approve_status', 2);
-                $pur_order_detail_qty = $this->db->get()->row();
-                $pur_order_detail_qty = !empty($pur_order_detail_qty->total_qty) ? $pur_order_detail_qty->total_qty : 0;
-                $remaining_qty = $item['qty'] - $pur_order_detail_qty;
-                $remaining_qty = number_format($remaining_qty, 2);
-                $remaining_qty_class = '';
-                if($remaining_qty < 0) {
-                    $remaining_qty_class = 'remaining_qty_red_class';
+                if($module == 'pur_orders') {
+                    $this->db->select('SUM(' . db_prefix() . 'pur_order_detail.quantity) as total_qty');
+                    $this->db->from(db_prefix() . 'pur_order_detail');
+                    $this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order', 'left');
+                    $this->db->where(db_prefix() . 'pur_order_detail.item_code', $item['item_code']);
+                    $this->db->where(db_prefix() . 'pur_order_detail.description', $item['long_description']);
+                    $this->db->where(db_prefix() . 'pur_orders.estimate', $estimate_id);
+                    $this->db->where(db_prefix() . 'pur_orders.group_pur', $budget_head_id);
+                    $this->db->where(db_prefix() . 'pur_orders.approve_status', 2);
+                    $pur_order_detail_qty = $this->db->get()->row();
+                    $pur_order_detail_qty = !empty($pur_order_detail_qty->total_qty) ? $pur_order_detail_qty->total_qty : 0;
+                    $remaining_qty = $item['qty'] - $pur_order_detail_qty;
+                    $remaining_qty = number_format($remaining_qty, 2);
                 }
 
                 $response .= '<tr>';
                 $response .= '<td>
-                        <span class="'.$remaining_qty_class.'">' . get_purchase_items($item['item_code']) . '</span>
+                        <span class="'.$budgeted_amount_class.'">' . get_purchase_items($item['item_code']) . '</span>
                         <div>
                             <a class="cost_fetch_pur_item" data-itemcode="' . $item['item_code'] . '" data-longdescription="' . $item['long_description'] . '" data-subhead="' . $item['sub_head'] . '">Fetch</a>
                         </div>
                     </td>';
-                $response .= '<td class="'.$remaining_qty_class.'">' . clear_textarea_breaks($item['long_description']) . '</td>';
-                $response .= '<td align="right" class="'.$remaining_qty_class.'">
+                $response .= '<td class="'.$budgeted_amount_class.'">' . clear_textarea_breaks($item['long_description']) . '</td>';
+                $response .= '<td class="'.$budgeted_amount_class.'">' . get_sub_head_name_by_id($item['sub_head']) . '</td>';
+                $response .= '<td align="right" class="'.$budgeted_amount_class.'">
                     <span>' . $item_qty . '</span>
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right" class="'.$remaining_qty_class.'">
+                $response .= '<td align="right" class="'.$budgeted_amount_class.'">
                     <span>' . $remaining_qty . '</span>
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right" class="'.$remaining_qty_class.'">' . app_format_money($item['rate'], $base_currency) . '</td>';
+                $response .= '<td align="right" class="'.$budgeted_amount_class.'">' . app_format_money($item['rate'], $base_currency) . '</td>';
                 $response .= '<td align="right">' . render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']) . '</td>';
                 $response .= '</tr>';
             }

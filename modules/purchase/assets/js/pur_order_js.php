@@ -326,7 +326,8 @@
         $.post(admin_url + 'purchase/get_cost_control_sheet', {
           estimate_id: estimate_id,
           budget_head_id: budget_head_id,
-          cost_sub_head: cost_sub_head
+          cost_sub_head: cost_sub_head,
+          module: 'pur_orders'
         }).done(function (response) {
           response = JSON.parse(response);
           if (response.result) {

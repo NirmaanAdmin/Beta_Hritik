@@ -928,4 +928,5 @@ $lang['vbt_order_amount'] = 'Order Amount';
 $lang['bulk_action'] = 'Bulk Action';
 $lang['bulk_assign'] = 'Bulk Assign';
 $lang['attachment_upload'] = 'Attachment Upload';
-$lang['attachment_download'] = 'Attachment Download';
+$lang['budgeted_qty'] = 'Budgeted Quantity';
+$lang['budgeted_rate'] = 'Budgeted Rate';
