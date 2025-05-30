@@ -185,6 +185,7 @@
                         <th align="center">#</th>
                         <th colspan="1"><?php echo _l('commodity_code') ?></th>
                         <th colspan="1"><?php echo _l('description') ?></th>
+                        <th colspan="1"><?php echo _l('area') ?></th>
                         <th colspan="1"><?php echo _l('warehouse_name') ?></th>
                         <th colspan="1"><?php echo _l('unit_name') ?></th>
                         <th colspan="2" class="text-center"><?php echo _l('po_quantity') ?></th>
@@ -237,6 +238,7 @@
                           <td><?php echo html_entity_decode($receipt_key) ?></td>
                           <td><?php echo html_entity_decode($commodity_name) ?></td>
                           <td><?php echo html_entity_decode($description) ?></td>
+                          <td><?php echo get_area_name_by_id($receipt_value['area']); ?></td>
                           <td><?php echo html_entity_decode($warehouse_code) ?></td>
                           <td><?php echo html_entity_decode($unit_name) ?></td>
                           <td></td>

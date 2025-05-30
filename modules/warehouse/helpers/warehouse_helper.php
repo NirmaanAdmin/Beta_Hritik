@@ -2227,3 +2227,15 @@ function get_vendor_name($id)
     }
     return '';
 }
+
+function get_inventory_area_list($name_area, $area)
+{
+    $CI = &get_instance();
+    $CI->load->model('purchase/purchase_model');
+    $get_area = $CI->purchase_model->get_area();
+    $selected = !empty($area) ? $area : array();
+    if (!is_array($selected)) {
+        $selected = explode(",", $selected);
+    }
+    return render_select($name_area, $get_area, array('id', 'area_name'), '', $selected, array('multiple' => true), array('id' => 'project_area'), '', '', false);
+}

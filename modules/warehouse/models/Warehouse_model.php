@@ -1188,6 +1188,7 @@ class Warehouse_model extends App_Model
 		unset($data['production_status']);
 		unset($data['payment_date']);
 		unset($data['est_delivery_date']);
+		unset($data['area']);
 		if (isset($data['warehouse_id_m'])) {
 			$data['warehouse_id'] = $data['warehouse_id_m'];
 			unset($data['warehouse_id_m']);
@@ -1342,6 +1343,7 @@ class Warehouse_model extends App_Model
 				unset($inventory_receipt['order']);
 				unset($inventory_receipt['id']);
 				unset($inventory_receipt['tax_select']);
+				$inventory_receipt['area'] = !empty($inventory_receipt['area']) ? implode(',', $inventory_receipt['area']) : NULL;
 
 				$this->db->insert(db_prefix() . 'goods_receipt_detail', $inventory_receipt);
 			}
@@ -1460,7 +1462,7 @@ class Warehouse_model extends App_Model
 		$list_item = $production_approval_item = '';
 		$list_item = $this->warehouse_model->create_goods_receipt_row_template();
 		$production_approval_item = $this->warehouse_model->create_goods_receipt_production_approvals_template();
-		$sql = 'select item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'pur_order_detail.unit_id, unit_price, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax, into_money, (' . db_prefix() . 'pur_order_detail.total-' . db_prefix() . 'pur_order_detail.into_money) as tax_money, total as goods_money, wh_quantity_received, tax_rate, tax_value, ' . db_prefix() . 'pur_order_detail.id as id, delivery_date, payment_date, est_delivery_date, production_status from ' . db_prefix() . 'pur_order_detail
+		$sql = 'select item_code as commodity_code, ' . db_prefix() . 'pur_order_detail.description, ' . db_prefix() . 'pur_order_detail.unit_id, unit_price, quantity as quantities, ' . db_prefix() . 'pur_order_detail.tax as tax, into_money, (' . db_prefix() . 'pur_order_detail.total-' . db_prefix() . 'pur_order_detail.into_money) as tax_money, total as goods_money, wh_quantity_received, tax_rate, tax_value, ' . db_prefix() . 'pur_order_detail.id as id, delivery_date, payment_date, est_delivery_date, production_status, ' . db_prefix() . 'pur_order_detail.area as area from ' . db_prefix() . 'pur_order_detail
 		left join ' . db_prefix() . 'items on ' . db_prefix() . 'pur_order_detail.item_code =  ' . db_prefix() . 'items.id
 		left join ' . db_prefix() . 'taxes on ' . db_prefix() . 'taxes.id = ' . db_prefix() . 'pur_order_detail.tax where ' . db_prefix() . 'pur_order_detail.pur_order = ' . $pur_order;
 		$results = $this->db->query($sql)->result_array();
@@ -1532,7 +1534,7 @@ class Warehouse_model extends App_Model
 				$quantities = $available_quantity;
 				$sub_total = 0;
 
-				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, 0, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'], $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true, '', $value['description'], $payment_date, $est_delivery_date, $production_status);
+				$list_item .= $this->create_goods_receipt_row_template($warehouse_data, 'newitems[' . $index . ']', $commodity_name, '', $quantities, 0, $unit_name, $unit_price, $taxname, $lot_number, $vendor_id, $delivery_date, $date_manufacture, $expiry_date, $value['commodity_code'], $value['unit_id'], $value['tax_rate'], $value['tax_value'], $value['goods_money'], $note, $value['id'], $sub_total, '', $value['tax'], true, '', $value['description'], $payment_date, $est_delivery_date, $production_status, $value['area']);
 				$production_approval_item .= $this->create_goods_receipt_production_approvals_template('approvalsitems[' . $index . ']', $value['description'], $commodity_name, '', '', '', '', $value['commodity_code']);
 				$total_goods_money_temp = $available_quantity * (float)$unit_price;
 				$total_goods_money += $total_goods_money_temp;
@@ -3204,6 +3206,7 @@ class Warehouse_model extends App_Model
 		<tr>
 		<th class="thead-dark-ip">' . _l('commodity_code') . '</th>
 		<th class="thead-dark-ip">' . _l('description') . '</th>
+		<th class="thead-dark-ip">' . _l('area') . '</th>
 		<th class="thead-dark-ip">' . _l('warehouse_name') . '</th>
 		<th class="thead-dark-ip">' . _l('unit_name') . '</th>
 		<th class="thead-dark-ip">' . _l('po_quantity') . '</th>
@@ -3268,6 +3271,7 @@ class Warehouse_model extends App_Model
 			$html .= '<tr>';
 			$html .= '<td class="td_style_r_ep_c"><b>' . $commodity_name . '</b></td>
 			<td class="td_style_r_ep_c" style="text-align: left;">' . $description . '</td>
+			<td class="td_style_r_ep_c">' . get_area_name_by_id($receipt_value['area']) . '</td>
 			<td class="td_style_r_ep_c">' . $warehouse_code . '</td>
 			<td class="td_style_r_ep_c">' . $unit_name . '</td>
 			<td class="td_style_r_ep_c">' . $po_quantities . '<br><span style="display: block; font-size: 10px;font-style: italic;">Rem : ' . $diff . '</span></td>
@@ -7815,6 +7819,7 @@ class Warehouse_model extends App_Model
 		unset($data['est_delivery_date']);
 		unset($data['payment_date']);
 		unset($data['production_status']);
+		unset($data['area']);
 
 		if (isset($data['warehouse_id_m'])) {
 			$data['warehouse_id'] = $data['warehouse_id_m'];
@@ -7971,6 +7976,7 @@ class Warehouse_model extends App_Model
 			$inventory_receipt['tax_name'] = $tax_name;
 			unset($inventory_receipt['order']);
 			unset($inventory_receipt['tax_select']);
+			$inventory_receipt['area'] = !empty($inventory_receipt['area']) ? implode(',', $inventory_receipt['area']) : NULL;
 
 			$this->db->where('id', $inventory_receipt['id']);
 			if ($this->db->update(db_prefix() . 'goods_receipt_detail', $inventory_receipt)) {
@@ -8050,6 +8056,7 @@ class Warehouse_model extends App_Model
 			unset($inventory_receipt['order']);
 			unset($inventory_receipt['id']);
 			unset($inventory_receipt['tax_select']);
+			$inventory_receipt['area'] = !empty($inventory_receipt['area']) ? implode(',', $inventory_receipt['area']) : NULL;
 
 			$this->db->insert(db_prefix() . 'goods_receipt_detail', $inventory_receipt);
 			if ($this->db->insert_id()) {
@@ -14537,7 +14544,7 @@ class Warehouse_model extends App_Model
 	 * @param  boolean $is_edit          
 	 * @return [type]                    
 	 */
-	public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $po_quantities = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '', $description = '', $payment_date = '', $est_delivery_date = '', $status = '')
+	public function create_goods_receipt_row_template($warehouse_data = [], $name = '', $commodity_name = '', $warehouse_id = '', $po_quantities = '', $quantities = '', $unit_name = '', $unit_price = '', $taxname = '', $lot_number = '', $vendor_id = '', $delivery_date = '', $date_manufacture = '', $expiry_date = '', $commodity_code = '', $unit_id = '', $tax_rate = '', $tax_money = '', $goods_money = '', $note = '', $item_key = '', $sub_total = '', $tax_name = '', $tax_id = '', $is_edit = false, $serial_number = '', $description = '', $payment_date = '', $est_delivery_date = '', $status = '', $area = '')
 	{
 
 		$this->load->model('invoice_items_model');
@@ -14571,6 +14578,7 @@ class Warehouse_model extends App_Model
 		$name_paymant_date = 'payment_date';
 		$name_est_delivery_date = 'est_delivery_date';
 		$name_status = 'production_status';
+		$name_area = 'area';
 		$array_qty_attr = ['min' => '0.0', 'step' => 'any'];
 		$array_rate_attr = ['min' => '0.0', 'step' => 'any'];
 		$str_rate_attr = 'min="0.0" step="any"';
@@ -14619,6 +14627,7 @@ class Warehouse_model extends App_Model
 			$name_paymant_date = $name . '[payment_date]';
 			$name_est_delivery_date = $name . '[est_delivery_date]';
 			$name_status = $name . '[production_status]';
+			$name_area = $name . '[area][]';
 			$array_rate_attr = ['onblur' => 'wh_calculate_total();', 'onchange' => 'wh_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
 			$array_qty_attr = ['onblur' => 'wh_calculate_total();', 'onchange' => 'wh_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantities];
@@ -14668,6 +14677,7 @@ class Warehouse_model extends App_Model
 
 		$row .= '<td class="">' . render_textarea($name_commodity_name, '', $commodity_name, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
 		$row .= '<td class="">' . render_textarea($name_description, '', $description, ['rows' => 2, 'placeholder' => _l('item_description_placeholder'), 'readonly' => true]) . '</td>';
+		$row .= '<td class="area">' . get_inventory_area_list($name_area, $area) . '</td>';
 		$row .= '<td class="warehouse_select">' .
 			// render_select_with_input_group($name_warehouse_id, $warehouse_data,array('warehouse_id','warehouse_name'),'',$warehouse_id,'<a href="javascript:void(0)" onclick="new_vehicle_reg(this,\''.$name_commodity_code.'\', \''.$name_warehouse_id.'\');return false;"><i class="fa fa-plus"></i></a>', ["data-none-selected-text" => _l('warehouse_name')]).
 			render_select($name_warehouse_id, $warehouse_data, array('warehouse_id', 'warehouse_name'), '', $warehouse_id, [], ["data-none-selected-text" => _l('warehouse_name')], 'no-margin') .
