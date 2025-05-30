@@ -13554,4 +13554,32 @@ class purchase extends AdminController
 
         ]);
     }
+
+    public function upload_order_tracker_attachments()
+    {
+        $input = $this->input->post();
+        $uploaded_files = $this->purchase_model->upload_order_tracker_attachments($input);
+        echo json_encode(['status' => !empty($uploaded_files)]);
+        die();
+    }
+
+    public function view_order_tracker_attachments()
+    {
+        $input = $this->input->post();
+        $attachments = $this->purchase_model->view_order_tracker_attachments($input);
+        echo json_encode(['result' => $attachments]);
+        die();
+    }
+
+    public function delete_order_tracker_attachment($id)
+    {
+        $file = $this->purchase_model->get_order_tracker_file($id);
+        if ($file->staffid == get_staff_user_id() || is_admin()) {
+            echo pur_html_entity_decode($this->purchase_model->delete_order_tracker_attachment($id));
+        } else {
+            header('HTTP/1.0 400 Bad error');
+            echo _l('access_denied');
+            die;
+        }
+    }
 }

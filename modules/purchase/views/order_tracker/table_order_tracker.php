@@ -27,6 +27,8 @@ $aColumns = [
    'anticipate_variation',
    'cost_to_complete',
    'final_certified_amount',
+   1,
+   2,
    'project',
    'rli_filter',
    'kind',
@@ -534,6 +536,35 @@ foreach ($rResult as $aRow) {
             // Render as an editable input if no value exists
             $_data = '<span style="font-style: italic;font-size: 12px;">Please enter the certified amount in Vendor Billing Tracker</span>';
          }
+      } elseif ($column == 1) {
+         $_data = '
+            <div class="input-group" style="width: 100%;">
+               <input type="file" 
+                      name="attachments[]" 
+                      class="form-control upload_order_tracker_files" 
+                      data-id="' . $aRow['id'] . '" 
+                      data-source="' . $aRow['source_table'] . '" 
+                      multiple 
+                      style="min-width: 200px; width: 100%;">
+               <span class="input-group-btn">
+                  <button type="button" 
+                          class="btn btn-success upload_order_tracker_attachments" 
+                          data-id="' . $aRow['id'] . '" 
+                          data-source="' . $aRow['source_table'] . '" 
+                          title="Upload Attachments">
+                     <i class="fa fa-upload"></i>
+                  </button>
+               </span>
+            </div>
+         ';
+      } elseif ($column == 2) {
+         $this->ci->load->model('purchase/purchase_model');
+         $attachments = $this->ci->purchase_model->get_order_tracker_attachments($aRow['id'], $aRow['source_table']);
+         $file_html = '';
+         if (!empty($attachments)) {
+            $file_html = '<a href="javascript:void(0)" onclick="view_order_tracker_attachments(' . $aRow['id'] . ', \'' . $aRow['source_table'] . '\'); return false;" class="btn btn-info btn-icon">View Files</a>';
+         }
+         $_data = $file_html;
       } elseif ($column == 'remarks') {
          // If remarks exist, display as plain text with an inline editing option
          $_data = '<span class="remarks-display" data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .

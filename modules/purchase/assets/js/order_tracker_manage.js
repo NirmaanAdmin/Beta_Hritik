@@ -64,6 +64,41 @@ var expenseDropzone;
         table_rec_campaign.DataTable().ajax.reload().columns.adjust().responsive.recalc();
     });
 
+    $(document).on('click', '.upload_order_tracker_attachments', function() {
+       var rowId = $(this).data('id');
+       var source = $(this).data('source');
+       var input = $(this).closest('.input-group').find('.upload_order_tracker_files')[0];
+       if (!input.files.length) {
+          alert_float('warning', "Please select at least one file to upload.");
+          return;
+       }
+       var formData = new FormData();
+       for (var i = 0; i < input.files.length; i++) {
+          formData.append('attachments[]', input.files[i]);
+       }
+       formData.append('id', rowId);
+       formData.append('source', source);
+       formData.append("csrf_token_name", $('input[name="csrf_token_name"]').val());
+       $.ajax({
+          url: admin_url + 'purchase/upload_order_tracker_attachments',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            var res = JSON.parse(response);
+            if (res.status === true) {
+                alert_float('success', "Order tracker attachments uploaded successfully.");
+            } else {
+                alert_float('warning', "Upload failed.");
+            }
+          },
+          error: function() {
+            alert_float('warning', "Upload failed.");
+          }
+       });
+    });
+
     $('.table-table_order_tracker').on('draw.dt', function () {
         var reportsTable = $(this).DataTable();
         var sums = reportsTable.ajax.json().sums;
@@ -223,4 +258,34 @@ function update_budget_head(status, id, table_name) {
             });
     }
 }
+
+function view_order_tracker_attachments(rel_id, rel_type) {
+  "use strict";
+  $.post(admin_url + 'purchase/view_order_tracker_attachments', {
+    rel_id: rel_id,
+    rel_type: rel_type
+  }).done(function(response) {
+      response = JSON.parse(response);
+      if(response.result) {
+        $('.view_order_attachment_modal').html(response.result);
+      } else {
+        $('.view_order_attachment_modal').html('');
+      }
+      $('#viewOrderAttachmentModal').modal('show');
+  });
+}
+
+function delete_order_tracker_attachment(id) {
+  "use strict"; 
+    if (confirm_delete()) {
+        requestGet('purchase/delete_order_tracker_attachment/' + id).done(function(success) {
+            if (success == 1) {
+                $(".view_order_attachment_modal").find('[data-attachment-id="' + id + '"]').remove();
+            }
+        }).fail(function(error) {
+            alert_float('danger', error.responseText);
+        });
+    }
+}
+
 

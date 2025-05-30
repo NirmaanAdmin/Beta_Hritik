@@ -20255,4 +20255,95 @@ class Purchase_model extends App_Model
         }
         return true;
     }
+
+    public function upload_order_tracker_attachments($input)
+    {
+        $uploadedFiles = handle_order_tracker_attachments_array($input['source'], $input['id']);
+        if ($uploadedFiles && is_array($uploadedFiles)) {
+            foreach ($uploadedFiles as $file) {
+                $data = array();
+                $data['dateadded'] = date('Y-m-d H:i:s');
+                $data['rel_type'] = $input['source'];
+                $data['rel_id'] = $input['id'];
+                $data['staffid'] = get_staff_user_id();
+                $data['attachment_key'] = app_generate_hash();
+                $data['file_name'] = $file['file_name'];
+                $data['filetype']  = $file['filetype'];
+                $this->db->insert(db_prefix() . 'order_tracker_files', $data);
+            }
+        }
+        return $uploadedFiles;
+    }
+
+    public function get_order_tracker_attachments($rel_id, $rel_type)
+    {
+        $this->db->where('rel_id', $rel_id);
+        $this->db->where('rel_type', $rel_type);
+        return $this->db->get(db_prefix() . 'order_tracker_files')->result_array();
+    }
+
+    public function view_order_tracker_attachments($input)
+    {
+        $file_html = '';
+        $rel_id = $input['rel_id'];
+        $rel_type = $input['rel_type'];
+        $attachments = $this->get_order_tracker_attachments($rel_id, $rel_type);
+
+        if(count($attachments) > 0){
+            $file_html .= '<p class="bold text-muted">'._l('customer_attachments').'</p>';
+            foreach ($attachments as $f) {
+              $href_url = site_url(PURCHASE_PATH.'pur_order_tracker/'.$f['rel_type'].'/'.$f['rel_id'].'/'.$f['file_name']).'" download';
+              $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="'. $f['id'].'">
+              <div class="col-md-8">
+                 <a name="preview-purinv-btn" onclick="preview_purinv_btn(this); return false;" rel_id = "'. $f['rel_id']. '" id = "'.$f['id'].'" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="'. _l('preview_file').'"><i class="fa fa-eye"></i></a>
+                 <div class="pull-left"><i class="'. get_mime_class($f['filetype']).'"></i></div>
+                 <a href=" '. $href_url.'" target="_blank" download>'.$f['file_name'].'</a>
+                 <br />
+                 <small class="text-muted">'.$f['filetype'].'</small>
+              </div>
+              <div class="col-md-4 text-right">';
+                if($f['staffid'] == get_staff_user_id() || is_admin()){
+                $file_html .= '<a href="#" class="text-danger" onclick="delete_order_tracker_attachment('. $f['id'].'); return false;"><i class="fa fa-times"></i></a>';
+                } 
+               $file_html .= '</div></div>';
+            }
+            $file_html .= '<hr />';
+        }
+        
+        return $file_html;
+    }
+
+    public function get_order_tracker_file($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->get(db_prefix() . 'order_tracker_files')->row();
+    }
+
+    public function delete_order_tracker_attachment($id)
+    {
+        $attachment = $this->get_order_tracker_file($id);
+        $deleted    = false;
+        if ($attachment) {
+            $file_path = get_upload_path_by_type('purchase') . 'pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
+            if (file_exists($file_path)) {
+                unlink($file_path);
+            } 
+            $this->db->where('id', $attachment->id);
+            $this->db->delete('tblorder_tracker_files');
+            if ($this->db->affected_rows() > 0) {
+                $deleted = true;
+            }
+
+            if (is_dir(get_upload_path_by_type('purchase') . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id)) {
+                // Check if no attachments left, so we can delete the folder also
+                $other_attachments = list_files(get_upload_path_by_type('purchase') . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id);
+                if (count($other_attachments) == 0) {
+                    // okey only index.html so we can delete the folder also
+                    delete_dir(get_upload_path_by_type('purchase') . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id);
+                }
+            }
+        }
+
+        return $deleted;
+    }
 }

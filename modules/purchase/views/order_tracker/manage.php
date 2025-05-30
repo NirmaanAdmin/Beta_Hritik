@@ -245,6 +245,8 @@
                               _l('anticipate_variation'),
                               _l('cost_to_complete'),
                               _l('final_certified_amount'),
+                              _l('attachment_upload'),
+                              _l('attachment_download'),
                               _l('project'),
                               _l('rli_filter'),
                               _l('category'),
@@ -292,6 +294,8 @@
                                  <th><?php echo _l('anticipate_variation'); ?></th>
                                  <th><?php echo _l('cost_to_complete'); ?></th>
                                  <th><?php echo _l('final_certified_amount'); ?></th>
+                                 <th><?php echo _l('attachment_upload'); ?></th>
+                                 <th><?php echo _l('attachment_download'); ?></th>
                                  <th><?php echo _l('project'); ?></th>
                                  <th><?php echo _l('rli_filter'); ?></th>
                                  <th><?php echo _l('category'); ?></th>
@@ -405,6 +409,26 @@
          </div>
       </div>
    </div>
+</div>
+
+<div class="modal fade" id="viewOrderAttachmentModal" tabindex="-1" role="dialog">
+   <div class="modal-dialog" role="document" style="width: 70%;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title"><?php echo _l('attachment'); ?></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+         </div>
+         <div class="modal-body">
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="view_order_attachment_modal">
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
 
    <?php init_tail(); ?>
    <?php require 'modules/purchase/assets/js/import_excel_items_order_tracker_js.php'; ?>
