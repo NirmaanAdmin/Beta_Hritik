@@ -854,6 +854,17 @@ function rb_related_table($table='')
 
 		]];
 
+		// wo_order_detail
+		$tables[]=['name' => 'wo_order_detail', 'label' => _l('tblwo_order_detail'), 'value' => [
+			'wo_order_detail' => ['primary_key' => ['id'], 'foreign_key' => ['wo_order','item_code','unit_id']],
+
+			'wo_orders' => ['primary_key' => ['id'], 'foreign_key' => ['vendor', 'estimate', 'addedfrom', 'buyer', 'clients', 'project', 'pur_request', 'department', 'sale_invoice'], 'operator_str' => db_prefix().'wo_order_detail.wo_order = '.db_prefix().'wo_orders.id'],
+			'items' => ['primary_key' => ['id'], 'foreign_key' => ['tax', 'tax2', 'group_id', 'color_id', 'style_id', 'model_id', 'size_id', 'unit_id', 'sub_group'], 'operator_str' => db_prefix().'wo_order_detail.item_code = '.db_prefix().'items.id'],
+			'ware_unit_type' => ['primary_key' => ['unit_type_id'], 'foreign_key' => [], 'operator_str' => db_prefix().'wo_order_detail.unit_id = '.db_prefix().'ware_unit_type.unit_type_id'],
+
+
+		]];
+
 
 
 		// pur_request

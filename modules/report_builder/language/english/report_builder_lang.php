@@ -372,6 +372,7 @@ $lang['tblpur_estimates'] 															 = 'ESTIMATES';
 $lang['tblpur_invoice_payment'] 															 = 'PURCHASE INVOICE PAYMENT';
 $lang['tblpur_invoices'] 															 = 'PURCHASE INVOICES';
 $lang['tblpur_order_detail'] 															 = 'PURCHASE ORDER DETAIL';
+$lang['tblwo_order_detail'] 															 = 'WORK ORDER DETAIL';
 $lang['tblpur_order_payment'] 															 = 'PURCHASE ORDER PAYMENT';
 $lang['tblpur_orders'] 															 = 'PURCHASE ORDERS';
 $lang['tblpur_request'] 															 = 'PURCHASE REQUEST';
