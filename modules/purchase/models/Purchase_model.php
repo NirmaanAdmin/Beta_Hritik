@@ -20324,7 +20324,7 @@ class Purchase_model extends App_Model
         $attachment = $this->get_order_tracker_file($id);
         $deleted    = false;
         if ($attachment) {
-            $file_path = get_upload_path_by_type('purchase') . 'pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
+            $file_path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
             if (file_exists($file_path)) {
                 unlink($file_path);
             } 
@@ -20334,12 +20334,12 @@ class Purchase_model extends App_Model
                 $deleted = true;
             }
 
-            if (is_dir(get_upload_path_by_type('purchase') . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id)) {
+            if (is_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id)) {
                 // Check if no attachments left, so we can delete the folder also
-                $other_attachments = list_files(get_upload_path_by_type('purchase') . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id);
+                $other_attachments = list_files(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id);
                 if (count($other_attachments) == 0) {
                     // okey only index.html so we can delete the folder also
-                    delete_dir(get_upload_path_by_type('purchase') . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id);
+                    delete_dir(PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id);
                 }
             }
         }

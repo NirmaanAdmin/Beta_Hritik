@@ -9,7 +9,7 @@
             <div class="row">
                <div class="col-md-12 border-right project_file_area">
                   <?php
-                     $path = 'uploads/purchase/pur_order_tracker/'.$file->rel_type.'/'.$file->rel_id.'/'.$file->file_name;
+                     $path = PURCHASE_PATH.'/pur_order_tracker/'.$file->rel_type.'/'.$file->rel_id.'/'.$file->file_name;
                      if(is_image($path)){ ?>
                   <img src="<?php echo base_url($path); ?>" class="img img-responsive img_style">
                   <?php } else if(strpos($file->file_name,'.pdf') !== false){ ?>

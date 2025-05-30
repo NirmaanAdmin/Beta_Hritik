@@ -4263,3 +4263,61 @@ function get_order_tracker_main_detail($id) {
     return $CI->purchase_model->get_order_tracker($id);
 }
 
+function handle_order_tracker_attachments_array($related, $id)
+{
+    $type = 'pur_invoice';
+    $path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order_tracker/' . $related . '/' . $id . '/';
+    $CI = &get_instance();
+    $totalUploaded = 0;
+    $uploaded_files = [];
+    if (!is_dir($path)) {
+        mkdir($path, 0755, true);
+    }
+
+    if (
+        isset($_FILES['attachments']['name'])
+        && ($_FILES['attachments']['name'] != '' || is_array($_FILES['attachments']['name']) && count($_FILES['attachments']['name']) > 0)
+    ) {
+        if (!is_array($_FILES['attachments']['name'])) {
+            $_FILES['attachments']['name'] = [$_FILES['attachments']['name']];
+            $_FILES['attachments']['type'] = [$_FILES['attachments']['type']];
+            $_FILES['attachments']['tmp_name'] = [$_FILES['attachments']['tmp_name']];
+            $_FILES['attachments']['error'] = [$_FILES['attachments']['error']];
+            $_FILES['attachments']['size'] = [$_FILES['attachments']['size']];
+        }
+
+        _file_attachments_index_fix('attachments');
+        for ($i = 0; $i < count($_FILES['attachments']['name']); $i++) {
+
+            // Get the temp file path
+            $tmpFilePath = $_FILES['attachments']['tmp_name'][$i];
+            // Make sure we have a filepath
+            if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                if (
+                    _perfex_upload_error($_FILES['attachments']['error'][$i])
+                    || !_upload_extension_allowed($_FILES['attachments']['name'][$i])
+                ) {
+                    continue;
+                }
+
+                _maybe_create_upload_path($path);
+                $filename = unique_filename($path, $_FILES['attachments']['name'][$i]);
+                $newFilePath = $path . $filename;
+                // Upload the file into the temp dir
+                if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                    array_push($uploaded_files, [
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES['attachments']['type'][$i],
+                    ]);
+                }
+            }
+        }
+    }
+
+    if (count($uploaded_files) > 0) {
+        return $uploaded_files;
+    }
+
+    return false;
+}
+
