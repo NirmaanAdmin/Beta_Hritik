@@ -1081,4 +1081,263 @@ class Forms extends AdminController
 
         $pdf->Output(mb_strtoupper(slug_it($form->subject)) . '.pdf', $type);
     }
+
+    public function dpr($status = '', $userid = '')
+    {
+        if (!is_numeric($status)) {
+            $status = '';
+        }
+
+        $data['table'] = App_table::find('dpr');
+
+        if ($this->input->is_ajax_request()) {
+            if (!$this->input->post('via_form')) {
+                $tableParams = [
+                    'status' => $status,
+                    'userid' => $userid,
+                ];
+            } else {
+                // request for othes forms when single form is opened
+                $tableParams = [
+                    'userid'        => $this->input->post('via_form_userid'),
+                    'via_form' => $this->input->post('via_form'),
+                ];
+
+                if ($tableParams['userid'] == 0) {
+                    unset($tableParams['userid']);
+                    $tableParams['by_email'] = $this->input->post('via_form_email');
+                }
+            }
+            $data['table']->output($tableParams);
+        }
+
+        $data['chosen_form_status']              = $status;
+        $data['weekly_forms_opening_statistics'] = json_encode($this->forms_model->get_weekly_forms_opening_statistics());
+        $data['title']                             = _l('support_forms');
+        $this->load->model('departments_model');
+        $data['statuses']             = $this->forms_model->get_form_status();
+        $data['staff_deparments_ids'] = $this->departments_model->get_staff_departments(get_staff_user_id(), true);
+        $data['departments']          = $this->departments_model->get();
+        $data['priorities']           = $this->forms_model->get_priority();
+        $data['services']             = $this->forms_model->get_service();
+        $data['form_assignees']     = $this->forms_model->get_forms_assignes_disctinct();
+        $data['bodyclass']            = 'forms-page';
+        add_admin_progress_reports_js_assets();
+        $data['default_forms_list_statuses'] = hooks()->apply_filters('default_forms_list_statuses', [1, 2, 4]);
+        $this->load->view('admin/progress_reports/dpr/list', $data);
+    }
+
+    public function find_dpr_design($form_id = 0)
+    {
+        $dpr_row_template = $this->forms_model->create_dpr_row_template();
+        if ($form_id != 0) {
+            $dpr_form = $this->forms_model->get_dpr_form($form_id);
+            $dpr_form_detail = $this->forms_model->get_dpr_form_detail($form_id);
+            if (!empty($dpr_form_detail)) {
+                $index_order = 0;
+                foreach ($dpr_form_detail as $value) {
+                    $index_order++;
+                    $dpr_row_template .= $this->forms_model->create_dpr_row_template(
+                        'items[' . $index_order . ']',
+                        $value['location'],
+                        $value['agency'],
+                        $value['type'],
+                        $value['work_execute'],
+                        $value['material_consumption'],
+                        $value['machinery'],
+                        $value['skilled'],
+                        $value['unskilled'],
+                        $value['depart'],
+                        $value['total'],
+                        $value['male'],
+                        $value['female'],
+                        true,
+                        $value['id']
+                    );
+                }
+            }
+            $data['dpr_form'] = $dpr_form;
+        }
+        $data['dpr_row_template'] = $dpr_row_template;
+        $this->load->view('admin/progress_reports/dpr/dpr_form_design', $data);
+    }
+
+    public function add_dpr($userid = false)
+    {
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            $data['form_type'] = 'dpr';
+
+            $data['message'] = html_purify($this->input->post('message', false));
+            $id              = $this->forms_model->add($data, get_staff_user_id());
+            if ($id) {
+                set_alert('success', _l('dpr_added_successfully', $id));
+                redirect(admin_url('forms/dpr'));
+            }
+        }
+        if ($userid !== false) {
+            $data['userid'] = $userid;
+            $data['client'] = $this->clients_model->get($userid);
+        }
+        // Load necessary models
+        $this->load->model('knowledge_base_model');
+        $this->load->model('departments_model');
+
+        $data['departments']        = $this->departments_model->get();
+        $data['predefined_replies'] = $this->forms_model->get_predefined_reply();
+        $data['priorities']         = $this->forms_model->get_priority();
+        $data['services']           = $this->forms_model->get_service();
+        $whereStaff                 = [];
+        if (get_option('access_forms_to_none_staff_members') == 0) {
+            $whereStaff['is_not_staff'] = 0;
+        }
+        $data['staff']     = $this->staff_model->get('', $whereStaff);
+        $data['articles']  = $this->knowledge_base_model->get();
+        $data['bodyclass'] = 'form';
+        $data['title']     = _l('new_form');
+
+        if ($this->input->get('project_id') && $this->input->get('project_id') > 0) {
+            // request from project area to create new form
+            $data['project_id'] = $this->input->get('project_id');
+            $data['userid']     = get_client_id_by_project_id($data['project_id']);
+            if (total_rows(db_prefix() . 'contacts', ['active' => 1, 'userid' => $data['userid']]) == 1) {
+                $contact = $this->clients_model->get_contacts($data['userid']);
+                if (isset($contact[0])) {
+                    $data['contact'] = $contact[0];
+                }
+            }
+        } elseif ($this->input->get('contact_id') && $this->input->get('contact_id') > 0 && $this->input->get('userid')) {
+            $contact_id = $this->input->get('contact_id');
+            if (total_rows(db_prefix() . 'contacts', ['active' => 1, 'id' => $contact_id]) == 1) {
+                $contact = $this->clients_model->get_contact($contact_id);
+                if ($contact) {
+                    $data['contact'] = (array) $contact;
+                }
+            }
+        }
+        $data['projects'] = $this->projects_model->get_items();
+        $data['form_listing'] = $this->forms_model->get_form_listing();
+        add_admin_progress_reports_js_assets();
+        $this->load->view('admin/progress_reports/dpr/add', $data);
+    }
+
+    public function view_edit_dpr($id)
+    {
+        if (!$id) {
+            redirect(admin_url('forms/add'));
+        }
+
+        $data['form']         = $this->forms_model->get_form_by_id($id);
+        $data['merged_forms'] = $this->forms_model->get_merged_forms_by_primary_id($id);
+
+        if (!$data['form']) {
+            blank_page(_l('form_not_found'));
+        }
+
+        if (get_option('staff_access_only_assigned_departments') == 1) {
+            if (!is_admin()) {
+                $this->load->model('departments_model');
+                $staff_departments = $this->departments_model->get_staff_departments(get_staff_user_id(), true);
+                if (!in_array($data['form']->department, $staff_departments)) {
+                    set_alert('danger', _l('form_access_by_department_denied'));
+                    redirect(admin_url('access_denied'));
+                }
+            }
+        }
+
+        if ($this->input->post()) {
+            $returnToFormList = false;
+            $data               = $this->input->post();
+
+            if (isset($data['form_add_response_and_back_to_list'])) {
+                $returnToFormList = true;
+                unset($data['form_add_response_and_back_to_list']);
+            }
+
+            $data['message'] = html_purify($this->input->post('message', false));
+            $replyid         = $this->forms_model->add_reply($data, $id, get_staff_user_id());
+
+            if ($replyid) {
+                set_alert('success', _l('replied_to_form_successfully', $id));
+            }
+            if (!$returnToFormList) {
+                redirect(admin_url('forms/form/' . $id));
+            } else {
+                set_form_open(0, $id);
+                redirect(admin_url('forms'));
+            }
+        }
+        // Load necessary models
+        $this->load->model('knowledge_base_model');
+        $this->load->model('departments_model');
+
+        $data['statuses']                       = $this->forms_model->get_form_status();
+        $data['statuses']['callback_translate'] = 'form_status_translate';
+
+        $data['departments']        = $this->departments_model->get();
+        $data['predefined_replies'] = $this->forms_model->get_predefined_reply();
+        $data['priorities']         = $this->forms_model->get_priority();
+        $data['services']           = $this->forms_model->get_service();
+        $whereStaff                 = [];
+        if (get_option('access_forms_to_none_staff_members') == 0) {
+            $whereStaff['is_not_staff'] = 0;
+        }
+        $data['staff']                = $this->staff_model->get('', $whereStaff);
+        $data['articles']             = $this->knowledge_base_model->get();
+        $data['form_replies']       = $this->forms_model->get_form_replies($id);
+        $data['bodyclass']            = 'top-tabs form single-form';
+        $data['title']                = $data['form']->subject;
+        $data['form']->form_notes = $this->misc_model->get_notes($id, 'form');
+        $data['projects'] = $this->projects_model->get_items();
+        $data['form_listing'] = $this->forms_model->get_form_listing();
+        add_admin_progress_reports_js_assets();
+        $this->load->view('admin/progress_reports/dpr/view_edit', $data);
+    }
+
+    public function update_dpr_changes()
+    {
+        if ($this->input->post()) {
+            $this->session->mark_as_flash('active_tab');
+            $this->session->mark_as_flash('active_tab_settings');
+
+            if ($this->input->post('merge_form_ids') !== 0) {
+                $formsToMerge = explode(',', $this->input->post('merge_form_ids'));
+
+                $alreadyMergedForms = $this->forms_model->get_already_merged_forms($formsToMerge);
+                if (count($alreadyMergedForms) > 0) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => _l('cannot_merge_forms_with_ids', implode(',', $alreadyMergedForms)),
+                    ]);
+
+                    die();
+                }
+            }
+            // $data = $this->input->post();
+            // dd($data);
+            $success = $this->forms_model->update_single_form_settings($this->input->post());
+            if ($success) {
+                $this->session->set_flashdata('active_tab', true);
+                $this->session->set_flashdata('active_tab_settings', true);
+                if (get_option('staff_access_only_assigned_departments') == 1) {
+                    $form = $this->forms_model->get_form_by_id($this->input->post('formid'));
+                    $this->load->model('departments_model');
+                    $staff_departments = $this->departments_model->get_staff_departments(get_staff_user_id(), true);
+                    if (!in_array($form->department, $staff_departments) && !is_admin()) {
+                        set_alert('success', _l('form_settings_updated_successfully_and_reassigned', $form->department_name));
+                        echo json_encode([
+                            'success'               => $success,
+                            'department_reassigned' => true,
+                        ]);
+                        die();
+                    }
+                }
+                set_alert('success', _l('dpr_updated_successfully'));
+            }
+            echo json_encode([
+                'success' => $success,
+            ]);
+            die();
+        }
+    }
 }

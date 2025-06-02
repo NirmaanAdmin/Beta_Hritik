@@ -4239,3 +4239,5 @@ $lang['create_new_revision'] = 'Create New Revision';
 $lang['revisions'] = 'Revisions';
 $lang['sub_head'] = 'Sub Head';
 $lang['vendor_bills_assign_to_order'] = 'All vendor bills are assigned to order';
+$lang['dpr_added_successfully'] = 'Daily Progress Report have added successfully';
+$lang['dpr_updated_successfully'] = 'Daily Progress Report have updated successfully';
