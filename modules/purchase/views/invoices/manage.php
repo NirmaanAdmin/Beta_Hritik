@@ -54,6 +54,7 @@
       text-align: center;
       font-weight: bold;
    }
+
 </style>
 <?php $module_name = 'vendor_billing_tracker'; ?>
 <div id="wrapper">
@@ -226,17 +227,16 @@
                            'id',
                            'invoice_code',
                            'invoice_number',
-                           'vendor',
-                           'vbt_order_name',
-                           'vbt_order_amount',
-                           'order_name',
+                           'vendor',                      
+                           'invoice_date',
+                           'group_pur',
+                           'description_of_services',
                            'ril_invoice',
                            'amount_without_tax',
                            'vendor_submitted_tax_amount',
                            'certified_amount',
                            'billing_status',
-                           'invoice_date',
-                           'group_pur',
+                           'vbt_order_name',
                            'tag',
                            'attachment',
                            'adminnote',
@@ -271,7 +271,7 @@
                               <th><?php echo _l('final_certified_amount'); ?></th>
                               <th><?php echo _l('billing_status'); ?></th>
                               <th><?php echo _l('vbt_order_name'); ?></th>
-                              <th><?php echo _l('vbt_order_amount'); ?></th>
+                              <!-- <th><?php echo _l('vbt_order_amount'); ?></th> -->
                               <th><?php echo _l('tag'); ?></th>
                               <th><?php echo _l('attachment'); ?></th>
                               <th><?php echo _l('adminnote'); ?></th>
@@ -298,7 +298,7 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                              <td></td>
+                              <!-- <td></td> -->
                            </tr>
                         </tfoot>
                      </table>

@@ -30,7 +30,7 @@ $aColumns = [
     'final_certified_amount',
     'payment_status',
     3,
-    4,
+    // 4,
     'vendor_note',
     db_prefix() . 'pur_invoices.id as inv_id',
     'adminnote',
