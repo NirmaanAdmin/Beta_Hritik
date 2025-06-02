@@ -323,11 +323,6 @@ var expenseDropzone;
     }
   });
 
-  $('body').on('shown.bs.tab', '#tab_bulk_action, #tab_bulk_assign', function (e) {
-    var target = $(e.target).attr("href").replace('#', '');
-    $('#bulk_active_tab').val(target);
-  });
-
   appValidateForm($('#pur_invoice-expense-form'), {
     expense_name: 'required',
     category: 'required',
@@ -483,6 +478,41 @@ function bulk_convert_ril_bill() {
       if (response.success) {
         $('.convert-bulk-actions-body').html('');
         $('.convert-bulk-actions-body').html(response.bulk_html);
+        $('.bulk_convert_title').html('Bulk Convert');
+        init_selectpicker();
+        $('#convert_ril_bill_modal').modal('show');
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  } else {
+    alert_float('danger', 'Please select at least one item from the list');
+  }
+}
+
+function bulk_assign_ril_bill() {
+  "use strict";
+  var print_id = '';
+  var rows = $('.table-table_pur_invoices').find('tbody tr');
+  $.each(rows, function() {
+    var checkbox = $($(this).find('td').eq(0)).find('input');
+    if (checkbox.prop('checked') === true) {
+        if (print_id !== '') {
+            print_id += ','; // Append a comma before adding the next value
+        }
+        print_id += checkbox.val();
+    }
+  });
+  if (print_id !== '') {
+    // Perform AJAX request to update the invoice date
+    $.post(admin_url + 'purchase/bulk_assign_ril_bill', {
+      ids: print_id,
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        $('.convert-bulk-actions-body').html('');
+        $('.convert-bulk-actions-body').html(response.bulk_html);
+        $('.bulk_convert_title').html('Bulk Assign');
         init_selectpicker();
         $('#convert_ril_bill_modal').modal('show');
       } else {

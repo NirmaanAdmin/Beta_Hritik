@@ -4,7 +4,7 @@
    .show_hide_columns {
       position: absolute;
       z-index: 999;
-      left: 290px
+      left: 384px
    }
 
    /* Ensure the table uses correct layout */
@@ -178,6 +178,7 @@
 
                   <div class="row">
                      <a onclick="bulk_convert_ril_bill(); return false;" data-toggle="modal" data-table=".table-table_pur_invoices" class=" hide bulk-actions-btn table-btn">Bulk Convert</a>
+                     <a onclick="bulk_assign_ril_bill(); return false;" data-toggle="modal" data-table=".table-table_pur_invoices" class=" hide bulk-actions-btn table-btn">Bulk Assign</a>
                   </div>
 
                   <?php
@@ -430,7 +431,7 @@
          <?php echo form_open(admin_url('purchase/add_bulk_convert_ril_bill'), array('id' => 'convert_ril_bill_form', 'class' => '')); ?>
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Bulk Convert</h4>
+            <h4 class="modal-title"><div class="bulk_convert_title"></div></h4>
          </div>
          <div class="modal-body convert-bulk-actions-body">
          </div>

@@ -12399,6 +12399,7 @@ class purchase extends AdminController
             unset($input['bulk_wo_order']);
             unset($input['bulk_order_tracker']);
             $neworderitems = array();
+            $bulk_active_tab = '';
             if(isset($input['neworderitems'])) {
                 $neworderitems = $input['neworderitems'];
                 unset($input['neworderitems']);
@@ -12407,9 +12408,9 @@ class purchase extends AdminController
                 $bulk_active_tab = $input['bulk_active_tab'];
                 unset($input['bulk_active_tab']);
             }
-            $this->load->model('expenses_model');
-            $input = $input['newitems'];
             if($bulk_active_tab == 'bulk_action') {
+                $this->load->model('expenses_model');
+                $input = $input['newitems'];
                 foreach ($input as $ikey => $data) {
                     if (isset($data['pur_invoice'])) {
                         $pur_invoice = $data['pur_invoice'];
@@ -12433,6 +12434,7 @@ class purchase extends AdminController
                         }
                     }
                 }
+                set_alert('success', _l('vendor_bills_converted_to_ril_invoices'));
             }
             if($bulk_active_tab == 'bulk_assign') {
                 if(!empty($neworderitems)) {
@@ -12440,9 +12442,9 @@ class purchase extends AdminController
                         $this->purchase_model->update_vbt_bulk_assign_order($value);
                     }
                 }
+                set_alert('success', _l('vendor_bills_assign_to_order'));
             }
         }
-        set_alert('success', _l('vendor_bills_converted_to_ril_invoices'));
         redirect(admin_url('purchase/invoices'));
     }
 
@@ -13593,5 +13595,13 @@ class purchase extends AdminController
             die;
         }
         $this->load->view('order_tracker/preview_order_tracker_file', $data);
+    }
+
+    public function bulk_assign_ril_bill()
+    {
+        $response = array();
+        $data = $this->input->post();
+        $bulk_html = $this->purchase_model->bulk_assign_ril_bill($data);
+        echo json_encode(['success' => true, 'bulk_html' => $bulk_html]);
     }
 }

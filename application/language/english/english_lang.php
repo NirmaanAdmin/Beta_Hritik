@@ -4238,3 +4238,4 @@ $lang['cost'] = 'Cost';
 $lang['create_new_revision'] = 'Create New Revision';
 $lang['revisions'] = 'Revisions';
 $lang['sub_head'] = 'Sub Head';
+$lang['vendor_bills_assign_to_order'] = 'All vendor bills are assigned to order';
