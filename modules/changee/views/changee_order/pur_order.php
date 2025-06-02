@@ -46,6 +46,35 @@
 
                   <div class="col-md-6">
                     <div class="row">
+                      <div class="col-md-6 form-group">
+                        <div class="form-group">
+                          <label for="po_order_id"><?php echo _l('purchase_order'); ?></label>
+                          <select name="po_order_id" id="po_order_id" onchange="coppy_pur_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                            <option value=""></option>
+                            <?php foreach ($pr_orders as $pr_order) { ?>
+                              <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($pur_order) && ($pur_order->po_order_id == $pr_order['id'])) {
+                                                                                                    echo 'selected';
+                                                                                                  } ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?></option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6 form-group">
+                        <div class="form-group">
+                          <label for="wo_order_id"><?php echo _l('wo_order'); ?></label>
+                          <select name="wo_order_id" id="wo_order_id" onchange="coppy_wo_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                            <option value=""></option>
+                            <?php
+                            foreach ($wo_orders as $pr_order) { ?>
+                              <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($pur_order) && ($pur_order->wo_order_id == $pr_order['id'])) {
+                                                                                                    echo 'selected';
+                                                                                                  } ?>><?php echo html_entity_decode($pr_order['wo_order_number'] . ' - ' . $pr_order['wo_order_name']); ?></option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
                       <div class="col-md-6">
                         <?php $pur_order_name = (isset($pur_order) ? $pur_order->pur_order_name : '');
                         echo render_input('pur_order_name', 'co_order_description', $pur_order_name); ?>
@@ -60,7 +89,7 @@
                           $pur_order_number = (isset($pur_order) ? $pur_order->pur_order_number : '');
                         }
 
- 
+
                         $number = (isset($pur_order) ? $pur_order->number : $next_number);
                         echo form_hidden('number', $number); ?>
 
@@ -76,10 +105,10 @@
                         ?>
                         <label for="vendor"><?php echo _l('vendor'); ?></label>
                         <input type="text" class="form-control" id="vendor_name" value="<?= $vendor_name ?>" readonly>
-                        <input type="hidden"  id="vendor" name="vendor" value="<?= $pur_order->vendor ?>">
+                        <input type="hidden" id="vendor" name="vendor" value="<?= $pur_order->vendor ?>">
                         <!-- <select name="vendor" id="vendor" disabled   class="selectpicker" <?php if (isset($pur_order)) {
-                                                                                  echo 'disabled';
-                                                                                } ?> onchange="estimate_by_vendor(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                                                                                                  echo 'disabled';
+                                                                                                } ?> onchange="estimate_by_vendor(this); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                           <option value=""></option>
                           <?php foreach ($vendors as $s) { ?>
                             <option value="<?php echo changee_pur_html_entity_decode($s['userid']); ?>" <?php if (isset($pur_order) && $pur_order->vendor == $s['userid']) {
@@ -179,35 +208,7 @@
                       </div>
                     </div>
 
-                    <div class="row">
-                      <div class="col-md-6 form-group">
-                        <div class="form-group">
-                          <label for="po_order_id"><?php echo _l('purchase_order'); ?></label>
-                          <select name="po_order_id" id="po_order_id" onchange="coppy_pur_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                            <option value=""></option>
-                            <?php foreach ($pr_orders as $pr_order) { ?>
-                              <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($pur_order) && ($pur_order->po_order_id == $pr_order['id'])) {
-                                                                                                    echo 'selected';
-                                                                                                  } ?>><?php echo html_entity_decode($pr_order['pur_order_number'] . ' - ' . $pr_order['pur_order_name']); ?></option>
-                            <?php } ?>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <div class="form-group">
-                          <label for="wo_order_id"><?php echo _l('wo_order'); ?></label>
-                          <select name="wo_order_id" id="wo_order_id" onchange="coppy_wo_orders(); return false;" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                            <option value=""></option>
-                            <?php
-                            foreach ($wo_orders as $pr_order) { ?>
-                              <option value="<?php echo html_entity_decode($pr_order['id']); ?>" <?php if (isset($pur_order) && ($pur_order->wo_order_id == $pr_order['id'])) {
-                                                                                                    echo 'selected';
-                                                                                                  } ?>><?php echo html_entity_decode($pr_order['wo_order_number'] . ' - ' . $pr_order['wo_order_name']); ?></option>
-                            <?php } ?>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
+
 
                   </div>
                   <div class="col-md-6">
@@ -369,26 +370,7 @@
                     </div> -->
 
                     <div class="row">
-                      <div class="col-md-6 ">
 
-                        <?php
-
-                        $selected = '';
-                        foreach ($area_pur as $area) {
-                          if (isset($pur_order)) {
-                            if ($pur_order->area_pur == $area['id']) {
-                              $selected = $area['id'];
-                            }
-                          }
-                          if (isset($selected_area)) {
-                            if ($selected_area == $area['id']) {
-                              $selected = $area['id'];
-                            }
-                          }
-                        }
-                        echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
-                        ?>
-                      </div>
                       <div class="col-md-6 form-group">
                         <label for="kind"><?php echo _l('kind'); ?></label>
                         <select name="kind" id="kind" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
@@ -583,149 +565,155 @@
               </div> -->
               <!-- <div class="tab-content">
                 <div role="tabpanel" class="tab-pane" id="items"> -->
-                  <div class="col-md-12">
-                    <div class="table-responsive s_table ">
-                      <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
-                        <thead>
-                          <tr>
-                            <th></th>
-                            <th align="left" style="min-width: 76px"><?php echo _l('serial_no'); ?></th>
-                            <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
-                            <th width="14%" align="right"><?php echo _l('description'); ?></th>
-                            <th width="9%" align="right"><?php echo _l('awarded_rate'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
-                            <th width="9%" align="right"><?php echo _l('rate_after_incl_co'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
-                            <th width="9%" align="right" class="qty"><?php echo _l('awarded_qty'); ?></th>
-                            <th width="9%" align="right" class="qty"><?php echo _l('qty_after_incl_co'); ?></th>
-                            <th width="9%" align="right"><?php echo _l('contract_value'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
-                            <th width="9%" align="right"><?php echo _l('updated_subtotal_before_tax'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
-                            <th width="5%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
-                            <!-- <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th> -->
-                            <th width="9%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
-                            <th width="9%" align="right"><?php echo _l('variation'); ?></th>
-                            <th width="5%" align="right"><?php echo _l('remarks'); ?></th>
-                            <th align="right"><i class="fa fa-cog"></i></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php echo $pur_order_row_template; ?>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="col-md-8 col-md-offset-4">
-                      <table class="table text-right">
-                        <tbody>
-                          <tr id="subtotal">
-                            <td><span class="bold"><?php echo _l('subtotal_wo_tax'); ?> :</span>
-                              <?php echo form_hidden('total_mn', ''); ?>
-                            </td>
-                            <td class="wh-subtotal">
-                            </td>
-                          </tr>
-
-                          <tr id="order_discount_percent">
-                            <td>
-                              <div class="row">
-                                <div class="col-md-7">
-                                  <span class="bold"><?php echo _l('pur_discount'); ?> <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="<?php echo _l('discount_percent_note'); ?>"></i></span>
-                                </div>
-                                <div class="col-md-3">
-                                  <?php $discount_total = isset($pur_order) ? $pur_order->discount_total : '';
-                                  echo render_input('order_discount', '', $discount_total, 'number', ['onchange' => 'pur_calculate_total()', 'onblur' => 'pur_calculate_total()']); ?>
-                                </div>
-                                <div class="col-md-2">
-                                  <select name="add_discount_type" id="add_discount_type" class="selectpicker" onchange="pur_calculate_total(); return false;" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
-                                    <option value="percent">%</option>
-                                    <option value="amount" selected><?php echo _l('amount'); ?></option>
-                                  </select>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="order_discount_value">
-
-                            </td>
-                          </tr>
-
-                          <tr id="total_discount">
-                            <td><span class="bold"><?php echo _l('total_discount'); ?> :</span>
-                              <?php echo form_hidden('dc_total', ''); ?>
-                            </td>
-                            <td class="wh-total_discount">
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td>
-                              <div class="row">
-                                <div class="col-md-9">
-                                  <span class="bold"><?php echo _l('pur_shipping_fee'); ?></span>
-                                </div>
-                                <div class="col-md-3">
-                                  <input type="number" onchange="pur_calculate_total()" data-toggle="tooltip" value="<?php if (isset($pur_order)) {
-                                                                                                                        echo $pur_order->shipping_fee;
-                                                                                                                      } else {
-                                                                                                                        echo '0';
-                                                                                                                      } ?>" class="form-control pull-left text-right" name="shipping_fee">
-                                </div>
-                              </div>
-                            </td>
-                            <td class="shiping_fee">
-                            </td>
-                          </tr>
-
-                          <tr id="totalmoney">
-                            <td><span class="bold"><?php echo _l('grand_total'); ?> :</span>
-                              <?php echo form_hidden('grand_total', ''); ?>
-                            </td>
-                            <td class="wh-total">
-                            </td>
-                          </tr>
-
-                          <tr id="co_value">
-                            <td><span class="bold"><?php echo _l('change_order_value'); ?> :</span>
-                              <?php echo form_hidden('co_value', ''); ?>
-                            </td>
-                            <td class="wh-co-value">
-                            </td>
-                          </tr>
-
-                          <tr id="non_tender_total">
-                            <td><span class="bold"><?php echo _l('non_tender_items_in_change_order'); ?> :</span>
-                              <?php echo form_hidden('non_tender_total', ''); ?>
-                            </td>
-                            <td class="wh-non-tender-total">
-                            </td>
-                          </tr>
-
-                        </tbody>
-                      </table>
-                    </div>
-                    <div id="removed-items"></div>
-                  </div>
+              <div class="col-md-12">
+                <div class="table-responsive s_table ">
+                  <table class="table invoice-items-table items table-main-invoice-edit has-calculations no-mtop">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th align="left" style="min-width: 76px"><?php echo _l('serial_no'); ?></th>
+                        <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
+                        <th width="14%" align="right"><?php echo _l('description'); ?></th>
+                        <th align="right"><?php echo _l('area'); ?></th>
+                        <th width="9%" align="right"><?php echo _l('awarded_rate'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
+                        <th width="9%" align="right"><?php echo _l('rate_after_incl_co'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
+                        <th width="9%" align="right" class="qty"><?php echo _l('awarded_qty'); ?></th>
+                        <th width="9%" align="right" class="qty"><?php echo _l('qty_after_incl_co'); ?></th>
+                        <th width="9%" align="right"><?php echo _l('contract_value'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
+                        <th width="9%" align="right"><?php echo _l('updated_subtotal_before_tax'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
+                        <th width="5%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
+                        <!-- <th width="5%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th> -->
+                        <th width="9%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>
+                        <th width="9%" align="right"><?php echo _l('variation'); ?></th>
+                        <!-- <th width="5%" align="right"><?php echo _l('remarks'); ?></th> -->
+                        <th align="right"><i class="fa fa-cog"></i></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php echo $pur_order_row_template; ?>
+                    </tbody>
+                  </table>
                 </div>
-                <div role="tabpanel" class="tab-pane " id="history" class="hide">
-                <!-- <div class="col-md-12" id="history_tbody">
+                <div class="col-md-8 col-md-offset-4">
+                  <table class="table text-right">
+                    <tbody>
+                      <tr id="subtotal">
+                        <td><span class="bold"><?php echo _l('subtotal_wo_tax'); ?> :</span>
+                          <?php echo form_hidden('total_mn', ''); ?>
+                        </td>
+                        <td class="wh-subtotal">
+                        </td>
+                      </tr>
+
+                      <tr id="order_discount_percent">
+                        <td>
+                          <div class="row">
+                            <div class="col-md-7">
+                              <span class="bold"><?php echo _l('pur_discount'); ?> <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="<?php echo _l('discount_percent_note'); ?>"></i></span>
+                            </div>
+                            <div class="col-md-3">
+                              <?php $discount_total = isset($pur_order) ? $pur_order->discount_total : '';
+                              echo render_input('order_discount', '', $discount_total, 'number', ['onchange' => 'pur_calculate_total()', 'onblur' => 'pur_calculate_total()']); ?>
+                            </div>
+                            <div class="col-md-2">
+                              <select name="add_discount_type" id="add_discount_type" class="selectpicker" onchange="pur_calculate_total(); return false;" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                                <option value="percent">%</option>
+                                <option value="amount" selected><?php echo _l('amount'); ?></option>
+                              </select>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="order_discount_value">
+
+                        </td>
+                      </tr>
+
+                      <tr id="total_discount">
+                        <td><span class="bold"><?php echo _l('total_discount'); ?> :</span>
+                          <?php echo form_hidden('dc_total', ''); ?>
+                        </td>
+                        <td class="wh-total_discount">
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <div class="row">
+                            <div class="col-md-9">
+                              <span class="bold"><?php echo _l('pur_shipping_fee'); ?></span>
+                            </div>
+                            <div class="col-md-3">
+                              <input type="number" onchange="pur_calculate_total()" data-toggle="tooltip" value="<?php if (isset($pur_order)) {
+                                                                                                                    echo $pur_order->shipping_fee;
+                                                                                                                  } else {
+                                                                                                                    echo '0';
+                                                                                                                  } ?>" class="form-control pull-left text-right" name="shipping_fee">
+                            </div>
+                          </div>
+                        </td>
+                        <td class="shiping_fee">
+                        </td>
+                      </tr>
+
+                      <tr id="totalmoney">
+                        <td><span class="bold"><?php echo _l('grand_total'); ?> :</span>
+                          <?php echo form_hidden('grand_total', ''); ?>
+                        </td>
+                        <td class="wh-total">
+                        </td>
+                      </tr>
+
+                      <tr id="co_value">
+                        <td><span class="bold"><?php echo _l('change_order_value'); ?> :</span>
+                          <?php echo form_hidden('co_value', ''); ?>
+                        </td>
+                        <td class="wh-co-value">
+                        </td>
+                      </tr>
+
+                      <tr id="non_tender_total">
+                        <td><span class="bold"><?php echo _l('non_tender_items_in_change_order'); ?> :</span>
+                          <?php echo form_hidden('non_tender_total', ''); ?>
+                        </td>
+                        <td class="wh-non-tender-total">
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+                <div id="removed-items"></div>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane " id="history" class="hide">
+              <!-- <div class="col-md-12" id="history_tbody">
                     
                                                                                                                       
                   </div> -->
-                <!-- </div>
+              <!-- </div>
               </div> -->
             </div>
           </div>
           <div class="row">
             <div class="col-md-12 mtop15">
               <div class="panel-body bottom-transaction">
-                <?php $value = (isset($pur_order) ? $pur_order->order_summary : changee_get_changee_option('order_summary')); 
+                <?php $value = (isset($pur_order) ? $pur_order->order_summary : changee_get_changee_option('order_summary'));
                 $day = date("j");
                 $month = date("F");
                 $year = date("Y");
-                function getOrdinalSuffix($day) {
-                    if ($day > 3 && $day < 21) return $day . "th";
-                    switch ($day % 10) {
-                        case 1: return $day . "st";
-                        case 2: return $day . "nd";
-                        case 3: return $day . "rd";
-                        default: return $day . "th";
-                    }
+                function getOrdinalSuffix($day)
+                {
+                  if ($day > 3 && $day < 21) return $day . "th";
+                  switch ($day % 10) {
+                    case 1:
+                      return $day . "st";
+                    case 2:
+                      return $day . "nd";
+                    case 3:
+                      return $day . "rd";
+                    default:
+                      return $day . "th";
+                  }
                 }
                 $formatted_date = getOrdinalSuffix($day) . " " . $month . " " . $year;
                 if (!isset($pur_order) && $pur_order->order_summary == '') {
@@ -735,8 +723,8 @@
                 <span class="vendor_address"></span><br>
                 <span class="vendor_city"></span><span class="vendor_state"></span><span class="vendor_pincode"></span></span><span class="vendor_country"></span><br><br>
 
-                <strong>C.O. Number:</strong> BI/JAMNAGAR/24-25/'.str_pad($next_number, 5, '0', STR_PAD_LEFT).'<br>
-                <strong>C.O. Date:</strong> <span class="order_full_date">'.date("d-M-y").'</span><br>
+                <strong>C.O. Number:</strong> BI/JAMNAGAR/24-25/' . str_pad($next_number, 5, '0', STR_PAD_LEFT) . '<br>
+                <strong>C.O. Date:</strong> <span class="order_full_date">' . date("d-M-y") . '</span><br>
                 <strong>Rev. No.:</strong><br>
                 <strong>Rev. Date:</strong><br><br>
 
@@ -755,7 +743,7 @@
                 <strong>Subject:</strong> <span class="pur_order_name"></span><br><br>
 
                 Dear Sir/Madam,<br>
-                This is with reference to your change order dated <span class="order_date">'.$formatted_date.'</span> and further our subsequent discussions with regards to <span class="pur_order_name"></span> for our above-mentioned project. We are pleased to issue you the order of <strong>INR <span class="subtotal_in_value"></span>/-</strong> (<span class="subtotal_in_words"></span>) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
+                This is with reference to your change order dated <span class="order_date">' . $formatted_date . '</span> and further our subsequent discussions with regards to <span class="pur_order_name"></span> for our above-mentioned project. We are pleased to issue you the order of <strong>INR <span class="subtotal_in_value"></span>/-</strong> (<span class="subtotal_in_words"></span>) (Exclusive of GST) on the following terms and conditions and specifications for the same as annexed.<br><br>
 
                 <strong>Currency:</strong> INR<br><br>
 
@@ -1053,7 +1041,7 @@
                 BASILLUS Shall provide the Water and Electricity free of cost for executing this order at one point. Vendor shall arrange the further distribution/ extension at their own cost.<br>
 
                 ";
-                } 
+                }
                 ?>
                 <?php echo render_textarea('terms', 'terms_and_conditions', $value, array(), array(), 'mtop15', 'tinymce'); ?>
                 <div id="vendor_data">

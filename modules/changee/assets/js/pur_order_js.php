@@ -193,6 +193,13 @@
       }, 500);
     });
 
+    get_project_areas();
+
+    $("body").on('change', 'select[name="project"]', function() {
+      get_project_areas();
+    });
+
+
     $("body").on('change', 'input[name="pur_order_name"]', function() {
       var pur_order_name = $(this).val();
       setTimeout(function() {
@@ -761,7 +768,7 @@
     var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.invoice-items-table tbody .item').length + 1;
     lastAddedItemKey = item_key;
     $("body").append('<div class="dt-loader"></div>');
-    pur_get_item_row_template('newitems[' + item_key + ']', data.item_code, data.item_text, data.description, data.original_unit_price, data.unit_price, data.original_quantity, data.quantity, data.unit_name, data.unit_id, data.into_money, data.into_money_updated, item_key, data.tax_value, data.total, data.taxname, currency_rate, to_currency, data.remarks).done(function(output) {
+    pur_get_item_row_template('newitems[' + item_key + ']', data.item_code, data.item_text, data.description, data.original_unit_price, data.unit_price, data.original_quantity, data.quantity, data.unit_name, data.unit_id, data.into_money, data.into_money_updated, item_key, data.tax_value, data.total, data.taxname, currency_rate, to_currency, data.remarks, data.area).done(function(output) {
       table_row += output;
 
       $('.invoice-item table.invoice-items-table.items tbody').append(table_row);
@@ -775,7 +782,7 @@
       $('body').find('#items-warning').remove();
       $("body").find('.dt-loader').remove();
       $('#item_select').selectpicker('val', '');
-
+      get_project_areas(data.area);
       return true;
     });
     return false;
@@ -801,6 +808,7 @@
     response.into_money_updated = $('.invoice-item .main input[name="into_money_updated"]').val();
     response.total = $('.invoice-item .main input[name="total"]').val();
     response.remarks = $('.invoice-item .main textarea[name="remarks"]').val();
+    response.area = $('.invoice-item .main select[name="area"]').val();
     return response;
   }
 
@@ -839,7 +847,7 @@
     }
   }
 
-  function pur_get_item_row_template(name, item_code, item_text, description, original_unit_price, unit_price, original_quantity, quantity, unit_name, unit_id, into_money, into_money_updated, item_key, tax_value, total, taxname, currency_rate, to_currency, remarks) {
+  function pur_get_item_row_template(name, item_code, item_text, description, original_unit_price, unit_price, original_quantity, quantity, unit_name, unit_id, into_money, into_money_updated, item_key, tax_value, total, taxname, currency_rate, to_currency, remarks,area) {
     "use strict";
 
     jQuery.ajaxSetup({
@@ -865,7 +873,8 @@
       item_code: item_code,
       currency_rate: currency_rate,
       to_currency: to_currency,
-      remarks: remarks
+      remarks: remarks,
+      area: area
     });
     jQuery.ajaxSetup({
       async: true
@@ -972,7 +981,7 @@ The original amount of INR <strong>${originalAmount}</strong> is hereby revised 
             console.error("No vendornote data in response!");
             tinymce.get('vendornote').setContent('');
           }
-
+          
 
           $('#pur_order_number').val(final_po_number);
           $('select[name="currency"]').val(response.currency).change();
@@ -980,6 +989,8 @@ The original amount of INR <strong>${originalAmount}</strong> is hereby revised 
 
           $('.invoice-item table.invoice-items-table.items tbody').html('');
           $('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
+          $('select[name="project"]').val(response.po_project_id);
+          $('select[name="project"]').selectpicker('refresh');
 
           setTimeout(function() {
             pur_calculate_total();
@@ -1085,6 +1096,8 @@ The original amount of INR <strong>${originalAmount}</strong> is hereby revised 
 
           $('.invoice-item table.invoice-items-table.items tbody').html('');
           $('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
+          $('select[name="project"]').val(response.wo_project_id);
+          $('select[name="project"]').selectpicker('refresh');
 
           setTimeout(function() {
             pur_calculate_total();
@@ -1120,6 +1133,39 @@ The original amount of INR <strong>${originalAmount}</strong> is hereby revised 
         const raw = $('#order_summary').val();
         tinymce.get('order_summary').setContent(raw);
       }
+    }
+  }
+
+  function get_project_areas(selected_area = '') {
+    var project = $('select[name="project"]').val();
+    if (project !== '' && $('input[name="isedit"]').length == 0) {
+      $.ajax({
+        url: admin_url + 'purchase/get_project_areas',
+        method: 'POST',
+        data: {
+          project: project
+        },
+        dataType: 'json',
+        success: function(response) {
+          var options = '';
+          $.each(response, function(index, area) {
+            var selected = (selected_area !== '' && selected_area == area.id) ? ' selected' : '';
+            options += '<option value="' + area.id + '"' + selected + '>' + area.area_name + '</option>';
+          });
+          var $select = $('#project_area select');
+          $select.html(options);
+          $select.selectpicker('refresh');
+
+          $('.invoice-item .main select[name="area"]').val('');
+          var $select = $('.invoice-item .main select[name="area"]');
+          $select.selectpicker('refresh');
+        },
+        error: function() {}
+      });
+    } else if (project == '' && $('input[name="isedit"]').length == 0) {
+      var $select = $('#project_area select');
+      $select.html('');
+      $select.selectpicker('refresh');
     }
   }
 </script>

@@ -2409,6 +2409,7 @@ class Changee_model extends App_Model
         unset($data['variation']);
         unset($data['additional_discount']);
         unset($data['serial_no']);
+        unset($data['area']);
 
         // $check_appr = $this->get_approve_setting('pur_order');
         // $data['approve_status'] = 1;
@@ -2547,6 +2548,7 @@ class Changee_model extends App_Model
                     $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
                     $dt_data['variation'] = $rqd['variation'];
                     $dt_data['serial_no'] = $rqd['serial_no'];
+                    $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                     $tax_money = 0;
                     $tax_rate_value = 0;
                     $tax_rate = null;
@@ -2631,7 +2633,7 @@ class Changee_model extends App_Model
         unset($data['variation']);
         unset($data['additional_discount']);
         unset($data['serial_no']);
-
+        unset($data['area']);
         $new_order = [];
         if (isset($data['newitems'])) {
             $new_order = $data['newitems'];
@@ -2746,6 +2748,7 @@ class Changee_model extends App_Model
                 $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
                 $dt_data['variation'] = $rqd['variation'];
                 $dt_data['serial_no'] = $rqd['serial_no'];
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -2796,6 +2799,7 @@ class Changee_model extends App_Model
                 $dt_data['tender_item'] = isset($rqd['tender_item']) ? $rqd['tender_item'] : 0;
                 $dt_data['variation'] = $rqd['variation'];
                 $dt_data['serial_no'] = $rqd['serial_no'];
+                $dt_data['area'] = !empty($rqd['area']) ? implode(',', $rqd['area']) : NULL;
                 $tax_money = 0;
                 $tax_rate_value = 0;
                 $tax_rate = null;
@@ -11202,7 +11206,7 @@ class Changee_model extends App_Model
      *
      * @return     string      
      */
-    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $remarks = '', $tender_item = 0, $serial_no = '')
+    public function create_changee_order_row_template($name = '', $item_code = '', $item_text = '', $item_description = '', $original_unit_price = '', $unit_price = '', $original_quantity = '', $quantity = '', $unit_name = '', $unit_id = '', $into_money = '', $into_money_updated = '', $item_key = '', $tax_value = '', $total = '', $tax_name = '', $tax_rate = '', $tax_id = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $remarks = '', $tender_item = 0, $serial_no = '', $area = '')
     {
         $this->load->model('invoice_items_model');
         $row = '';
@@ -11228,6 +11232,7 @@ class Changee_model extends App_Model
         $array_rate_attr = ['min' => '0.0', 'step' => 'any'];
         $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
         $array_subtotal_attr = ['readonly' => true];
+        $name_area = 'area';
 
         $text_right_class = 'text-right';
 
@@ -11267,6 +11272,7 @@ class Changee_model extends App_Model
             $name_remarks = $name . '[remarks]';
             $name_variation = $name . '[variation]';
             $name_serial_no = $name . '[serial_no]';
+            $name_area = $name . '[area][]';
             $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('unit_price')];
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
@@ -11318,6 +11324,7 @@ class Changee_model extends App_Model
         }
         $row .= '</td>';
         $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+        $row .= '<td class="area">' . get_area_list_changee($name_area, $area) . '</td>';
         $row .= '<td class="original_rate">' . render_input($name_original_unit_price, '', $original_unit_price, 'number', ['readonly' => true], [], 'no-margin') . '<span class="variation">Amendment : </span></td>';
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
@@ -11350,7 +11357,7 @@ class Changee_model extends App_Model
         $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
         $row .= '<td class="_total">' . render_input($name_total, '', $total, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
         $row .= '<td class="variation">' . render_input($name_variation, '', $variation, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
-        $row .= '<td class="">' . render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
+        // $row .= '<td class="">' . render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
         if ($name == '') {
             $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
         } else {
@@ -14836,7 +14843,7 @@ class Changee_model extends App_Model
     public function get_pur_order_detail_in_po($pur_order)
     {
 
-        $pur_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, prq.description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
+        $pur_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, prq.description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total, prq.area
         FROM ' . db_prefix() . 'pur_order_detail prq 
         LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id 
         WHERE prq.pur_order = ' . $pur_order)->result_array();
@@ -14861,7 +14868,7 @@ class Changee_model extends App_Model
     public function get_wo_order_detail_in_po($wo_order)
     {
 
-        $wo_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, prq.description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total 
+        $wo_order_lst = $this->db->query('SELECT item_code, prq.unit_id as unit_id, unit_price, quantity, into_money, prq.description, prq.tax as tax, tax_name, tax_rate, item_name, tax_value, total as total_money, total as total, prq.area
         FROM ' . db_prefix() . 'wo_order_detail prq 
         LEFT JOIN ' . db_prefix() . 'items it ON prq.item_code = it.id 
         WHERE prq.wo_order = ' . $wo_order)->result_array();
