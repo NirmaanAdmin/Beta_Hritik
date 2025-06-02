@@ -21,16 +21,16 @@ $aColumns = [
     'invoice_number',
     'vendor_invoice_number',
     db_prefix() . 'pur_vendor.company',
-    3,
-    4,
+    'invoice_date',
+    db_prefix() . 'items_groups.name',
     db_prefix() . 'pur_invoices.pur_order',
     'expense_convert',
     'vendor_submitted_amount_without_tax',
     'vendor_submitted_tax_amount',
     'final_certified_amount',
     'payment_status',
-    'invoice_date',
-    db_prefix() . 'items_groups.name',
+    3,
+    4,
     'vendor_note',
     db_prefix() . 'pur_invoices.id as inv_id',
     'adminnote',
@@ -357,7 +357,7 @@ foreach ($rResult as $aRow) {
             } else {
                 $order_data = '';
             }
-            $_data = '<div style="width: 200px;">'.$order_data.'</div>';
+            $_data = '<div style="width: 200px;">' . $order_data . '</div>';
         } elseif ($aColumns[$i] == 4) {
             $order_data = '';
             if (!empty($aRow['order_tracker_id'])) {
