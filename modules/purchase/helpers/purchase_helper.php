@@ -4321,3 +4321,10 @@ function handle_order_tracker_attachments_array($related, $id)
     return false;
 }
 
+function get_all_po_data(){
+    $CI = &get_instance();
+    $CI->db->select('*');
+    $CI->db->from(db_prefix() . 'pur_orders');
+    return $CI->db->get()->result_array();
+}
+

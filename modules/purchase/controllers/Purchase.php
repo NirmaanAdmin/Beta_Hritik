@@ -12400,15 +12400,15 @@ class purchase extends AdminController
             unset($input['bulk_order_tracker']);
             $neworderitems = array();
             $bulk_active_tab = '';
-            if(isset($input['neworderitems'])) {
+            if (isset($input['neworderitems'])) {
                 $neworderitems = $input['neworderitems'];
                 unset($input['neworderitems']);
             }
-            if(isset($input['bulk_active_tab'])) {
+            if (isset($input['bulk_active_tab'])) {
                 $bulk_active_tab = $input['bulk_active_tab'];
                 unset($input['bulk_active_tab']);
             }
-            if($bulk_active_tab == 'bulk_action') {
+            if ($bulk_active_tab == 'bulk_action') {
                 $this->load->model('expenses_model');
                 $input = $input['newitems'];
                 foreach ($input as $ikey => $data) {
@@ -12436,8 +12436,8 @@ class purchase extends AdminController
                 }
                 set_alert('success', _l('vendor_bills_converted_to_ril_invoices'));
             }
-            if($bulk_active_tab == 'bulk_assign') {
-                if(!empty($neworderitems)) {
+            if ($bulk_active_tab == 'bulk_assign') {
+                if (!empty($neworderitems)) {
                     foreach ($neworderitems as $key => $value) {
                         $this->purchase_model->update_vbt_bulk_assign_order($value);
                     }
@@ -13603,5 +13603,138 @@ class purchase extends AdminController
         $data = $this->input->post();
         $bulk_html = $this->purchase_model->bulk_assign_ril_bill($data);
         echo json_encode(['success' => true, 'bulk_html' => $bulk_html]);
+    }
+
+    public function po_chats()
+    {
+        // 2. Fetch “monthly totals” data (for a line chart)
+        $po_data = get_all_po_data();
+        $labels       = array_column($po_data, 'order_date'); // ['January','February',...]
+        $data     = array_column($po_data, 'total'); // [12000,15000,...]
+
+        // 3. Build the “line chart” definition
+        $line_chart = [
+            'type'     => 'line',
+            'labels'   => $labels,
+            'datasets' => [
+                [
+                    'label'           => _l('PO Value'),   // e.g. “Monthly Revenue”
+                    'data'            => $data,
+                    'borderColor'     => 'rgba(54, 162, 235, 1)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+                    'fill'            => true,
+                    'tension'         => 0.4
+                ]
+            ],
+            'options'  => [
+                'responsive' => true,
+                'plugins'    => [
+                    'title'  => [
+                        'display' => true,
+                        'text'    => _l('PO trends')
+                    ],
+                    'legend' => ['position' => 'top']
+                ],
+                'scales'     => [
+                    'y' => ['beginAtZero' => true]
+                ]
+            ]
+        ];
+        $approved_count = 0;
+        $draft_count    = 0;
+        $rejected_count = 0;
+
+        foreach ($po_data as $row) {
+            switch (strtolower($row['approve_status'])) {
+                case '2':
+                    $approved_count++;
+                    break;
+                case '1':
+                    $draft_count++;
+                    break;
+                case '3':
+                    $rejected_count++;
+                    break;
+                default:
+                    // If there are other statuses, ignore or handle here
+                    break;
+            }
+        }
+
+        // The pie_data array must match the order of labels:
+        $pie_data = [
+            $approved_count,
+            $draft_count,
+            $rejected_count
+        ];
+        // 5. Build the “pie chart” definition
+        $pie_chart = [
+            'type'     => 'pie',
+            'labels'   => ['Approved', 'Draft', 'Rejected'],
+            'datasets' => [
+                [
+                    'label'           => _l('category_breakdown'),
+                    'data'            => $pie_data,
+                    'backgroundColor' => [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)'
+                    ]
+                ]
+            ],
+            'options'  => [
+                'responsive' => true,
+                'plugins'    => [
+                    'title'  => [
+                        'display' => true,
+                        'text'    => _l('PO Approval Status (Pie)')
+                    ],
+                    'legend' => ['position' => 'bottom']
+                ]
+            ]
+        ];
+
+        // 6. If you wanted a second dataset—say, a bar chart of the same “monthly totals”—you could add another array:
+        $bar_chart = [
+            'type'     => 'bar',
+            'labels'   => $labels,
+            'datasets' => [
+                [
+                    'label'           => _l('Monthly Revenue (Bar)'),
+                    'data'            => $data,
+                    'backgroundColor' => 'rgba(153, 102, 255, 0.6)',
+                    'borderColor'     => 'rgba(153, 102, 255, 1)',
+                    'borderWidth'     => 1
+                ]
+            ],
+            'options'  => [
+                'responsive' => true,
+                'plugins'    => [
+                    'title'  => [
+                        'display' => true,
+                        'text'    => _l('Monthly Revenue (Bar)')
+                    ],
+                    'legend' => ['position' => 'top']
+                ],
+                'scales'     => [
+                    'y' => ['beginAtZero' => true]
+                ]
+            ]
+        ];
+
+        // 7. Combine all chart definitions into one array
+        $data['charts'] = [
+            $line_chart,
+            $pie_chart,
+            $bar_chart
+        ];
+        $data['col_classes'] = [
+            'col-md-8',   // for the Line chart (index 0)
+            'col-md-4',   // for the Pie chart  (index 1)
+            'col-md-12'    // for the Bar chart  (index 2)
+        ];
+        // 8. Load the shared view
+        $this->load->view('admin/chartjs_common_view', $data);
     }
 }
