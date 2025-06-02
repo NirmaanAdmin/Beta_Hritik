@@ -19963,13 +19963,14 @@ class Purchase_model extends App_Model
             $response .= '<table class="table items">';
             $response .= '<thead>
                 <tr>
-                    <th width="18%" align="left">' . _l('estimate_table_item_heading') . '</th>
-                    <th width="18%" align="left">' . _l('estimate_table_item_description') . '</th>
-                    <th width="12%" align="left">' . _l('sub_groups_pur') . '</th>
-                    <th width="12%" class="qty" align="right">' . _l('budgeted_qty') . '</th>
-                    <th width="12%" class="qty" align="right">' . _l('remaining_qty') . '</th>
-                    <th width="13%" align="right">' . _l('budgeted_rate') . '</th>
-                    <th width="15%" align="right">' . _l('control_remarks') . '</th>
+                    <th width="15%" align="left">' . _l('estimate_table_item_heading') . '</th>
+                    <th width="15%" align="left">' . _l('estimate_table_item_description') . '</th>
+                    <th width="11%" align="left">' . _l('sub_groups_pur') . '</th>
+                    <th width="11%" class="qty" align="right">' . _l('budgeted_qty') . '</th>
+                    <th width="11%" class="qty" align="right">' . _l('remaining_qty') . '</th>
+                    <th width="11%" align="right">' . _l('budgeted_rate') . '</th>
+                    <th width="11%" align="right">' . _l('budgeted_amount') . '</th>
+                    <th width="14%" align="right">' . _l('control_remarks') . '</th>
                 </tr>
             </thead>';
             $response .= '<tbody style="border: 1px solid #ddd;">';
@@ -19978,11 +19979,14 @@ class Purchase_model extends App_Model
                 $purchase_unit_name = get_purchase_unit($item['unit_id']);
                 $purchase_unit_name = !empty($purchase_unit_name) ? ' ' . $purchase_unit_name : '';
                 $cost_control_remarks_name = 'cost_control_remarks[' . $item['id'] . ']';
+                $budgeted_amount = $item['qty'] * $item['rate'];
                 $remaining_qty = 0;
+                $pur_detail_quantity = 0;
+                $pur_detail_amount = 0;
                 $budgeted_amount_class = '';
 
                 if($module == 'pur_orders') {
-                    $this->db->select('SUM(' . db_prefix() . 'pur_order_detail.quantity) as total_qty');
+                    $this->db->select(db_prefix() . 'pur_order_detail.id as id, '.db_prefix() . 'pur_order_detail.quantity as quantity, '.db_prefix() . 'pur_order_detail.total as total');
                     $this->db->from(db_prefix() . 'pur_order_detail');
                     $this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order', 'left');
                     $this->db->where(db_prefix() . 'pur_order_detail.item_code', $item['item_code']);
@@ -19990,10 +19994,18 @@ class Purchase_model extends App_Model
                     $this->db->where(db_prefix() . 'pur_orders.estimate', $estimate_id);
                     $this->db->where(db_prefix() . 'pur_orders.group_pur', $budget_head_id);
                     $this->db->where(db_prefix() . 'pur_orders.approve_status', 2);
-                    $pur_order_detail_qty = $this->db->get()->row();
-                    $pur_order_detail_qty = !empty($pur_order_detail_qty->total_qty) ? $pur_order_detail_qty->total_qty : 0;
-                    $remaining_qty = $item['qty'] - $pur_order_detail_qty;
+                    $pur_order_detail_qty_total = $this->db->get()->result_array();
+                    if(!empty($pur_order_detail_qty_total)) {
+                        foreach ($pur_order_detail_qty_total as $srow) {
+                            $pur_detail_quantity += (float)$srow['quantity'];
+                            $pur_detail_amount += (float)$srow['total'];
+                        }
+                    }
+                    $remaining_qty = $item['qty'] - $pur_detail_quantity;
                     $remaining_qty = number_format($remaining_qty, 2);
+                }
+                if($pur_detail_amount > $budgeted_amount) {
+                    $budgeted_amount_class = 'remaining_qty_red_class';
                 }
 
                 $response .= '<tr>';
@@ -20014,6 +20026,7 @@ class Purchase_model extends App_Model
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
                 $response .= '<td align="right" class="'.$budgeted_amount_class.'">' . app_format_money($item['rate'], $base_currency) . '</td>';
+                $response .= '<td align="right" class="'.$budgeted_amount_class.'">' . app_format_money($budgeted_amount, $base_currency) . '</td>';
                 $response .= '<td align="right">' . render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']) . '</td>';
                 $response .= '</tr>';
             }

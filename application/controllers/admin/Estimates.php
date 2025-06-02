@@ -297,6 +297,8 @@ class Estimates extends AdminController
             $data['send_later'] = true;
             $this->session->unset_userdata('send_later');
         }
+        $this->load->model('purchase/purchase_model');
+        $data['sub_groups_pur'] = $this->purchase_model->get_sub_group();
 
         if ($to_return == false) {
             $this->load->view('admin/estimates/estimate_preview_template', $data);

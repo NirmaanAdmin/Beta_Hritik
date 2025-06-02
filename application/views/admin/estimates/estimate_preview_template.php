@@ -720,7 +720,9 @@
                             ?>
                             </p>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-8 pull-right">
+                            <button type="button" class="btn btn-info pull-right" id="download_historical_data" style="margin-left: 7px;"><?php echo _l('download_historical_data'); ?></button>
+                            <button type="button" class="btn btn-info pull-right" id="cost_control_sheet"><?php echo _l('cost_control_sheet'); ?></button>
                         </div>
                         <div class="table-responsive s_table">
                             <table class="table estimate-items-table items table-main-estimate-edit has-calculations no-mtop">
@@ -833,6 +835,31 @@
 
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="cost_complete_modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document" style="width: 98%;">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">View Items</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <div class="col-md-3" style="padding-left: 0px; padding-top: 5px;">
+                            <?php
+                            echo render_select('cost_sub_head', $sub_groups_pur, array('id', 'sub_group_name'), 'Sub Head');
+                            ?>
+                          </div>
+                        </div>
+
+                        <div class="modal-body">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="view_cost_control_sheet">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                 </div>
 
@@ -1017,5 +1044,45 @@ init_tabs_scrollable();
 <?php if ($send_later) { ?>
 schedule_estimate_send(<?php echo e($estimate->id); ?>);
 <?php } ?>
+$("body").on('click', '#cost_control_sheet', function () {
+  cost_control_sheet(this);
+});
+
+$("body").on('change', 'select[name="cost_sub_head"]', function () {
+    cost_control_sheet(this);
+});
+
+$("body").on('click', '#download_historical_data', function() {
+  var estimate_id = <?php echo e($estimate->id); ?>;
+  var budget_head_id = $(this).closest('.detailed-costing-tab').data('id');
+  if (estimate_id !== '' && budget_head_id !== '') {
+    var url = admin_url + 'purchase/download_revision_historical_data?estimate_id='+encodeURIComponent(estimate_id)+'&budget_head_id=' + encodeURIComponent(budget_head_id);
+    window.location.href = url;
+  }
+});
+
+function cost_control_sheet(el) {
+  var estimate_id = <?php echo e($estimate->id); ?>;
+  var budget_head_id = $(el).closest('.detailed-costing-tab').data('id');
+  var cost_sub_head = $('select[name="cost_sub_head"]').val();
+  if (estimate_id !== '' && budget_head_id !== '') {
+    $.post(admin_url + 'purchase/get_cost_control_sheet', {
+      estimate_id: estimate_id,
+      budget_head_id: budget_head_id,
+      cost_sub_head: cost_sub_head,
+      module: 'pur_orders'
+    }).done(function (response) {
+      response = JSON.parse(response);
+      if (response.result) {
+        $('.view_cost_control_sheet').html('');
+        $('.view_cost_control_sheet').html(response.result);
+        $('#cost_complete_modal').modal('show');
+      } else {
+        $('.view_cost_control_sheet').html('');
+        alert_float('warning', "No any items have found");
+      }
+    });
+  }
+}
 </script>
 <?php $this->load->view('admin/estimates/estimate_send_to_client'); ?>
