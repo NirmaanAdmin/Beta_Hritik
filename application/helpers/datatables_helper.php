@@ -424,7 +424,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             (t.total + IFNULL(t.co_total, 0)) AS total_rev_contract_value,
             t.anticipate_variation,
             (IFNULL(t.anticipate_variation, 0) + (t.total + IFNULL(t.co_total, 0))) AS cost_to_complete,
-            t.final_certified_amount AS final_certified_amount,
+            COALESCE(inv_ot_sum.final_certified_amount, 0) AS final_certified_amount,
             t.group_pur,
             t.kind,
             t.remarks AS remarks,
@@ -435,6 +435,15 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         FROM tblpur_order_tracker t
         LEFT JOIN tblpur_vendor pv ON pv.userid = t.vendor
         LEFT JOIN tblprojects pr ON pr.id = t.project
+        LEFT JOIN (
+        SELECT
+            order_tracker_id ,
+            SUM(final_certified_amount) AS final_certified_amount
+            FROM tblpur_invoices
+            WHERE order_tracker_id  IS NOT NULL
+            GROUP BY order_tracker_id 
+        ) AS inv_ot_sum
+            ON inv_ot_sum.order_tracker_id = t.id
     ) AS combined_orders";
 
 

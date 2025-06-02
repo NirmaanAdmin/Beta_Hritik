@@ -514,27 +514,14 @@ foreach ($rResult as $aRow) {
          // Format final_certified_amount to display as currency
          // $_data = app_format_money($aRow['final_certified_amount'], '₹');
 
-         if (!empty($aRow['final_certified_amount'])) {
-            // Display as plain text
-            if ($aRow['source_table'] == 'order_tracker') {
-               if (!empty($aRow['final_certified_amount'])) {
-                  $_data = '<span class="final-certified-amount-display"   data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
-                     app_format_money($aRow['final_certified_amount'], '₹') .
-                     '</span>';
-               } else {
-                  $_data = '<input type="number" class="form-control final-certified-amount-input" 
-                     placeholder="Enter Toral Certified Amount" 
-                     data-id="' . $aRow['id'] . '" 
-                     data-type="' . $aRow['source_table'] . '">';
-               }
-            } else {
-               $_data = '<span   data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
-                  app_format_money($aRow['final_certified_amount'], '₹') .
-                  '</span>';
-            }
+         if (!empty($aRow['final_certified_amount']) && $aRow['final_certified_amount'] != 0) {
+
+            $_data = '<span class=  data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
+               app_format_money($aRow['final_certified_amount'], '₹') .
+               '</span>';
          } else {
             // Render as an editable input if no value exists
-            $_data = '<span style="font-style: italic;font-size: 12px;">Please enter the certified amount in Vendor Billing Tracker</span>';
+            $_data = '<span style="font-style: italic;font-size: 12px;">Values will be fetched directly from the vendor billing tracker</span>';
          }
       } elseif ($column == 1) {
          $_data = '
