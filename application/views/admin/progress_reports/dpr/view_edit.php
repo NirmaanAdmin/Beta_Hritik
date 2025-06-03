@@ -24,15 +24,12 @@
                         <div class="tw-inline-flex tw-items-center tw-grow md:tw-mr-4">
                             <h3 class="tw-font-semibold tw-text-xl tw-my-0">
                                 <span id="form_subject">
-                                    #<?php echo e($form->formid); ?> - <?php echo e($form->subject); ?>
+                                    <?php echo e($form->subject); ?>
                                 </span>
                             </h3>
                             <?php echo '<span class="tw-self-start md:tw-self-center label' . (is_mobile() ? ' ' : ' mleft15 ') . 'single-form-status-label" style="color:' . $form->statuscolor . ';border: 1px solid ' . adjust_hex_brightness($form->statuscolor, 0.4) . '; background:' . adjust_hex_brightness($form->statuscolor, 0.04) . ';">' . form_status_translate($form->formstatusid) . '</span>'; ?>
 
                         </div>
-                        <?php
-                        echo render_select('status_top', $statuses, ['formstatusid', 'name'], '', $form->status, [], [], 'no-mbot tw-flex-1 tw-max-w-sm', '', false);
-                        ?>
                     </div>
                     <?php
                     if ($form->project_id) {
@@ -59,7 +56,12 @@
                                                                             echo 'active';
                                                                         } ?>">
                                             <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">
-                                                <?php echo _l('Details'); ?>
+                                                <?php echo _l('Data'); ?>
+                                            </a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a href="#daily_labor_report" aria-controls="daily_labor_report" role="tab" data-toggle="tab">
+                                                <?php echo _l('daily_labor_report'); ?>
                                             </a>
                                         </li>
                                         <li role="presentation">
@@ -369,6 +371,10 @@
                                     </div>
                                     <?php echo form_close(); ?>
                                 </div>
+                            </div>
+
+                            <div role="tabpanel" class="tab-pane" id="daily_labor_report">
+                                Hello here
                             </div>
                             <div role="tabpanel" class="tab-pane" id="note">
                                 <hr class="no-mtop" />

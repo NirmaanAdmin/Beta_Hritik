@@ -7,24 +7,15 @@
             <div class="col-md-12">
                 <div class="tw-flex tw-items-center tw-mb-2">
                     <h4 class="tw-my-0 tw-font-semibold tw-text-lg tw-text-neutral-700 tw-mr-4">
-                        <?php echo _l('clients_single_form_information_heading'); ?>
+                        <?php echo _l('daily_progress_report'); ?>
                     </h4>
-                    <?php if (!isset($project_id) && !isset($contact)) { ?>
-                        <a href="#" id="form_no_contact" class="label label-default">
-                            <i class="fa-regular fa-envelope tw-mr-1"></i> <?php echo _l('form_create_no_contact'); ?>
-                        </a>
-                        <a href="#" class="hide label label-default" id="form_to_contact">
-                            <i class="fa-regular fa-user tw-mr-1"></i>
-                            <?php echo _l('form_create_to_contact'); ?>
-                        </a>
-                    <?php } ?>
                 </div>
                 <div class="panel_s">
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-6">
 
-                                <?php echo render_input('subject', 'form_settings_subject', '', 'text', ['required' => 'true']); ?>
+                                <?php echo render_input('subject', 'form_settings_subject', 'DPR', 'text', ['required' => 'true']); ?>
 
                                 <div class="form-group projects-wrapper">
                                     <?php
@@ -101,9 +92,37 @@
                         <div class="col-md-12">
                             <hr class="hr-panel-separator" />
                         </div>
+
+                        <div class="col-md-12">
+                            <div class="attachments_area">
+                                <div class="row attachments">
+                                    <div class="attachment">
+                                        <div class="col-md-4 mtop10">
+                                            <div class="form-group">
+                                                <label for="attachment"
+                                                class="control-label"><?php echo _l('form_add_attachments'); ?></label>
+                                                <div class="input-group">
+                                                    <input type="file"
+                                                    extension="<?php echo str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')); ?>"
+                                                    filesize="<?php echo file_upload_max_size(); ?>"
+                                                    class="form-control" name="attachments[0]"
+                                                    accept="<?php echo get_form_form_accepted_mimes(); ?>">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-default add_more_attachments"
+                                                        data-max="<?php echo get_option('maximum_allowed_form_attachments'); ?>"
+                                                        type="button"><i class="fa fa-plus"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-12 tw-mt-3">
-                            <h4 class="tw-mt-0 tw-font-semibold tw-text-base tw-text-neutral-700">
-                                <?php echo _l('form_add_body'); ?>
+                            <h4 class="tw-mt-0 tw-font-semibold tw-text-base tw-text-neutral-700 mtop10">
+                                <?php echo _l('additional_notes'); ?>
                             </h4>
                             <div class="row">
                                 <div class="col-md-12 mbot20 before-form-message">
@@ -148,30 +167,6 @@
                         </div>
                         <div class="clearfix"></div>
                         <?php echo render_textarea('message', '', '', [], [], '', 'tinymce'); ?>
-                        <div class="attachments_area">
-                            <div class="row attachments">
-                                <div class="attachment">
-                                    <div class="col-md-4 col-md-offset-8 mtop10">
-                                        <div class="form-group">
-                                            <label for="attachment"
-                                            class="control-label"><?php echo _l('form_add_attachments'); ?></label>
-                                            <div class="input-group">
-                                                <input type="file"
-                                                extension="<?php echo str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')); ?>"
-                                                filesize="<?php echo file_upload_max_size(); ?>"
-                                                class="form-control" name="attachments[0]"
-                                                accept="<?php echo get_form_form_accepted_mimes(); ?>">
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-default add_more_attachments"
-                                                    data-max="<?php echo get_option('maximum_allowed_form_attachments'); ?>"
-                                                    type="button"><i class="fa fa-plus"></i></button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -179,7 +174,7 @@
 
                     <button type="submit" data-form="#new_form_form" autocomplete="off"
                     data-loading-text="<?php echo _l('wait_text'); ?>"
-                    class="btn btn-primary"><?php echo _l('open_form'); ?></button>
+                    class="btn btn-primary"><?php echo _l('save_report'); ?></button>
                 </div>
             </div>
         </div>

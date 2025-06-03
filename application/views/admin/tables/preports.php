@@ -55,7 +55,7 @@ $rules[] = App_table_filter::new('assigned', 'SelectRule')->label(_l('form_assig
         })->all();
     });
 
-return App_table::find('dpr')
+return App_table::find('preports')
     ->outputUsing(function ($params) use ($statuses) {
         extract($params);
 
@@ -63,14 +63,12 @@ return App_table::find('dpr')
             '1', // bulk actions
             'formid',
             'subject',
-            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'forms.formid and rel_type="form" ORDER by tag_order ASC) as tags',
             db_prefix() . 'departments.name as department_name',
-            db_prefix() . 'services.name as service_name',
-            'CONCAT(' . db_prefix() . 'contacts.firstname, \' \', ' . db_prefix() . 'contacts.lastname) as contact_full_name',
             'status',
             'priority',
             'lastreply',
             db_prefix() . 'forms.date',
+            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'forms.formid and rel_type="form" ORDER by tag_order ASC) as tags',
             '2'
         ];
 
@@ -153,14 +151,16 @@ return App_table::find('dpr')
             @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
         }
 
-        array_push($where, 'AND form_type = "dpr"');
+        if (isset($module)) {
+            array_push($where, 'AND form_type = "' . $module . '"');
+        }
 
         $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, $additionalSelect);
 
         $output  = $result['output'];
         $rResult = $result['rResult'];
 
-        foreach ($rResult as $aRow) {
+        foreach ($rResult as $pkey => $aRow) {
             $row = [];
             for ($i = 0; $i < count($aColumns); $i++) {
                 if (strpos($aColumns[$i], 'as') !== false && !isset($aRow[$aColumns[$i]])) {
@@ -185,7 +185,7 @@ return App_table::find('dpr')
                                 'staff-profile-image-xs',
                             ]) . '</a>';
                         } else {
-                            $_data = e($_data);
+                            $_data = $pkey + 1;
                         }
                     } else {
                         $_data = e($_data);
