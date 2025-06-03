@@ -223,7 +223,7 @@ function app_init_admin_sidebar_menu_items()
     $CI->app_menu->add_sidebar_children_item('progress_reports', [
         'slug'     => 'daily-progress-report',
         'name'     => 'Daily Progress Report',
-        'href'     => admin_url('forms/dpr'),
+        'href'     => admin_url('forms/progress_report_listing/dpr'),
         'position' => 1,
         'badge'    => [],
     ]);
@@ -231,7 +231,7 @@ function app_init_admin_sidebar_menu_items()
     $CI->app_menu->add_sidebar_children_item('progress_reports', [
         'slug'     => 'weekly-progress-report',
         'name'     => 'Weekly Progress Report',
-        'href'     => '#',
+        'href'     => admin_url('forms/progress_report_listing/wpr'),
         'position' => 2,
         'badge'    => [],
     ]);
@@ -239,7 +239,7 @@ function app_init_admin_sidebar_menu_items()
     $CI->app_menu->add_sidebar_children_item('progress_reports', [
         'slug'     => 'monthly-progress-report',
         'name'     => 'Monthly Progress Report',
-        'href'     => '#',
+        'href'     => admin_url('forms/progress_report_listing/mpr'),
         'position' => 3,
         'badge'    => [],
     ]);
@@ -247,7 +247,7 @@ function app_init_admin_sidebar_menu_items()
     $CI->app_menu->add_sidebar_children_item('progress_reports', [
         'slug'     => 'progress-report-settings',
         'name'     => _l('settings'),
-        'href'     => '#',
+        'href'     => admin_url('forms/progress_report_setting'),
         'position' => 4,
         'badge'    => [],
     ]);

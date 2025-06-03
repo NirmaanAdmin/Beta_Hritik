@@ -923,28 +923,6 @@ class Forms extends AdminController
         $this->load->view("admin/forms/form_design/{$form_type}", $data);
     }
 
-    /**
-     * Gets the Daily Progress Report row template.
-     */
-    public function get_dpr_row_template()
-    {
-        $name = $this->input->post('name');
-        $location = $this->input->post('location');
-        $agency = $this->input->post('agency');
-        $type = $this->input->post('type');
-        $work_execute = $this->input->post('work_execute');
-        $material_consumption = $this->input->post('material_consumption');
-        $machinery = $this->input->post('machinery');
-        $skilled = $this->input->post('skilled');
-        $unskilled = $this->input->post('unskilled');
-        $depart = $this->input->post('depart');
-        $total = $this->input->post('total');
-        $male = $this->input->post('male');
-        $female = $this->input->post('female');
-        $item_key = $this->input->post('item_key');
-
-        echo $this->forms_model->create_dpr_row_template($name, $location, $agency, $type, $work_execute, $material_consumption, $machinery, $skilled, $unskilled, $depart, $total, $male, $female, false, $item_key);
-    }
     public function get_qcr_row_template()
     {
         $name = $this->input->post('name');
@@ -1082,13 +1060,15 @@ class Forms extends AdminController
         $pdf->Output(mb_strtoupper(slug_it($form->subject)) . '.pdf', $type);
     }
 
-    public function dpr($status = '', $userid = '')
+    public function progress_report_listing($module = 'dpr')
     {
+        $status = '';
+        $userid = '';
         if (!is_numeric($status)) {
             $status = '';
         }
 
-        $data['table'] = App_table::find('dpr');
+        $data['table'] = App_table::find('preports');
 
         if ($this->input->is_ajax_request()) {
             if (!$this->input->post('via_form')) {
@@ -1108,6 +1088,7 @@ class Forms extends AdminController
                     $tableParams['by_email'] = $this->input->post('via_form_email');
                 }
             }
+            $tableParams['module'] = $module;
             $data['table']->output($tableParams);
         }
 
@@ -1124,7 +1105,8 @@ class Forms extends AdminController
         $data['bodyclass']            = 'forms-page';
         add_admin_progress_reports_js_assets();
         $data['default_forms_list_statuses'] = hooks()->apply_filters('default_forms_list_statuses', [1, 2, 4]);
-        $this->load->view('admin/progress_reports/dpr/list', $data);
+        $data['module'] = $module;
+        $this->load->view('admin/progress_reports/report_listing', $data);
     }
 
     public function find_dpr_design($form_id = 0)
@@ -1142,15 +1124,14 @@ class Forms extends AdminController
                         $value['location'],
                         $value['agency'],
                         $value['type'],
+                        $value['sub_type'],
                         $value['work_execute'],
                         $value['material_consumption'],
-                        $value['machinery'],
-                        $value['skilled'],
-                        $value['unskilled'],
-                        $value['depart'],
-                        $value['total'],
                         $value['male'],
                         $value['female'],
+                        $value['total'],
+                        $value['machinery'],
+                        $value['total_machinery'],
                         true,
                         $value['id']
                     );
@@ -1160,6 +1141,28 @@ class Forms extends AdminController
         }
         $data['dpr_row_template'] = $dpr_row_template;
         $this->load->view('admin/progress_reports/dpr/dpr_form_design', $data);
+    }
+
+    /**
+     * Gets the Daily Progress Report row template.
+     */
+    public function get_dpr_row_template()
+    {
+        $name = $this->input->post('name');
+        $location = $this->input->post('location');
+        $agency = $this->input->post('agency');
+        $type = $this->input->post('type');
+        $sub_type = $this->input->post('sub_type');
+        $work_execute = $this->input->post('work_execute');
+        $material_consumption = $this->input->post('material_consumption');
+        $male = $this->input->post('male');
+        $female = $this->input->post('female');
+        $total = $this->input->post('total');
+        $machinery = $this->input->post('machinery');
+        $total_machinery = $this->input->post('total_machinery');
+        $item_key = $this->input->post('item_key');
+
+        echo $this->forms_model->create_dpr_row_template($name, $location, $agency, $type, $sub_type, $work_execute, $material_consumption, $male, $female, $total, $machinery, $total_machinery, false, $item_key);
     }
 
     public function add_dpr($userid = false)
@@ -1172,7 +1175,7 @@ class Forms extends AdminController
             $id              = $this->forms_model->add($data, get_staff_user_id());
             if ($id) {
                 set_alert('success', _l('dpr_added_successfully', $id));
-                redirect(admin_url('forms/dpr'));
+                redirect(admin_url('forms/progress_report_setting/dpr'));
             }
         }
         if ($userid !== false) {
@@ -1339,5 +1342,152 @@ class Forms extends AdminController
             ]);
             die();
         }
+    }
+
+    public function progress_report_setting()
+    {
+        $data['group'] = $this->input->get('group');
+        $data['title'] = _l('setting');
+        $data['tab'][] = 'progress_report_type';
+        $data['tab'][] = 'progress_report_sub_type';
+        $data['tab'][] = 'progress_report_machinary';
+        if ($data['group'] == '') {
+            $data['group'] = 'progress_report_type';
+        }
+        $data['tabs']['view'] = 'admin/progress_reports/includes/' . $data['group'];
+        $data['progress_report_type'] = $this->forms_model->get_progress_report_type();
+        $data['progress_report_sub_type'] = $this->forms_model->get_progress_report_sub_type();
+        $data['progress_report_machinary'] = $this->forms_model->get_progress_report_machinary();
+
+        $this->load->view('admin/progress_reports/manage_setting', $data);
+    }
+
+    public function progress_report_type()
+    {
+        if ($this->input->post()) {
+            $message = '';
+            $data = $this->input->post();
+            if (!$this->input->post('id')) {
+                $id = $this->forms_model->add_progress_report_type($data);
+                if ($id) {
+                    $success = true;
+                    $message = _l('added_successfully', _l('progress_report_type'));
+                    set_alert('success', $message);
+                }
+                redirect(admin_url('forms/progress_report_setting?group=progress_report_type'));
+            } else {
+                $id = $data['id'];
+                unset($data['id']);
+                $success = $this->forms_model->update_progress_report_type($data, $id);
+                if ($success) {
+                    $message = _l('updated_successfully', _l('progress_report_type'));
+                    set_alert('success', $message);
+                }
+                redirect(admin_url('forms/progress_report_setting?group=progress_report_type'));
+            }
+            die;
+        }
+    }
+
+    public function delete_progress_report_type($id)
+    {
+        if (!$id) {
+            redirect(admin_url('forms/progress_report_setting?group=progress_report_type'));
+        }
+        $response = $this->forms_model->delete_progress_report_type($id);
+        if (is_array($response) && isset($response['referenced'])) {
+            set_alert('warning', _l('is_referenced', _l('progress_report_type')));
+        } elseif ($response == true) {
+            set_alert('success', _l('deleted', _l('progress_report_type')));
+        } else {
+            set_alert('warning', _l('problem_deleting', _l('progress_report_type')));
+        }
+        redirect(admin_url('forms/progress_report_setting?group=progress_report_type'));
+    }
+
+    public function progress_report_sub_type()
+    {
+        if ($this->input->post()) {
+            $message = '';
+            $data = $this->input->post();
+            if (!$this->input->post('id')) {
+                $id = $this->forms_model->add_progress_report_sub_type($data);
+                if ($id) {
+                    $success = true;
+                    $message = _l('added_successfully', _l('progress_report_sub_type'));
+                    set_alert('success', $message);
+                }
+                redirect(admin_url('forms/progress_report_setting?group=progress_report_sub_type'));
+            } else {
+                $id = $data['id'];
+                unset($data['id']);
+                $success = $this->forms_model->update_progress_report_sub_type($data, $id);
+                if ($success) {
+                    $message = _l('updated_successfully', _l('progress_report_sub_type'));
+                    set_alert('success', $message);
+                }
+                redirect(admin_url('forms/progress_report_setting?group=progress_report_sub_type'));
+            }
+            die;
+        }
+    }
+
+    public function delete_progress_report_sub_type($id)
+    {
+        if (!$id) {
+            redirect(admin_url('forms/progress_report_setting?group=progress_report_sub_type'));
+        }
+        $response = $this->forms_model->delete_progress_report_sub_type($id);
+        if (is_array($response) && isset($response['referenced'])) {
+            set_alert('warning', _l('is_referenced', _l('progress_report_sub_type')));
+        } elseif ($response == true) {
+            set_alert('success', _l('deleted', _l('progress_report_sub_type')));
+        } else {
+            set_alert('warning', _l('problem_deleting', _l('progress_report_sub_type')));
+        }
+        redirect(admin_url('forms/progress_report_setting?group=progress_report_sub_type'));
+    }
+
+    public function progress_report_machinary()
+    {
+        if ($this->input->post()) {
+            $message = '';
+            $data = $this->input->post();
+            if (!$this->input->post('id')) {
+                $id = $this->forms_model->add_progress_report_machinary($data);
+                if ($id) {
+                    $success = true;
+                    $message = _l('added_successfully', _l('progress_report_machinary'));
+                    set_alert('success', $message);
+                }
+                redirect(admin_url('forms/progress_report_setting?group=progress_report_machinary'));
+            } else {
+                $id = $data['id'];
+                unset($data['id']);
+                $success = $this->forms_model->update_progress_report_machinary($data, $id);
+                if ($success) {
+                    $message = _l('updated_successfully', _l('progress_report_machinary'));
+                    set_alert('success', $message);
+                }
+                redirect(admin_url('forms/progress_report_setting?group=progress_report_machinary'));
+            }
+            die;
+        }
+    }
+
+    public function delete_progress_report_machinary($id)
+    {
+        if (!$id) {
+            redirect(admin_url('forms/progress_report_setting?group=progress_report_machinary'));
+        }
+        $response = $this->forms_model->delete_progress_report_machinary($id);
+        if (is_array($response) && isset($response['referenced'])) {
+            set_alert('warning', _l('is_referenced', _l('progress_report_machinary')));
+        } elseif ($response == true) {
+            set_alert('success', _l('deleted', _l('progress_report_machinary')));
+        } else {
+            set_alert('warning', _l('problem_deleting', _l('progress_report_machinary')));
+        }
+        redirect(admin_url('forms/progress_report_setting?group=progress_report_machinary'));
     }
 }

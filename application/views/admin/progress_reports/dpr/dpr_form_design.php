@@ -75,22 +75,22 @@
                     <th colspan="13" class="daily_report_activity">ACTIVITY WITH LOCATION & OUTPUT</th>
                 </tr>
                 <tr>
-                    <th rowspan="2" class="daily_report_head daily_center" style="width: 200px;">
+                    <th rowspan="2" class="daily_report_head daily_center" style="width: 160px;">
                         <span class="daily_report_label">Location</span>
                     </th>
-                    <th rowspan="2" class="daily_report_head daily_center" style="width: 200px;">
+                    <th rowspan="2" class="daily_report_head daily_center" style="width: 160px;">
                         <span class="daily_report_label">Agency</span>
                     </th>
-                    <th rowspan="2" class="daily_report_head daily_center" style="width: 200px;">
+                    <th rowspan="2" class="daily_report_head daily_center" style="width: 160px;">
                         <span class="daily_report_label">Type</span>
+                    </th>
+                    <th rowspan="2" class="daily_report_head daily_center" style="width: 160px;">
+                        <span class="daily_report_label">Sub Type</span>
                     </th>
                     <th colspan="2" class="daily_report_head daily_center">
                         <span class="daily_report_label">Work Progress</span>
                     </th>
-                    <th rowspan="2" class="daily_report_head daily_center">
-                        <span class="daily_report_label">Machinery</span>
-                    </th>
-                    <th colspan="4" class="daily_report_head daily_center">
+                    <th colspan="3" class="daily_report_head daily_center">
                         <span class="daily_report_label">Manpower</span>
                     </th>
                     <th colspan="3" class="daily_report_head daily_center">
@@ -105,22 +105,19 @@
                         <span class="daily_report_label">Material Consumption</span>
                     </th>
                     <th class="daily_report_head daily_center">
-                        <span class="daily_report_label">Skilled</span>
+                        <span class="daily_report_label">Male</span>
                     </th>
                     <th class="daily_report_head daily_center">
-                        <span class="daily_report_label">Unskilled</span>
-                    </th>
-                    <th class="daily_report_head daily_center">
-                        <span class="daily_report_label">Depart</span>
+                        <span class="daily_report_label">Female</span>
                     </th>
                     <th class="daily_report_head daily_center">
                         <span class="daily_report_label">Total</span>
                     </th>
                     <th class="daily_report_head daily_center">
-                        <span class="daily_report_label">Male</span>
+                        <span class="daily_report_label">Machinary</span>
                     </th>
                     <th class="daily_report_head daily_center">
-                        <span class="daily_report_label">Female</span>
+                        <span class="daily_report_label">Total Machinary</span>
                     </th>
                     <th class="daily_report_head daily_center">
                         <span class="daily_report_label"><i class="fa fa-cog"></i></span>
@@ -135,6 +132,14 @@
 </div>
 
 <script type="text/javascript">
+    get_selected_project();
+    $(document).on('change', "select[name='project_id']", function(event) {
+        get_selected_project();
+    });
+    function get_selected_project() {
+        var selectedText = $("select[name='project_id']").find("option:selected").text();
+        $('.view_project_name').html(selectedText);
+    }
     $(document).on('click', '.dpr-add-item-to-table', function(event) {
         "use strict";
 
@@ -144,10 +149,14 @@
         var item_key = lastAddedItemKey ? lastAddedItemKey += 1 : $("body").find('.dpr-items-table tbody .item').length + 1;
         lastAddedItemKey = item_key;
 
-        dpr_get_item_row_template('newitems[' + item_key + ']', data.location, data.agency, data.type, data.work_execute, data.material_consumption, data.machinery, data.skilled, data.unskilled, data.depart, data.total, data.male, data.female, item_key).done(function(output){
+        dpr_get_item_row_template('newitems[' + item_key + ']', data.location, data.agency, data.type, data.sub_type, data.work_execute, data.material_consumption, data.male, data.female, data.total, data.machinery, data.total_machinery, item_key).done(function(output){
             table_row += output;
 
             $('.dpr_body').append(table_row);
+
+            setTimeout(function() {
+                dpr_calculate_total();
+            }, 15);
 
             init_selectpicker();
             pur_clear_item_preview_values();
@@ -160,7 +169,7 @@
         return false;
     });
 
-    function dpr_get_item_row_template(name, location, agency, type, work_execute, material_consumption, machinery, skilled, unskilled, depart, total, male, female, item_key)  {
+    function dpr_get_item_row_template(name, location, agency, type, sub_type, work_execute, material_consumption, male, female, total, machinery, total_machinery, item_key)  {
       "use strict";
 
       jQuery.ajaxSetup({
@@ -172,15 +181,14 @@
         location : location,
         agency : agency,
         type : type,
+        sub_type : sub_type,
         work_execute : work_execute,
         material_consumption : material_consumption,
-        machinery : machinery,
-        skilled : skilled,
-        unskilled : unskilled,
-        depart : depart,
-        total : total,
         male : male,
         female : female,
+        total : total,
+        machinery : machinery,
+        total_machinery : total_machinery,
         item_key: item_key
       });
       jQuery.ajaxSetup({
@@ -196,15 +204,14 @@
       response.location = $('.dpr-items-table input[name="location"]').val();
       response.agency = $('.dpr-items-table select[name="agency"]').selectpicker('val');
       response.type = $('.dpr-items-table select[name="type"]').selectpicker('val');
+      response.sub_type = $('.dpr-items-table select[name="sub_type"]').selectpicker('val');
       response.work_execute = $('.dpr-items-table input[name="work_execute"]').val();
       response.material_consumption = $('.dpr-items-table input[name="material_consumption"]').val();
-      response.machinery = $('.dpr-items-table input[name="machinery"]').val();
-      response.skilled = $('.dpr-items-table input[name="skilled"]').val();
-      response.unskilled = $('.dpr-items-table input[name="unskilled"]').val();
-      response.depart = $('.dpr-items-table input[name="depart"]').val();
-      response.total = $('.dpr-items-table input[name="total"]').val();
       response.male = $('.dpr-items-table input[name="male"]').val();
       response.female = $('.dpr-items-table input[name="female"]').val();
+      response.total = $('.dpr-items-table input[name="total"]').val();
+      response.machinery = $('.dpr-items-table select[name="machinery"]').val();
+      response.total_machinery = $('.dpr-items-table input[name="total_machinery"]').val();
 
       return response;
     }
@@ -217,4 +224,17 @@
       previewArea.find('textarea').val('');
       previewArea.find('select').val('').selectpicker('refresh');
     }
+
+    function dpr_calculate_total() {
+        "use strict";
+        var rows = $('.dpr_body tr.item');
+
+        $.each(rows, function() {
+            var male = parseFloat($(this).find('td.male input').val()) || 0;
+            var female = parseFloat($(this).find('td.female input').val()) || 0;
+            var total = male + female;
+            $(this).find('td.total input').val(total);
+        });
+    }
+
 </script>

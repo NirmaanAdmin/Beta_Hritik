@@ -9,7 +9,17 @@
                     <a href="<?php echo admin_url('forms/add_dpr'); ?>"
                         class="btn btn-primary pull-left display-block mright5">
                         <i class="fa-regular fa-plus tw-mr-1"></i>
-                        <?php echo _l('new_form'); ?>
+                        <?php 
+                        if($module == "dpr") {
+                            echo _l('daily_progress_report'); 
+                        } else if($module == "wpr") {
+                            echo _l('weekly_progress_report'); 
+                        } else if($module == "mpr") {
+                            echo _l('monthly_progress_report'); 
+                        } else {
+                            echo _l('new_form');
+                        }
+                        ?>
                     </a>
 
                     <a href="#" class="btn btn-default btn-with-tooltip" data-toggle="tooltip" data-placement="bottom"
@@ -58,7 +68,7 @@
                             data-table=".table-forms"><?php echo _l('bulk_actions'); ?></a>
                         <div class="clearfix"></div>
                         <div class="panel-table-full">
-                            <?php echo AdminFormsTableStructure('', true); ?>
+                            <?php echo AdminReportsTableStructure('', true); ?>
                         </div>
                     </div>
                 </div>
