@@ -12,7 +12,7 @@
 		overflow-y: auto;
 	}
 
-	.dropdown-item {
+ 	.dropdown-item {
 		padding: 8px 12px;
 		display: block;
 		color: #333;
@@ -557,7 +557,6 @@
 					<div class="col-md-12">
 						<?php
 						$permission_list = [
-							['id' => 'preview', 'name' => _l('dmg_preview')],
 							['id' => 'viewer', 'name' => _l('dmg_viewer')],
 							['id' => 'editor', 'name' => _l('dmg_editor')],
 							['id' => 'upload_only', 'name' =>  _l('dmg_upload_only')]
@@ -621,7 +620,7 @@ if (isset($item) && $item->filetype != 'folder' && $edit != 1) {
 				$.ajax({
 					url: '<?= base_url("document_management/get_file_and_folder") ?>',
 					type: 'GET',
-					data: {
+					data: { 
 						query: query,
 						id: folderId // Pass folder ID if exists
 					},
