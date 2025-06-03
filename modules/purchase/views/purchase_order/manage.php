@@ -39,6 +39,9 @@
                            </li>
                         </ul>
                      </div>
+                     <a href="<?php echo admin_url('purchase/po_charts'); ?>" class="btn btn-info pull-left mleft10 display-block">
+                        <?php echo _l('PO Charts'); ?>
+                     </a>
                   </div>
                   <div class="col-md-1 form-group pull-right">
                      <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
@@ -60,7 +63,7 @@
                      echo render_date_input('from_date', _l('from_date'), $from_date_type_filter_val); ?>
                   </div>
                   <div class="col-md-2">
-                     <?php 
+                     <?php
                      $to_date_type_filter = get_module_filter($module_name, 'to_date');
                      $to_date_type_filter_val = !empty($to_date_type_filter) ?  $to_date_type_filter->filter_value : '';
                      echo render_date_input('to_date', _l('to_date'), $to_date_type_filter_val); ?>

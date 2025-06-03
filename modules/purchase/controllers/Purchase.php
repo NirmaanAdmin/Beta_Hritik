@@ -13605,45 +13605,13 @@ class purchase extends AdminController
         echo json_encode(['success' => true, 'bulk_html' => $bulk_html]);
     }
 
-    public function po_chats()
+    public function po_charts()
     {
-        // 2. Fetch “monthly totals” data (for a line chart)
+        // 1) Fetch PO rows and compute counts
         $po_data = get_all_po_data();
-        $labels       = array_column($po_data, 'order_date'); // ['January','February',...]
-        $data     = array_column($po_data, 'total'); // [12000,15000,...]
-
-        // 3. Build the “line chart” definition
-        $line_chart = [
-            'type'     => 'line',
-            'labels'   => $labels,
-            'datasets' => [
-                [
-                    'label'           => _l('PO Value'),   // e.g. “Monthly Revenue”
-                    'data'            => $data,
-                    'borderColor'     => 'rgba(54, 162, 235, 1)',
-                    'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
-                    'fill'            => true,
-                    'tension'         => 0.4
-                ]
-            ],
-            'options'  => [
-                'responsive' => true,
-                'plugins'    => [
-                    'title'  => [
-                        'display' => true,
-                        'text'    => _l('PO trends')
-                    ],
-                    'legend' => ['position' => 'top']
-                ],
-                'scales'     => [
-                    'y' => ['beginAtZero' => true]
-                ]
-            ]
-        ];
         $approved_count = 0;
         $draft_count    = 0;
         $rejected_count = 0;
-
         foreach ($po_data as $row) {
             switch (strtolower($row['approve_status'])) {
                 case '2':
@@ -13655,86 +13623,304 @@ class purchase extends AdminController
                 case '3':
                     $rejected_count++;
                     break;
-                default:
-                    // If there are other statuses, ignore or handle here
-                    break;
             }
         }
 
-        // The pie_data array must match the order of labels:
-        $pie_data = [
-            $approved_count,
-            $draft_count,
-            $rejected_count
-        ];
-        // 5. Build the “pie chart” definition
-        $pie_chart = [
-            'type'     => 'pie',
-            'labels'   => ['Approved', 'Draft', 'Rejected'],
-            'datasets' => [
-                [
-                    'label'           => _l('category_breakdown'),
-                    'data'            => $pie_data,
-                    'backgroundColor' => [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)'
+        // 2) BAR CHART: Budget Head vs Actual PO Value
+        $budget_head_data_all = get_budget_head_and_total_tax();
+        $budget_head_labels   = array_column($budget_head_data_all, 'budget_head');
+        $budget_head_data     = array_column($budget_head_data_all, 'total');
+
+        $bar_chart = [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $budget_head_labels,
+                'datasets' => [[
+                    'label'           => _l('PO Value'),
+                    'data'            => $budget_head_data,
+                    'borderColor'     => 'rgba(54, 162, 235, 1)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
+                    'borderWidth'     => 1,
+                    'borderRadius'    => 4,
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'responsive' => true,
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text'    => _l('Budget Head vs Actual PO Value'),
+                        'font'    => ['size' => 16]
+                    ],
+                    'legend' => ['display' => false]
+                    // Removed tooltip callback strings here
+                ],
+                'scales' => [
+                    'x' => [
+                        'beginAtZero' => true
+                        // Removed ticks.callback string here
+                    ],
+                    'y' => [
+                        'grid' => ['display' => false]
+                    ],
+                    'x' => [
+                        'grid' => ['display' => false]
                     ]
                 ]
-            ],
-            'options'  => [
-                'responsive' => true,
-                'plugins'    => [
-                    'title'  => [
-                        'display' => true,
-                        'text'    => _l('PO Approval Status (Pie)')
-                    ],
-                    'legend' => ['position' => 'bottom']
-                ]
             ]
         ];
-
-        // 6. If you wanted a second dataset—say, a bar chart of the same “monthly totals”—you could add another array:
-        $bar_chart = [
-            'type'     => 'bar',
-            'labels'   => $labels,
-            'datasets' => [
-                [
-                    'label'           => _l('Monthly Revenue (Bar)'),
-                    'data'            => $data,
-                    'backgroundColor' => 'rgba(153, 102, 255, 0.6)',
-                    'borderColor'     => 'rgba(153, 102, 255, 1)',
-                    'borderWidth'     => 1
-                ]
+        $budget_sub_head_data_all = get_budget_sub_head_and_total();
+        $budget_sub_head_labels   = array_column($budget_sub_head_data_all, 'budget_sub_head');
+        $budget_sub_head_data     = array_column($budget_sub_head_data_all, 'total');
+        $stacked_bar_chart = [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $budget_sub_head_labels,
+                'datasets' => [[
+                    'label'           => _l('Value'),
+                    'data'            => $budget_sub_head_data,
+                    'borderColor'     => 'rgba(54, 162, 235, 1)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
+                    'borderWidth'     => 1,
+                    'borderRadius'    => 4,
+                ]]
             ],
-            'options'  => [
+            'options' => [
+                'indexAxis' => 'x',
                 'responsive' => true,
-                'plugins'    => [
-                    'title'  => [
+                'plugins' => [
+                    'title' => [
                         'display' => true,
-                        'text'    => _l('Monthly Revenue (Bar)')
+                        'text'    => _l('Budget Sub Head vs Actual Order Value'),
+                        'font'    => ['size' => 16]
                     ],
-                    'legend' => ['position' => 'top']
+                    'legend' => ['display' => false]
+                    // Removed tooltip callback strings here
                 ],
-                'scales'     => [
-                    'y' => ['beginAtZero' => true]
+                'scales' => [
+                    'x' => [
+                        'beginAtZero' => true,
+                        // Removed ticks.callback string here
+
+                    ],
+                    'y' => [
+
+                        'grid' => ['display' => false]
+                    ],
+                    'x' => [
+                        'grid' => ['display' => false]
+                    ]
                 ]
             ]
         ];
 
-        // 7. Combine all chart definitions into one array
-        $data['charts'] = [
-            $line_chart,
-            $pie_chart,
-            $bar_chart
+        $vendor_bar_data_all = get_vendor_po_volume();
+        $vendor_bar_labels   = array_column($vendor_bar_data_all, 'vendor_name');
+        $vendor_bar_data     = array_column($vendor_bar_data_all, 'total');
+        $vendor_bar_chart = [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $vendor_bar_labels,
+                'datasets' => [[
+                    'label'           => _l('Value'),
+                    'data'            => $vendor_bar_data,
+                    'borderColor'     => 'rgba(54, 162, 235, 1)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
+                    'borderWidth'     => 1,
+                    'borderRadius'    => 4,
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'responsive' => true,
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text'    => _l('Vendor-Wise Total Spend'),
+                        'font'    => ['size' => 16]
+                    ],
+                    'legend' => ['display' => false]
+                    // Removed tooltip callback strings here
+                ],
+                'scales' => [
+                    'x' => [
+                        'beginAtZero' => true,
+                        // Removed ticks.callback string here
+
+                    ],
+                    'y' => [
+
+                        'grid' => ['display' => false]
+                    ],
+                    'x' => [
+                        'grid' => ['display' => false]
+                    ]
+                ]
+            ]
         ];
-        $data['col_classes'] = [
-            'col-md-8',   // for the Line chart (index 0)
-            'col-md-4',   // for the Pie chart  (index 1)
-            'col-md-12'    // for the Bar chart  (index 2)
+
+        $department_bar_data_all = get_department_and_total_tax();
+        $department_bar_labels   = array_column($department_bar_data_all, 'department_name');
+        $department_bar_data     = array_column($department_bar_data_all, 'total');
+        $department_bar_chart = [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $department_bar_labels,
+                'datasets' => [[
+                    'label'           => _l('Value'),
+                    'data'            => $department_bar_data,
+                    'borderColor'     => 'rgba(54, 162, 235, 1)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
+                    'borderWidth'     => 1,
+                    'borderRadius'    => 4,
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'x',
+                'responsive' => true,
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text'    => _l('Departmental Spend Distribution'),
+                        'font'    => ['size' => 16]
+                    ],
+                    'legend' => ['display' => false]
+                    // Removed tooltip callback strings here
+                ],
+                'scales' => [
+                    'x' => [
+                        'beginAtZero' => true,
+                        // Removed ticks.callback string here
+
+                    ],
+                    'y' => [
+
+                        'grid' => ['display' => false]
+                    ],
+                    'x' => [
+                        'grid' => ['display' => false]
+                    ]
+                ]
+            ]
         ];
-        // 8. Load the shared view
+
+        $expensive_item_bar_data_all = get_expensive_item_wise();
+        $expensive_item_bar_labels   = array_column($expensive_item_bar_data_all, 'item_name');
+        $expensive_item_bar_data     = array_column($expensive_item_bar_data_all, 'total_cost');
+        $expensive_item_bar_chart = [
+            'type' => 'bar',
+            'data' => [
+                'labels'   => $expensive_item_bar_labels,
+                'datasets' => [[
+                    'label'           => _l('PO Value'),
+                    'data'            => $expensive_item_bar_data,
+                    'borderColor'     => 'rgba(54, 162, 235, 1)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
+                    'borderWidth'     => 1,
+                    'borderRadius'    => 4,
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'responsive' => true,
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text'    => _l('Departmental Spend Distribution'),
+                        'font'    => ['size' => 16]
+                    ],
+                    'legend' => ['display' => false]
+                    // Removed tooltip callback strings here
+                ],
+                'scales' => [
+                    'x' => [
+                        'beginAtZero' => true,
+                        // Removed ticks.callback string here
+
+                    ],
+                    'y' => [
+
+                        'grid' => ['display' => false]
+                    ],
+                    'x' => [
+                        'grid' => ['display' => false]
+                    ]
+                ]
+            ]
+        ];
+
+
+
+        // 3) PIE CHART: PO Approval Status
+        $pie_chart = [
+            'type' => 'pie',
+            'data' => [
+                'labels'   => [_l('Approved'), _l('Draft'), _l('Rejected')],
+                'datasets' => [[
+                    'data'            => [$approved_count, $draft_count, $rejected_count],
+                    'backgroundColor' => [
+                        'rgba(22, 163, 74, 1)',
+                        'rgba(37, 99, 235, 1)',
+                        'rgba(202, 138, 4, 1)'
+                    ],
+                    'borderWidth' => 1
+                ]]
+            ],
+            'options' => [
+                'responsive' => true,
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text'    => _l('PO Approval Status'),
+                        'font'    => ['size' => 16]
+                    ],
+                    'legend' => ['position' => 'right']
+                    // Removed tooltip callback string here
+                ]
+            ]
+        ];
+        $get_item_wise_cost_summary = get_item_wise_cost_summary();
+        $tree = [];
+        foreach ($get_item_wise_cost_summary as $item) {
+            $tree[] = [
+                'item_name' => $item['item_name'],
+                'total_value'  => round($item['total_cost']),
+            ];
+        }
+
+        $tree_map_chart = [
+            'type' => 'treemap',
+            'data' => [
+                'datasets' => [[
+                    'label'             => 'Total Value',
+                    'tree'              => $tree,
+                    'key'               => 'total_value',
+                    'groups'            => ['item_name'],
+                    'spacing'           => 0.5,
+                    'borderWidth'       => 1,
+
+                ]]
+            ],
+            'options' => [
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text'    => 'Item-Wise Cost Summary',
+                        'font'    => ['size' => 16]
+                    ],
+                    'legend' => [
+                        'display' => false
+                    ]
+                ]
+            ]
+        ];
+
+
+        // 5) Pass all three charts to the view
+        $data['charts']      = [$bar_chart, $pie_chart, $stacked_bar_chart, $vendor_bar_chart, $department_bar_chart,$expensive_item_bar_chart];
+        $data['col_classes'] = ['col-md-9', 'col-md-3', 'col-md-9', 'col-md-9', 'col-md-9', 'col-md-9'];
+
         $this->load->view('admin/chartjs_common_view', $data);
     }
 }

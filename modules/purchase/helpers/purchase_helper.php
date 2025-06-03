@@ -3553,7 +3553,8 @@ function get_budget_head_list($name_kind, $category)
     return render_select($name_kind, $get_buget_head, array('id', 'name'), '', $selected, array(), array(), '', '', true);
 }
 
-function get_projects_list($name_project,$project){
+function get_projects_list($name_project, $project)
+{
     $CI = &get_instance();
     $CI->load->model('projects_model');
     $get_project = $CI->projects_model->get();
@@ -4245,19 +4246,22 @@ function get_order_tracker_detials($tracker_id)
     return $CI->db->get(db_prefix() . $table)->row();
 }
 
-function get_pur_order_main_detail($id) {
+function get_pur_order_main_detail($id)
+{
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     return $CI->purchase_model->get_pur_order($id);
 }
 
-function get_wo_order_main_detail($id) {
+function get_wo_order_main_detail($id)
+{
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     return $CI->purchase_model->get_wo_order($id);
 }
 
-function get_order_tracker_main_detail($id) {
+function get_order_tracker_main_detail($id)
+{
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
     return $CI->purchase_model->get_order_tracker($id);
@@ -4321,10 +4325,135 @@ function handle_order_tracker_attachments_array($related, $id)
     return false;
 }
 
-function get_all_po_data(){
+function get_all_po_data()
+{
     $CI = &get_instance();
     $CI->db->select('*');
     $CI->db->from(db_prefix() . 'pur_orders');
     return $CI->db->get()->result_array();
 }
 
+function get_budget_head_and_total_tax()
+{
+    $CI = &get_instance();
+    $CI->db->select(db_prefix() . 'items_groups.name as budget_head, SUM(' . db_prefix() . 'pur_orders.total) as total');
+    $CI->db->join(db_prefix() . 'pur_vendor', db_prefix() . 'pur_orders.vendor = ' . db_prefix() . 'pur_vendor.userid', 'left');
+    $CI->db->join(db_prefix() . 'items_groups', db_prefix() . 'pur_orders.group_pur = ' . db_prefix() . 'items_groups.id', 'left');
+    $CI->db->group_by(db_prefix() . 'pur_orders.group_pur');
+    $CI->db->from(db_prefix() . 'pur_orders');
+    return $CI->db->get()->result_array();
+}
+
+function get_budget_sub_head_and_total()
+{
+    $CI = &get_instance();
+
+    $CI->db->select("
+        wsg.sub_group_name AS budget_sub_head,
+        SUM(pod.total)       AS total
+    ");
+    $CI->db->from(db_prefix() . 'pur_order_detail AS pod');
+    $CI->db->join(
+        db_prefix() . 'wh_sub_group AS wsg',
+        'pod.sub_groups_pur = wsg.id',
+        'left'
+    );
+    $CI->db->group_by('pod.sub_groups_pur');
+    $CI->db->order_by('total', 'DESC'); // optional: highest‐sum sub‐groups first
+    $CI->db->limit(10); // optional: limit to top 100 sub‐groups
+    return $CI->db->get()->result_array();
+}
+
+
+function get_item_wise_cost_summary()
+{
+    $CI = &get_instance();
+    $CI->db->select([
+        db_prefix() . 'pur_order_detail.item_code',
+        db_prefix() . 'items.description AS item_name',
+        'SUM(' . db_prefix() . 'pur_order_detail.into_money) AS total_cost'
+    ]);
+    $CI->db->join(
+        db_prefix() . 'items',
+        db_prefix() . 'items.id = ' . db_prefix() . 'pur_order_detail.item_code',
+        'left'
+    );
+    $CI->db->from(db_prefix() . 'pur_order_detail');
+    // Group by item_code so that SUM(into_money) aggregates per item
+    $CI->db->group_by(db_prefix() . 'pur_order_detail.item_code');
+    // Order by the summed cost in descending order
+    $CI->db->order_by('total_cost', 'DESC');
+    // Limit to top 100 items by total cost
+    $CI->db->limit(100);
+
+    return $CI->db->get()->result_array();
+}
+
+function get_vendor_po_volume()
+{
+    $CI = &get_instance();
+
+    try {
+        $CI->db->select([
+            db_prefix() . 'pur_vendor.company as vendor_name',
+            'SUM(' . db_prefix() . 'pur_orders.total) as total'
+        ]);
+
+        $CI->db->from(db_prefix() . 'pur_orders');
+        $CI->db->join(
+            db_prefix() . 'pur_vendor',
+            db_prefix() . 'pur_orders.vendor = ' . db_prefix() . 'pur_vendor.userid',
+            'left'
+        );
+
+        $CI->db->group_by(db_prefix() . 'pur_orders.vendor');
+        $CI->db->order_by('total', 'DESC');
+        $CI->db->limit(20);
+
+        $result = $CI->db->get();
+
+        if (!$result) {
+            throw new Exception('Database query failed');
+        }
+
+        return $result->result_array();
+    } catch (Exception $e) {
+        log_message('error', 'get_vendor_po_volume error: ' . $e->getMessage());
+        return [];
+    }
+}
+
+
+function get_department_and_total_tax()
+{
+    $CI = &get_instance();
+    $CI->db->select(db_prefix() . 'departments.name as department_name, SUM(' . db_prefix() . 'pur_orders.total) as total');
+    $CI->db->join(db_prefix() . 'departments', db_prefix() . 'pur_orders.department = ' . db_prefix() . 'departments.departmentid', 'left');
+    $CI->db->group_by(db_prefix() . 'pur_orders.department');
+    $CI->db->from(db_prefix() . 'pur_orders');
+    return $CI->db->get()->result_array();
+}
+
+function get_expensive_item_wise()
+{
+    $CI = &get_instance();
+    $CI->db->select([
+        db_prefix() . 'pur_order_detail.item_code',
+        db_prefix() . 'items.description AS item_name',
+        'SUM(' . db_prefix() . 'pur_order_detail.into_money) AS total_cost'
+    ]);
+    $CI->db->join(
+        db_prefix() . 'items',
+        db_prefix() . 'items.id = ' . db_prefix() . 'pur_order_detail.item_code',
+        'left'
+    );
+    $CI->db->from(db_prefix() . 'pur_order_detail');
+    // Group by item_code so that SUM(into_money) aggregates per item
+    $CI->db->group_by(db_prefix() . 'pur_order_detail.item_code');
+    // Order by the summed cost in descending order
+    $CI->db->order_by('total_cost', 'DESC');
+    // Limit to top 100 items by total cost
+    $CI->db->limit(10);
+
+    return $CI->db->get()->result_array();
+}
