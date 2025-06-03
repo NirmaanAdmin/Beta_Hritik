@@ -4514,4 +4514,80 @@ class Forms_model extends App_Model
         }
         return false;
     }
+
+    public function get_daily_labor_report($id)
+    {
+        $result = array();
+        $dpr_form_detail = $this->get_dpr_form_detail($id);
+
+        if(!empty($dpr_form_detail)) {
+            $unique_sub_types = array_values(array_unique(array_column($dpr_form_detail, 'sub_type')));
+            if(!empty($unique_sub_types)) {
+                foreach ($unique_sub_types as $key => $value) {
+                    $sub_type_array = array();
+                    $this->db->where('id', $value);
+                    $progress_report_sub_type = $this->db->get(db_prefix() . 'progress_report_sub_type')->row();
+                    $sub_type_array['name'] = $progress_report_sub_type->name;
+
+                    $sub_type_filtered = array_filter($dpr_form_detail, function($item) use ($value) {
+                        return $item['sub_type'] == $value;
+                    });
+                    $sub_type_array['male'] = !empty($sub_type_filtered) ? array_sum(array_column($sub_type_filtered, 'male')) : 0;
+                    $sub_type_array['female'] = !empty($sub_type_filtered) ? array_sum(array_column($sub_type_filtered, 'female')) : 0;
+                    $sub_type_array['total'] = $sub_type_array['male'] + $sub_type_array['female'];
+                    $sub_type_array['is_bold'] = true;
+
+                    $result[] = $sub_type_array;
+
+                    $unique_type = array_values(array_unique(array_column($sub_type_filtered, 'type')));
+                    if(!empty($unique_type)) {
+                        foreach ($unique_type as $ukey => $uvalue) {
+                            $type_array = array();
+                            $this->db->where('id', $uvalue);
+                            $progress_report_type = $this->db->get(db_prefix() . 'progress_report_type')->row();
+                            $type_array['name'] = $progress_report_type->name;
+
+                            $type_filtered = array_filter($sub_type_filtered, function($item) use ($value, $uvalue) {
+                                return $item['sub_type'] == $value && $item['type'] == $uvalue;
+                            });
+                            $type_array['male'] = !empty($type_filtered) ? array_sum(array_column($type_filtered, 'male')) : 0;
+                            $type_array['female'] = !empty($type_filtered) ? array_sum(array_column($type_filtered, 'female')) : 0;
+                            $type_array['total'] = $type_array['male'] + $type_array['female'];
+                            $type_array['is_bold'] = false;
+
+                            $result[] = $type_array;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public function get_labor_report_machinery($id)
+    {
+        $result = array();
+        $dpr_form_detail = $this->get_dpr_form_detail($id);
+
+        if(!empty($dpr_form_detail)) {
+            $unique_machinery = array_values(array_unique(array_column($dpr_form_detail, 'machinery')));
+            if(!empty($unique_machinery)) {
+                $unique_machinery = array_values(array_filter($unique_machinery));
+                foreach ($unique_machinery as $key => $value) {
+                    $machinery_array = array();
+                    $this->db->where('id', $value);
+                    $progress_report_machinary = $this->db->get(db_prefix() . 'progress_report_machinary')->row();
+                    $machinery_array['name'] = $progress_report_machinary->name;
+                    $machinery_filtered = array_filter($dpr_form_detail, function($item) use ($value) {
+                        return $item['machinery'] == $value;
+                    });
+                    $machinery_array['total'] = !empty($machinery_filtered) ? array_sum(array_column($machinery_filtered, 'total_machinery')) : 0;
+                    $result[] = $machinery_array;
+                }
+            }
+        }
+
+        return $result;
+    }
 }

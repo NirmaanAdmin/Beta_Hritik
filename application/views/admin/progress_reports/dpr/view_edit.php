@@ -374,7 +374,65 @@
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="daily_labor_report">
-                                Hello here
+                                <div class="table-responsive s_table">
+                                    <table class="table items no-mtop" style="border: 1px solid #dee2e6;">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%" align="">Row Labels</th>
+                                                <th width="25%" align="right">Sum of Male</th>
+                                                <th width="25%" align="right">Sum of Female</th>
+                                                <th width="25%" align="right">Sum of Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                            if(!empty($daily_labor_report)) {
+                                                foreach ($daily_labor_report as $key => $value) { ?>
+                                                    <tr<?php echo $value['is_bold'] ? ' style="font-weight: bold;"' : ''; ?>>
+                                                        <td align="left">
+                                                            <?php echo $value['name']; ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo $value['male']; ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo $value['female']; ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo $value['total']; ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php }
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-responsive s_table">
+                                    <table class="table items no-mtop" style="border: 1px solid #dee2e6;">
+                                        <thead>
+                                            <tr>
+                                                <th width="50%" align="">Row Labels</th>
+                                                <th width="50%" align="right">Sum of Male</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                            if(!empty($labor_report_machinery)) {
+                                                foreach ($labor_report_machinery as $key => $value) { ?>
+                                                    <tr>
+                                                        <td align="left">
+                                                            <?php echo $value['name']; ?>
+                                                        </td>
+                                                        <td align="right">
+                                                            <?php echo $value['total']; ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php }
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div role="tabpanel" class="tab-pane" id="note">
                                 <hr class="no-mtop" />

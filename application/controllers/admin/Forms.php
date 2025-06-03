@@ -1293,6 +1293,8 @@ class Forms extends AdminController
         $data['form']->form_notes = $this->misc_model->get_notes($id, 'form');
         $data['projects'] = $this->projects_model->get_items();
         $data['form_listing'] = $this->forms_model->get_form_listing();
+        $data['daily_labor_report'] = $this->forms_model->get_daily_labor_report($id);
+        $data['labor_report_machinery'] = $this->forms_model->get_labor_report_machinery($id);
         add_admin_progress_reports_js_assets();
         $this->load->view('admin/progress_reports/dpr/view_edit', $data);
     }
