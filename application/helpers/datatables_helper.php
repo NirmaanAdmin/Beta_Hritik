@@ -338,10 +338,10 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             po.budget,
             po.order_value,
             po.total AS total,
-            co.co_value AS co_total,
-            (po.subtotal + IFNULL(co.co_value, 0)) AS total_rev_contract_value, 
+            IFNULL(co_sum.co_total, 0) AS co_total,
+            (po.subtotal + IFNULL(co_sum.co_total, 0)) AS total_rev_contract_value, 
             po.anticipate_variation,
-            (IFNULL(po.anticipate_variation, 0) + (po.subtotal + IFNULL(co.co_value, 0))) AS cost_to_complete,
+            (IFNULL(po.anticipate_variation, 0) + (po.subtotal + IFNULL(co_sum.co_total, 0))) AS cost_to_complete,
             COALESCE(inv_po_sum.vendor_submitted_amount_without_tax, 0) AS vendor_submitted_amount_without_tax,
             po.group_pur,
             po.kind,
@@ -352,7 +352,12 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             'pur_orders' AS source_table
         FROM tblpur_orders po
         LEFT JOIN tblpur_vendor pv ON pv.userid = po.vendor
-        LEFT JOIN tblco_orders co ON co.po_order_id = po.id
+        LEFT JOIN (
+            SELECT po_order_id, SUM(co_value) AS co_total
+            FROM tblco_orders
+            WHERE po_order_id IS NOT NULL
+            GROUP BY po_order_id
+        ) AS co_sum ON co_sum.po_order_id = po.id
         LEFT JOIN tblprojects pr ON pr.id = po.project
         LEFT JOIN (
         SELECT
@@ -379,10 +384,10 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             wo.budget,
             wo.order_value,
             wo.total AS total,
-            co.co_value AS co_total,
-            (wo.subtotal + IFNULL(co.co_value, 0)) AS total_rev_contract_value,
+            IFNULL(co_sum.co_total, 0) AS co_total,
+            (wo.subtotal + IFNULL(co_sum.co_total, 0)) AS total_rev_contract_value,
             wo.anticipate_variation,
-            (IFNULL(wo.anticipate_variation, 0) + (wo.subtotal + IFNULL(co.co_value, 0))) AS cost_to_complete,
+            (IFNULL(wo.anticipate_variation, 0) + (wo.subtotal + IFNULL(co_sum.co_total, 0))) AS cost_to_complete,
             COALESCE(inv_wo_sum.vendor_submitted_amount_without_tax, 0) AS vendor_submitted_amount_without_tax,
             wo.group_pur,
             wo.kind,
@@ -393,7 +398,12 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             'wo_orders' AS source_table
         FROM tblwo_orders wo
         LEFT JOIN tblpur_vendor pv ON pv.userid = wo.vendor
-        LEFT JOIN tblco_orders co ON co.wo_order_id = wo.id
+        LEFT JOIN (
+            SELECT wo_order_id, SUM(co_value) AS co_total
+            FROM tblco_orders
+            WHERE wo_order_id IS NOT NULL
+            GROUP BY wo_order_id
+        ) AS co_sum ON co_sum.wo_order_id = wo.id
         LEFT JOIN tblprojects pr ON pr.id = wo.project
         LEFT JOIN (
         SELECT
