@@ -342,7 +342,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             (po.subtotal + IFNULL(co.co_value, 0)) AS total_rev_contract_value, 
             po.anticipate_variation,
             (IFNULL(po.anticipate_variation, 0) + (po.subtotal + IFNULL(co.co_value, 0))) AS cost_to_complete,
-            COALESCE(inv_po_sum.final_certified_amount, 0) AS final_certified_amount,
+            COALESCE(inv_po_sum.vendor_submitted_amount_without_tax, 0) AS vendor_submitted_amount_without_tax,
             po.group_pur,
             po.kind,
             po.remarks AS remarks,
@@ -357,7 +357,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         LEFT JOIN (
         SELECT
             pur_order,
-            SUM(final_certified_amount) AS final_certified_amount
+            SUM(vendor_submitted_amount_without_tax) AS vendor_submitted_amount_without_tax
             FROM tblpur_invoices
             WHERE pur_order IS NOT NULL
             GROUP BY pur_order
@@ -383,7 +383,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             (wo.subtotal + IFNULL(co.co_value, 0)) AS total_rev_contract_value,
             wo.anticipate_variation,
             (IFNULL(wo.anticipate_variation, 0) + (wo.subtotal + IFNULL(co.co_value, 0))) AS cost_to_complete,
-            COALESCE(inv_wo_sum.final_certified_amount, 0) AS final_certified_amount,
+            COALESCE(inv_wo_sum.vendor_submitted_amount_without_tax, 0) AS vendor_submitted_amount_without_tax,
             wo.group_pur,
             wo.kind,
             wo.remarks AS remarks,
@@ -398,7 +398,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         LEFT JOIN (
         SELECT
             wo_order,
-            SUM(final_certified_amount) AS final_certified_amount
+            SUM(vendor_submitted_amount_without_tax) AS vendor_submitted_amount_without_tax
             FROM tblpur_invoices
             WHERE wo_order IS NOT NULL
             GROUP BY wo_order
@@ -424,7 +424,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
             (t.total + IFNULL(t.co_total, 0)) AS total_rev_contract_value,
             t.anticipate_variation,
             (IFNULL(t.anticipate_variation, 0) + (t.total + IFNULL(t.co_total, 0))) AS cost_to_complete,
-            COALESCE(inv_ot_sum.final_certified_amount, 0) AS final_certified_amount,
+            COALESCE(inv_ot_sum.vendor_submitted_amount_without_tax, 0) AS vendor_submitted_amount_without_tax,
             t.group_pur,
             t.kind,
             t.remarks AS remarks,
@@ -438,7 +438,7 @@ function data_tables_init_union($aColumns, $sIndexColumn, $combinedTables, $join
         LEFT JOIN (
         SELECT
             order_tracker_id ,
-            SUM(final_certified_amount) AS final_certified_amount
+            SUM(vendor_submitted_amount_without_tax) AS vendor_submitted_amount_without_tax
             FROM tblpur_invoices
             WHERE order_tracker_id  IS NOT NULL
             GROUP BY order_tracker_id 

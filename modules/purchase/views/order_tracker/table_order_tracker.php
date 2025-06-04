@@ -26,7 +26,7 @@ $aColumns = [
    'total_rev_contract_value',
    'anticipate_variation',
    'cost_to_complete',
-   'final_certified_amount',
+   'vendor_submitted_amount_without_tax',
    1,
    2,
    'project',
@@ -263,7 +263,7 @@ $result = data_tables_init_union($aColumns, $sIndexColumn, $sTable, $join, $wher
    'total_rev_contract_value',
    'anticipate_variation',
    'cost_to_complete',
-   'final_certified_amount',
+   'vendor_submitted_amount_without_tax',
    'kind',
    'group_name',
    'remarks',
@@ -510,14 +510,14 @@ foreach ($rResult as $aRow) {
       } elseif ($column == 'cost_to_complete') {
          $base_currency = get_base_currency_pur();
          $_data = app_format_money($aRow['cost_to_complete'], $base_currency->symbol);
-      } elseif ($column == 'final_certified_amount') {
+      } elseif ($column == 'vendor_submitted_amount_without_tax') {
          // Format final_certified_amount to display as currency
          // $_data = app_format_money($aRow['final_certified_amount'], '₹');
 
-         if (!empty($aRow['final_certified_amount']) && $aRow['final_certified_amount'] != 0) {
+         if (!empty($aRow['vendor_submitted_amount_without_tax']) && $aRow['vendor_submitted_amount_without_tax'] != 0) {
 
             $_data = '<span class=  data-id="' . $aRow['id'] . '" data-type="' . $aRow['source_table'] . '">' .
-               app_format_money($aRow['final_certified_amount'], '₹') .
+               app_format_money($aRow['vendor_submitted_amount_without_tax'], '₹') .
                '</span>';
          } else {
             // Render as an editable input if no value exists
@@ -702,7 +702,7 @@ foreach ($rResult as $aRow) {
    $footer_data['total_rev_contract_value'] += $aRow['total_rev_contract_value'];
    $footer_data['total_anticipate_variation'] += $aRow['anticipate_variation'];
    $footer_data['total_cost_to_complete'] += $aRow['cost_to_complete'];
-   $footer_data['total_final_certified_amount'] += $aRow['final_certified_amount'];
+   $footer_data['total_final_certified_amount'] += $aRow['vendor_submitted_amount_without_tax'];
    $output['aaData'][] = $row;
    $sr++;
 }
