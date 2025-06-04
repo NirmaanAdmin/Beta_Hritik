@@ -1492,4 +1492,10 @@ class Forms extends AdminController
         }
         redirect(admin_url('forms/progress_report_setting?group=progress_report_machinary'));
     }
+
+    public function dpr_dashboard()
+    {
+        $data = $this->forms_model->dpr_dashboard();
+        $this->load->view('admin/progress_reports/dpr/dpr_dashboard', $data);
+    }
 }

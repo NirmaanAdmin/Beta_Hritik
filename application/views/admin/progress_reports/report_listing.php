@@ -22,11 +22,11 @@
                         ?>
                     </a>
 
-                    <a href="#" class="btn btn-default btn-with-tooltip" data-toggle="tooltip" data-placement="bottom"
-                        data-title="<?php echo _l('forms_chart_weekly_opening_stats'); ?>"
-                        onclick="slideToggle('.weekly-form-opening', init_forms_weekly_chart); return false;">
-                        <i class="fa fa-bar-chart"></i>
-                    </a>
+                    <?php if($module == "dpr") { ?>
+                        <a href="<?php echo admin_url('forms/dpr_dashboard'); ?>" class="btn btn-primary">
+                            <?php echo _l('dashboard_string'); ?>
+                        </a>
+                    <?php } ?>
 
                     <div class="tw-inline pull-right">
                             <app-filters
