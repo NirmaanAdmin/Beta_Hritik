@@ -22,7 +22,7 @@
                         <div class="row">
                             <div class="col-md-12" style="padding: 0px;">
                                 <div class="col-md-12" id="heading">
-                                    <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Purchase Tracker</h4>
+                                    <h4 class="no-margin font-bold"><i class="fa fa-shopping-basket" aria-hidden="true"></i> <?php echo _l('client_supply_tracker'); ?></h4>
                                     <hr />
                                 </div>
                             </div>
