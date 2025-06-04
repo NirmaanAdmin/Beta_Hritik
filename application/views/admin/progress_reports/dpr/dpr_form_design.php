@@ -46,7 +46,8 @@
                         <span class="daily_report_label">Project: <span class="view_project_name"></span></span>
                     </th>
                     <th colspan="4" class="daily_report_head">
-                        <span class="daily_report_label">Date: </span><?php echo date('d-m-Y'); ?>
+                        <span class="daily_report_label">Date: </span>
+                        <?php echo isset($dpr_main_form->date) ? date('d-m-Y', strtotime($dpr_main_form->date)) : date('d-m-Y'); ?>
                     </th>
                 </tr>
                 <tr>

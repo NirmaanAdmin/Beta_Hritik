@@ -1113,6 +1113,7 @@ class Forms extends AdminController
     {
         $dpr_row_template = $this->forms_model->create_dpr_row_template();
         if ($form_id != 0) {
+            $dpr_main_form = $this->forms_model->get_form($form_id);
             $dpr_form = $this->forms_model->get_dpr_form($form_id);
             $dpr_form_detail = $this->forms_model->get_dpr_form_detail($form_id);
             if (!empty($dpr_form_detail)) {
@@ -1138,6 +1139,7 @@ class Forms extends AdminController
                 }
             }
             $data['dpr_form'] = $dpr_form;
+            $data['dpr_main_form'] = $dpr_main_form;
         }
         $data['dpr_row_template'] = $dpr_row_template;
         $this->load->view('admin/progress_reports/dpr/dpr_form_design', $data);
