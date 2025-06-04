@@ -10507,12 +10507,7 @@ class purchase extends AdminController
 
     public function import_file_xlsx_wo_order_items()
     {
-        if (!is_admin() && !has_permission('purchase', '', 'create')) {
-            access_denied(_l('purchase'));
-        }
-        // if (!is_admin() && !has_permission('purchase', '', 'create')) {
-        //     access_denied(_l('purchase'));
-        // }
+
 
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
@@ -10678,9 +10673,6 @@ class purchase extends AdminController
     }
     public function import_file_xlsx_order_tracker_items()
     {
-        if (!is_admin() && !has_permission('order_tracker', '', 'create')) {
-            access_denied(_l('order_tracker'));
-        }
 
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
