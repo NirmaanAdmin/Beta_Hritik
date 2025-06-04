@@ -4673,4 +4673,10 @@ class Forms_model extends App_Model
 
         return $result;
     }
+
+    public function get_form($form_id)
+    {
+        $this->db->where('formid', $form_id);
+        return $this->db->get(db_prefix() . 'forms')->row();
+    }
 }
