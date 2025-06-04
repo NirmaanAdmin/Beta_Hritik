@@ -200,16 +200,11 @@ class document_management_model extends app_model
 		return $array;
 	}
 
-	/**
-	 * upload file
-	 * @param  integer $id     
-	 * @param  string $folder 
-	 * @return boolean         
-	 */
 	public function upload_file($id, $type, $version = '1.0.0')
 	{
 		$path = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/' . $type . '/' . $id . '/';
 		$totalUploaded = 0;
+
 		if (
 			isset($_FILES['file']['name'])
 			&& ($_FILES['file']['name'] != '' || is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
@@ -222,10 +217,10 @@ class document_management_model extends app_model
 				$_FILES['file']['size'] = [$_FILES['file']['size']];
 			}
 			_file_attachments_index_fix('file');
+
 			for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
-				// Get the temp file path
 				$tmpFilePath = $_FILES['file']['tmp_name'][$i];
-				// Make sure we have a filepath
+
 				if (!empty($tmpFilePath) && $tmpFilePath != '') {
 					if (
 						_perfex_upload_error($_FILES['file']['error'][$i])
@@ -234,17 +229,33 @@ class document_management_model extends app_model
 						continue;
 					}
 
-					_maybe_create_upload_path($path);
-					$filename = $this->check_duplicate_file_name($id, $_FILES['file']['name'][$i]);
-					$newFilePath = $path . $filename;
-					// Upload the file into the temp dir
-					if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-						$creator_type = 'staff';
-						if (is_client_logged_in()) {
-							$creator_type = 'customer';
+					// Check if file is a ZIP
+					if (strtolower(pathinfo($_FILES['file']['name'][$i], PATHINFO_EXTENSION)) === 'zip') {
+						$zipFolderName = pathinfo($_FILES['file']['name'][$i], PATHINFO_FILENAME);
+						$totalUploaded += $this->handle_zip_upload($tmpFilePath, $id, $type, $version, $zipFolderName);
+					} else {
+						// Regular file upload
+						_maybe_create_upload_path($path);
+						$filename = $this->check_duplicate_file_name($id, $_FILES['file']['name'][$i]);
+						$newFilePath = $path . $filename;
+
+						if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+							$creator_type = 'staff';
+							if (is_client_logged_in()) {
+								$creator_type = 'customer';
+							}
+							$this->add_attachment_file_to_database(
+								$filename,
+								$id,
+								$version,
+								$_FILES['file']['type'][$i],
+								'',
+								'',
+								'',
+								$creator_type
+							);
+							$totalUploaded++;
 						}
-						$this->add_attachment_file_to_database($filename, $id, $version, $_FILES['file']['type'][$i], '', '', '', $creator_type);
-						$totalUploaded++;
 					}
 				}
 			}
@@ -252,6 +263,118 @@ class document_management_model extends app_model
 		return (bool) $totalUploaded;
 	}
 
+	/**
+	 * Handle ZIP file upload and extract contents
+	 */
+	private function handle_zip_upload($zipPath, $parent_id, $type, $version, $zipFolderName)
+	{
+		$totalUploaded = 0;
+		$basePath = DOCUMENT_MANAGEMENT_MODULE_UPLOAD_FOLDER . '/' . $type . '/' . $parent_id . '/';
+
+		_maybe_create_upload_path($basePath);
+
+		$zip = new ZipArchive;
+		if ($zip->open($zipPath) === TRUE) {
+			// Track folders we've created in database (path => folder_id)
+			$createdFolders = [];
+
+			for ($i = 0; $i < $zip->numFiles; $i++) {
+				$filename = $zip->getNameIndex($i);
+
+				// Skip MAC OSX hidden files
+				if (strpos($filename, '__MACOSX/') !== false || strpos($filename, '.DS_Store') !== false) {
+					continue;
+				}
+
+				// Skip empty directories
+				if (substr($filename, -1) === '/' && $zip->getFromIndex($i) === false) {
+					continue;
+				}
+
+				$fileinfo = pathinfo($filename);
+				$isDirectory = substr($filename, -1) === '/';
+				$relativePath = trim($filename, '/');
+				$pathParts = explode('/', $relativePath);
+
+				// For files not in any folder
+				if (count($pathParts) === 1 && !$isDirectory) {
+					// Extract file directly
+					$fullPath = $basePath . $filename;
+
+					if ($zip->extractTo($basePath, $filename)) {
+						$this->add_attachment_file_to_database(
+							$filename,
+							$parent_id, // Parent is the original parent
+							$version,
+							mime_content_type($fullPath),
+							'',
+							'',
+							'',
+							is_client_logged_in() ? 'customer' : 'staff'
+						);
+						$totalUploaded++;
+					}
+					continue;
+				}
+
+				// Handle files in folders
+				if (!$isDirectory) {
+					$currentPath = '';
+					$currentParentId = $parent_id;
+
+					// Process each folder in the path (except the filename)
+					for ($j = 0; $j < count($pathParts) - 1; $j++) {
+						$currentPath .= ($currentPath ? '/' : '') . $pathParts[$j];
+
+						if (!isset($createdFolders[$currentPath])) {
+							// Create folder in database
+							$newFolderId = $this->add_attachment_file_to_database(
+								$pathParts[$j],
+								$currentParentId,
+								$version,
+								'folder',
+								'',
+								'',
+								'',
+								is_client_logged_in() ? 'customer' : 'staff'
+							);
+							$createdFolders[$currentPath] = $newFolderId;
+							$totalUploaded++;
+						}
+
+						$currentParentId = $createdFolders[$currentPath];
+					}
+
+					// Extract the file
+					$fullPath = $basePath . $filename;
+					$dirPath = dirname($fullPath);
+
+					// Ensure physical directory exists
+					if (!is_dir($dirPath)) {
+						mkdir($dirPath, 0755, true);
+					}
+
+					if ($zip->extractTo($basePath, $filename)) {
+						// Add file to database
+						$this->add_attachment_file_to_database(
+							$pathParts[count($pathParts) - 1], // filename
+							$currentParentId, // parent is the deepest folder
+							$version,
+							mime_content_type($fullPath),
+							'',
+							'',
+							'',
+							is_client_logged_in() ? 'customer' : 'staff'
+						);
+						$totalUploaded++;
+					}
+				}
+			}
+			$zip->close();
+		}
+
+		return $totalUploaded;
+	}
 	/**
 	 * add attachment file to database
 	 * @param [type] $name      
@@ -1829,50 +1952,6 @@ class document_management_model extends app_model
 		$API->start($from_path, 'docx')->wait()->download($to_path)->delete();
 	}
 
-	// public function searchFilesAndFolders($query, $folder_id = null)
-	// {
-	// 	// Get all subfolder IDs if searching inside a folder
-	// 	$searchable_folder_ids = [$folder_id]; // Start with the current folder
-	// 	if ($folder_id) {
-	// 		$searchable_folder_ids = array_merge($searchable_folder_ids, $this->getAllDescendantIds($folder_id));
-	// 	}
-
-	// 	// ===== 1. SEARCH FOR FILES (in current folder + subfolders) =====
-	// 	$this->db->group_start();
-	// 	$this->db->where_in('parent_id', $searchable_folder_ids);
-	// 	if (!$folder_id) {
-	// 		$this->db->or_where('parent_id IS NULL'); // Include root if no folder_id
-	// 	}
-	// 	$this->db->group_end();
-	// 	$this->db->like('name', $query);
-	// 	$fileResults = $this->db->get(db_prefix() . 'dmg_items')->result();
-
-	// 	// ===== 2. SEARCH FOR FOLDERS (only in current folder) =====
-	// 	$this->db->where('filetype', 'folder');
-	// 	$this->db->where('parent_id', $folder_id); // Only direct children
-	// 	$this->db->like('name', $query);
-	// 	$folderResults = $this->db->get(db_prefix() . 'dmg_items')->result();
-
-	// 	// ===== 3. COMBINE RESULTS =====
-	// 	$results = array_merge($fileResults, $folderResults);
-
-	// 	// ===== 4. ADD BREADCRUMBS =====
-	// 	$rootFolder = $this->db->where('filetype', 'folder')
-	// 		->where('parent_id', NULL)
-	// 		->get(db_prefix() . 'dmg_items')
-	// 		->row();
-
-	// 	foreach ($results as $key => $item) {
-	// 		$breadcrumbs = [];
-	// 		if ($rootFolder) {
-	// 			$breadcrumbs[] = $rootFolder->name;
-	// 		}
-	// 		$breadcrumbs = array_merge($breadcrumbs, $this->getLimitedBreadcrumb($item->parent_id));
-	// 		$results[$key]->breadcrumb = $breadcrumbs;
-	// 	}
-
-	// 	return $results;
-	// }
 	public function searchFilesAndFolders($query, $folder_id = null)
 	{
 		// 1. Build the set of folder IDs to search under (recursive)
