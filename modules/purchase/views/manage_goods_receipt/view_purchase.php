@@ -138,13 +138,16 @@
 
                     <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('commodity_code') ?></label><br>
                     <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('description') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('po_quantity') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('received_quantity') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> <?php echo _l('production_status') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="6" checked=""> <?php echo _l('payment_date') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="7" checked=""> <?php echo _l('est_delivery_date') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="8" checked=""><?php echo _l('delivery_date') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="9" checked=""><?php echo _l('remarks') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('area') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('po_quantity') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> <?php echo _l('received_quantity') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="6" checked=""> <?php echo _l('imported_local') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="7" checked=""> <?php echo _l('status') ?></label><br>
+                    <label><input type="checkbox" class="column-toggle" data-column="8" checked=""> <?php echo _l('production_status') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="9" checked=""> <?php echo _l('payment_date') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="10" checked=""> <?php echo _l('est_delivery_date') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="11" checked=""><?php echo _l('delivery_date') ?></label>
+                    <label><input type="checkbox" class="column-toggle" data-column="12" checked=""><?php echo _l('remarks') ?></label>
                   </div>
                 </span>
               </div>
@@ -156,8 +159,11 @@
                         <th align="center">#</th>
                         <th><?php echo _l('commodity_code') ?></th>
                         <th><?php echo _l('description') ?></th>
+                        <th><?php echo _l('area') ?></th>
                         <th><?php echo _l('po_quantity') ?></th>
                         <th><?php echo _l('received_quantity') ?></th>
+                        <th><?php echo _l('imported_local') ?></th>
+                        <th><?php echo _l('status') ?></th>
                         <th><?php echo _l('production_status') ?></th>
                         <th><?php echo _l('payment_date') ?></th>
                         <th><?php echo _l('est_delivery_date') ?></th>
@@ -244,8 +250,11 @@
                           <td><?php echo html_entity_decode($receipt_key) ?></td>
                           <td><?php echo html_entity_decode($commodity_name) ?></td>
                           <td><?php echo html_entity_decode($description) ?></td>
+                          <td><?php echo get_area_name_by_id($receipt_value['area']); ?></td>
                           <td><?php echo html_entity_decode($po_quantities).' '.html_entity_decode($unit_name) ?></td>
                           <td><?php echo html_entity_decode($quantities).' '.html_entity_decode($unit_name) ?></td>
+                          <td></td>
+                          <td></td>
                           <td><?php echo $production_status ?></td>
                           <td>
                             <?php

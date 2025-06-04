@@ -931,3 +931,4 @@ $lang['attachment_upload'] = 'Attachment Upload';
 $lang['budgeted_qty'] = 'Budgeted Quantity';
 $lang['budgeted_rate'] = 'Budgeted Rate';
 $lang['client_supply_tracker'] = 'BOI/Client Supply Tracker';
+$lang['imported_local'] = 'Imported/Local';
