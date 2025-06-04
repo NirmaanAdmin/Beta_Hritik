@@ -10173,6 +10173,9 @@ class purchase extends AdminController
         if (!is_admin() && !has_permission('purchase', '', 'create')) {
             access_denied(_l('purchase'));
         }
+        // if (!is_admin() && !has_permission('purchase', '', 'create')) {
+        //     access_denied(_l('purchase'));
+        // }
 
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
@@ -10513,6 +10516,9 @@ class purchase extends AdminController
         if (!is_admin() && !has_permission('purchase', '', 'create')) {
             access_denied(_l('purchase'));
         }
+        // if (!is_admin() && !has_permission('purchase', '', 'create')) {
+        //     access_denied(_l('purchase'));
+        // }
 
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
