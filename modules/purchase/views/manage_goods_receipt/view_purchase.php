@@ -243,6 +243,35 @@
 
                           $production_status .= '</span>';
                         }
+
+                        $imp_local_status = '';
+                        $imp_local_labels = [
+                          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+                          2 => ['label' => 'success', 'table' => 'imported', 'text' => _l('imported')],
+                          3 => ['label' => 'info', 'table' => 'local', 'text' => _l('local')],
+                        ];
+                        if ($receipt_value['imp_local_status'] > 0) {
+                          $status = $imp_local_labels[$receipt_value['imp_local_status']];
+                          $imp_local_status = '<span class="inline-block label label-' . $status['label'] . '" id="imp_status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+
+                          $imp_local_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+                          $imp_local_status .= '<a href="#" class="dropdown-toggle text-dark" id="tableImpLocalStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                          $imp_local_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+                          $imp_local_status .= '</a>';
+                          $imp_local_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableImpLocalStatus-' . $aRow['id'] . '">';
+                          foreach ($imp_local_labels as $key => $status) {
+                            if ($key != $receipt_value['imp_local_status']) {
+                              $imp_local_status .= '<li>
+                                       <a href="#">
+                                           ' . $status['text'] . '
+                                       </a>
+                                   </li>';
+                            }
+                          }
+                          $imp_local_status .= '</ul>';
+                          $imp_local_status .= '</div>';
+                          $imp_local_status .= '</span>';
+                        }
                         $remarks = $receipt_value['remarks'];
                       ?>
 
@@ -253,7 +282,7 @@
                           <td><?php echo get_area_name_by_id($receipt_value['area']); ?></td>
                           <td><?php echo html_entity_decode($po_quantities).' '.html_entity_decode($unit_name) ?></td>
                           <td><?php echo html_entity_decode($quantities).' '.html_entity_decode($unit_name) ?></td>
-                          <td></td>
+                          <td><?php echo $imp_local_status ?></td>
                           <td></td>
                           <td><?php echo $production_status ?></td>
                           <td>

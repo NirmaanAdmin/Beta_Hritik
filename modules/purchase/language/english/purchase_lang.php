@@ -932,3 +932,6 @@ $lang['budgeted_qty'] = 'Budgeted Quantity';
 $lang['budgeted_rate'] = 'Budgeted Rate';
 $lang['client_supply_tracker'] = 'BOI/Client Supply Tracker';
 $lang['imported_local'] = 'Imported/Local';
+$lang['not_set'] = 'Not set';
+$lang['imported'] = 'Imported';
+$lang['local'] = 'Local';
