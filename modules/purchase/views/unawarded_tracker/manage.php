@@ -201,7 +201,7 @@
                            <a class="dropdown-item export-btn" href="<?php echo admin_url('purchase/unawarded_tracker_pdf'); ?>" data-type="pdf">
                               <i class="fa fa-file-pdf text-danger"></i> PDF
                            </a><br>
-                           <a class="dropdown-item export-btn" href="<?php echo admin_url('purchase/order_tracker_excel'); ?>" data-type="excel">
+                           <a class="dropdown-item export-btn" href="<?php echo admin_url('purchase/unawarded_tracker_excel'); ?>" data-type="excel">
                               <i class="fa fa-file-excel text-success"></i> Excel
                            </a>
                         </div>

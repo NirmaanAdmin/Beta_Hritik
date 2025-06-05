@@ -14162,4 +14162,312 @@ class purchase extends AdminController
         $pdf_name = 'unwarded_tracker.pdf';
         $pdf->Output($pdf_name, $type);
     }
+
+    public function unawarded_tracker_excel()
+    {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="Unwarded_Tracker_Export.csv"');
+
+        // Open output stream
+        $output = fopen('php://output', 'w');
+        $get_order_tracker = $this->purchase_model->get_unawarded_tracker_pdf();
+        // CSV Headers (same as PDF table columns)
+        $headers = [
+            'Order Scope',
+            'Order Date',
+            'Completion Date',
+            'Budget RO Projection',
+            'Project',
+            'RLI Filter',
+            'Category',
+            'Group Pur',
+            'Remarks'
+        ];
+
+        // Write headers to CSV
+        fputcsv($output, $headers);
+
+        // Data rows
+        $serial_no = 1;
+        foreach ($get_order_tracker as $row) {
+            // Format dates (same logic as PDF)
+            $completion_date = $aw_unw_order_status = $contract_amount = $order_name = '';
+            if (!empty($row['completion_date']) && $row['completion_date'] != '0000-00-00') {
+                $completion_date = date('d M, Y', strtotime($row['completion_date']));
+            }
+
+            $order_date = '';
+            if (!empty($row['order_date']) && $row['order_date'] != '0000-00-00') {
+                $order_date = date('d M, Y', strtotime($row['order_date']));
+            }
+
+            $status_labels = [
+                0 => ['label' => 'danger', 'table' => 'provided_by_ril', 'text' => _l('provided_by_ril')],
+                1 => ['label' => 'success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
+                2 => ['label' => 'info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
+                3 => ['label' => 'warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
+                4 => ['label' => 'primary', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+                5 => ['label' => 'secondary', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+                6 => ['label' => 'purple', 'table' => 'event_expense', 'text' => _l('event_expense')],
+                7 => ['label' => 'teal', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+                8 => ['label' => 'orange', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ghj_scope')],
+                9 => ['label' => 'green', 'table' => 'common_services_in_ril_scope', 'text' => _l('common_services_in_ril_scope')],
+                10 => ['label' => 'default', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+            ];
+            if ($row['source_table'] == "order_tracker") {
+                $contract_amount =  app_format_money($row['total'] ?? 0, '');
+                $order_name = $row['order_name'] ?? '';
+            } else {
+                $contract_amount = app_format_money($row['subtotal'] ?? 0, '');
+                $order_name = $row['order_number'] . '-' . $row['order_name'] ?? '';
+            }
+            // Write row data
+            fputcsv($output, [
+                $order_name,
+                $order_date,
+                $completion_date,
+                app_format_money($row['budget'] ?? 0, ''),
+                $row['project'] ?? '',
+                $status_labels[$row['rli_filter']]['text'] ?? '',
+                $row['kind'] ?? '',
+                get_group_name_by_id($row['group_pur']) ?? '',
+                $row['remarks'] ?? ''
+            ]);
+        }
+
+        // Close output stream
+        fclose($output);
+        exit;
+    }
+    public function update_unawarded_date()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $order_date = $this->input->post('orderDate');
+
+        if (!$id || !$table || !$order_date) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_unawarded_tracker', ['order_date' => $order_date]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('order_date_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+    public function update_unawarded_completion_date()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $completion_date = $this->input->post('completion_date');
+
+        if (!$id || !$table || !$completion_date) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_unawarded_tracker', ['completion_date' => $completion_date]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('completion_date_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function update_unawarded_budget()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $budget = $this->input->post('budget');
+
+        if (!$id || !$table || !$budget) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        // Perform the update
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_unawarded_tracker', ['budget' => $budget]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('amount_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
+
+    public function change_rli_filter_unawarded($status, $id, $table_name)
+    {
+
+        // Define an array of statuses with their corresponding labels and texts
+        $status_labels = [
+            0 => ['label' => 'label-danger', 'table' => 'provided_by_ril', 'text' => _l('provided_by_ril')],
+            1 => ['label' => 'label-success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
+            2 => ['label' => 'label-info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
+            3 => ['label' => 'label-warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
+            4 => ['label' => 'label-primary', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+            5 => ['label' => 'label-secondary', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+            6 => ['label' => 'label-purple', 'table' => 'event_expense', 'text' => _l('event_expense')],
+            7 => ['label' => 'label-teal', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+            8 => ['label' => 'label-orange', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ghj_scope')],
+            9 => ['label' => 'label-green', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ril_scope')],
+            10 => ['label' => 'label-default', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+        ];
+        $success = $this->purchase_model->change_rli_filter_unawarded($status, $id, $table_name);
+        $message = $success ? _l('change_rli_filter_successfully') : _l('change_rli_filter_fail');
+
+        $html = '';
+        $status_str = $status_labels[$status]['text'] ?? '';
+        $class = $status_labels[$status]['label'] ?? '';
+
+        if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+            $html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+            $html .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            $html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+            $html .= '</a>';
+
+            $html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $id . '">';
+
+            // Generate the dropdown menu options dynamically
+            foreach ($status_labels as $key => $label) {
+                if ($key != $status) {
+                    $html .= '<li>
+                    <a href="#" onclick="change_rli_filter_unawarded(' . $key . ', ' . $id . ', \'' . htmlspecialchars($table_name, ENT_QUOTES) . '\'); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+                }
+            }
+
+            $html .= '</ul>';
+            $html .= '</div>';
+        }
+
+        echo json_encode([
+            'success' => $success,
+            'status_str' => $status_str,
+            'class' => $class,
+            'mess' => $message,
+            'html' => $html,
+        ]);
+    }
+    public function update_budget_head_unawarded($budget_head_id, $id, $table_name)
+    {
+        // 1) Get all budget heads
+        $budget_heads = get_group_name_item();
+
+        // 2) Define your 11-item label palette
+        $label_palette = [
+            'danger',
+            'success',
+            'info',
+            'warning',
+            'primary',
+            'secondary',
+            'purple',
+            'teal',
+            'orange',
+            'green',
+            'default',
+        ];
+
+        // 3) Build a map id => label, cycling through the palette
+        $status_labels = [];
+        $i = 0;
+        foreach ($budget_heads as $h) {
+            $status_labels[$h['id']] = $label_palette[$i % count($label_palette)];
+            $i++;
+        }
+
+        // 4) Lookup the chosen head’s name
+        $current_budget_head_name = '';
+        foreach ($budget_heads as $h) {
+            if ($h['id'] == $budget_head_id) {
+                $current_budget_head_name = $h['name'];
+                break;
+            }
+        }
+
+        // 5) Do the DB update
+        $success = $this->purchase_model->update_budget_head_unawarded($budget_head_id, $id, $table_name);
+        $message = $success ? _l('update_budget_head_successfully') : _l('update_budget_head_fail');
+
+        // 6) Determine this head’s label‐class
+        $label_key = isset($status_labels[$budget_head_id]) ? $status_labels[$budget_head_id] : 'default';
+        $class = 'label label-' . $label_key;
+
+        // 7) Build the replacement <span> with dropdown
+        $span = '<span>'
+            .  $current_budget_head_name;
+
+        if (has_permission('order_tracker', '', 'edit') || is_admin()) {
+            $span .= '<div class="dropdown inline-block mleft5 table-export-exclude">'
+                .  '<a href="#" class="dropdown-toggle text-dark" '
+                .     'id="tableBudgetHead-' . $id . '" data-toggle="dropdown">'
+                .     '<span data-toggle="tooltip" title="' . _l('change_budget_head') . '">'
+                .         '<i class="fa fa-caret-down"></i>'
+                .     '</span>'
+                .  '</a>'
+                .  '<ul class="dropdown-menu dropdown-menu-right" '
+                .      'aria-labelledby="tableBudgetHead-' . $id . '">';
+            foreach ($budget_heads as $h) {
+                if ($h['id'] != $budget_head_id) {
+                    $other_label = isset($status_labels[$h['id']])
+                        ? $status_labels[$h['id']]
+                        : 'default';
+                    $span .= '<li>'
+                        .   '<a href="javascript:void(0);" '
+                        .      'onclick="update_budget_head_unawarded('
+                        .         $h['id'] . ',' . $id . ',\'' .
+                        htmlspecialchars($table_name, ENT_QUOTES) .
+                        '\');return false;">'
+                        .          $h['name']
+                        .   '</a>'
+                        . '</li>';
+                }
+            }
+            $span .=   '</ul>'
+                .   '</div>';
+        }
+
+        $span .= '</span>';
+
+        // 8) Return JSON
+        echo json_encode([
+            'success'    => $success,
+            'status_str' => $span,
+            'class'      => $class,
+            'mess'       => $message,
+
+        ]);
+    }
+
+    public function update_unawarded_remarks()
+    {
+        $id = $this->input->post('id');
+        $table = $this->input->post('table');
+        $remarks = $this->input->post('remarks');
+
+        if (!$id || !$table) {
+            echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+            return;
+        }
+
+        $this->db->where('id', $id);
+        $success = $this->db->update('tblpur_unawarded_tracker', ['remarks' => $remarks]);
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => _l('remarks_updated')]);
+        } else {
+            echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+        }
+    }
 }

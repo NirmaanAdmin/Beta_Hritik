@@ -20609,4 +20609,18 @@ class Purchase_model extends App_Model
 
         return $html;
     }
+    public function change_rli_filter_unawarded($status, $id, $table_name)
+    {
+        $this->db->where('id', $id);
+        $this->db->update('tblpur_unawarded_tracker', ['rli_filter' => $status]);
+        return true;
+    }
+
+    public function update_budget_head_unawarded($status, $id, $table_name)
+    {
+
+        $this->db->where('id', $id);
+        $this->db->update('tblpur_unawarded_tracker', ['group_pur' => $status]);
+        return true;
+    }
 }

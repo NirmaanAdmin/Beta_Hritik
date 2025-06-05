@@ -116,10 +116,10 @@ var expenseDropzone;
     $('.buttons-collection').hide()
 })(jQuery);
 
-function change_rli_filter(status, id, table_name) {
+function change_rli_filter_unawarded(status, id, table_name) {
     "use strict";
     if (id > 0) {
-        $.post(admin_url + 'purchase/change_rli_filter/' + status + '/' + id + '/' + table_name)
+        $.post(admin_url + 'purchase/change_rli_filter_unawarded/' + status + '/' + id + '/' + table_name)
             .done(function (response) {
                 try {
                     response = JSON.parse(response);
@@ -211,10 +211,10 @@ function change_aw_unw_order_status(status, id, table_name) {
     }
 }
 
-function update_budget_head(status, id, table_name) {
+function update_budget_head_unawarded(status, id, table_name) {
     "use strict";
     if (id > 0) {
-        $.post(admin_url + 'purchase/update_budget_head/' + status + '/' + id + '/' + table_name)
+        $.post(admin_url + 'purchase/update_budget_head_unawarded/' + status + '/' + id + '/' + table_name)
             .done(function (response) {
                 try {
                     response = JSON.parse(response);

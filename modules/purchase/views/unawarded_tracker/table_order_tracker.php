@@ -400,7 +400,7 @@ foreach ($rResult as $aRow) {
             foreach ($status_labels as $key => $status) {
                if ($key != $aRow['rli_filter']) {
                   $rli_filter .= '<li>
-                       <a href="#" onclick="change_rli_filter(' . $key . ', ' . $aRow['id'] . ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES) . '\'); return false;">
+                       <a href="#" onclick="change_rli_filter_unawarded(' . $key . ', ' . $aRow['id'] . ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES) . '\'); return false;">
                            ' . $status['text'] . '
                        </a>
                    </li>';
@@ -637,7 +637,7 @@ foreach ($rResult as $aRow) {
                   if ($id != $aRow['group_pur']) {
                      $budget_head_html .= '<li>'
                         .   '<a href="javascript:void(0);" '
-                        .      'onclick="update_budget_head(' . $id . ', ' . $aRow['id']
+                        .      'onclick="update_budget_head_unawarded(' . $id . ', ' . $aRow['id']
                         .      ', \'' . htmlspecialchars($aRow['source_table'], ENT_QUOTES)
                         .      '\'); return false;">'
                         .          $bh['name']

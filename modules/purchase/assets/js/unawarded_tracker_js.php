@@ -14,7 +14,7 @@
             var completionDate = $(this).val();
 
             // Perform AJAX request to update the completion date
-            $.post(admin_url + 'purchase/update_completion_date', {
+            $.post(admin_url + 'purchase/update_unawarded_completion_date', {
                 id: rowId,
                 table: tableType,
                 completion_date: completionDate
@@ -36,7 +36,7 @@
             var orderDate = $(this).val();
 
             // Perform AJAX request to update the oder date
-            $.post(admin_url + 'purchase/update_order_date', {
+            $.post(admin_url + 'purchase/update_unawarded_date', {
                 id: rowId,
                 table: tableType,
                 orderDate: orderDate
@@ -59,7 +59,7 @@
             var budget = $(this).val();
 
             // Perform AJAX request to update the budget
-            $.post(admin_url + 'purchase/update_budget', {
+            $.post(admin_url + 'purchase/update_unawarded_budget', {
                 id: rowId,
                 table: tableType,
                 budget: budget
@@ -239,7 +239,7 @@
             var remarks = $(this).val();
 
             // Perform AJAX request to update the remarks
-            $.post(admin_url + 'purchase/update_remarks', {
+            $.post(admin_url + 'purchase/update_unawarded_remarks', {
                 id: rowId,
                 table: tableType,
                 remarks: remarks
