@@ -9465,4 +9465,129 @@ class warehouse extends AdminController
 			'html' => $html,
 		]);
 	}
+
+	public function update_lead_time_days()
+	{
+		$id = $this->input->post('id');
+		$lead_time_days = $this->input->post('lead_time_days');
+		$purchase_tracker = $this->input->post('purchase_tracker');
+
+		if (!$id  || !$lead_time_days) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['lead_time_days' => $lead_time_days]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['lead_time_days' => $lead_time_days]);
+		}
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('lead_time_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+
+	public function update_advance_payment()
+	{
+		$id = $this->input->post('id');
+		$advance_payment = $this->input->post('advance_payment');
+		$purchase_tracker = $this->input->post('purchase_tracker');
+
+		if (!$id  || !$advance_payment) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['advance_payment' => $advance_payment]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['advance_payment' => $advance_payment]);
+		}
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('advance_payment_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+
+	public function update_shop_submission()
+	{
+		$id = $this->input->post('id');
+		$shop_submission = $this->input->post('shop_submission');
+		$purchase_tracker = $this->input->post('purchase_tracker');
+
+		if (!$id  || !$shop_submission) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['shop_submission' => $shop_submission]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['shop_submission' => $shop_submission]);
+		}
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('shop_submission_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+
+	public function update_shop_approval()
+	{
+		$id = $this->input->post('id');
+		$shop_approval = $this->input->post('shop_approval');
+		$purchase_tracker = $this->input->post('purchase_tracker');
+
+		if (!$id  || !$shop_approval) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['shop_approval' => $shop_approval]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['shop_approval' => $shop_approval]);
+		}
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('shop_approval_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+
+	public function update_actual_remarks()
+	{
+		$id = $this->input->post('id');
+		$actual_remarks = $this->input->post('actual_remarks');
+		$purchase_tracker = $this->input->post('purchase_tracker');
+
+		if (!$id  || !$actual_remarks) {
+			echo json_encode(['success' => false, 'message' => _l('invalid_request')]);
+			return;
+		}
+		// Perform the update
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$success = $this->db->update('tblpur_order_detail', ['actual_remarks' => $actual_remarks]);
+		} else {
+			$success = $this->db->update('tblgoods_receipt_detail', ['actual_remarks' => $actual_remarks]);
+		}
+
+		if ($success) {
+			echo json_encode(['success' => true, 'message' => _l('remarks_updated')]);
+		} else {
+			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
 }

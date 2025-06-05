@@ -744,3 +744,7 @@ $lang['fe_print_qrcode'] = 'Print QR code';
 $lang['please_select_at_least_one_item_from_the_list'] = 'Please select at least one item from the list';
 $lang['change_status_successfully'] = 'Change status successfully';
 $lang['change_status_fail'] = 'Change status fail';
+$lang['lead_time_updated'] = 'Lead time updated';
+$lang['advance_payment_updated'] = 'Advance payment updated';
+$lang['shop_submission_updated'] = 'Shop drawings submission updated';
+$lang['shop_approval_updated'] = 'Shop drawings approval updated';

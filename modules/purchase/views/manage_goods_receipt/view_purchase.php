@@ -137,304 +137,393 @@
               </table>
             </div>
             <div class="row">
-              <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
-
-                <span style="margin-right: 10px;">
-                  <button class="btn btn-primary" id="settings-toggle">Columns</button>
-                  <div id="settings-dropdown" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:165px;right: 24px;">
-
-                    <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('commodity_code') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('description') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('area') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('po_quantity') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> <?php echo _l('received_quantity') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="6" checked=""> <?php echo _l('imported_local') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="7" checked=""> <?php echo _l('status') ?></label><br>
-                    <label><input type="checkbox" class="column-toggle" data-column="8" checked=""> <?php echo _l('production_status') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="9" checked=""> <?php echo _l('payment_date') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="10" checked=""> <?php echo _l('est_delivery_date') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="11" checked=""><?php echo _l('delivery_date') ?></label>
-                    <label><input type="checkbox" class="column-toggle" data-column="12" checked=""><?php echo _l('remarks') ?></label>
-                  </div>
-                </span>
-              </div>
               <div class="col-md-12">
-                <div class="table-responsive">
-                  <table class="table items items-preview estimate-items-preview" data-type="estimate">
-                    <thead class="purchase-head">
-                      <tr>
-                        <th align="center">#</th>
-                        <th><?php echo _l('commodity_code') ?></th>
-                        <th><?php echo _l('description') ?></th>
-                        <th><?php echo _l('area') ?></th>
-                        <th><?php echo _l('po_quantity') ?></th>
-                        <th><?php echo _l('received_quantity') ?></th>
-                        <th><?php echo _l('imported_local') ?></th>
-                        <th><?php echo _l('status') ?> <i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="SPC - Specification Installation<br>RFQ - RFQ Sent<br>FQR - Final Quotes received<br>POI - Purchase order Issued<br>PIR - PI Received"></i></th>
-                        <th><?php echo _l('production_status') ?></th>
-                        <th><?php echo _l('payment_date') ?></th>
-                        <th><?php echo _l('est_delivery_date') ?></th>
-                        <th><?php echo _l('delivery_date') ?></th>
-                        <th><?php echo _l('remarks') ?></th>
-                      </tr>
-                    </thead>
-                    <tbody class="ui-sortable purchase-body">
-
-                      <?php
-                      foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
-
-                        $receipt_key++;
-                        $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : 0);
-                        $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : 0);
-                        $remaining_quantities = $po_quantities - $quantities;
-                        $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
-                        $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
-                        $goods_money = (isset($receipt_value) ? $receipt_value['goods_money'] : '');
-
-                        $commodity_code = get_commodity_name($receipt_value['commodity_code']) != null ? get_commodity_name($receipt_value['commodity_code'])->commodity_code : '';
-                        $commodity_name = get_commodity_name($receipt_value['commodity_code']) != null ? get_commodity_name($receipt_value['commodity_code'])->description : '';
-
-                        $unit_name = '';
-                        if (is_numeric($receipt_value['unit_id'])) {
-                          $unit_name = (get_unit_type($receipt_value['unit_id']) != null && isset(get_unit_type($receipt_value['unit_id'])->unit_name)) ? get_unit_type($receipt_value['unit_id'])->unit_name : '';
-                        }
-
-                        $warehouse_code = get_warehouse_name($receipt_value['warehouse_id']) != null ? get_warehouse_name($receipt_value['warehouse_id'])->warehouse_name : '';
-                        $tax_money = (isset($receipt_value) ? $receipt_value['tax_money'] : '');
-                        $expiry_date = (isset($receipt_value) ? $receipt_value['expiry_date'] : '');
-                        $lot_number = (isset($receipt_value) ? $receipt_value['lot_number'] : '');
-                        $commodity_name = $receipt_value['commodity_name'];
-                        $description = $receipt_value['description'];
-                        if (strlen($commodity_name) == 0) {
-                          $commodity_name = wh_get_item_variatiom($receipt_value['commodity_code']);
-                        }
-
-                        if (strlen($receipt_value['serial_number']) > 0) {
-                          $name_serial_number_tooltip = _l('wh_serial_number') . ': ' . $receipt_value['serial_number'];
-                        } else {
-                          $name_serial_number_tooltip = '';
-                        }
-
-                        $vendor_name = !empty($receipt_value['vendor_id']) ? wh_get_vendor_company_name($receipt_value['vendor_id']) : '';
-                        $delivery_date = !empty($receipt_value['delivery_date']) ? $receipt_value['delivery_date'] : null;
-                        $payment_date = !empty($receipt_value['payment_date']) ? $receipt_value['payment_date'] : null;
-                        $est_delivery_date = !empty($receipt_value['est_delivery_date']) ? $receipt_value['est_delivery_date'] : null;
-                        $production_status = '';
-                        $production_labels = [
-                          1 => ['label' => 'danger', 'table' => 'not_started', 'text' => _l('not_started')],
-                          2 => ['label' => 'success', 'table' => 'approved', 'text' => _l('approved')],
-                          3 => ['label' => 'info', 'table' => 'on_going', 'text' => _l('on_going')],
-                          4 => ['label' => 'warning', 'table' => 'delivered', 'text' => _l('Delivered')],
-                        ];
-                        if ($receipt_value['production_status'] > 0) {
-
-                          $status = $production_labels[$receipt_value['production_status']];
-                          $production_status = '<span class="inline-block label label-' . $status['label'] . '" id="status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
-
-                          $production_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-                          $production_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                          $production_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
-                          $production_status .= '</a>';
-                          $production_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $aRow['id'] . '">';
-                          foreach ($production_labels as $key => $status) {
-                            if ($key != $receipt_value['production_status']) {
-                              $production_status .= '<li>
-                                       <a href="#" onclick="change_production_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
-                                           ' . $status['text'] . '
-                                       </a>
-                                   </li>';
-                            }
-                          }
-                          $production_status .= '</ul>';
-                          $production_status .= '</div>';
-
-                          $production_status .= '</span>';
-                        }
-
-                        $imp_local_status = '';
-                        $imp_local_labels = [
-                          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
-                          2 => ['label' => 'success', 'table' => 'imported', 'text' => _l('imported')],
-                          3 => ['label' => 'info', 'table' => 'local', 'text' => _l('local')],
-                        ];
-                        if ($receipt_value['imp_local_status'] > 0) {
-                          $status = $imp_local_labels[$receipt_value['imp_local_status']];
-                          $imp_local_status = '<span class="inline-block label label-' . $status['label'] . '" id="imp_status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
-
-                          $imp_local_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-                          $imp_local_status .= '<a href="#" class="dropdown-toggle text-dark" id="tableImpLocalStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                          $imp_local_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
-                          $imp_local_status .= '</a>';
-                          $imp_local_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableImpLocalStatus-' . $aRow['id'] . '">';
-                          foreach ($imp_local_labels as $key => $status) {
-                            if ($key != $receipt_value['imp_local_status']) {
-                              $imp_local_status .= '<li>
-                                       <a href="#" onclick="change_imp_local_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
-                                           ' . $status['text'] . '
-                                       </a>
-                                   </li>';
-                            }
-                          }
-                          $imp_local_status .= '</ul>';
-                          $imp_local_status .= '</div>';
-                          $imp_local_status .= '</span>';
-                        }
-
-                        $tracker_status = '';
-                        $tracker_status_labels = [
-                          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
-                          2 => ['label' => 'info', 'table' => 'SPC', 'text' => 'SPC'],
-                          3 => ['label' => 'info', 'table' => 'RFQ', 'text' => 'RFQ'],
-                          4 => ['label' => 'info', 'table' => 'FQR', 'text' => 'FQR'],
-                          5 => ['label' => 'info', 'table' => 'POI', 'text' => 'POI'],
-                          6 => ['label' => 'info', 'table' => 'PIR', 'text' => 'PIR'],
-                        ];
-                        if ($receipt_value['tracker_status'] > 0) {
-                          $status = $tracker_status_labels[$receipt_value['tracker_status']];
-                          $tracker_status = '<span class="inline-block label label-' . $status['label'] . '" id="tracker_status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
-
-                          $tracker_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-                          $tracker_status .= '<a href="#" class="dropdown-toggle text-dark" id="tableTrackerStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                          $tracker_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
-                          $tracker_status .= '</a>';
-                          $tracker_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableTrackerStatus-' . $aRow['id'] . '">';
-                          foreach ($tracker_status_labels as $key => $status) {
-                            if ($key != $receipt_value['tracker_status']) {
-                              $tracker_status .= '<li>
-                                       <a href="#" onclick="change_tracker_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
-                                           ' . $status['text'] . '
-                                       </a>
-                                   </li>';
-                            }
-                          }
-                          $tracker_status .= '</ul>';
-                          $tracker_status .= '</div>';
-                          $tracker_status .= '</span>';
-                        }
-                        $remarks = $receipt_value['remarks'];
-                      ?>
-
-                        <tr data-toggle="tooltip" data-original-title="<?php echo html_entity_decode($name_serial_number_tooltip); ?>">
-                          <td><?php echo html_entity_decode($receipt_key) ?></td>
-                          <td><?php echo html_entity_decode($commodity_name) ?></td>
-                          <td><?php echo html_entity_decode($description) ?></td>
-                          <td><?php echo get_area_name_by_id($receipt_value['area']); ?></td>
-                          <td><?php echo html_entity_decode($po_quantities).' '.html_entity_decode($unit_name) ?></td>
-                          <td><?php echo html_entity_decode($quantities).' '.html_entity_decode($unit_name) ?></td>
-                          <td><?php echo $imp_local_status ?></td>
-                          <td><?php echo $tracker_status ?></td>
-                          <td><?php echo $production_status ?></td>
-                          <td>
-                            <?php
-                            echo '<input type="date" class="form-control payment-date-input"
-                              value="' . $payment_date . '"
-                              data-id="' . $receipt_value['id'] . '"
-                              ">';
-                            ?>
-                          </td>
-                          <td>
-                            <?php
-                            echo '<input type="date" class="form-control est-delivery-date-input"
-                              value="' . $est_delivery_date . '"
-                              data-id="' . $receipt_value['id'] . '"
-                              ">';
-                            ?>
-                          </td>
-                          <td>
-                            <?php
-                            echo '<input type="date" class="form-control delivery-date-input"
-                              value="' . $delivery_date . '"
-                              data-id="' . $receipt_value['id'] . '"
-                              ">';
-                            ?>
-                          </td>
-                          <td><?php echo '<textarea style="width: 154px;height: 50px;" class="form-control  remarks-input" data-id="' . $receipt_value['id'] . '">' . $remarks . '</textarea>' ?></td>
-                        </tr>
-                      <?php  } ?>
-                    </tbody>
-                  </table>
+                <div class="horizontal-tabs">
+                  <ul class="nav nav-tabs nav-tabs-horizontal mbot15" role="tablist">
+                    <li role="presentation" class="active">
+                      <a href="#general_information" aria-controls="general_information" role="tab" id="tab_general_information" data-toggle="tab">
+                          General Information
+                      </a>
+                    </li>
+                    <?php
+                    if(empty($goods_receipt->goods_receipt_code)) { ?>
+                      <li role="presentation">
+                        <a href="#actual" aria-controls="actual" role="tab" id="tab_actual" data-toggle="tab">
+                            Actual
+                        </a>
+                      </li>
+                    <?php } ?>
+                  </ul>
                 </div>
               </div>
 
-              <div class="col-md-12">
-                <div class="project-overview-right">
-                  <?php if (count($list_approve_status) > 0) { ?>
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="general_information">
+                  <div class="col-md-10 pull-right" style="z-index: 99999;display: flex;justify-content: end;">
 
-                    <div class="row">
-                      <div class="col-md-12 project-overview-expenses-finance">
-                        <div class="col-md-4 text-center">
-                        </div>
-                        <?php
-                        $this->load->model('staff_model');
-                        $enter_charge_code = 0;
-                        foreach ($list_approve_status as $value) {
-                          $value['staffid'] = explode(', ', $value['staffid']);
-                          if ($value['action'] == 'sign') {
-                        ?>
-                            <div class="col-md-3 text-center">
-                              <p class="text-uppercase text-muted no-mtop bold">
-                                <?php
-                                $staff_name = '';
-                                $st = _l('status_0');
-                                $color = 'warning';
-                                foreach ($value['staffid'] as $key => $val) {
-                                  if ($staff_name != '') {
-                                    $staff_name .= ' or ';
-                                  }
-                                  if ($this->staff_model->get($val)) {
-                                    $staff_name .= $this->staff_model->get($val)->full_name;
-                                  }
-                                }
-                                echo html_entity_decode($staff_name);
-                                ?></p>
-                              <?php if ($value['approve'] == 1) {
-                              ?>
-                                <?php if (file_exists(WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . $goods_receipt->id . '/signature_' . $value['id'] . '.png')) { ?>
+                    <span style="margin-right: 10px;">
+                      <button class="btn btn-primary" id="settings-toggle">Columns</button>
+                      <div id="settings-dropdown" style="display: none; position: absolute; background: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); padding: 10px;width:165px;right: 24px;">
 
-                                  <img src="<?php echo site_url('modules/warehouse/uploads/stock_import/' . $goods_receipt->id . '/signature_' . $value['id'] . '.png'); ?>" class="img-width-height">
-
-                                <?php } else { ?>
-                                  <img src="<?php echo site_url('modules/warehouse/uploads/image_not_available.jpg'); ?>" class="img-width-height">
-                                <?php } ?>
-
-
-                              <?php }
-                              ?>
-                            </div>
-                          <?php } else { ?>
-                            <div class="col-md-3 text-center">
-                              <p class="text-uppercase text-muted no-mtop bold">
-                                <?php
-                                $staff_name = '';
-                                foreach ($value['staffid'] as $key => $val) {
-                                  if ($staff_name != '') {
-                                    $staff_name .= ' or ';
-                                  }
-                                  if ($this->staff_model->get($val)) {
-                                    $staff_name .= $this->staff_model->get($val)->full_name;
-                                  }
-                                }
-                                echo html_entity_decode($staff_name);
-                                ?></p>
-                              <?php if ($value['approve'] == 1) {
-                              ?>
-                                <img src="<?php echo site_url('modules/warehouse/uploads/approval/approved.png'); ?>" class="img-width-height">
-                              <?php } elseif ($value['approve'] == -1) { ?>
-                                <img src="<?php echo site_url('modules/warehouse/uploads/approval/rejected.png'); ?>" class="img-width-height">
-                              <?php }
-                              ?>
-                              <p class="text-muted no-mtop bold">
-                                <?php echo html_entity_decode($value['note']) ?>
-                              </p>
-                            </div>
-                        <?php }
-                        } ?>
+                        <label><input type="checkbox" class="column-toggle" data-column="1" checked=""> <?php echo _l('commodity_code') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="2" checked=""> <?php echo _l('description') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="3" checked=""> <?php echo _l('area') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="4" checked=""> <?php echo _l('po_quantity') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="5" checked=""> <?php echo _l('received_quantity') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="6" checked=""> <?php echo _l('imported_local') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="7" checked=""> <?php echo _l('status') ?></label><br>
+                        <label><input type="checkbox" class="column-toggle" data-column="8" checked=""> <?php echo _l('production_status') ?></label>
+                        <label><input type="checkbox" class="column-toggle" data-column="9" checked=""> <?php echo _l('payment_date') ?></label>
+                        <label><input type="checkbox" class="column-toggle" data-column="10" checked=""> <?php echo _l('est_delivery_date') ?></label>
+                        <label><input type="checkbox" class="column-toggle" data-column="11" checked=""><?php echo _l('delivery_date') ?></label>
+                        <label><input type="checkbox" class="column-toggle" data-column="12" checked=""><?php echo _l('remarks') ?></label>
                       </div>
+                    </span>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="table-responsive">
+                      <table class="table items items-preview estimate-items-preview" data-type="estimate">
+                        <thead class="purchase-head">
+                          <tr>
+                            <th align="center">#</th>
+                            <th><?php echo _l('commodity_code') ?></th>
+                            <th><?php echo _l('description') ?></th>
+                            <th><?php echo _l('area') ?></th>
+                            <th><?php echo _l('po_quantity') ?></th>
+                            <th><?php echo _l('received_quantity') ?></th>
+                            <th><?php echo _l('imported_local') ?></th>
+                            <th><?php echo _l('status') ?> <i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="SPC - Specification Installation<br>RFQ - RFQ Sent<br>FQR - Final Quotes received<br>POI - Purchase order Issued<br>PIR - PI Received"></i></th>
+                            <th><?php echo _l('production_status') ?></th>
+                            <th><?php echo _l('payment_date') ?></th>
+                            <th><?php echo _l('est_delivery_date') ?></th>
+                            <th><?php echo _l('delivery_date') ?></th>
+                            <th><?php echo _l('remarks') ?></th>
+                          </tr>
+                        </thead>
+                        <tbody class="ui-sortable purchase-body">
+
+                          <?php
+                          foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
+
+                            $receipt_key++;
+                            $po_quantities = (isset($receipt_value) ? $receipt_value['po_quantities'] : 0);
+                            $quantities = (isset($receipt_value) ? $receipt_value['quantities'] : 0);
+                            $remaining_quantities = $po_quantities - $quantities;
+                            $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
+                            $unit_price = (isset($receipt_value) ? $receipt_value['unit_price'] : '');
+                            $goods_money = (isset($receipt_value) ? $receipt_value['goods_money'] : '');
+
+                            $commodity_code = get_commodity_name($receipt_value['commodity_code']) != null ? get_commodity_name($receipt_value['commodity_code'])->commodity_code : '';
+                            $commodity_name = get_commodity_name($receipt_value['commodity_code']) != null ? get_commodity_name($receipt_value['commodity_code'])->description : '';
+
+                            $unit_name = '';
+                            if (is_numeric($receipt_value['unit_id'])) {
+                              $unit_name = (get_unit_type($receipt_value['unit_id']) != null && isset(get_unit_type($receipt_value['unit_id'])->unit_name)) ? get_unit_type($receipt_value['unit_id'])->unit_name : '';
+                            }
+
+                            $warehouse_code = get_warehouse_name($receipt_value['warehouse_id']) != null ? get_warehouse_name($receipt_value['warehouse_id'])->warehouse_name : '';
+                            $tax_money = (isset($receipt_value) ? $receipt_value['tax_money'] : '');
+                            $expiry_date = (isset($receipt_value) ? $receipt_value['expiry_date'] : '');
+                            $lot_number = (isset($receipt_value) ? $receipt_value['lot_number'] : '');
+                            $commodity_name = $receipt_value['commodity_name'];
+                            $description = $receipt_value['description'];
+                            if (strlen($commodity_name) == 0) {
+                              $commodity_name = wh_get_item_variatiom($receipt_value['commodity_code']);
+                            }
+
+                            if (strlen($receipt_value['serial_number']) > 0) {
+                              $name_serial_number_tooltip = _l('wh_serial_number') . ': ' . $receipt_value['serial_number'];
+                            } else {
+                              $name_serial_number_tooltip = '';
+                            }
+
+                            $vendor_name = !empty($receipt_value['vendor_id']) ? wh_get_vendor_company_name($receipt_value['vendor_id']) : '';
+                            $delivery_date = !empty($receipt_value['delivery_date']) ? $receipt_value['delivery_date'] : null;
+                            $payment_date = !empty($receipt_value['payment_date']) ? $receipt_value['payment_date'] : null;
+                            $est_delivery_date = !empty($receipt_value['est_delivery_date']) ? $receipt_value['est_delivery_date'] : null;
+                            $production_status = '';
+                            $production_labels = [
+                              1 => ['label' => 'danger', 'table' => 'not_started', 'text' => _l('not_started')],
+                              2 => ['label' => 'success', 'table' => 'approved', 'text' => _l('approved')],
+                              3 => ['label' => 'info', 'table' => 'on_going', 'text' => _l('on_going')],
+                              4 => ['label' => 'warning', 'table' => 'delivered', 'text' => _l('Delivered')],
+                            ];
+                            if ($receipt_value['production_status'] > 0) {
+
+                              $status = $production_labels[$receipt_value['production_status']];
+                              $production_status = '<span class="inline-block label label-' . $status['label'] . '" id="status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+
+                              $production_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+                              $production_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                              $production_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+                              $production_status .= '</a>';
+                              $production_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tablePurOderStatus-' . $aRow['id'] . '">';
+                              foreach ($production_labels as $key => $status) {
+                                if ($key != $receipt_value['production_status']) {
+                                  $production_status .= '<li>
+                                           <a href="#" onclick="change_production_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
+                                               ' . $status['text'] . '
+                                           </a>
+                                       </li>';
+                                }
+                              }
+                              $production_status .= '</ul>';
+                              $production_status .= '</div>';
+
+                              $production_status .= '</span>';
+                            }
+
+                            $imp_local_status = '';
+                            $imp_local_labels = [
+                              1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+                              2 => ['label' => 'success', 'table' => 'imported', 'text' => _l('imported')],
+                              3 => ['label' => 'info', 'table' => 'local', 'text' => _l('local')],
+                            ];
+                            if ($receipt_value['imp_local_status'] > 0) {
+                              $status = $imp_local_labels[$receipt_value['imp_local_status']];
+                              $imp_local_status = '<span class="inline-block label label-' . $status['label'] . '" id="imp_status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+
+                              $imp_local_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+                              $imp_local_status .= '<a href="#" class="dropdown-toggle text-dark" id="tableImpLocalStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                              $imp_local_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+                              $imp_local_status .= '</a>';
+                              $imp_local_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableImpLocalStatus-' . $aRow['id'] . '">';
+                              foreach ($imp_local_labels as $key => $status) {
+                                if ($key != $receipt_value['imp_local_status']) {
+                                  $imp_local_status .= '<li>
+                                           <a href="#" onclick="change_imp_local_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
+                                               ' . $status['text'] . '
+                                           </a>
+                                       </li>';
+                                }
+                              }
+                              $imp_local_status .= '</ul>';
+                              $imp_local_status .= '</div>';
+                              $imp_local_status .= '</span>';
+                            }
+
+                            $tracker_status = '';
+                            $tracker_status_labels = [
+                              1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+                              2 => ['label' => 'info', 'table' => 'SPC', 'text' => 'SPC'],
+                              3 => ['label' => 'info', 'table' => 'RFQ', 'text' => 'RFQ'],
+                              4 => ['label' => 'info', 'table' => 'FQR', 'text' => 'FQR'],
+                              5 => ['label' => 'info', 'table' => 'POI', 'text' => 'POI'],
+                              6 => ['label' => 'info', 'table' => 'PIR', 'text' => 'PIR'],
+                            ];
+                            if ($receipt_value['tracker_status'] > 0) {
+                              $status = $tracker_status_labels[$receipt_value['tracker_status']];
+                              $tracker_status = '<span class="inline-block label label-' . $status['label'] . '" id="tracker_status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+
+                              $tracker_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+                              $tracker_status .= '<a href="#" class="dropdown-toggle text-dark" id="tableTrackerStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                              $tracker_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+                              $tracker_status .= '</a>';
+                              $tracker_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableTrackerStatus-' . $aRow['id'] . '">';
+                              foreach ($tracker_status_labels as $key => $status) {
+                                if ($key != $receipt_value['tracker_status']) {
+                                  $tracker_status .= '<li>
+                                           <a href="#" onclick="change_tracker_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
+                                               ' . $status['text'] . '
+                                           </a>
+                                       </li>';
+                                }
+                              }
+                              $tracker_status .= '</ul>';
+                              $tracker_status .= '</div>';
+                              $tracker_status .= '</span>';
+                            }
+                            $remarks = $receipt_value['remarks'];
+                          ?>
+
+                            <tr data-toggle="tooltip" data-original-title="<?php echo html_entity_decode($name_serial_number_tooltip); ?>">
+                              <td><?php echo html_entity_decode($receipt_key) ?></td>
+                              <td><?php echo html_entity_decode($commodity_name) ?></td>
+                              <td><?php echo html_entity_decode($description) ?></td>
+                              <td><?php echo get_area_name_by_id($receipt_value['area']); ?></td>
+                              <td><?php echo html_entity_decode($po_quantities).' '.html_entity_decode($unit_name) ?></td>
+                              <td><?php echo html_entity_decode($quantities).' '.html_entity_decode($unit_name) ?></td>
+                              <td><?php echo $imp_local_status ?></td>
+                              <td><?php echo $tracker_status ?></td>
+                              <td><?php echo $production_status ?></td>
+                              <td>
+                                <?php
+                                echo '<input type="date" class="form-control payment-date-input"
+                                  value="' . $payment_date . '"
+                                  data-id="' . $receipt_value['id'] . '"
+                                  ">';
+                                ?>
+                              </td>
+                              <td>
+                                <?php
+                                echo '<input type="date" class="form-control est-delivery-date-input"
+                                  value="' . $est_delivery_date . '"
+                                  data-id="' . $receipt_value['id'] . '"
+                                  ">';
+                                ?>
+                              </td>
+                              <td>
+                                <?php
+                                echo '<input type="date" class="form-control delivery-date-input"
+                                  value="' . $delivery_date . '"
+                                  data-id="' . $receipt_value['id'] . '"
+                                  ">';
+                                ?>
+                              </td>
+                              <td><?php echo '<textarea style="width: 154px;height: 50px;" class="form-control  remarks-input" data-id="' . $receipt_value['id'] . '">' . $remarks . '</textarea>' ?></td>
+                            </tr>
+                          <?php  } ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="project-overview-right">
+                      <?php if (count($list_approve_status) > 0) { ?>
+
+                        <div class="row">
+                          <div class="col-md-12 project-overview-expenses-finance">
+                            <div class="col-md-4 text-center">
+                            </div>
+                            <?php
+                            $this->load->model('staff_model');
+                            $enter_charge_code = 0;
+                            foreach ($list_approve_status as $value) {
+                              $value['staffid'] = explode(', ', $value['staffid']);
+                              if ($value['action'] == 'sign') {
+                            ?>
+                                <div class="col-md-3 text-center">
+                                  <p class="text-uppercase text-muted no-mtop bold">
+                                    <?php
+                                    $staff_name = '';
+                                    $st = _l('status_0');
+                                    $color = 'warning';
+                                    foreach ($value['staffid'] as $key => $val) {
+                                      if ($staff_name != '') {
+                                        $staff_name .= ' or ';
+                                      }
+                                      if ($this->staff_model->get($val)) {
+                                        $staff_name .= $this->staff_model->get($val)->full_name;
+                                      }
+                                    }
+                                    echo html_entity_decode($staff_name);
+                                    ?></p>
+                                  <?php if ($value['approve'] == 1) {
+                                  ?>
+                                    <?php if (file_exists(WAREHOUSE_STOCK_IMPORT_MODULE_UPLOAD_FOLDER . $goods_receipt->id . '/signature_' . $value['id'] . '.png')) { ?>
+
+                                      <img src="<?php echo site_url('modules/warehouse/uploads/stock_import/' . $goods_receipt->id . '/signature_' . $value['id'] . '.png'); ?>" class="img-width-height">
+
+                                    <?php } else { ?>
+                                      <img src="<?php echo site_url('modules/warehouse/uploads/image_not_available.jpg'); ?>" class="img-width-height">
+                                    <?php } ?>
+
+
+                                  <?php }
+                                  ?>
+                                </div>
+                              <?php } else { ?>
+                                <div class="col-md-3 text-center">
+                                  <p class="text-uppercase text-muted no-mtop bold">
+                                    <?php
+                                    $staff_name = '';
+                                    foreach ($value['staffid'] as $key => $val) {
+                                      if ($staff_name != '') {
+                                        $staff_name .= ' or ';
+                                      }
+                                      if ($this->staff_model->get($val)) {
+                                        $staff_name .= $this->staff_model->get($val)->full_name;
+                                      }
+                                    }
+                                    echo html_entity_decode($staff_name);
+                                    ?></p>
+                                  <?php if ($value['approve'] == 1) {
+                                  ?>
+                                    <img src="<?php echo site_url('modules/warehouse/uploads/approval/approved.png'); ?>" class="img-width-height">
+                                  <?php } elseif ($value['approve'] == -1) { ?>
+                                    <img src="<?php echo site_url('modules/warehouse/uploads/approval/rejected.png'); ?>" class="img-width-height">
+                                  <?php }
+                                  ?>
+                                  <p class="text-muted no-mtop bold">
+                                    <?php echo html_entity_decode($value['note']) ?>
+                                  </p>
+                                </div>
+                            <?php }
+                            } ?>
+                          </div>
+                        </div>
+
+                      <?php } ?>
                     </div>
 
-                  <?php } ?>
+                  </div>
                 </div>
 
+                <?php
+                if(empty($goods_receipt->goods_receipt_code)) { ?>
+                  <div role="tabpanel" class="tab-pane" id="actual">
+                    <div class="col-md-12">
+                      <div class="table-responsive">
+                        <table class="table items items-preview estimate-items-preview" data-type="estimate">
+                          <thead class="purchase-head">
+                            <tr>
+                              <th align="center">#</th>
+                              <th><?php echo _l('commodity_code') ?></th>
+                              <th><?php echo _l('description') ?></th>
+                              <th><?php echo _l('lead_time_days') ?></th>
+                              <th><?php echo _l('advance_payment') ?></th>
+                              <th><?php echo _l('shop_drawings_submission') ?></th>
+                              <th><?php echo _l('shop_drawings_approval') ?></th>
+                              <th><?php echo _l('remarks') ?></th>
+                            </tr>
+                          </thead>
+                          <tbody class="ui-sortable purchase-body">
+                            <?php
+                            foreach ($goods_receipt_detail as $receipt_key => $receipt_value) {
+                              $receipt_key++;
+                              $commodity_name = $receipt_value['commodity_name'];
+                              $description = $receipt_value['description'];
+                              if (strlen($commodity_name) == 0) {
+                                $commodity_name = wh_get_item_variatiom($receipt_value['commodity_code']);
+                              }
+                              $lead_time_days = $receipt_value['lead_time_days'];
+                              $advance_payment = $receipt_value['advance_payment'];
+                              $shop_submission = $receipt_value['shop_submission'];
+                              $shop_approval = $receipt_value['shop_approval'];
+                              $actual_remarks = $receipt_value['actual_remarks'];
+                            ?>
+                              <tr>
+                                <td><?php echo html_entity_decode($receipt_key) ?></td>
+                                <td><?php echo html_entity_decode($commodity_name) ?></td>
+                                <td><?php echo html_entity_decode($description) ?></td>
+                                <td>
+                                  <div class="form-group">
+                                    <input type="number" id="lead_time_days" name="lead_time_days" class="form-control" min="0" max="100" value="<?php echo $lead_time_days; ?>" data-id="<?php echo $receipt_value['id']; ?>">
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group">
+                                    <input type="number" id="advance_payment" name="advance_payment" class="form-control" min="0" max="100" value="<?php echo $advance_payment; ?>" data-id="<?php echo $receipt_value['id']; ?>">
+                                  </div>
+                                </td>
+                                <td>
+                                  <input type="date" id="shop_submission" name="shop_submission" class="form-control" value="<?php echo $shop_submission; ?>" data-id="<?php echo $receipt_value['id']; ?>">
+                                </td>
+                                <td>
+                                  <input type="date" id="shop_approval" name="shop_approval" class="form-control" value="<?php echo $shop_approval; ?>" data-id="<?php echo $receipt_value['id']; ?>">
+                                </td>
+                                <td>
+                                  <textarea style="width: 154px;height: 50px;" class="form-control" name="actual_remarks" data-id="<?php echo $receipt_value['id']; ?>"><?php echo $actual_remarks; ?></textarea>
+                                </td>
+                              </tr>
+                            <?php  } ?>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                <?php } ?>
               </div>
 
             </div>
@@ -730,6 +819,101 @@
 
   $('[data-toggle="tooltip"]').tooltip({
     html: true
+  });
+
+  $('body').on('change', 'input[name="lead_time_days"]', function(e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var lead_time_days = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    $.post(admin_url + 'warehouse/update_lead_time_days', {
+      id: rowId,
+      lead_time_days: lead_time_days,
+      purchase_tracker: purchase_tracker
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+  $('body').on('change', 'input[name="advance_payment"]', function(e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var advance_payment = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    $.post(admin_url + 'warehouse/update_advance_payment', {
+      id: rowId,
+      advance_payment: advance_payment,
+      purchase_tracker: purchase_tracker
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+  $('body').on('change', 'input[name="shop_submission"]', function(e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var shop_submission = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    $.post(admin_url + 'warehouse/update_shop_submission', {
+      id: rowId,
+      shop_submission: shop_submission,
+      purchase_tracker: purchase_tracker
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+  $('body').on('change', 'input[name="shop_approval"]', function(e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var shop_approval = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    $.post(admin_url + 'warehouse/update_shop_approval', {
+      id: rowId,
+      shop_approval: shop_approval,
+      purchase_tracker: purchase_tracker
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
+  });
+
+  $('body').on('change', 'textarea[name="actual_remarks"]', function(e) {
+    e.preventDefault();
+    var rowId = $(this).data('id');
+    var actual_remarks = $(this).val();
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    $.post(admin_url + 'warehouse/update_actual_remarks', {
+      id: rowId,
+      actual_remarks: actual_remarks,
+      purchase_tracker: purchase_tracker
+    }).done(function(response) {
+      response = JSON.parse(response);
+      if (response.success) {
+        alert_float('success', response.message);
+      } else {
+        alert_float('danger', response.message);
+      }
+    });
   });
 </script>
 <script>

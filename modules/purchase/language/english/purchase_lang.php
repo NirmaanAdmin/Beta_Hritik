@@ -938,3 +938,7 @@ $lang['local'] = 'Local';
 $lang['po_amount'] = 'PO Amount';
 $lang['unawarded_tracker'] = 'Unawarded Tracker';
 $lang['unawarded_order'] = 'Unawarded Order';
+$lang['lead_time_days'] = 'Lead time (Days)';
+$lang['advance_payment'] = 'Advance Payment (%)';
+$lang['shop_drawings_submission'] = 'Shop Drawings Submission';
+$lang['shop_drawings_approval'] = 'Shop Drawings Approval';
