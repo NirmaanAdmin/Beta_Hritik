@@ -62,7 +62,7 @@
       height: 100px;
    }
 </style>
-<?php $module_name = 'order_tracker'; ?>
+<?php $module_name = 'unawareded_tracker'; ?>
 <div id="wrapper">
    <div class="content">
       <div class="loader-container hide" id="loader-container">
@@ -198,7 +198,7 @@
                            <i class="fa fa-download"></i> <?php echo _l('Export'); ?> <span class="caret"></span>
                         </button>
                         <div class="dropdown-menu" style="padding: 10px;min-width: 94px;">
-                           <a class="dropdown-item export-btn" href="<?php echo admin_url('purchase/order_tracker_pdf'); ?>" data-type="pdf">
+                           <a class="dropdown-item export-btn" href="<?php echo admin_url('purchase/unawarded_tracker_pdf'); ?>" data-type="pdf">
                               <i class="fa fa-file-pdf text-danger"></i> PDF
                            </a><br>
                            <a class="dropdown-item export-btn" href="<?php echo admin_url('purchase/order_tracker_excel'); ?>" data-type="excel">

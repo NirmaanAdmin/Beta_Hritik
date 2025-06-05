@@ -14085,7 +14085,7 @@ class purchase extends AdminController
                             $filename = PURCHASE_ORDER_IMPORT_ORDER_TRACKER_ERROR . $filename;
                         }
                         $list_item = $list_item;
-                       
+
                         @delete_dir($tmpDir);
                     }
                 } else {
@@ -14138,5 +14138,28 @@ class purchase extends AdminController
             ]);
         }
         exit; // Stop further execution
+    }
+    public function unawarded_tracker_pdf()
+    {
+        $unawarded_tracker = $this->purchase_model->get_unawarded_tracker_pdf_html();
+        try {
+            $pdf = $this->purchase_model->unawarded_tracker_pdf($unawarded_tracker);
+            $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+        } catch (Exception $e) {
+            echo pur_html_entity_decode($e->getMessage());
+            die;
+        }
+
+        $type = 'D';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+        $pdf_name = 'unwarded_tracker.pdf';
+        $pdf->Output($pdf_name, $type);
     }
 }

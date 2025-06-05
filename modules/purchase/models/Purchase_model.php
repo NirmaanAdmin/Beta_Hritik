@@ -7022,13 +7022,13 @@ class Purchase_model extends App_Model
         $this->db->where('invoice_number', $data['invoice_number']);
         $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
 
-        if(!isset($data['order_tracker_id'])) {
+        if (!isset($data['order_tracker_id'])) {
             $data['order_tracker_id'] = NULL;
         }
-        if(!isset($data['pur_order'])) {
+        if (!isset($data['pur_order'])) {
             $data['pur_order'] = 0;
         }
-        if(!isset($data['wo_order'])) {
+        if (!isset($data['wo_order'])) {
             $data['wo_order'] = 0;
         }
 
@@ -7377,13 +7377,13 @@ class Purchase_model extends App_Model
             }
         }
 
-        if(!isset($data['order_tracker_id'])) {
+        if (!isset($data['order_tracker_id'])) {
             $data['order_tracker_id'] = NULL;
         }
-        if(!isset($data['pur_order'])) {
+        if (!isset($data['pur_order'])) {
             $data['pur_order'] = 0;
         }
-        if(!isset($data['wo_order'])) {
+        if (!isset($data['wo_order'])) {
             $data['wo_order'] = 0;
         }
 
@@ -8252,7 +8252,7 @@ class Purchase_model extends App_Model
         $this->db->update(db_prefix() . $tableName, ['aw_unw_order_status' => $status]);
         return true;
     }
-     public function update_budget_head($status, $id, $table_name)
+    public function update_budget_head($status, $id, $table_name)
     {
         if ($table_name === 'pur_orders') {
             $tableName = 'pur_orders';
@@ -17740,7 +17740,7 @@ class Purchase_model extends App_Model
         return $row;
     }
 
-     public function create_unawarded_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value = '', $project = '')
+    public function create_unawarded_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value = '', $project = '')
     {
         $row = '';
         $name_order_scope = 'order_scope';
@@ -17848,7 +17848,7 @@ class Purchase_model extends App_Model
         return false;
     }
 
-     public function add_unawarded_order_tracker($data)
+    public function add_unawarded_order_tracker($data)
     {
         unset($data['order_scope']);
         unset($data['vendor']);
@@ -19852,6 +19852,147 @@ class Purchase_model extends App_Model
         return $html;
     }
 
+    public function get_unawarded_tracker_pdf_html()
+    {
+        $get_order_tracker = $this->get_unawarded_tracker_pdf();
+
+        $html = '';
+        $html .=  '<table class="table purorder-item" style="width: 100%">
+        <thead>
+          <tr>
+            <th class="thead-dark" align="left" style="width: 3%">' . _l('#') . '</th>
+            <th class="thead-dark" align="left" style="width: 20%">' . _l('order_scope') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('order_date') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('completion_date') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('budget_ro_projection') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('project') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('rli_filter') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('category') . '</th>
+            <th class="thead-dark" align="left" style="width: 8.1%">' . _l('group_pur') . '</th>
+            <th class="thead-dark" align="left" style="width: 20%">' . _l('remarks') . '</th>
+            
+          </tr>
+          </thead>
+          <tbody>';
+        $serial_no = 1;
+        foreach ($get_order_tracker as $row) {
+            // Handle completion_date - fixed logic and validation
+            $completion_date = $aw_unw_order_status = '';
+            if (!empty($row['completion_date']) && $row['completion_date'] != '0000-00-00') {
+                $completion_date = date('d M, Y', strtotime($row['completion_date']));
+            }
+
+            // Handle order_date
+            $order_date = '';
+            if (!empty($row['order_date']) && $row['order_date'] != '0000-00-00') {
+                $order_date = date('d M, Y', strtotime($row['order_date']));
+            }
+
+            $status_labels = [
+                0 => ['label' => 'danger', 'table' => 'provided_by_ril', 'text' => _l('provided_by_ril')],
+                1 => ['label' => 'success', 'table' => 'new_item_service_been_addded_as_per_instruction', 'text' => _l('new_item_service_been_addded_as_per_instruction')],
+                2 => ['label' => 'info', 'table' => 'due_to_spec_change_then_original_cost', 'text' => _l('due_to_spec_change_then_original_cost')],
+                3 => ['label' => 'warning', 'table' => 'deal_slip', 'text' => _l('deal_slip')],
+                4 => ['label' => 'primary', 'table' => 'to_be_provided_by_ril_but_managed_by_bil', 'text' => _l('to_be_provided_by_ril_but_managed_by_bil')],
+                5 => ['label' => 'secondary', 'table' => 'due_to_additional_item_as_per_apex_instrution', 'text' => _l('due_to_additional_item_as_per_apex_instrution')],
+                6 => ['label' => 'purple', 'table' => 'event_expense', 'text' => _l('event_expense')],
+                7 => ['label' => 'teal', 'table' => 'pending_procurements', 'text' => _l('pending_procurements')],
+                8 => ['label' => 'orange', 'table' => 'common_services_in_ghj_scope', 'text' => _l('common_services_in_ghj_scope')],
+                9 => ['label' => 'green', 'table' => 'common_services_in_ril_scope', 'text' => _l('common_services_in_ril_scope')],
+                10 => ['label' => 'default', 'table' => 'due_to_site_specfic_constraint', 'text' => _l('due_to_site_specfic_constraint')],
+            ];
+            $html .= '<tr>
+                <td style="width: 3%">' . $serial_no . '</td>';
+                $html .= '<td style="width: 20%">' . $row['order_name'] . '</td>';
+            
+            $html .= '
+                <td style="width: 8.1%">' . $order_date . '</td>
+                <td style="width: 8.1%">' . $completion_date . '</td>
+                <td style="width: 8.1%">' . app_format_money($row['budget'], '₹') . '</td>';
+            $html .= '
+                <td style="width: 8.1%">' . $row['project'] . '</td>
+                <td style="width: 8.1%">' . $status_labels[$row['rli_filter']]['text'] . '</td>
+                <td style="width: 8.1%">' . $row['kind'] . '</td>
+                <td style="width: 8.1%">' . get_group_name_by_id($row['group_pur']) . '</td>
+                <td style="width: 20%">' . $row['remarks'] . '</td>
+            </tr>';
+            $serial_no++;
+        }
+        $html .=  '</tbody>
+      </table>';
+        $html .= '<link href="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/css/order_tracker_pdf.css') . '"  rel="stylesheet" type="text/css" />';
+
+        return $html;
+    }
+    public function get_unawarded_tracker_pdf()
+    {
+        // 1) Build the base UNION ALL query
+        $baseSql = "
+        SELECT DISTINCT
+            t.id,
+            t.pur_order_name AS order_name,
+            t.order_date,
+            t.completion_date,
+            t.budget,
+            t.group_pur,
+            t.rli_filter,
+            t.kind,
+            t.remarks AS remarks,
+            pr.name as project,
+            pr.id as project_id,
+            'order_tracker' AS source_table
+        FROM tblpur_unawarded_tracker t
+        LEFT JOIN tblprojects pr ON pr.id = t.project
+        ";
+
+        // 2) Load any user‑saved filters
+        $CI = &get_instance();
+        $filters = $CI->db
+            ->select('*')
+            ->from(db_prefix() . 'module_filter')
+            ->where('module_name', 'unawareded_tracker')
+            ->where('staff_id', get_staff_user_id())
+            ->get()
+            ->result_array();
+        // 3) Build WHERE clauses
+        $whereClauses = [];
+        foreach ($filters as $f) {
+            $name  = $f['filter_name'];
+            $value = trim($f['filter_value']);
+            if ($value === '') {
+                continue;
+            }
+            $val = $CI->db->escape_str($value);
+            switch ($name) {
+                case 'rli_filter':
+                    $whereClauses[] = "rli_filter = '{$val}'";
+                    break;
+                case 'order_tracker_kind':
+                    $whereClauses[] = "kind = '{$val}'";
+                    break;
+                case 'budget_head':
+                    $whereClauses[] = "group_pur = '{$val}'";
+                    break;
+                case 'projects':
+                    $whereClauses[] = "project_id = '{$val}'";
+                    break;
+            }
+        }
+        // 4) If there are filters, wrap the base query and apply them
+        if (!empty($whereClauses)) {
+            $sql = "
+            SELECT *
+            FROM (
+                {$baseSql}
+            ) AS combined_results
+            WHERE " . implode(' AND ', $whereClauses);
+        } else {
+            $sql = $baseSql;
+        }
+
+        // 5) Execute and return
+        return $CI->db->query($sql)->result_array();
+    }
     public function get_order_tracker_pdf()
     {
         // 1) Build the base UNION ALL query
@@ -19960,7 +20101,7 @@ class Purchase_model extends App_Model
         FROM tblpur_order_tracker t
         LEFT JOIN tblpur_vendor pv   ON pv.userid = t.vendor
         LEFT JOIN tblprojects pr     ON pr.id = t.project
-    ";
+        ";
 
         // 2) Load any user‑saved filters
         $CI = &get_instance();
@@ -20034,6 +20175,11 @@ class Purchase_model extends App_Model
         return app_pdf('order_tracker', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Order_tracker_pdf'), $order_tracker);
     }
 
+    public function unawarded_tracker_pdf($unawarded_tracker)
+    {
+        return app_pdf('unawarded_tracker', module_dir_path(PURCHASE_MODULE_NAME, 'libraries/pdf/Unawarded_tracker_pdf'), $unawarded_tracker);
+    }
+
     public function get_all_estimates()
     {
         $this->db->select('id, budget_description');
@@ -20054,7 +20200,7 @@ class Purchase_model extends App_Model
         $this->db->where('rel_id', $estimate_id);
         $this->db->where('rel_type', 'estimate');
         $this->db->where('annexure', $budget_head_id);
-        if(!empty($cost_sub_head)) {
+        if (!empty($cost_sub_head)) {
             $this->db->where('sub_head', $cost_sub_head);
         }
         $itemable = $this->db->get(db_prefix() . 'itemable')->result_array();
@@ -20086,8 +20232,8 @@ class Purchase_model extends App_Model
                 $pur_detail_amount = 0;
                 $budgeted_amount_class = '';
 
-                if($module == 'pur_orders') {
-                    $this->db->select(db_prefix() . 'pur_order_detail.id as id, '.db_prefix() . 'pur_order_detail.quantity as quantity, '.db_prefix() . 'pur_order_detail.total as total');
+                if ($module == 'pur_orders') {
+                    $this->db->select(db_prefix() . 'pur_order_detail.id as id, ' . db_prefix() . 'pur_order_detail.quantity as quantity, ' . db_prefix() . 'pur_order_detail.total as total');
                     $this->db->from(db_prefix() . 'pur_order_detail');
                     $this->db->join(db_prefix() . 'pur_orders', db_prefix() . 'pur_orders.id = ' . db_prefix() . 'pur_order_detail.pur_order', 'left');
                     $this->db->where(db_prefix() . 'pur_order_detail.item_code', $item['item_code']);
@@ -20096,7 +20242,7 @@ class Purchase_model extends App_Model
                     $this->db->where(db_prefix() . 'pur_orders.group_pur', $budget_head_id);
                     $this->db->where(db_prefix() . 'pur_orders.approve_status', 2);
                     $pur_order_detail_qty_total = $this->db->get()->result_array();
-                    if(!empty($pur_order_detail_qty_total)) {
+                    if (!empty($pur_order_detail_qty_total)) {
                         foreach ($pur_order_detail_qty_total as $srow) {
                             $pur_detail_quantity += (float)$srow['quantity'];
                             $pur_detail_amount += (float)$srow['total'];
@@ -20105,29 +20251,29 @@ class Purchase_model extends App_Model
                     $remaining_qty = $item['qty'] - $pur_detail_quantity;
                     $remaining_qty = number_format($remaining_qty, 2);
                 }
-                if($pur_detail_amount > $budgeted_amount) {
+                if ($pur_detail_amount > $budgeted_amount) {
                     $budgeted_amount_class = 'remaining_qty_red_class';
                 }
 
                 $response .= '<tr>';
                 $response .= '<td>
-                        <span class="'.$budgeted_amount_class.'">' . get_purchase_items($item['item_code']) . '</span>
+                        <span class="' . $budgeted_amount_class . '">' . get_purchase_items($item['item_code']) . '</span>
                         <div>
                             <a class="cost_fetch_pur_item" data-itemcode="' . $item['item_code'] . '" data-longdescription="' . $item['long_description'] . '" data-subhead="' . $item['sub_head'] . '">Fetch</a>
                         </div>
                     </td>';
-                $response .= '<td class="'.$budgeted_amount_class.'">' . clear_textarea_breaks($item['long_description']) . '</td>';
-                $response .= '<td class="'.$budgeted_amount_class.'">' . get_sub_head_name_by_id($item['sub_head']) . '</td>';
-                $response .= '<td align="right" class="'.$budgeted_amount_class.'">
+                $response .= '<td class="' . $budgeted_amount_class . '">' . clear_textarea_breaks($item['long_description']) . '</td>';
+                $response .= '<td class="' . $budgeted_amount_class . '">' . get_sub_head_name_by_id($item['sub_head']) . '</td>';
+                $response .= '<td align="right" class="' . $budgeted_amount_class . '">
                     <span>' . $item_qty . '</span>
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right" class="'.$budgeted_amount_class.'">
+                $response .= '<td align="right" class="' . $budgeted_amount_class . '">
                     <span>' . $remaining_qty . '</span>
                     <span>' . $purchase_unit_name . '</span>
                 </td>';
-                $response .= '<td align="right" class="'.$budgeted_amount_class.'">' . app_format_money($item['rate'], $base_currency) . '</td>';
-                $response .= '<td align="right" class="'.$budgeted_amount_class.'">' . app_format_money($budgeted_amount, $base_currency) . '</td>';
+                $response .= '<td align="right" class="' . $budgeted_amount_class . '">' . app_format_money($item['rate'], $base_currency) . '</td>';
+                $response .= '<td align="right" class="' . $budgeted_amount_class . '">' . app_format_money($budgeted_amount, $base_currency) . '</td>';
                 $response .= '<td align="right">' . render_textarea($cost_control_remarks_name, '', $item['cost_control_remarks']) . '</td>';
                 $response .= '</tr>';
             }
@@ -20216,33 +20362,36 @@ class Purchase_model extends App_Model
         return true;
     }
 
-    public function update_vbt_bulk_assign_order($data) 
+    public function update_vbt_bulk_assign_order($data)
     {
-        if(isset($data['pur_order'])) {
-            if(!empty($data['pur_order'])) {
+        if (isset($data['pur_order'])) {
+            if (!empty($data['pur_order'])) {
                 $pur_order = $this->get_pur_order($data['pur_order']);
                 $this->db->where('id', $data['pur_invoice']);
-                $this->db->update(db_prefix() . 'pur_invoices', 
+                $this->db->update(
+                    db_prefix() . 'pur_invoices',
                     ['vendor' => $pur_order->vendor, 'group_pur' => $pur_order->group_pur, 'project_id' => $pur_order->project, 'description_services' => $pur_order->pur_order_name, 'pur_order' => $data['pur_order']]
                 );
             }
         }
 
-        if(isset($data['wo_order'])) {
-            if(!empty($data['wo_order'])) {
+        if (isset($data['wo_order'])) {
+            if (!empty($data['wo_order'])) {
                 $wo_order = $this->get_wo_order($data['wo_order']);
                 $this->db->where('id', $data['pur_invoice']);
-                $this->db->update(db_prefix() . 'pur_invoices', 
+                $this->db->update(
+                    db_prefix() . 'pur_invoices',
                     ['vendor' => $wo_order->vendor, 'group_pur' => $wo_order->group_pur, 'project_id' => $wo_order->project, 'description_services' => $wo_order->wo_order_name, 'wo_order' => $data['wo_order']]
                 );
             }
         }
 
-        if(isset($data['order_tracker'])) {
-            if(!empty($data['order_tracker'])) {
+        if (isset($data['order_tracker'])) {
+            if (!empty($data['order_tracker'])) {
                 $order_tracker = $this->get_order_tracker($data['order_tracker']);
                 $this->db->where('id', $data['pur_invoice']);
-                $this->db->update(db_prefix() . 'pur_invoices', 
+                $this->db->update(
+                    db_prefix() . 'pur_invoices',
                     ['vendor' => $order_tracker->vendor, 'group_pur' => $order_tracker->group_pur, 'order_tracker_id' => $data['order_tracker']]
                 );
             }
@@ -20283,27 +20432,27 @@ class Purchase_model extends App_Model
         $rel_type = $input['rel_type'];
         $attachments = $this->get_order_tracker_attachments($rel_id, $rel_type);
 
-        if(count($attachments) > 0){
-            $file_html .= '<p class="bold text-muted">'._l('customer_attachments').'</p>';
+        if (count($attachments) > 0) {
+            $file_html .= '<p class="bold text-muted">' . _l('customer_attachments') . '</p>';
             foreach ($attachments as $f) {
-              $href_url = site_url(PURCHASE_PATH.'pur_order_tracker/'.$f['rel_type'].'/'.$f['rel_id'].'/'.$f['file_name']).'" download';
-              $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="'. $f['id'].'">
+                $href_url = site_url(PURCHASE_PATH . 'pur_order_tracker/' . $f['rel_type'] . '/' . $f['rel_id'] . '/' . $f['file_name']) . '" download';
+                $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="' . $f['id'] . '">
               <div class="col-md-8">
-                 <a name="preview-purinv-btn" onclick="preview_order_tracker_btn(this); return false;" id = "'.$f['id'].'" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="'. _l('preview_file').'"><i class="fa fa-eye"></i></a>
-                 <div class="pull-left"><i class="'. get_mime_class($f['filetype']).'"></i></div>
-                 <a href=" '. $href_url.'" target="_blank" download>'.$f['file_name'].'</a>
+                 <a name="preview-purinv-btn" onclick="preview_order_tracker_btn(this); return false;" id = "' . $f['id'] . '" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="' . _l('preview_file') . '"><i class="fa fa-eye"></i></a>
+                 <div class="pull-left"><i class="' . get_mime_class($f['filetype']) . '"></i></div>
+                 <a href=" ' . $href_url . '" target="_blank" download>' . $f['file_name'] . '</a>
                  <br />
-                 <small class="text-muted">'.$f['filetype'].'</small>
+                 <small class="text-muted">' . $f['filetype'] . '</small>
               </div>
               <div class="col-md-4 text-right">';
-                if($f['staffid'] == get_staff_user_id() || is_admin()){
-                $file_html .= '<a href="#" class="text-danger" onclick="delete_order_tracker_attachment('. $f['id'].'); return false;"><i class="fa fa-times"></i></a>';
-                } 
-               $file_html .= '</div></div>';
+                if ($f['staffid'] == get_staff_user_id() || is_admin()) {
+                    $file_html .= '<a href="#" class="text-danger" onclick="delete_order_tracker_attachment(' . $f['id'] . '); return false;"><i class="fa fa-times"></i></a>';
+                }
+                $file_html .= '</div></div>';
             }
             $file_html .= '<hr />';
         }
-        
+
         return $file_html;
     }
 
@@ -20321,7 +20470,7 @@ class Purchase_model extends App_Model
             $file_path = PURCHASE_MODULE_UPLOAD_FOLDER . '/pur_order_tracker/' . $attachment->rel_type . '/' . $attachment->rel_id . '/' . $attachment->file_name;
             if (file_exists($file_path)) {
                 unlink($file_path);
-            } 
+            }
             $this->db->where('id', $attachment->id);
             $this->db->delete('tblorder_tracker_files');
             if ($this->db->affected_rows() > 0) {
@@ -20373,31 +20522,31 @@ class Purchase_model extends App_Model
                 $html .= '<div class="col-md-3">
                     <select name="bulk_pur_order" id="bulk_pur_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
                     <option value=""></option>';
-                    foreach ($pur_orders as $ct) {
-                        $pur_order_number = html_entity_decode($ct['pur_order_number']);
-                        $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
-                        $pur_order_name = html_entity_decode($ct['pur_order_name']);
-                        $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $pur_order_number . ' - ' . $vendor_name . ' - ' . $pur_order_name .'</option>';
-                    }
+                foreach ($pur_orders as $ct) {
+                    $pur_order_number = html_entity_decode($ct['pur_order_number']);
+                    $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
+                    $pur_order_name = html_entity_decode($ct['pur_order_name']);
+                    $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $pur_order_number . ' - ' . $vendor_name . ' - ' . $pur_order_name . '</option>';
+                }
                 $html .= '</select>
                 </div>';
                 $html .= '<div class="col-md-3">
                     <select name="bulk_wo_order" id="bulk_wo_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
                     <option value=""></option>';
-                    foreach ($wo_orders as $ct) {
-                        $wo_order_number = html_entity_decode($ct['wo_order_number']);
-                        $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
-                        $wo_order_name = html_entity_decode($ct['wo_order_name']);
-                        $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $wo_order_number . ' - ' . $vendor_name . ' - ' . $wo_order_name .'</option>';
-                    }
+                foreach ($wo_orders as $ct) {
+                    $wo_order_number = html_entity_decode($ct['wo_order_number']);
+                    $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
+                    $wo_order_name = html_entity_decode($ct['wo_order_name']);
+                    $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $wo_order_number . ' - ' . $vendor_name . ' - ' . $wo_order_name . '</option>';
+                }
                 $html .= '</select>
                 </div>';
                 $html .= '<div class="col-md-3">
                     <select name="bulk_order_tracker" id="bulk_order_tracker" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
                     <option value=""></option>';
-                    foreach ($order_tracker_list as $s) {
-                        $html .= '<option value="' . pur_html_entity_decode($s['id']) . '">' . pur_html_entity_decode($s['vendor']) . ' - ' . pur_html_entity_decode($s['order_name']) .'</option>';
-                    }
+                foreach ($order_tracker_list as $s) {
+                    $html .= '<option value="' . pur_html_entity_decode($s['id']) . '">' . pur_html_entity_decode($s['vendor']) . ' - ' . pur_html_entity_decode($s['order_name']) . '</option>';
+                }
                 $html .= '</select>
                 </div>';
                 $html .= '<div class="col-md-1"><button type="button" class="btn btn-info update_bulk_assign">' . _l('update') . '</button></div>';
@@ -20421,36 +20570,36 @@ class Purchase_model extends App_Model
                     $html .= form_hidden($order_pur_invoice_name_attr, $pvalue['id']);
                     $html .= '<div class="col-md-2 bulk-title">' . $pvalue['invoice_number'] . '</div>';
                     $html .= '<div class="col-md-3 all_pur_order">
-                        <select name="'.$pur_order_name_attr.'" id="single_pur_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
+                        <select name="' . $pur_order_name_attr . '" id="single_pur_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
                         <option value=""></option>';
-                        foreach ($pur_orders as $ct) {
-                            $pur_order_number = html_entity_decode($ct['pur_order_number']);
-                            $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
-                            $pur_order_name = html_entity_decode($ct['pur_order_name']);
-                            $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $pur_order_number . ' - ' . $vendor_name . ' - ' . $pur_order_name .'</option>';
-                        }
+                    foreach ($pur_orders as $ct) {
+                        $pur_order_number = html_entity_decode($ct['pur_order_number']);
+                        $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
+                        $pur_order_name = html_entity_decode($ct['pur_order_name']);
+                        $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $pur_order_number . ' - ' . $vendor_name . ' - ' . $pur_order_name . '</option>';
+                    }
                     $html .= '</select>
                     </div>';
 
                     $html .= '<div class="col-md-3 all_wo_order">
-                        <select name="'.$wo_order_name_attr.'" id="single_wo_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
+                        <select name="' . $wo_order_name_attr . '" id="single_wo_order" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
                         <option value=""></option>';
-                        foreach ($wo_orders as $ct) {
-                            $wo_order_number = html_entity_decode($ct['wo_order_number']);
-                            $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
-                            $wo_order_name = html_entity_decode($ct['wo_order_name']);
-                            $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $wo_order_number . ' - ' . $vendor_name . ' - ' . $wo_order_name .'</option>';
-                        }
+                    foreach ($wo_orders as $ct) {
+                        $wo_order_number = html_entity_decode($ct['wo_order_number']);
+                        $vendor_name = html_entity_decode(get_vendor_company_name($ct['vendor']));
+                        $wo_order_name = html_entity_decode($ct['wo_order_name']);
+                        $html .= '<option value="' . pur_html_entity_decode($ct['id']) . '">' . $wo_order_number . ' - ' . $vendor_name . ' - ' . $wo_order_name . '</option>';
+                    }
                     $html .= '</select>
                     </div>';
 
                     $html .= '<div class="col-md-3 all_order_tracker">
-                        <select name="'.$order_tracker_name_attr.'" id="single_order_tracker" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
+                        <select name="' . $order_tracker_name_attr . '" id="single_order_tracker" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="' . _l('ticket_settings_none_assigned') . '">
                         <option value=""></option>';
-                        $order_tracker_list = get_order_tracker_list();
-                        foreach ($order_tracker_list as $s) {
-                            $html .= '<option value="' . pur_html_entity_decode($s['id']) . '">' . pur_html_entity_decode($s['vendor']) . ' - ' . pur_html_entity_decode($s['order_name']) .'</option>';
-                        }
+                    $order_tracker_list = get_order_tracker_list();
+                    foreach ($order_tracker_list as $s) {
+                        $html .= '<option value="' . pur_html_entity_decode($s['id']) . '">' . pur_html_entity_decode($s['vendor']) . ' - ' . pur_html_entity_decode($s['order_name']) . '</option>';
+                    }
                     $html .= '</select>
                     </div>';
                     $html .= '</div><br/>';
