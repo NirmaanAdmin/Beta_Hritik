@@ -58,6 +58,12 @@
                                     <option value="completely_delivered"><?php echo _l('completely_delivered'); ?></option>
                                 </select>
                             </div>
+
+                            <div class="col-md-3 form-group">
+                                <?php
+                                echo render_select('vendors[]', $vendors, array('userid', 'company'), '', '', array('data-width' => '100%', 'data-none-selected-text' => _l('vendor'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); 
+                                ?>
+                            </div>
                             
                         </div>
                         <br />

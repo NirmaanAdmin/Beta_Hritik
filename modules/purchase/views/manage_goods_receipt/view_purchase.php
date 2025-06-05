@@ -65,20 +65,12 @@
 
                   </tr>
                   <tr class="project-overview">
-                    <td class="bold" width="30%"><?php echo _l('deliver_name'); ?></td>
-                    <td><?php echo html_entity_decode($goods_receipt->deliver_name); ?></td>
-                  </tr>
-                  <tr class="project-overview">
                     <td class="bold"><?php echo _l('Buyer'); ?></td>
                     <td><?php echo get_staff_full_name($goods_receipt->buyer_id); ?></td>
                   </tr>
                   <tr class="project-overview">
                     <td class="bold"><?php echo _l('stock_received_docket_code'); ?></td>
                     <td><?php echo html_entity_decode($goods_receipt->goods_receipt_code); ?></td>
-                  </tr>
-                  <tr class="project-overview">
-                    <td class="bold"><?php echo _l('note_'); ?></td>
-                    <td><?php echo html_entity_decode($goods_receipt->description); ?></td>
                   </tr>
                   <tr class="project-overview">
                     <td class="bold"><?php echo _l('category'); ?></td>
@@ -100,6 +92,21 @@
                   <?php   }
                   }
                   ?>
+
+                  <tr class="project-overview">
+                    <td class="bold"><?php echo _l('group_pur'); ?></td>
+                    <td><?php echo get_group_name_by_id($pur_order->group_pur); ?></td>
+                  </tr>
+
+                  <tr class="project-overview">
+                    <td class="bold"><?php echo _l('po_date'); ?></td>
+                    <td><?php echo date('d-m-Y', strtotime($pur_order->order_date)); ?></td>
+                  </tr>
+
+                  <tr class="project-overview">
+                    <td class="bold"><?php echo _l('po_amount'); ?></td>
+                    <td><?php echo app_format_money($pur_order->total, $base_currency); ?></td>
+                  </tr>
 
                   <?php
                   if (isset($purchase_tracker)) { ?>
@@ -163,7 +170,7 @@
                         <th><?php echo _l('po_quantity') ?></th>
                         <th><?php echo _l('received_quantity') ?></th>
                         <th><?php echo _l('imported_local') ?></th>
-                        <th><?php echo _l('status') ?></th>
+                        <th><?php echo _l('status') ?> <i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="SPC - Specification Installation<br>RFQ - RFQ Sent<br>FQR - Final Quotes received<br>POI - Purchase order Issued<br>PIR - PI Received"></i></th>
                         <th><?php echo _l('production_status') ?></th>
                         <th><?php echo _l('payment_date') ?></th>
                         <th><?php echo _l('est_delivery_date') ?></th>
@@ -262,7 +269,7 @@
                           foreach ($imp_local_labels as $key => $status) {
                             if ($key != $receipt_value['imp_local_status']) {
                               $imp_local_status .= '<li>
-                                       <a href="#">
+                                       <a href="#" onclick="change_imp_local_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
                                            ' . $status['text'] . '
                                        </a>
                                    </li>';
@@ -271,6 +278,38 @@
                           $imp_local_status .= '</ul>';
                           $imp_local_status .= '</div>';
                           $imp_local_status .= '</span>';
+                        }
+
+                        $tracker_status = '';
+                        $tracker_status_labels = [
+                          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+                          2 => ['label' => 'info', 'table' => 'SPC', 'text' => 'SPC'],
+                          3 => ['label' => 'info', 'table' => 'RFQ', 'text' => 'RFQ'],
+                          4 => ['label' => 'info', 'table' => 'FQR', 'text' => 'FQR'],
+                          5 => ['label' => 'info', 'table' => 'POI', 'text' => 'POI'],
+                          6 => ['label' => 'info', 'table' => 'PIR', 'text' => 'PIR'],
+                        ];
+                        if ($receipt_value['tracker_status'] > 0) {
+                          $status = $tracker_status_labels[$receipt_value['tracker_status']];
+                          $tracker_status = '<span class="inline-block label label-' . $status['label'] . '" id="tracker_status_span_' . $receipt_value['id'] . '" task-status-table="' . $status['table'] . '">' . $status['text'];
+
+                          $tracker_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+                          $tracker_status .= '<a href="#" class="dropdown-toggle text-dark" id="tableTrackerStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                          $tracker_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+                          $tracker_status .= '</a>';
+                          $tracker_status .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableTrackerStatus-' . $aRow['id'] . '">';
+                          foreach ($tracker_status_labels as $key => $status) {
+                            if ($key != $receipt_value['tracker_status']) {
+                              $tracker_status .= '<li>
+                                       <a href="#" onclick="change_tracker_status(' . $key . ', ' . $receipt_value['id'] . '); return false;">
+                                           ' . $status['text'] . '
+                                       </a>
+                                   </li>';
+                            }
+                          }
+                          $tracker_status .= '</ul>';
+                          $tracker_status .= '</div>';
+                          $tracker_status .= '</span>';
                         }
                         $remarks = $receipt_value['remarks'];
                       ?>
@@ -283,7 +322,7 @@
                           <td><?php echo html_entity_decode($po_quantities).' '.html_entity_decode($unit_name) ?></td>
                           <td><?php echo html_entity_decode($quantities).' '.html_entity_decode($unit_name) ?></td>
                           <td><?php echo $imp_local_status ?></td>
-                          <td></td>
+                          <td><?php echo $tracker_status ?></td>
                           <td><?php echo $production_status ?></td>
                           <td>
                             <?php
@@ -606,6 +645,92 @@
         });
     }
   }
+
+  function change_imp_local_status(status, id) {
+    "use strict";
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    if (id > 0) {
+      $.post(admin_url + 'warehouse/change_imp_local_status/' + status + '/' + id + '/' + purchase_tracker)
+        .done(function(response) {
+          try {
+            response = JSON.parse(response);
+
+            if (response.success) {
+              var $statusSpan = $('#imp_status_span_' + id);
+
+              // Remove all status-related classes
+              $statusSpan.removeClass('label-danger label-success label-info label-warning label-primary label-purple label-teal label-orange label-green label-defaul label-secondaryt');
+
+              // Add the new class and update content
+              if (response.class) {
+                $statusSpan.addClass('label-' + response.class);
+              }
+              if (response.status_str) {
+                $statusSpan.html(response.status_str + ' ' + (response.html || ''));
+              }
+
+              // Display success message
+              alert_float('success', response.mess);
+            } else {
+              // Display warning message if the operation fails
+              alert_float('warning', response.mess);
+            }
+          } catch (e) {
+            console.error('Error parsing server response:', e);
+            alert_float('danger', 'Invalid server response');
+          }
+        })
+        .fail(function(xhr, status, error) {
+          console.error('AJAX Error:', error);
+          alert_float('danger', 'Failed to update status');
+        });
+    }
+  }
+
+  function change_tracker_status(status, id) {
+    "use strict";
+    var purchase_tracker = <?php echo isset($purchase_tracker) ? json_encode($purchase_tracker) : 'false'; ?>;
+    if (id > 0) {
+      $.post(admin_url + 'warehouse/change_tracker_status/' + status + '/' + id + '/' + purchase_tracker)
+        .done(function(response) {
+          try {
+            response = JSON.parse(response);
+
+            if (response.success) {
+              var $statusSpan = $('#tracker_status_span_' + id);
+
+              // Remove all status-related classes
+              $statusSpan.removeClass('label-danger label-success label-info label-warning label-primary label-purple label-teal label-orange label-green label-defaul label-secondaryt');
+
+              // Add the new class and update content
+              if (response.class) {
+                $statusSpan.addClass('label-' + response.class);
+              }
+              if (response.status_str) {
+                $statusSpan.html(response.status_str + ' ' + (response.html || ''));
+              }
+
+              // Display success message
+              alert_float('success', response.mess);
+            } else {
+              // Display warning message if the operation fails
+              alert_float('warning', response.mess);
+            }
+          } catch (e) {
+            console.error('Error parsing server response:', e);
+            alert_float('danger', 'Invalid server response');
+          }
+        })
+        .fail(function(xhr, status, error) {
+          console.error('AJAX Error:', error);
+          alert_float('danger', 'Failed to update status');
+        });
+    }
+  }
+
+  $('[data-toggle="tooltip"]').tooltip({
+    html: true
+  });
 </script>
 <script>
   // Toggle settings dropdown visibility

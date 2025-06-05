@@ -742,3 +742,5 @@ $lang['item_description']  = 'Item Description';
 $lang['project_name']  = 'Project Name';
 $lang['fe_print_qrcode'] = 'Print QR code';
 $lang['please_select_at_least_one_item_from_the_list'] = 'Please select at least one item from the list';
+$lang['change_status_successfully'] = 'Change status successfully';
+$lang['change_status_fail'] = 'Change status fail';

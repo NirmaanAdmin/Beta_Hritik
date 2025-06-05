@@ -9384,4 +9384,85 @@ class warehouse extends AdminController
         
         $this->load->view('warehouse_dashboard/warehouse_dashboard', $data);
     }
+
+    public function change_imp_local_status($status, $id, $purchase_tracker = true)
+	{
+		// Define an array of statuses with their corresponding labels and texts
+		$imp_local_labels = [
+          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+          2 => ['label' => 'success', 'table' => 'imported', 'text' => _l('imported')],
+          3 => ['label' => 'info', 'table' => 'local', 'text' => _l('local')],
+        ];
+		$success = $this->warehouse_model->change_imp_local_status($status, $id, $purchase_tracker);
+		$message = $success ? _l('change_status_successfully') : _l('change_status_fail');
+		$html = '';
+		$status_str = $imp_local_labels[$status]['text'] ?? '';
+		$class = $imp_local_labels[$status]['label'] ?? '';
+		$html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+		$html .= '<a href="#" class="dropdown-toggle text-dark" id="tableImpLocalStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+		$html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+		$html .= '</a>';
+		$html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableImpLocalStatus-' . $id . '">';
+		// Generate the dropdown menu options dynamically
+		foreach ($imp_local_labels as $key => $label) {
+			if ($key != $status) {
+				$html .= '<li>
+                    <a href="#" onclick="change_imp_local_status(' . $key . ', ' . $id . '); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+			}
+		}
+		$html .= '</ul>';
+		$html .= '</div>';
+		echo json_encode([
+			'success' => $success,
+			'status_str' => $status_str,
+			'class' => $class,
+			'mess' => $message,
+			'html' => $html,
+		]);
+	}
+
+	public function change_tracker_status($status, $id, $purchase_tracker = true)
+	{
+		// Define an array of statuses with their corresponding labels and texts
+		$tracker_status_labels = [
+          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+          2 => ['label' => 'info', 'table' => 'SPC', 'text' => 'SPC'],
+          3 => ['label' => 'info', 'table' => 'RFQ', 'text' => 'RFQ'],
+          4 => ['label' => 'info', 'table' => 'FQR', 'text' => 'FQR'],
+          5 => ['label' => 'info', 'table' => 'POI', 'text' => 'POI'],
+          6 => ['label' => 'info', 'table' => 'PIR', 'text' => 'PIR'],
+        ];
+		$success = $this->warehouse_model->change_tracker_status($status, $id, $purchase_tracker);
+		$message = $success ? _l('change_status_successfully') : _l('change_status_fail');
+		$html = '';
+		$status_str = $tracker_status_labels[$status]['text'] ?? '';
+		$class = $tracker_status_labels[$status]['label'] ?? '';
+		$html .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
+		$html .= '<a href="#" class="dropdown-toggle text-dark" id="tableTrackerStatus-' . $id . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+		$html .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';
+		$html .= '</a>';
+		$html .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableTrackerStatus-' . $id . '">';
+		// Generate the dropdown menu options dynamically
+		foreach ($tracker_status_labels as $key => $label) {
+			if ($key != $status) {
+				$html .= '<li>
+                    <a href="#" onclick="change_tracker_status(' . $key . ', ' . $id . '); return false;">
+                        ' . $label['text'] . '
+                    </a>
+                </li>';
+			}
+		}
+		$html .= '</ul>';
+		$html .= '</div>';
+		echo json_encode([
+			'success' => $success,
+			'status_str' => $status_str,
+			'class' => $class,
+			'mess' => $message,
+			'html' => $html,
+		]);
+	}
 }

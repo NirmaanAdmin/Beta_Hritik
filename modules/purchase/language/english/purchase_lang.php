@@ -935,3 +935,4 @@ $lang['imported_local'] = 'Imported/Local';
 $lang['not_set'] = 'Not set';
 $lang['imported'] = 'Imported';
 $lang['local'] = 'Local';
+$lang['po_amount'] = 'PO Amount';

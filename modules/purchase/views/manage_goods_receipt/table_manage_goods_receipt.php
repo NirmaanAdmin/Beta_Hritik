@@ -51,6 +51,11 @@ if (isset($delivery)) {
     }
 }
 
+if ($this->ci->input->post('vendors')
+    && count($this->ci->input->post('vendors')) > 0) {
+    $where[] = 'AND supplier_name IN (' . implode(',', $this->ci->input->post('vendors')) . ')';
+}
+
 $result = data_tables_purchase_tracker_init($aColumns, $join, $where, [
     'type',
 ]);

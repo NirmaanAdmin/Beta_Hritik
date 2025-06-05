@@ -5,6 +5,7 @@ var GoodsreceiptParams = {
     "day_vouchers": "input[name='date_add']",
     "kind": "select[name='kind']",
     "delivery": "select[name='delivery']",
+    "vendors": "[name='vendors[]']",
     "toggle-filter": "input[name='toggle-filter']"
 };
 
@@ -23,6 +24,10 @@ $('#kind').on('change', function () {
     table_manage_goods_receipt.DataTable().ajax.reload();
 });
 $('#delivery').on('change', function () {
+    table_manage_goods_receipt.DataTable().ajax.reload();
+});
+$('select[name="vendors[]"]').on('change', function () {
+    $('select[name="vendors[]"]').selectpicker('refresh');
     table_manage_goods_receipt.DataTable().ajax.reload();
 });
 $('.toggle-filter').on('change', function () {

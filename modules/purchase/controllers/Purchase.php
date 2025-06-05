@@ -11596,6 +11596,7 @@ class purchase extends AdminController
     {
         $data['title'] = 'Purchase Tracker';
         $data['purchase_id'] = $id;
+        $data['vendors'] = $this->purchase_model->get_vendor();
         $this->load->view('manage_goods_receipt/manage_purchase', $data);
     }
 
@@ -11676,6 +11677,7 @@ class purchase extends AdminController
         $base_currency = $this->currencies_model->get_base_currency();
         $data['base_currency'] = $base_currency;
         $pur_order = $this->purchase_model->get_pur_order($id);
+        $data['pur_order'] = $pur_order;
         $pur_order_details = $this->purchase_model->get_pur_order_detail($id);
         $goods_receipt = array();
         $goods_receipt['id'] = 0;

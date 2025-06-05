@@ -20734,4 +20734,26 @@ class Warehouse_model extends App_Model
 		}
 		return $url;
 	}
+
+	function change_imp_local_status($status, $id, $purchase_tracker)
+	{
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$this->db->update(db_prefix() . 'pur_order_detail', ['imp_local_status' => $status]);
+		} else {
+			$this->db->update(db_prefix() . 'goods_receipt_detail', ['imp_local_status' => $status]);
+		}
+		return true;
+	}
+
+	function change_tracker_status($status, $id, $purchase_tracker)
+	{
+		$this->db->where('id', $id);
+		if ($purchase_tracker == "false") {
+			$this->db->update(db_prefix() . 'pur_order_detail', ['tracker_status' => $status]);
+		} else {
+			$this->db->update(db_prefix() . 'goods_receipt_detail', ['tracker_status' => $status]);
+		}
+		return true;
+	}
 }
