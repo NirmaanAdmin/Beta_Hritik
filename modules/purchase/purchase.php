@@ -16,6 +16,7 @@ define('PURCHASE_MODULE_UPLOAD_FOLDER', module_dir_path(PURCHASE_MODULE_NAME, 'u
 define('PURCHASE_ORDER_RETURN_MODULE_UPLOAD_FOLDER', module_dir_path(PURCHASE_MODULE_NAME, 'uploads/order_return/'));
 define('PURCHASE_ORDER_IMPORT_ITEMS_ERROR', 'modules/purchase/uploads/import_items_pur_order_error/');
 define('PURCHASE_ORDER_IMPORT_ORDER_TRACKER_ERROR', 'modules/purchase/uploads/import_items_order_tracker_error/');
+define('PURCHASE_ORDER_IMPORT_UNAWARDED_TRACKER_ERROR', 'modules/purchase/uploads/import_items_unawarded_tracker_error/');
 define('WORK_ORDER_IMPORT_ITEMS_ERROR', 'modules/purchase/uploads/import_items_wo_order_error/');
 
 hooks()->add_action('admin_init', 'purchase_permissions');
@@ -195,7 +196,7 @@ function purchase_module_init_menu_items()
 {
 
     $CI = &get_instance();
-    if (has_permission('purchase_items', '', 'view') || has_permission('purchase_vendors', '', 'view') || has_permission('purchase_vendor_items', '', 'view') || has_permission('purchase_request', '', 'view') || has_permission('purchase_quotations', '', 'view') || has_permission('purchase_orders', '', 'view') || has_permission('purchase_contracts', '', 'view') || has_permission('purchase_invoices', '', 'view') || has_permission('purchase_reports', '', 'view') || has_permission('order_tracker', '', 'view') || has_permission('purchase_tracker', '', 'view') || has_permission('work_orders', '', 'view') || has_permission('work_orders', '', 'view') || has_permission('purchase_debit_notes', '', 'view') || has_permission('purchase_settings', '', 'edit') || has_permission('purchase_vendors', '', 'view_own') || has_permission('purchase_vendor_items', '', 'view_own') || has_permission('purchase_request', '', 'view_own') || has_permission('purchase_quotations', '', 'view_own') || has_permission('purchase_orders', '', 'view_own') || has_permission('purchase_contracts', '', 'view_own') || has_permission('purchase_invoices', '', 'view_own') || has_permission('purchase_debit_notes', '', 'view_own') || has_permission('purchase_order_return', '', 'view_own') || has_permission('purchase_order_return', '', 'view')) {
+    if (has_permission('purchase_items', '', 'view') || has_permission('purchase_vendors', '', 'view') || has_permission('purchase_vendor_items', '', 'view') || has_permission('purchase_request', '', 'view') || has_permission('purchase_quotations', '', 'view') || has_permission('purchase_orders', '', 'view') || has_permission('purchase_contracts', '', 'view') || has_permission('purchase_invoices', '', 'view') || has_permission('purchase_reports', '', 'view') || has_permission('order_tracker', '', 'view') || has_permission('unawarded_tracker', '', 'view') || has_permission('purchase_tracker', '', 'view') || has_permission('work_orders', '', 'view') || has_permission('work_orders', '', 'view') || has_permission('purchase_debit_notes', '', 'view') || has_permission('purchase_settings', '', 'edit') || has_permission('purchase_vendors', '', 'view_own') || has_permission('purchase_vendor_items', '', 'view_own') || has_permission('purchase_request', '', 'view_own') || has_permission('purchase_quotations', '', 'view_own') || has_permission('purchase_orders', '', 'view_own') || has_permission('purchase_contracts', '', 'view_own') || has_permission('purchase_invoices', '', 'view_own') || has_permission('purchase_debit_notes', '', 'view_own') || has_permission('purchase_order_return', '', 'view_own') || has_permission('purchase_order_return', '', 'view')) {
         $CI->app_menu->add_sidebar_menu_item('purchase', [
             'name' => _l('purchase'),
             'icon' => 'fa fa-shopping-cart',
@@ -274,7 +275,6 @@ function purchase_module_init_menu_items()
             'href' => admin_url('purchase/purchase_order'),
             'position' => 6,
         ]);
-        
     }
 
     if (has_permission('purchase_order_return', '', 'view') || has_permission('purchase_order_return', '', 'view_own')) {
@@ -328,16 +328,16 @@ function purchase_module_init_menu_items()
     }
 
     if (has_permission('purchase_reports', '', 'view')) {
-        value: $CI->app_menu->add_sidebar_children_item('purchase', [
+        value:
+        $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'purchase_reports',
             'name' => _l('reports'),
             'icon' => 'fa fa-bar-chart',
             'href' => admin_url('purchase/reports'),
             'position' => 11,
         ]);
-      
     }
-    
+
 
     if (is_admin() || has_permission('purchase_settings', '', 'edit')) {
         $CI->app_menu->add_sidebar_children_item('purchase', [
@@ -349,8 +349,8 @@ function purchase_module_init_menu_items()
         ]);
     }
     if (has_permission('work_orders', '', 'view')) {
-        
-       $CI->app_menu->add_sidebar_children_item('purchase', [
+
+        $CI->app_menu->add_sidebar_children_item('purchase', [
             'slug' => 'work-order',
             'name' => _l('work_order'),
             'icon' => 'fa fa-check',
@@ -368,25 +368,35 @@ function purchase_module_init_menu_items()
     ]);
 
     if (has_permission('order_tracker', '', 'view')) {
-        
-        $CI->app_menu->add_sidebar_children_item('purchase', [
-             'slug' => 'order-tracker',
-             'name' => _l('order_tracker'),
-             'icon' => 'fa fa-ship',
-             'href' => admin_url('purchase/order_tracker'),
-             'position' => 21,
-         ]);
-     }
 
-    // if (has_permission('purchase_tracker', '', 'view')) {
-        
         $CI->app_menu->add_sidebar_children_item('purchase', [
-             'slug' => 'purchase-tracker',
-             'name' => 'Purchase Tracker',
-             'icon' => 'fa fa-ship',
-             'href' => admin_url('purchase/manage_purchase'),
-             'position' => 21,
-         ]);
+            'slug' => 'order-tracker',
+            'name' => _l('order_tracker'),
+            'icon' => 'fa fa-ship',
+            'href' => admin_url('purchase/order_tracker'),
+            'position' => 21,
+        ]);
+    }
+
+    if (has_permission('unawarded_tracker', '', 'view')) {
+
+        $CI->app_menu->add_sidebar_children_item('purchase', [
+            'slug' => 'unawarded-tracker',
+            'name' => _l('unawarded_tracker'),
+            'icon' => 'fa fa-ship',
+            'href' => admin_url('purchase/unawarded_tracker'),
+            'position' => 21,
+        ]);
+    }
+    // if (has_permission('purchase_tracker', '', 'view')) {
+
+    $CI->app_menu->add_sidebar_children_item('purchase', [
+        'slug' => 'purchase-tracker',
+        'name' => 'Purchase Tracker',
+        'icon' => 'fa fa-ship',
+        'href' => admin_url('purchase/manage_purchase'),
+        'position' => 21,
+    ]);
     // }
 }
 
@@ -418,8 +428,8 @@ function purchase_load_js($dashboard_js)
             $dashboard_js .=  $CI->load->view('purchase/purchase_dashboard_js');
         }
     }
-    if (!(strpos($viewuri, '/admin/purchase/manage_purchase') === false)) { 
-        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/manage_purchase.js').'?v=' . REVISION.'"></script>';
+    if (!(strpos($viewuri, '/admin/purchase/manage_purchase') === false)) {
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/manage_purchase.js') . '?v=' . REVISION . '"></script>';
     }
     return $dashboard_js;
 }
@@ -464,6 +474,7 @@ function purchase_permissions()
     register_staff_capabilities('purchase_quotations', $capabilities_own, _l('purchase_quotations'));
     register_staff_capabilities('purchase_orders', $capabilities_own, _l('purchase_orders'));
     register_staff_capabilities('work_orders', $capabilities_own, _l('work_order'));
+    register_staff_capabilities('unawarded_tracker', $capabilities_own, _l('unawarded_tracker'));
     register_staff_capabilities('order_tracker', $capabilities_own, _l('order_tracker'));
     register_staff_capabilities('purchase_tracker', $capabilities_own, _l('purchase_tracker'));
     register_staff_capabilities('purchase_order_return', $capabilities_own, _l('purchase_order_return'));
@@ -534,8 +545,12 @@ function purchase_add_footer_components()
         echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/purchase_order_manage.js') . '?v=' . PURCHASE_REVISION . '"></script>';
     }
     if (!(strpos($viewuri, '/admin/purchase/order_tracker') === false)) {
-       
+
         echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/order_tracker_manage.js') . '?v=' . PURCHASE_REVISION . '"></script>';
+    }
+    if (!(strpos($viewuri, '/admin/purchase/unawarded_tracker') === false)) {
+
+        echo '<script src="' . module_dir_url(PURCHASE_MODULE_NAME, 'assets/js/unawarded_tracker_manage.js') . '?v=' . PURCHASE_REVISION . '"></script>';
     }
     if (!(strpos($viewuri, '/admin/purchase/work_order') === false)) {
         echo '<script src="' . base_url('assets/plugins/signature-pad/signature_pad.min.js') . '"></script>';
@@ -1004,8 +1019,6 @@ function po_relation_data($data, $type, $rel_id, $q = '')
     if ($type == 'pur_order') {
         if ($rel_id != '') {
             $data = $CI->purchase_model->get_pur_order($rel_id);
-            
-
         } else {
             $data   = [];
         }
@@ -1624,21 +1637,20 @@ function wo_get_relation_data($data, $obj, $q = '')
 function pay_get_relation_data($data, $obj, $q = '')
 {
     $type = $obj['type'];
-    $rel_id = $obj['rel_id'];    
+    $rel_id = $obj['rel_id'];
     $CI = &get_instance();
     $CI->load->model('purchase/purchase_model');
 
     if ($type == 'payment_certificate' || $type == 'payment_certificate') {
         if ($rel_id != '') {
             $payment_certificate_data = $CI->purchase_model->get_payment_certificate_po_wo_id($rel_id);
-            
 
-            if($payment_certificate_data->po_id != ''){
+
+            if ($payment_certificate_data->po_id != '') {
                 $data = $CI->purchase_model->get_pur_order_new($rel_id);
-            }elseif ($payment_certificate_data->wo_id != '') {
+            } elseif ($payment_certificate_data->wo_id != '') {
                 $data = $CI->purchase_model->get_wo_order_new($rel_id);
             }
-         
         } else {
             if ($q != '') {
                 $data = $CI->purchase_model->get_wo_order_search($q);
@@ -1648,7 +1660,8 @@ function pay_get_relation_data($data, $obj, $q = '')
     return $data;
 }
 
-function pr_get_relation_data($data, $obj, $q = ''){
+function pr_get_relation_data($data, $obj, $q = '')
+{
     $type = $obj['type'];
     $rel_id = $obj['rel_id'];
     $CI = &get_instance();
@@ -1657,8 +1670,7 @@ function pr_get_relation_data($data, $obj, $q = ''){
     if ($type == 'purchase_request' || $type == 'purchase_request') {
         if ($rel_id != '') {
             $data = $CI->purchase_model->get_purchase_request($rel_id);
-
-        }else{
+        } else {
             if ($q != '') {
                 $data = $CI->purchase_model->get_purchase_request_search($q);
             }

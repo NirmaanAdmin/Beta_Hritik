@@ -936,3 +936,5 @@ $lang['not_set'] = 'Not set';
 $lang['imported'] = 'Imported';
 $lang['local'] = 'Local';
 $lang['po_amount'] = 'PO Amount';
+$lang['unawarded_tracker'] = 'Unawarded Tracker';
+$lang['unawarded_order'] = 'Unawarded Order';

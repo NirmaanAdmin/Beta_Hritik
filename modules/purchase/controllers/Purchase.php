@@ -10170,7 +10170,7 @@ class purchase extends AdminController
      */
     public function import_file_xlsx_pur_order_items()
     {
-       
+
         if (!class_exists('XLSXReader_fin')) {
             require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
         }
@@ -13912,9 +13912,28 @@ class purchase extends AdminController
 
 
         // 5) Pass all three charts to the view
-        $data['charts']      = [$bar_chart, $pie_chart, $stacked_bar_chart, $vendor_bar_chart, $department_bar_chart,$expensive_item_bar_chart];
+        $data['charts']      = [$bar_chart, $pie_chart, $stacked_bar_chart, $vendor_bar_chart, $department_bar_chart, $expensive_item_bar_chart];
         $data['col_classes'] = ['col-md-9', 'col-md-3', 'col-md-9', 'col-md-9', 'col-md-9', 'col-md-9'];
 
         $this->load->view('admin/chartjs_common_view', $data);
+    }
+
+    public function table_unawarded_tracker()
+    {
+        $this->app->get_table_data(module_views_path('purchase', 'unawarded_tracker/table_order_tracker'));
+    }
+
+
+    public function unawarded_tracker()
+    {
+        $data['title'] = _l('unawarded_tracker');
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['projects'] = $this->projects_model->get();
+        $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
+        $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
+        $data['rli_filters'] = $this->purchase_model->get_all_rli_filters();
+
+        $this->load->view('unawarded_tracker/manage', $data);
     }
 }
