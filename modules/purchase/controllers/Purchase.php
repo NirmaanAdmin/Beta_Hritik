@@ -13930,10 +13930,213 @@ class purchase extends AdminController
         $data['vendors'] = $this->purchase_model->get_vendor();
         $data['commodity_groups_pur'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['projects'] = $this->projects_model->get();
-        $data['order_tracker_row_template'] = $this->purchase_model->create_order_tracker_row_template();
+        $data['order_tracker_row_template'] = $this->purchase_model->create_unawarded_tracker_row_template();
         $data['budget_head'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['rli_filters'] = $this->purchase_model->get_all_rli_filters();
 
         $this->load->view('unawarded_tracker/manage', $data);
+    }
+
+    public function import_file_xlsx_unawared_tracker_items()
+    {
+
+        if (!class_exists('XLSXReader_fin')) {
+            require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXReader/XLSXReader.php');
+        }
+        require_once(module_dir_path(WAREHOUSE_MODULE_NAME) . '/assets/plugins/XLSXWriter/xlsxwriter.class.php');
+
+        $total_row_false = 0;
+        $total_rows_data = 0;
+        $dataerror = 0;
+        $total_row_success = 0;
+        $total_rows_data_error = 0;
+        $filename = '';
+
+        if ($this->input->post()) {
+
+            if (isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+                //do_action('before_import_leads');
+
+                // Get the temp file path
+                $tmpFilePath = $_FILES['file_csv']['tmp_name'];
+                // Make sure we have a filepath
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    $tmpDir = TEMP_FOLDER . '/' . time() . uniqid() . '/';
+
+                    if (!file_exists(TEMP_FOLDER)) {
+                        mkdir(TEMP_FOLDER, 0755);
+                    }
+
+                    if (!file_exists($tmpDir)) {
+                        mkdir($tmpDir, 0755);
+                    }
+
+                    // Setup our new file path
+                    $newFilePath = $tmpDir . $_FILES['file_csv']['name'];
+
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+
+                        $import_result = true;
+                        $rows = [];
+
+                        //Writer file
+                        $writer_header = array(
+                            "(*)" . _l('order_scope') => 'string',
+                            _l('order_date') => 'date',
+                            _l('completion_date')    => 'date',
+                            _l('budget_ro_projection')    => 'numeric',
+                            _l('remarks')    => 'string',
+                        );
+
+                        $widths_arr = array();
+                        for ($i = 1; $i <= count($writer_header); $i++) {
+                            $widths_arr[] = 40;
+                        }
+
+                        $writer = new XLSXWriter();
+
+                        $col_style1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+                        $style1 = ['widths' => $widths_arr, 'fill' => '#ff9800',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13];
+
+                        $writer->writeSheetHeader_v2('Sheet1', $writer_header,  $col_options = ['widths' => $widths_arr, 'fill' => '#f44336',  'font-style' => 'bold', 'color' => '#0a0a0a', 'border' => 'left,right,top,bottom', 'border-color' => '#0a0a0a', 'font-size' => 13], $col_style1, $style1);
+
+                        //init file error end
+
+                        //Reader file
+                        $xlsx = new XLSXReader_fin($newFilePath);
+                        $sheetNames = $xlsx->getSheetNames();
+                        $data = $xlsx->getSheetData($sheetNames[1]);
+
+
+                        // start row write 2
+                        $numRow = 2;
+                        $total_rows = 0;
+                        $total_rows_actualy = 0;
+                        $list_item = $this->purchase_model->create_unawarded_tracker_row_template();
+                        //get data for compare
+                        $index_quote = 0;
+                        for ($row = 1; $row < count($data); $row++) {
+
+                            $rd = array();
+                            $flag = 0;
+                            $flag2 = 0;
+
+                            $string_error = '';
+                            $flag_contract_form = 0;
+
+                            $flag_id_commodity_code;
+                            $flag_id_order_scope;
+
+
+                            $value_cell_order_scope = isset($data[$row][0]) ? $data[$row][0] : null;
+                            $value_cell_order_date = isset($data[$row][1]) ? $data[$row][1] : '';
+                            $value_cell_completion_date = isset($data[$row][2]) ? $data[$row][2] : '';
+                            $value_cell_budget = isset($data[$row][3]) ? $data[$row][3] : '';
+                            $value_cell_total_remaks = isset($data[$row][4]) ? $data[$row][4] : '';
+
+
+                            /*check null*/
+                            if (is_null($value_cell_order_scope) == true) {
+                                $string_error .= _l('order_scope') . ' ' . _l('not_yet_entered');
+                                $flag = 1;
+                            }
+                            $value_cell_budget = trim($value_cell_budget, " ");
+                            if ($value_cell_budget !== "" && !is_numeric($value_cell_budget)) {
+                                $string_error .= _l('budget_ro_projection') . ' ' . _l('_not_a_number');
+                                $flag2 = 1;
+                            }
+
+
+                            if (($flag == 1) || ($flag2 == 1)) {
+                                //write error file
+                                $writer->writeSheetRow('Sheet1', [
+                                    $value_cell_order_scope,
+                                    $value_cell_order_date,
+                                    $value_cell_completion_date,
+                                    $value_cell_budget,
+                                    $value_cell_total_remaks,
+                                    $string_error,
+                                ]);
+
+                                $numRow++;
+                                $total_rows_data_error++;
+                                $message = 'Import Error In Some Item';
+                            }
+                            if (($flag == 0) && ($flag2 == 0)) {
+
+                                $rows[] = $row;
+                                $list_item .= $this->purchase_model->create_unawarded_tracker_row_template('newitems[' . $index_quote . ']', $value_cell_order_scope, '', $value_cell_order_date, $value_cell_completion_date, $value_cell_budget, '', '', '', '', '', '', $value_cell_total_remaks, '', '');
+                                $index_quote++;
+                                $total_rows_data++;
+                                $message = 'Data Import successfully';
+                            }
+                        }
+
+                        $total_rows = $total_rows;
+                        $data['total_rows_post'] = count($rows);
+                        $total_row_success = count($rows);
+                        $total_row_false = $total_rows - (int) count($rows);
+
+                        if (($total_rows_data_error > 0) || ($total_row_false > 0)) {
+
+                            $filename = 'FILE_ERROR_IMPORT_ORDER_TRACKER' . get_staff_user_id() . strtotime(date('Y-m-d H:i:s')) . '.xlsx';
+                            $writer->writeToFile(str_replace($filename, PURCHASE_ORDER_IMPORT_ORDER_TRACKER_ERROR . $filename, $filename));
+
+                            $filename = PURCHASE_ORDER_IMPORT_ORDER_TRACKER_ERROR . $filename;
+                        }
+                        $list_item = $list_item;
+                       
+                        @delete_dir($tmpDir);
+                    }
+                } else {
+                    set_alert('warning', 'Import Item failed');
+                }
+            }
+        }
+
+        echo json_encode([
+            'message' => $message,
+            'total_row_success' => $total_row_success,
+            'total_row_false' => $total_rows_data_error,
+            'total_rows' => $total_rows_data,
+            'site_url' => site_url(),
+            'staff_id' => get_staff_user_id(),
+            'total_rows_data_error' => $total_rows_data_error,
+            'filename' => $filename,
+            'list_item' => $list_item
+        ]);
+    }
+
+    public function add_unawarded_order()
+    {
+        $data = $this->input->post();
+
+        if ($data) {
+            $id = $this->purchase_model->add_unawarded_order_tracker($data);
+            if ($id) {
+                // Set a flash message if needed
+                // set_alert('success', _l('added_successfully', _l('order_tracker')));
+
+                // Return a JSON success response
+                echo json_encode([
+                    'success' => true,
+                    'row_template' => $this->purchase_model->create_unawarded_tracker_row_template(),
+                    'message' => _l('added_successfully', _l('order_tracker'))
+                ]);
+            } else {
+                // Return a JSON error response if the insert failed
+                echo json_encode([
+                    'success' => false,
+                    'message' => _l('problem_adding_order')
+                ]);
+            }
+        } else {
+            // Return a JSON error response if no data was posted
+            echo json_encode([
+                'success' => false,
+                'message' => _l('no_data_received')
+            ]);
+        }
+        exit; // Stop further execution
     }
 }

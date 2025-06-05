@@ -17740,6 +17740,65 @@ class Purchase_model extends App_Model
         return $row;
     }
 
+     public function create_unawarded_tracker_row_template($name = '', $order_scope = '', $contractor = '', $order_date = '', $completion_date = '', $budget_ro_projection = '', $committed_contract_amount = '', $change_order_amount = '', $anticipate_variation = '',  $final_certified_amount = '', $category = '', $group_pur = '', $remarks = '', $order_value = '', $project = '')
+    {
+        $row = '';
+        $name_order_scope = 'order_scope';
+        $name_vendor = 'vendor';
+        $name_order_date = 'order_date';
+        $name_completion_date = 'completion_date';
+        $name_budget_ro_projection = 'budget_ro_projection';
+        $name_committed_contract_amount = 'committed_contract_amount';
+        $name_change_order_amount = 'change_order_amount';
+        $name_anticipate_variation = 'anticipate_variation';
+        $name_final_certified_amount = 'final_certified_amount';
+        $name_kind = 'kind';
+        $name_group_pur = 'group_pur';
+        $name_remarks = 'remarks';
+        $name_order_value = 'order_value';
+        $name_project = 'project';
+
+        if ($name == '') {
+            $row .= '<tr class="main">';
+        } else {
+            $row .= '<tr class="sortable item">';
+            $name_order_scope = $name . '[order_scope]';
+            $name_vendor = $name . '[vendor]';
+            $name_order_date = $name . '[order_date]';
+            $name_completion_date = $name . '[completion_date]';
+            $name_budget_ro_projection = $name . '[budget_ro_projection]';
+            $name_committed_contract_amount = $name . '[committed_contract_amount]';
+            $name_change_order_amount = $name . '[change_order_amount]';
+            $name_anticipate_variation = $name . '[anticipate_variation]';
+            $name_final_certified_amount = $name . '[final_certified_amount]';
+            $name_kind = $name . '[kind]';
+            $name_group_pur = $name . '[group_pur]';
+            $name_remarks = $name . '[remarks]';
+            $name_order_value = $name . '[order_value]';
+            $name_project = $name . '[project]';
+        }
+
+
+        $row .= '<td class="">' . render_textarea($name_order_scope, '', $order_scope, ['rows' => 2, 'placeholder' => _l('order_scope')]) . '</td>';
+
+        $row .= '<td class="">' .  render_input($name_order_date, '', $order_date, 'date') . '</td>';
+        $row .= '<td class="">' .  render_input($name_completion_date, '', $completion_date, 'date') . '</td>';
+        $row .= '<td class="">' .  render_input($name_budget_ro_projection, '', $budget_ro_projection, 'number') . '</td>';
+        $row .= '<td class="">' .  get_projects_list($name_project, $project) . '</td>';
+        $row .= '<td class="">' .  get_kind_list($name_kind, $category) . '</td>';
+        $row .= '<td class="">' .  get_budget_head_list($name_group_pur, $group_pur) . '</td>';
+        $row .= '<td class="">' .  render_textarea($name_remarks, '', $remarks, ['rows' => 2, 'placeholder' => _l('remarks')]) . '</td>';
+
+        $add_class = '';
+        if ($name == '') {
+            $row .= '<td><button type="button" onclick="order_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
+        } else {
+            $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="order_delete_item(this,\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
+        }
+        $row .= '</tr>';
+        return $row;
+    }
+
     public function add_order_tracker($data)
     {
         unset($data['order_scope']);
@@ -17782,6 +17841,48 @@ class Purchase_model extends App_Model
                 $dt_data['project'] = $rqd['project'];
 
                 $this->db->insert(db_prefix() . 'pur_order_tracker', $dt_data);
+                $last_insert_id[] = $this->db->insert_id();
+            }
+            return $last_insert_id;
+        }
+        return false;
+    }
+
+     public function add_unawarded_order_tracker($data)
+    {
+        unset($data['order_scope']);
+        unset($data['vendor']);
+        unset($data['order_date']);
+        unset($data['completion_date']);
+        unset($data['budget_ro_projection']);
+        unset($data['committed_contract_amount']);
+        unset($data['change_order_amount']);
+        unset($data['anticipate_variation']);
+        unset($data['final_certified_amount']);
+        unset($data['project']);
+        unset($data['kind']);
+        unset($data['group_pur']);
+        unset($data['remarks']);
+        unset($data['order_value']);
+        $order_detail = [];
+        if (isset($data['newitems'])) {
+            $order_detail = $data['newitems'];
+            unset($data['newitems']);
+        }
+        $last_insert_id = [];
+        if (count($order_detail) > 0) {
+            foreach ($order_detail as $key => $rqd) {
+                $dt_data = [];
+
+                $dt_data['pur_order_name'] = $rqd['order_scope'];
+                $dt_data['order_date'] = $rqd['order_date'];
+                $dt_data['completion_date'] = $rqd['completion_date'];
+                $dt_data['budget'] = $rqd['budget_ro_projection'];
+                $dt_data['kind'] = $rqd['kind'];
+                $dt_data['group_pur'] = $rqd['group_pur'];
+                $dt_data['remarks'] = $rqd['remarks'];
+
+                $this->db->insert(db_prefix() . 'pur_unawarded_tracker', $dt_data);
                 $last_insert_id[] = $this->db->insert_id();
             }
             return $last_insert_id;

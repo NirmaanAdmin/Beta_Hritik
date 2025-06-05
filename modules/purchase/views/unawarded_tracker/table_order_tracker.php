@@ -2,7 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-$module_name = 'order_tracker';
+$module_name = 'unawareded_tracker';
 $type_filter_name = 'order_tracker_type';
 $rli_filter_name = 'rli_filter';
 $vendors_filter_name = 'vendors';
@@ -14,21 +14,10 @@ $aw_unw_order_status_filter_name = 'aw_unw_order_status';
 
 // Define common columns for both tables
 $aColumns = [
-   'aw_unw_order_status',
    'order_name', // Will represent 'pur_order_name' or 'wo_order_name'
-   'vendor',
    'order_date',
    'completion_date',
    'budget',
-   // 'order_value',
-   'total',
-   'co_total',
-   'total_rev_contract_value',
-   'anticipate_variation',
-   'cost_to_complete',
-   'vendor_submitted_amount_without_tax',
-   1,
-   2,
    'project',
    'rli_filter',
    'kind',
@@ -252,27 +241,15 @@ update_module_filter($module_name, $aw_unw_order_status_filter_name, $aw_unw_ord
 $result = data_tables_init_union_unawarded($aColumns, $sIndexColumn, $sTable, $join, $where, [
    'combined_orders.id as id',
    'rli_filter',
-   'vendor',
-   'vendor_id',
    'order_date',
    'completion_date',
    'budget',
-   // 'order_value',
-   'co_total',
-   'total',
-   'total_rev_contract_value',
-   'anticipate_variation',
-   'cost_to_complete',
-   'vendor_submitted_amount_without_tax',
    'kind',
    'group_name',
    'remarks',
    'group_pur',
    'source_table',
-   'order_number',
-   'subtotal',
    'project',
-
 ]);
 
 $output  = $result['output'];
@@ -280,13 +257,6 @@ $rResult = $result['rResult'];
 
 $footer_data = [
    'total_budget_ro_projection' => 0,
-   'total_order_value' => 0,
-   'total_committed_contract_amount' => 0,
-   'total_change_order_amount' => 0,
-   'total_rev_contract_value' => 0,
-   'total_anticipate_variation' => 0,
-   'total_cost_to_complete' => 0,
-   'total_final_certified_amount' => 0,
 ];
 $this->ci->load->model('purchase/purchase_model');
 $vendor_list  = $this->ci->purchase_model->get_vendor();
@@ -692,17 +662,6 @@ foreach ($rResult as $aRow) {
    }
 
    $footer_data['total_budget_ro_projection'] += $aRow['budget'];
-   // $footer_data['total_order_value'] += $aRow['order_value'];
-   if ($aRow['source_table'] === 'order_tracker') {
-      $footer_data['total_committed_contract_amount'] += $aRow['total'];
-   } else {
-      $footer_data['total_committed_contract_amount'] += $aRow['subtotal'];
-   }
-   $footer_data['total_change_order_amount'] += $aRow['co_total'];
-   $footer_data['total_rev_contract_value'] += $aRow['total_rev_contract_value'];
-   $footer_data['total_anticipate_variation'] += $aRow['anticipate_variation'];
-   $footer_data['total_cost_to_complete'] += $aRow['cost_to_complete'];
-   $footer_data['total_final_certified_amount'] += $aRow['vendor_submitted_amount_without_tax'];
    $output['aaData'][] = $row;
    $sr++;
 }

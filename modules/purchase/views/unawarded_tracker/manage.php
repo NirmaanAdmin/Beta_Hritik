@@ -86,34 +86,6 @@
 
                      <div class="all_ot_filters">
 
-                        <div class="col-md-2 form-group">
-                           <?php
-                           // Fetch saved filter; ensure we end up with an array
-                           $order_tracker_type_filter = get_module_filter($module_name, 'order_tracker_type');
-                           if (!empty($order_tracker_type_filter) && $order_tracker_type_filter->filter_value !== '') {
-                              $selected_types = explode(',', $order_tracker_type_filter->filter_value);
-                           } else {
-                              $selected_types = [];
-                           }
-                           ?>
-                           <select
-                              name="type[]"
-                              id="order_tracker_type"
-                              class="selectpicker"
-                              multiple
-                              data-live-search="true"
-                              data-width="100%"
-                              data-none-selected-text="<?php echo _l('type'); ?>">
-                              <option value="pur_orders" <?php echo in_array('pur_orders', $selected_types) ? 'selected' : ''; ?>>
-                                 <?php echo _l('pur_order'); ?>
-                              </option>
-                              <option value="wo_orders" <?php echo in_array('wo_orders', $selected_types) ? 'selected' : ''; ?>>
-                                 <?php echo _l('wo_order'); ?>
-                              </option>
-                           </select>
-                        </div>
-
-
                         <div class="col-md-3 form-group">
                            <?php
                            $rli_filter = get_module_filter($module_name, 'rli_filter');
@@ -128,13 +100,6 @@
                            </select>
                         </div>
 
-                        <div class="col-md-2">
-                           <?php
-                           $vendors_filter = get_module_filter($module_name, 'vendors');
-                           $vendors_filter_val = !empty($vendors_filter) ? explode(",", $vendors_filter->filter_value) : '';
-                           echo render_select('vendors[]', $vendors, array('userid', 'company'), '', $vendors_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('contractor'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false);
-                           ?>
-                        </div>
 
                         <div class="col-md-2 form-group">
                            <?php
@@ -161,19 +126,7 @@
                               <?php } ?>
                            </select>
                         </div>
-                        <?php
-                        $order_type_filter_filter = get_module_filter($module_name, 'order_type_filter');
-                        $order_type_filter_val = !empty($order_type_filter_filter) ? $order_type_filter_filter->filter_value : '';
-                        ?>
-                        <div class="col-md-2 form-group" style="padding-left: 0px;">
-                           <select name="order_type_filter" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('Order Type'); ?>" data-actions-box="true">
-                              <option value=""></option>
-                              <option value="None">None</option>
-                              <option value="fetched" <?php echo ($order_type_filter_val == "fetched") ? 'selected' : ''; ?>>Fetched</option>
-                              <option value="created" <?php echo ($order_type_filter_val == "created") ? 'selected' : ''; ?>>Created</option>
 
-                           </select>
-                        </div>
 
                         <div class="col-md-2">
                            <?php
@@ -188,19 +141,7 @@
                            ?>
                         </div>
 
-                        <div class="col-md-2 form-group">
 
-                           <?php
-                           $aw_unw_order_status_type_filter = get_module_filter($module_name, 'aw_unw_order_status');
-                           $aw_unw_order_status_type_filter_val = !empty($aw_unw_order_status_type_filter) ? explode(",", $aw_unw_order_status_type_filter->filter_value) : [];
-                           $order_status = [
-                              0 => ['id' => '1', 'name' => _l('Awarded')],
-                              1 => ['id' => '2', 'name' => _l('Unawarded')],
-                              2 => ['id' => '3', 'name' => _l('Awarded by RIL')],
-                           ];
-
-                           echo render_select('aw_unw_order_status[]', $order_status, array('id', 'name'), '', $aw_unw_order_status_type_filter_val, array('data-width' => '100%', 'data-none-selected-text' => _l('Order Status'), 'multiple' => true, 'data-actions-box' => true), array(), 'no-mbot', '', false); ?>
-                        </div>
 
                         <div class="col-md-1 form-group">
                            <a href="javascript:void(0)" class="btn btn-info btn-icon reset_all_ot_filters">
@@ -232,21 +173,10 @@
                            <!-- Column Checkboxes -->
                            <?php
                            $columns = [
-                              _l('order_status'),
-                              _l('order_scope'),
-                              _l('contractor'),
+                              _l('order_scope'),                             
                               _l('order_date'),
                               _l('completion_date'),
                               _l('budget_ro_projection'),
-                              // _l('order_value'),
-                              _l('committed_contract_amount'),
-                              _l('change_order_amount'),
-                              _l('total_rev_contract_value'),
-                              _l('anticipate_variation'),
-                              _l('cost_to_complete'),
-                              _l('final_certified_amount'),
-                              _l('attachment_upload'),
-                              _l('attachment_download'),
                               _l('project'),
                               _l('rli_filter'),
                               _l('category'),
@@ -281,21 +211,10 @@
                         <table class="dt-table-loading table table-table_order_tracker">
                            <thead>
                               <tr>
-                                 <th><?php echo _l('order_status'); ?></th>
                                  <th><?php echo _l('order_scope'); ?></th>
-                                 <th><?php echo _l('contractor'); ?></th>
                                  <th><?php echo _l('order_date'); ?></th>
                                  <th><?php echo _l('completion_date'); ?></th>
                                  <th><?php echo _l('budget_ro_projection'); ?></th>
-                                 <!-- <th><?php echo _l('order_value'); ?></th> -->
-                                 <th><?php echo _l('committed_contract_amount'); ?></th>
-                                 <th><?php echo _l('change_order_amount'); ?></th>
-                                 <th><?php echo _l('total_rev_contract_value'); ?></th>
-                                 <th><?php echo _l('anticipate_variation'); ?></th>
-                                 <th><?php echo _l('cost_to_complete'); ?></th>
-                                 <th><?php echo _l('final_certified_amount'); ?></th>
-                                 <th><?php echo _l('attachment_upload'); ?></th>
-                                 <th><?php echo _l('attachment_download'); ?></th>
                                  <th><?php echo _l('project'); ?></th>
                                  <th><?php echo _l('rli_filter'); ?></th>
                                  <th><?php echo _l('category'); ?></th>
@@ -309,16 +228,7 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                              <td></td>
-                              <td></td>
                               <td class="total_budget_ro_projection"></td>
-                              <!-- <td class="total_order_value"></td> -->
-                              <td class="total_committed_contract_amount"></td>
-                              <td class="total_change_order_amount"></td>
-                              <td class="total_rev_contract_value"></td>
-                              <td class="total_anticipate_variation"></td>
-                              <td class="total_cost_to_complete"></td>
-                              <td class="total_final_certified_amount"></td>
                               <td></td>
                               <td></td>
                               <td></td>
@@ -379,17 +289,10 @@
                      <table class="table order-tracker-items-table items table-main-invoice-edit has-calculations no-mtop">
                         <thead>
                            <tr>
-                              <!-- <th align="left"><?php echo _l('serial_no'); ?></th> -->
                               <th align="left"><?php echo _l('order_scope'); ?></th>
-                              <th align="left"><?php echo _l('contractor'); ?></th>
                               <th align="left"><?php echo _l('order_date'); ?></th>
                               <th align="left"><?php echo _l('completion_date'); ?></th>
                               <th align="left"><?php echo _l('budget_ro_projection'); ?></th>
-                              <th align="left"><?php echo _l('order_value'); ?></th>
-                              <th align="left"><?php echo _l('committed_contract_amount'); ?></th>
-                              <th align="left"><?php echo _l('change_order_amount'); ?></th>
-                              <th align="left"><?php echo _l('anticipate_variation'); ?></th>
-                              <th align="left"><?php echo _l('final_certified_amount'); ?></th>
                               <th align="left"><?php echo _l('project'); ?></th>
                               <th align="left"><?php echo _l('category'); ?></th>
                               <th align="left"><?php echo _l('group_pur'); ?></th>
@@ -431,9 +334,9 @@
 </div>
 <div id="order_tracker_file_data"></div>
 
-   <?php init_tail(); ?>
-   <?php require 'modules/purchase/assets/js/import_excel_items_order_tracker_js.php'; ?>
-   <?php require 'modules/purchase/assets/js/order_tracker_js.php'; ?>
-   </body>
+<?php init_tail(); ?>
+<?php require 'modules/purchase/assets/js/import_excel_items_unawarded_tracker_js.php'; ?>
+<?php require 'modules/purchase/assets/js/unawarded_tracker_js.php'; ?>
+</body>
 
-   </html>
+</html>
