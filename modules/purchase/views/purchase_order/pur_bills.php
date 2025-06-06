@@ -49,8 +49,11 @@
 	                        <option value=""></option>
 	                        <?php foreach($vendors as $ven){ ?>
 	                        	<option value="<?php echo pur_html_entity_decode($ven['userid']); ?>" <?php if(isset($vendor_id) && $vendor_id == $ven['userid']){ echo 'selected'; } ?>><?php echo pur_html_entity_decode($ven['vendor_code'].' '.$ven['company']); ?></option>
-	                        <?php } ?>
+	                        <?php } 
+							 echo form_hidden('vendor',$vendor_id);
+							?>
 	                    </select>
+						
 	                </div>
 
 	                <div class="col-md-6 form-group pad_right_0">
@@ -69,12 +72,14 @@
 	                        <option value=""></option>
 	                        <?php foreach($pur_orders as $ct){ ?>
 	                        	<option value="<?php echo pur_html_entity_decode($ct['id']); ?>" selected ><?php echo pur_html_entity_decode($ct['pur_order_number']); ?></option>
-	                        <?php } ?>
+	                        <?php }
+							 echo form_hidden('pur_order',$po_id);
+							?>
 	                    </select>
 	                </div>
 
 	                <div class="col-md-6 pad_right_0">
-	                	<label for="invoice_date"><span class="text-danger">* </span><?php echo _l('invoice_date'); ?></label>
+	                	<label for="invoice_date"><span class="text-danger">* </span><?php echo _l('Bill Date'); ?></label>
 	                	<?php $invoice_date = ( isset($pur_invoice) ? _d($pur_invoice->invoice_date) : _d(date('Y-m-d')) );
 	                	 echo render_date_input('invoice_date','',$invoice_date,array( 'required' => 'true')); ?>
 	                </div>
@@ -99,7 +104,7 @@
 	                <div id="recurring_div" class="<?php if(isset($pur_invoice) && $pur_invoice->pur_order != null){ echo 'hide';} ?>">
 
 	                <div class="form-group col-md-12 pad_left_0 pad_right_0">
-	                	<label for="recurring"><?php echo _l('invoice_add_edit_recurring'); ?></label>
+	                	<label for="recurring"><?php echo _l('Recurring Bill?'); ?></label>
 	                    <select name="recurring" id="recurring" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 	                        <?php for($i = 0; $i <=12; $i++){ ?>
 	                        	<?php

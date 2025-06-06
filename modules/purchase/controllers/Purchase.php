@@ -1614,6 +1614,7 @@ class purchase extends AdminController
         $data['activity'] = $this->purchase_model->get_po_activity($id);
         $data['changes'] = $this->purchase_model->get_po_changes($id);
         $data['payment_certificate'] = $this->purchase_model->get_all_po_payment_certificate($id);
+        $data['bills_data'] = $this->purchase_model->get_bills_data($id);
         if ($to_return == false) {
             $this->load->view('purchase_order/pur_order_preview', $data);
         } else {
@@ -14480,6 +14481,7 @@ class purchase extends AdminController
 
         if ($type === 'po') {
             $pur_order = $this->purchase_model->get_pur_order($id);
+            $data['po_id'] = $id;
             $data['vendor_id'] = $pur_order->vendor;
             $data['project_id'] = $pur_order->project;
             $currency = $pur_order->currency;
@@ -14524,15 +14526,13 @@ class purchase extends AdminController
                     $item_name = pur_get_item_variatiom($inv_detail['item_code']);
                     // }
 
-                    $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('items[' . $index_order . ']',  $item_name, $inv_detail['description'], $inv_detail['quantity'], $unit_name, $inv_detail['unit_price'], $taxname, $inv_detail['item_code'], $inv_detail['unit_id'], $inv_detail['tax_rate'],  $inv_detail['total_money'], $inv_detail['discount_percent'], $inv_detail['discount_money'], $inv_detail['total'], $inv_detail['into_money'], $inv_detail['tax'], $inv_detail['tax_value'], $inv_detail['id'], true, $currency_rate, $to_currency);
+                    $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('newitems[' . $index_order . ']',  $item_name, $inv_detail['description'], $inv_detail['quantity'], $unit_name, $inv_detail['unit_price'], $taxname, $inv_detail['item_code'], $inv_detail['unit_id'], $inv_detail['tax_rate'],  $inv_detail['total_money'], $inv_detail['discount_percent'], $inv_detail['discount_money'], $inv_detail['total'], $inv_detail['into_money'], $inv_detail['tax'], $inv_detail['tax_value'], $inv_detail['id'], true, $currency_rate, $to_currency);
                 }
             }
         } else {
             $data['pur_orders'] = $this->purchase_model->get_pur_order_approved_for_inv();
         }
-        // echo '<pre>';
-        // print_r($data['pur_orders']);
-        // die;
+
         $data['pur_bill_row_template'] = $pur_bill_row_template;
 
         $data['ajaxItems'] = false;
@@ -14552,6 +14552,7 @@ class purchase extends AdminController
             $data = $this->input->post();
             if ($data['id'] == '') {
                 unset($data['id']);
+               
                 $mess = $this->purchase_model->add_pur_bill($data);
                 if ($mess) {
                     handle_pur_invoice_file($mess);
@@ -14559,7 +14560,7 @@ class purchase extends AdminController
                 } else {
                     set_alert('warning', _l('add_purchase_invoice_fail'));
                 }
-                redirect(admin_url('purchase/invoices'));
+                redirect(admin_url('purchase/purchase_order'));
             } else {
                 $id = $data['id'];
                 unset($data['id']);
@@ -14570,7 +14571,7 @@ class purchase extends AdminController
                 } else {
                     set_alert('warning', _l('update_purchase_invoice_fail'));
                 }
-                redirect(admin_url('purchase/invoices'));
+                redirect(admin_url('purchase/purchase_order'));
             }
         }
     }

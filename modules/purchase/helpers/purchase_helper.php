@@ -2680,6 +2680,16 @@ function get_invoice_currency_id($invoice_id)
     }
     return 0;
 }
+function get_bill_currency_id($bill_id)
+{
+    $CI   = &get_instance();
+    $CI->db->where('id', $bill_id);
+    $bills = $CI->db->get(db_prefix() . 'pur_bills')->row();
+    if ($bills) {
+        return $bills->currency;
+    }
+    return 0;
+}
 
 /**
  * Client attachments

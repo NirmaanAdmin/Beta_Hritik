@@ -20790,7 +20790,7 @@ class Purchase_model extends App_Model
 
     public function add_pur_bill($data)
     {
-
+        
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
@@ -20827,8 +20827,8 @@ class Purchase_model extends App_Model
         $data['payment_status'] = 0;
         $prefix = get_purchase_option('pur_bill_prefix');
 
-        $this->db->where('invoice_number', $data['invoice_number']);
-        $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+        $this->db->where('bill_number', $data['bill_number']);
+        $check_exist_number = $this->db->get(db_prefix() . 'pur_bills')->row();
 
         if (!isset($data['order_tracker_id'])) {
             $data['order_tracker_id'] = NULL;
@@ -20842,9 +20842,9 @@ class Purchase_model extends App_Model
 
         while ($check_exist_number) {
             $data['number'] = $data['number'] + 1;
-            $data['invoice_number'] =  $prefix . str_pad($data['number'], 5, '0', STR_PAD_LEFT);
-            $this->db->where('invoice_number', $data['invoice_number']);
-            $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+            $data['bill_number'] =  $prefix . str_pad($data['number'], 5, '0', STR_PAD_LEFT);
+            $this->db->where('bill_number', $data['bill_number']);
+            $check_exist_number = $this->db->get(db_prefix() . 'pur_bills')->row();
         }
 
         $data['invoice_date'] = to_sql_date($data['invoice_date']);
@@ -20901,15 +20901,17 @@ class Purchase_model extends App_Model
             $custom_fields = $data['custom_fields'];
             unset($data['custom_fields']);
         }
-
-        $this->db->insert(db_prefix() . 'pur_invoices', $data);
+        // echo '<pre>';
+        // print_r($data);
+        // die;
+        $this->db->insert(db_prefix() . 'pur_bills', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {
             $next_number = $data['number'] + 1;
-            $this->db->where('option_name', 'next_inv_number');
+            $this->db->where('option_name', 'next_bill_number');
             $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
 
-            handle_tags_save($tags, $insert_id, 'pur_invoice');
+            handle_tags_save($tags, $insert_id, 'pur_bill');
 
             if (isset($custom_fields)) {
                 handle_custom_fields_post($insert_id, $custom_fields);
@@ -20918,13 +20920,12 @@ class Purchase_model extends App_Model
             $total = [];
             $total['tax'] = 0;
 
-            $this->db->where('pur_invoice', $insert_id);
-            $this->db->delete(db_prefix() . 'pur_invoice_details');
+
 
             if (count($order_detail) > 0) {
                 foreach ($order_detail as $key => $rqd) {
                     $dt_data = [];
-                    $dt_data['pur_invoice'] = $insert_id;
+                    $dt_data['pur_bill'] = $insert_id;
                     $dt_data['item_code'] = $rqd['item_code'];
                     $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
                     $dt_data['unit_price'] = $rqd['unit_price'];
@@ -20957,7 +20958,7 @@ class Purchase_model extends App_Model
 
                     $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
 
-                    $this->db->insert(db_prefix() . 'pur_invoice_details', $dt_data);
+                    $this->db->insert(db_prefix() . 'pur_bill_details', $dt_data);
                 }
             }
 
@@ -20976,5 +20977,13 @@ class Purchase_model extends App_Model
             return $insert_id;
         }
         return false;
+    }
+
+    public function get_bills_data($po_id){
+        $this->db->select('*');
+        $this->db->where('pur_order', $po_id);
+        $this->db->from(db_prefix() . 'pur_bills');
+        $query = $this->db->get();
+        return $query->result_array();
     }
 }
