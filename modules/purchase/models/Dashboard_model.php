@@ -11,6 +11,12 @@ class Dashboard_model extends App_Model
 	{
 		$this->load->model('currencies_model');
 		$base_currency = $this->currencies_model->get_base_currency();
+		$vendors = $data['vendors'];
+        $group_pur = $data['group_pur'];
+        $kind = $data['kind'];
+        $from_date = $data['from_date'];
+        $to_date = $data['to_date'];
+
 		$response = array();
 	    $sql = "SELECT 
 	        combined_orders.aw_unw_order_status,
@@ -163,24 +169,40 @@ class Dashboard_model extends App_Model
 	        ) AS combined_orders
 	        LEFT JOIN tblassets_group ON tblassets_group.group_id = combined_orders.group_pur";
 
+	    $conditions = [];
+	    if (!empty($vendors)) {
+	    	$conditions[] = "combined_orders.vendor_id = " . $vendors;
+	    }
+	    if (!empty($group_pur)) {
+		    $conditions[] = "combined_orders.group_pur = " . $group_pur;
+		}
+
+	    if (!empty($conditions)) {
+		    $sql .= " WHERE " . implode(" AND ", $conditions);
+		}
+
 	    $query = $this->db->query($sql);
 	    $result = $query->result_array();
 
 	    $response['cost_to_complete'] = 0;
-	    $response['total_cost_to_complete'] = 0;
+	    $cost_to_complete = 0;
 	    if(!empty($result)) {
-	    	$response['total_cost_to_complete'] = array_sum(array_column($result, 'cost_to_complete'));
-	    	$response['cost_to_complete'] = app_format_money($response['total_cost_to_complete'], $base_currency);
+	    	$cost_to_complete = array_sum(array_column($result, 'cost_to_complete'));
+	    	$response['cost_to_complete'] = app_format_money($cost_to_complete, $base_currency);
 	    }
 
 	    $response['rev_contract_value'] = 0;
-	    $response['total_rev_contract_value'] = 0;
+	    $rev_contract_value = 0;
 	    if(!empty($result)) {
-	    	$response['total_rev_contract_value'] = array_sum(array_column($result, 'total_rev_contract_value'));
-	    	$response['rev_contract_value'] = app_format_money($response['total_rev_contract_value'], $base_currency);
+	    	$rev_contract_value = array_sum(array_column($result, 'total_rev_contract_value'));
+	    	$response['rev_contract_value'] = app_format_money($rev_contract_value, $base_currency);
 	    }
-
-	    $response['percentage_utilized'] = round(($response['total_rev_contract_value'] / $response['total_cost_to_complete']) * 100).'%';
+	    $response['percentage_utilized'] = 0;
+	    if($cost_to_complete > 0) {
+	    	$response['percentage_utilized'] = round(($rev_contract_value / $cost_to_complete) * 100);
+	    }
+	    $response['cost_to_complete_ratio'] = $response['percentage_utilized'];
+	    $response['rev_contract_value_ratio'] = 100 - $response['cost_to_complete_ratio'];
 
 	    $response['budgeted_actual_category_labels'] = array();
 	    $response['budgeted_category_value'] = array();
@@ -207,14 +229,26 @@ class Dashboard_model extends App_Model
 		$response['procurement_table_data'] = array();
 		if(!empty($result)) {
 			$monthlyData = array_reduce($result, function($carry, $item) {
-			    $month = (int)date('m', strtotime($item['order_date']));
-			    $carry[$month]['month'] = date('F', mktime(0, 0, 0, $month, 1));
-			    $carry[$month]['cost_to_complete'] = ($carry[$month]['cost_to_complete'] ?? 0) + (float)$item['cost_to_complete'];
-			    $carry[$month]['total_rev_contract_value'] = ($carry[$month]['total_rev_contract_value'] ?? 0) + (float)$item['total_rev_contract_value'];
+			    $timestamp = strtotime($item['order_date']);
+			    if (!$timestamp || $timestamp <= 0) {
+			        return $carry;
+			    }
+			    $key = date('m-Y', $timestamp);
+			    $label = date('F-Y', $timestamp);
+			    $carry[$key]['month'] = $label;
+			    $carry[$key]['cost_to_complete'] = ($carry[$key]['cost_to_complete'] ?? 0) + (float)$item['cost_to_complete'];
+			    $carry[$key]['total_rev_contract_value'] = ($carry[$key]['total_rev_contract_value'] ?? 0) + (float)$item['total_rev_contract_value'];
 			    return $carry;
 			}, []);
-			ksort($monthlyData);
-			$monthlyData = array_values($monthlyData);
+
+			if(!empty($monthlyData)) {
+				uksort($monthlyData, function ($a, $b) {
+				    $dateA = DateTime::createFromFormat('m-Y', $a);
+				    $dateB = DateTime::createFromFormat('m-Y', $b);
+				    return $dateA <=> $dateB;
+				});
+				$monthlyData = array_values($monthlyData);
+			}
 
 			$response['procurement_table_data'] = '
 				<div class="table-responsive s_table">

@@ -23,15 +23,15 @@ function get_purchase_order_dashboard() {
     // Update value summaries
     $('.cost_to_complete').text(response.cost_to_complete);
     $('.rev_contract_value').text(response.rev_contract_value);
-    $('.percentage_utilized').text(response.percentage_utilized);
+    $('.percentage_utilized').text(response.percentage_utilized+'%');
     $('.procurement_table_data').html(response.procurement_table_data);
 
     // DOUGHNUT CHART - Budget Utilization
     var budgetUtilizationCtx = document.getElementById('doughnutChartbudgetUtilization').getContext('2d');
     var budgetUtilizationLabels = ['Budgeted', 'Actual'];
     var budgetUtilizationData = [
-      response.total_cost_to_complete, 
-      response.total_rev_contract_value
+      response.cost_to_complete_ratio, 
+      response.rev_contract_value_ratio
     ];
     if (window.budgetUtilizationChart) {
       budgetUtilizationChart.data.datasets[0].data = budgetUtilizationData;
@@ -63,7 +63,9 @@ function get_purchase_order_dashboard() {
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  return context.label + ': ' + context.formattedValue;
+                  var label = context.label || '';
+                  var value = context.formattedValue;
+                  return `${label}: ${value}%`;
                 }
               }
             }
