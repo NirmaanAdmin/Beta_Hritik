@@ -213,7 +213,7 @@ function purchase_module_init_menu_items()
         'slug' => 'purchase-dashboard',
         'name' => _l('dashboard'),
         'icon' => 'fa fa-home menu-icon',
-        'href' => admin_url('purchase/purchase_dashboard'),
+        'href' => admin_url('purchase/dashboard/index'),
         'position' => 1,
     ]);
 
