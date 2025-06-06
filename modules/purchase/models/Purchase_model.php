@@ -3268,9 +3268,10 @@ class Purchase_model extends App_Model
      *
      * @return     <array>  The pur order approved.
      */
-    public function get_pur_order_approved()
+    public function get_pur_order_approved($id = '')
     {
         $this->db->where('approve_status', 2);
+        $this->db->where('id', $id);
         if (!has_permission('purchase_orders', '', 'view') && is_staff_logged_in()) {
             $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
@@ -20622,5 +20623,355 @@ class Purchase_model extends App_Model
         $this->db->where('id', $id);
         $this->db->update('tblpur_unawarded_tracker', ['group_pur' => $status]);
         return true;
+    }
+
+    public function create_purchase_bill_row_template($name = '', $item_name = '', $item_description = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    {
+
+        $this->load->model('invoice_items_model');
+        $row = '';
+
+        $name_item_code = 'item_code';
+        $name_item_name = 'item_name';
+        $name_item_description = 'description';
+        $name_unit_id = 'unit_id';
+        $name_unit_name = 'unit_name';
+        $name_quantity = 'quantity';
+        $name_unit_price = 'unit_price';
+        $name_tax_id_select = 'tax_select';
+        $name_tax_id = 'tax_id';
+        $name_total = 'total';
+        $name_tax_rate = 'tax_rate';
+        $name_tax_name = 'tax_name';
+        $name_tax_value = 'tax_value';
+        $array_attr = [];
+        $array_attr_payment = ['data-payment' => 'invoice'];
+        $name_into_money = 'into_money';
+        $name_discount = 'discount';
+        $name_discount_money = 'discount_money';
+        $name_total_money = 'total_money';
+
+        $array_available_quantity_attr = ['min' => '0.0', 'step' => 'any', 'readonly' => true];
+        $array_qty_attr = ['min' => '0.0', 'step' => 'any'];
+        $array_rate_attr = ['min' => '0.0', 'step' => 'any'];
+        $array_discount_attr = ['min' => '0.0', 'step' => 'any'];
+        $array_discount_money_attr = ['min' => '0.0', 'step' => 'any'];
+        $str_rate_attr = 'min="0.0" step="any"';
+
+        $array_subtotal_attr = ['readonly' => true];
+        $text_right_class = 'text-right';
+
+        if ($name == '') {
+            $row .= '<tr class="main">
+                  <td></td>';
+            $vehicles = [];
+            $array_attr = ['placeholder' => _l('unit_price')];
+
+            $manual             = true;
+            $invoice_item_taxes = '';
+            $amount = '';
+            $sub_total = 0;
+        } else {
+            $row .= '<tr class="sortable item">
+                    <td class="dragger"><input type="hidden" class="order" name="' . $name . '[order]"><input type="hidden" class="ids" name="' . $name . '[id]" value="' . $item_key . '"></td>';
+            $name_item_code = $name . '[item_code]';
+            $name_item_name = $name . '[item_name]';
+            $name_item_description = $name . '[item_description]';
+            $name_unit_id = $name . '[unit_id]';
+            $name_unit_name = '[unit_name]';
+            $name_quantity = $name . '[quantity]';
+            $name_unit_price = $name . '[unit_price]';
+            $name_tax_id_select = $name . '[tax_select][]';
+            $name_tax_id = $name . '[tax_id]';
+            $name_total = $name . '[total]';
+            $name_tax_rate = $name . '[tax_rate]';
+            $name_tax_name = $name . '[tax_name]';
+            $name_into_money = $name . '[into_money]';
+            $name_discount = $name . '[discount]';
+            $name_discount_money = $name . '[discount_money]';
+            $name_total_money = $name . '[total_money]';
+            $name_tax_value = $name . '[tax_value]';
+
+
+            $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity];
+
+
+            $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('rate')];
+            $array_discount_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
+
+            $array_discount_money_attr = ['onblur' => 'pur_calculate_total(1);', 'onchange' => 'pur_calculate_total(1);', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
+
+
+            $manual             = false;
+
+            $tax_money = 0;
+            $tax_rate_value = 0;
+
+            if ($is_edit) {
+                $invoice_item_taxes = pur_convert_item_taxes($tax_id, $tax_rate, $taxname);
+                $arr_tax_rate = explode('|', $tax_rate ?? '');
+                foreach ($arr_tax_rate as $key => $value) {
+                    $tax_rate_value += (float)$value;
+                }
+            } else {
+                $invoice_item_taxes = $taxname;
+                $tax_rate_data = $this->pur_get_tax_rate($taxname);
+                $tax_rate_value = $tax_rate_data['tax_rate'];
+            }
+
+            if ((float)$tax_rate_value != 0) {
+                $tax_money = (float)$unit_price * (float)$quantity * (float)$tax_rate_value / 100;
+                $goods_money = (float)$unit_price * (float)$quantity + (float)$tax_money;
+                $amount = (float)$unit_price * (float)$quantity + (float)$tax_money;
+            } else {
+                $goods_money = (float)$unit_price * (float)$quantity;
+                $amount = (float)$unit_price * (float)$quantity;
+            }
+
+            $sub_total = (float)$unit_price * (float)$quantity;
+            $amount = app_format_number($amount);
+        }
+
+
+        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => _l('pur_item_name')]) . '</td>';
+
+        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description')]) . '</td>';
+
+        $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
+        if ($unit_price != '') {
+            $original_price = ($currency_rate > 0) ? round(($unit_price / $currency_rate), 2) : 0;
+            $base_currency = get_base_currency();
+            if ($to_currency != 0 && $to_currency != $base_currency->id) {
+                $row .= render_input('original_price', '', app_format_money($original_price, $base_currency), 'text', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => _l('original_price'), 'disabled' => true], [], 'no-margin', 'input-transparent text-right pur_input_none');
+            }
+
+            $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
+        }
+
+        $row .= '<td class="quantities">' .
+            render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
+            render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
+            '</td>';
+
+        $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
+
+        $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
+
+        $row .= '<td class="_total" align="right">' . $total . '</td>';
+
+        if ($discount_money > 0) {
+            $discount = '';
+        }
+
+        $row .= '<td class="discount">' . render_input($name_discount, '', $discount, 'number', $array_discount_attr, [], '', $text_right_class) . '</td>';
+        $row .= '<td class="discount_money" align="right">' . render_input($name_discount_money, '', $discount_money, 'number', $array_discount_money_attr, [], '', $text_right_class . ' item_discount_money') . '</td>';
+        $row .= '<td class="label_total_after_discount" align="right">' . app_format_number($total_money) . '</td>';
+
+        $row .= '<td class="hide commodity_code">' . render_input($name_item_code, '', $item_code, 'text', ['placeholder' => _l('commodity_code')]) . '</td>';
+        $row .= '<td class="hide unit_id">' . render_input($name_unit_id, '', $unit_id, 'text', ['placeholder' => _l('unit_id')]) . '</td>';
+
+        $row .= '<td class="hide _total_after_tax">' . render_input($name_total, '', $total, 'number', []) . '</td>';
+
+        //$row .= '<td class="hide discount_money">' . render_input($name_discount_money, '', $discount_money, 'number', []) . '</td>';
+        $row .= '<td class="hide total_after_discount">' . render_input($name_total_money, '', $total_money, 'number', []) . '</td>';
+        $row .= '<td class="hide _into_money">' . render_input($name_into_money, '', $into_money, 'number', []) . '</td>';
+
+        // if ($name == '') {
+        //     $row .= '<td><button type="button" onclick="pur_add_item_to_table(\'undefined\',\'undefined\'); return false;" class="btn pull-right btn-info"><i class="fa fa-check"></i></button></td>';
+        // } else {
+        //     $row .= '<td><a href="#" class="btn btn-danger pull-right" onclick="pur_delete_item(this,' . $item_key . ',\'.invoice-item\'); return false;"><i class="fa fa-trash"></i></a></td>';
+        // }
+        $row .= '</tr>';
+        return $row;
+    }
+
+    public function add_pur_bill($data)
+    {
+
+        unset($data['item_select']);
+        unset($data['item_name']);
+        unset($data['description']);
+        unset($data['total']);
+        unset($data['quantity']);
+        unset($data['unit_price']);
+        unset($data['unit_name']);
+        unset($data['item_code']);
+        unset($data['unit_id']);
+        unset($data['discount']);
+        unset($data['into_money']);
+        unset($data['tax_rate']);
+        unset($data['tax_name']);
+        unset($data['discount_money']);
+        unset($data['total_money']);
+        unset($data['additional_discount']);
+        unset($data['tax_value']);
+
+        $order_detail = [];
+        if (isset($data['newitems'])) {
+            $order_detail = $data['newitems'];
+            unset($data['newitems']);
+        }
+
+        $data['to_currency'] = $data['currency'];
+
+        if (isset($data['add_from'])) {
+            $data['add_from'] = $data['add_from'];
+        } else {
+            $data['add_from'] = get_staff_user_id();
+            $data['add_from_type'] = 'admin';
+        }
+        $data['date_add'] = date('Y-m-d');
+        $data['payment_status'] = 0;
+        $prefix = get_purchase_option('pur_inv_prefix');
+
+        $this->db->where('invoice_number', $data['invoice_number']);
+        $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+
+        if (!isset($data['order_tracker_id'])) {
+            $data['order_tracker_id'] = NULL;
+        }
+        if (!isset($data['pur_order'])) {
+            $data['pur_order'] = 0;
+        }
+        if (!isset($data['wo_order'])) {
+            $data['wo_order'] = 0;
+        }
+
+        while ($check_exist_number) {
+            $data['number'] = $data['number'] + 1;
+            $data['invoice_number'] =  $prefix . str_pad($data['number'], 5, '0', STR_PAD_LEFT);
+            $this->db->where('invoice_number', $data['invoice_number']);
+            $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
+        }
+
+        $data['invoice_date'] = to_sql_date($data['invoice_date']);
+        if ($data['duedate'] != '') {
+            $data['duedate'] = to_sql_date($data['duedate']);
+        }
+        if ($data['bill_accept_date'] != '') {
+            $data['bill_accept_date'] = to_sql_date($data['bill_accept_date']);
+        }
+        if ($data['certified_bill_date'] != '') {
+            $data['certified_bill_date'] = to_sql_date($data['certified_bill_date']);
+        }
+        if ($data['payment_date'] != '') {
+            $data['payment_date'] = to_sql_date($data['payment_date']);
+        }
+        if ($data['payment_date_basilius'] != '') {
+            $data['payment_date_basilius'] = to_sql_date($data['payment_date_basilius']);
+        }
+        $data['transaction_date'] = to_sql_date($data['transaction_date']);
+
+        if (isset($data['order_discount'])) {
+            $order_discount = $data['order_discount'];
+            if ($data['add_discount_type'] == 'percent') {
+                $data['discount_percent'] = $order_discount;
+            }
+
+            unset($data['order_discount']);
+        }
+
+        unset($data['add_discount_type']);
+
+        if (isset($data['dc_total'])) {
+            $data['discount_total'] = $data['dc_total'];
+            unset($data['dc_total']);
+        }
+
+        if (isset($data['total_mn'])) {
+            $data['subtotal'] = $data['total_mn'];
+            unset($data['total_mn']);
+        }
+
+        if (isset($data['grand_total'])) {
+            $data['total'] = $data['grand_total'];
+            unset($data['grand_total']);
+        }
+
+        $tags = '';
+        if (isset($data['tags'])) {
+            $tags = $data['tags'];
+            unset($data['tags']);
+        }
+
+        if (isset($data['custom_fields'])) {
+            $custom_fields = $data['custom_fields'];
+            unset($data['custom_fields']);
+        }
+
+        $this->db->insert(db_prefix() . 'pur_invoices', $data);
+        $insert_id = $this->db->insert_id();
+        if ($insert_id) {
+            $next_number = $data['number'] + 1;
+            $this->db->where('option_name', 'next_inv_number');
+            $this->db->update(db_prefix() . 'purchase_option', ['option_val' =>  $next_number,]);
+
+            handle_tags_save($tags, $insert_id, 'pur_invoice');
+
+            if (isset($custom_fields)) {
+                handle_custom_fields_post($insert_id, $custom_fields);
+            }
+
+            $total = [];
+            $total['tax'] = 0;
+
+            $this->db->where('pur_invoice', $insert_id);
+            $this->db->delete(db_prefix() . 'pur_invoice_details');
+
+            if (count($order_detail) > 0) {
+                foreach ($order_detail as $key => $rqd) {
+                    $dt_data = [];
+                    $dt_data['pur_invoice'] = $insert_id;
+                    $dt_data['item_code'] = $rqd['item_code'];
+                    $dt_data['unit_id'] = isset($rqd['unit_id']) ? $rqd['unit_id'] : null;
+                    $dt_data['unit_price'] = $rqd['unit_price'];
+                    $dt_data['into_money'] = $rqd['into_money'];
+                    $dt_data['total'] = $rqd['total'];
+                    $dt_data['tax_value'] = $rqd['tax_value'];
+                    $dt_data['item_name'] = $rqd['item_name'];
+                    $dt_data['description'] = nl2br($rqd['item_description']);
+                    $dt_data['total_money'] = $rqd['total_money'];
+                    $dt_data['discount_money'] = $rqd['discount_money'];
+                    $dt_data['discount_percent'] = $rqd['discount'];
+
+                    $tax_money = 0;
+                    $tax_rate_value = 0;
+                    $tax_rate = null;
+                    $tax_id = null;
+                    $tax_name = null;
+
+                    if (isset($rqd['tax_select'])) {
+                        $tax_rate_data = $this->pur_get_tax_rate($rqd['tax_select']);
+                        $tax_rate_value = $tax_rate_data['tax_rate'];
+                        $tax_rate = $tax_rate_data['tax_rate_str'];
+                        $tax_id = $tax_rate_data['tax_id_str'];
+                        $tax_name = $tax_rate_data['tax_name_str'];
+                    }
+
+                    $dt_data['tax'] = $tax_id;
+                    $dt_data['tax_rate'] = $tax_rate;
+                    $dt_data['tax_name'] = $tax_name;
+
+                    $dt_data['quantity'] = ($rqd['quantity'] != '' && $rqd['quantity'] != null) ? $rqd['quantity'] : 0;
+
+                    $this->db->insert(db_prefix() . 'pur_invoice_details', $dt_data);
+                }
+            }
+
+
+            $_taxes = $this->get_html_tax_pur_invoice($insert_id);
+            foreach ($_taxes['taxes_val'] as $tax_val) {
+                $total['tax'] += $tax_val;
+            }
+
+
+            $this->db->where('id', $insert_id);
+            $this->db->update(db_prefix() . 'pur_invoices', $total);
+
+            hooks()->do_action('after_pur_invoice_added', $insert_id);
+
+            return $insert_id;
+        }
+        return false;
     }
 }

@@ -14470,4 +14470,108 @@ class purchase extends AdminController
             echo json_encode(['success' => false, 'message' => _l('update_failed')]);
         }
     }
+
+    public function pur_bills($id = '')
+    {
+        $data['title'] = _l('add_bill');
+
+        $type = $this->input->get('type');
+
+
+        if ($type === 'po') {
+            $pur_order = $this->purchase_model->get_pur_order($id);
+            $data['vendor_id'] = $pur_order->vendor;
+            $data['project_id'] = $pur_order->project;
+            $currency = $pur_order->currency;
+            $currency_rate = $pur_order->currency_rate;
+            $to_currency = $pur_order->to_currency;
+        }
+
+        $data['contracts'] = $this->purchase_model->get_contract();
+        $data['taxes'] = $this->purchase_model->get_taxes();
+        $this->load->model('currencies_model');
+        $data['currencies'] = $this->currencies_model->get();
+        $data['projects'] = $this->projects_model->get_items();
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $pur_bill_row_template = '';
+
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
+
+        if ($id != '') {
+            $data['pur_orders'] = $this->purchase_model->get_pur_order_approved($id);
+            $data['pur_invoice'] = $this->purchase_model->get_pur_invoice($id);
+            $data['pur_invoice_detail'] = $this->purchase_model->get_pur_invoice_detail($id);
+            $data['pur_order_detail'] = $this->purchase_model->get_pur_order_detail($id);
+            $currency_rate = 1;
+            if ($currency != 0 && $currency_rate != null) {
+                $currency_rate = $currency_rate;
+            }
+
+            $to_currency = $data['base_currency']->name;
+            if ($currency != 0 && $to_currency != null) {
+                $to_currency = $to_currency;
+            }
+
+            if (count($data['pur_order_detail']) > 0) {
+                $index_order = 0;
+                foreach ($data['pur_order_detail'] as $inv_detail) {
+                    $index_order++;
+                    $unit_name = pur_get_unit_name($inv_detail['unit_id']);
+                    $taxname = $inv_detail['tax_name'];
+                    // $item_name = $inv_detail['item_name'];
+
+                    // if (strlen($item_name) == 0) {
+                    $item_name = pur_get_item_variatiom($inv_detail['item_code']);
+                    // }
+
+                    $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('items[' . $index_order . ']',  $item_name, $inv_detail['description'], $inv_detail['quantity'], $unit_name, $inv_detail['unit_price'], $taxname, $inv_detail['item_code'], $inv_detail['unit_id'], $inv_detail['tax_rate'],  $inv_detail['total_money'], $inv_detail['discount_percent'], $inv_detail['discount_money'], $inv_detail['total'], $inv_detail['into_money'], $inv_detail['tax'], $inv_detail['tax_value'], $inv_detail['id'], true, $currency_rate, $to_currency);
+                }
+            }
+        } else {
+            $data['pur_orders'] = $this->purchase_model->get_pur_order_approved_for_inv();
+        }
+        // echo '<pre>';
+        // print_r($data['pur_orders']);
+        // die;
+        $data['pur_bill_row_template'] = $pur_bill_row_template;
+
+        $data['ajaxItems'] = false;
+        if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
+            $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased');
+        } else {
+            $data['items']     = [];
+            $data['ajaxItems'] = true;
+        }
+
+        $this->load->view('purchase_order/pur_bills', $data);
+    }
+
+    public function pur_bill_form()
+    {
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            if ($data['id'] == '') {
+                unset($data['id']);
+                $mess = $this->purchase_model->add_pur_bill($data);
+                if ($mess) {
+                    handle_pur_invoice_file($mess);
+                    set_alert('success', _l('added_successfully') . ' ' . _l('purchase_bill'));
+                } else {
+                    set_alert('warning', _l('add_purchase_invoice_fail'));
+                }
+                redirect(admin_url('purchase/invoices'));
+            } else {
+                $id = $data['id'];
+                unset($data['id']);
+                handle_pur_invoice_file($id);
+                $success = $this->purchase_model->update_pur_invoice($id, $data);
+                if ($success) {
+                    set_alert('success', _l('updated_successfully') . ' ' . _l('purchase_invoice'));
+                } else {
+                    set_alert('warning', _l('update_purchase_invoice_fail'));
+                }
+                redirect(admin_url('purchase/invoices'));
+            }
+        }
+    }
 }
