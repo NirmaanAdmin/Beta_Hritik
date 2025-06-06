@@ -1071,7 +1071,7 @@ $lang['client_payments_tab'] = 'Payments';
 
 # Estimate General
 $lang['estimate_pdf_heading']            = 'ESTIMATE';
-$lang['estimate_table_item_heading']     = 'Item';
+$lang['estimate_table_item_heading']     = 'Uniclass Code';
 $lang['estimate_table_quantity_heading'] = 'Qty';
 $lang['estimate_table_rate_heading']     = 'Rate';
 $lang['estimate_table_tax_heading']      = 'Tax';

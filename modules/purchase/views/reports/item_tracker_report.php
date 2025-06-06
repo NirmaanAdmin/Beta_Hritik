@@ -50,7 +50,7 @@
    <table class="table table-item-tracker-report scroll-responsive">
       <thead>
          <tr>
-            <th><?php echo _l('pur_item'); ?></th>
+            <th><?php echo _l('Uniclass Code'); ?></th>
             <th><?php echo _l('decription'); ?></th>
             <th><?php echo _l('po_quantity'); ?></th>
             <th><?php echo _l('received_quantity'); ?></th>

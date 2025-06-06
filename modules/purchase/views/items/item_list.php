@@ -144,7 +144,7 @@
                        $table_data = array(
                         '<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="table_item_list"><label></label></div>',
                         _l('_images'),
-                        _l('commodity_code'),
+                        _l('Uniclass Code'), 
                         _l('commodity_name'),
                         _l('groups'),
                         _l('unit_name'),
@@ -242,7 +242,7 @@
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <?php echo render_input('commodity_code', 'commodity_code'); ?>
+                                    <?php echo render_input('commodity_code', 'Uniclass Code'); ?>
                                 </div>
                                 <div class="col-md-6">
                                   <?php echo render_input('description', 'commodity_name'); ?>

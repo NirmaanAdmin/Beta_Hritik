@@ -310,7 +310,7 @@
                 <thead>
                   <tr>
                     <th width="1%"></th>
-                    <th width="13%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+                    <th width="13%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('Uniclass Code'); ?></th>
                     <th width="13%" align="left"><?php echo _l('item_description'); ?></th>
                     <th width="10%" align="left"><?php echo _l('area'); ?></th>
                     <th width="12%" align="left"><?php echo _l('warehouse_name'); ?></th>

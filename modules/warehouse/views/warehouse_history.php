@@ -114,7 +114,7 @@
                         <?php render_datatable(array(
                             _l('id'),
                             _l('form_code'),
-                            _l('commodity_code'),
+                            _l('Uniclass Code'),
                             _l('warehouse_code'),
                             _l('warehouse_name'),
                             _l('day_vouchers'),

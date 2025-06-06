@@ -274,7 +274,7 @@
 										<thead>
 											<tr>
 												<th width="1%"></th>
-												<th align="left" style="width: 10%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+												<th align="left" style="width: 10%;"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('Uniclass Code'); ?></th>
 												<th align="left" style="width: 15%;"><?php echo _l('description'); ?></th>
 												<th align="left" style="width: 10%;"><?php echo _l('area'); ?></th>
 												<th align="left" style="width: 5%;"><?php echo _l('warehouse_name'); ?></th>

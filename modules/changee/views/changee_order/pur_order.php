@@ -572,7 +572,7 @@
                       <tr>
                         <th></th>
                         <th align="left" style="min-width: 76px"><?php echo _l('serial_no'); ?></th>
-                        <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
+                        <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('Uniclass Code'); ?></th>
                         <th width="14%" align="right"><?php echo _l('description'); ?></th>
                         <th align="right"><?php echo _l('area'); ?></th>
                         <th width="9%" align="right"><?php echo _l('awarded_rate'); ?><span class="th_currency"><?php echo '(' . $base_currency->symbol . ')'; ?></span></th>

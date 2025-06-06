@@ -138,7 +138,7 @@
                 <thead>
                   <tr>
                     <th></th>
-                    <th width="40%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('invoice_table_item_heading'); ?></th>
+                    <th width="40%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('Uniclass Code'); ?></th>
                     <th width="17%" align="right"><?php echo _l('lot_number'); ?></th>
                     <th width="17%" align="right"><?php echo _l('expiry_date'); ?></th>
                     <th width="13%" align="right" class="qty"><?php echo _l('available_quantity'); ?></th>

@@ -374,7 +374,7 @@
                       <thead>
                         <tr>
                           <th></th>
-                          <th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Product code</th>
+                          <th align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> Uniclass Code</th>
                           <th align="right"><?php echo _l('description'); ?></th>
                           <th align="right"><?php echo _l('area'); ?></th>
                           <th align="right"><?php echo _l('Image'); ?></th>
