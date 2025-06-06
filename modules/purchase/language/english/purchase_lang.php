@@ -948,3 +948,4 @@ $lang['bill_code'] = 'Bill Code';
 $lang['bill_number'] = 'Bill Number';
 $lang['purchase_bill'] = 'Purchase Bill';
 $lang['bill_for_pur_order'] = 'Bill for purchase order';
+$lang['update_purchase_bill_fail'] = 'Update purchase bill fail';

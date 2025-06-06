@@ -14526,7 +14526,7 @@ class purchase extends AdminController
                     $item_name = pur_get_item_variatiom($inv_detail['item_code']);
                     // }
 
-                    $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('newitems[' . $index_order . ']',  $item_name, $inv_detail['description'], $inv_detail['quantity'], $unit_name, $inv_detail['unit_price'], $taxname, $inv_detail['item_code'], $inv_detail['unit_id'], $inv_detail['tax_rate'],  $inv_detail['total_money'], $inv_detail['discount_percent'], $inv_detail['discount_money'], $inv_detail['total'], $inv_detail['into_money'], $inv_detail['tax'], $inv_detail['tax_value'], $inv_detail['id'], true, $currency_rate, $to_currency,'');
+                    $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('newitems[' . $index_order . ']',  $item_name, $inv_detail['description'], $inv_detail['quantity'], $unit_name, $inv_detail['unit_price'], $taxname, $inv_detail['item_code'], $inv_detail['unit_id'], $inv_detail['tax_rate'],  $inv_detail['total_money'], $inv_detail['discount_percent'], $inv_detail['discount_money'], $inv_detail['total'], $inv_detail['into_money'], $inv_detail['tax'], $inv_detail['tax_value'], $inv_detail['id'], true, $currency_rate, $to_currency, '');
                 }
             }
         } else {
@@ -14546,32 +14546,92 @@ class purchase extends AdminController
         $this->load->view('purchase_order/pur_bills', $data);
     }
 
+
+    public function edit_pur_bills($id = '')
+    {
+        $data['title'] = _l('edit_bill');
+
+        $type = $this->input->get('type');
+
+        $data['contracts'] = $this->purchase_model->get_contract();
+        $data['taxes'] = $this->purchase_model->get_taxes();
+        $this->load->model('currencies_model');
+        $data['currencies'] = $this->currencies_model->get();
+        $data['projects'] = $this->projects_model->get_items();
+        $data['vendors'] = $this->purchase_model->get_vendor();
+        $pur_bill_row_template = '';
+
+        $data['base_currency'] = $this->currencies_model->get_base_currency();
+
+
+        $data['pur_orders'] = $this->purchase_model->get_pur_order_approved($id);
+        $data['pur_bill'] = $this->purchase_model->get_pur_bill($id);
+        $data['pur_bill_detail'] = $this->purchase_model->get_pur_bill_detail($id);
+        $currency_rate = 1;
+        if ($data['pur_bill']->currency != 0 && $data['pur_bill']->currency_rate != null) {
+            $currency_rate = $data['pur_bill']->currency_rate;
+        }
+
+        $to_currency = $data['base_currency']->name;
+        if ($data['pur_bill']->currency != 0 && $data['pur_bill']->to_currency != null) {
+            $to_currency = $data['pur_bill']->to_currency;
+        }
+
+        if (count($data['pur_bill_detail']) > 0) {
+            $index_order = 0;
+            foreach ($data['pur_bill_detail'] as $bill_detail) {
+                $index_order++;
+                $unit_name = pur_get_unit_name($bill_detail['unit_id']);
+                $taxname = $bill_detail['tax_name'];
+                $item_name = $bill_detail['item_name'];
+
+                if (strlen($item_name) == 0) {
+                $item_name = pur_get_item_variatiom($bill_detail['item_code']);
+                }
+
+                $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('items[' . $index_order . ']',  $item_name, $bill_detail['description'], $bill_detail['quantity'], $unit_name, $bill_detail['unit_price'], $taxname, $bill_detail['item_code'], $bill_detail['unit_id'], $bill_detail['tax_rate'],  $bill_detail['total_money'], $bill_detail['discount_percent'], $bill_detail['discount_money'], $bill_detail['total'], $bill_detail['into_money'], $bill_detail['tax'], $bill_detail['tax_value'], $bill_detail['id'], true, $currency_rate, $to_currency, $bill_detail['billed_quantity']);
+            }
+        }
+
+
+        $data['pur_bill_row_template'] = $pur_bill_row_template;
+
+        $data['ajaxItems'] = false;
+        if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
+            $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased');
+        } else {
+            $data['items']     = [];
+            $data['ajaxItems'] = true;
+        }
+
+        $this->load->view('purchase_order/edit_pur_bills', $data);
+    }
     public function pur_bill_form()
     {
         if ($this->input->post()) {
             $data = $this->input->post();
             if ($data['id'] == '') {
                 unset($data['id']);
-               
+                
                 $mess = $this->purchase_model->add_pur_bill($data);
                 if ($mess) {
-                    handle_pur_invoice_file($mess);
+                    // handle_pur_invoice_file($mess);
                     set_alert('success', _l('added_successfully') . ' ' . _l('purchase_bill'));
                 } else {
-                    set_alert('warning', _l('add_purchase_invoice_fail'));
+                    set_alert('warning', _l('add_purchase_bill_fail'));
                 }
-                redirect(admin_url('purchase/purchase_order'));
+                redirect(admin_url('purchase/purchase_order/'.$data['pur_order']));
             } else {
                 $id = $data['id'];
                 unset($data['id']);
-                handle_pur_invoice_file($id);
-                $success = $this->purchase_model->update_pur_invoice($id, $data);
+                // handle_pur_invoice_file($id);
+                $success = $this->purchase_model->update_pur_bill($id, $data);
                 if ($success) {
-                    set_alert('success', _l('updated_successfully') . ' ' . _l('purchase_invoice'));
+                    set_alert('success', _l('updated_successfully') . ' ' . _l('purchase_bill'));
                 } else {
-                    set_alert('warning', _l('update_purchase_invoice_fail'));
+                    set_alert('warning', _l('update_purchase_bill_fail'));
                 }
-                redirect(admin_url('purchase/purchase_order'));
+                redirect(admin_url('purchase/purchase_order/'.$data['pur_order']));
             }
         }
     }
