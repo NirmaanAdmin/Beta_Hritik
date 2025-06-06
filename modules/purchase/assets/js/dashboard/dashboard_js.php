@@ -12,6 +12,7 @@ function get_purchase_order_dashboard() {
 
   var data = {
     vendors: $('select[name="vendors"]').val(),
+    projects: $('select[name="projects"]').val(),
     group_pur: $('select[name="group_pur"]').val(),
     kind: $('select[name="kind"]').val(),
     from_date: $('input[name="from_date"]').val(),

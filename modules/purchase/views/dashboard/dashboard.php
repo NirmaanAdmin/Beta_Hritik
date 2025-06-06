@@ -24,6 +24,9 @@
                     <?php echo render_select('vendors', $vendors, array('userid', 'company'), 'vendor'); ?>
                   </div>
                   <div class="col-md-2">
+                    <?php echo render_select('projects', $projects, array('id', 'name'), 'projects'); ?>
+                  </div>
+                  <div class="col-md-2">
                     <?php echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'group_pur'); ?>
                   </div>
                   <div class="col-md-2 form-group">
@@ -40,7 +43,7 @@
                   <div class="col-md-2">
                     <?php echo render_date_input('to_date','to_date', ''); ?>
                   </div>
-                  <div class="col-md-1" style="margin-top: 21px;">
+                  <div class="col-md-1">
                     <a href="#" onclick="get_purchase_order_dashboard(); return false;" class="btn btn-info"><?php echo _l('_filter'); ?></a>
                   </div>
             </div>

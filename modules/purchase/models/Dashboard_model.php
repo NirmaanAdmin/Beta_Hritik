@@ -12,6 +12,7 @@ class Dashboard_model extends App_Model
 		$this->load->model('currencies_model');
 		$base_currency = $this->currencies_model->get_base_currency();
 		$vendors = $data['vendors'];
+		$projects = $data['projects'];
         $group_pur = $data['group_pur'];
         $kind = $data['kind'];
         $from_date = $data['from_date'];
@@ -32,6 +33,7 @@ class Dashboard_model extends App_Model
 	        combined_orders.cost_to_complete,
 	        combined_orders.vendor_submitted_amount_without_tax,
 	        combined_orders.project,
+	        combined_orders.project_id,
 	        combined_orders.rli_filter,
 	        combined_orders.kind,
 	        tblassets_group.group_name,
@@ -171,10 +173,24 @@ class Dashboard_model extends App_Model
 
 	    $conditions = [];
 	    if (!empty($vendors)) {
-	    	$conditions[] = "combined_orders.vendor_id = " . $vendors;
+	    	$conditions[] = "combined_orders.vendor_id = '" . $vendors . "'";
+	    }
+	    if (!empty($projects)) {
+	    	$conditions[] = "combined_orders.project_id = '" . $projects . "'";
 	    }
 	    if (!empty($group_pur)) {
-		    $conditions[] = "combined_orders.group_pur = " . $group_pur;
+		    $conditions[] = "combined_orders.group_pur = '" . $group_pur . "'";
+		}
+		if (!empty($kind)) {
+		    $conditions[] = "combined_orders.kind = '" . $kind . "'";
+		}
+		if (!empty($from_date)) {
+			$from_date = date('Y-m-d', strtotime($from_date));
+			$conditions[] = "combined_orders.order_date >= '" . $from_date . "'";
+		}
+		if (!empty($to_date)) {
+			$to_date = date('Y-m-d', strtotime($to_date));
+			$conditions[] = "combined_orders.order_date >= '" . $to_date . "'";
 		}
 
 	    if (!empty($conditions)) {
