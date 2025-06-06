@@ -190,7 +190,7 @@ class Dashboard_model extends App_Model
 		}
 		if (!empty($to_date)) {
 			$to_date = date('Y-m-d', strtotime($to_date));
-			$conditions[] = "combined_orders.order_date >= '" . $to_date . "'";
+			$conditions[] = "combined_orders.order_date <= '" . $to_date . "'";
 		}
 
 	    if (!empty($conditions)) {
