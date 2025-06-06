@@ -20822,7 +20822,7 @@ class Purchase_model extends App_Model
         }
         $data['date_add'] = date('Y-m-d');
         $data['payment_status'] = 0;
-        $prefix = get_purchase_option('pur_inv_prefix');
+        $prefix = get_purchase_option('pur_bill_prefix');
 
         $this->db->where('invoice_number', $data['invoice_number']);
         $check_exist_number = $this->db->get(db_prefix() . 'pur_invoices')->row();
