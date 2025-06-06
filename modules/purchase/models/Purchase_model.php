@@ -3271,7 +3271,10 @@ class Purchase_model extends App_Model
     public function get_pur_order_approved($id = '')
     {
         $this->db->where('approve_status', 2);
-        $this->db->where('id', $id);
+        if($id > 0 ){
+            $this->db->where('id', $id);
+        }
+        
         if (!has_permission('purchase_orders', '', 'view') && is_staff_logged_in()) {
             $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
