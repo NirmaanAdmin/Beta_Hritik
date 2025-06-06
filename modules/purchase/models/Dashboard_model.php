@@ -182,6 +182,73 @@ class Dashboard_model extends App_Model
 
 	    $response['percentage_utilized'] = round(($response['total_rev_contract_value'] / $response['total_cost_to_complete']) * 100).'%';
 
+	    $response['budgeted_actual_category_labels'] = array();
+	    $response['budgeted_category_value'] = array();
+	    $response['actual_category_value'] = array();
+
+	    if(!empty($result)) {
+		    $grouped_filter = array_values(array_reduce($result, function($carry, $item) {
+			    $key = trim($item['group_name']);
+			    $carry[$key]['group_name'] = $key;
+			    $carry[$key]['cost_to_complete'] = ($carry[$key]['cost_to_complete'] ?? 0) + (float)$item['cost_to_complete'];
+			    $carry[$key]['total_rev_contract_value'] = ($carry[$key]['total_rev_contract_value'] ?? 0) + (float)$item['total_rev_contract_value'];
+			    return $carry;
+			}, []));
+
+			if(!empty($grouped_filter)) {
+				foreach ($grouped_filter as $key => $value) {
+					$response['budgeted_actual_category_labels'][] = $value['group_name'];
+					$response['budgeted_category_value'][] = $value['cost_to_complete'];
+					$response['actual_category_value'][] = $value['total_rev_contract_value'];
+				}
+			}
+		}
+
+		$response['procurement_table_data'] = array();
+		if(!empty($result)) {
+			$monthlyData = array_reduce($result, function($carry, $item) {
+			    $month = (int)date('m', strtotime($item['order_date']));
+			    $carry[$month]['month'] = date('F', mktime(0, 0, 0, $month, 1));
+			    $carry[$month]['cost_to_complete'] = ($carry[$month]['cost_to_complete'] ?? 0) + (float)$item['cost_to_complete'];
+			    $carry[$month]['total_rev_contract_value'] = ($carry[$month]['total_rev_contract_value'] ?? 0) + (float)$item['total_rev_contract_value'];
+			    return $carry;
+			}, []);
+			ksort($monthlyData);
+			$monthlyData = array_values($monthlyData);
+
+			$response['procurement_table_data'] = '
+				<div class="table-responsive s_table">
+				  <table class="table items table-bordered">
+				    <thead>
+				      <tr>
+				        <th align="left">Month</th>
+				        <th align="right">Budgeted</th>
+				        <th align="right">Actual</th>
+				      </tr>
+				    </thead>
+				    <tbody>';
+			if (!empty($monthlyData)) {
+			    foreach ($monthlyData as $row) {
+			        $response['procurement_table_data'] .= '
+			      <tr>
+			        <td align="left">' . htmlspecialchars($row['month']) . '</td>
+			        <td align="right">' . app_format_money($row['cost_to_complete'], $base_currency) . '</td>
+			        <td align="right">' . app_format_money($row['total_rev_contract_value'], $base_currency) . '</td>
+			      </tr>';
+			    }
+			} else {
+			    $response['procurement_table_data'] .= '
+			      <tr>
+			        <td colspan="3" align="center">No data available</td>
+			      </tr>';
+			}
+			$response['procurement_table_data'] .= '
+			    </tbody>
+			  </table>
+			</div>';
+
+		}
+
 	    return $response;
 	}
 
