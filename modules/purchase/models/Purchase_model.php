@@ -3271,10 +3271,10 @@ class Purchase_model extends App_Model
     public function get_pur_order_approved($id = '')
     {
         $this->db->where('approve_status', 2);
-        if($id > 0 ){
+        if ($id > 0) {
             $this->db->where('id', $id);
         }
-        
+
         if (!has_permission('purchase_orders', '', 'view') && is_staff_logged_in()) {
             $this->db->where(' (' . db_prefix() . 'pur_orders.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.buyer = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'pur_orders.vendor IN (SELECT vendor_id FROM ' . db_prefix() . 'pur_vendor_admin WHERE staff_id=' . get_staff_user_id() . '))');
         }
@@ -19907,8 +19907,8 @@ class Purchase_model extends App_Model
             ];
             $html .= '<tr>
                 <td style="width: 3%">' . $serial_no . '</td>';
-                $html .= '<td style="width: 20%">' . $row['order_name'] . '</td>';
-            
+            $html .= '<td style="width: 20%">' . $row['order_name'] . '</td>';
+
             $html .= '
                 <td style="width: 8.1%">' . $order_date . '</td>
                 <td style="width: 8.1%">' . $completion_date . '</td>
@@ -20628,7 +20628,7 @@ class Purchase_model extends App_Model
         return true;
     }
 
-    public function create_purchase_bill_row_template($name = '', $item_name = '', $item_description = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '')
+    public function create_purchase_bill_row_template($name = '', $item_name = '', $item_description = '', $quantity = '', $unit_name = '', $unit_price = '', $taxname = '',  $item_code = '', $unit_id = '', $tax_rate = '', $total_money = '', $discount = '', $discount_money = '', $total = '', $into_money = '', $tax_id = '', $tax_value = '', $item_key = '', $is_edit = false, $currency_rate = 1, $to_currency = '', $billed_quantity)
     {
 
         $this->load->model('invoice_items_model');
@@ -20647,6 +20647,7 @@ class Purchase_model extends App_Model
         $name_tax_rate = 'tax_rate';
         $name_tax_name = 'tax_name';
         $name_tax_value = 'tax_value';
+        $name_billed_quantity = 'billed_quantity';
         $array_attr = [];
         $array_attr_payment = ['data-payment' => 'invoice'];
         $name_into_money = 'into_money';
@@ -20683,6 +20684,7 @@ class Purchase_model extends App_Model
             $name_unit_id = $name . '[unit_id]';
             $name_unit_name = '[unit_name]';
             $name_quantity = $name . '[quantity]';
+            $name_billed_quantity = $name . '[billed_quantity]';
             $name_unit_price = $name . '[unit_price]';
             $name_tax_id_select = $name . '[tax_select][]';
             $name_tax_id = $name . '[tax_id]';
@@ -20697,9 +20699,9 @@ class Purchase_model extends App_Model
 
 
             $array_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-quantity' => (float)$quantity, 'readonly' => true];
+            $array_bill_qty_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any',  'data-billed-quantity' => (float)$quantity];
 
-
-            $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('rate'),'readonly' => true];
+            $array_rate_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('rate'), 'readonly' => true];
             $array_discount_attr = ['onblur' => 'pur_calculate_total();', 'onchange' => 'pur_calculate_total();', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
 
             $array_discount_money_attr = ['onblur' => 'pur_calculate_total(1);', 'onchange' => 'pur_calculate_total(1);', 'min' => '0.0', 'step' => 'any', 'data-amount' => 'invoice', 'placeholder' => _l('discount')];
@@ -20736,9 +20738,9 @@ class Purchase_model extends App_Model
         }
 
 
-        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => _l('pur_item_name'),'readonly' => true]) . '</td>';
+        $row .= '<td class="">' . render_textarea($name_item_name, '', $item_name, ['rows' => 2, 'placeholder' => _l('pur_item_name'), 'readonly' => true]) . '</td>';
 
-        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'),'readonly' => true]) . '</td>';
+        $row .= '<td class="">' . render_textarea($name_item_description, '', $item_description, ['rows' => 2, 'placeholder' => _l('item_description'), 'readonly' => true]) . '</td>';
 
         $row .= '<td class="rate">' . render_input($name_unit_price, '', $unit_price, 'number', $array_rate_attr, [], 'no-margin', $text_right_class);
         if ($unit_price != '') {
@@ -20750,12 +20752,16 @@ class Purchase_model extends App_Model
 
             $row .= '<input class="hide" name="og_price" disabled="true" value="' . $original_price . '">';
         }
-
-        $row .= '<td class="quantities">' .
+         $row .= '
+        <td class="quantities">' .
             render_input($name_quantity, '', $quantity, 'number', $array_qty_attr, [], 'no-margin', $text_right_class) .
             render_input($name_unit_name, '', $unit_name, 'text', ['placeholder' => _l('unit'), 'readonly' => true], [], 'no-margin', 'input-transparent text-right pur_input_none') .
             '</td>';
-
+        $row .= '
+        <td class="quantities">' .
+            render_input($name_billed_quantity, '', $billed_quantity, 'number', $array_bill_qty_attr, [], 'no-margin', $text_right_class) .
+            'Rem.<span class="remaining_quantity"></span></td>';
+       
         $row .= '<td class="taxrate">' . $this->get_taxes_dropdown_template($name_tax_id_select, $invoice_item_taxes, 'invoice', $item_key, true, $manual) . '</td>';
 
         $row .= '<td class="tax_value">' . render_input($name_tax_value, '', $tax_value, 'number', $array_subtotal_attr, [], '', $text_right_class) . '</td>';
@@ -20790,12 +20796,12 @@ class Purchase_model extends App_Model
 
     public function add_pur_bill($data)
     {
-        
         unset($data['item_select']);
         unset($data['item_name']);
         unset($data['description']);
         unset($data['total']);
         unset($data['quantity']);
+        unset($data['billed_quantity']);
         unset($data['unit_price']);
         unset($data['unit_name']);
         unset($data['item_code']);
@@ -20937,6 +20943,7 @@ class Purchase_model extends App_Model
                     $dt_data['total_money'] = $rqd['total_money'];
                     $dt_data['discount_money'] = $rqd['discount_money'];
                     $dt_data['discount_percent'] = $rqd['discount'];
+                    $dt_data['billed_quantity'] = $rqd['billed_quantity'];
 
                     $tax_money = 0;
                     $tax_rate_value = 0;
@@ -20979,7 +20986,8 @@ class Purchase_model extends App_Model
         return false;
     }
 
-    public function get_bills_data($po_id){
+    public function get_bills_data($po_id)
+    {
         $this->db->select('*');
         $this->db->where('pur_order', $po_id);
         $this->db->from(db_prefix() . 'pur_bills');
