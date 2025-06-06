@@ -1513,7 +1513,7 @@ class Warehouse_model extends App_Model
 					$available_quantity = $available_quantity - $total_quantity;
 				}
 			}
-			$available_quantity = app_format_number($available_quantity, true);
+			// $available_quantity = app_format_number($available_quantity, true);
 			if ($available_quantity > 0) {
 
 				$unit_price = round((float)$value['unit_price'] / $currency_rate, 5);
