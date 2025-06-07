@@ -459,7 +459,7 @@
                   // Loop through each checklist item
                   foreach ($checklist_items as $key => $value) {
                     // Find the corresponding entry in $goods_documentations
-                    $is_required = 0; // Default to not required
+                    $is_required = 1; // Default to not required
                     // foreach ($goods_documentitions as $doc) {
                     //   if ($doc['checklist_id'] == $key) {
                     //     $is_required = $doc['required'];

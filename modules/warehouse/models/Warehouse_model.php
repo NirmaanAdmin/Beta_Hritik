@@ -20762,7 +20762,6 @@ class Warehouse_model extends App_Model
 	{
 
 		if (isset($data) && !empty($data)) {
-			$this->db->trans_start(); // Start transaction for atomic operations
 
 			// Loop through checklist_ids (they should match the required array keys)
 			foreach ($data['checklist_id'] as $key => $checklist_id) {
@@ -20783,7 +20782,6 @@ class Warehouse_model extends App_Model
 					$insert_id = $existing_record->id;
 
 					if (!$update_result) {
-						$this->db->trans_rollback();
 						return false;
 					}
 				} else {
@@ -20792,7 +20790,6 @@ class Warehouse_model extends App_Model
 					$insert_id = $this->db->insert_id();
 
 					if (!$insert_result) {
-						$this->db->trans_rollback();
 						return false;
 					}
 				}
@@ -20813,18 +20810,13 @@ class Warehouse_model extends App_Model
 
 						$file_insert = $this->db->insert(db_prefix() . 'invetory_files', $file_data);
 						if (!$file_insert) {
-							$this->db->trans_rollback();
 							return false;
 						}
 					}
 				}
 			}
 
-			$this->db->trans_complete(); // Complete transaction
-
-			if ($this->db->trans_status() === FALSE) {
-				return false;
-			}
+			
 
 			return true;
 		}
