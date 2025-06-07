@@ -949,8 +949,8 @@ class warehouse extends AdminController
 		$base_currency = $this->currencies_model->get_base_currency();
 		$data['base_currency'] = $base_currency;
 		$data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_receipt', $id);
-		$data['attachments_new'] = $this->warehouse_model->get_inventory_attachments('goods_receipt_checkl', $id);
-		$data['attachments_for_this'] = $this->warehouse_model->get_inventory_documents();
+		$data['attachments_for_this'] = $this->warehouse_model->get_inventory_attachments('goods_receipt_checkl', $id);
+		$data['goods_documentitions'] = $this->warehouse_model->get_inventory_documents();
 
 		$this->load->view('manage_goods_receipt/view_purchase', $data);
 	}
