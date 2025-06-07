@@ -506,8 +506,8 @@
                         </div>
                       </td>
                       <td>
-                        <?php if (!empty($attachments_for_this)) : ?>
-                          <?php foreach ($attachments_for_this as $file) : ?>
+                        <?php if (!empty($attachments_new)) : ?>
+                          <?php foreach ($attachments_new as $file) : ?>
                             <?php
                             // Build the full server path to the file
                             $checkPath = get_upload_path_by_type('inventory')
