@@ -460,15 +460,15 @@
                   foreach ($checklist_items as $key => $value) {
                     // Find the corresponding entry in $goods_documentations
                     $is_required = 1; // Default to not required
-                    if(!empty($goods_documentitions)){
+                    if (!empty($goods_documentitions)) {
                       foreach ($goods_documentitions as $doc) {
-                      if ($doc['checklist_id'] == $key) {
-                        $is_required = $doc['required'];
-                        break;
+                        if ($doc['checklist_id'] == $key) {
+                          $is_required = $doc['required'];
+                          break;
+                        }
                       }
                     }
-                    }
-                    
+
 
                   ?>
                     <input type="hidden" name="checklist_id[<?= $key ?>]" value="<?= $key ?>">
@@ -484,7 +484,7 @@
                         </div>
                       </td>
 
-                      
+
                       <td>
                         <div class="attachment_new">
                           <div class="col-md-12">
@@ -506,7 +506,7 @@
                         </div>
                       </td>
                       <td>
-                        <?php if (! empty($attachments_for_this)) : ?>
+                        <?php if (!empty($attachments_for_this)) : ?>
                           <?php foreach ($attachments_for_this as $file) : ?>
                             <?php
                             // Build the full server path to the file
