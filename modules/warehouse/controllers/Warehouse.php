@@ -13,7 +13,7 @@ class warehouse extends AdminController
 		$this->load->model('warehouse_model');
 		hooks()->do_action('warehouse_init');
 	}
- 
+
 	/**
 	 * setting 
 	 * @return view
@@ -930,7 +930,7 @@ class warehouse extends AdminController
 		$data['check_approve_status'] = $this->warehouse_model->check_approval_details($id, 1);
 		$data['list_approve_status'] = $this->warehouse_model->get_list_approval_details($id, 1);
 		$data['payslip_log'] = $this->warehouse_model->get_activity_log($id, 1);
-		$data['activity'] = $this->warehouse_model->get_activity_log($id,'stock_import');
+		$data['activity'] = $this->warehouse_model->get_activity_log($id, 'stock_import');
 		//get vaule render dropdown select
 		$data['commodity_code_name'] = $this->warehouse_model->get_commodity_code_name();
 		$data['units_code_name'] = $this->warehouse_model->get_units_code_name();
@@ -949,7 +949,8 @@ class warehouse extends AdminController
 		$base_currency = $this->currencies_model->get_base_currency();
 		$data['base_currency'] = $base_currency;
 		$data['attachments'] = $this->warehouse_model->get_inventory_attachments('goods_receipt', $id);
-
+		$data['attachments_new'] = $this->warehouse_model->get_inventory_attachments('goods_receipt_checkl', $id);
+		$data['goods_documentitions'] = $this->warehouse_model->get_inventory_documents();
 
 		$this->load->view('manage_goods_receipt/view_purchase', $data);
 	}
@@ -1592,7 +1593,7 @@ class warehouse extends AdminController
 		$goods_delivery_row_template = '';
 		if (is_numeric($id)) {
 			$goods_delivery = $this->warehouse_model->get_goods_delivery($id);
-			if ($goods_delivery->approval == 0) { 
+			if ($goods_delivery->approval == 0) {
 				$goods_delivery_row_template = $this->warehouse_model->create_goods_delivery_row_template();
 			}
 		} else {
@@ -7085,7 +7086,7 @@ class warehouse extends AdminController
 		$success = $this->warehouse_model->delivery_status_mark_as($status, $id, $type);
 		$message = '';
 
-		if ($success) { 
+		if ($success) {
 			$message = _l('wh_change_delivery_status_successfully');
 		}
 		echo json_encode([
@@ -9188,7 +9189,7 @@ class warehouse extends AdminController
 			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
 		}
 	}
- 
+
 	public function delete_attachment($id)
 	{
 		$this->warehouse_model->delete_inventory_attachment($id);
@@ -9322,17 +9323,17 @@ class warehouse extends AdminController
 		} else {
 			$pur_order = "Unknown Purchase Order"; // Default if vendor name is missing
 		}
-		if($project_name){
+		if ($project_name) {
 			$project_name = rawurldecode($project_name);
-		}else{
+		} else {
 			$project_name = "Unknown Project name";
 		}
-		if($commodity_descriptions){
+		if ($commodity_descriptions) {
 			$commodity_descriptions = rawurldecode($commodity_descriptions);
-		}else{
+		} else {
 			$commodity_descriptions = "Unknown Project name";
 		}
-		
+
 		// Assign values to the data array
 		$data['title'] = _l('fe_print_qrcode');
 		$data['type'] = $type;
@@ -9342,7 +9343,7 @@ class warehouse extends AdminController
 		$data['commodity_descriptions'] = $commodity_descriptions;
 		$data['list_id'] = explode(',', urldecode($id_s));
 		$data['purchase_id'] = $purchase_id; // Send purchase ID to the view
- 
+
 		// Load the HTML view and pass vendor name
 		$html = $this->load->view('print_commodity/print_commodity_qrcode_html_new', $data, true);
 		$html .= '<link href="' . module_dir_url(WAREHOUSE_MODULE_NAME, 'assets/css/sign_document_pdf.css') . '" rel="stylesheet" type="text/css" />';
@@ -9355,44 +9356,44 @@ class warehouse extends AdminController
 	}
 
 	public function warehouse_dashboard()
-    {
-        $data['title'] = _l('dashboard');
-        $data['group'] = $this->input->get('group');
-        $data['tab'][] = 'goods_receipt';
-        $data['tab'][] = 'stock_export';
-        $data['tab'][] = 'inventory_inside';
+	{
+		$data['title'] = _l('dashboard');
+		$data['group'] = $this->input->get('group');
+		$data['tab'][] = 'goods_receipt';
+		$data['tab'][] = 'stock_export';
+		$data['tab'][] = 'inventory_inside';
 
-        switch ($data['group']) {
-            case 'goods_receipt':
-            $data['title'] = _l('goods_receipt');
-            break;
+		switch ($data['group']) {
+			case 'goods_receipt':
+				$data['title'] = _l('goods_receipt');
+				break;
 
-            case 'stock_export':
-            $data['title'] = _l('stock_export');
-            break;
+			case 'stock_export':
+				$data['title'] = _l('stock_export');
+				break;
 
-            case 'inventory_inside':
-            $data['title'] = _l('inventory_inside');
-            break;
+			case 'inventory_inside':
+				$data['title'] = _l('inventory_inside');
+				break;
 
-            default:
-            $data['title'] = _l('goods_receipt');
-            $data['group'] = 'goods_receipt';
-            break;
-        }
-        $data['tabs']['view'] = 'warehouse_dashboard/report/' . $data['group'];
-        
-        $this->load->view('warehouse_dashboard/warehouse_dashboard', $data);
-    }
+			default:
+				$data['title'] = _l('goods_receipt');
+				$data['group'] = 'goods_receipt';
+				break;
+		}
+		$data['tabs']['view'] = 'warehouse_dashboard/report/' . $data['group'];
 
-    public function change_imp_local_status($status, $id, $purchase_tracker = true)
+		$this->load->view('warehouse_dashboard/warehouse_dashboard', $data);
+	}
+
+	public function change_imp_local_status($status, $id, $purchase_tracker = true)
 	{
 		// Define an array of statuses with their corresponding labels and texts
 		$imp_local_labels = [
-          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
-          2 => ['label' => 'success', 'table' => 'imported', 'text' => _l('imported')],
-          3 => ['label' => 'info', 'table' => 'local', 'text' => _l('local')],
-        ];
+			1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+			2 => ['label' => 'success', 'table' => 'imported', 'text' => _l('imported')],
+			3 => ['label' => 'info', 'table' => 'local', 'text' => _l('local')],
+		];
 		$success = $this->warehouse_model->change_imp_local_status($status, $id, $purchase_tracker);
 		$message = $success ? _l('change_status_successfully') : _l('change_status_fail');
 		$html = '';
@@ -9428,13 +9429,13 @@ class warehouse extends AdminController
 	{
 		// Define an array of statuses with their corresponding labels and texts
 		$tracker_status_labels = [
-          1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
-          2 => ['label' => 'info', 'table' => 'SPC', 'text' => 'SPC'],
-          3 => ['label' => 'info', 'table' => 'RFQ', 'text' => 'RFQ'],
-          4 => ['label' => 'info', 'table' => 'FQR', 'text' => 'FQR'],
-          5 => ['label' => 'info', 'table' => 'POI', 'text' => 'POI'],
-          6 => ['label' => 'info', 'table' => 'PIR', 'text' => 'PIR'],
-        ];
+			1 => ['label' => 'danger', 'table' => 'not_set', 'text' => _l('not_set')],
+			2 => ['label' => 'info', 'table' => 'SPC', 'text' => 'SPC'],
+			3 => ['label' => 'info', 'table' => 'RFQ', 'text' => 'RFQ'],
+			4 => ['label' => 'info', 'table' => 'FQR', 'text' => 'FQR'],
+			5 => ['label' => 'info', 'table' => 'POI', 'text' => 'POI'],
+			6 => ['label' => 'info', 'table' => 'PIR', 'text' => 'PIR'],
+		];
 		$success = $this->warehouse_model->change_tracker_status($status, $id, $purchase_tracker);
 		$message = $success ? _l('change_status_successfully') : _l('change_status_fail');
 		$html = '';
@@ -9588,6 +9589,31 @@ class warehouse extends AdminController
 			echo json_encode(['success' => true, 'message' => _l('remarks_updated')]);
 		} else {
 			echo json_encode(['success' => false, 'message' => _l('update_failed')]);
+		}
+	}
+
+
+	public function goods_receipt_attachment($id)
+	{
+		$this->warehouse_model->save_invetory_files('goods_receipt', $id);
+		redirect(admin_url('warehouse/manage_purchase/' . $id));
+	}
+
+	public function goods_receipt_documentetion($goods_receipt_id)
+	{
+		$data = $this->input->post();
+
+		// Call the model function and check its return value
+		$success = $this->warehouse_model->add_goods_documentetion($data, $goods_receipt_id);
+
+		if ($success) {
+			// Only redirect if the operation was successful
+			set_alert('success', _l('goods_receipt_documentation_saved_successfully'));
+			redirect(admin_url('warehouse/manage_purchase/' . $goods_receipt_id));
+		} else {
+			// Show error message if the operation failed
+			set_alert('danger', _l('failed_to_save_goods_receipt_documentation'));
+			redirect(admin_url('warehouse/manage_purchase/' . $goods_receipt_id));
 		}
 	}
 }

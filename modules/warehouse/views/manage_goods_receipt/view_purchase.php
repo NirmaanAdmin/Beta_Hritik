@@ -30,7 +30,7 @@
 
             <li role="presentation" class="tab-separator">
               <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
-                <?php echo _l('attachment'); ?>
+                <?php echo _l('Documentation'); ?>
               </a>
             </li>
             <li role="presentation">
@@ -154,7 +154,7 @@
                     <input type="hidden" id="vendor_name" value="<?= htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" id="pur_order_name" value="<?= htmlspecialchars($pur_order_name, ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" id="project_name" value="<?= htmlspecialchars($project_name->name, ENT_QUOTES, 'UTF-8'); ?>">
-                    <input type="hidden" id="purchase_id" value="<?= htmlspecialchars(json_encode($goods_receipt->id), ENT_QUOTES, 'UTF-8'); ?>">                                                                                                                                                         
+                    <input type="hidden" id="purchase_id" value="<?= htmlspecialchars(json_encode($goods_receipt->id), ENT_QUOTES, 'UTF-8'); ?>">
                     <td>
                       <div class="btn-group">
                         <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" onclick="print_qrcodes()" aria-haspopup="true" aria-expanded="false"><i class="fa fa-qrcode"></i></a>
@@ -175,7 +175,7 @@
             ?>
             <input type="hidden" id="commodity_code_ids" value="<?= htmlspecialchars($commodity_code_ids, ENT_QUOTES, 'UTF-8'); ?>">
             <input type="hidden" id="commodity_descriptions" value="<?= htmlspecialchars(json_encode($commodity_descriptions), ENT_QUOTES, 'UTF-8'); ?>">
-                                                                                                                                                                           
+
             <div class="row">
               <div class="col-md-12">
                 <div class="table-responsive">
@@ -429,6 +429,116 @@
 
         <div role="tabpanel" class="tab-pane" id="attachment">
           <div class="col-md-12">
+            <div class="table-responsive">
+              <?php echo form_open_multipart(admin_url('warehouse/goods_receipt_documentetion/' . $goods_receipt->id), array('id' => 'partograph-attachments-upload'));
+              ?>
+              <table class="table items items-preview estimate-items-preview" data-type="estimate">
+                <thead>
+                  <tr>
+                    <th colspan="1" style="width: 7%;">Sr. No</th>
+                    <th colspan="1"><?php echo _l('Checklist') ?></th>
+                    <th colspan="1"><?php echo _l('Required') ?></th>
+                    <th colspan="1"><?php echo _l('Attachments') ?></th>
+                    <th colspan="1"><?php echo _l('Download') ?></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <?php
+                  // Define the checklist items
+                  $checklist_items = [
+                    '1' => 'Stock Import Images',
+                    '2' => 'Technical/Security Staff sign',
+                    '3' => 'Transport Document',
+                    '4' => 'Production Certificate',
+                  ];
+
+                  // Initialize serial number
+                  $sr = 1;
+
+                  // Loop through each checklist item
+                  foreach ($checklist_items as $key => $value) {
+                    // Find the corresponding entry in $goods_documentations
+                    $is_required = 0; // Default to not required
+                    foreach ($goods_documentitions as $doc) {
+                      if ($doc['checklist_id'] == $key) {
+                        $is_required = $doc['required'];
+                        break;
+                      }
+                    }
+
+                  ?>
+                    <input type="hidden" name="checklist_id[<?= $key ?>]" value="<?= $key ?>">
+
+                    <tr>
+                      <td><?= $sr ?></td>
+
+                      <td><?= $value ?></td>
+                      <td style="text-align: center;">
+                        <div class="checkbox">
+                          <input type="checkbox" name="required[<?= $key ?>]"
+                            <?= $is_required ? 'checked="checked"' : '' ?> style="opacity: unset;">
+                        </div>
+                      </td>
+
+                      
+                      <td>
+                        <div class="attachment_new">
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <div class="input-group">
+                                <input type="file"
+                                  extension="<?php echo str_replace(['.', ' '], '', get_option('form_attachments_file_extensions')); ?>"
+                                  filesize="<?php echo file_upload_max_size(); ?>"
+                                  class="form-control" name="items[<?= $sr ?>][attachments_new][<?= $sr ?>]"
+                                  accept="<?php echo get_form_form_accepted_mimes(); ?>">
+                                <span class="input-group-btn">
+                                  <button class="btn btn-default add_more_attachments_goods" data-item="<?= $sr ?>"
+                                    data-max="<?php echo get_option('maximum_allowed_form_attachments'); ?>"
+                                    type="button"><i class="fa fa-plus"></i></button>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <?php if (! empty($attachments_for_this)) : ?>
+                          <?php foreach ($attachments_for_this as $file) : ?>
+                            <?php
+                            // Build the full server path to the file
+                            $checkPath = get_upload_path_by_type('inventory')
+                              . 'goods_receipt_checklist/'
+                              . $file['rel_id']  // the goods receipt ID
+                              . '/' . $sr         // your serial number / item index
+                              . '/' . $file['file_name'];
+
+                            // Only show the name if the file actually exists
+                            if (file_exists($checkPath)) :
+                            ?>
+                              <div style="padding-bottom:5px;">
+                                <?= htmlspecialchars($file['file_name'], ENT_QUOTES, 'UTF-8'); ?>
+                              </div>
+                            <?php endif; ?>
+                          <?php endforeach; ?>
+                        <?php else: ?>
+                          <em>No attachments</em>
+                        <?php endif; ?>
+                      </td>
+
+                    </tr>
+                  <?php
+                    // Increment serial number
+                    $sr++;
+                  }
+                  ?>
+                </tbody>
+              </table>
+              <div class="col-md-12">
+                <button id="obgy_btn2" type="submit" class="btn btn-info pull-right"><?php echo _l('submit'); ?></button>
+              </div>
+              <?php echo form_close(); ?>
+            </div>
             <?php
             if (isset($attachments) && count($attachments) > 0) {
               foreach ($attachments as $value) {
@@ -502,8 +612,8 @@
                       }
 
                       if (!empty($activity['staffid'])) {
-                        $get_staff = get_staff_by_id($activity['staffid']);  
-                        $_formatted_activity = $get_staff->firstname .' '. $get_staff->lastname . ' - ' . $_formatted_activity;
+                        $get_staff = get_staff_by_id($activity['staffid']);
+                        $_formatted_activity = $get_staff->firstname . ' ' . $get_staff->lastname . ' - ' . $_formatted_activity;
                       }
 
                       echo $_formatted_activity;
@@ -511,7 +621,7 @@
                       // if (is_admin()) {
                       //   echo '<a href="#" class="pull-right text-danger" onclick="delete_sale_activity(' . $activity['id'] . '); return false;"><i class="fa fa-remove"></i></a>';
                       // } 
-                      
+
                       ?>
                     </div>
                   </div>
@@ -519,7 +629,7 @@
               </div>
             </div>
           </div>
-        </div>  
+        </div>
       </div>
 
       <div class="modal fade" id="add_action" tabindex="-1" role="dialog">
@@ -663,5 +773,72 @@
           alert_float('danger', 'Failed to update status');
         });
     }
+  }
+  let addMoreAttachmentsInputKey = 2;
+
+  // Handle adding attachments
+  $("body").on("click", ".add_more_attachments_goods", function() {
+    if ($(this).hasClass("disabled")) {
+      return false;
+    }
+
+    const itemIndex = $(this).data("item"); // Fetch the current item index
+    if (typeof itemIndex === "undefined") {
+      console.error("Item index is undefined. Please ensure the data-item attribute is set correctly.");
+      return;
+    }
+
+    const parentContainer = $(this).closest(".attachment_new");
+    const newAttachment = parentContainer.clone();
+
+    // Update the name attribute with the correct item and attachment index
+    newAttachment
+      .find("input[type='file']")
+      .attr(
+        "name",
+        `items[${itemIndex}][attachments_new][${addMoreAttachmentsInputKey}]`
+      )
+      .val("");
+
+    // Replace the "+" button with a "-" button for removing
+    newAttachment.find(".fa").removeClass("fa-plus").addClass("fa-minus");
+    newAttachment
+      .find("button")
+      .removeClass("add_more_attachments_goods")
+      .addClass("remove_attachment")
+      .removeClass("btn-default")
+      .addClass("btn-danger");
+
+    // Append the new attachment container after the current one
+    parentContainer.after(newAttachment);
+
+    // Increment the attachment key for unique naming
+    addMoreAttachmentsInputKey++;
+  });
+
+  // Handle removing an attachment
+  $("body").on("click", ".remove_attachment", function() {
+    // Remove the parent `.attachment_new` container
+    $(this).closest(".attachment_new").remove();
+    // Reset addMoreAttachmentsInputKey based on the number of existing attachments
+    resetAttachmentKeys();
+  });
+
+  // Function to recalculate and reset attachment keys
+  function resetAttachmentKeys() {
+    addMoreAttachmentsInputKey = 1; // Reset the counter
+    $(".attachment_new").each(function() {
+      const itemIndex = $(this).find(".add_more_attachments_goods").data("item");
+
+      // Update the file input's name with the new sequential key
+      $(this)
+        .find("input[type='file']")
+        .attr(
+          "name",
+          `items[${itemIndex}][attachments_new][${addMoreAttachmentsInputKey}]`
+        );
+
+      addMoreAttachmentsInputKey++; // Increment for the next attachment
+    });
   }
 </script>

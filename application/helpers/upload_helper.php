@@ -2058,7 +2058,99 @@ function handle_ckecklist_item_attachment_array($related, $form_id, $item_id, $i
 
     return false;
 }
+{
+    // Validate inputs to prevent directory traversal or injection attacks
+    $sanitized_related = preg_replace('/[^a-zA-Z0-9_-]/', '', $related);
+    $sanitized_form_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $form_id);
+    $sanitized_item_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $item_id);
 
+    // Define the base path for inventory attachments
+    $base_path = get_upload_path_by_type('inventory');
+    $path = $base_path . $sanitized_related . '/' . $sanitized_form_id . '/' . $sanitized_item_id . '/';
+
+    // Create necessary directories if they don't exist
+    if (!is_dir($base_path)) {
+        mkdir($base_path, 0755, true);
+    }
+    if (!is_dir($base_path . $sanitized_related)) {
+        mkdir($base_path . $sanitized_related, 0755, true);
+    }
+    if (!is_dir($base_path . $sanitized_related . '/' . $sanitized_form_id)) {
+        mkdir($base_path . $sanitized_related . '/' . $sanitized_form_id, 0755, true);
+    }
+    if (!is_dir($path)) {
+        mkdir($path, 0755, true);
+    }
+
+    $uploaded_files = [];
+    $CI = &get_instance();
+
+    // Check if files exist for this item index
+    if (isset($_FILES[$index_name]['name'][$itemIndex]['attachments_new'])) {
+        $attachments = $_FILES[$index_name]['name'][$itemIndex]['attachments_new'];
+
+        // Normalize to an array if it's a single file
+        if (!is_array($attachments)) {
+            $attachments = [$attachments];
+            foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $key) {
+                $_FILES[$index_name][$key][$itemIndex]['attachments_new'] = [$attachments[0]];
+            }
+        }
+
+        // Process each attachment
+        foreach ($attachments as $attachmentKey => $attachmentFileName) {
+            if (empty($attachmentFileName)) {
+                continue; // Skip empty file names
+            }
+
+            $file = [
+                'name'     => $_FILES[$index_name]['name'][$itemIndex]['attachments_new'][$attachmentKey],
+                'type'     => $_FILES[$index_name]['type'][$itemIndex]['attachments_new'][$attachmentKey],
+                'tmp_name' => $_FILES[$index_name]['tmp_name'][$itemIndex]['attachments_new'][$attachmentKey],
+                'error'    => $_FILES[$index_name]['error'][$itemIndex]['attachments_new'][$attachmentKey],
+                'size'     => $_FILES[$index_name]['size'][$itemIndex]['attachments_new'][$attachmentKey],
+            ];
+
+            // Skip if there's an upload error or invalid file type
+            if ($file['error'] !== UPLOAD_ERR_OK || !_upload_extension_allowed($file['name'])) {
+                continue;
+            }
+
+            // Generate a unique filename and move the uploaded file
+            $filename = unique_filename($path, $file['name']);
+            $newFilePath = $path . $filename;
+
+            if (move_uploaded_file($file['tmp_name'], $newFilePath)) {
+                $uploaded_files[] = [
+                    'item_id'   => $sanitized_item_id,
+                    'file_name' => $filename,
+                    'filetype'  => $file['type'],
+                ];
+
+                // Optionally create a thumbnail for images
+                if (is_image($newFilePath)) {
+                    create_img_thumb($path, $filename);
+                }
+            }
+        }
+    }
+
+    // Return uploaded files or clean up empty directories if no files were uploaded
+    if (!empty($uploaded_files)) {
+        return $uploaded_files;
+    } else {
+        // Clean up empty directories
+        if (is_dir($path) && count(list_files($path)) === 0) {
+            @rmdir($path); // Remove item directory
+            $parent_dir = dirname($path);
+            if (is_dir($parent_dir) && count(list_files($parent_dir)) === 0) {
+                @rmdir($parent_dir); // Remove form_id directory if empty
+            }
+        }
+    }
+
+    return false;
+}
 function handle_qor_item_attachment_array($related, $form_id, $item_id, $itemIndex)
 {
     $base_path = get_upload_path_by_type('form');
