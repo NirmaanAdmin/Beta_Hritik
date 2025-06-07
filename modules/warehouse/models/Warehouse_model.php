@@ -20758,79 +20758,79 @@ class Warehouse_model extends App_Model
 	}
 
 
-	function add_goods_documentetion($data, $goods_receipt_id)
-	{
+	// function add_goods_documentetion($data, $goods_receipt_id)
+	// {
 
-		if (isset($data) && !empty($data)) {
-			$this->db->trans_start(); // Start transaction for atomic operations
+	// 	if (isset($data) && !empty($data)) {
+	// 		$this->db->trans_start(); // Start transaction for atomic operations
 
-			// Loop through checklist_ids (they should match the required array keys)
-			foreach ($data['checklist_id'] as $key => $checklist_id) {
-				$dt_data = [];
-				$dt_data['goods_receipt_id'] = $goods_receipt_id;
-				$dt_data['checklist_id'] = $checklist_id;
-				$dt_data['required'] = isset($data['required'][$key]) ? 1 : 0; // Convert 'on' to 1 for database
+	// 		// Loop through checklist_ids (they should match the required array keys)
+	// 		foreach ($data['checklist_id'] as $key => $checklist_id) {
+	// 			$dt_data = [];
+	// 			$dt_data['goods_receipt_id'] = $goods_receipt_id;
+	// 			$dt_data['checklist_id'] = $checklist_id;
+	// 			$dt_data['required'] = isset($data['required'][$key]) ? 1 : 0; // Convert 'on' to 1 for database
 
-				// Check if record exists
-				$this->db->where('goods_receipt_id', $goods_receipt_id);
-				$this->db->where('checklist_id', $checklist_id);
-				$existing_record = $this->db->get(db_prefix() . 'goods_receipt_documentetion')->row();
+	// 			// Check if record exists
+	// 			$this->db->where('goods_receipt_id', $goods_receipt_id);
+	// 			$this->db->where('checklist_id', $checklist_id);
+	// 			$existing_record = $this->db->get(db_prefix() . 'goods_receipt_documentetion')->row();
 
-				if ($existing_record) {
-					// Update existing record
-					$this->db->where('id', $existing_record->id);
-					$update_result = $this->db->update(db_prefix() . 'goods_receipt_documentetion', $dt_data);
-					$insert_id = $existing_record->id;
+	// 			if ($existing_record) {
+	// 				// Update existing record
+	// 				$this->db->where('id', $existing_record->id);
+	// 				$update_result = $this->db->update(db_prefix() . 'goods_receipt_documentetion', $dt_data);
+	// 				$insert_id = $existing_record->id;
 
-					if (!$update_result) {
-						$this->db->trans_rollback();
-						return false;
-					}
-				} else {
-					// Insert new record
-					$insert_result = $this->db->insert(db_prefix() . 'goods_receipt_documentetion', $dt_data);
-					$insert_id = $this->db->insert_id();
+	// 				if (!$update_result) {
+	// 					$this->db->trans_rollback();
+	// 					return false;
+	// 				}
+	// 			} else {
+	// 				// Insert new record
+	// 				$insert_result = $this->db->insert(db_prefix() . 'goods_receipt_documentetion', $dt_data);
+	// 				$insert_id = $this->db->insert_id();
 
-					if (!$insert_result) {
-						$this->db->trans_rollback();
-						return false;
-					}
-				}
+	// 				if (!$insert_result) {
+	// 					$this->db->trans_rollback();
+	// 					return false;
+	// 				}
+	// 			}
 
-				// Handle file attachments
-				$iuploadedFiles = handle_goods_receipt_ckecklist_item_attachment_array('goods_receipt_checklist', $goods_receipt_id, $insert_id, 'items', $key);
+	// 			// Handle file attachments
+	// 			$iuploadedFiles = handle_goods_receipt_ckecklist_item_attachment_array('goods_receipt_checklist', $goods_receipt_id, $insert_id, 'items', $key);
 
-				if ($iuploadedFiles && is_array($iuploadedFiles)) {
-					foreach ($iuploadedFiles as $file) {
-						$file_data = array();
-						$file_data['dateadded'] = date('Y-m-d H:i:s');
-						$file_data['rel_type'] = 'goods_receipt_checkl';
-						$file_data['rel_id'] = $goods_receipt_id;
-						$file_data['staffid'] = get_staff_user_id();
-						$file_data['attachment_key'] = app_generate_hash();
-						$file_data['file_name'] = $file['file_name'];
-						$file_data['filetype'] = $file['filetype'];
+	// 			if ($iuploadedFiles && is_array($iuploadedFiles)) {
+	// 				foreach ($iuploadedFiles as $file) {
+	// 					$file_data = array();
+	// 					$file_data['dateadded'] = date('Y-m-d H:i:s');
+	// 					$file_data['rel_type'] = 'goods_receipt_checkl';
+	// 					$file_data['rel_id'] = $goods_receipt_id;
+	// 					$file_data['staffid'] = get_staff_user_id();
+	// 					$file_data['attachment_key'] = app_generate_hash();
+	// 					$file_data['file_name'] = $file['file_name'];
+	// 					$file_data['filetype'] = $file['filetype'];
 
-						$file_insert = $this->db->insert(db_prefix() . 'invetory_files', $file_data);
-						if (!$file_insert) {
-							$this->db->trans_rollback();
-							return false;
-						}
-					}
-				}
-			}
+	// 					$file_insert = $this->db->insert(db_prefix() . 'invetory_files', $file_data);
+	// 					if (!$file_insert) {
+	// 						$this->db->trans_rollback();
+	// 						return false;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
 
-			$this->db->trans_complete(); // Complete transaction
+	// 		$this->db->trans_complete(); // Complete transaction
 
-			if ($this->db->trans_status() === FALSE) {
-				return false;
-			}
+	// 		if ($this->db->trans_status() === FALSE) {
+	// 			return false;
+	// 		}
 
-			return true;
-		}
+	// 		return true;
+	// 	}
 
-		return true;
-	}
+	// 	return true;
+	// }
 
 	public function get_inventory_documents(){
 
