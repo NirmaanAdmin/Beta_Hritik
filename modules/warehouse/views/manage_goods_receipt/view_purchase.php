@@ -427,7 +427,7 @@
           <?php init_relation_tasks_table(array('data-new-rel-id' => $goods_receipt->id, 'data-new-rel-type' => 'stock_import')); ?>
         </div>
 
-        <div role="tabpanel" class="tab-pane" id="attachment">
+        <!-- <div role="tabpanel" class="tab-pane" id="attachment">
           <div class="col-md-12">
             <div class="table-responsive">
               <?php echo form_open_multipart(admin_url('warehouse/goods_receipt_documentetion/' . $goods_receipt->id), array('id' => 'partograph-attachments-upload'));
@@ -439,6 +439,7 @@
                     <th colspan="1"><?php echo _l('Checklist') ?></th>
                     <th colspan="1"><?php echo _l('Required') ?></th>
                     <th colspan="1"><?php echo _l('Attachments') ?></th>
+                    <th colspan="1"><?php echo _l('Download') ?></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -446,7 +447,7 @@
                   <?php
                   // Define the checklist items
                   $checklist_items = [
-                    '1' => 'Stock Import',
+                    '1' => 'Stock Import Images',
                     '2' => 'Technical/Security Staff sign',
                     '3' => 'Transport Document',
                     '4' => 'Production Certificate',
@@ -461,24 +462,18 @@
                     $is_required = 0; // Default to not required
                     foreach ($goods_documentitions as $doc) {
                       if ($doc['checklist_id'] == $key) {
-                        echo $doc['required'];
                         $is_required = $doc['required'];
                         break;
                       }
                     }
-                   
+
                   ?>
-                    <!-- Hidden input for checklist ID -->
                     <input type="hidden" name="checklist_id[<?= $key ?>]" value="<?= $key ?>">
 
                     <tr>
-                      <!-- Serial Number -->
                       <td><?= $sr ?></td>
 
-                      <!-- Checklist Item Name -->
                       <td><?= $value ?></td>
-
-                      <!-- Required Checkbox -->
                       <td style="text-align: center;">
                         <div class="checkbox">
                           <input type="checkbox" name="required[<?= $key ?>]"
@@ -486,7 +481,7 @@
                         </div>
                       </td>
 
-                      <!-- Attachments -->
+                      
                       <td>
                         <div class="attachment_new">
                           <div class="col-md-12">
@@ -507,6 +502,30 @@
                           </div>
                         </div>
                       </td>
+                      <td>
+                        <?php if (! empty($attachments_for_this)) : ?>
+                          <?php foreach ($attachments_for_this as $file) : ?>
+                            <?php
+                            // Build the full server path to the file
+                            $checkPath = get_upload_path_by_type('inventory')
+                              . 'goods_receipt_checklist/'
+                              . $file['rel_id']  // the goods receipt ID
+                              . '/' . $sr         // your serial number / item index
+                              . '/' . $file['file_name'];
+
+                            // Only show the name if the file actually exists
+                            if (file_exists($checkPath)) :
+                            ?>
+                              <div style="padding-bottom:5px;">
+                                <?= htmlspecialchars($file['file_name'], ENT_QUOTES, 'UTF-8'); ?>
+                              </div>
+                            <?php endif; ?>
+                          <?php endforeach; ?>
+                        <?php else: ?>
+                          <em>No attachments</em>
+                        <?php endif; ?>
+                      </td>
+
                     </tr>
                   <?php
                     // Increment serial number
@@ -542,7 +561,7 @@
               }
             } ?>
           </div>
-        </div>
+        </div> -->
         <div role="tabpanel" class="tab-pane ptop10" id="tab_activity">
           <div class="row">
             <div class="col-md-12">
