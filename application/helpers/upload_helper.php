@@ -2058,6 +2058,7 @@ function handle_ckecklist_item_attachment_array($related, $form_id, $item_id, $i
 
     return false;
 }
+function handle_goods_receipt_ckecklist_item_attachment_array($related, $form_id, $item_id, $index_name, $itemIndex)
 {
     // Validate inputs to prevent directory traversal or injection attacks
     $sanitized_related = preg_replace('/[^a-zA-Z0-9_-]/', '', $related);
