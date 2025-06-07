@@ -20762,6 +20762,8 @@ class Warehouse_model extends App_Model
 	{
 
 		if (isset($data) && !empty($data)) {
+			
+
 			// Loop through checklist_ids (they should match the required array keys)
 			foreach ($data['checklist_id'] as $key => $checklist_id) {
 				$dt_data = [];
@@ -20781,7 +20783,7 @@ class Warehouse_model extends App_Model
 					$insert_id = $existing_record->id;
 
 					if (!$update_result) {
-						$this->db->trans_rollback();
+						
 						return false;
 					}
 				} else {
@@ -20790,7 +20792,7 @@ class Warehouse_model extends App_Model
 					$insert_id = $this->db->insert_id();
 
 					if (!$insert_result) {
-						$this->db->trans_rollback();
+						
 						return false;
 					}
 				}
@@ -20817,6 +20819,10 @@ class Warehouse_model extends App_Model
 					}
 				}
 			}
+
+			$this->db->trans_complete(); // Complete transaction
+
+			
 
 			return true;
 		}
