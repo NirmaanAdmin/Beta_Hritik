@@ -21315,4 +21315,28 @@ class Purchase_model extends App_Model
         $rs['taxes_val'] = $tax_val_rs;
         return $rs;
     }
+
+    /**
+     * Deletes a purchase bill from the database
+     * 
+     * @param int $bill_id The ID of the bill to delete
+     * @return bool Returns true if deletion was successful, false otherwise
+     * @throws Exception If database operation fails
+     */
+    public function delete_pur_bill($bill_id)
+    {
+        if (!is_numeric($bill_id)) {
+            throw new InvalidArgumentException('Bill ID must be a numeric value');
+        }
+
+        $this->db->where('id', (int)$bill_id);
+        $result = $this->db->delete(db_prefix() . 'pur_bills');
+
+        if (!$result) {
+            log_message('error', 'Failed to delete purchase bill with ID: ' . $bill_id);
+            return false;
+        }
+
+        return true;
+    }
 }

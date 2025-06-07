@@ -14586,7 +14586,7 @@ class purchase extends AdminController
                 $item_name = $bill_detail['item_name'];
 
                 if (strlen($item_name) == 0) {
-                $item_name = pur_get_item_variatiom($bill_detail['item_code']);
+                    $item_name = pur_get_item_variatiom($bill_detail['item_code']);
                 }
 
                 $pur_bill_row_template .= $this->purchase_model->create_purchase_bill_row_template('items[' . $index_order . ']',  $item_name, $bill_detail['description'], $bill_detail['quantity'], $unit_name, $bill_detail['unit_price'], $taxname, $bill_detail['item_code'], $bill_detail['unit_id'], $bill_detail['tax_rate'],  $bill_detail['total_money'], $bill_detail['discount_percent'], $bill_detail['discount_money'], $bill_detail['total'], $bill_detail['into_money'], $bill_detail['tax'], $bill_detail['tax_value'], $bill_detail['id'], true, $currency_rate, $to_currency, $bill_detail['billed_quantity']);
@@ -14612,7 +14612,7 @@ class purchase extends AdminController
             $data = $this->input->post();
             if ($data['id'] == '') {
                 unset($data['id']);
-                
+
                 $mess = $this->purchase_model->add_pur_bill($data);
                 if ($mess) {
                     // handle_pur_invoice_file($mess);
@@ -14620,7 +14620,7 @@ class purchase extends AdminController
                 } else {
                     set_alert('warning', _l('add_purchase_bill_fail'));
                 }
-                redirect(admin_url('purchase/purchase_order/'.$data['pur_order']));
+                redirect(admin_url('purchase/purchase_order/' . $data['pur_order']));
             } else {
                 $id = $data['id'];
                 unset($data['id']);
@@ -14631,8 +14631,43 @@ class purchase extends AdminController
                 } else {
                     set_alert('warning', _l('update_purchase_bill_fail'));
                 }
-                redirect(admin_url('purchase/purchase_order/'.$data['pur_order']));
+                redirect(admin_url('purchase/purchase_order/' . $data['pur_order']));
             }
         }
+    }
+
+    /**
+     * Deletes a bill and redirects to the purchase order page
+     * 
+     * @param int $id The ID of the bill to delete
+     * @param int $pur_id The ID of the related purchase order for redirect
+     * @return void
+     * @throws Exception If deletion fails or invalid parameters provided
+     */
+    public function delete_bill($id, $pur_id)
+    {
+        // Validate input parameters
+        if (!is_numeric($id) || !is_numeric($pur_id)) {
+            set_alert('warning', _l('invalid_parameters'));
+            redirect(admin_url('purchase'));
+        }
+
+        try {
+            // Attempt to delete the bill
+            $result = $this->purchase_model->delete_pur_bill($id);
+
+            if ($result) {
+                set_alert('success', _l('bill_deleted_successfully'));
+            } else {
+                set_alert('warning', _l('bill_deletion_failed'));
+            }
+        } catch (Exception $e) {
+            // Log the error and show message to user
+            log_message('error', 'Bill deletion failed: ' . $e->getMessage());
+            set_alert('danger', _l('bill_deletion_error'));
+        }
+
+        // Redirect to purchase order page
+        redirect(admin_url('purchase/purchase_order/' . $pur_id));
     }
 }
